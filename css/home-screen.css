@@ -1,7 +1,7 @@
-@import '/CSS/appbar.css';
-@import '/CSS/popup-alert.css';
-@import '/CSS/popup-action.css';
-@import '/CSS/popup-dropdown.css';
+@import '/css/appbar.css';
+@import '/css/popup-alert.css';
+@import '/css/popup-action.css';
+@import '/css/popup-dropdown.css';
 
 #main-body {
     overflow: hidden;

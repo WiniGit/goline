@@ -1,25 +1,25 @@
 /* Color */
-@import '/CSS/ds-skin.css';
+@import '/css/ds-skin.css';
 
 /* Typo */
-@import '/CSS/ds-typography.css';
+@import '/css/ds-typography.css';
 
 /* Layout */
-@import '/CSS/ds-layout.css';
+@import '/css/ds-layout.css';
 
 /* Effect */
-@import '/CSS/ds-effect.css';
+@import '/css/ds-effect.css';
 
 /* Systems */
-@import '/CSS/ds-systems.css';
+@import '/css/ds-systems.css';
 
-@import '/CSS/ds-Responsive.css';
+@import '/css/ds-Responsive.css';
 
-@import '/CSS/appbar.css';
+@import '/css/appbar.css';
 
-@import '/CSS/design-block.css';
-@import '/CSS/design-f12-container.css';
-@import '/CSS/design-invite-member.css';
+@import '/css/design-block.css';
+@import '/css/design-f12-container.css';
+@import '/css/design-invite-member.css';
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200..900');
 
