@@ -1,0 +1,448 @@
+.w-text {
+    display: inline-flex;
+    align-items: center;
+}
+
+.overflow-elipstic {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.regular0 {
+    line-height: 14px;
+    font-size: 10px;
+    color: #00204D;
+}
+
+.regular11 {
+    line-height: 14px;
+    font-size: 11px;
+    color: #00204D;
+}
+
+.regular1 {
+    line-height: 16px;
+    font-size: 12px;
+    color: #00204D;
+}
+
+.regular2 {
+    line-height: 22px;
+    font-size: 14px;
+    color: #00204D;
+}
+
+.regular3 {
+    line-height: 28px;
+    font-size: 16px;
+    color: #00204D;
+}
+
+.regular4 {
+    line-height: 28px;
+    font-size: 20px;
+    color: #00204D;
+}
+
+.regular5 {
+    line-height: 32px;
+    font-size: 14px;
+    color: #00204D;
+}
+
+.regular6 {
+    line-height: 38px;
+    font-size: 30px;
+    color: #00204D;
+}
+
+.regular7 {
+    line-height: 48px;
+    font-size: 38px;
+    color: #00204D;
+}
+
+.regular8 {
+    line-height: 54px;
+    font-size: 46px;
+    color: #00204D;
+}
+
+.regular9 {
+    line-height: 64px;
+    font-size: 56px;
+    color: #00204D;
+}
+
+.semibold0 {
+    line-height: 14px;
+    font-size: 10px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold11 {
+    line-height: 14px;
+    font-size: 11px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold1 {
+    line-height: 16px;
+    font-size: 12px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold2 {
+    line-height: 22px;
+    font-size: 14px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold3 {
+    line-height: 28px;
+    font-size: 16px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold4 {
+    line-height: 28px;
+    font-size: 20px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold5 {
+    line-height: 32px;
+    font-size: 24px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold6 {
+    line-height: 48px;
+    font-size: 30px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold7 {
+    line-height: 48px;
+    font-size: 38px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold8 {
+    line-height: 54px;
+    font-size: 46px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.semibold9 {
+    line-height: 64px;
+    font-size: 56px;
+    color: #00204D;
+    font-weight: 600;
+}
+
+.heading-1 {
+    line-height: 68px;
+    font-size: 56px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.heading-2 {
+    line-height: 56px;
+    font-size: 46px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.heading-3 {
+    line-height: 46px;
+    font-size: 38px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.heading-4 {
+    line-height: 38px;
+    font-size: 30px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.heading-5 {
+    line-height: 32px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.heading-6 {
+    line-height: 28px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.heading-7 {
+    line-height: 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.heading-8 {
+    line-height: 22px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.heading-9 {
+    line-height: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.subtitle-1 {
+    line-height: 26px;
+    font-size: 18px;
+    color: #6E87AA;
+}
+
+.subtitle-2 {
+    line-height: 24px;
+    font-size: 16px;
+    color: #6E87AA;
+}
+
+.subtitle-3 {
+    line-height: 22px;
+    font-size: 14px;
+    color: #6E87AA;
+}
+
+.subtitle-4 {
+    line-height: 16px;
+    font-size: 12px;
+    color: #6E87AA;
+}
+
+.subtitle-5 {
+    line-height: 14px;
+    font-size: 10px;
+    color: #6E87AA;
+}
+
+.body-1 {
+    line-height: 28px;
+    font-size: 18px;
+    color: #4B6281;
+}
+
+.body-2 {
+    line-height: 24px;
+    font-size: 16px;
+    color: #4B6281;
+}
+
+.body-3 {
+    line-height: 22px;
+    font-size: 14px;
+    color: #4B6281;
+}
+
+.button-text-1 {
+    line-height: 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1C2430;
+}
+
+.button-text-2 {
+    line-height: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.button-text-3 {
+    line-height: 22px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.button-text-4 {
+    line-height: 22px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1C2430;
+}
+
+.button-text-5 {
+    line-height: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.button-text-6 {
+    line-height: 16px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #1C2430;
+}
+
+.label-1 {
+    line-height: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.label-2 {
+    line-height: 22px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #1C2430;
+}
+
+.label-3 {
+    line-height: 22px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.label-4 {
+    line-height: 22px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1C2430;
+}
+
+.label-5 {
+    line-height: 16px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #1C2430;
+}
+
+.placeholder-1 {
+    line-height: 28px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #1C2430;
+}
+
+.placeholder-2 {
+    line-height: 22px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1C2430;
+}
+
+
+
+.highlight-1 {
+    line-height: 68px;
+    font-size: 56px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.highlight-2 {
+    line-height: 56px;
+    font-size: 46px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.highlight-3 {
+    line-height: 46px;
+    font-size: 38px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.highlight-4 {
+    line-height: 38px;
+    font-size: 30px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.highlight-5 {
+    line-height: 32px;
+    font-size: 24px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.highlight-6 {
+    line-height: 28px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.headline-1 {
+    line-height: 48px;
+    font-size: 38px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.headline-2 {
+    line-height: 38px;
+    font-size: 30px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+
+.headline-3 {
+    line-height: 32px;
+    font-size: 24px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.headline-4 {
+    line-height: 28px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.headline-5 {
+    line-height: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1C2430;
+}
+
+.title-3 {
+    line-height: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #4B6281;
+}
+
+.title-4 {
+    line-height: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #4B6281;
+}

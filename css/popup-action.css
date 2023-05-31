@@ -1,0 +1,33 @@
+.popup-action {
+    z-index: 2;
+    display: none;
+    position: absolute;
+    box-sizing: border-box;
+    background-color: white;
+    transform: translateY(-20%);
+}
+
+.popup-action .hide {
+    display: none;
+}
+
+.popup-action .inactive {
+    pointer-events: none;
+}
+
+.popup-action .popup-header {
+    height: 48px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.popup-action .popup-body {
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.popup-action .popup-footer {
+    padding: 0 16px;
+    box-sizing: border-box;
+}

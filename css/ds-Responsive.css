@@ -1,0 +1,335 @@
+﻿@media (min-width: 0px) {
+    .col-sx-1 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .col-sx-2 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .col-sx-3 {
+        flex: 0 0 auto;
+        width: 33%;
+    }
+
+    .col-sx-4 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+
+    .col-sx-5 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+
+    .row-sx-1 {
+        flex: 0 0 auto;
+        height: 100%;
+    }
+
+    .row-sx-2 {
+        flex: 0 0 auto;
+        height: 50%;
+    }
+
+    .row-sx-3 {
+        flex: 0 0 auto;
+        height: 33%;
+    }
+
+    .row-sx-4 {
+        flex: 0 0 auto;
+        height: 25%;
+    }
+
+    .row-sx-5 {
+        flex: 0 0 auto;
+        height: 20%;
+    }
+}
+
+@media (min-width: 576px) {
+    .col-sm-1 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .col-sm-2 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .col-sm-3 {
+        flex: 0 0 auto;
+        width: 33%;
+    }
+
+    .col-sm-4 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+
+    .col-sm-5 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+
+    .row-sm-1 {
+        flex: 0 0 auto;
+        height: 100%;
+    }
+
+    .row-sm-2 {
+        flex: 0 0 auto;
+        height: 50%;
+    }
+
+    .row-sm-3 {
+        flex: 0 0 auto;
+        height: 33%;
+    }
+
+    .row-sm-4 {
+        flex: 0 0 auto;
+        height: 25%;
+    }
+
+    .row-sm-5 {
+        flex: 0 0 auto;
+        height: 20%;
+    }
+}
+
+@media (min-width:768px) {
+    .col-md-1 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .col-md-2 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .col-md-3 {
+        flex: 0 0 auto;
+        width: 33%;
+    }
+
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+
+    .col-md-5 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+
+    .row-md-1 {
+        flex: 0 0 auto;
+        height: 100%;
+    }
+
+    .row-md-2 {
+        flex: 0 0 auto;
+        height: 50%;
+    }
+
+    .row-md-3 {
+        flex: 0 0 auto;
+        height: 33%;
+    }
+
+    .row-md-4 {
+        flex: 0 0 auto;
+        height: 25%;
+    }
+
+    .row-md-5 {
+        flex: 0 0 auto;
+        height: 20%;
+    }
+}
+
+@media (min-width:992px) {
+    .col-lg-1 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .col-lg-2 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .col-lg-3 {
+        flex: 0 0 auto;
+        width: 33%;
+    }
+
+    .col-lg-4 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+
+    .col-lg-5 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+
+    .row-lg-1 {
+        flex: 0 0 auto;
+        height: 100%;
+    }
+
+    .row-lg-2 {
+        flex: 0 0 auto;
+        height: 50%;
+    }
+
+    .row-lg-3 {
+        flex: 0 0 auto;
+        height: 33%;
+    }
+
+    .row-lg-4 {
+        flex: 0 0 auto;
+        height: 25%;
+    }
+
+    .row-lg-5 {
+        flex: 0 0 auto;
+        height: 20%;
+    }
+}
+
+@media (min-width:1200px) {
+    .col-xl-1 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .col-xl-2 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .col-xl-3 {
+        flex: 0 0 auto;
+        width: 33%;
+    }
+
+    .col-xl-4 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+
+    .col-xl-5 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+
+    .row-xl-1 {
+        flex: 0 0 auto;
+        height: 100%;
+    }
+
+    .row-xl-2 {
+        flex: 0 0 auto;
+        height: 50%;
+    }
+
+    .row-xl-3 {
+        flex: 0 0 auto;
+        height: 33%;
+    }
+
+    .row-xl-4 {
+        flex: 0 0 auto;
+        height: 25%;
+    }
+
+    .row-xl-5 {
+        flex: 0 0 auto;
+        height: 20%;
+    }
+}
+
+@media (min-width:1600px) {
+    .col-xxl-1 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .col-xxl-2 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .col-xxl-3 {
+        flex: 0 0 auto;
+        width: 33%;
+    }
+
+    .col-xxl-4 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+
+    .col-xxl-5 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+
+    .row-xxl-1 {
+        flex: 0 0 auto;
+        height: 100%;
+    }
+
+    .row-xxl-2 {
+        flex: 0 0 auto;
+        height: 50%;
+    }
+
+    .row-xxl-3 {
+        flex: 0 0 auto;
+        height: 33%;
+    }
+
+    .row-xxl-4 {
+        flex: 0 0 auto;
+        height: 25%;
+    }
+
+    .row-xxl-5 {
+        flex: 0 0 auto;
+        height: 20%;
+    }
+}
+
+.col-1 {
+    width: 100%;
+}
+
+.col-2 {
+    width: 50%;
+}
+
+.col-3 {
+    width: 33.33%;
+}
+
+.col-4 {
+    width: 25%;
+}
+
+.col-5 {
+    width: 20%;
+}
+
+.col-6 {
+    width: 16.67%;
+}

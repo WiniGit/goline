@@ -1,0 +1,130 @@
+.animation_move {
+    position: absolute;
+    animation-duration: 1.5s;
+    /* animation-iteration-count: infinite; */
+    animation-timing-function: ease;
+}
+
+.animation_move.in.left {
+    animation-name: moveIn_left;
+}
+
+@keyframes moveIn_left {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+
+}
+
+.animation_move.in.right {
+    animation-name: moveIn_right;
+}
+
+@keyframes moveIn_right {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+
+}
+
+.animation_move.in.top {
+    animation-name: moveIn_top;
+}
+
+@keyframes moveIn_top {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(0%);
+    }
+
+}
+
+.animation_move.in.bottom {
+    animation-name: moveIn_bottom;
+}
+
+@keyframes moveIn_bottom {
+    0% {
+        transform: translateY(100%);
+    }
+
+    100% {
+        transform: translateY(0%);
+    }
+
+}
+
+.animation_move.out.left {
+    right: 100%;
+    animation-name: moveout_left;
+}
+
+@keyframes moveout_left {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+
+}
+
+.animation_move.out.right {
+    left: 100%;
+    animation-name: moveout_right;
+}
+
+@keyframes moveout_right {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+
+}
+
+.animation_move.out.top {
+    bottom: 100%;
+    animation-name: moveout_top;
+}
+
+@keyframes moveout_top {
+    0% {
+        transform: translateY(100%);
+    }
+
+    100% {
+        transform: translateY(0%);
+    }
+
+}
+
+.animation_move.out.bottom {
+    top: 100%;
+    animation-name: moveout_bottom;
+}
+
+@keyframes moveout_bottom {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(0%);
+    }
+
+}

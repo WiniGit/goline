@@ -1,0 +1,233 @@
+<ul class="prototype-view-container col">
+    <li class="device-container design-block col">
+        <div class="block-tile row">
+            <h5 class="block-label text-title semibold1">Device</h5>
+            <div class="add-interaction box32"></div>
+        </div>
+    </li>
+
+    <li class="prototype-container design-block col">
+        <div class="setting-interactions col">
+            <div class="block-tile row">
+                <h5 class="block-label text-title semibold1">Interactions</h5>
+                <button class="add-interaction box32">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+            <div class="interaction-tile block-tile row">
+                <div class="content-container row">
+                    <span class="event-handle regular11 text-body">On Tap</span>
+                    <div class="box32 center text-body">
+                        <i class="fa-solid fa-arrow-right fa-xs"></i>
+                    </div>
+                    <span class="page-end regular11 text-body"></span>
+                </div>
+                <button class="delete-prototype box32">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+
+                <!-- popup detail -->
+                <div class="setting-interaction-popup prototype-popup elevation7 wini_popup col">
+                    <div class="block-tile row border-bottom">
+                        <h5 class="block-label text-title heading-9">Interaction details</h5>
+                        <div class="box40"></div>
+                    </div>
+                    <div class="select-action row">
+                        <i class="fa-regular fa-dot-circle fa-xs text-subtitle"></i>
+                        <span class="regular11 text-label"></span>
+                        <i class="fa-solid fa-chevron-down fa-2xs text-subtitle"></i>
+                        <div class="prototype-popup-select selecte-action-popup col">
+                            <div data-index="1" class="action-option regular11 select-option row text-white">Click</div>
+                            <div data-index="2" class="action-option regular11 select-option row text-white">Double click</div>
+                            <div data-index="3" class="action-option regular11 select-option row text-white">Hover</div>
+                            <div data-index="4" class="action-option regular11 select-option row text-white">Enter</div>
+                        </div>
+                    </div>
+                    <div class="setting-container row">
+                        <div class="select-event row">
+                            <i class="fa-solid fa-arrow-right fa-xs text-subtitle"></i>
+                            <span class="regular11 text-label">Navigate to</span>
+                            <i class="fa-solid fa-chevron-down fa-2xs text-subtitle"></i>
+                            <div class="prototype-popup-select selecte-event-popup col">
+                                <div data-index="1" class="event-option regular11 select-option row text-white">Navigate to</div>
+                                <div data-index="2" class="event-option regular11 select-option row text-white">Show popup</div>
+                                <div data-index="3" class="event-option regular11 select-option row text-white">Show bottom sheet</div>
+                            </div>
+                        </div>
+                        <div class="select-next-page row">
+                            <span class="regular11 text-label"></span>
+                            <i class="fa-solid fa-chevron-down fa-2xs text-subtitle"></i>
+                            <div class="prototype-popup-select selecte-next-page-popup col"></div>
+                        </div>
+                    </div>
+                    <div class="animation-container col">
+                        <div class="block-tile row">
+                            <h5 class="block-label text-title heading-9">Animation</h5>
+                            <div class="box40"></div>
+                        </div>
+                        <div class="animation-review background-disable"></div>
+                        <div class="row animation-tile-container">
+                            <div class="row select-animation-container select_container">
+                                <img class="box24 center" src="/lib/assets/animate-slide.svg" alt="">
+                                <div class="selected-animation regular11 text-body">Instant</div>
+                                <i class="fa-solid fa-2xs fa-chevron-down"></i>
+                                <div class="select-animation-popup animation_popup">
+                                    <div data-enum="1" class="regular0 text-white animation-option">Instant</div>
+                                    <div data-enum="2" class="regular0 text-white animation-option">Dissolve</div>
+                                    <div class="divider-row"></div>
+                                    <div data-enum="3" class="regular0 text-white animation-option">Move In</div>
+                                    <div data-enum="4" class="regular0 text-white animation-option">Move Out</div>
+                                    <div data-enum="5" class="regular0 text-white animation-option">Push</div>
+                                    <div data-enum="6" class="regular0 text-white animation-option">Slide In</div>
+                                    <div data-enum="7" class="regular0 text-white animation-option">Slide Out</div>
+                                </div>
+                            </div>
+                            <div class="row select-direction-container select_container">
+                                <div data-direction="left" class="box24 center direction-option selected left"><i class="fa-solid fa-xs fa-arrow-left"></i></div>
+                                <div data-direction="right" class="box24 center direction-option right"><i class="fa-solid fa-xs fa-arrow-right"></i></div>
+                                <div data-direction="up" class="box24 center direction-option up"><i class="fa-solid fa-xs fa-arrow-up"></i></div>
+                                <div data-direction="down" class="box24 center direction-option down"><i class="fa-solid fa-xs fa-arrow-down"></i></div>
+                            </div>
+                        </div>
+                        <div class="row animation-tile-container regular11">
+                            <input type="checkbox" class="box12 is-smart-animate"> Smart animate matching layers
+                        </div>
+                        <div class="row animation-tile-container">
+                            <div class="row select-timing-container select_container">
+                                <img class="box24 center" src="/lib/assets/animate-ease.svg" alt="">
+                                <div class="selected-timing regular11 text-body">Ease</div>
+                                <i class="fa-solid fa-2xs fa-chevron-down"></i>
+                                <div class="select-timing-popup animation_popup">
+                                    <div data-enum="1" class="regular0 text-white timing-option">Linear</div>
+                                    <div data-enum="2" class="regular0 text-white timing-option">Ease</div>
+                                </div>
+                            </div>
+                            <div class="row input-time-container select_container">
+                                <img class="box24 center" src="/lib/assets/clock.svg" alt="">
+                                <input type="text" class="animate-time regular11 text-body" value="200ms" />
+                                <i class="fa-solid fa-2xs fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- setting data prototype -->
+            <div class="block-tile setting-data row">
+                <h5 class="block-label text-title semibold1">Setting data</h5>
+                <button type="button" class="show-table-data box32">
+                    <img src="/lib/assets/buttonStyle.svg" />
+                </button>
+
+                <!-- popup setting data -->
+                <div class="setting-data-popup prototype-popup elevation7 wini_popup col">
+                    <div class="block-tile row border-bottom">
+                        <h5 class="block-label text-title semibold1">Setting data prototype</h5>
+                        <div class="box40"></div>
+                    </div>
+                    <div class="table-header table-row row">
+                        <div class="row-index semibold11 center">STT</div>
+                        <div class="row-key semibold11">Key</div>
+                        <div class="row-value semibold11">Value</div>
+                        <button class="add-row box32"><i class="fa-solid fa-plus fa-sm"></i></button>
+                    </div>
+                    <div class="data-table col"></div>
+                </div>
+            </div>
+    </li>
+
+    <!-- setting router -->
+    <li class="router-container design-block col">
+        <div class="block-tile setting-router row">
+            <h5 class="block-label text-title semibold1">Router</h5>
+            <button type="button" class="show-select-router box32">
+                <img src="/lib/assets/buttonStyle.svg" />
+            </button>
+
+            <!-- popup router -->
+            <div class="select-router-popup prototype-popup elevation7 wini_popup col">
+                <div class="block-tile row border-bottom">
+                    <h5 class="block-label text-title semibold1">Router</h5>
+                    <button class="box40"></button>
+                </div>
+                <div class="search-container row">
+                    <i class="fa-solid fa-search fa-sm text-placeholder"></i>
+                    <input class="search-router regular1" type="text" placeholder="Search">
+                </div>
+                <div class="list-router"></div>
+            </div>
+        </div>
+
+        <div class="block-tile router-name row regular11 background-disable"></div>
+        <div class="block-tile router-value row regular11 background-disable"></div>
+
+        <ul class="block-title list-route-field col">
+            <li class="block-tile route-field row">
+                <span class="field-key regular11"></span>
+                <div class="field-value regular11 text-disable">
+                    <span class="value"></span>
+                    <span><i class="fa-solid fa-chevron-down fa-xs"></i></span>
+                </div>
+            </li>
+            <li class="block-tile route-field row">
+                <span class="field-key regular11"></span>
+                <div class="field-value regular11 text-disable">
+                    <span class="value"></span>
+                    <span><i class="fa-solid fa-chevron-down fa-xs"></i></span>
+                </div>
+            </li>
+        </ul>
+
+        <div class="param-container col">
+            <div class="block-tile setting-param row">
+                <h5 class="block-label text-title semibold11">Router param</h5>
+                <button type="button" class="show-setting-param box32">
+                    <img src="/lib/assets/buttonStyle.svg" />
+                </button>
+            </div>
+            <!-- popup setting data -->
+            <div class="setting-router-param-popup prototype-popup elevation7 wini_popup col">
+                <div class="block-tile row border-bottom">
+                    <h5 class="block-label text-title semibold1">Setting router param</h5>
+                    <div class="box40"></div>
+                </div>
+                <div class="table-header table-row row">
+                    <div class="row-index semibold11 center">STT</div>
+                    <div class="row-key semibold11">Key</div>
+                    <div class="row-value semibold11">Value</div>
+                    <button class="add-row box32"><i class="fa-solid fa-plus fa-sm"></i></button>
+                </div>
+                <div class="data-table col"></div>
+            </div>
+        </div>
+    </li>
+    <li class="select-data-popup wini_popup prototype-popup-select col">
+        <div class="prototype-input-container col">
+            <div class="block-tile row">
+                <span class="block-label text-white semibold11">Input</span>
+                <button class="box32 center">
+                    <i class="fa-solid fa-chevron-down fa-2xs text-white"></i>
+                </button>
+            </div>
+            <div class="list-input-container col"></div>
+        </div>
+        <div class="prototype-output-container col">
+            <div class="block-tile row">
+                <span class="block-label text-white semibold11">Output</span>
+                <button class="box32 center">
+                    <i class="fa-solid fa-chevron-down fa-2xs text-white"></i>
+                </button>
+            </div>
+            <div class="list-output-item"></div>
+        </div>
+        <div class="prototype-wbase-container col">
+            <div class="block-tile row">
+                <span class="block-label text-white regular11">Page item</span>
+                <button class="box32 center">
+                    <i class="fa-solid fa-chevron-down fa-2xs text-white"></i>
+                </button>
+            </div>
+            <div class="list-wbase-item"></div>
+        </div>
+    </li>
+</ul>

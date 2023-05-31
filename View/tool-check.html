@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/Script/appconfig.js"></script>
+    <script src="/Script/utils.js"></script>
+    <script src="/Script/wini-function.js"></script>
+   
+   <script src="/Script/user-service.js"></script>
+</head>
+
+<body>
+    <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const token = urlParams.get('token');
+        var customer = JSON.parse(Ultis.getStorage('customer'));
+        if (token != null && token != 'null') {
+            customer = JSON.parse(decodeURIComponent(atob(token.replace('/', ''))));
+            // Ultis.setStorage('token', customer.Token);
+            // Ultis.setStorage('refresh-token', customer.RefreshToken);
+            UserService.setToken(customer.Token, customer.RefreshToken);
+            Ultis.setStorage('customer', JSON.stringify(customer));
+        }
+        //checkIsLogin();
+        if (customer) {
+            window.location.href = `home.html`;
+        } else {
+            window.location.href = `login-electron.html`;
+        }
+    </script>
+</body>
+
+</html>

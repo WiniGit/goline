@@ -1,0 +1,148 @@
+/*! Text Field */
+.w-textfield-56 {
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.w-textfield-56 a {
+    position: absolute;
+    right: 0;
+}
+
+.w-textfield-56 input {
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    border-radius: 8px;
+}
+
+.w-textfield-56 input:focus,
+.w-textfield-56 input:valid,
+.w-textfield-56 input:not(:placeholder-shown) {
+    font-size: 14px;
+    padding-top: 16px;
+}
+
+.w-textfield-56 input:focus~span {
+    transform: translateY(-90%);
+    font-size: 12px;
+    color: #366AE2;
+}
+
+.w-textfield-56 input:valid~span,
+.w-textfield-56 input:not(:placeholder-shown)+span {
+    transform: translateY(-90%);
+    font-size: 12px;
+}
+
+.w-textfield-56 span {
+    position: absolute;
+    left: 16px;
+    color: #8c8c8c;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.w-textfield-56 label {
+    position: absolute;
+    left: 4px;
+}
+
+/* ! Popup */
+.w-popup {
+    width: 100%;
+    height: 100%;
+    background-color: #00000040;
+    position: fixed;
+    display: flex;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.w-popup .w-popup-container {
+    width: 414px;
+    border-radius: 8px;
+    padding: 24px;
+    box-sizing: border-box;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.w-popup .w-popup-title {
+    margin-top: 16px;
+}
+
+.w-popup .w-popup-content {
+    margin-top: 4px;
+    color: #4B6281;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.w-popup .w-popup-button-container {
+    margin-top: 24px;
+    display: flex;
+    justify-content: end;
+}
+
+.w-popup .w-popup-button-container .w-popup-button-cancel {
+    background-color: #F2F5F8;
+    color: #6E87AA;
+}
+
+.w-popup .w-popup-button-container .w-popup-button-confirm {
+    background-color: #366AE2;
+    color: white;
+    margin-left: 8px;
+}
+
+.w-popup button {
+    border: none;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* !Button */
+.w-primary-button {
+    height: 40px;
+    border: none;
+    padding: 0 24px;
+    color: white;
+    border-radius: 8px;
+    background-color: #1890FF;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.w-cancel-button {
+    height: 40px;
+    border: var(--divider-dark-color);
+    padding: 0 24px;
+    color: var(--primary-text-color);
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.w-transparent-button {
+    height: 40px;
+    border: none;
+    background-color: transparent;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}

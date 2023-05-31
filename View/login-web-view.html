@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        delete window.exports;
+        delete window.module;
+    </script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-signin-client_id" content="1024381494307-95bcqh537i2c8mg04l7r70bfr973mha4.apps.googleusercontent.com">
+
+    <title>Login</title>
+    <link rel="icon" sizes="any" type="image/svg+xml" href="/lib/assets/logo.svg" />
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/CSS/appbar.css" />
+    <link rel="stylesheet" href="/CSS/styles-old.css" />
+    <!-- <link rel="stylesheet" href="/wini-web/css/styles.css" /> -->
+    <script src="https://kit.fontawesome.com/1cf830eab3.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="/js/jquery.validate.min.js"></script>
+    <script src="/js/bootstrap-toastr/toastr.min.js"></script>
+    <link href="/js/bootstrap-toastr/toastr.min.css" rel="stylesheet" />
+
+    <script src="/Script/appconfig.js"></script>
+    <script src="/Script/utils.js"></script>
+    <script src="/Script/user-service.js"></script>
+
+    <script src="/Script/JS/title-bar.js"></script>
+
+    <script src="/Script/Socket/socket.io.js"></script>
+    <script src="/Script/Socket/SocketGoogle.js"></script>
+
+    <!-- <script src="/Script/wini-function.js"></script> -->
+    <script>
+        localStorage.clear();
+        document.onkeydown = function (ev) {
+            if (ev.key == "F11") ev.preventDefault()
+        }
+        fetch('/View/title-bar.html')
+            .then(response => response.text())
+            .then(text => {
+                document.getElementById('title-bar').innerHTML = text;
+                TitleBarDA.updateTitleBar();
+            });
+    </script>
+</head>
+
+<body>
+    <div class="title-bar" id="title-bar"></div>
+    <div class="login-screen login-browser">
+        <div class="login-view  col">
+            <img class="wini-logo" src="/lib/assets/wini_technology.svg" alt="" />
+
+            <form id="login_e_browser_form" class="login_form center col">
+                <h1 class="text-title heading-2">Welcome to Wini!</h1>
+                <div class="text-body regular3">Your idea, our responsibility</div>
+
+                <script src="https://accounts.google.com/gsi/client" async defer></script>
+                <div id="g_id_onload" data-client_id="1024381494307-95bcqh537i2c8mg04l7r70bfr973mha4.apps.googleusercontent.com" data-callback="handleCredentialResponse">
+                </div>
+                <div class="g_id_signin" data-type="standard"></div>
+
+                <div class="button-text-3 text-subtitle">or</div>
+
+                <div class="login-input-container row">
+                    <input class="text-title regular2" id="login-input-email" type="email" name="Email" placeholder="Email" required />
+                    <span class="input-label text-placeholder label-4">Email <span class="text-error">*</span></span>
+                </div>
+
+                <div class="login-input-container row">
+                    <input class="text-title regular2" id="login-input-password" type="password" name="Password" placeholder="Password" required />
+                    <span class="input-label text-placeholder label-4">Password <span class="text-error">*</span></span>
+                    <a class="suffix-button login-input-visible">
+                        <img class="login-input-visible-img" src="/lib/assets/eye-visible.svg" />
+                    </a>
+                </div>
+
+
+                <div class="button-forgot-password button-text-3 text-primary">Forgot password?</div>
+
+                <button id="button-login" class="background-primary row center" type="submit">
+                    <div id="loader"><i class="fa-solid fa-spin fa-spinner fa-xl"></i></div>
+                    <span id="btn-text">Log in</span>
+                </button>
+
+                <div class="create-account-container button-text-4 text-subtitle">Don’t have account? <a class="button-text-3 text-primary" href="/View/signup-tool-view.html">Create one</a></div>
+            </form>
+
+            <span class="login-version center"> © 2021 Wini.vn All Rights Reserved </span>
+        </div>
+        <div class="banner-view center">
+            <!-- <img src="/lib/assets/login_rightview_image.svg" /> -->
+        </div>
+    </div>
+    <script src="/wini-login/login-web/script/login-web.js"></script>
+    <script>
+        function handleCredentialResponse(response) {
+            // decodeJwtResponse() is a custom function defined by you
+            // to decode the credential response.
+            const responsePayload = Ultis.decodeJwtResponse(response.credential);
+            if (responsePayload.sub != null) {
+                var url = 'Customer/GoogleCallback';
+                emitGetGoogle(responsePayload, url);
+            }
+            //console.log("ID: " + responsePayload.sub);
+            //console.log('Full Name: ' + responsePayload.name);
+            //console.log('Given Name: ' + responsePayload.given_name);
+            //console.log('Family Name: ' + responsePayload.family_name);
+            //console.log("Image URL: " + responsePayload.picture);
+            //console.log("Email: " + responsePayload.email);
+        }
+    </script>
+</body>
+
+</html>

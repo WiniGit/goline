@@ -1,0 +1,662 @@
+/* Appbar */
+/* @import '/CSS/appbar.css'; */
+
+
+/* Slide bar */
+/* @import 'slide-bar.css'; */
+/* @import 'info-view.css'; */
+/* @import 'header.css'; */
+/* @import 'popup.css'; */
+
+/* skin */
+/* @import '/css/skin.css'; */
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Header */
+.home-header {
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+    padding-right: 16px;
+    box-sizing: border-box;
+    background-color: #262626;
+}
+
+.home-view {
+    height: calc(100% - 86px);
+    width: 100%;
+}
+
+.home-header .customer-info {
+    height: 40px;
+    width: 240px;
+    padding: 0 8px;
+    min-width: 240px;
+    box-sizing: border-box;
+    border-right: 1px solid #444444;
+}
+
+.home-header .customer-info .customer-name {
+    flex: 1;
+    overflow: hidden;
+    margin-left: 12px;
+}
+
+.home-header .customer-info .customer-name>* {
+    white-space: nowrap;
+}
+
+.home-header .search-container {
+    width: 360px;
+    height: 36px;
+    margin: 0 12px;
+    padding: 0 12px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background-color: #444444;
+}
+
+.home-header .search-container>input {
+    padding: 0 12px;
+    color: white;
+}
+
+.home-header .search-container>input::placeholder {
+    color: rgba(239, 242, 245, 0.6);
+}
+
+.home-header .join-by-code {
+    height: 32px;
+    padding: 0 24px;
+    margin-right: 12px;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+}
+
+.home-header .notifi-button {
+    border-radius: 6px;
+    margin-right: 8px;
+}
+
+.home-header .notifi-button:hover {
+    background-color: #444444;
+}
+
+.home-header .customer-setting {
+    width: 80px;
+    height: 32px;
+    color: white;
+    border-radius: 4px;
+    position: relative;
+    justify-content: space-evenly;
+}
+
+.home-header .customer-setting:hover {
+    background-color: #444444;
+}
+
+.home-header .customer-setting .customer-setting-dropdown {
+    top: 42px;
+    right: 0;
+    z-index: 2;
+    display: none;
+    padding: 6px 0;
+    position: absolute;
+    border-radius: 2px;
+    background-color: #262626;
+}
+
+.home-header .customer-setting .customer-setting-dropdown::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    right: 4px;
+    border: 4px solid #262626;
+    border-color: transparent transparent #262626 transparent;
+}
+
+.home-header .customer-setting .customer-setting-dropdown .option-tile {
+    height: 40px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.home-header .customer-setting .customer-setting-dropdown .option-tile:not(:first-child):hover {
+    background-color: var(--primary-color);
+}
+
+.home-header .customer-setting .customer-setting-dropdown .option-tile>:first-child {
+    min-width: 24px;
+    margin-right: 8px;
+}
+
+.home-header .customer-setting .customer-setting-dropdown .option-tile.border {
+    border-bottom: 1px solid #444444;
+}
+
+.customer-setting.is-show .customer-setting-dropdown {
+    display: flex;
+}
+
+/* . */
+
+.loading-view {
+    width: 100%;
+    flex-direction: row;
+    height: calc(100% - 86px);
+    min-height: calc(100% - 86px);
+    background-color: white;
+    display: none;
+}
+
+.home-body-content {
+    flex: 1;
+    height: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
+    /* position: relative; */
+
+}
+
+.home-body-content .content-header {
+    width: calc(100% - 16px);
+    height: 64px;
+    min-height: 64px;
+    margin: 0 8px;
+    box-sizing: border-box;
+}
+
+.home-body-content>.content-view-container {
+    width: 100%;
+    height: calc(100% - 44px);
+    align-items: flex-start;
+}
+
+.home-body-content .content-views {
+    width: calc(100% - 340px);
+    height: calc(100% - 16px);
+    margin: 8px;
+    border-top: 1px solid var(--border-color);
+}
+
+.home-body-content .content-views .content-view {
+    width: 100%;
+    height: 100%;
+    padding: 8px 0;
+    box-sizing: border-box;
+    display: none;
+}
+
+/* Project */
+.list-project-view {
+    overflow: auto;
+}
+
+.list-project-view::-webkit-scrollbar {
+    display: none;
+}
+
+.list-project-view .add-new-design-file {
+    width: 300px;
+    margin: 12px 8px;
+    cursor: pointer;
+    padding: 0 12px;
+    min-width: 300px;
+    min-height: 56px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+}
+
+.list-project-view .add-new-design-file .col {
+    flex: 1;
+    margin: 0 12px;
+}
+
+.list-project-view .sort-container {
+    width: 100%;
+    height: 36px;
+    min-height: 36px;
+}
+
+.list-project-view .list-project {
+    width: 100%;
+    /* overflow: auto; */
+    flex-wrap: wrap;
+    min-width: 356px;
+    /* position: relative; */
+    align-items: flex-start;
+    -ms-overflow-style: none;
+    align-content: flex-start;
+    /* height: calc(100% - 184px); */
+}
+
+.list-project .project-card-container {
+    width: 20%;
+    /* min-width: 286px; */
+    height: 286px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+@media only screen and (max-width: 1920px) {
+    .list-project .project-card-container {
+        width: 25%;
+        height: 286px;
+    }
+}
+
+@media only screen and (max-width: 1400px) {
+    .list-project .project-card-container {
+        width: 33.33%;
+        height: 286px;
+    }
+}
+
+@media only screen and (max-width: 1268px) {
+    .list-project .project-card-container {
+        width: 50%;
+        height: 200px;
+    }
+}
+
+@media only screen and (max-width: 986px) {
+    .list-project .project-card-container {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+.list-project .project-card-container .project-card {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 6px;
+    box-sizing: border-box;
+    outline: 1px solid var(--border-color);
+}
+
+.list-project .project-card-container .project-card.selected {
+    outline-color: var(--primary-color);
+}
+
+.list-project .project-card-container .project-card .design-preview {
+    flex: 1;
+    width: 100%;
+}
+
+.list-project .project-card-container .project-card .project-info {
+    width: 100%;
+    height: 56px;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+.list-project .project-card-container .project-card .project-info .col {
+    flex: 1;
+    margin-left: 8px;
+}
+
+.list-project .project-card-container .project-card .project-info input {
+    padding: 0;
+    margin-bottom: 4px;
+}
+
+
+.list-project .project-tile {
+    width: 100%;
+    height: 36px;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+.list-project .project-tile.selected {
+    background-color: var(--primary-background-color);
+}
+
+.list-project .project-tile .block1 {
+    flex: 3;
+}
+
+.list-project .project-tile .block2 {
+    flex: 1;
+}
+
+.list-project .project-tile .block3 {
+    flex: 1;
+    justify-content: end;
+}
+
+.list-project .project-tile .block3>* {
+    margin-left: 8px;
+}
+
+
+/* Sort */
+.sort-container {
+    padding: 0 8px;
+    box-sizing: border-box;
+    justify-content: space-between;
+}
+
+.sort-container .sort_type {
+    border-radius: 4px;
+    color: var(--disable-color);
+    border: 1px solid transparent;
+    margin-left: 8px;
+}
+
+.sort-container .sort_type.selected {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* popup */
+.project-card-popup {
+    width: 200px;
+    position: absolute;
+    background-color: #262626;
+    z-index: 1;
+    padding: 6px 0;
+    box-sizing: border-box;
+    border-radius: 2px;
+    overflow: hidden;
+    display: none;
+}
+
+.project-card-popup.is-show {
+    display: flex;
+}
+
+.project-card-popup .option-tile {
+    height: 32px;
+    color: white;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.project-card-popup .option-tile:hover {
+    background-color: var(--primary-color);
+}
+
+.project-card-popup .delete-project {
+    display: none;
+}
+
+/* Team */
+.team-header {
+    width: 100%;
+}
+
+.team-header .team-name {
+    font-weight: normal;
+    margin-left: 8px;
+}
+
+.team-header .button-invite,
+.team-header .button-create {
+    height: 32px;
+    padding: 0 24px;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-right: 16px;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+}
+
+.team-header .button-create:hover,
+.team-header .button-invite:hover {
+    background-color: var(--overlay-color);
+}
+
+.team-header .button-more-option {
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+}
+
+.team-header .button-more-option:hover {
+    background-color: var(--overlay-color);
+}
+
+.list-team-view {
+    /* display: none; */
+    overflow: auto;
+}
+
+.list-team-view::-webkit-scrollbar {
+    display: none;
+}
+
+.list-team-view .team-tile {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    height: 168px;
+    min-height: 168px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+}
+
+.list-team-view .team-tile.selected {
+    background-color: var(--primary-background-color);
+}
+
+.list-team-view .team-tile:hover {
+    background-color: var(--overlay-color);
+}
+
+.list-team-view .team-tile .team-project-info {
+    width: 200px;
+    height: 100%;
+    min-width: 200px;
+    justify-content: space-between;
+}
+
+.list-team-view .team-tile .list-project-team {
+    flex: 1;
+    height: 100%;
+    padding: 0 8px;
+    overflow-x: auto;
+    box-sizing: border-box;
+}
+
+.list-team-view .team-tile .list-project-team::-webkit-scrollbar {
+    display: none;
+}
+
+.list-team-view .team-tile .list-project-team .project-card {
+    width: 200px;
+    min-width: 200px;
+    position: relative;
+    border-radius: 6px;
+    height: calc(100% - 8px);
+    outline: 1px solid var(--border-color);
+    overflow: hidden;
+    margin: 0 8px;
+}
+
+.list-team-view .team-tile .list-project-team .project-card.selected {
+    outline-color: var(--primary-color);
+}
+
+.list-team-view .team-tile .list-project-team .project-card:hover .project-name {
+    display: block;
+}
+
+.list-team-view .team-tile .list-project-team .project-card .project-name {
+    bottom: 0;
+    width: 100%;
+    display: none;
+    position: absolute;
+    padding: 8px 16px;
+    box-sizing: border-box;
+    background-color: white;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Popup private */
+.list-popup {
+    position: absolute;
+}
+
+.popup-invite-member {
+    width: 546px;
+    position: relative;
+}
+
+.popup-invite-member .input-email-container {
+    width: 100%;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 6px;
+    border: 1px solid var(--overlay-selected-color);
+    margin: 24px 0;
+}
+
+.popup-invite-member .input-email-container .input-email-form {
+    padding: 0 12px;
+}
+
+.popup-invite-member .input-email-container .button-permission {
+    height: 40px;
+    white-space: nowrap;
+    padding: 0 12px;
+}
+
+.popup-invite-member .input-email-container .button-permission>i {
+    width: 16px;
+    margin-top: 2px;
+    align-items: center;
+}
+
+.popup-invite-member .input-email-container .button-permission .list-permission {
+    display: none;
+    padding: 4px 0;
+    position: absolute;
+    border-radius: 2px;
+    box-sizing: border-box;
+    background-color: #262626;
+}
+
+.popup-invite-member .input-email-container .button-permission .list-permission span {
+    height: 20px;
+    color: white;
+    padding: 0 24px;
+    cursor: default;
+}
+
+.popup-invite-member .input-email-container .button-permission .list-permission span:hover {
+    background-color: var(--primary-color);
+}
+
+.button-send-invite {
+    margin-left: 8px;
+    white-space: nowrap;
+    height: 40px;
+    border-radius: 4px;
+    background-color: var(--disable-color) !important;
+}
+
+.button-send-invite.active {
+    background-color: var(--primary-color) !important;
+}
+
+.button-permission.is-show .list-permission {
+    display: flex !important;
+}
+
+.popup-join-by-code {
+    width: 500px;
+}
+
+.popup-join-by-code .input-code-form {
+    flex: 1;
+    height: 40px;
+    margin: 24px 0;
+    border: 1px solid var(--overlay-selected-color);
+}
+
+.popup-join-by-code .button-join {
+    height: 40px;
+    padding: 0 16px;
+    margin-left: 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    background-color: var(--disable-color) !important;
+}
+
+.popup-join-by-code .button-join.active {
+    background-color: var(--primary-color) !important;
+}
+
+/* Move card */
+.move-card {
+    z-index: 0;
+    width: 20px;
+    height: 16px;
+    display: none;
+    border-radius: 4px;
+    position: absolute;
+    border: 1px solid var(--border-color);
+}
+
+/* Create new team */
+.create-team-header {
+    padding: 16px;
+}
+
+.create-team-header .button-close:hover {
+    background-color: var(--overlay-color);
+}
+
+.create-team-body {
+    width: 100%;
+    padding-top: 8%;
+    align-items: center;
+    box-sizing: border-box;
+    height: calc(100% - 72px);
+}
+
+.create-team-body .team-name-container {
+    width: 36%;
+    margin: 24px 0;
+}
+
+.create-team-body .team-name-container>:first-child {
+    white-space: nowrap;
+    margin-right: 16px;
+}
+
+.create-team-body .new-team-name {
+    height: 40px;
+    border-radius: 2px;
+    border: 1px solid var(--border-color);
+}
+
+.create-team-body .button-create-new-team {
+    height: 40px;
+    color: white;
+    margin: 16px 0;
+    padding: 0 32px;
+    border-radius: 6px;
+    background-color: var(--disable-color);
+}
+
+.create-team-body .button-create-new-team.active {
+    background-color: var(--primary-color);
+}
+
+.create-team-body .button-create-new-team.active:hover {
+    background-color: #1890FF;
+}

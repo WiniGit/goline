@@ -1,0 +1,365 @@
+.wrap_div {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+#btn_select_page {
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 4px 2px;
+  color: #262626;
+}
+
+#btn_select_page > p {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  margin: 0 4px 0 0;
+}
+
+#btn_select_page > i {
+  padding: 8px 4px;
+}
+  
+#div_list_page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-y: scroll;
+  min-height: 68px;
+  border-bottom: 1.5px solid #e5e5e5;
+  font-size: 12px;
+  line-height: 16px;
+  padding-bottom: 8px;
+}
+
+#div_list_page > .header {
+  font-weight: 600;
+  justify-content: space-between;
+  margin: 6px 0 6px 16px;
+  width: auto;
+}
+
+#div_list_page i:hover {
+  background-color: #f1f1f1;
+}
+
+.page_item_tile {
+  padding-left: 16px;
+  margin: 2px 0;
+}
+
+.page_item_tile > input {
+  width: 100%;
+  flex: 1;
+  padding: 6px;
+  margin-left: 8px;
+  height: 100%;
+  background-color: transparent;
+  cursor: context-menu;
+}
+
+.page_item_tile:hover {
+  background-color: #f1f1f1;
+}
+
+.page_item_tile:focus-within {
+  background-color: #f1f1f1;
+}
+
+#resize_left_view_line {
+  padding: 0 4px;
+  position: absolute;
+  left: 256px;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  border: none;
+  cursor: col-resize;
+}
+
+.layer-search-result {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  border-bottom: 0.5px solid #f1f1f1;
+  padding: 16px 8px 8px 8px;
+  box-sizing: border-box;
+}
+
+.layer-search-result p {
+  margin: 0 0 0 12px;
+}
+
+.search-filter-popup > .row {
+  gap: 2px;
+  padding: 4px 8px;
+}
+
+.search-filter-popup > .row > * {
+  margin: 0;
+  color: #ffffff;
+}
+
+.layer_wbase_tile {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  border: 1px solid transparent;
+}
+
+.layer_wbase_tile > i:last-child {
+  color: #bfbfbf;
+  padding: 8px;
+}
+
+.layer_wbase_tile > input {
+  flex: 1;
+  display: block;
+  height: 100%;
+  box-sizing: border-box;
+  text-overflow: ellipsis;
+  background-color: transparent;
+  min-width: 20px;
+  border: none;
+  outline: none;
+  cursor: auto;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+.layer_wbase_tile + .col {
+  display: none;
+}
+
+.layer_wbase_tile > .prefix-btn { 
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.layer_wbase_tile:has(> .fa-caret-down) + .col {
+  display: flex !important;
+}
+
+.col:has(> .col:not(:empty)) > .layer_wbase_tile > .prefix-btn {
+  pointer-events: auto !important;
+  visibility: visible !important;
+}
+
+#search_input_assets {
+  flex: 1;
+  width: 100%;
+  height: 32px;
+  padding: 0 8px 0 16px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  box-sizing: border-box;
+  border: none;
+}
+
+.list_tile {
+  height: 32px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.list_tile:hover {
+  background-color: #f1f1f1;
+}
+
+.list_tile > .title {
+  margin: 8px 16px 4px 4px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+.list_tile > i {
+  padding: 6px;
+}
+
+#Assets > div {
+  flex: 1;
+  width: 100%;
+}
+
+#Assets > div:nth-child(2) {
+  flex-wrap: wrap;
+  border-left: 1.5px solid #e5e5e5;
+  overflow-x: visible;
+  overflow-y: scroll;
+}
+
+.instance_demo {
+  width: 100%;
+  flex: 1;
+  margin: 8px;
+  border-radius: 8px;
+  background-color: #e5e5e5;
+  box-sizing: border-box;
+  min-width: 32px;
+  max-width: 94px;
+  overflow: visible;
+  position: relative;
+}
+
+.instance_demo > div {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popupEditOrDelete {
+  height: fit-content;
+  width: fit-content;
+  overflow: hidden;
+}
+
+.popupEditOrDelete > div {
+  width: 64px;
+  font-size: 12px;
+  line-height: 16px;
+  color: white;
+  font-weight: 500;
+  padding: 6px 8px;
+}
+
+.popupEditOrDelete > div:hover {
+  background-color: #1890ff;
+}
+
+#dialog_link_component_skin {
+  width: 560px;
+  height: 560px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  transform: translateY(-40px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#dialog_link_component_skin > div {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#lib_dialog_content {
+  height: calc(100% - 116px);
+  display: flex;
+  flex-direction: column;
+}
+
+#lib_dialog_content > div:first-child {
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+}
+
+#lib_dialog_content > div:first-child > input {
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px 12px 6px;
+  background-color: transparent;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.lib_content_details {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.project_tile {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 6px 8px 6px 12px;
+}
+
+.project_tile > p:nth-child(2) {
+  font-size: 14px;
+  line-height: 22px;
+  color: #595959;
+  margin-left: 8px;
+  flex: 1;
+  width: 100%;
+}
+
+.project_tile > p:nth-child(3) {
+  font-size: 12px;
+  line-height: 16px;
+  color: #bfbfbf;
+  margin-left: 8px;
+  flex: 1;
+  width: 100%;
+}
+
+.link_skin_cate_form {
+  flex-direction: column !important;
+  box-sizing: border-box;
+}
+
+.link_skin_cate_form p {
+  margin: 0;
+}
+
+.link_skin_cate_form > div {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 12px;
+  gap: 12px;
+}
+
+.link_skin_cate_form > .link_skin_cate_form {
+  font-size: 12px;
+  line-height: 16px;
+  margin-left: 56px;
+  width: calc(100% - 56px);
+}
+
+.link_skin_cate_form > div:first-child {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 700;
+  color: #262626;
+  padding: 4px 16px;
+}
+
+.link_skin_cate_form > .checkbox_skin_tile {
+  margin-left: 38px;
+  width: calc(100% - 38px);
+}
+
+.link_skin_cate_form > div:first-child > i {
+  color: #8c8c8c;
+  padding: 12px 6px;
+}
+
+.link_skin_cate_form > div > input {
+  max-width: 32px;
+  height: 20px;
+}

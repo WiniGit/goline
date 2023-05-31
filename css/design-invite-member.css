@@ -1,0 +1,126 @@
+.wpopup-background {
+    top: 0;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: rgb(0, 0, 0, 0.01);
+}
+
+.wpopup-background .wpopup-container {
+    min-width: 468px;
+    border-radius: 4px;
+    background-color: white;
+    margin-bottom: 15%;
+}
+
+.wpopup-background .wpopup-container>.invite-block {
+    margin-top: 12px;
+}
+
+.wpopup-background .wpopup-container>* {
+    width: 100%;
+    padding: 8px 12px;
+    box-sizing: border-box;
+}
+
+.wpopup-background .wpopup-container * {
+    white-space: nowrap;
+}
+
+.wpopup-background .wpopup-container *:not(input, button) {
+    cursor: context-menu;
+}
+
+.wpopup-background .wpopup-container button {
+    min-height: 28px;
+    transition: 0.3s;
+    border-radius: 2px;
+}
+
+.wpopup-background .wpopup-container button:hover {
+    opacity: 0.92;
+}
+
+.wpopup-background .wpopup-container button.overlay:hover {
+    background-color: var(--overlay-color);
+}
+
+.wpopup-background .invite-container {
+    height: 32px;
+    position: relative;
+    margin-right: 8px;
+    border-radius: 2px;
+    box-sizing: border-box;
+    width: calc(100% - 24px);
+    border: 1px solid var(--border-color);
+}
+
+.wpopup-background .invite-container .select-inviter-permission {
+    width: 100px;
+    height: 100%;
+}
+
+.wpopup-background .wbutton-send-invite {
+    border: 0;
+    height: 32px;
+    color: white;
+    padding: 0 24px;
+    box-sizing: border-box;
+    border-radius: 2px !important;
+    background-color: var(--primary-color);
+}
+
+.wpopup-background .wbutton-permission>* {
+    pointer-events: none;
+    margin: 0 8px;
+    width: 60px;
+    text-align: end;
+}
+
+.wpopup-background .wmember-container {
+    position: relative;
+}
+
+.wpopup-background .wpopup-select-permission,
+.wpopup-edit-permisson {
+    position: absolute;
+    z-index: 5;
+    top: 32px;
+    right: 0;
+    width: 100px;
+    padding: 4px 0;
+    border-radius: 2px;
+    box-sizing: border-box;
+    opacity: 1 !important;
+    background-color: #262626;
+    display: none;
+}
+
+.wpopup-background .permission-option {
+    width: 100%;
+    padding: 6px 12px;
+    box-sizing: border-box;
+}
+
+.wpopup-background .permission-option.hide {
+    display: none;
+}
+
+.wpopup-background .permission-option:hover {
+    transition: 0.2s;
+    background-color: var(--primary-color);
+}
+
+.wpopup-background .member-title {
+    padding: 4px 0;
+}
+
+.wpopup-background .indentify.hide {
+    display: none;
+}
+
+.wpopup-background label.error {
+    font-size: 10px !important;
+    margin: 4px 0;
+}

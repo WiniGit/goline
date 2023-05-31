@@ -1,0 +1,123 @@
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circular {
+    border-radius: 50%;
+}
+
+.box8 {
+    width: 8px;
+    height: 8px;
+}
+
+.box12 {
+    width: 12px;
+    height: 12px;
+}
+
+.box14 {
+    width: 14px;
+    height: 14px;
+}
+
+.box16 {
+    width: 16px;
+    height: 16px;
+}
+
+.box20 {
+    width: 20px;
+    height: 20px;
+}
+
+.box24 {
+    width: 24px;
+    height: 24px;
+}
+
+.box32 {
+    width: 32px;
+    height: 32px;
+}
+
+.box36 {
+    width: 36px;
+    height: 36px;
+}
+
+.box40 {
+    width: 40px;
+    height: 40px;
+}
+
+.box44 {
+    width: 44px;
+    height: 44px;
+}
+
+.box48 {
+    width: 48px;
+    height: 48px;
+}
+
+.box56 {
+    width: 56px;
+    height: 56px;
+}
+
+.box72 {
+    width: 72px;
+    height: 72px;
+}
+
+.box80 {
+    width: 80px;
+    height: 80px;
+}
+
+.box100 {
+    width: 100px;
+    height: 100px;
+}
+
+.box120 {
+    width: 120px;
+    height: 120px;
+}
+
+.border-bottom {
+    border-bottom: 1px solid var(--border-overlay-color);
+}
+
+.border-top-light {
+    border-top: 1px solid var(--outline-color);
+}
+
+.border-bottom-light {
+    border-bottom: 1px solid var(--outline-color);
+}
+
+.divider-row {
+    width: 100%;
+    border-bottom: 1px solid var(--border-overlay-color);
+}
+
+.divider-col {
+    width: 100%;
+    border-bottom: 1px solid var(--border-overlay-color);
+}

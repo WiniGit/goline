@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+    <link rel="shortcut icon" href="/lib/assets/logo.svg">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/CSS/home-screen.css">
+    <script src="https://kit.fontawesome.com/bd12e96ffa.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="/js/bootstrap-toastr/toastr.min.js"></script>
+    <link href="/js/bootstrap-toastr/toastr.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="/tool/qrcode.min.js"></script>
+
+    <script src="/Script/appconfig.js"></script>
+
+    <script src="/Script/utils.js"></script>
+
+    <script src="/Script/DA/design-wbaseDA.js"></script>
+
+    <script src="/Script/DA/TeamDA.js"></script>
+    <script src="/Script/DA/ProjectDA.js"></script>
+    <script src="/Script/Common/PopupDA.js"></script>
+    <script src="/Script/DA/HomePopupDA.js"></script>
+    <script src="/Script/DA/PermissionDA.js"></script>
+
+    <script src="/Script/enum-obj-event.js"></script>
+    <script src="/Script/user-service.js"></script>
+    <script src="/Script/wini-function.js"></script>
+    <!-- Socket -->
+    <script src="/Script/Socket/socket.io.js"></script>
+    <script src="/Script/Socket/SocketHome.js"></script>
+
+    <script src="/Script/JS/title-bar.js"></script>
+    <!-- <script src="/common/w_popup.js"></script> -->
+    <script>
+        history.state = { Tab: "recent" };
+        var userItem = JSON.parse(Ultis.getStorage('customer'));
+        document.onkeydown = function (ev) {
+            if (ev.key == "F11") ev.preventDefault()
+        }
+        window.onload = function () {
+            document.addEventListener(
+                "contextmenu",
+                function (e) {
+                    e.preventDefault();
+                },
+                false
+            );
+        };
+    </script>
+
+<body id="main-body" class="col center">
+    <div class="popup-background center col">
+        <div class="popup-join-by-code col elevation7 popup-action ">
+            <div class="popup-header row">
+                <div class="semibold1 space">Join by code</div>
+                <button class="box32 center button-transparent close-popup" style="padding: 0;" type="button">
+                    <i class="fa-solid fa-close fa-xl"></i>
+                </button>
+            </div>
+            <div class="popup-body row">
+                <input class="regular1 text-body code-input" placeholder="Enter code" type="text">
+                <button class="button-join background-primary button-transparent" type="button">
+                    <span class="semibold1 text-white">Join</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="popup-invite-member col elevation7 popup-action "></div>
+    </div>
+
+    <div class="user-option dropdown-popup col home-popup">
+        <a class="option-tile show-profile row">
+            <span class="box32 center text-white"><i class="fa-solid fa-user"></i></span>
+            <span class="regular1 text-white">Profile</span>
+        </a>
+        <a class="option-tile change-password row">
+            <span class="box32 center text-white"><i class="fa-solid fa-key"></i></span>
+            <span class="regular1 text-white">Change password</span>
+        </a>
+        <a class="option-tile logout row" href="/View/login-tool-view.html">
+            <span class="box32 center text-white"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+            <span class="regular1 text-white">Logout</span>
+        </a>
+    </div>
+
+    <div class="home-view col">
+        <!-- ! -->
+        <div id="home-header" class="col">
+            <!-- ! -->
+            <div class="appbar app-bar row"></div>
+            <!-- ! -->
+            <div class="screen-header row">
+                <!-- ! -->
+                <div class="header_block1 row">
+                    <img class="box32" src="/lib/assets/logo_wini.svg" alt="logo">
+                    <div class="user-container col">
+                        <div class="user-name semibold1 text-white">Duc Nguyen</div>
+                        <div class="user-email regular0 text-subtitle-white">Ducnm@wini.vn</div>
+                    </div>
+                </div>
+                <!-- ! -->
+                <div class="header_block2 row">
+                    <div class="search-input row">
+                        <div class="box32 center">
+                            <i class="fa-solid fa-search fa-sm"></i>
+                        </div>
+                        <input type="text" placeholder="Search" class="regular1 ">
+                    </div>
+                </div>
+                <!-- ! -->
+                <div class="header_block3 row">
+                    <button type="button" class="join-by-code background-primary text-white button-transparent semibold1">Join by code</button>
+                    <button class="button-transparent box32"><i class="fa-solid fa-bell text-white fa-lg"></i></button>
+                    <button class="show-user-action button-transparent row">
+                        <div class="box32 circular center">
+                            <i class="fa-solid fa-circle text-white fa-2xl"></i>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-white fa-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- ! -->
+        <div class="loading-view"></div>
+        <!-- ! -->
+        <div id="home-body" class="row">
+            <!-- ! -->
+            <div id="nav-container" class="col elevation7">
+                <div data-tab="recent" class="recent nav_tile semibold1 row text-body selected">
+                    <span class="box32 center"><i class="fa-regular fa-clock"></i></span>
+                    Recent
+                </div>
+                <div data-tab="draft" class="draft nav_tile semibold1 row text-body">
+                    <span class="box32 center"><i class="fa-regular fa-file"></i></span>
+                    Draft
+                </div>
+                <div class="border-bottom"></div>
+                <div class="team-title semibold1 row">
+                    <span class="box24 center"><i class="fa-solid fa-caret-down"></i></span>
+                    Teams
+                </div>
+                <div class="list-team-container col"></div>
+
+                <div class="border-bottom"></div>
+                <a href="/View/home-create-team.html" class="nav_tile semibold1 row text-body">
+                    <span class="box32 center"><i class="fa-regular fa-plus"></i></span>
+                    Create new team
+                </a>
+            </div>
+            <!-- ! -->
+            <div id="content-container" class="col">
+                <div class="content-container-header row">
+                    <div class="recent-header semibold2 text-body space">Recently viewed</div>
+                    <div class="team-header text-body row">
+                        <div class="box32 background-grey3"></div>
+                        <div class="col">
+                            <span class="team-header-name semibold2 text-title">Team name</span>
+                            <span class="regular0 text-subtitle">Team</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-selected-view add-project-container row">
+                    <button class="button-add-project row">
+                        <div class="box32"><img src="/lib/assets/pen.svg"></div>
+                        <div class="space text-body col">
+                            <span class="semibold2 text-title">New design file</span>
+                            <span class="regular0 text-subtitle">Design and prototype</span>
+                        </div>
+                        <div class="box24 center"><i class="fa-solid fa-plus fa-xl"></i></div>
+                    </button>
+                </div>
+
+                <div class="project-selected-view sort-container row">
+                    <span class="space"></span>
+                    <div class="regular11 text-body">
+                        <span>sort: </span>
+                        <span class="regular11 text-tite">Last viewed </span>
+                        <i class="fa-solid fa-chevron-down fa-sm"></i>
+                    </div>
+                    <button data-type="1" class="grid-view type-view-button button-transparent box24 selected">
+                        <i class="fa-solid fa-border-all semibold1"></i>
+                    </button>
+                    <button data-type="2" class="list-view type-view-button button-transparent box24">
+                        <i class="fa-solid fa-list semibold1"></i>
+                    </button>
+                </div>
+
+                <div class="project-selected-view project-content-container row"></div>
+
+                <div class="team-content-container col  "></div>
+            </div>
+            <!-- ! -->
+            <div id="info-container" class="col project">
+                <!-- ! -->
+                <div class="team-action-container info_block row" style="border: none;">
+                    <button class="add-new-project semibold11 text-body button-transparent" type="button">New project</button>
+                    <button class="invite-member semibold11 text-body button-transparent" type="button">Invite</button>
+                    <button class="more-action text-body button-transparent" type="button"><i class="fa-solid fa-ellipsis-h"></i></button>
+                </div>
+                <div class="border-bottom"></div>
+                <!-- ! -->
+                <div class="info_block col">
+                    <div id="logo-container" class="box40 background-disable center semibold3">W</div>
+                    <div class="project-name info_tile text-body semibold2 row"></div>
+                </div>
+                <!-- ! -->
+                <div class="code-domain-block info_block col">
+                    <div id="QR_container" class="box100 background-disable center"></div>
+                    <div class="info_tile code-container row">
+                        <span class="space">
+                            <span class="regular2 text-label">File code: </span>
+                            <span class="code-value semibold2 text-primary"></span>
+                        </span>
+                        <button class="copy-code-button button-transparent box32">
+                            <i class="fa-regular fa-copy fa-lg text-primary"></i>
+                        </button>
+                    </div>
+                    <div class="domain-container row">
+                        <div class="space">
+                            <button class="button-transparent domain-value-button">
+                                <u class="domain-value info_tile regular2 text-primary"></u>
+                            </button>
+                            <input class="regular2 text-body change-domain-input text-body" type="text" value="" placeholder="Enter domain" autofocus>
+                        </div>
+                        <button class="edit-domain-button button-transparent regular1 text-primary">Edit domain </button>
+                    </div>
+                </div>
+                <!-- ! -->
+                <div class="description-block info_block col">
+                    <div class="semibold2 info_tile">Description</div>
+                    <input class="regular1 text-body change-description-input text-body" value="" type="text" placeholder="Enter description">
+                </div>
+                <!-- ! -->
+                <div class="keyword-block info_block col">
+                    <div class="semibold2 info_tile">Keyword</div>
+                    <input class="regular1 text-body change-keyword-input text-body" value="" type="text" placeholder="Enter keyword">
+                </div>
+                <!-- ! -->
+                <div class="member-block info_block col">
+                    <div class="info_tile row">
+                        <div class="semibold2 space">Member</div>
+                        <div class="box40"></div>
+                        <button class="invite-member button-transparent regular1 text-primary">Invite</button>
+                    </div>
+                    <div class="list-member col">
+                        <div class="member-row info_tile row">
+                            <div class="box36 center"><i class="fa-solid fa-user-circle text-body fa-lg"></i></div>
+                            <div class="regular2 space">
+                                <span class="text-body">Member's name</span>
+                                <span class="regular1 text-subtitle">(You)</span>
+                            </div>
+                            <button class="button-delete button-transparent text-primary regular1">leave</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="move-card"></div>
+
+    <div class="team-nav-popup home-popup"> </div>
+
+    <div class="project-option-popup home-popup"></div>
+
+    <script src="/Script/JS/home-project-view.js"></script>
+    <script src="/Script/JS/home-team-view.js"></script>
+    <script src="/Script/JS/home-info-view.js"></script>
+
+    <script src="/Script/JS/home-screen.js"></script>
+    <script src="/Script/JS/home-popup.js"></script>
+</body>
+</head>
+
+</html>
+
+</head>
