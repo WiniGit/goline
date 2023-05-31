@@ -2,24 +2,24 @@
 @import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/ds-skin.css';
 
 /* Typo */
-@import '/css/ds-typography.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/ds-typography.css';
 
 /* Layout */
-@import '/css/ds-layout.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/ds-layout.css';
 
 /* Effect */
-@import '/css/ds-effect.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/ds-effect.css';
 
 /* Systems */
-@import '/css/ds-systems.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/ds-systems.css';
 
-@import '/css/ds-Responsive.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/ds-Responsive.css';
 
-@import '/css/appbar.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/appbar.css';
 
-@import '/css/design-block.css';
-@import '/css/design-f12-container.css';
-@import '/css/design-invite-member.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/design-block.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/design-f12-container.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/design-invite-member.css';
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200..900');
 
