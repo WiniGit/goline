@@ -1,0 +1,1 @@
+$('.environments-container').load('/View/api-environments-view.html');

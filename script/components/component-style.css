@@ -1,0 +1,489 @@
+.wbaseItem-value[lock="true"] {
+  pointer-events: none !important;
+}
+
+.wbaseItem-value[lock="true"] .wbaseItem-value{
+  pointer-events: none !important;
+}
+
+.w-frame.w-page {
+  width: 100% !important;
+  min-width: 100% !important;
+}
+
+:not(.w-table) > .fixed-position {
+  position: absolute !important;
+}
+
+.w-frame.w-page > .fixed-position {
+  position: fixed !important;
+}
+
+.w-rect.wbaseItem-value {
+  box-sizing: border-box !important;
+}
+
+.wbaseItem-value.grid-layout {
+  display: grid !important;
+  grid-template-columns: repeat(24, 1fr);
+  grid-auto-rows: min-content;
+}
+
+.w-text {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: default;
+  word-break: break-word;
+  text-overflow: ellipsis;
+  overflow: hidden !important;
+  outline: none;
+}
+
+.w-svg {
+  position: relative;
+  display: block !important;
+}
+
+.w-svg > svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  aspect-ratio: 6 / 4 !important;
+  background-color: var(--unchecked-bg) !important;
+  border-radius: 30px;
+  border: none;
+  outline: none;
+}
+
+.switch > input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  border: none;
+  outline: none;
+}
+
+.switch > .slider {
+  position: absolute;
+  height: calc(100% - 4px);
+  aspect-ratio: 1 / 1;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.switch:has(> input:checked) {
+  background-color: var(--checked-bg) !important;
+}
+
+.switch > input:checked + .slider {
+  -webkit-transform: translateX(calc((100% + 4px) * 1.5 - 4px - 100%));
+  -ms-transform: translateX(calc((100% + 4px) * 1.5 - 4px - 100%));
+  transform: translateX(calc((100% + 4px) * 1.5 - 4px - 100%));
+}
+
+/*checkbox*/
+.check-box {
+  position: relative;
+  width: 24px;
+  aspect-ratio: 1 / 1 !important;
+  background-color: var(--unchecked-bg) !important;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.check-box > input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.check-box:has(> input:checked) {
+  background-color: var(--checked-bg) !important;
+  border: none !important;
+}
+
+.check-box > input:checked ~ .checkmark {
+  display: block;
+}
+
+.check-box > .checkmark {
+  left: 0;
+  top: 0;
+  display: none;
+  transition: 0.4s;
+}
+
+/* textformfield */
+.textformfield {
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  width: 382px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+}
+
+.wbaseItem-value.textformfield .wbaseItem-value:has(> .textfield) {
+  width: 100%;
+  flex: 1;
+  align-items: center;
+}
+
+.textformfield.helper-text {
+  overflow: visible !important;
+  border-color: var(--state-color) !important;
+}
+
+.textformfield.helper-text::after {
+  content: attr(helper-text);
+  color: var(--state-color);
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  font-size: inherit;
+  line-height: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  transform: translate(-7.5%, 92.5%) scale(0.85);
+}
+
+.textformfield .textfield {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-items: center;
+  gap: 4px;
+  width: 100%;
+  background-color: transparent !important;
+}
+
+.textformfield .textfield > input,
+label {
+  border: none;
+  outline: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  transition: 0.4s;
+}
+
+.textformfield .textfield > input {
+  min-width: 0;
+  width: 100%;
+  background-color: transparent;
+  padding: 0;
+  line-height: inherit;
+  order: 1;
+}
+
+.textformfield .textfield:has(> label) > input {
+  transform: translateY(-50%);
+}
+
+.textfield > label {
+  transform: translateY(calc(50% + 4px + (0.25 * 100%)));
+  order: 0;
+  line-height: 0.8;
+}
+
+.textformfield .textfield.content > label {
+  transform: scale(0.75) translate(-12.5%, -12.5%);
+  text-align: start;
+}
+
+.textfield > input:focus ~ label {
+  transform: scale(0.75) translate(-12.5%, -12.5%);
+  text-align: start;
+}
+
+.textformfield .textfield:has(> label) > input:focus {
+  transform: none;
+}
+
+.textformfield .textfield.content:has(> label) > input {
+  transform: none;
+}
+
+.textformfield .textfield + .obscure-btn-txtfd {
+  position: relative;
+  box-sizing: border-box;
+  aspect-ratio: 1 / 1;
+}
+
+.textformfield .textfield + .obscure-btn-txtfd > * {
+  position: absolute;
+  box-sizing: border-box;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* radio */
+.radio-btn {
+  display: block;
+  position: relative;
+  width: 20px;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 2px solid var(--unchecked-border);
+  background-color: transparent !important;
+}
+
+.radio-btn > input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.radio-btn > input[type="radio"]:checked ~ .checkmark {
+  display: block !important;
+}
+
+.radio-btn > .checkmark {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  width: inherit;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
+}
+
+.radio-btn:has(> input[type="radio"]:checked) {
+  border-color: var(--checked-border) !important;
+}
+
+/* table */
+.w-table {
+  display: table !important;
+  border-collapse: collapse;
+  overflow: visible !important;
+  border-radius: 0 !important;
+}
+
+.w-table[table-width="hug"] {
+  table-layout: auto !important;
+}
+
+.w-table > .table-row {
+  display: table-row !important;
+  border-style: inherit;
+  border-color: inherit;
+  border-width: 0;
+}
+
+.w-table > .table-row > .table-cell {
+  border-width: 0 var(--col-border) var(--row-border) 0;
+  text-align: var(--text-align);
+  vertical-align: var(--vertical-align);
+  border-style: inherit;
+  border-color: inherit;
+  padding: var(--padding);
+  box-sizing: border-box;
+}
+
+.w-table > .table-row > .table-cell > .wbaseItem-value {
+  position: relative !important;
+  left: unset !important;
+  top: unset !important;
+  right: unset !important;
+  bottom: unset !important;
+  transform: unset !important;
+}
+
+.w-table > .table-row > .table-cell:last-child {
+  border-right-width: 0 !important;
+}
+
+.w-table > .table-row:last-child > .table-cell {
+  border-bottom-width: 0 !important;
+}
+
+.w-table[type="0"] > .table-row:first-child > .table-cell {
+  background-color: var(--header-bg) !important;
+}
+
+.w-table[type="2"] > .table-row:first-child > .table-cell {
+  background-color: var(--header-bg) !important;
+}
+
+.w-table[type="2"] > .table-row:last-child > .table-cell {
+  background-color: var(--footer-bg) !important;
+}
+.w-table[type="3"] > .table-row:last-child > .table-cell {
+  background-color: var(--footer-bg) !important;
+}
+
+/* tree */
+.w-tree {
+  display: flex;
+  flex-flow: column nowrap !important;
+  margin-left: calc(var(--indent-space) * var(--tree-level));
+  padding: 0 !important;
+  height: fit-content !important;
+  min-height: fit-content !important;
+}
+
+.w-tree > .w-tree {
+  column-gap: inherit;
+  width: calc(100% - (var(--indent-space) * var(--tree-level)));
+  justify-content: inherit;
+  align-items: inherit;
+}
+
+.w-tree > .tile-item {
+  column-gap: inherit;
+  justify-content: inherit;
+  align-items: inherit;
+  padding: var(--padding);
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100%;
+  height: var(--height);
+  box-sizing: border-box;
+}
+
+.w-tree > .tile-item > .children-value {
+  column-gap: inherit;
+  justify-content: inherit;
+  align-items: inherit;
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.w-tree[tree-height="hug"] .tile-item {
+  height: fit-content !important;
+}
+
+.w-tree[tree-height="hug"] .tile-item > .children-value {
+  height: fit-content !important;
+}
+
+.w-tree > .w-tree > .tile-item > .children-value > * {
+  min-width: min-content !important;
+}
+
+.w-tree:has(> :nth-child(2)) > .tile-item > .btn-tree-action {
+  visibility: visible !important;
+  pointer-events: auto;
+}
+
+.w-tree > .tile-item > .btn-tree-action {
+  display: flex;
+  visibility: hidden;
+  aspect-ratio: 1 / 1;
+  width: var(--action-size);
+  justify-content: center;
+  align-items: center;
+  font-size: calc(var(--action-size) / 1.25);
+  color: var(--action-color);
+}
+
+.w-tree:has(
+    > .tile-item > :is(.fa-chevron-right, .fa-caret-right).btn-tree-action
+  )
+  > .w-tree {
+  display: none !important;
+}
+
+/* carousel */
+.w-carousel {
+  overflow: hidden !important;
+  position: relative;
+  display: flex;
+}
+
+.w-carousel > .slide-list {
+  width: inherit;
+  height: inherit;
+  align-items: inherit;
+}
+
+.w-carousel .slide-arrow {
+  position: absolute;
+  display: flex;
+  aspect-ratio: 1 / 1;
+  width: var(--action-size);
+  justify-content: center;
+  align-items: center;
+  font-size: calc(var(--action-size) / 1.25);
+  color: var(--action-color);
+  border-radius: 50%;
+  background-color: var(--action-bg);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.w-carousel .slide-arrow.slide-prev {
+  left: 8px;
+}
+
+.w-carousel .slide-arrow.slide-next {
+  right: 8px;
+}
+
+.w-carousel .slide-track {
+  width: inherit;
+  height: inherit;
+  display: flex;
+  transition: 0.1s;
+  align-items: inherit;
+}
+
+.w-carousel[effect="fade"] .slide-track {
+  transform: none;
+  transition: none;
+  display: block;
+}
+
+.w-carousel .slide-clone {
+  display: flex !important;
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  align-items: inherit;
+  column-gap: var(--gap);
+  justify-content: var(--justify-content);
+  box-sizing: border-box;
+  padding: var(--padding);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.w-carousel .slide-clone > .wbaseItem-value {
+  position: relative !important;
+  left: unset !important;
+  top: unset !important;
+  right: unset !important;
+  bottom: unset !important;
+  transform: unset !important;
+}
+
+.w-carousel[effect="fade"] .slide-clone:not(.slide-clone[isactive="true"]) {
+  display: none !important;
+}
