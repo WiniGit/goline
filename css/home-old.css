@@ -1,5 +1,5 @@
 /* Appbar */
-/* @import '/css/appbar.css'; */
+/* @import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/appbar.css'; */
 
 
 /* Slide bar */
@@ -9,7 +9,7 @@
 /* @import 'popup.css'; */
 
 /* skin */
-/* @import '/css/skin.css'; */
+/* @import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/skin.css'; */
 
 ::-webkit-scrollbar {
     display: none;
