@@ -1,7 +1,7 @@
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/appbar.css';
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/popup-alert.css';
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/popup-action.css';
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@main/css/popup-dropdown.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/appbar.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/popup-alert.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/popup-action.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/popup-dropdown.css';
 
 #main-body {
     overflow: hidden;
