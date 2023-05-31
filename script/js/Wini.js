@@ -1836,7 +1836,7 @@ function wdraw() {
         ctxr.drawImage(image, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
       } else {
         image = new Image(12, 12);
-        image.src = "/lib/assets/Union.png";
+        image.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/Union.png";
         image.onload = () => {
           ctxr.drawImage(image, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
         };

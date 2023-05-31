@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/appconfig.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/utils.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/wini-function.min.js"></script>
+   
+   <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/user-service.min.js"></script>
+</head>
+
+<body>
+    <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const token = urlParams.get('token');
+        var customer = JSON.parse(Ultis.getStorage('customer'));
+        if (token != null && token != 'null') {
+            customer = JSON.parse(decodeURIComponent(atob(token.replace('/', ''))));
+            // Ultis.setStorage('token', customer.Token);
+            // Ultis.setStorage('refresh-token', customer.RefreshToken);
+            UserService.setToken(customer.Token, customer.RefreshToken);
+            Ultis.setStorage('customer', JSON.stringify(customer));
+        }
+        //checkIsLogin();
+        if (customer) {
+            window.location.href = `home-screen.html`;
+        } else {
+            window.location.href = `login-tool-view.html`;
+        }
+    </script>
+</body>
+
+</html>

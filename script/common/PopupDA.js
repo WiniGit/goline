@@ -13,15 +13,15 @@ class PopupDA {
     static get_popupImage(type) {
         switch (type) {
             case "info":
-                return '/lib/assets/popup-img/info.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/popup-img/info.svg'
             case "error":
-                return '/lib/assets/popup-img/error.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/popup-img/error.svg'
             case "warning":
-                return '/lib/assets/popup-img/warning.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/popup-img/warning.svg'
             case "success":
-                return '/lib/assets/popup-img/success.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/popup-img/success.svg'
             default:
-                return '/lib/assets/popup-img/info.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/popup-img/info.svg'
         }
     }
     static get_popupButtonColor(type) {

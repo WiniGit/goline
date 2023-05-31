@@ -36,7 +36,7 @@
                         UserService.setToken(data.Data.Token, data.Data.RefreshToken);
                         Ultis.set_timeRefreshToken();
                         Ultis.setStorage('customer', JSON.stringify(data.Data));
-                        window.location.href = '/wini-login/login-web/login-success.html';
+                        window.location.href = '/View/login-web-success.html';
                     } else {
                         btnSubmit.disabled = false;
                         btnSubmit.style.backgroundColor = "#366AE2";
@@ -56,7 +56,7 @@
     let loginPass = false;
     $(".login-input-visible").click(function () {
         loginPass = !loginPass;
-        $('.login-input-visible-img').attr('src', loginPass ? "/lib/assets/eye-invisible.svg" : "/lib/assets/eye-visible.svg");
+        $('.login-input-visible-img').attr('src', loginPass ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-invisible.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-visible.svg");
         $("#login-input-password").prop("type", loginPass ? "text" : "password");
     });
 

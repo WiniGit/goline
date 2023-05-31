@@ -66,7 +66,7 @@ socketG.on('server-google',
         Ultis.set_timeRefreshToken();
         UserService.setToken(data.data.Token, data.data.RefreshToken);
         Ultis.setStorage('customer', JSON.stringify(data.data));
-        window.location.href = '/wini-login/login-web/login-success.html';
+        window.location.href = '/View/login-web-success.html';
     });
 
 async function emitGetGoogle(json, url) {

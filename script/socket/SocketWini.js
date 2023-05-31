@@ -770,7 +770,7 @@ socket.on("server-refresh", (data) => {
     if (!href.includes("login-success.html")) {
       window.location.href = "/View/login-tool-view.html";
     } else {
-      window.location.href = "/wini-login/login-web/login.html";
+      window.location.href = "/View/login-web-success.html";
     }
     toastr["error"]("Phiên làm việc của bạn đã hết hạn, vui lòng đăng nhập lại!!!");
   }

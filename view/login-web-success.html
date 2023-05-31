@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" sizes="any" type="image/svg+xml" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/logo.svg" />
+    <title>Wini</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/home_styles.min.css">
+
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/js/bootstrap-toastr/toastr.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/js/bootstrap-toastr/toastr.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/appconfig.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/utils.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/user-service.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/wini-function.min.js"></script>
+
+    <script>
+        check_loginSuccess();
+    </script>
+</head>
+
+<body class="col">
+    <div class="login-success-logo box80">
+        <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/logo.svg" alt="">
+    </div>
+
+    <div class="login-success col">
+        <span class="semibold4">Log in as <span class="login-success-customer-email"></span></span>
+        <a id="callback-href" class="login-success-open-app-button row semibold2 center">Open the desktop app</a>
+        <span class="regular1">
+            Not <span class="login-success-customer-email"></span>?
+            <a href="/View/login-web-view.html" class="regular1 login-success-another-account">Login with another account.</a>
+        </span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/login-web-success.min.js"></script>
+</body>
+
+</html>

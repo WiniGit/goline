@@ -129,7 +129,7 @@ $('body').on('click', `.list-member button.button-delete`, function (ev) {
 try {
     const ipcRenderer = require('electron').ipcRenderer;
     $('body').on('click', '.domain-value-button', function () {
-        ipcRenderer.send('asynchronous', `${$(this).find("u").text()} `);
+        ipcRenderer.send('asynchronous', `${$(this).find("u").text()}`);
     });
 } catch (error) {
 

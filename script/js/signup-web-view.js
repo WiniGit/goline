@@ -82,7 +82,7 @@
                         UserService.setToken(data.Data.Token, data.Data.RefreshToken);
                         Ultis.set_timeRefreshToken();
                         Ultis.setStorage('customer', JSON.stringify(data.Data));
-                        window.location.href = '/View/home-screen.html?tab=home';
+                        window.location.href = '/View/login-web-success.html';
                     } else {
                         $("#button-signup #loader").hide();
                         $("#button-signup #btn-text").show();

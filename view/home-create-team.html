@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        delete window.exports;
+        delete window.module;
+    </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/styles.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/appbar.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/home-old.min.css" />
+
+    <title>Create new Team</title>
+    <link rel="icon" sizes="any" type="image/svg+xml" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/logo.svg" />
+
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/appconfig.min.js"></script>
+
+    <!-- import library outside-->
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/bd12e96ffa.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/js/bootstrap-toastr/toastr.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/js/bootstrap-toastr/toastr.min.css" rel="stylesheet" />
+    <!-- DA -->
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/ProjectDA.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/TeamDA.min.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/enum-obj-event.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/user-service.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/utils.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/wini-function.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/title-bar.min.js"></script>
+    <!-- Socket -->
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/socket/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/socket/SocketHome.min.js"></script>
+    <script>
+        document.onkeydown = function (ev) {
+            if (ev.key == "F11") ev.preventDefault()
+        }
+    </script>
+</head>
+
+<body class="col">
+    <div class="appbar row"></div>
+    <div class="create-team-header row">
+        <div class="space"></div>
+        <a class="box40 button-transparent button-close" href="/View/home-screen.html?tab=recent"><i class="fa-solid fa-close fa-lg"></i></a>
+    </div>
+    <div class="create-team-body col">
+        <div class="heading-5">Create a team</div>
+        <div class="team-name-container row">
+            <div class="label-3">Team name</div>
+            <input class="new-team-name" type="text" placeholder="Add a team name">
+        </div>
+        <span class="create-team-content subtitle-4">After creating a team, you can invite others to join.</span>
+        <button class="button-transparent button-create-new-team button-text-3">Create team</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/create-new-team.min.js"></script>
+</body>
+
+</html>

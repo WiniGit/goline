@@ -1,25 +1,25 @@
 /* Color */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/ds-skin.css';
+@import '/css/ds-skin.css';
 
 /* Typo */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/ds-typography.css';
+@import '/css/ds-typography.css';
 
 /* Layout */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/ds-layout.css';
+@import '/css/ds-layout.css';
 
 /* Effect */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/ds-effect.css';
+@import '/css/ds-effect.css';
 
 /* Systems */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/ds-systems.css';
+@import '/css/ds-systems.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/ds-Responsive.css';
+@import '/css/ds-Responsive.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/appbar.css';
+@import '/css/appbar.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/design-block.css';
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/design-f12-container.css';
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/design-invite-member.css';
+@import '/css/design-block.css';
+@import '/css/design-f12-container.css';
+@import '/css/design-invite-member.css';
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200..900');
 
@@ -1367,9 +1367,13 @@ select::-ms-expand {
 }
 
 .login-success>.login-success-open-app-button {
+    min-height: 40px;
     width: 340px;
     text-align: center;
     margin: 24px 0;
+    border-radius: 8px;
+    color: white;
+    background-color: #1890FF !important;
 }
 
 .login-success>.login-success-open-app-button:hover {

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    delete window.exports;
+    delete window.module;
+  </script>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style id="class-res"></style>
+  <style id="skin-class"></style>
+
+  <link rel="icon" sizes="any" type="image/svg+xml" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/logo.svg" />
+  <title>Project - Wini</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/styles.min.css?v=27" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/home_styles.min.css?v=27" />
+
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/appconfig.js?v=27"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://kit.fontawesome.com/1cf830eab3.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/js/jquery.validate.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/js/bootstrap-toastr/toastr.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/js/bootstrap-toastr/toastr.min.css" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/enum-obj-event.min.js?v=27"></script>
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/user-service.min.js?v=27"></script>
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/utils.min.js?v=27"></script>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/design-wbaseDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/design-baseDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/design-PageDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/design-fileDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/design-skinDA.min.js?v=27"></script>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/ProjectDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/PermissionDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/api-CollectionDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/api-RequestDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/api-InputDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/api-OutputDA.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/da/api-RouterDA.min.js?v=27"></script>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/project-design-popup.min.js?v=27"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/component-style.min.css?v=27" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/design-project-view.min.css?v=27" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/design-right-view.min.css?v=27" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/design-left-view.min.css?v=27" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/css/design-popup.min.css?v=27" />
+
+
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/title-bar.min.js?v=27"></script>
+
+  <script>
+    var userItem = JSON.parse(Ultis.getStorage('customer'));
+
+    document.onkeydown = function (ev) {
+      if (ev.key == "F11" || ev.key == "F12") ev.preventDefault();
+    };
+    TitleBarDA.initDataStorage();
+    fetch("/View/title-bar.html")
+      .then((response) => response.text())
+      .then((text) => {
+        document.getElementById("title-bar").innerHTML = text;
+        TitleBarDA.updateTitleBar();
+      });
+  </script>
+</head>
+
+<body>
+  <div id="body">
+    <div class="col" style="z-index: 2; position: absolute; width: 100%; top: 0">
+      <div class="title-bar" id="title-bar" style="height: 38px; width: 100%"></div>
+      <div id="header" class="row">
+        <div id="create_tool" style="display: inline-flex; align-items: center"></div>
+        <p id="project_name" class="semibold2"></p>
+        <div id="share_tool" style="display: inline-flex; align-items: center"></div>
+      </div>
+    </div>
+    <div id="canvas_view" style="z-index: 0; position: absolute; top: 0">
+      <div id="divSection"></div>
+    </div>
+
+    <div id="left_view" class="elevation7">
+      <div id="tab_bar_left">
+        <i id="layer-search" class="fa-solid fa-magnifying-glass fa-xs"></i>
+        <button class="layer tab_left">Layer</button>
+        <button class="assets tab_left" style="opacity: 0.7">Assets</button>
+        <!-- <button class="base component tab_left">Base component</button> -->
+        <div id="btn_select_page">
+          <p></p>
+          <i class="fa-solid fa-chevron-up fa-xs"></i>
+        </div>
+      </div>
+      <div id="Layer" class="left_tab_view" style="display: block"></div>
+      <div id="Assets" class="left_tab_view" style="display: none"></div>
+      <!-- <div
+                id="Base component"
+                class="left_tab_view"
+                style="display: none"
+            ></div> -->
+      <div id="resize_left_view_line"></div>
+    </div>
+    <div id="right_view" class="elevation7" style="top: 86px">
+      <div id="tab_bar_right">
+        <button data-index="0" class="design tab_right text-label">
+          Design
+        </button>
+        <button data-index="1" class="prototype tab_right text-label" style="opacity: 0.7">
+          Prototype
+        </button>
+        <button data-index="2" class="set-state tab_right text-label" style="opacity: 0.7">
+          State
+        </button>
+        <button data-index="3" class="set-state tab_right text-label" style="opacity: 0.7">
+          Export
+        </button>
+      </div>
+      <div id="Design" class="right_tab_view" style="display: block"></div>
+      <div id="Prototype" class="prototype_setting_view right_tab_view" style="display: none"></div>
+      <div id="State" class="state_setting_view right_tab_view" style="display: none"></div>
+      <div id="Export" class="export_view right_tab_view" style="display: none">
+        <div class="download-project center">
+          <span class="regular1">Download <i class="fa-solid fa-download fa-sm"></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div id="f12_view"></div> -->
+  <div id="f12-container" class="f12-container col"></div>
+
+  <div class="popup-background wini_popup" id="create_skin_popup" style="z-index: 3">
+    <div class="popup-content">
+      <div class="popup-header row">
+        <span class="semibold1 title_create_skin">Create new</span>
+        <button class="button-primary box24 popup-close" onclick="closePopupSkin()">
+          <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/close.svg" />
+        </button>
+      </div>
+      <div class="popup-body row" id="input_new_skin_name">
+        <input class="popup-input space regular1" type="text" placeholder="skin name" name="projectName" />
+      </div>
+      <div class="popup-footer row" style="justify-content: end">
+        <button class="cancel-button semibold11 popup-close" onclick="closePopupSkin()">
+          Cancel
+        </button>
+        <button class="confirm-button team-create-popup-confirm semibold11" onclick="createNewSkin()">
+          Create skin
+        </button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/project-design-hedaer-view.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/project-design-view.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/project-design-popup-component.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/project-design-left-view.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/project-design-state-component.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/design-view.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/Wini.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/design-edit-wbase-style-events.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/desing-right-click-function.min.js?v=27"></script>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/svg_icon.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/handleData.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_button.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_checkbox.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_frame.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_variant.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_progress_bar.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_progress_circle.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_radio_button.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_rectangle.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_svg.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_switch.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_text.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_text_form_field.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_date_picker.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_table.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_tree.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_chart.min.js?v=27"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/components/w_carousel.min.js?v=27"></script>
+
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/design-setting-prototype.min.js?v=27"></script>
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/design-setting-animation.min.js?v=27"></script>
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/F12-container.min.js?v=27"></script>
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/api-view.min.js?v=27"></script>
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/js/design-download-project.min.js?v=27"></script>
+
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/socket/socket.io.min.js?v=27"></script>
+  <script src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/script/socket/SocketWini.min.js?v=27"></script>
+</body>
+
+</html>

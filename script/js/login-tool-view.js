@@ -52,7 +52,7 @@
     let loginPass = false;
     $(".login-input-visible").on('click', function () {
         loginPass = !loginPass;
-        $('.login-input-visible-img').attr('src', loginPass ? "/lib/assets/eye-invisible.svg" : "/lib/assets/eye-visible.svg");
+        $('.login-input-visible-img').attr('src', loginPass ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-invisible.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-visible.svg");
         $("#login-input-password").prop("type", loginPass ? "text" : "password");
     });
 }

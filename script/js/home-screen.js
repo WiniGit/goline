@@ -4,6 +4,8 @@ var url_tab = urlParams.get('tab');
 var url_id = urlParams.get('id');
 
 $('.loading-view').load('/View/loading.html', function () {
+    $('.user-container .user-name').text(userItem.Fullname);
+    $('.user-container .user-email').text(userItem.Email);
     ProjectDA.init();
     TeamDA.init();
     $('.loading-view').show();
