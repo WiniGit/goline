@@ -1,3 +1,9 @@
+@import url('https://rsms.me/inter/inter.css');
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
 body,
 html {
     margin: 0;
@@ -385,7 +391,7 @@ label.error {
     box-sizing: border-box;
     background-size: cover;
     background-repeat: no-repeat;
-    background: url('https://cdn.jsdelivr.net/gh/WiniGit/goline/lib/assets/login_background.svg');
+    background-image: url("https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/login_background.svg");
 }
 
 .banner-view img {

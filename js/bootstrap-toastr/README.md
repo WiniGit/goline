@@ -19,7 +19,7 @@ Toastr is hosted at CDN JS
 
 #### Minified
 - [//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js](//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js) 
-- [//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css](//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css)
+- [//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css](//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css)
 
 ## NuGet Gallery
 http://nuget.org/packages/toastr
