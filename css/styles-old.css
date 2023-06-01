@@ -389,7 +389,7 @@ label.error {
     box-sizing: border-box;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/login_background.svg");
+    background-image: url("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/login_background.svg");
 }
 
 .banner-view img {

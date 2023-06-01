@@ -139,42 +139,42 @@ function createEditAlign() {
   editAlignContainer.id = "edit_align_div";
   let listAlignItem = [
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/layout_align_left.svg",
+      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/layout_align_left.svg",
       onclick: function () {
         alignPosition("align left");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/layout_align_horizontal_center.svg",
+      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/layout_align_horizontal_center.svg",
       onclick: function () {
         alignPosition("align horizontal center");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/layout_align_right.svg",
+      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/layout_align_right.svg",
       onclick: function () {
         alignPosition("align right");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/layout_align_top.svg",
+      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/layout_align_top.svg",
       onclick: function () {
         alignPosition("align top");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/layout_align_vertical_center.svg",
+      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/layout_align_vertical_center.svg",
       onclick: function () {
         alignPosition("align vertical center");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/layout_align_bottom.svg",
+      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/layout_align_bottom.svg",
       onclick: function () {
         alignPosition("align bottom");
         updateUIEditPosition();
@@ -206,7 +206,7 @@ function createEditAlign() {
   btn_extend.style.boxSizing = "border-box";
   btn_extend.style.position = "relative";
   let icon_extend = document.createElement("img");
-  icon_extend.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/extend_align.svg";
+  icon_extend.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/extend_align.svg";
   icon_extend.className = "img-button size-32";
   icon_extend.style.padding = "0";
   let icon_down = document.createElement("i");
@@ -291,12 +291,12 @@ function createEditSizePosition() {
       group_btn_frame_direction.className = "group_btn_direction";
       let btn_vertical = document.createElement("img");
       group_btn_frame_direction.appendChild(btn_vertical);
-      btn_vertical.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/frame_vertical.svg";
+      btn_vertical.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/frame_vertical.svg";
       btn_vertical.style.backgroundColor = "#e5e5e5";
       btn_vertical.style.padding = "4px 2.5px";
       let btn_horizontal = document.createElement("img");
       group_btn_frame_direction.appendChild(btn_horizontal);
-      btn_horizontal.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/frame_horizontal.svg";
+      btn_horizontal.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/frame_horizontal.svg";
       btn_horizontal.style.padding = "2.5px 4px";
       btn_vertical.onclick = function () {
         if (this.style.backgroundColor == "transparent") {
@@ -314,7 +314,7 @@ function createEditSizePosition() {
     if (selected_list.every((e) => !e.WAutolayoutItem)) {
       let icon_resize_to_fit = document.createElement("img");
       div_frame_size_direction.appendChild(icon_resize_to_fit);
-      icon_resize_to_fit.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/resize_to_fit.svg";
+      icon_resize_to_fit.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/resize_to_fit.svg";
       icon_resize_to_fit.className = "img-button size-32";
       icon_resize_to_fit.style.borderRadius = "2px";
       icon_resize_to_fit.style.padding = "6px 8px";
@@ -357,7 +357,7 @@ function createEditSizePosition() {
   if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("CateID") == cate) && window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
     let isFixPos = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
     let iconFixPos = document.createElement("img");
-    iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/fix_position.svg";
+    iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/fix_position.svg";
     iconFixPos.className = "img-button size-28 tlwh-option";
     if (isFixPos) {
       iconFixPos.style.border = "1px solid #e5e5e5";
@@ -400,16 +400,16 @@ function createEditSizePosition() {
   };
   let isRatio = selected_list.some((wbaseItem) => EnumCate.scale_size_component.some((cate) => wbaseItem.CateID === cate));
   let icon_ratioWH = document.createElement("img");
-  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isRatio ? "ratioWH" : "un_ratioWH"}.svg`;
+  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isRatio ? "ratioWH" : "un_ratioWH"}.svg`;
   icon_ratioWH.className = "img-button size-28 tlwh-option";
   if (!isRatio) {
     icon_ratioWH.onclick = function () {
       isRatio = !isRatio;
       if (isRatio) {
-        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/ratioWH.svg";
+        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/ratioWH.svg";
         this.style.borderColor = "transparent";
       } else {
-        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/un_ratioWH.svg";
+        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/un_ratioWH.svg";
         this.style.borderColor = "#f1f1f1";
       }
     };
@@ -483,7 +483,7 @@ function createEditSizePosition() {
     _row4.style.width = "100%";
     _row4.style.alignItems = "center";
     // input edit rotate
-    let edit_rotate = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/rotate_rect.svg", undefined, "0");
+    let edit_rotate = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/rotate_rect.svg", undefined, "0");
     edit_rotate.style.marginRight = "8px";
 
     // input edit radius
@@ -491,7 +491,7 @@ function createEditSizePosition() {
     if (list_seleted_radius.length > 0) {
       let list_radius_value = list_seleted_radius.map((e) => [e.StyleItem.FrameItem.TopLeft, e.StyleItem.FrameItem.TopRight, e.StyleItem.FrameItem.BottomLeft, e.StyleItem.FrameItem.BottomRight]);
       list_radius_value = [].concat(...list_radius_value).filterAndMap();
-      let edit_radius = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/radius_rect.svg", undefined, list_radius_value.length == 1 ? list_radius_value[0] : "Mixed");
+      let edit_radius = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/radius_rect.svg", undefined, list_radius_value.length == 1 ? list_radius_value[0] : "Mixed");
       edit_radius.lastChild.onblur = function () {
         let newValue = parseFloat(this.value);
         if (isNaN(newValue)) {
@@ -512,7 +512,7 @@ function createEditSizePosition() {
         }
       };
       let icon_radius_detail = document.createElement("img");
-      icon_radius_detail.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/radius_detail.svg";
+      icon_radius_detail.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/radius_detail.svg";
       icon_radius_detail.className = "img-button size-24";
       icon_radius_detail.style.marginLeft = "24px";
       icon_radius_detail.style.border = "1px solid transparent";
@@ -536,7 +536,7 @@ function createEditSizePosition() {
       let _row_radius_detail = document.createElement("div");
       _row_radius_detail.id = "row_radius_detail";
       let icon_HTML = document.createElement("img");
-      icon_HTML.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/radius_rect.svg";
+      icon_HTML.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/radius_rect.svg";
       icon_HTML.style.boxSizing = "border-box";
       icon_HTML.style.width = "24px";
       icon_HTML.style.height = "24px";
@@ -817,7 +817,7 @@ function createAutoLayout() {
     // input edit child space
     let childSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.ChildSpace);
     if (!isEditTable) {
-      let input_child_space = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "vertical" : "horizontal"} child spacing.svg`, undefined, childSpaceValues.length == 1 ? childSpaceValues[0] : "Mixed");
+      let input_child_space = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "vertical" : "horizontal"} child spacing.svg`, undefined, childSpaceValues.length == 1 ? childSpaceValues[0] : "Mixed");
       input_child_space.style.position = "absolute";
       input_child_space.style.left = "0";
       input_child_space.style.bottom = "0";
@@ -860,7 +860,7 @@ function createAutoLayout() {
           }
         };
         let runSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.RunSpace);
-        let inputRunSpace = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "horizontal" : "vertical"} child spacing.svg`, undefined, runSpaceValues.length == 1 ? runSpaceValues[0] : "Mixed");
+        let inputRunSpace = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "horizontal" : "vertical"} child spacing.svg`, undefined, runSpaceValues.length == 1 ? runSpaceValues[0] : "Mixed");
         inputRunSpace.lastChild.onblur = function () {
           let newValue = parseFloat(this.value);
           if (newValue != undefined) {
@@ -893,7 +893,7 @@ function createAutoLayout() {
     paddingContainer.style.gap = "4px";
     paddingContainer.style.marginTop = "6px";
     editContainer.appendChild(paddingContainer);
-    let input_padding_horizontal = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/padding horizontal.svg", undefined, padLeftValue == padRightValue ? padLeftValue : "Mixed");
+    let input_padding_horizontal = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/padding horizontal.svg", undefined, padLeftValue == padRightValue ? padLeftValue : "Mixed");
     input_padding_horizontal.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
       if (newValue != undefined) {
@@ -907,7 +907,7 @@ function createAutoLayout() {
       }
     };
     paddingContainer.appendChild(input_padding_horizontal);
-    let input_padding_vertical = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/padding vertical.svg", undefined, padTopValue == padBotValue ? padTopValue : "Mixed");
+    let input_padding_vertical = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/padding vertical.svg", undefined, padTopValue == padBotValue ? padTopValue : "Mixed");
     input_padding_vertical.style.marginLeft = "6px";
     input_padding_vertical.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
@@ -922,7 +922,7 @@ function createAutoLayout() {
       }
     };
     paddingContainer.appendChild(input_padding_vertical);
-    let input_padding_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/padding left.svg", undefined, padLeftValue);
+    let input_padding_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/padding left.svg", undefined, padLeftValue);
     input_padding_left.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
       if (newValue != undefined) {
@@ -934,7 +934,7 @@ function createAutoLayout() {
       }
     };
     paddingContainer.appendChild(input_padding_left);
-    let input_padding_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/padding top.svg", undefined, padTopValue);
+    let input_padding_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/padding top.svg", undefined, padTopValue);
     input_padding_top.style.marginLeft = "6px";
     input_padding_top.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
@@ -952,8 +952,8 @@ function createAutoLayout() {
     icon_padding_details.style.borderRadius = "2px";
     icon_padding_details.style.margin = "4px 0 0 6px";
     paddingContainer.appendChild(icon_padding_details);
-    icon_padding_details.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/padding details.svg";
-    let input_padding_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/padding right.svg", undefined, padRightValue);
+    icon_padding_details.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/padding details.svg";
+    let input_padding_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/padding right.svg", undefined, padRightValue);
     input_padding_right.lastChild.onblur = function () {
       var newValue = parseFloat(this.value);
       if (newValue != undefined) {
@@ -965,7 +965,7 @@ function createAutoLayout() {
       }
     };
     paddingContainer.appendChild(input_padding_right);
-    let input_padding_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/padding bottom.svg", undefined, padBotValue);
+    let input_padding_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/padding bottom.svg", undefined, padBotValue);
     input_padding_bottom.style.marginLeft = "6px";
     input_padding_bottom.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
@@ -1453,44 +1453,44 @@ function _alignTable(isVertical = true, value) {
   alignment_type.style.border = "1.5px solid #e5e5e5";
   alignment_type.style.borderRadius = "4px";
   alignment_type.style.position = "relative";
-  let top_left = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "left vertical" : "top horizontal"}.svg`);
+  let top_left = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "left vertical" : "top horizontal"}.svg`);
   top_left.id = AlignmentType.top_left;
   top_left.style.top = "0";
   top_left.style.left = "0";
-  let top_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "center vertical" : "top horizontal"}.svg`);
+  let top_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "center vertical" : "top horizontal"}.svg`);
   top_center.id = AlignmentType.top_center;
   top_center.style.top = "0";
   top_center.style.left = "50%";
   top_center.style.transform = "translate(-50%, 0)";
-  let top_right = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "right vertical" : "top horizontal"}.svg`);
+  let top_right = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "right vertical" : "top horizontal"}.svg`);
   top_right.id = AlignmentType.top_right;
   top_right.style.top = "0";
   top_right.style.right = "0";
-  let left_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "left vertical" : "center horizontal"}.svg`);
+  let left_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "left vertical" : "center horizontal"}.svg`);
   left_center.id = AlignmentType.left_center;
   left_center.style.left = "0";
   left_center.style.top = "50%";
   left_center.style.transform = "translate(0, -50%)";
-  let center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "center vertical" : "center horizontal"}.svg`);
+  let center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "center vertical" : "center horizontal"}.svg`);
   center.id = AlignmentType.center;
   center.style.left = "50%";
   center.style.top = "50%";
   center.style.transform = "translate(-50%, -50%)";
-  let right_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "right vertical" : "center horizontal"}.svg`);
+  let right_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "right vertical" : "center horizontal"}.svg`);
   right_center.id = AlignmentType.right_center;
   right_center.style.right = "0";
   right_center.style.top = "50%";
   right_center.style.transform = "translate(0, -50%)";
-  let bottom_left = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "left vertical" : "bottom horizontal"}.svg`);
+  let bottom_left = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "left vertical" : "bottom horizontal"}.svg`);
   bottom_left.id = AlignmentType.bottom_left;
   bottom_left.style.left = "0";
   bottom_left.style.bottom = "0";
-  let bottom_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "center vertical" : "bottom horizontal"}.svg`);
+  let bottom_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "center vertical" : "bottom horizontal"}.svg`);
   bottom_center.id = AlignmentType.bottom_center;
   bottom_center.style.left = "50%";
   bottom_center.style.bottom = "0";
   bottom_center.style.transform = "translate(-50%, 0)";
-  let bottom_right = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/${isVertical ? "right vertical" : "bottom horizontal"}.svg`);
+  let bottom_right = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/${isVertical ? "right vertical" : "bottom horizontal"}.svg`);
   bottom_right.id = AlignmentType.bottom_right;
   bottom_right.style.bottom = "0";
   bottom_right.style.right = "0";
@@ -1632,7 +1632,7 @@ function createEditBackground() {
     divSelectImg.appendChild(inputOpacity);
 
     let btnEye = document.createElement("img");
-    btnEye.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/eye-outline.svg";
+    btnEye.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/eye-outline.svg";
     btnEye.style.width = "16px";
     btnEye.style.height = "16px";
     btnEye.style.padding = "6px";
@@ -1659,7 +1659,7 @@ function createEditBackground() {
     header.appendChild(btnSelectImg);
   }
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/buttonStyle.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.color, offset);
   });
@@ -1812,7 +1812,7 @@ function createEditTextStyle() {
   title.innerHTML = listTextStyle.every((e) => e.CateID === EnumCate.chart) ? "Chart label" : "Text";
   header.appendChild(title);
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/buttonStyle.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.typography, offset);
   });
@@ -1973,7 +1973,7 @@ function createEditTextStyle() {
       text_style_attribute.appendChild(div_height_spacing);
       // input line-height
       let lineHeightValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.Height);
-      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/line-height.svg", undefined, lineHeightValues.length == 1 ? (lineHeightValues[0] == null ? "Auto" : lineHeightValues[0]) : "Mixed", "25px");
+      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/line-height.svg", undefined, lineHeightValues.length == 1 ? (lineHeightValues[0] == null ? "Auto" : lineHeightValues[0]) : "Mixed", "25px");
       input_line_height.style.flex = 1;
       input_line_height.style.marginRight = "8px";
       input_line_height.lastChild.onblur = function () {
@@ -1988,7 +1988,7 @@ function createEditTextStyle() {
       div_height_spacing.appendChild(input_line_height);
       // input letter spacing
       let lSpacingValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.LetterSpacing);
-      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/letter-spacing.svg", undefined, lSpacingValues.length == 1 ? lSpacingValues[0] : "Mixed", "28px");
+      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/letter-spacing.svg", undefined, lSpacingValues.length == 1 ? lSpacingValues[0] : "Mixed", "28px");
       input_letter_spacing.style.flex = 1;
       input_letter_spacing.lastChild.onblur = function () {
         if (!isNaN(parseFloat(this.value))) {
@@ -2005,15 +2005,15 @@ function createEditTextStyle() {
       [
         {
           attribute: TextAutoSize.autoWidth,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/auto-width.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/auto-width.svg",
         },
         {
           attribute: TextAutoSize.autoHeight,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/auto-height.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/auto-height.svg",
         },
         {
           attribute: TextAutoSize.fixedSize,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/fixed-size.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/fixed-size.svg",
         },
       ],
       function (value) {
@@ -2038,15 +2038,15 @@ function createEditTextStyle() {
       [
         {
           attribute: TextAlign.left,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/text-align-left.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/text-align-left.svg",
         },
         {
           attribute: TextAlign.center,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/text-align-center.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/text-align-center.svg",
         },
         {
           attribute: TextAlign.right,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/text-align-right.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/text-align-right.svg",
         },
       ],
       function (value) {
@@ -2069,15 +2069,15 @@ function createEditTextStyle() {
       [
         {
           attribute: TextAlignVertical.top,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/text-align-vertical-top.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/text-align-vertical-top.svg",
         },
         {
           attribute: TextAlignVertical.middle,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/text-align-vertical-center.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/text-align-vertical-center.svg",
         },
         {
           attribute: TextAlignVertical.bottom,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/text-align-vertical-bottom.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/text-align-vertical-bottom.svg",
         },
       ],
       function (value) {
@@ -2231,7 +2231,7 @@ function _btnDropDownSelect(list = [], func_on_show_popup, onclick) {
   title.innerHTML = "bold";
   btnDropDownSelect.appendChild(title);
   let icon_down = document.createElement("img");
-  icon_down.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/down_black.svg";
+  icon_down.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/down_black.svg";
   btnDropDownSelect.appendChild(icon_down);
 
   btnDropDownSelect.onclick = function () {
@@ -2294,7 +2294,7 @@ function createEditBorder() {
   title.innerHTML = "Border";
   header.appendChild(title);
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/buttonStyle.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.border, offset);
   });
@@ -2421,7 +2421,7 @@ function createEditBorder() {
             }
         }
       });
-      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/stroke-width.svg", undefined, widthValues.length == 1 ? widthValues[0] : "Mixed", "28px");
+      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/stroke-width.svg", undefined, widthValues.length == 1 ? widthValues[0] : "Mixed", "28px");
       edit_stroke_width.lastChild.onblur = function () {
         let newValue = parseFloat(this.value);
         if (newValue != undefined) {
@@ -2459,7 +2459,7 @@ function createEditBorder() {
       formEditLine.appendChild(action_edit_line_container);
 
       let sideValues = listBorder.filterAndMap((e) => e.StyleItem.DecorationItem.BorderItem.BorderSide);
-      let btnSelectBorderSide = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-all-black.svg", null, function () {
+      let btnSelectBorderSide = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-all-black.svg", null, function () {
         dropdown_type.style.display = "flex";
         dropdown_type.childNodes[0].style.display = "none";
         let list_border_side = selected_list.filter((e) => e.StyleItem.DecorationItem?.BorderItem).map((e) => e.StyleItem.DecorationItem.BorderItem.BorderSide);
@@ -2485,7 +2485,7 @@ function createEditBorder() {
       });
       btnSelectBorderSide.appendChild(dropdown_type);
 
-      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/more-horizontal.svg", null, function () {});
+      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/more-horizontal.svg", null, function () {});
       edit_line_action2.className = "action-button";
       action_edit_line_container.appendChild(edit_line_action2);
 
@@ -2493,7 +2493,7 @@ function createEditBorder() {
       editContainer.appendChild(group_custom_border_side);
       group_custom_border_side.id = "group_input_edit_border_side";
       group_custom_border_side.className = "group_input_border_side";
-      let input_border_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-left-black.svg", undefined, "0", "36px");
+      let input_border_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-left-black.svg", undefined, "0", "36px");
       input_border_left.id = "input_border_left";
       input_border_left.style.display = "inline-flex";
       input_border_left.style.marginLeft = "8px";
@@ -2505,7 +2505,7 @@ function createEditBorder() {
         updateUIBorder();
       };
       group_custom_border_side.appendChild(input_border_left);
-      var input_border_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-top-black.svg", undefined, "0", "36px");
+      var input_border_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-top-black.svg", undefined, "0", "36px");
       input_border_top.id = "input_border_top";
       input_border_top.style.display = "inline-flex";
       input_border_top.style.marginRight = "35px";
@@ -2517,7 +2517,7 @@ function createEditBorder() {
         updateUIBorder();
       };
       group_custom_border_side.appendChild(input_border_top);
-      var input_border_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-right-black.svg", undefined, "0", "36px");
+      var input_border_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-right-black.svg", undefined, "0", "36px");
       input_border_right.id = "input_border_right";
       input_border_right.style.display = "inline-flex";
       input_border_right.style.marginLeft = "8px";
@@ -2529,7 +2529,7 @@ function createEditBorder() {
         updateUIBorder();
       };
       group_custom_border_side.appendChild(input_border_right);
-      var input_border_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-bottom-black.svg", undefined, "0", "36px");
+      var input_border_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-bottom-black.svg", undefined, "0", "36px");
       input_border_bottom.id = "input_border_bottom";
       input_border_bottom.style.marginRight = "35px";
       input_border_bottom.style.display = "inline-flex";
@@ -2544,7 +2544,7 @@ function createEditBorder() {
       let firstSideValue = sideValues.length == 1 ? sideValues[0] : "Mixed";
       if (firstSideValue == BorderSide.custom) {
         group_custom_border_side.style.display = "flex";
-        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-all-black.svg`;
+        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-all-black.svg`;
         for (let j = 0; j < group_custom_border_side.childNodes.length; j++) {
           let list_width = [];
           let inputValue;
@@ -2589,7 +2589,7 @@ function createEditBorder() {
         }
       } else {
         group_custom_border_side.style.display = "none";
-        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-${firstSideValue}-black.svg`;
+        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-${firstSideValue}-black.svg`;
       }
     }
   }
@@ -2617,7 +2617,7 @@ function createEditEffect() {
   title.innerHTML = "Effect";
   header.appendChild(title);
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/buttonStyle.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.effect, offset);
   });
@@ -2673,7 +2673,7 @@ function createEditEffect() {
       div_select_eType.style.alignItems = "center";
       editContainer.appendChild(div_select_eType);
       // popup edit effect type attribute
-      let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/effect-settings.svg", null, function () {
+      let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/effect-settings.svg", null, function () {
         setTimeout(function () {
           updateUIEffectAttribute();
         }, 200);
@@ -2858,11 +2858,11 @@ function createEditEffect() {
       btn_select_eType.firstChild.innerHTML = eTypeValues.length == 1 ? eTypeValues[0] : "Mixed";
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/eye-close.svg", function () {});
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
 
-      let btn_delete = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/minus.svg", null, function () {
+      let btn_delete = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/minus.svg", null, function () {
         deleteEffect();
         updateUIEffect();
       });
@@ -2934,7 +2934,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
   containerAction.appendChild(buttonVisible);
 
   let buttonVisibleIcon = document.createElement("img");
-  buttonVisibleIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/eye-outline.svg";
+  buttonVisibleIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/eye-outline.svg";
   buttonVisibleIcon.style.padding = "0px";
 
   buttonVisible.appendChild(buttonVisibleIcon);
@@ -2944,7 +2944,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
   if (funcDelete) {
     buttonMinus.className = "action-button";
     let buttonMinusIcon = document.createElement("img");
-    buttonMinusIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/minus.svg";
+    buttonMinusIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/minus.svg";
     buttonMinus.appendChild(buttonMinusIcon);
     buttonMinus.onclick = funcDelete;
     containerAction.appendChild(buttonMinus);
@@ -2954,7 +2954,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
   //change icon
   buttonVisible.onclick = function () {
     visible = visible ? false : true;
-    buttonVisibleIcon.src = !visible ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/eye-close.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/eye-outline.svg";
+    buttonVisibleIcon.src = !visible ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/eye-close.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/eye-outline.svg";
   };
   // UI action
   containerInput.onmouseover = function () {
@@ -3013,31 +3013,31 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
 function selectBorderSide(params, onclick) {
   let list = [
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-all-white.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-all-white.svg",
       name: "Mixed",
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-all-white.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-all-white.svg",
       name: BorderSide.all,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-top.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-top.svg",
       name: BorderSide.top,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-left.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-left.svg",
       name: BorderSide.left,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-bottom.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-bottom.svg",
       name: BorderSide.bottom,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-right.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-right.svg",
       name: BorderSide.right,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/settings-gear.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/settings-gear.svg",
       name: BorderSide.custom,
     },
   ];
@@ -3063,7 +3063,7 @@ function selectBorderSide(params, onclick) {
     }
     let checkIcon = document.createElement("img");
     checkIcon.className = "option-icon";
-    checkIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/check.svg";
+    checkIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/check.svg";
     checkIcon.style.opacity = params == list[i].name ? 1 : 0;
     option.appendChild(checkIcon);
 
@@ -3122,11 +3122,11 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
   let title = document.createElement("span");
   title.style.pointerEvents = "none";
   title.style.flex = 1;
-  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/library-black.svg", null, function () {});
+  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/library-black.svg", null, function () {});
 
   header.appendChild(title);
   header.appendChild(action1);
-  let action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/add2.svg", null, function () {
+  let action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/add2.svg", null, function () {
     setTimeout(function () {
       let create_skin_popup = document.getElementById("create_skin_popup");
       create_skin_popup.style.display = "flex";
@@ -3599,7 +3599,7 @@ function createSkinTileHTML(enumCate, jsonSkin) {
         }
       };
       let demo_effect = document.createElement("img");
-      demo_effect.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/effect-settings.svg";
+      demo_effect.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/effect-settings.svg";
       demo_effect.style.width = "16px";
       demo_effect.style.height = "16px";
       demo_effect.style.pointerEvents = "none";
@@ -3896,7 +3896,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       div_height_spacing.style.alignItems = "center";
       body.appendChild(div_height_spacing);
       // input line-height
-      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/line-height.svg", undefined, "0", "25px");
+      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/line-height.svg", undefined, "0", "25px");
       input_line_height.style.flex = 1;
       input_line_height.style.marginRight = "8px";
       input_line_height.lastChild.value = jsonSkin.Height ? jsonSkin.Height : "Auto";
@@ -3914,7 +3914,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       };
       div_height_spacing.appendChild(input_line_height);
       // input letter spacing
-      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/letter-spacing.svg", undefined, "0", "28px");
+      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/letter-spacing.svg", undefined, "0", "28px");
       input_letter_spacing.id = "input_letter_spacing";
       input_letter_spacing.style.flex = 1;
       input_letter_spacing.lastChild.value = jsonSkin.LetterSpacing;
@@ -4004,7 +4004,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       btnSelectStyle.firstChild.innerHTML = jsonSkin.BorderStyle;
       formEditLine.appendChild(btnSelectStyle);
 
-      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/stroke-width.svg", undefined, "0", "28px");
+      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/stroke-width.svg", undefined, "0", "28px");
       let listWidth = jsonSkin.Width.split(" ");
       switch (jsonSkin.BorderSide) {
         case BorderSide.top:
@@ -4063,7 +4063,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       };
       formEditLine.appendChild(edit_stroke_width);
 
-      let btnSelectBorderSide = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-all-black.svg", null, function () {
+      let btnSelectBorderSide = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-all-black.svg", null, function () {
         dropdown_type.style.display = "flex";
         dropdown_type.childNodes[0].style.display = "none";
         for (let i = 1; i < dropdown_type.childNodes.length; i++) {
@@ -4099,7 +4099,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       body.appendChild(group_custom_border_side);
       group_custom_border_side.className = "group_input_border_side";
       group_custom_border_side.style.display = jsonSkin.BorderSide == BorderSide.custom ? "flex" : "none";
-      let input_border_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-left-black.svg", undefined, "0", "36px");
+      let input_border_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-left-black.svg", undefined, "0", "36px");
       input_border_left.style.marginLeft = "8px";
       input_border_left.lastChild.value = jsonSkin.Width.split(" ")[3];
       input_border_left.lastChild.onblur = function () {
@@ -4113,7 +4113,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         }
       };
       group_custom_border_side.appendChild(input_border_left);
-      let input_border_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-top-black.svg", undefined, "0", "36px");
+      let input_border_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-top-black.svg", undefined, "0", "36px");
       input_border_top.style.marginRight = "8px";
       input_border_top.lastChild.value = jsonSkin.Width.split(" ")[0];
       input_border_top.lastChild.onblur = function () {
@@ -4126,7 +4126,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         }
       };
       group_custom_border_side.appendChild(input_border_top);
-      let input_border_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-right-black.svg", undefined, "0", "36px");
+      let input_border_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-right-black.svg", undefined, "0", "36px");
       input_border_right.style.marginLeft = "8px";
       input_border_right.lastChild.value = jsonSkin.Width.split(" ")[1];
       input_border_right.lastChild.onblur = function () {
@@ -4139,7 +4139,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         }
       };
       group_custom_border_side.appendChild(input_border_right);
-      let input_border_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/border-bottom-black.svg", undefined, "0", "36px");
+      let input_border_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/border-bottom-black.svg", undefined, "0", "36px");
       input_border_bottom.style.marginRight = "8px";
       input_border_bottom.lastChild.value = jsonSkin.Width.split(" ")[2];
       input_border_bottom.lastChild.onblur = function () {
@@ -4195,7 +4195,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       div_select_eType.style.alignItems = "center";
       body.appendChild(div_select_eType);
       // popup edit effect type attribute
-      let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/effect-settings.svg", null, function () {
+      let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/effect-settings.svg", null, function () {
         setTimeout(function () {
           let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
           let popupEditEffect = document.createElement("div");
@@ -4351,7 +4351,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       btn_select_eType.firstChild.innerHTML = jsonSkin.Type;
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/eye-close.svg", function () {});
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
       //
@@ -4372,7 +4372,7 @@ function wbaseSkinTile(enumCate, onclick, onRemove) {
   };
   wbase_skin_tile.appendChild(btn_table_skin);
   let btn_unLink = document.createElement("img");
-  btn_unLink.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/unlink-skin.svg";
+  btn_unLink.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/unlink-skin.svg";
   switch (enumCate) {
     case EnumCate.color:
       let demo_color = document.createElement("div");
@@ -4441,7 +4441,7 @@ function wbaseSkinTile(enumCate, onclick, onRemove) {
       break;
     case EnumCate.effect:
       let demo_effect = document.createElement("img");
-      demo_effect.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/effect-settings.svg";
+      demo_effect.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/effect-settings.svg";
       demo_effect.style.width = "16px";
       demo_effect.style.height = "16px";
       demo_effect.style.pointerEvents = "none";
@@ -4464,7 +4464,7 @@ function wbaseSkinTile(enumCate, onclick, onRemove) {
   wbase_skin_tile.appendChild(btn_unLink);
   if (onRemove) {
     let btn_remove_color = document.createElement("img");
-    btn_remove_color.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/minus.svg";
+    btn_remove_color.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/minus.svg";
     wbase_skin_tile.appendChild(btn_remove_color);
     btn_remove_color.onclick = onRemove;
   }
@@ -4858,7 +4858,7 @@ function createSelectionSkins() {
   title.innerHTML = "Local Skins";
   header.appendChild(title);
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/read.svg", null, StyleDA.getListMergeSkin);
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/read.svg", null, StyleDA.getListMergeSkin);
   header.appendChild(btnSelectSkin);
 
   let body = document.createElement("div");
@@ -5344,7 +5344,7 @@ function mergeSkinTile(enumCate, jsonSkin) {
     case EnumCate.effect:
       var demoDiv1 = document.createElement("div");
       demoDiv1.className = "demo-div";
-      demoDiv1.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/effect-settings.svg"})`;
+      demoDiv1.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/effect-settings.svg"})`;
       demoDiv1.style.backgroundSize = `contain`;
       var skinTitle = document.createElement("p");
       skinTitle.className = "regular1";
@@ -5368,7 +5368,7 @@ function mergeSkinTile(enumCate, jsonSkin) {
           demoDiv.style.height = "20px";
           demoDiv.style.borderRadius = "50%";
           demoDiv.style.backgroundColor = "#ffffff";
-          demoDiv.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/effect-settings.svg"})`;
+          demoDiv.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/effect-settings.svg"})`;
           demoDiv.style.backgroundSize = `contain`;
           let optionTitle = document.createElement("p");
           optionTitle.innerHTML = option.Name;
@@ -5382,7 +5382,7 @@ function mergeSkinTile(enumCate, jsonSkin) {
           onSelectLocalSkin(option);
           var demoDiv = document.createElement("div");
           demoDiv.className = "demo-div";
-          demoDiv.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/effect-settings.svg"})`;
+          demoDiv.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/effect-settings.svg"})`;
           demoDiv.style.backgroundSize = `contain`;
           iconSearch.replaceWith(demoDiv);
         },
@@ -5556,7 +5556,7 @@ function createBreakpoint() {
   let title = document.createElement("p");
   title.innerHTML = "Breakpoint";
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/filter.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/filter.svg", null, function () {
     let brpPopup = document.createElement("div");
     let offsetPopup = editContainer.getBoundingClientRect();
     brpPopup.className = "breakpoint-popup col wini_popup popup_remove";
@@ -5796,7 +5796,7 @@ function winiResponsive() {
   body.className = "row regular1";
   editContainer.appendChild(body);
   let prefixIcon = document.createElement("img");
-  prefixIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/column.svg";
+  prefixIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/column.svg";
   prefixIcon.style.width = "16px";
   prefixIcon.style.height = "16px";
   let text = document.createElement("p");
@@ -6063,7 +6063,7 @@ function selectionClass() {
   let title = document.createElement("p");
   title.innerHTML = "Style class";
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/buttonStyle.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.typography, offset);
   });
@@ -6083,9 +6083,9 @@ function selectionClass() {
       titleClass.innerHTML = clName;
       titleClass.className = "regular1";
       let btn_unLink = document.createElement("img");
-      btn_unLink.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/unlink-skin.svg";
+      btn_unLink.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/unlink-skin.svg";
       let targetImg = document.createElement("img");
-      targetImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/lib/assets/target.svg";
+      targetImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/target.svg";
       classTile.replaceChildren(titleClass, btn_unLink, targetImg);
       return classTile;
     }),
