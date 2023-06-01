@@ -60,7 +60,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       wbValue.removeAttribute("listid");
       wbValue.removeAttribute("lock");
       wbValue.removeAttribute("iswini");
-      if (wbValue.getAttribute("cateid") === EnumCate.chart) {
+      if (wbValue.getAttribute("cateid") == EnumCate.chart) {
         let item = wbase_list.find((wb) => wb.GID === cloneValue.id);
         let labelStyle = item.StyleItem.TextStyleItem;
         const config = {
