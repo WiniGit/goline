@@ -1,7 +1,7 @@
 class InfoView {
     static create_memberTile(item, isOwner) {
         let member_tile =
-            `<div data-id=${item.ID} data-customer=${item.ID} class="member-row info_tile row">
+            `<div data-id=${item.ID} data-customer=${item.CustomerID} class="member-row info_tile row">
                 <div class="box36 center"><i class="fa-solid fa-user-circle text-body fa-lg"></i></div>
                 <div class="regular2 space">
                     <span class="text-body">${item?.CustomerName ?? "Anonymus"}</span>
