@@ -44,7 +44,7 @@ class ProjectDA {
     };
 
     static initLayoutResponsive() {
-        fetch("/View/css_Responsive.txt")
+        fetch("https://cdn.jsdelivr.net/gh/WiniGit/goline@c082ccf/css/css_Responsive.txt")
             .then((response) => response.text()
                 .then((text) => {
                     let colCss = text.replace(/(\.grid-layout ){0,1}\.{1}col[0-9]{1,2}/g, mtc => `.min-brp ${mtc}`);
