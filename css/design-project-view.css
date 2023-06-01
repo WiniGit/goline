@@ -1,24 +1,24 @@
 @font-face {
   font-family: Roboto;
-  src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/fonts/Roboto-Thin.ttf";
+  src: "/lib/assets/fonts/Roboto-Thin.ttf";
   font-weight: 200;
 }
 
 @font-face {
   font-family: Roboto;
-  src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/fonts/Roboto-Regular.ttf";
+  src: "/lib/assets/fonts/Roboto-Regular.ttf";
   font-weight: 400;
 }
 
 @font-face {
   font-family: Roboto;
-  src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/fonts/Roboto-Medium.ttf";
+  src: "/lib/assets/fonts/Roboto-Medium.ttf";
   font-weight: 600;
 }
 
 @font-face {
   font-family: Roboto;
-  src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/fonts/Roboto-Bold.ttf";
+  src: "/lib/assets/fonts/Roboto-Bold.ttf";
   font-weight: 800;
 }
 
