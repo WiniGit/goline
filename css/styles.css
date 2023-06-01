@@ -1,25 +1,25 @@
 /* Color */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-skin.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-skin.min.css';
 
 /* Typo */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-typography.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-typography.min.css';
 
 /* Layout */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-layout.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-layout.min.css';
 
 /* Effect */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-effect.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-effect.min.css';
 
 /* Systems */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-systems.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-systems.min.css';
 
 
 /* Home */
-/* @import '/wini-tools/css/home.css'; */
+/* @import '/wini-tools/css/home.min.css'; */
 
 /* API */
-/* @import '/wini-tools/css/api-view.css'; */
-/* @import '/wini-tools/css/api-view/api.css'; */
+/* @import '/wini-tools/css/api-view.min.css'; */
+/* @import '/wini-tools/css/api-view/api.min.css'; */
 
 :root {
     --divider-color: rgba(0, 53, 128, 0.08);
