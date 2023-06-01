@@ -108,7 +108,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     cloneValue.Name = e.Name;
     return cloneValue;
   });
-  // try {
+  try {
     for (let page of list_page) {
       page_script = "";
       let list_itemShow = get_listItemInside(page.id);
@@ -126,7 +126,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
           if (witem.PrototypeID != null) {
             let nextPagePrototype = list_page.find((e) => e.id == witem.PrototypeID);
             if (nextPagePrototype) {
-              let animation = witem.JsonEventItem?.find((e) => (e.Name = "Animation"));
+              let animation = witem.JsonEventItem?.find((e) => (e.Name == "Animation"));
               let animation_class;
               if (animation != null) {
                 animation_class += " animation_move";
@@ -191,7 +191,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     }
 
     window.open(domainApi + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
-
+    
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
 
@@ -199,7 +199,8 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     $(".download-project>i").removeClass("fa-spin");
 
     toastr["success"]("Download successful!");
-  // } catch (error) {
-  //   toastr["error"](`${error}`);
-  // }
+
+  } catch (error) {
+    toastr["error"](`${error}`);
+  }
 });
