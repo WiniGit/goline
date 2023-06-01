@@ -17,7 +17,7 @@ class ProjectView {
         let project_card =
             `<div data-id=${item.ID} class="project-card ${item.ID == ProjectDA.selected?.ID ? "selected" : ""}">
                 <div class="project-card-info row">
-                    <div class="box32"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/lib/assets/pen.svg"></div>
+                    <div class="box32"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@6520db8/lib/assets/pen.svg"></div>
                     <div class="space col">
                         <input  value="${item.Name}" class="project-name semibold1 text-title" readonly/>
                         <span class="regular0 text-subtitle">Editor ${Ultis.getTimeEdit(item.DateUpdate)} ago</span>
