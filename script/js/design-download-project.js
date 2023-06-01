@@ -61,8 +61,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       wbValue.removeAttribute("lock");
       wbValue.removeAttribute("iswini");
       if (wbValue.getAttribute("cateid") == EnumCate.chart) {
-        let item = wbase_list.find((el) => el.GID === cloneValue.id);
-        buildChart(item, wbValue);
+        buildChart(wbValue);
       }
     });
     $(cloneValue).addClass("w-page");

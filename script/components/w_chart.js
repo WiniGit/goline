@@ -54,7 +54,8 @@ function createChart(item) {
   return chart;
 }
 
-function buildChart(item, chart) {
+function buildChart(chart) {
+  let item = wbase_list.find((e) => e.GID === chart.id);
   let labelStyle = item.StyleItem.TextStyleItem;
   const config = {
     type: item.JsonItem.Type,
