@@ -1,6 +1,6 @@
 RouterDA.getAllPage();
 
-$('.environments-container').load('/View/api-router-view.html');
+$('.router-container').load('/View/api-router-view.html');
 
 function updateData() {
     ProjectDA.selected.RouterJson = JSON.stringify(RouterDA.list);
