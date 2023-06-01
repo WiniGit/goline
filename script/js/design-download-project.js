@@ -51,8 +51,8 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   document.body.getAttribute;
 
   let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
-  list_page = list_page.map((e) => {
-    let cloneValue = e.value.cloneNode(true);
+  list_page = list_page.map((wb) => {
+    let cloneValue = wb.value.cloneNode(true);
     cloneValue.style.position = "unset";
     cloneValue.style.top = "unset";
     cloneValue.style.left = "unset";
@@ -61,51 +61,12 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       wbValue.removeAttribute("lock");
       wbValue.removeAttribute("iswini");
       if (wbValue.getAttribute("cateid") == EnumCate.chart) {
-        let item = wbase_list.find((wb) => wb.GID === cloneValue.id);
-        let labelStyle = item.StyleItem.TextStyleItem;
-        const config = {
-          type: item.JsonItem.Type,
-          data: item.ChartData,
-          options: {
-            plugins: {
-              legend: {
-                display: false,
-              },
-            },
-            scales: ChartType.axes_chart.some((chartType) => chartType === item.JsonItem.Type)
-              ? {
-                x: {
-                  ticks: {
-                    color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
-                    font: {
-                      size: labelStyle.FontSize,
-                      weight: labelStyle.FontWeight,
-                      family: labelStyle.FontFamily,
-                    },
-                  },
-                },
-                y: {
-                  beginAtZero: true,
-                  max: item.JsonItem.MaxValue,
-                  ticks: {
-                    stepSize: item.JsonItem.StepSize,
-                    color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
-                    font: {
-                      size: labelStyle.FontSize,
-                      weight: labelStyle.FontWeight,
-                      family: labelStyle.FontFamily,
-                    },
-                  },
-                },
-              }
-              : null,
-          },
-        };
-        wbValue.setAttribute("config", JSON.stringify(config));
+        let item = wbase_list.find((el) => el.GID === cloneValue.id);
+        buildChart(item, wbValue);
       }
     });
     $(cloneValue).addClass("w-page");
-    cloneValue.Name = e.Name;
+    cloneValue.Name = wb.Name;
     return cloneValue;
   });
   // try {
