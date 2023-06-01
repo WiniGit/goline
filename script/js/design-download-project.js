@@ -126,7 +126,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
           if (witem.PrototypeID != null) {
             let nextPagePrototype = list_page.find((e) => e.id == witem.PrototypeID);
             if (nextPagePrototype) {
-              let animation = witem.JsonEventItem?.find((e) => (e.Name = "Animation"));
+              let animation = witem.JsonEventItem?.find((e) => (e.Name === "Animation"));
               let animation_class;
               if (animation != null) {
                 animation_class += " animation_move";
