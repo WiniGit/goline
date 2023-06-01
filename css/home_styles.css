@@ -1,25 +1,25 @@
 /* Color */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-skin.min.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-skin.css';
 
 /* Typo */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-typography.min.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-typography.css';
 
 /* Layout */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-layout.min.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-layout.css';
 
 /* Effect */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-effect.min.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-effect.css';
 
 /* Systems */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-systems.min.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-systems.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-Responsive.min.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/ds-Responsive.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/appbar.min.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/appbar.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/design-block.min.css';
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/design-f12-container.min.css';
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/design-invite-member.min.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/design-block.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/design-f12-container.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/css/design-invite-member.css';
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200..900');
 
