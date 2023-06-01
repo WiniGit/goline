@@ -156,6 +156,8 @@ socketH.on('server-get', (data) => {
                                 else {
                                     toastr["error"]("Người dùng chưa đăng ký tài khoản Wini!");
                                 }
+                                break;
+                            case EnumEvent.edit:
                                 break
                         }
                         break;
@@ -281,7 +283,7 @@ socketH.on('server-post', (data) => {
 
                     let popup_new_member = HomePopup.create_memberRow(data.data.Data);
                     $('.popup-invite-member .list-member').append(popup_new_member);
-                    
+
                     ProjectDA.Permission = 2;
                     toastr["success"]('Thêm thành công');
                     break

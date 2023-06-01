@@ -74,30 +74,30 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
             },
             scales: ChartType.axes_chart.some((chartType) => chartType === item.JsonItem.Type)
               ? {
-                  x: {
-                    ticks: {
-                      color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
-                      font: {
-                        size: labelStyle.FontSize,
-                        weight: labelStyle.FontWeight,
-                        family: labelStyle.FontFamily,
-                      },
+                x: {
+                  ticks: {
+                    color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
+                    font: {
+                      size: labelStyle.FontSize,
+                      weight: labelStyle.FontWeight,
+                      family: labelStyle.FontFamily,
                     },
                   },
-                  y: {
-                    beginAtZero: true,
-                    max: item.JsonItem.MaxValue,
-                    ticks: {
-                      stepSize: item.JsonItem.StepSize,
-                      color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
-                      font: {
-                        size: labelStyle.FontSize,
-                        weight: labelStyle.FontWeight,
-                        family: labelStyle.FontFamily,
-                      },
+                },
+                y: {
+                  beginAtZero: true,
+                  max: item.JsonItem.MaxValue,
+                  ticks: {
+                    stepSize: item.JsonItem.StepSize,
+                    color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
+                    font: {
+                      size: labelStyle.FontSize,
+                      weight: labelStyle.FontWeight,
+                      family: labelStyle.FontFamily,
                     },
                   },
-                }
+                },
+              }
               : null,
           },
         };
@@ -108,7 +108,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     cloneValue.Name = e.Name;
     return cloneValue;
   });
-  try {
+  // try {
     for (let page of list_page) {
       page_script = "";
       let list_itemShow = get_listItemInside(page.id);
@@ -191,15 +191,15 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     }
 
     window.open(domainApi + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
-  } catch (error) {
-    toastr["error"](`${error}`);
-  }
 
-  $(".download-project").removeClass("downloading");
-  $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
+    $(".download-project").removeClass("downloading");
+    $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
 
-  $(".download-project>i").toggleClass("fa-spinner fa-download");
-  $(".download-project>i").removeClass("fa-spin");
+    $(".download-project>i").toggleClass("fa-spinner fa-download");
+    $(".download-project>i").removeClass("fa-spin");
 
-  toastr["success"]("Download successful!");
+    toastr["success"]("Download successful!");
+  // } catch (error) {
+  //   toastr["error"](`${error}`);
+  // }
 });
