@@ -6,8 +6,11 @@ class PopupDA {
         cancelTitle: "Cancel",
         confirmTitle: "Confirm",
         cancelAction: function () {
+            
         },
-        confirmAction: function () { },
+        confirmAction: function () { 
+            
+        },
     };
 
     static get_popupImage(type) {
@@ -69,6 +72,7 @@ class PopupDA {
         buttonCancel.onclick = function () {
             item.cancelAction();
             $(popup).remove();
+            $('.popup-background').hide();
         }
         popupActionContainer.appendChild(buttonCancel);
 
@@ -80,6 +84,7 @@ class PopupDA {
         buttonConfirm.onclick = function () {
             item.confirmAction();
             $(popup).remove();
+            $('.popup-background').hide();
         }
         popupActionContainer.appendChild(buttonConfirm);
 
@@ -115,6 +120,7 @@ class PopupDA {
         buttonCancel.onclick = function () {
             item.cancelAction;
             $(popup).remove();
+            $('.popup-background').hide();
         }
         popupActionContainer.appendChild(buttonCancel);
 
@@ -125,6 +131,7 @@ class PopupDA {
         buttonConfirm.onclick = function () {
             item.confirmAction;
             $(popup).remove();
+            $('.popup-background').hide();
         }
         popupActionContainer.appendChild(buttonConfirm);
 
