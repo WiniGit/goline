@@ -48,6 +48,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   $(".download-project i").addClass("fa-spin");
 
   let page_script = "";
+  document.body.getAttribute;
 
   let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
   list_page = list_page.map((e) => {
@@ -59,7 +60,51 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       wbValue.removeAttribute("listid");
       wbValue.removeAttribute("lock");
       wbValue.removeAttribute("iswini");
+      if (wbValue.getAttribute("cateid") == EnumCate.chart) {
+        let item = wbase_list.find((wb) => wb.GID === cloneValue.id);
+        let labelStyle = item.StyleItem.TextStyleItem;
+        const config = {
+          type: item.JsonItem.Type,
+          data: item.ChartData,
+          options: {
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+            scales: ChartType.axes_chart.some((chartType) => chartType === item.JsonItem.Type)
+              ? {
+                  x: {
+                    ticks: {
+                      color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
+                      font: {
+                        size: labelStyle.FontSize,
+                        weight: labelStyle.FontWeight,
+                        family: labelStyle.FontFamily,
+                      },
+                    },
+                  },
+                  y: {
+                    beginAtZero: true,
+                    max: item.JsonItem.MaxValue,
+                    ticks: {
+                      stepSize: item.JsonItem.StepSize,
+                      color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
+                      font: {
+                        size: labelStyle.FontSize,
+                        weight: labelStyle.FontWeight,
+                        family: labelStyle.FontFamily,
+                      },
+                    },
+                  },
+                }
+              : null,
+          },
+        };
+        wbValue.setAttribute("config", JSON.stringify(config));
+      }
     });
+    $(cloneValue).addClass("w-page");
     cloneValue.Name = e.Name;
     return cloneValue;
   });
@@ -72,7 +117,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
           let router_item = witem.JsonEventItem.find((e) => e.Name == "Router");
           if (router_item) {
             let clickElement = page;
-            if(page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
+            if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
             let new_url = "/" + `${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
             $(clickElement).addClass("event-click");
             page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
@@ -123,10 +168,10 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
               }
               if (nextPagePrototype) {
                 $(nextPagePrototype).addClass(animation_class);
-              } 
-            //   else {
-            //     next_wbase_prototype.ListClassName += animation_class;
-            //   }
+              }
+              //   else {
+              //     next_wbase_prototype.ListClassName += animation_class;
+              //   }
             }
           }
         }
