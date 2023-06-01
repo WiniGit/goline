@@ -2,14 +2,14 @@
     let signupPass = false;
     $(".signup-input-visible").on("click", function () {
         signupPass = !signupPass;
-        $('.signup-input-visible-img').attr('src', signupPass ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-invisible.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-visible.svg");
+        $('.signup-input-visible-img').attr('src', signupPass ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/lib/assets/eye-invisible.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/lib/assets/eye-visible.svg");
         $("#signup-input-password").prop("type", signupPass ? "text" : "password");
     });
 
     let signupRePass = false;
     $(".signup-re-input-visible").on("click", function () {
         signupRePass = !signupRePass;
-        $('.signup-re-input-visible-img').attr('src', signupRePass ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-invisible.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-visible.svg");
+        $('.signup-re-input-visible-img').attr('src', signupRePass ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/lib/assets/eye-invisible.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/lib/assets/eye-visible.svg");
         $("#signup-re-input-password").prop("type", signupRePass ? "text" : "password");
     });
 
@@ -99,7 +99,7 @@
     let loginPass = false;
     $("body").on('click', '.login-input-visible', function () {
         loginPass = !loginPass;
-        $(this).parent().find('.login-input-visible-img').attr('src', loginPass ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-invisible.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/eye-visible.svg");
+        $(this).parent().find('.login-input-visible-img').attr('src', loginPass ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/lib/assets/eye-invisible.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/lib/assets/eye-visible.svg");
         $(this).parent().find('input').prop("type", loginPass ? "text" : "password");
     });
     // $('#button-signup').on('click', function (ev) {

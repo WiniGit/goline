@@ -197,7 +197,7 @@ class ProjectDA {
                 '    <div class="project-card col elevation7"  data-id="' + item.ID + '">' +
                 '        <div class="design-preview background-grey3"></div>' +
                 '        <div class="project-info row background-white">' +
-                '            <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@latest/lib/assets/pen.svg" class="box32">' +
+                '            <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@38cb2df/lib/assets/pen.svg" class="box32">' +
                 '                <div class="col">' +
                 '                    <input class="button-text-5 text-title" type="text" value="' + item.Name + '" disabled>' +
                 '                        <span class="regular11 text-subtitle">Editor ' + Ultis.getTimeEdit(item.DateUpdate) + ' ago</span>' +
