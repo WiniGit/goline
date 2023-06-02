@@ -401,11 +401,12 @@ socketH.on('server-post', (data) => {
                     $('.new-user-name').val(userItem.Fullname);
                     $('.new-new-mobile').val(userItem.Mobile);
 
-                    update_UI_userInfo(userItem);
 
                     $(`.button-edit-profile`).show();
                     $('.tab-bar-content').html(create_userInfoTable());
-            }
+
+                    update_UI_userInfo(userItem);
+                }
             break;
     }
 });
