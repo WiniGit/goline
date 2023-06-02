@@ -122,10 +122,10 @@ function create_editUserInfoTable() {
 }
 
 function update_UI_userInfo(userItem) {
-    $('.user-info .user-name').text(userItem.Fullname);
-    $('.user-info .user-email, .new-user-email').text(userItem.Email);
-    $('.user-info .count-container.team').first().find('div').first().text(TeamDA.list.length);
-    $('.user-info .count-container.project').first().find('div').first().text(ProjectDA.list.length);
+    $('.user-name').text(userItem.Fullname);
+    $('.user-email').text(userItem.Email);
+    $('.count-container.team').first().find('div').first().text(TeamDA.list.length);
+    $('.count-container.project').first().find('div').first().text(ProjectDA.list.length);
     $('.user-mobild, .user-new-mobile').text(userItem.Mobile);
 
     $('.new-user-name').val(userItem.Fullname);
