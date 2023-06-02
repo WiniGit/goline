@@ -53,15 +53,25 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
   list_page = list_page.map((wb) => {
     let cloneValue = wb.value.cloneNode(true);
-    cloneValue.style.position = "unset";
-    cloneValue.style.top = "unset";
-    cloneValue.style.left = "unset";
+    cloneValue.style.position = null;
+    cloneValue.style.top = null;
+    cloneValue.style.left = null;
     [cloneValue, ...cloneValue.querySelectorAll(".wbaseItem-value")].forEach((wbValue) => {
       wbValue.removeAttribute("listid");
       wbValue.removeAttribute("lock");
       wbValue.removeAttribute("iswini");
-      if (wbValue.getAttribute("cateid") == EnumCate.chart) {
-        buildChart(wbValue);
+      switch (parseInt(wbValue.getAttribute("cateid"))) {
+        case EnumCate.chart:
+          buildChart(wbValue);
+          break;
+        case EnumCate.textfield:
+          wbValue.style.pointerEvents = null;
+          break;
+        case EnumCate.tree:
+          wbValue.querySelectorAll(".w-tree").forEach((wtree) => wtree.style.pointerEvents = null);
+          break;
+        default:
+          break;
       }
     });
     $(cloneValue).addClass("w-page");
@@ -86,8 +96,8 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
           if (witem.PrototypeID != null) {
             let nextPagePrototype = list_page.find((e) => e.id == witem.PrototypeID);
             if (nextPagePrototype) {
-              let animation = witem.JsonEventItem?.find((e) => (e.Name === "Animation"));
-              let animation_class;
+              let animation = witem.JsonEventItem?.find((e) => e.Name === "Animation");
+              let animation_class = "";
               if (animation != null) {
                 animation_class += " animation_move";
                 console.log(animation);
@@ -129,9 +139,6 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
               if (nextPagePrototype) {
                 $(nextPagePrototype).addClass(animation_class);
               }
-              //   else {
-              //     next_wbase_prototype.ListClassName += animation_class;
-              //   }
             }
           }
         }
@@ -151,7 +158,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     }
 
     window.open(domainApi + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
-    
+
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
 
@@ -159,7 +166,6 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     $(".download-project>i").removeClass("fa-spin");
 
     toastr["success"]("Download successful!");
-
   } catch (error) {
     toastr["error"](`${error}`);
   }

@@ -593,7 +593,6 @@ socket.on("server-post", (data) => {
           StyleDA.copySkinToProject(data.data);
           break;
         case EnumEvent.merge:
-          console.log("heheh");
           // StyleDA.mergeSkinSuccess(data.data);
           break;
         default:

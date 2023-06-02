@@ -6,6 +6,9 @@ function setupLeftView() {
   // setup tab change
   let list_tab_view = document.getElementsByClassName("tab_left");
   for (let i = 0; i < list_tab_view.length; i++) {
+    if (!PageDA.enableEdit) {
+      if(list_tab_view[i].innerHTML === "Assets") list_tab_view[i].style.display = "none";
+    }
     list_tab_view[i].onclick = function () {
       tabChange(this.innerHTML, "left_tab_view");
       if (this.innerHTML === "Assets") {
@@ -59,7 +62,9 @@ function setupLeftView() {
     PageDA.add(newPage);
   };
   header_page.appendChild(btn_add_page);
-  if (!PageDA.enableEdit) btn_add_page.style.display = "none";
+  if (!PageDA.enableEdit) {
+    btn_add_page.style.display = "none";
+  }
   div_list_page.replaceChildren(header_page, ...PageDA.list.map((pageItem) => createPageTile(pageItem)));
   // add event unfocus when click white space
   layer_view.onclick = function (event) {
@@ -197,7 +202,7 @@ function showSearchResult() {
         }
         result.replaceChildren(cateImg, titleCol);
         result.ondblclick = function () {
-          $(cateImg).trigger("dblclick")
+          $(cateImg).trigger("dblclick");
           searchContainer.remove();
         };
         if (selected_list.some((ele) => ele.GID === wb.GID)) result.style.backgroundColor = "#e6f7ff";
@@ -257,12 +262,12 @@ function showSearchResult() {
           }
           if (num !== searchFilter) checkMark.style.visibility = "hidden";
           option.replaceChildren(checkMark, type);
-          option.onclick = function(evt) {
+          option.onclick = function (evt) {
             evt.stopPropagation();
             searchFilter = num;
             filterPopup.remove();
             $(inputBar).trigger("input");
-          }
+          };
           return option;
         }),
       );
