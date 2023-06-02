@@ -124,9 +124,9 @@ function create_editUserInfoTable() {
 function update_UI_userInfo(userItem) {
     $('.user-name').text(userItem.Fullname);
     $('.user-email').text(userItem.Email);
+    $('.user-mobile').text(userItem.Mobile);
     $('.count-container.team').first().find('div').first().text(TeamDA.list.length);
     $('.count-container.project').first().find('div').first().text(ProjectDA.list.length);
-    $('.user-mobild, .user-new-mobile').text(userItem.Mobile);
 
     $('.new-user-name').val(userItem.Fullname);
     $('.new-user-email').val(userItem.Email);
