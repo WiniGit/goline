@@ -49,7 +49,7 @@ function create_userInfoTable() {
             <div class="space">
                 <span class="regular2 text-subtitle">Email</span>
                 <span class="space"></span>
-                <span class="regular2 text-title">Ducnm@wini.vn</span>
+                <span class="regular2 text-title"></span>
             </div>
             <div class="space">
                 <span class="regular2 text-subtitle">Job</span>
@@ -92,7 +92,7 @@ function create_editUserInfoTable() {
         <div class="info-content-row row">
             <div class="space col" style="justify-content: center; align-items: start;">
                 <span class="semibold2 text-label">Email</span>
-                <input class="new-user-email regular2 text-body" value="Ducnm@wini.vn" disabled/>
+                <input class="new-user-email regular2 text-body" value="" disabled/>
             </div>
             <div class="space col" style="justify-content: center; align-items: start;">
                 <span class="semibold2 text-label">Job</span>
@@ -122,11 +122,16 @@ function create_editUserInfoTable() {
 }
 
 function update_UI_userInfo(userItem) {
-    $('.user-info .user-name, .new-user-name').text(userItem.Fullname);
+    $('.user-info .user-name').text(userItem.Fullname);
     $('.user-info .user-email, .new-user-email').text(userItem.Email);
     $('.user-info .count-container.team').first().find('div').first().text(TeamDA.list.length);
     $('.user-info .count-container.project').first().find('div').first().text(ProjectDA.list.length);
     $('.user-mobild, .user-new-mobile').text(userItem.Mobile);
+
+    $('.new-user-name').val(userItem.Fullname);
+    $('.new-user-email').val(userItem.Email);
+    $('.new-new-mobile').val(userItem.Mobile);
+
 }
 
 
