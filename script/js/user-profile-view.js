@@ -49,7 +49,7 @@ function create_userInfoTable() {
             <div class="space">
                 <span class="regular2 text-subtitle">Email</span>
                 <span class="space"></span>
-                <span class="regular2 text-title"></span>
+                <span class="user-email regular2 text-title"></span>
             </div>
             <div class="space">
                 <span class="regular2 text-subtitle">Job</span>
