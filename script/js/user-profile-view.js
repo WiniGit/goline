@@ -37,7 +37,7 @@ function create_userInfoTable() {
             <div class="space">
                 <span class="regular2 text-subtitle">Profile name</span>
                 <span class="space"></span>
-                <span class="regular2 text-title">Duc Nguyen</span>
+                <span class="user-name regular2 text-title"></span>
             </div>
             <div class="space">
                 <span class="regular2 text-subtitle">Company/ Team</span>
