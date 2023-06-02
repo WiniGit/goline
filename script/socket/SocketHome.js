@@ -396,8 +396,10 @@ socketH.on('server-post', (data) => {
                     userItem.FullName = data.Data.FullName != null ? data.Data.FullName : userItem.Fullname;
                     userItem.Mobile = data.Data.Mobile != null ? data.Data.Mobile : userItem.Mobile;
                     Ultis.setStorage('customer', JSON.stringify(userItem));
-                    $('.user-name, .new-user-name').text(userItem.Fullname);
-                    $('.user-mobile, .user-new-mobile').text(userItem.Mobile);
+                    $('.user-name').text(userItem.Fullname);
+                    $('.user-mobile').text(userItem.Mobile);
+                    $('.new-user-name').val(userItem.Fullname);
+                    $('.new-new-mobile').val(userItem.Mobile);
 
                     update_UI_userInfo(userItem);
 
