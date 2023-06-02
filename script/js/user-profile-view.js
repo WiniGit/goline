@@ -6,7 +6,7 @@ $('.appbar').load('/View/title-bar.html', function () {
     TitleBarDA.initDataStorage();
 });
 
-$('.screen-header').load('/View/layout-hedaer2.html', function (ev) {
+$('.screen-header').load('/View/layout-hedaer.html', function (ev) {
     $('.user-container .user-name').text(userItem.Fullname);
     $('.user-container .user-email').text(userItem.Email);
 
