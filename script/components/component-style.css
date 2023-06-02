@@ -30,9 +30,6 @@
 }
 
 .w-text {
-  display: flex;
-  flex-direction: column;
-  position: relative;
   cursor: default;
   word-break: break-word;
   text-overflow: ellipsis;

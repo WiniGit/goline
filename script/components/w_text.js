@@ -151,7 +151,6 @@ function createTextHTML(item) {
       addInputAction();
       this.removeAttribute("isCtrlZ");
       this.contentEditable = false;
-      this.style.cursor = "default";
       let selection = window.getSelection();
       selection.removeAllRanges();
       let thisRect = this.getBoundingClientRect();
@@ -205,7 +204,6 @@ function createTextHTML(item) {
       WBaseDA.isCtrlZ = false;
     };
     item.value.oninput = function (e) {
-      e.stopPropagation();
       if (this.innerHTML == "") {
         this.style.minWidth = "1px";
         select_box = null;

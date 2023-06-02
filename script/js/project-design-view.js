@@ -53,7 +53,7 @@ async function initData() {
     initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
   }
   divSection.querySelectorAll(`.wbaseItem-value[cateid="${EnumCate.tool_text}"]`).forEach((eText) => {
-    let newSize = calcTextNode(eText);  
+    let newSize = calcTextNode(eText);
     eText.style.minWidth = newSize.width + "px";
     eText.style.minHeight = newSize.height + "px";
   });
@@ -630,9 +630,11 @@ function dragWbaseUpdate(xp, yp, event) {
     let wbase_children = wbase_list.filter((e) => e.ParentID === new_parentID);
     for (let i = 0; i < children.length; i++) {
       let wbase_child = wbase_children.find((e) => e.GID === children[i].id);
-      wbase_child.Sort = i;
-      children[i].style.order = i;
-      children[i].style.zIndex = i;
+      if (wbase_child) {
+        wbase_child.Sort = i;
+        children[i].style.order = i;
+        children[i].style.zIndex = i;
+      }
     }
     if (parentHTML.style.flexDirection === "column") {
       let zIndex = 0;

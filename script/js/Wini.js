@@ -718,10 +718,7 @@ function centerViewInitListener() {
       return;
     } else if (event.key.toLowerCase() === "tab") {
       event.preventDefault();
-    } else if (event.shiftKey && (event.metaKey || (!isMac && event.ctrlKey)) && event.key.toLowerCase() === "r") {
-      event.preventDefault();
-      initData();
-    }
+    } 
     let currentKey = keyid;
     keyTimeStamp = event.timeStamp;
     if (event.metaKey) {
