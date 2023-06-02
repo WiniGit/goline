@@ -42,7 +42,7 @@ function create_userInfoTable() {
             <div class="space">
                 <span class="regular2 text-subtitle">Company/ Team</span>
                 <span class="space"></span>
-                <span style="white-space: nowrap;" class="regular2 text-title">Wini company</span>
+                <span style="white-space: nowrap;" class="regular2 text-title">None</span>
             </div>
         </div>
         <div class="info-content-row row border-bottom">
@@ -54,14 +54,14 @@ function create_userInfoTable() {
             <div class="space">
                 <span class="regular2 text-subtitle">Job</span>
                 <span class="space"></span>
-                <span style="white-space: nowrap;" class="regular2 text-title">DEV</span>
+                <span style="white-space: nowrap;" class="regular2 text-title">None</span>
             </div>
         </div>
         <div class="info-content-row row border-bottom">
             <div class="space">
                 <span class="regular2 text-subtitle">Contact</span>
                 <span class="space"></span>
-                <span class="regular2 text-title">0988 977 403</span>
+                <span class="user-mobile regular2 text-title"></span>
             </div>
             <div class="space"></div>
         </div>
@@ -82,21 +82,21 @@ function create_editUserInfoTable() {
         `<div class="info-content-row row">
             <div class="space col" style="justify-content: center; align-items: start;">
                 <span class="semibold2 text-label">Profile name</span>
-                <input class="new-user-name regular2 text-body" value="Duc Nguyen" />
+                <input class="new-user-name regular2 text-body" value="" />
             </div>
             <div class="space col" style="justify-content: center; align-items: start;">
                 <span class="semibold2 text-label">Company/ Team</span>
-                <input class="regular2 text-body" value="Wini company" />
+                <input class="regular2 text-body" value="None" disabled/>
             </div>
         </div>
         <div class="info-content-row row">
             <div class="space col" style="justify-content: center; align-items: start;">
                 <span class="semibold2 text-label">Email</span>
-                <input class="regular2 text-body" value="Ducnm@wini.vn" />
+                <input class="new-user-email regular2 text-body" value="Ducnm@wini.vn" disabled/>
             </div>
             <div class="space col" style="justify-content: center; align-items: start;">
                 <span class="semibold2 text-label">Job</span>
-                <input class="regular2 text-body" value="DEV" />
+                <input class="regular2 text-body" value="None" disabled/>
             </div>
         </div>
         <div class="info-content-row row">
@@ -121,37 +121,46 @@ function create_editUserInfoTable() {
     return output;
 }
 
-$('.user-info .user-name').text(userItem.Fullname);
-$('.user-info .user-email').text(userItem.Email);
-$('.user-info .count-container.team').first().find('div').first().text(TeamDA.list.length);
-$('.user-info .count-container.project').first().find('div').first().text(ProjectDA.list.length);
+function update_UI_userInfo(userItem) {
+    $('.user-info .user-name, .new-user-name').text(userItem.Fullname);
+    $('.user-info .user-email, .new-user-email').text(userItem.Email);
+    $('.user-info .count-container.team').first().find('div').first().text(TeamDA.list.length);
+    $('.user-info .count-container.project').first().find('div').first().text(ProjectDA.list.length);
+    $('.user-mobild, .user-new-mobile').text(userItem.Mobile);
+}
+
 
 $('.tab-bar-content').html(create_userInfoTable());
-
+update_UI_userInfo(userItem);
 
 $('body').on('click', `.button-edit-profile`, function (ev) {
     $(`.button-edit-profile`).hide();
     $('.tab-bar-content').html(create_editUserInfoTable());
+
+    update_UI_userInfo(userItem);
 });
+
 $('body').on('click', `.button-cancel-edit`, function (ev) {
     $(`.button-edit-profile`).show();
     $('.tab-bar-content').html(create_userInfoTable());
+
+    update_UI_userInfo(userItem);
 });
+
 $('body').on('click', `.button-save-change`, function (ev) {
     let is_change = false;
-    if (userItem.Fullname != $('.new-user-name')) {
+    if (userItem.Fullname != $('.new-user-name').val()) {
         is_change = true;
-        userItem.Fullname = $('.new-user-name');
+        userItem.Fullname = $('.new-user-name').val();
     }
-    if (userItem.Mobile != $('.new-user-contact')) {
+    if (userItem.Mobile != $('.new-user-contact').val()) {
         is_change = true;
-        userItem.Mobile = ('.new-user-contact');
+        userItem.Mobile = $('.new-user-contact').val();
     };
 
     if (is_change == true) {
         PermissionDA.editCustomerItem(userItem)
     }
 
-    $(`.button-edit-profile`).show();
-    $('.tab-bar-content').html(create_userInfoTable());
+
 });

@@ -392,7 +392,17 @@ socketH.on('server-post', (data) => {
         case EnumObj.customer:
             switch (data["enumEvent"]) {
                 case EnumEvent.edit:
-                    debugger
+                    var userItem = JSON.parse(Ultis.getStorage('customer'));
+                    userItem.FullName = data.Data.FullName != null ? data.Data.FullName : userItem.Fullname;
+                    userItem.Mobile = data.Data.Mobile != null ? data.Data.Mobile : userItem.Mobile;
+                    Ultis.setStorage('customer', JSON.stringify(userItem));
+                    $('.user-name, .new-user-name').text(userItem.Fullname);
+                    $('.user-mobile, .user-new-mobile').text(userItem.Mobile);
+
+                    update_UI_userInfo(userItem);
+
+                    $(`.button-edit-profile`).show();
+                    $('.tab-bar-content').html(create_userInfoTable());
             }
             break;
     }
