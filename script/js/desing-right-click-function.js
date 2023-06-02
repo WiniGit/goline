@@ -385,7 +385,7 @@ function createImgDocument() {
     let btnAddFolder = document.createElement("i");
     btnAddFolder.className = "fa-solid fa-plus fa-sm";
     btnAddFolder.style.padding = "10px 8px";
-    folderTitle.click = function () {
+    btnAddFolder.onclick = function () {
         let newFolder = {
             ID: 0,
             Name: "new folder",
