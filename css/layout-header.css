@@ -1,0 +1,113 @@
+.screen-header {
+    width: 100%;
+    height: 48px;
+    box-sizing: border-box;
+    background-color: #2C2C2C;
+}
+
+.screen-header .header_block1 {
+    height: 100%;
+    padding: 0 12px;
+    min-width: 260px;
+    max-width: 260px;
+    box-sizing: border-box;
+    border-right: 1px solid #5c5c5c;
+}
+
+.screen-header .header_block1>img {
+    margin-right: 8px;
+}
+
+.screen-header .header_block1>.user-container>* {
+    width: 192px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+}
+
+.screen-header .header_block2 {
+    flex: 1;
+}
+
+.screen-header .header_block2 .search-input {
+    width: 380px;
+    min-width: 180px;
+    height: 34px;
+    border-radius: 6px;
+    background-color: #444444;
+    margin: 0 8px;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+.screen-header .header_block2 .search-input * {
+    color: rgb(255, 255, 255, 0.9) !important;
+    padding: 0;
+}
+
+.screen-header .header_block2 .search-input input::placeholder {
+    color: rgb(255, 255, 255, 0.6);
+}
+
+.screen-header .header_block3 {
+    padding: 0 4px;
+    box-sizing: border-box;
+}
+
+.screen-header .header_block3>* {
+    margin: 4px;
+    box-sizing: border-box;
+}
+
+.screen-header .header_block3 .join-by-code {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.screen-header .header_block3 button:hover {
+    transition: 0.3s;
+    opacity: 0.9;
+    border-radius: 6px;
+}
+
+.screen-header .header_block3 button:not(:nth-child(1)).selected,
+.screen-header .header_block3 button:not(:nth-child(1)):hover {
+    background-color: rgb(223, 223, 223, 0.1) !important;
+}
+
+.popup-join-by-code {
+    width: 40%;
+    min-width: 500px;
+    max-width: 686px;
+}
+
+.popup-join-by-code input.code-input {
+    height: 40px;
+    margin: 16px 0;
+    margin-right: 16px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.popup-join-by-code .button-join {
+    width: 100px;
+    height: 40px;
+    border-radius: 4px;
+}
+
+.user-option {
+    top: 88px;
+    right: 1px;
+    width: 200px;
+    display: none;
+    border-radius: 2px;
+}
+
+.user-option * {
+    cursor: context-menu !important;
+}

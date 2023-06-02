@@ -389,6 +389,25 @@ socketH.on('server-post', (data) => {
                     break;
             }
             break;
+        case EnumObj.customer:
+            switch (data["enumEvent"]) {
+                case EnumEvent.edit:
+                    var userItem = JSON.parse(Ultis.getStorage('customer'));
+                    userItem.Fullname = data.data.Data.Fullname != null ? data.data.Data.Fullname : userItem.Fullname;
+                    userItem.Mobile = data.data.Data.Mobile != null ? data.data.Data.Mobile : userItem.Mobile;
+                    Ultis.setStorage('customer', JSON.stringify(userItem));
+                    $('.user-name').text(userItem.Fullname);
+                    $('.user-mobile').text(userItem.Mobile);
+                    $('.new-user-name').val(userItem.Fullname);
+                    $('.new-new-mobile').val(userItem.Mobile);
+
+
+                    $(`.button-edit-profile`).show();
+                    $('.tab-bar-content').html(create_userInfoTable());
+
+                    update_UI_userInfo(userItem);
+                }
+            break;
     }
 });
 socketH.on('server-noti', (data) => {
