@@ -393,7 +393,7 @@ socketH.on('server-post', (data) => {
             switch (data["enumEvent"]) {
                 case EnumEvent.edit:
                     var userItem = JSON.parse(Ultis.getStorage('customer'));
-                    userItem.FullName = data.Data.FullName != null ? data.Data.FullName : userItem.Fullname;
+                    userItem.Fullname = data.Data.Fullname != null ? data.Data.Fullname : userItem.Fullname;
                     userItem.Mobile = data.Data.Mobile != null ? data.Data.Mobile : userItem.Mobile;
                     Ultis.setStorage('customer', JSON.stringify(userItem));
                     $('.user-name').text(userItem.Fullname);
