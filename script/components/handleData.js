@@ -138,6 +138,7 @@ async function initComponents(item, list, initListener = true) {
   }
   $(item.value).addClass("wbaseItem-value");
   initWbaseStyle(item);
+  if(item.AttributesItem.NameField && item.AttributesItem.NameField.trim() != "")
   $(item.value).attr("name-field", item.AttributesItem.NameField);
   item.value.setAttribute("Level", item.Level);
   item.value.setAttribute("CateID", item.CateID);
