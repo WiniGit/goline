@@ -10,9 +10,9 @@ class PermissionDA {
     static editCustomerItem(item) {
         var url = 'Customer/UpdateAcount';
         if (ProjectDA.obj.ID != 0) {
-            WiniIO.emitPost(item, url, EnumObj.customer, EnumEvent.edit);
+            WiniIO.emitPort(item, url, EnumObj.customer, EnumEvent.edit);
         } else {
-            emitPost(item, "Customer/UpdateAcount", EnumObj.customer, EnumEvent.edit);
+            emitPort(item, "Customer/UpdateAcount", EnumObj.customer, EnumEvent.edit);
         }
     }
     static getByCode(code) {
