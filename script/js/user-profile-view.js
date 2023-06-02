@@ -139,18 +139,17 @@ $('body').on('click', `.button-cancel-edit`, function (ev) {
 });
 $('body').on('click', `.button-save-change`, function (ev) {
     let is_change = false;
-    let newItem;
     if (userItem.Fullname != $('.new-user-name')) {
         is_change = true;
-        newItem.Fullname = $('.new-user-name');
+        userItem.Fullname = $('.new-user-name');
     }
     if (userItem.Mobile != $('.new-user-contact')) {
         is_change = true;
-        newItem.Mobile = ('.new-user-contact');
+        userItem.Mobile = ('.new-user-contact');
     };
 
     if (is_change == true) {
-        PermissionDA.editCustomerItem(newItem)
+        PermissionDA.editCustomerItem(userItem)
     }
 
     $(`.button-edit-profile`).show();

@@ -389,6 +389,12 @@ socketH.on('server-post', (data) => {
                     break;
             }
             break;
+        case EnumObj.customer:
+            switch (data["enumEvent"]) {
+                case EnumEvent.edit:
+                    debugger
+            }
+            break;
     }
 });
 socketH.on('server-noti', (data) => {
