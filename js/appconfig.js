@@ -1,4 +1,4 @@
-var domainUrl = 'https://localhost:5000/';
+var domainUrl = 'http://localhost:3000/';
 
 var domainApi = 'https://apip.wini.vn/';
 
