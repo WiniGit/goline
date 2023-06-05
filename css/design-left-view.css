@@ -8,11 +8,13 @@
 
 #btn_select_page {
   float: right;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   box-sizing: border-box;
   padding: 4px 2px;
   color: #262626;
+  width: 40%;
+  justify-content: end;
 }
 
 #btn_select_page > p {
@@ -20,12 +22,16 @@
   line-height: 16px;
   font-weight: 500;
   margin: 0 4px 0 0;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #btn_select_page > i {
   padding: 8px 4px;
 }
-  
+
 #div_list_page {
   display: flex;
   flex-direction: column;
@@ -139,7 +145,7 @@
   display: none;
 }
 
-.layer_wbase_tile > .prefix-btn { 
+.layer_wbase_tile > .prefix-btn {
   pointer-events: none;
   visibility: hidden;
 }
