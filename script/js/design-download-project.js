@@ -144,8 +144,8 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
         }
       }
 
-      await $.post(
-        domainApi + "/WBase/build/",
+      await $.get(
+        domainApi + "/buildstart",
         {
           Name: page.Name,
           Code: ProjectDA.obj.Code,
@@ -155,9 +155,35 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
           console.log("data", data);
         },
       );
+
+      // await $.post(
+      //   domainApi + "/WBase/build/",
+      //   {
+      //     Name: page.Name,
+      //     Code: ProjectDA.obj.Code,
+      //     Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
+      //   },
+      //   function (data) {
+      //     console.log("data", data);
+      //   },
+      // );
     }
 
-    window.open(domainApi + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
+    await $.get(
+      domainApi + "/buildend",
+      function (data) {
+        console.log("data", data);
+      },
+    );
+
+    await $.get(
+      domainApi + "/download?code=" + ProjectDA.obj.Code,
+      function (data) {
+        console.log("data", data);
+      },
+    );
+
+    // window.open(domainApi + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
 
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
