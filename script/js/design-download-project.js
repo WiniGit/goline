@@ -144,7 +144,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
         }
       }
 
-      await $.post(
+      await $.get(
         socketWini + "/buildstart",
         {
           Name: page.Name,
@@ -169,14 +169,14 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       // );
     }
 
-    await $.post(
+    await $.get(
       socketWini + "/buildend",
       function (data) {
         console.log("data", data);
       },
     );
 
-    await $.post(
+    await $.get(
       socketWini + "/download?code=" + ProjectDA.obj.Code,
       function (data) {
         console.log("data", data);
