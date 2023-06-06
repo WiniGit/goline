@@ -177,6 +177,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   $(".download-project i").toggleClass("fa-spinner fa-download");
   $(".download-project i").addClass("fa-spin");
 
+  let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
 
   try {
     push_dataProject();
