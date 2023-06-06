@@ -199,9 +199,7 @@ html {
 #body {
   width: 100%;
   height: 100%;
-  flex: 1;
   z-index: 2;
-  overflow: hidden;
   position: relative;
 }
 
@@ -222,10 +220,6 @@ html {
 
 #body:has(> .loading-view) > .col > .header {
   pointer-events: none !important;
-}
-
-#canvas_view {
-  position: relative !important;
 }
 
 #divSection {
@@ -294,7 +288,8 @@ body:has(.wbaseItem-value[loading="true"]) {
   width: 100%;
   height: 100%;
   background-color: #f5f5f5;
-  position: relative;
+  position: relative !important;
+  overflow: hidden;
 }
 
 #left_view > .col:has(> .search-header) {
