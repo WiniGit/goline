@@ -209,3 +209,9 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     $(".download-project>i").removeClass("fa-spin");
   }
 });
+
+$('body').on('click', '.btn-play', function (ev) {
+  ev.stopPropagation();
+  push_dataProject();
+  window.open("https://demo.wini.vn/" + ProjectDA.obj.Code);
+});
