@@ -342,7 +342,7 @@ function customerList() {
   if (PageDA.customerList.length > 3) {
     let itemCircle = document.createElement("div");
     const randomColor = Ultis.generateRandomColor();
-    customerItem.className = "center semibold1 text-white";
+    itemCircle.className = "center semibold1 text-white";
     itemCircle.style.backgroundColor = randomColor;
     itemCircle.innerHTML = PageDA.customerList.length - 3;
     let tooltip = document.createElement("span");
