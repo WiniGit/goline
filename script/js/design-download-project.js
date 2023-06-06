@@ -47,10 +47,10 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   $(".download-project i").toggleClass("fa-spinner fa-download");
   $(".download-project i").addClass("fa-spin");
 
-  let page_script = "";
+  var page_script = "";
   document.body.getAttribute;
 
-  let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
+  var list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
   list_page = list_page.map((wb) => {
     let cloneValue = wb.value.cloneNode(true);
     cloneValue.style.position = null;
@@ -81,7 +81,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   try {
     for (let page of list_page) {
       page_script = "";
-      let list_itemShow = get_listItemInside(page.id);
+      var list_itemShow = get_listItemInside(page.id);
       for (let witem of list_itemShow) {
         if (witem.JsonEventItem) {
           let router_item = witem.JsonEventItem.find((e) => e.Name == "Router");
@@ -145,11 +145,11 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       }
 
       await $.post(
-        "https://server.wini.vn//buildstart",
+        "https://server.wini.vn/buildstart",
         {
           Sort: list_page.indexOf(page),
           Name: page.Name,
-          Code: ProjectDA.obj.Code,
+          Code: ProjectDA.obj.Code.toLowerCase(),
           Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
         },
         function (data) {
@@ -162,20 +162,20 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     var router;
 
     if (ProjectDA.obj.RouterJson != null) {
-      router = JSON.parse(ProjectDA.obj.RouterJson)[0]
+      router = JSON.parse(ProjectDA.obj.RouterJson)[0];
     }
     else {
       router = { Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].name }
     }
 
     await $.get(
-      `https://server.wini.vn/buildend?name=${ProjectDA.obj.Name}&code=${ProjectDA.obj.Code}&router=${router}`,
+      `https://server.wini.vn/buildend?name=${ProjectDA.obj.Name}&code=${ProjectDA.obj.Code}&router=${JSON.stringify(router)}`,
       function (data) {
         console.log("data", data);
       },
     );
 
-    window.open("https://server.wini.vn/download?code=" + ProjectDA.obj.Code);
+    window.open("https://server.wini.vn/download?code=" + ProjectDA.obj.Code.toLowerCase());
 
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
