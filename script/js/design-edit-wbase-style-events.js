@@ -2383,18 +2383,14 @@ function changeProperty(variantID) {
       if (wbaseParent) {
         wbaseParent.ListChildID[indexOf(selectedWbase.GID)] = newWbaseSelect.GID;
       }
-      let newWbaseLayer = createLayerTile(newWbaseSelect);
-      document.getElementById("wbaseID:" + selectedWbase.GID).parentElement.replaceWith(newWbaseLayer);
       let seletedHTML = document.getElementById(selectedWbase.GID);
       let seletedComputeStyle = window.getComputedStyle(seletedHTML);
       newWbaseSelect.value.style.position = seletedComputeStyle.position;
       newWbaseSelect.value.style.left = seletedComputeStyle.left;
       newWbaseSelect.value.style.top = seletedComputeStyle.top;
       seletedHTML.replaceWith(newWbaseSelect.value);
-      if (newWbaseSelect.Level == 1) {
-        document.getElementById("title:" + selectedWbase.GID)?.remove();
-      }
       selectedWbase.IsDeleted = true;
+      replaceAllLyerItemHTML();
     }
     selected_list = [];
     WBaseDA.changeProperty(listUpdate);
