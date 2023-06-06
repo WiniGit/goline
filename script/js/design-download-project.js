@@ -179,18 +179,17 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 
 
   try {
-    // push_dataProject();
+    push_dataProject();
 
-    console.log(" 111111111111111111111111111111111111111");
-    // var router;
-    // if (ProjectDA.obj.RouterJson != null) {
-    //   router = JSON.parse(ProjectDA.obj.RouterJson);
-    // }
-    // else {
-    //   router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].Name }]
-    // }
+    var router;
+    if (ProjectDA.obj.RouterJson != null) {
+      router = JSON.parse(ProjectDA.obj.RouterJson);
+    }
+    else {
+      router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].Name }]
+    }
 
-    // window.open("https://server.wini.vn/download?code=" + ProjectDA.obj.Code.toLowerCase());
+    window.open("https://server.wini.vn/download?code=" + ProjectDA.obj.Code.toLowerCase());
 
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
