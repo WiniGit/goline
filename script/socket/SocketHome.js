@@ -63,6 +63,21 @@ socketH.on('server-get', (data) => {
             var tok = UserService.getToken();
             if (tok != null && data.headers.token === tok) {
                 switch (data.enumObj) {
+                    case EnumObj.request:
+                        switch (data['enumEvent']) {
+                            case EnumEvent.getByID:
+                                RequestDA.selected = data.data;
+                                RequestDA.selected.ProjectID = pid;
+
+                                if (!RequestDA.list_opening.some(e => e.GID == data.data.GID)) {
+                                    RequestDA.list_opening.push(data.data);
+                                    RequestDA.set_ListOpening();
+                                }
+                                RequestDA.set_TabSelected(data.data);
+                                break;
+                            default:
+                        }
+                        break;
                     // //! GET TEAM
                     case EnumObj.team:
                         switch (data.enumEvent) {
