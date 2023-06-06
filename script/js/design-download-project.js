@@ -144,7 +144,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
         }
       }
 
-      await $.get(
+      await $.post(
         "https://server.wini.vn//buildstart",
         {
           Sort: list_page.indexOf(page),
@@ -156,36 +156,26 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
           console.log("data", data);
         },
       );
-
-      // await $.post(
-      //   socketWini + "/WBase/build/",
-      //   {
-      //     Name: page.Name,
-      //     Code: ProjectDA.obj.Code,
-      //     Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
-      //   },
-      //   function (data) {
-      //     console.log("data", data);
-      //   },
-      // );
     }
 
-    let router = JSON.parse(ProjectDA.obj?.RouterJson != null ? ProjectDA.obj?.RouterJson : "[]");
+    // var router = JSON.parse(ProjectDA.obj?.RouterJson != null ? ProjectDA.obj?.RouterJson : "[]");
+    var router;
+
+    if (ProjectDA.obj.RouterJson != null) {
+      router = JSON.parse(ProjectDA.obj.RouterJson)[0]
+    }
+    else {
+      router = { Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].name }
+    }
+
     await $.get(
-      `https://server.wini.vn/buildend?name=${ProjectDA.obj.Name}&code=${ProjectDA.obj.Code}&router=${router.length > 0 ? router[0].PageName : list_page[0].Name}`,
+      `https://server.wini.vn/buildend?name=${ProjectDA.obj.Name}&code=${ProjectDA.obj.Code}&router=${router}`,
       function (data) {
         console.log("data", data);
       },
     );
 
-    await $.get(
-      "https://server.wini.vn/download?code=" + ProjectDA.obj.Code,
-      function (data) {
-        console.log("data", data);
-      },
-    );
-
-    // window.open(socketWini + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
+    window.open("https://server.wini.vn/download?code=" + ProjectDA.obj.Code);
 
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
