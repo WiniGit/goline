@@ -364,6 +364,7 @@ function customerList() {
         customerItem.color = randomColor;
         if (!customerItem.CustomerName && customerItem.CustomerID === user.ID)
             customerItem.CustomerName = user.Email;
+        itemCircle.className = "center text-white semibold1";
         itemCircle.style.backgroundColor = randomColor;
         itemCircle.innerHTML = (customerItem.CustomerName ?? "Anonymous").substring(0, 1).toUpperCase();
         let tooltip = document.createElement("span");
@@ -374,6 +375,7 @@ function customerList() {
     if (PageDA.customerList.length > 3) {
         let itemCircle = document.createElement("div");
         const randomColor = Ultis.generateRandomColor();
+        itemCircle.className = "center text-white semibold1";
         itemCircle.style.backgroundColor = randomColor;
         itemCircle.innerHTML = PageDA.customerList.length - 3;
         let tooltip = document.createElement("span");
