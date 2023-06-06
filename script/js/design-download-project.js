@@ -145,7 +145,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       }
 
       await $.get(
-        domainApi + "/buildstart",
+        socketWini + "/buildstart",
         {
           Name: page.Name,
           Code: ProjectDA.obj.Code,
@@ -157,7 +157,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       );
 
       // await $.post(
-      //   domainApi + "/WBase/build/",
+      //   socketWini + "/WBase/build/",
       //   {
       //     Name: page.Name,
       //     Code: ProjectDA.obj.Code,
@@ -170,20 +170,20 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     }
 
     await $.get(
-      domainApi + "/buildend",
+      socketWini + "/buildend",
       function (data) {
         console.log("data", data);
       },
     );
 
     await $.get(
-      domainApi + "/download?code=" + ProjectDA.obj.Code,
+      socketWini + "/download?code=" + ProjectDA.obj.Code,
       function (data) {
         console.log("data", data);
       },
     );
 
-    // window.open(domainApi + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
+    // window.open(socketWini + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
 
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
@@ -194,5 +194,10 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     toastr["success"]("Download successful!");
   } catch (error) {
     toastr["error"](`${error}`);
+    $(".download-project").removeClass("downloading");
+    $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
+
+    $(".download-project>i").toggleClass("fa-spinner fa-download");
+    $(".download-project>i").removeClass("fa-spin");
   }
 });
