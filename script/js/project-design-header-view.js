@@ -286,8 +286,7 @@ button_share.onclick = function () {
   });
 };
 
-let button_play = document.createElement("button");
-button_play.className = ""
+let button_play = document.createElement("img");
 button_play.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/play.svg";
 button_play.className = "btn-play";
 
