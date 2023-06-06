@@ -175,7 +175,9 @@ async function push_dataProject(action) {
     `https://server.wini.vn/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`,
     function (data) {
       console.log("data-end", data);
-      action();
+      action(
+        function () { }
+      );
     },
   );
 }
