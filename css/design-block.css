@@ -80,6 +80,7 @@
     max-height: 500px;
     border-radius: 2px;
     box-sizing: border-box;
+    display: none;
     background-color: #262626;
 }
 
