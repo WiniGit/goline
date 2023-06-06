@@ -312,7 +312,6 @@ socketH.on('server-post', (data) => {
             break;
         //! POST collection
         case EnumObj.collection:
-            debugger
             switch (data['enumEvent']) {
                 case EnumEvent.add:
                     let new_collection = data.data.Data;
