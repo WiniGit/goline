@@ -145,8 +145,9 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       }
 
       await $.get(
-        socketWini + "/buildstart",
+        "https://server.wini.vn//buildstart",
         {
+          Sort: list_page.indexOf(page),
           Name: page.Name,
           Code: ProjectDA.obj.Code,
           Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
@@ -169,15 +170,16 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       // );
     }
 
+    let router = JSON.parse(ProjectDA.obj?.RouterJson != null ? ProjectDA.obj?.RouterJson : "[]");
     await $.get(
-      socketWini + "/buildend",
+      `https://server.wini.vn/buildend?name=${ProjectDA.obj.Name}&code=${ProjectDA.obj.Code}&router=${router.length > 0 ? router[0].PageName : list_page[0].Name}`,
       function (data) {
         console.log("data", data);
       },
     );
 
     await $.get(
-      socketWini + "/download?code=" + ProjectDA.obj.Code,
+      "https://server.wini.vn/download?code=" + ProjectDA.obj.Code,
       function (data) {
         console.log("data", data);
       },
