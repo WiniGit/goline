@@ -329,7 +329,7 @@ function customerList() {
       let itemCircle = document.createElement("div");
       const randomColor = Ultis.generateRandomColor();
       customerItem.color = randomColor;
-      customerItem.className = "center semibold1 text-white";
+      itemCircle.className = "center semibold1 text-white";
       if (!customerItem.CustomerName && customerItem.CustomerID === user.ID) customerItem.CustomerName = user.Email;
       itemCircle.style.backgroundColor = randomColor;
       itemCircle.innerHTML = (customerItem.CustomerName ?? "Anonymous").substring(0, 1).toUpperCase();
