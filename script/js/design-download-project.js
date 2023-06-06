@@ -162,10 +162,10 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     var router;
 
     if (ProjectDA.obj.RouterJson != null) {
-      router = JSON.parse(ProjectDA.obj.RouterJson)[0];
+      router = JSON.parse(ProjectDA.obj.RouterJson);
     }
     else {
-      router = { Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].name }
+      router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].name }]
     }
 
     await $.get(
