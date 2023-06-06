@@ -78,66 +78,71 @@ async function push_dataProject(action) {
     var list_itemShow = get_listItemInside(page.id);
     for (let witem of list_itemShow) {
       if (witem.JsonEventItem) {
-        let router_item = witem.JsonEventItem.find((e) => e.Name == "Router");
-        if (router_item) {
-          let clickElement = page;
-          if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
-          let new_url = `https://demo.wini.vn/${ProjectDA.obj.Code}/Views/${page.Name}.html`;
-          // let new_url = "https://demo.wini.vn/" + ProjectDA.obj.Code + `${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
-          // let new_url = `https://${ProjectDA.obj?.Domain ?? "demo"}.wini.vn/` + ProjectDA.obj.Code + `${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
+        // let router_item = witem.JsonEventItem.find((e) => e.Name == "Router");
+        // if (router_item) {
+        //   let clickElement = page;
+        //   if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
+        //   let new_url = `https://demo.wini.vn/${ProjectDA.obj.Code}/Views/${page.Name}.html`;
+        //   // let new_url = "https://demo.wini.vn/" + ProjectDA.obj.Code + `${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
+        //   // let new_url = `https://${ProjectDA.obj?.Domain ?? "demo"}.wini.vn/` + ProjectDA.obj.Code + `${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
+        //   $(clickElement).addClass("event-click");
+        //   page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
+        // }
+      }
+
+      if (witem.PrototypeID != null) {
+        let nextPagePrototype = list_page.find((e) => e.id == witem.PrototypeID);
+        if (nextPagePrototype) {
+          let animation = witem.JsonEventItem?.find((e) => e.Name === "Animation");
+          let animation_class = "";
+          if (animation != null) {
+            animation_class += " animation_move";
+            console.log(animation);
+            switch (animation.Data.Animation) {
+              case EnumAnimation.MoveIn:
+                animation_class += " in";
+                break;
+              case EnumAnimation.MoveOut:
+                animation_class += " out";
+                break;
+              case EnumAnimation.SlideIn:
+                animation_class += " in";
+                break;
+              case EnumAnimation.SlideOut:
+                animation_class += " out";
+                break;
+              default:
+                animation_class += " in";
+                break;
+            }
+            switch (animation.Data.Direction) {
+              case "left":
+                animation_class += " left";
+                break;
+              case "right":
+                animation_class += " right";
+                break;
+              case "up":
+                animation_class += " up";
+                break;
+              case "down":
+                animation_class += " down";
+                break;
+              default:
+                animation_class += " left";
+                break;
+            }
+          }
+          // if (nextPagePrototype) {
+          $(nextPagePrototype).addClass(animation_class);
+          // }
+
+          let new_url = `https://demo.wini.vn/${ProjectDA.obj.Code}/Views/${nextPagePrototype.Name}.html`;
           $(clickElement).addClass("event-click");
           page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
         }
-
-        if (witem.PrototypeID != null) {
-          let nextPagePrototype = list_page.find((e) => e.id == witem.PrototypeID);
-          if (nextPagePrototype) {
-            let animation = witem.JsonEventItem?.find((e) => e.Name === "Animation");
-            let animation_class = "";
-            if (animation != null) {
-              animation_class += " animation_move";
-              console.log(animation);
-              switch (animation.Data.Animation) {
-                case EnumAnimation.MoveIn:
-                  animation_class += " in";
-                  break;
-                case EnumAnimation.MoveOut:
-                  animation_class += " out";
-                  break;
-                case EnumAnimation.SlideIn:
-                  animation_class += " in";
-                  break;
-                case EnumAnimation.SlideOut:
-                  animation_class += " out";
-                  break;
-                default:
-                  animation_class += " in";
-                  break;
-              }
-              switch (animation.Data.Direction) {
-                case "left":
-                  animation_class += " left";
-                  break;
-                case "right":
-                  animation_class += " right";
-                  break;
-                case "up":
-                  animation_class += " up";
-                  break;
-                case "down":
-                  animation_class += " down";
-                  break;
-                default:
-                  animation_class += " left";
-                  break;
-              }
-            }
-            if (nextPagePrototype) {
-              $(nextPagePrototype).addClass(animation_class);
-            }
-          }
-        }
       }
+      // }
     }
 
     await $.post(
