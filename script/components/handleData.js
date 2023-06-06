@@ -785,9 +785,6 @@ function handleStyleSize(item) {
       case EnumCate.tool_rectangle:
         item.value.style.borderRadius = "50%";
         break;
-      case EnumCate.w_switch:
-        item.value.style.borderRadius = `${item.StyleItem.FrameItem.Width / 2}px`;
-        break;
       default:
         break;
     }
