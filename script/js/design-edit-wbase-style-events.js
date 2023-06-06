@@ -1899,6 +1899,7 @@ function editTextStyle(text_style_item, onSubmit = true) {
     }
   }
   if (onSubmit) {
+    console.log("????????????????????txt: ", text_style_item);
     if (_enumObj === EnumObj.textStyle && list_text.some((e) => e.StyleItem.TextStyleID === 0)) {
       list_text
         .filter((e) => e.StyleItem.TextStyleID === 0)
