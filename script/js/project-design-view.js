@@ -311,7 +311,6 @@ function createWbaseHTML(rect_box, newObj) {
       }
       let listNewWbase = createNewWbase(new_obj, relativeWbase, newListID, newParent.querySelectorAll(":scope > .wbaseItem-value").length);
       listNewWbase.forEach((wbaseItem) => {
-        debugger;
         initComponents(
           wbaseItem,
           listNewWbase.filter((e) => e.ParentID == wbaseItem.GID),
