@@ -2434,8 +2434,7 @@ function upListener(event) {
             new_wbase_item.value.style.top = `${new_wbase_item.StyleItem.PositionItem.Top}px`;
           }
         }
-        var layerHTML = createLayerTile(new_wbase_item);
-        document.getElementById(`parentID:${new_wbase_item.ParentID}`).appendChild(layerHTML);
+        replaceAllLyerItemHTML();
         WBaseDA.enumEvent = EnumEvent.add;
         addSelectList([new_wbase_item]);
       } else {
