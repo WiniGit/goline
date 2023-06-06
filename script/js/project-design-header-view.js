@@ -286,9 +286,18 @@ button_share.onclick = function () {
   });
 };
 
-let button_play = document.createElement("img");
+let button_play = document.createElement("button");
+button_play.className = ""
 button_play.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/play.svg";
 button_play.className = "btn-play";
+
+$('body').on('click', '.btn-play', function (ev) {
+  ev.stopPropagation();
+  push_dataProject();
+
+  window.open("https://demo.wini.vn/" + ProjectDA.obj.Code);
+});
+
 let input_scale = document.createElement("div");
 input_scale.className = "regular1 input-scale";
 input_scale.innerHTML = "20%";
