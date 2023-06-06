@@ -163,7 +163,7 @@ async function push_dataProject() {
   }
 
   await $.get(
-    `https://server.wini.vn/buildend?name=${ProjectDA.obj.Name}&code=${ProjectDA.obj.Code}&router=${JSON.stringify(router)}`,
+    `https://server.wini.vn/buildend?name=${ProjectDA.obj.Name}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`,
     function (data) {
       console.log("data", data);
     },
