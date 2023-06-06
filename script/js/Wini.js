@@ -11,8 +11,8 @@ var totalH = height + scale;
 var totalW = width + scale;
 var topx = 0,
   leftx = 0,
-  leftw = document.getElementById("left_view").offsetWidth,
-  reightw = document.getElementById("right_view").offsetWidth;
+  leftw = document.getElementById("left_view")?.offsetWidth ?? 0,
+  reightw = document.getElementById("right_view")?.offsetWidth ?? 0;
 var showF12 = false;
 var selectPath;
 var design_view_index = 0;
@@ -718,7 +718,7 @@ function centerViewInitListener() {
       return;
     } else if (event.key.toLowerCase() === "tab") {
       event.preventDefault();
-    } 
+    }
     let currentKey = keyid;
     keyTimeStamp = event.timeStamp;
     if (event.metaKey) {
@@ -2438,8 +2438,8 @@ function upListener(event) {
         WBaseDA.enumEvent = EnumEvent.add;
         addSelectList([new_wbase_item]);
       } else {
-          let url = window.getComputedStyle(instance_drag).backgroundImage.split(/"/)[1];
-          let isSvgImg = url.endsWith(".svg");
+        let url = window.getComputedStyle(instance_drag).backgroundImage.split(/"/)[1];
+        let isSvgImg = url.endsWith(".svg");
         let newRect = isSvgImg ? WBaseDefault.imgSvg : WBaseDefault.rectangle;
         newRect.Name = isSvgImg ? url.split("/").pop().replace(".svg", "") : "new rectangle";
         newRect.AttributesItem.Content = url.replace(urlImg, "");

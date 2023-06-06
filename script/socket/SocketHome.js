@@ -63,6 +63,21 @@ socketH.on('server-get', (data) => {
             var tok = UserService.getToken();
             if (tok != null && data.headers.token === tok) {
                 switch (data.enumObj) {
+                    case EnumObj.request:
+                        switch (data['enumEvent']) {
+                            case EnumEvent.getByID:
+                                RequestDA.selected = data.data;
+                                RequestDA.selected.ProjectID = pid;
+
+                                if (!RequestDA.list_opening.some(e => e.GID == data.data.GID)) {
+                                    RequestDA.list_opening.push(data.data);
+                                    RequestDA.set_ListOpening();
+                                }
+                                RequestDA.set_TabSelected(data.data);
+                                break;
+                            default:
+                        }
+                        break;
                     // //! GET TEAM
                     case EnumObj.team:
                         switch (data.enumEvent) {
@@ -88,7 +103,7 @@ socketH.on('server-get', (data) => {
                                 // update list collection view
                                 CollectionDA.update_UI_ListCollection();
                                 // get 
-                                api_getDataStorage();
+                                RequestDA.api_getDataStorage();
                                 ProjectDA.getByID();
                                 break;
                             case EnumEvent.getProjectByID:
@@ -297,7 +312,6 @@ socketH.on('server-post', (data) => {
             break;
         //! POST collection
         case EnumObj.collection:
-            debugger
             switch (data['enumEvent']) {
                 case EnumEvent.add:
                     let new_collection = data.data.Data;
@@ -406,7 +420,7 @@ socketH.on('server-post', (data) => {
                     $('.tab-bar-content').html(create_userInfoTable());
 
                     update_UI_userInfo(userItem);
-                }
+            }
             break;
     }
 });

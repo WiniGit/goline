@@ -177,6 +177,39 @@ class RequestDA {
         RequestDA.list_opening[index] = new_item;
         RequestDA.set_ListOpening();
     }
+
+
+    static api_getDataStorage() {
+        let tab_selected = RequestDA.get_TabSelected();
+        RequestDA.list_opening = RequestDA.get_ListOpening();
+
+        let list_opening = RequestDA.list_opening.filter(e => e.ProjectID == pid);
+
+        if (list_opening?.length > 0 && tab_selected) {
+            $('.no-request').css('display', 'none');
+            $('.content-container').css('display', 'flex');
+
+            RequestDA.update_UI_ListRequestTab();
+
+            if (tab_selected?.ProjectID == pid) {
+                let collection = CollectionDA.list.find(e => e.ID == tab_selected.CollectionID);
+
+                let request = collection.listApi.find(e => e.GID == tab_selected.GID);
+
+                let index = collection.listApi.indexOf(request);
+                collection.listApi[index] = tab_selected;
+
+                RequestDA.set_TabSelected(tab_selected);
+            } else {
+                RequestDA.set_TabSelected(list_opening[list_opening.length - 1]);
+            }
+
+
+        } else {
+            $('.no-request').css('display', 'flex');
+            $('.content-container').css('display', 'none');
+        }
+    }
 }
 
 
