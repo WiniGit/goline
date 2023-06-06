@@ -40,7 +40,7 @@ function get_data_outputFromJson(json, outputID, index) {
   return output.Value;
 }
 
-async function push_dataProject() {
+async function push_dataProject(action) {
   var page_script = "";
   document.body.getAttribute;
 
@@ -69,7 +69,7 @@ async function push_dataProject() {
       }
     });
     $(cloneValue).addClass("w-page");
-    cloneValue.Name = wb.Name;
+    cloneValue.Name = Ultis.toSlug(wb.Name);
     return cloneValue;
   });
 
@@ -82,7 +82,7 @@ async function push_dataProject() {
         if (router_item) {
           let clickElement = page;
           if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
-          let new_url = "/" + `${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
+          let new_url = "https://demo.wini.vn/" + ProjectDA.obj.Code + `${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
           $(clickElement).addClass("event-click");
           page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
         }
@@ -142,12 +142,13 @@ async function push_dataProject() {
       "https://server.wini.vn/buildstart",
       {
         Sort: list_page.indexOf(page),
-        Name: page.Name,
+        Name: Ultis.toSlug(page.Name),
         Code: ProjectDA.obj.Code.toLowerCase(),
         Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
       },
       function (data) {
-        console.log("data", data);
+        console.log("data-start", data);
+        action;
       },
     );
   }
@@ -163,9 +164,10 @@ async function push_dataProject() {
   }
 
   await $.get(
-    `https://server.wini.vn/buildend?name=${ProjectDA.obj.Name}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`,
+    `https://server.wini.vn/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`,
     function (data) {
-      console.log("data", data);
+      console.log("data-end", data);
+      action();
     },
   );
 }
@@ -180,17 +182,19 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
 
   try {
-    push_dataProject();
+    push_dataProject(
+      function () {
+        // var router;
+        // if (ProjectDA.obj.RouterJson != null) {
+        //   router = JSON.parse(ProjectDA.obj.RouterJson);
+        // }
+        // else {
+        //   router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].Name }]
+        // }
+        // window.open("https://server.wini.vn/download?code=" + ProjectDA.obj.Code.toLowerCase());
+      }
+    );
 
-    var router;
-    if (ProjectDA.obj.RouterJson != null) {
-      router = JSON.parse(ProjectDA.obj.RouterJson);
-    }
-    else {
-      router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].Name }]
-    }
-
-    window.open("https://server.wini.vn/download?code=" + ProjectDA.obj.Code.toLowerCase());
 
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
