@@ -146,7 +146,7 @@ button_share.onclick = function () {
   let p_user = PageDA.customerList.find((e) => e.CustomerID == userItem.ID);
   let owner_item = PageDA.customerList.find((e) => e.Permission == EnumPermission.owner);
   for (let customer of PageDA.customerList) {
-    list_customer += '<div data-id="' + customer.ID + '" data-customer="' + customer.CustomerID + '" class="wmember-container row">' + '    <div class="center box32"><i class="fa-solid fa-user-circle text-body"></i></div>' + '    <span class="regular11 text-title space">' + "        <span>" + `${customer?.CustomerName ?? "Anonymus"}` + "</span > " + '        <span class="indentify regular11 text-subtitle ' + `${userItem.ID == customer.CustomerID ? "" : " hide"}` + '">(You)</span>' + "    </span>" + '    <button class="edit-member-permission wbutton-permission button-transparent overlay" type="button" >' + "        <span>" + '            <span class="user_permission">' + EnumPermission.get_namePermission(customer.Permission) + "</span>" + '            <i class="fa-solid fa-chevron-down fa-xs"></i>' + "        </span>" + "    </button>" + '    <div class="wpopup-edit-permisson permission_popup">' + '        <div class="owner ' + `${p_user.Permission == EnumPermission.owner ? "" : "hide "}` + 'permission-option regular11 text-white">Owner</div>' + '        <div class="edit ' + `${p_user.Permission != EnumPermission.viewer && (customer.CustomerID == userItem.ID || p_user.Permission < customer.Permission) ? "" : "hide "}` + 'permission-option regular11 text-white">Can edit</div>' + '        <div class="view permission-option regular11 text-white">Can view</div>' + '        <div class="remove ' + `${p_user.Permission == EnumPermission.owner ? "" : "hide "}` + 'permission-option regular11 text-white border-top-light">remove</div>' + '        <div class="leave ' + `${p_user.Permission != EnumPermission.owner && customer.CustomerID == userItem.ID ? "" : "hide "}` + 'permission-option regular11 text-white border-top-light">Leave</div>' + "    </div>" + "</div>";
+    list_customer += '<div data-id="' + customer.ID + '" data-customer="' + customer.CustomerID + '" class="wmember-container row">' + '    <div class="center box32"><i class="fa-solid fa-user-circle text-body"></i></div>' + '    <span class="regular11 text-title space">' + "        <span>" + `${customer?.CustomerName ?? "Anonymus"}` + "</span > " + '        <span class="indentify regular11 text-subtitle ' + `${userItem.ID == customer.CustomerID ? "" : " hide"}` + '">(You)</span>' + "    </span>" + '    <button class="edit-member-permission wbutton-permission button-transparent overlay" type="button" >' + "        <span>" + '            <span class="user_permission regular1">' + EnumPermission.get_namePermission(customer.Permission) + "</span>" + '            <i class="fa-solid fa-chevron-down fa-xs"></i>' + "        </span>" + "    </button>" + '    <div class="wpopup-edit-permisson permission_popup">' + '        <div class="owner ' + `${p_user.Permission == EnumPermission.owner ? "" : "hide "}` + 'permission-option regular11 text-white">Owner</div>' + '        <div class="edit ' + `${p_user.Permission != EnumPermission.viewer && (customer.CustomerID == userItem.ID || p_user.Permission < customer.Permission) ? "" : "hide "}` + 'permission-option regular11 text-white">Can edit</div>' + '        <div class="view permission-option regular11 text-white">Can view</div>' + '        <div class="remove ' + `${p_user.Permission == EnumPermission.owner ? "" : "hide "}` + 'permission-option regular11 text-white border-top-light">remove</div>' + '        <div class="leave ' + `${p_user.Permission != EnumPermission.owner && customer.CustomerID == userItem.ID ? "" : "hide "}` + 'permission-option regular11 text-white border-top-light">Leave</div>' + "    </div>" + "</div>";
   }
   list_customer += "</div>";
   $("body").append(
@@ -210,10 +210,10 @@ button_share.onclick = function () {
     $(".permission_popup").hide();
     $(this).next(".wpopup-select-permission").show();
   });
-  // $('body').on('click', '.wpopup-select-permission .permission-option', function (ev) {
-  //     $('.selected_permission').text($(this).text());
-  //     ProjectDA.permission = $(this).data('permission');
-  // });
+  $('body').on('click', '.wpopup-select-permission .permission-option', function (ev) {
+      $('.selected_permission').text($(this).text());
+      ProjectDA.permission = $(this).data('permission');
+  });
 
   $("body").on("click", ".edit-member-permission", function (ev) {
     ev.stopPropagation();
@@ -252,7 +252,6 @@ button_share.onclick = function () {
       let selected_cus = PageDA.customerList.find((e) => e.ID == $(this).parents(".wmember-container").data("id"));
       PageDA.deleteCustomerPermission(selected_cus.ID, selected_cus.CustomerType);
     }
-
     if ($(this).hasClass("edit")) {
       let selected_cus = PageDA.customerList.find((e) => e.ID == $(this).parents(".wmember-container").data("id"));
       if (selected_cus.Permission != EnumPermission.editer) {
