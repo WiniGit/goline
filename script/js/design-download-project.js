@@ -210,8 +210,17 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   }
 });
 
-$('body').on('click', '.btn-play', function (ev) {
-  ev.stopPropagation();
-  push_dataProject();
-  window.open("https://demo.wini.vn/" + ProjectDA.obj.Code);
-});
+// $('body').on('click', '.btn-play', function (ev) {
+//   ev.stopPropagation();
+//   push_dataProject();
+//   window.open("https://demo.wini.vn/" + ProjectDA.obj.Code);
+// });
+
+try {
+  const ipcRenderer = require('electron').ipcRenderer;
+  $('body').on('click', '.btn-play', function () {
+    ipcRenderer.send('asynchronous-play', ProjectDA.obj.Code);
+  });
+} catch (error) {
+
+}
