@@ -654,7 +654,7 @@ function selectResizeType(isW = true, type) {
   setTimeout(updateUISelectBox, 20);
 }
 
-function addAutoLayout() {
+async function addAutoLayout() {
   let new_auto_layout = {
     GID: uuidv4(),
     Name: "new layout",
@@ -674,7 +674,6 @@ function addAutoLayout() {
     Bottom: 0,
   };
   if (selected_list.length === 1 && EnumCate.extend_frame.some((cate) => cate === selected_list[0].CateID) && !selected_list[0].WAutolayoutItem) {
-    debugger;
     let eHTML = document.getElementById(selected_list[0].GID);
     selected_list[0].AutoLayoutID = new_auto_layout.GID;
     selected_list[0].WAutolayoutItem = new_auto_layout;
@@ -758,11 +757,11 @@ function addAutoLayout() {
       eHTML.setAttribute("Level", selected_list[i].Level);
       eHTML.setAttribute("ListID", selected_list[i].ListID);
       eHTML.style.position = "relative";
-      eHTML.style.left = "unset";
-      eHTML.style.top = "unset";
-      eHTML.style.right = "unset";
-      eHTML.style.bottom = "unset";
-      eHTML.style.transform = "none";
+      eHTML.style.left = null;
+      eHTML.style.top = null;
+      eHTML.style.right = null;
+      eHTML.style.bottom = null;
+      eHTML.style.transform = null;
       eHTML.style.zIndex = i;
       eHTML.style.order = i;
       if (selected_list[i].CountChild > 0) {
@@ -778,21 +777,31 @@ function addAutoLayout() {
         }
       }
     }
-    initComponents(new_wbase_item, selected_list);
+    await initComponents(new_wbase_item, selected_list);
     wbase_list.push(new_wbase_item);
     list_update.push(new_wbase_item);
     if (new_wbase_item.ParentID != wbase_parentID) {
-      let parent_wbase = wbase_list.find((e) => e.GID == new_wbase_item.ParentID);
+      let parent_wbase = wbase_list.find((e) => e.GID === new_wbase_item.ParentID);
       list_update.push(parent_wbase);
       parent_wbase.CountChild += 1 - selected_list.length;
       let parentHTML = document.getElementById(new_wbase_item.ParentID);
-      parentHTML.appendChild(new_wbase_item.value);
-      let childrenHTML = [...parentHTML.childNodes];
+      if (parentHTML.getAttribute("cateid") == EnumCate.table) {
+        let cellList = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
+        let availableCell = cellList.find(cd => cd.contentid.includes(selected_list[0].GID));
+        parentHTML.querySelector(`:scope > .table-row > .table-cell[id="${availableCell.id}"]`).appendChild(new_wbase_item.value);
+        cellList.forEach(cd => {
+          cd.contentid = cd.contentid.split(",").filter(id => selected_list.every(e => e.GID !== id)).join(",");
+          if(cd.id === availableCell.id) cd.contentid = new_wbase_item.GID;
+        });
+      } else if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+        initPositionStyle(new_wbase_item);
+        parentHTML.appendChild(new_wbase_item.value);
+      } else {
+        parentHTML.appendChild(new_wbase_item.value);
+      }
+      let childrenHTML = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
       childrenHTML.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
       parent_wbase.ListChildID = childrenHTML.map((e) => e.id);
-      if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
-        initPositionStyle(new_wbase_item);
-      }
     }
     arrange();
     replaceAllLyerItemHTML();
