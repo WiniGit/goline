@@ -63,6 +63,15 @@ socketH.on('server-get', (data) => {
             var tok = UserService.getToken();
             if (tok != null && data.headers.token === tok) {
                 switch (data.enumObj) {
+                    //! GET router
+                    case EnumObj.router:
+                        switch (data.enumEvent) {
+                            case EnumEvent.get:
+                                RouterDA.listPage = data.data;
+                                break;
+                        }
+                        break;
+                    //! GET request
                     case EnumObj.request:
                         switch (data['enumEvent']) {
                             case EnumEvent.getByID:
