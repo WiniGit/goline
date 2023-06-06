@@ -184,6 +184,8 @@ function createNewWbase(dataJson, list_contain_child = [], listId, sort) {
       let newPositionId = uuidv4();
       new_wbase_item.StyleItem.PositionID = newPositionId;
       new_wbase_item.StyleItem.PositionItem.GID = newPositionId;
+      new_wbase_item.StyleItem.PositionItem.ConstraintsX ??= Constraints.left;
+      new_wbase_item.StyleItem.PositionItem.ConstraintsY ??= Constraints.top;
     }
     // tạo GuiID mới cho paddingItem nếu khác null
     if (new_wbase_item.StyleItem.PaddingItem) {
@@ -308,12 +310,13 @@ function createWbaseHTML(rect_box, newObj) {
         newListID = newParent.getAttribute("ListID") + `,${new_obj.ParentID}`;
       }
       let listNewWbase = createNewWbase(new_obj, relativeWbase, newListID, newParent.querySelectorAll(":scope > .wbaseItem-value").length);
-      listNewWbase.forEach((wbaseItem) =>
+      listNewWbase.forEach((wbaseItem) => {
+        debugger;
         initComponents(
           wbaseItem,
           listNewWbase.filter((e) => e.ParentID == wbaseItem.GID),
-        ),
-      );
+        );
+      });
       WBaseDA.listData.push(...listNewWbase);
       new_obj = listNewWbase.pop();
       wbase_list.push(...listNewWbase);
