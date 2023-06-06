@@ -88,7 +88,7 @@ socketH.on('server-get', (data) => {
                                 // update list collection view
                                 CollectionDA.update_UI_ListCollection();
                                 // get 
-                                api_getDataStorage();
+                                RequestDA.api_getDataStorage();
                                 ProjectDA.getByID();
                                 break;
                             case EnumEvent.getProjectByID:
@@ -406,7 +406,7 @@ socketH.on('server-post', (data) => {
                     $('.tab-bar-content').html(create_userInfoTable());
 
                     update_UI_userInfo(userItem);
-                }
+            }
             break;
     }
 });
