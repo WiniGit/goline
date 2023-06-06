@@ -111,31 +111,31 @@ function showSearchResult() {
     let filterList = [];
     switch (searchFilter) {
       case 0:
-        filterList = wbase_list.filter((wb) => wb.Name.toLowerCase().includes(this.value.toLowerCase()));
+        filterList = wbase_list.filter((wb) => Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis(this.value.toLowerCase())));
         break;
       case -1:
-        filterList = wbase_list.filter((wb) => EnumCate.baseComponent.some((ct) => wb.CateID === ct) && wb.Name.toLowerCase().includes(this.value.toLowerCase()));
+        filterList = wbase_list.filter((wb) => EnumCate.baseComponent.some((ct) => wb.CateID === ct) && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis(this.value.toLowerCase())));
         break;
       case -2:
-        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_text && wb.AttributesItem.Content.toLowerCase().includes(this.value.toLowerCase()));
+        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_text && wb.AttributesItem.Content.toLowerCase().includes(Ultis(this.value.toLowerCase())));
         break;
       case -3:
         filterList = wbase_list.filter((wb) => wb.IsWini);
         break;
       case EnumCate.tool_text:
-        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_text && wb.Name.toLowerCase().includes(this.value.toLowerCase()));
+        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_text && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis(this.value.toLowerCase())));
         break;
       case EnumCate.svg:
-        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.svg && wb.Name.toLowerCase().includes(this.value.toLowerCase()));
+        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.svg && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis(this.value.toLowerCase())));
         break;
       case EnumCate.tool_rectangle:
-        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_rectangle && wb.Name.toLowerCase().includes(this.value.toLowerCase()));
+        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_rectangle && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis(this.value.toLowerCase())));
         break;
       case EnumCate.tool_frame:
-        filterList = wbase_list.filter((wb) => EnumCate.extend_frame.some((ct) => wb.CateID === ct) && wb.Name.toLowerCase().includes(this.value.toLowerCase()));
+        filterList = wbase_list.filter((wb) => EnumCate.extend_frame.some((ct) => wb.CateID === ct) && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis(this.value.toLowerCase())));
         break;
       case EnumCate.tool_variant:
-        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_variant && wb.Name.toLowerCase().includes(this.value.toLowerCase()));
+        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_variant && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis(this.value.toLowerCase())));
         break;
       default:
         break;
