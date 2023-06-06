@@ -2589,7 +2589,7 @@ function createEditBorder() {
         }
       } else {
         group_custom_border_side.style.display = "none";
-        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/border-${firstSideValue}-black.svg`;
+        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/border-${firstSideValue.toLowerCase()}-black.svg`;
       }
     }
   }
