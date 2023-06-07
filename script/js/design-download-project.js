@@ -40,7 +40,7 @@ function get_data_outputFromJson(json, outputID, index) {
   return output.Value;
 }
 
-async function push_dataProject() {
+async function push_dataProject(action) {
   var page_script = "";
   document.body.getAttribute;
 
@@ -148,6 +148,7 @@ async function push_dataProject() {
       },
       function (data) {
         console.log("data-start", data);
+        action();
       },
     );
   }
@@ -170,23 +171,27 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
 
   try {
-    push_dataProject();
+    push_dataProject(
+      function () {
+        var router;
+        if (ProjectDA.obj.RouterJson != null) {
+          router = JSON.parse(ProjectDA.obj.RouterJson);
+        }
+        else {
+          router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].Name }]
+        }
+        window.open(domainApi + `/WBase/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`);
+      }
+    );
 
-    var router;
-    if (ProjectDA.obj.RouterJson != null) {
-      router = JSON.parse(ProjectDA.obj.RouterJson);
-    }
-    else {
-      router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].Name }]
-    }
-    window.open(domainApi + `/WBase/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`);
 
 
-      $(".download-project").removeClass("downloading");
-      $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
 
-      $(".download-project>i").toggleClass("fa-spinner fa-download");
-      $(".download-project>i").removeClass("fa-spin");
+    $(".download-project").removeClass("downloading");
+    $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
+
+    $(".download-project>i").toggleClass("fa-spinner fa-download");
+    $(".download-project>i").removeClass("fa-spin");
 
     toastr["success"]("Download successful!");
   }
@@ -204,7 +209,7 @@ try {
   const ipcRenderer = require('electron').ipcRenderer;
   $('body').on('click', '.btn-play', function () {
 
-    push_dataProject();
+    push_dataProject(function () { });
     ipcRenderer.send('asynchronous-play', ProjectDA.obj.Code);
   });
 } catch (error) {
