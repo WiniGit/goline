@@ -62,7 +62,7 @@ async function push_dataProject() {
           wbValue.style.pointerEvents = null;
           break;
         case EnumCate.tree:
-          wbValue.querySelectorAll(".w-tree").forEach((wtree) => wtree.style.pointerEvents = null);
+          wbValue.querySelectorAll(".w-tree").forEach((wtree) => (wtree.style.pointerEvents = null));
           break;
         default:
           break;
@@ -182,11 +182,11 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     window.open(domainApi + `/WBase/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`);
 
 
-    $(".download-project").removeClass("downloading");
-    $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
+      $(".download-project").removeClass("downloading");
+      $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
 
-    $(".download-project>i").toggleClass("fa-spinner fa-download");
-    $(".download-project>i").removeClass("fa-spin");
+      $(".download-project>i").toggleClass("fa-spinner fa-download");
+      $(".download-project>i").removeClass("fa-spin");
 
     toastr["success"]("Download successful!");
   }
