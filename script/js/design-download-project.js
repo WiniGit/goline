@@ -202,9 +202,8 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 
 try {
   const ipcRenderer = require('electron').ipcRenderer;
-  $('body').on('click', '.btn-play', function () {
-
-    push_dataProject();
+  $('body').on('click', '.btn-play', async function () {
+    await push_dataProject();
     ipcRenderer.send('asynchronous-play', ProjectDA.obj.Code);
   });
 } catch (error) {
