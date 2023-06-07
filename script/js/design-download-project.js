@@ -68,7 +68,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
           wbValue.style.pointerEvents = null;
           break;
         case EnumCate.tree:
-          wbValue.querySelectorAll(".w-tree").forEach((wtree) => wtree.style.pointerEvents = null);
+          wbValue.querySelectorAll(".w-tree").forEach((wtree) => (wtree.style.pointerEvents = null));
           break;
         default:
           break;
@@ -136,9 +136,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
                     break;
                 }
               }
-              if (nextPagePrototype) {
-                $(nextPagePrototype).addClass(animation_class);
-              }
+              $(nextPagePrototype).addClass(animation_class);
             }
           }
         }
@@ -147,25 +145,30 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       await $.post(
         domainApi + "/WBase/build/",
         {
+          Sort: 0,
           Name: page.Name,
           Code: ProjectDA.obj.Code,
           Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
         },
         function (data) {
-          console.log("data", data);
+          console.log("data-build: ", data);
         },
       );
     }
 
-    window.open(domainApi + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
+    try {
+      window.open(domainApi + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
 
-    $(".download-project").removeClass("downloading");
-    $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
+      $(".download-project").removeClass("downloading");
+      $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
 
-    $(".download-project>i").toggleClass("fa-spinner fa-download");
-    $(".download-project>i").removeClass("fa-spin");
+      $(".download-project>i").toggleClass("fa-spinner fa-download");
+      $(".download-project>i").removeClass("fa-spin");
 
-    toastr["success"]("Download successful!");
+      toastr["success"]("Download successful!");
+    } catch (err) {
+      toastr["error"]("Đã có lỗi xảy ra!");
+    }
   } catch (error) {
     toastr["error"](`${error}`);
   }
