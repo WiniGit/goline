@@ -137,19 +137,35 @@ async function push_dataProject() {
       }
       // }
     }
+    await fetch(
+      "/view/build", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      },
+      body: {
+        "Sort": list_page.indexOf(page),
+        "Name": Ultis.toSlug(page.Name),
+        "Code": ProjectDA.obj.Code.toLowerCase(),
+        "Item": `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
+      }
+    }
+    ).then((data) => {
+      console.log("data-start: ", data);
+    })
 
-    await $.post(
-      "/view/build",
-      {
-        Sort: list_page.indexOf(page),
-        Name: Ultis.toSlug(page.Name),
-        Code: ProjectDA.obj.Code.toLowerCase(),
-        Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
-      },
-      function (data) {
-        console.log("data-start", data);
-      },
-    );
+    // await $.post(
+    //   "/view/build",
+    //   {
+    //     Sort: list_page.indexOf(page),
+    //     Name: Ultis.toSlug(page.Name),
+    //     Code: ProjectDA.obj.Code.toLowerCase(),
+    //     Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
+    //   },
+    //   function (data) {
+    //     console.log("data-start", data);
+    //   },
+    // );
   }
   // await $.get(
   //   `https://server.wini.vn/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`,
@@ -203,6 +219,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 try {
   const ipcRenderer = require('electron').ipcRenderer;
   $('body').on('click', '.btn-play', async function () {
+
     await push_dataProject();
     ipcRenderer.send('asynchronous-play', ProjectDA.obj.Code);
   });
