@@ -82,8 +82,6 @@ async function push_dataProject(action) {
         if (router_item) {
           let clickElement = page;
           if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
-          // let new_url = `https://demo.wini.vn/${ProjectDA.obj.Code}/Views/${page.Name}.html`;
-          // let new_url = "https://demo.wini.vn/" + ProjectDA.obj.Code + `${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
           let new_url = `/${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
           $(clickElement).addClass("event-click");
           page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
@@ -133,14 +131,7 @@ async function push_dataProject(action) {
                 break;
             }
           }
-          // if (nextPagePrototype) {
           $(nextPagePrototype).addClass(animation_class);
-          // }
-
-          // if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
-          // let new_url = `https://demo.wini.vn/${ProjectDA.obj.Code}/Views/${nextPagePrototype.Name}.html`;
-          // $(clickElement).addClass("event-click");
-          // page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
         }
       }
       // }
@@ -160,7 +151,6 @@ async function push_dataProject(action) {
     );
   }
 
-  // var router = JSON.parse(ProjectDA.obj?.RouterJson != null ? ProjectDA.obj?.RouterJson : "[]");
   var router;
 
   if (ProjectDA.obj.RouterJson != null) {

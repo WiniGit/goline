@@ -75,12 +75,12 @@
 .prototype-view-container .prototype-popup-select {
     right: 0;
     z-index: 4;
+    display: none;
     padding: 4px 0;
     position: absolute;
     max-height: 500px;
     border-radius: 2px;
     box-sizing: border-box;
-    display: none;
     background-color: #262626;
 }
 
