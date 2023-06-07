@@ -118,7 +118,7 @@ class CollectionDA {
                     '<div class="collection-container col">' +
                     '    <div data-id="' + item.ID + '" class="collection-tile option-tile row">' +
                     '        <button class="box24 button-transparent"><i class="fa-solid fa-chevron-down fa-xs"></i></button>' +
-                    '        <img class="box24" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/logo.svg">' +
+                    '        <img class="box24" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@4e3b6c3/lib/assets/logo.svg">' +
                     '        <input class="button-text-5 text-title" type="text" value="' + item.Name + '" disabled>' +
                     '    </div>' +
                     '    <div class="list-request col">' + RequestDA.update_UI_ListRequestTile(item.listApi) + '</div>' +

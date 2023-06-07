@@ -16,15 +16,15 @@ class PopupDA {
     static get_popupImage(type) {
         switch (type) {
             case "info":
-                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/popup-img/info.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@4e3b6c3/lib/assets/popup-img/info.svg'
             case "error":
-                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/popup-img/error.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@4e3b6c3/lib/assets/popup-img/error.svg'
             case "warning":
-                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/popup-img/warning.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@4e3b6c3/lib/assets/popup-img/warning.svg'
             case "success":
-                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/popup-img/success.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@4e3b6c3/lib/assets/popup-img/success.svg'
             default:
-                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@f7ad6db/lib/assets/popup-img/info.svg'
+                return 'https://cdn.jsdelivr.net/gh/WiniGit/goline@4e3b6c3/lib/assets/popup-img/info.svg'
         }
     }
     static get_popupButtonColor(type) {
