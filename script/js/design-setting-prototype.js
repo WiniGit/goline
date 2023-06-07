@@ -558,9 +558,9 @@ function update_UI_selectDataPopup() {
     })
 }
 
-document.onclick = function (ev) {
+$('body').on('click', function (ev) {
     if (!$('.prototype-popup-select').is(ev.target)) {
         $('.prototype-popup-select').css('display', 'none');
     }
-}
+})
 //  && $('.prototype-popup-select').has(ev.target).length == 1

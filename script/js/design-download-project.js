@@ -40,11 +40,17 @@ function get_data_outputFromJson(json, outputID, index) {
   return output.Value;
 }
 
-async function push_dataProject(action) {
-  var page_script = "";
+$("body").on("click", '.download-project:not(".downloading")', async function () {
+  $(".download-project").addClass("downloading");
+  $(".download-project span").html('Download... <i class="fa-solid fa-download fa-sm"></i>');
+
+  $(".download-project i").toggleClass("fa-spinner fa-download");
+  $(".download-project i").addClass("fa-spin");
+
+  let page_script = "";
   document.body.getAttribute;
 
-  var list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
+  let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
   list_page = list_page.map((wb) => {
     let cloneValue = wb.value.cloneNode(true);
     cloneValue.style.position = null;
@@ -69,129 +75,89 @@ async function push_dataProject(action) {
       }
     });
     $(cloneValue).addClass("w-page");
-    cloneValue.Name = Ultis.toSlug(wb.Name);
+    cloneValue.Name = wb.Name;
     return cloneValue;
   });
+  try {
+    for (let page of list_page) {
+      page_script = "";
+      let list_itemShow = get_listItemInside(page.id);
+      for (let witem of list_itemShow) {
+        if (witem.JsonEventItem) {
+          let router_item = witem.JsonEventItem.find((e) => e.Name == "Router");
+          if (router_item) {
+            let clickElement = page;
+            if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
+            let new_url = "/" + `${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
+            $(clickElement).addClass("event-click");
+            page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
+          }
 
-  for (let page of list_page) {
-    page_script = "";
-    var list_itemShow = get_listItemInside(page.id);
-    for (let witem of list_itemShow) {
-      if (witem.JsonEventItem) {
-        let router_item = witem.JsonEventItem.find((e) => e.Name == "Router");
-        if (router_item) {
-          let clickElement = page;
-          if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
-          let new_url = `/${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
-          $(clickElement).addClass("event-click");
-          page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
-        }
-      }
-
-      if (witem.PrototypeID != null) {
-        let nextPagePrototype = list_page.find((e) => e.id == witem.PrototypeID);
-        if (nextPagePrototype) {
-          let animation = witem.JsonEventItem?.find((e) => e.Name === "Animation");
-          let animation_class = "";
-          if (animation != null) {
-            animation_class += " animation_move";
-            console.log(animation);
-            switch (animation.Data.Animation) {
-              case EnumAnimation.MoveIn:
-                animation_class += " in";
-                break;
-              case EnumAnimation.MoveOut:
-                animation_class += " out";
-                break;
-              case EnumAnimation.SlideIn:
-                animation_class += " in";
-                break;
-              case EnumAnimation.SlideOut:
-                animation_class += " out";
-                break;
-              default:
-                animation_class += " in";
-                break;
-            }
-            switch (animation.Data.Direction) {
-              case "left":
-                animation_class += " left";
-                break;
-              case "right":
-                animation_class += " right";
-                break;
-              case "up":
-                animation_class += " up";
-                break;
-              case "down":
-                animation_class += " down";
-                break;
-              default:
-                animation_class += " left";
-                break;
+          if (witem.PrototypeID != null) {
+            let nextPagePrototype = list_page.find((e) => e.id == witem.PrototypeID);
+            if (nextPagePrototype) {
+              let animation = witem.JsonEventItem?.find((e) => e.Name === "Animation");
+              let animation_class = "";
+              if (animation != null) {
+                animation_class += " animation_move";
+                console.log(animation);
+                switch (animation.Data.Animation) {
+                  case EnumAnimation.MoveIn:
+                    animation_class += " in";
+                    break;
+                  case EnumAnimation.MoveOut:
+                    animation_class += " out";
+                    break;
+                  case EnumAnimation.SlideIn:
+                    animation_class += " in";
+                    break;
+                  case EnumAnimation.SlideOut:
+                    animation_class += " out";
+                    break;
+                  default:
+                    animation_class += " in";
+                    break;
+                }
+                switch (animation.Data.Direction) {
+                  case "left":
+                    animation_class += " left";
+                    break;
+                  case "right":
+                    animation_class += " right";
+                    break;
+                  case "up":
+                    animation_class += " up";
+                    break;
+                  case "down":
+                    animation_class += " down";
+                    break;
+                  default:
+                    animation_class += " left";
+                    break;
+                }
+              }
+              if (nextPagePrototype) {
+                $(nextPagePrototype).addClass(animation_class);
+              }
             }
           }
-          $(nextPagePrototype).addClass(animation_class);
         }
       }
-      // }
+
+      await $.post(
+        domainApi + "/WBase/build/",
+        {
+          Name: page.Name,
+          Code: ProjectDA.obj.Code,
+          Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
+        },
+        function (data) {
+          console.log("data", data);
+        },
+      );
     }
 
-    await $.post(
-      "https://server.wini.vn/buildstart",
-      {
-        Sort: list_page.indexOf(page),
-        Name: Ultis.toSlug(page.Name),
-        Code: ProjectDA.obj.Code.toLowerCase(),
-        Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
-      },
-      function (data) {
-        console.log("data-start", data);
-      },
-    );
-  }
-
-  var router;
-
-  if (ProjectDA.obj.RouterJson != null) {
-    router = JSON.parse(ProjectDA.obj.RouterJson);
-  }
-  else {
-    router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].Name }]
-  }
-
-  await $.get(
-    `https://server.wini.vn/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`,
-    function (data) {
-      console.log("data-end", data);
-      action();
-    },
-  );
-}
-
-$("body").on("click", '.download-project:not(".downloading")', async function () {
-  $(".download-project").addClass("downloading");
-  $(".download-project span").html('Download... <i class="fa-solid fa-download fa-sm"></i>');
-
-  $(".download-project i").toggleClass("fa-spinner fa-download");
-  $(".download-project i").addClass("fa-spin");
-
-  let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
-
-  try {
-    push_dataProject(
-      function () {
-        var router;
-        if (ProjectDA.obj.RouterJson != null) {
-          router = JSON.parse(ProjectDA.obj.RouterJson);
-        }
-        else {
-          router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].Name }]
-        }
-        window.open("https://server.wini.vn/download?code=" + ProjectDA.obj.Code.toLowerCase());
-      }
-    );
-
+    window.open(domainApi + `/WBase/buildend?code=${ProjectDA.obj.Code}&name=${ProjectDA.obj.Name}&id=${ProjectDA.obj.ID}`);
 
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
@@ -200,23 +166,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     $(".download-project>i").removeClass("fa-spin");
 
     toastr["success"]("Download successful!");
-  }
-  catch (error) {
+  } catch (error) {
     toastr["error"](`${error}`);
-    $(".download-project").removeClass("downloading");
-    $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
-
-    $(".download-project>i").toggleClass("fa-spinner fa-download");
-    $(".download-project>i").removeClass("fa-spin");
   }
 });
-
-try {
-  const ipcRenderer = require('electron').ipcRenderer;
-  $('body').on('click', '.btn-play', function () {
-    push_dataProject(function () { });
-    ipcRenderer.send('asynchronous-play', ProjectDA.obj.Code);
-  });
-} catch (error) {
-
-}
