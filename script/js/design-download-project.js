@@ -156,7 +156,6 @@ async function push_dataProject(action) {
       },
       function (data) {
         console.log("data-start", data);
-        action;
       },
     );
   }
@@ -175,9 +174,7 @@ async function push_dataProject(action) {
     `https://server.wini.vn/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`,
     function (data) {
       console.log("data-end", data);
-      action(
-        function () { }
-      );
+      action();
     },
   );
 }
@@ -227,7 +224,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 try {
   const ipcRenderer = require('electron').ipcRenderer;
   $('body').on('click', '.btn-play', function () {
-    push_dataProject();
+    push_dataProject(function () { });
     ipcRenderer.send('asynchronous-play', ProjectDA.obj.Code);
   });
 } catch (error) {
