@@ -1,5 +1,3 @@
-ProjectDA.getByID();
-
 function get_listItemInside(pageID) {
   let list = wbase_list.filter((a) => a.ListID.includes(pageID) || a.GID === pageID);
   return list;
