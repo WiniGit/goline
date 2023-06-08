@@ -193,7 +193,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     if (ProjectDA.obj.RouterJson != null) {
       router = JSON.parse(ProjectDA.obj.RouterJson);
     } else {
-      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: list_page[0].Name }];
+      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[0].Name) }];
     }
     await $.post(
       "/view/download",
@@ -228,6 +228,15 @@ try {
   const ipcRenderer = require("electron").ipcRenderer;
   $("body").on("click", ".btn-play", async function () {
     await push_dataProject(true);
-    ipcRenderer.send("asynchronous-play", ProjectDA.obj.Code);
+
+    let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
+
+    var router;
+    if (ProjectDA.obj.RouterJson != null) {
+      router = JSON.parse(ProjectDA.obj.RouterJson);
+    } else {
+      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[0].Name) }];
+    }
+    ipcRenderer.send("asynchronous-play", `${ProjectDA.obj.Code}/Views/${router[0].PageName}.html`);
   });
 } catch (error) { }
