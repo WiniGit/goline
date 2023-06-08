@@ -141,7 +141,7 @@ async function push_dataProject() {
       "/view/build",
       {
         Sort: list_page.indexOf(page),
-        Name: Ultis.toSlug(page.Name),
+        Name: page.Name,
         Code: ProjectDA.obj.Code.toLowerCase(),
         Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
       },
