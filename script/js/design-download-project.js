@@ -40,7 +40,7 @@ function get_data_outputFromJson(json, outputID, index) {
   return output.Value;
 }
 
-async function push_dataProject() {
+async function push_dataProject(isDemo) {
   var page_script = "";
   document.body.getAttribute;
 
@@ -84,7 +84,12 @@ async function push_dataProject() {
           if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
 
           $(clickElement).addClass("event-click");
-          let new_url = `/${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
+          let new_url = '';
+          if (isDemo == true) {
+            new_url = `https://demo.wini.vn/${ProjectDA.obj.Code}/Views/${Ultis.toSlug(page.Name)}.html`
+          } else {
+            new_url = `/${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
+          }
           page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
         }
       }
@@ -182,7 +187,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
 
   try {
-    await push_dataProject();
+    await push_dataProject(false);
 
     var router;
     if (ProjectDA.obj.RouterJson != null) {
@@ -222,7 +227,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 try {
   const ipcRenderer = require("electron").ipcRenderer;
   $("body").on("click", ".btn-play", async function () {
-    await push_dataProject();
+    await push_dataProject(true);
     ipcRenderer.send("asynchronous-play", ProjectDA.obj.Code);
   });
-} catch (error) {}
+} catch (error) { }
