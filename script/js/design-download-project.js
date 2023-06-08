@@ -137,22 +137,20 @@ async function push_dataProject() {
       }
       // }
     }
-    await fetch(
-      "/view/build", {
+    await fetch("/view/build", {
       method: "POST",
       headers: {
-        "Content-type": "application/json"
+        "Content-type": "application/json",
       },
-      body: {
-        "Sort": list_page.indexOf(page),
-        "Name": Ultis.toSlug(page.Name),
-        "Code": ProjectDA.obj.Code.toLowerCase(),
-        "Item": `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
-      }
-    }
-    ).then((data) => {
+      body: JSON.stringify({
+        Sort: list_page.indexOf(page),
+        Name: Ultis.toSlug(page.Name),
+        Code: ProjectDA.obj.Code.toLowerCase(),
+        Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
+      }),
+    }).then((data) => {
       console.log("data-start: ", data);
-    })
+    });
 
     // await $.post(
     //   "/view/build",
@@ -191,12 +189,10 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     var router;
     if (ProjectDA.obj.RouterJson != null) {
       router = JSON.parse(ProjectDA.obj.RouterJson);
-    }
-    else {
-      router = [{ Id: 0, Name: '', Route: '', Sort: 0, PageName: list_page[0].Name }]
+    } else {
+      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: list_page[0].Name }];
     }
     window.open(domainApi + `/WBase/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`);
-
 
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
@@ -205,8 +201,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     $(".download-project>i").removeClass("fa-spin");
 
     toastr["success"]("Download successful!");
-  }
-  catch (error) {
+  } catch (error) {
     toastr["error"](`${error}`);
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
@@ -217,12 +212,9 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 });
 
 try {
-  const ipcRenderer = require('electron').ipcRenderer;
-  $('body').on('click', '.btn-play', async function () {
-
+  const ipcRenderer = require("electron").ipcRenderer;
+  $("body").on("click", ".btn-play", async function () {
     await push_dataProject();
-    ipcRenderer.send('asynchronous-play', ProjectDA.obj.Code);
+    ipcRenderer.send("asynchronous-play", ProjectDA.obj.Code);
   });
-} catch (error) {
-
-}
+} catch (error) {}
