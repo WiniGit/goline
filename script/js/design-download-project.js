@@ -86,11 +86,18 @@ async function push_dataProject(isDemo) {
           $(clickElement).addClass("event-click");
           let new_url = '';
           if (isDemo == true) {
-            new_url = `https://demo.wini.vn/${ProjectDA.obj.Code}/Views/${Ultis.toSlug(page.Name)}.html`
+            let new_router = RouterDA.list.find((e) => e.Id == router_item.RouterID);
+            if (new_router != null) {
+              new_url = `https://demo.wini.vn/${ProjectDA.obj.Code}/Views/${Ultis.toSlug(new_router.PageName)}.html`
+            } else {
+              new_url = ``;
+            }
           } else {
             new_url = `/${RouterDA.list.find((e) => e.Id == router_item.RouterID)?.Route ?? ""}`;
           }
-          page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
+          if (new_url.length > 0) {
+            page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
+          }
         }
       }
 
