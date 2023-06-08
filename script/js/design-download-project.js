@@ -197,7 +197,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
         Item: JSON.stringify(router),
       },
       function (data) {
-        console.log("data-end: ", data);
+        window.open(window.location.hostname + `/project/${ProjectDA.obj.Code.toLowerCase()}.zip`);
       },
     );
 
