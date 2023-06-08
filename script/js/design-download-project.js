@@ -137,20 +137,18 @@ async function push_dataProject() {
       }
       // }
     }
-    await fetch("/view/build", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
+    await $.post(
+      "/view/build",
+      {
         Sort: list_page.indexOf(page),
         Name: Ultis.toSlug(page.Name),
         Code: ProjectDA.obj.Code.toLowerCase(),
         Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
-      }),
-    }).then((data) => {
-      console.log("data-start: ", data);
-    });
+      },
+      function (data) {
+        console.log("data-start: ", data);
+      },
+    );
 
     // await $.post(
     //   "/view/build",
@@ -192,7 +190,16 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     } else {
       router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: list_page[0].Name }];
     }
-    window.open(domainApi + `/WBase/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`);
+    await $.post(
+      "/view/download",
+      {
+        Code: ProjectDA.obj.Code.toLowerCase(),
+        Item: JSON.stringify(router),
+      },
+      function (data) {
+        console.log("data-end: ", data);
+      },
+    );
 
     $(".download-project").removeClass("downloading");
     $(".download-project>span").html('Download <i class="fa-solid fa-download fa-sm"></i>');
