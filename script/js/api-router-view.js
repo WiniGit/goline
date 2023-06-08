@@ -65,7 +65,7 @@ $('body').on('click', '.page-value', function (ev) {
 
 $('body').on('click', '.select-page-popup .option-tile', function (ev) {
     RouterDA.selected = RouterDA.list.find(e => e.Id == $('.select-page-popup').attr('rid'));
-    if (RouterDA.selected.PageId != $(this).data('id')) {
+    if (RouterDA.selected.PageName != $(this).data('name')) {
         RouterDA.selected.PageId = $(this).data('id');
         RouterDA.selected.PageName = $(this).data('name');
         $('.router-row[data-id="' + `${$('.select-page-popup').attr('rid')}` + '"]').replaceWith(RouterDA.create_routerRow(RouterDA.selected));

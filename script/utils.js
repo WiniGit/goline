@@ -401,7 +401,7 @@ class Ultis {
     }
 
     static toSlug(input) {
-        return input.toLowerCase()
+        return input.toString().toLowerCase()
             .replace(/đ/g, 'd')
             .replace(/[í|ì|ỉ|ĩ|ị]/g, 'i')
             .replace(/[ý|ỳ|ỷ|ỹ|ỵ]/g, 'y')

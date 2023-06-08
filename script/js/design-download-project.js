@@ -1,3 +1,5 @@
+ProjectDA.getByID();
+
 function get_listItemInside(pageID) {
   let list = wbase_list.filter((a) => a.ListID.includes(pageID) || a.GID === pageID);
   return list;
@@ -200,7 +202,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
     if (ProjectDA.obj.RouterJson != null) {
       router = JSON.parse(ProjectDA.obj.RouterJson);
     } else {
-      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[0].Name) }];
+      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[list_page.length - 1].Name) }];
     }
     await $.post(
       "/view/download",
@@ -242,7 +244,7 @@ try {
     if (ProjectDA.obj.RouterJson != null) {
       router = JSON.parse(ProjectDA.obj.RouterJson);
     } else {
-      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[0].Name) }];
+      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[list_page.length - 1].Name) }];
     }
     ipcRenderer.send("asynchronous-play", `${ProjectDA.obj.Code}/Views/${router[0].PageName}.html`);
   });
