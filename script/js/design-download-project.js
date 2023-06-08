@@ -198,7 +198,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       },
       function (data) {
         console.log("build-end: ", data);
-        window.open(`/project/${ProjectDA.obj.Code.toLowerCase()}.zip`);
+        window.open(urlFile + `/project/${ProjectDA.obj.Code.toLowerCase()}.zip`);
       },
     );
 
