@@ -892,7 +892,7 @@ function moveListener(event) {
             handToolDrag(event);
           } else if (isAroundPoint(prototypePoint, event) || drag_prototype_endppoint) {
             dragPrototypeLine(event);
-          } else if (keyid != "z") {
+          } else if (keyid != "z" && design_view_index !== 1) {
             let isCreate = false;
             if (ToolState.create_new_type.some((tool) => tool_state == tool) && checkpad == 0) {
               let offset_convert = offsetScale(Math.min(minx, event.pageX), Math.min(miny, event.pageY));
@@ -1976,92 +1976,95 @@ function drawCurvePrototype() {
       if (witem.PrototypeID != null && witem.PrototypeID != "") {
         let startPage = document.getElementById(witem.GID);
         let endPage = document.getElementById(witem.PrototypeID);
+        if (endPage) {
+          let startPosition = startPage.getBoundingClientRect();
+          let endPosition = endPage.getBoundingClientRect();
 
-        let startPosition = startPage.getBoundingClientRect();
-        let endPosition = endPage.getBoundingClientRect();
+          let listPoint1 = getPagePrototypePoint(startPage);
+          let listPoint2 = getPagePrototypePoint(endPage);
 
-        let listPoint1 = getPagePrototypePoint(startPage);
-        let listPoint2 = getPagePrototypePoint(endPage);
+          let _startPoint;
+          let _endPoint;
 
-        let _startPoint;
-        let _endPoint;
-
-        if (startPosition.x + startPosition.width < endPosition.x) {
-          _startPoint = listPoint1.o2;
-          if (startPosition.y + startPosition.height < endPosition.y) {
-            _endPoint = listPoint2.o1;
-            controlPoint = 1;
-            direction = "bottom";
-          } else if (startPosition.y > endPosition.y + endPosition.height) {
-            _endPoint = listPoint2.o3;
-            controlPoint = 1;
-            direction = "top";
-          } else {
-            _endPoint = listPoint2.o4;
-            controlPoint = 2;
-            direction = "right";
-          }
-          isHorizontal = true;
-        } else if (startPosition.x > endPosition.x + endPosition.width) {
-          _startPoint = listPoint1.o4;
-          if (startPosition.y + startPosition.height < endPosition.y) {
-            _endPoint = listPoint2.o1;
-            controlPoint = 1;
-            direction = "bottom";
-          } else if (startPosition.y > endPosition.y + endPosition.height) {
-            _endPoint = listPoint2.o3;
-            controlPoint = 1;
-            direction = "top";
-          } else {
-            _endPoint = listPoint2.o2;
-            controlPoint = 2;
-            direction = "left";
-          }
-          isHorizontal = true;
-        } else {
-          if (startPosition.y > endPosition.y + endPosition.height) {
-            _startPoint = listPoint1.o1;
-            _endPoint = listPoint2.o3;
-            controlPoint = 2;
-            isHorizontal = false;
-            direction = "top";
-          } else if (startPosition.y + startPosition.height < endPosition.y) {
-            _startPoint = listPoint1.o3;
-            _endPoint = listPoint2.o1;
-            controlPoint = 2;
-            isHorizontal = false;
-            direction = "bottom";
-          } else {
+          if (startPosition.x + startPosition.width < endPosition.x) {
             _startPoint = listPoint1.o2;
-            _endPoint = listPoint2.o2;
-            controlPoint = 1;
-            direction = "top";
-          }
-        }
-
-        let curve = new Path2D();
-
-        curve.arc(_startPoint.x, _startPoint.y, 6 * scale, 0, 2 * Math.PI);
-
-        curve.moveTo(_startPoint.x, _startPoint.y);
-        if (controlPoint == 2) {
-          if (isHorizontal) {
-            curve.bezierCurveTo(_startPoint.x + (_endPoint.x - _startPoint.x) * 0.5, _startPoint.y, _startPoint.x + (_endPoint.x - _startPoint.x) * 0.5, _endPoint.y, _endPoint.x, _endPoint.y);
+            if (startPosition.y + startPosition.height < endPosition.y) {
+              _endPoint = listPoint2.o1;
+              controlPoint = 1;
+              direction = "bottom";
+            } else if (startPosition.y > endPosition.y + endPosition.height) {
+              _endPoint = listPoint2.o3;
+              controlPoint = 1;
+              direction = "top";
+            } else {
+              _endPoint = listPoint2.o4;
+              controlPoint = 2;
+              direction = "right";
+            }
+            isHorizontal = true;
+          } else if (startPosition.x > endPosition.x + endPosition.width) {
+            _startPoint = listPoint1.o4;
+            if (startPosition.y + startPosition.height < endPosition.y) {
+              _endPoint = listPoint2.o1;
+              controlPoint = 1;
+              direction = "bottom";
+            } else if (startPosition.y > endPosition.y + endPosition.height) {
+              _endPoint = listPoint2.o3;
+              controlPoint = 1;
+              direction = "top";
+            } else {
+              _endPoint = listPoint2.o2;
+              controlPoint = 2;
+              direction = "left";
+            }
+            isHorizontal = true;
           } else {
-            curve.bezierCurveTo(_startPoint.x, _endPoint.y + (_startPoint.y - _endPoint.y) / 2, _endPoint.x, _endPoint.y + (_startPoint.y - _endPoint.y) / 2, _endPoint.x, _endPoint.y);
+            if (startPosition.y > endPosition.y + endPosition.height) {
+              _startPoint = listPoint1.o1;
+              _endPoint = listPoint2.o3;
+              controlPoint = 2;
+              isHorizontal = false;
+              direction = "top";
+            } else if (startPosition.y + startPosition.height < endPosition.y) {
+              _startPoint = listPoint1.o3;
+              _endPoint = listPoint2.o1;
+              controlPoint = 2;
+              isHorizontal = false;
+              direction = "bottom";
+            } else {
+              _startPoint = listPoint1.o2;
+              _endPoint = listPoint2.o2;
+              controlPoint = 1;
+              direction = "top";
+            }
           }
+
+          let curve = new Path2D();
+
+          curve.arc(_startPoint.x, _startPoint.y, 6 * scale, 0, 2 * Math.PI);
+
+          curve.moveTo(_startPoint.x, _startPoint.y);
+          if (controlPoint == 2) {
+            if (isHorizontal) {
+              curve.bezierCurveTo(_startPoint.x + (_endPoint.x - _startPoint.x) * 0.5, _startPoint.y, _startPoint.x + (_endPoint.x - _startPoint.x) * 0.5, _endPoint.y, _endPoint.x, _endPoint.y);
+            } else {
+              curve.bezierCurveTo(_startPoint.x, _endPoint.y + (_startPoint.y - _endPoint.y) / 2, _endPoint.x, _endPoint.y + (_startPoint.y - _endPoint.y) / 2, _endPoint.x, _endPoint.y);
+            }
+          } else {
+            curve.quadraticCurveTo(_startPoint.x + (_endPoint.x - _startPoint.x) * 0.8, _startPoint.y, _endPoint.x, _endPoint.y);
+          }
+
+          drawArrow(curve, _startPoint, _endPoint);
+
+          listCurve.push({
+            curveValue: curve,
+            startPoint: _startPoint,
+            startPage: witem,
+          });
+          ctxr.stroke(curve);
         } else {
-          curve.quadraticCurveTo(_startPoint.x + (_endPoint.x - _startPoint.x) * 0.8, _startPoint.y, _endPoint.x, _endPoint.y);
+          witem.PrototypeID = null;
         }
-
-        drawArrow(curve, _startPoint, _endPoint);
-
-        listCurve.push({
-          curveValue: curve,
-          startPoint: _startPoint,
-          startPage: witem,
-        });
-        ctxr.stroke(curve);
       }
     }
   }
