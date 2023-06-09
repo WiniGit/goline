@@ -2488,7 +2488,7 @@ function upListener(event) {
     } else {
     }
     drag_prototype_endppoint = null;
-  } else if (target_view && !document.getElementById("wini_features") && design_view_index !== 1) {
+  } else if (target_view && !document.getElementById("wini_features")) {
     console.log(" zoom" + keyid);
     if (keyid == "z" && !(event.metaKey || (!isMac && event.ctrlKey))) {
       if (event.altKey && scale > min_scale) {
