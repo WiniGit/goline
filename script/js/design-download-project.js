@@ -145,6 +145,17 @@ async function push_dataProject() {
             }
           }
           $(nextPagePrototype).addClass(animation_class);
+
+          let clickElement = page;
+          if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
+
+          $(clickElement).addClass("event-click");
+          let new_url = '';
+          new_url = `/${Ultis.toSlug(nextPagePrototype.Name)}`;
+          // }
+          if (new_url.length > 0) {
+            page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
+          }
         }
       }
       // }
@@ -231,27 +242,29 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
   }
 });
 
-// try {
-// const ipcRenderer = require("electron").ipcRenderer;
-$("body").on("click", ".btn-play", async function () {
-  await push_dataProject();
+try {
+  const ipcRenderer = require("electron").ipcRenderer;
+  $("body").on("click", ".btn-play", async function () {
+    await push_dataProject();
 
-  var router;
-  if (ProjectDA.obj.RouterJson != null) {
-    router = JSON.parse(ProjectDA.obj.RouterJson);
-  } else {
-    router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[list_page.length - 1].Name) }];
-  }
-  await $.post(
-    "/view/download",
-    {
-      Code: ProjectDA.obj.Code.toLowerCase(),
-      Item: JSON.stringify(router),
-    },
-    function (data) {
-      console.log("build-end: ", data);
-      window.open(`https://wini.vn`);
-    },
-  );
-});
-// } catch (error) { }
+    var router;
+    if (ProjectDA.obj.RouterJson != null) {
+      router = JSON.parse(ProjectDA.obj.RouterJson);
+    } else {
+      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[list_page.length - 1].Name) }];
+    }
+    await $.post(
+      "/view/download",
+      {
+        Code: ProjectDA.obj.Code.toLowerCase(),
+        Item: JSON.stringify(router),
+      },
+      function (data) {
+        console.log("build-end: ", data);
+        // window.open(`https://wini.vn`);
+        // ${ProjectDA.obj.Code}/Views/${router[0].PageName}.html
+        ipcRenderer.send("asynchronous-play", `${ProjectDA.obj.Code}`);
+      },
+    );
+  });
+} catch (error) { }
