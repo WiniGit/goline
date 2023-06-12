@@ -2584,10 +2584,10 @@ function upListener(event) {
         for (let addItem of list_add) {
           let eHTML = document.getElementById(addItem.GID);
           if (addItem.StyleItem.FrameItem?.Width != undefined && addItem.StyleItem.FrameItem.Width > 0) {
-            addItem.StyleItem.FrameItem.Width = eHTML.offsetWidth ?? addItem.StyleItem.FrameItem.Width;
+            addItem.StyleItem.FrameItem.Width = eHTML?.offsetWidth ?? addItem.StyleItem.FrameItem.Width;
           }
           if (addItem.StyleItem.FrameItem?.Height != undefined && addItem.StyleItem.FrameItem.Height > 0) {
-            addItem.StyleItem.FrameItem.Height = eHTML.offsetHeight ?? addItem.StyleItem.FrameItem.Height;
+            addItem.StyleItem.FrameItem.Height = eHTML?.offsetHeight ?? addItem.StyleItem.FrameItem.Height;
           }
         }
       action_list[action_index].selected = [...list_add.filter((e) => e.ParentID === selected_list[0].ParentID).map((wbasItem) => JSON.parse(JSON.stringify(wbasItem)))];
