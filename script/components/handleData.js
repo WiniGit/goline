@@ -310,9 +310,9 @@ function initElement(wbaseHTML) {
       break;
     case EnumCate.textformfield:
       if (wbaseHTML.style.height == "fit-content") {
-        wbaseHTML.querySelector(".textfield").parentElement.style.height = "fit-content";
+        wbaseHTML.querySelector(".textfield")?.parentElement?.style.height = "fit-content";
       } else {
-        wbaseHTML.querySelector(".textfield").parentElement.style.height = "100%";
+        wbaseHTML.querySelector(".textfield")?.parentElement?.style.height = "100%";
       }
       break;
     case EnumCate.table:
