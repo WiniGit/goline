@@ -309,10 +309,13 @@ function initElement(wbaseHTML) {
       $(wbaseHTML.querySelector("input")).trigger("change");
       break;
     case EnumCate.textformfield:
-      if (wbaseHTML.style.height == "fit-content") {
-        wbaseHTML.querySelector(".textfield").parentElement.style.height = "fit-content";
-      } else {
-        wbaseHTML.querySelector(".textfield").parentElement.style.height = "100%";
+      let textFieldRow = wbaseHTML.querySelector(".textfield");
+      if(textFieldRow) {
+        if (wbaseHTML.style.height == "fit-content") {
+          textFieldRow.parentElement.style.height = "fit-content";
+        } else {
+          textFieldRow.parentElement.style.height = "100%";
+        }
       }
       break;
     case EnumCate.table:
