@@ -267,6 +267,7 @@ socketH.on('server-post', (data) => {
                     if (TeamDA.selected.ParentID == null) {
                         $(`.team-nav[data-id=${TeamDA.selected.ID}]`).remove();
                         TeamDA.list = TeamDA.list.filter(e => e != TeamDA.selected);
+                        
                     } else {
                         $(`.team-child-nav[data-id=${TeamDA.selected.ID}]`).remove();
                         TeamDA.selected.ListChild = TeamDA.list.ListChild.filter(e => e != TeamDA.selected);
@@ -295,6 +296,9 @@ socketH.on('server-post', (data) => {
                 case EnumEvent.delete:
                     $('#info-container .info_block').css("visibility", "hidden");
                     $(`.project-card[data-id=${ProjectDA.selected.ID}], .project-tile[data-id=${ProjectDA.selected.ID}]`).remove();
+                    break;
+                case EnumEvent.joinbycode:
+                    window.location.reload();
                     break;
             }
             break;
