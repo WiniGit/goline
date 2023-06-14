@@ -1,4 +1,6 @@
 // khai báo biến ứng vs các view
+var left_view = document.getElementById("left_view");
+var right_view = document.getElementById("right_view");
 var layer_view = document.getElementById("Layer");
 var assets_view = document.getElementById("Assets");
 var design_view = document.getElementById("Design");

@@ -1,7 +1,6 @@
 //setup left view
 function setupLeftView() {
   // layer view HTML
-  let left_view = document.getElementById("left_view");
   left_view.style.width = `${left_view.offsetWidth}px`;
   // setup tab change
   let list_tab_view = document.getElementsByClassName("tab_left");
@@ -660,11 +659,8 @@ async function initUIAssetView(reloadComponent = false) {
     // list component
     if (select_component) {
       children.push(instance_div);
-      let left_view = document.getElementById("left_view");
       if (left_view.offsetWidth < 320) {
         left_view.style.width = "380px";
-        let reize_left_view = document.getElementById("resize_left_view_line");
-        reize_left_view.style.left = "376px";
       }
       let instance_demo = document.createElement("div");
       instance_demo.className = "instance_demo";
@@ -1674,6 +1670,7 @@ function dragInstanceEnd(event) {
   newWb.StyleItem.FrameItem.Height = newWb.value.offsetHeight;
   newWb.value.style.width = newWb.value.offsetWidth + "px";
   newWb.value.style.height = newWb.value.offsetHeight + "px";
+  newWb.value.style.transform = null;
   newWb.value.removeAttribute("iswini");
   if (isTableParent) {
     let demo = document.getElementById("demo_auto_layout");
@@ -1783,11 +1780,4 @@ function dragInstanceEnd(event) {
   addSelectList([newWb]);
   newWb.value.setAttribute("loading", "true");
   action_list[action_index].tmpHTML = [newWb.value];
-  let centerRect = newWb.value.getBoundingClientRect();
-  centerRect = offsetScale(centerRect.x + centerRect.width / 2, centerRect.y + centerRect.height / 2);
-  divSection.style.transition = "1s";
-  scrollbdClick(centerRect.x, centerRect.y, newWb.value.offsetWidth, newWb.value.offsetHeight);
-  divSection.style.transition = "none";
-  updateHoverWbase();
-  PageDA.saveSettingsPage();
 }

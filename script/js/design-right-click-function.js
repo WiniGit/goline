@@ -163,17 +163,12 @@ function popupRightClick(event) {
 }
 
 function showOnOffUI() {
-    let left_view = document.getElementById("left_view");
-    let reize_left_view = document.getElementById("resize_left_view_line");
-    let right_view = document.getElementById("right_view");
     if (left_view.style.display != "none") {
         left_view.style.display = "none";
-        reize_left_view.style.display = "none";
         right_view.style.display = "none";
         scrollTop.style.right = "0px";
     } else {
         left_view.style.display = "block";
-        reize_left_view.style.display = "block";
         right_view.style.display = "block";
         scrollTop.style.right = "260px";
     }

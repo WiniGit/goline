@@ -11,8 +11,8 @@ var totalH = height + scale;
 var totalW = width + scale;
 var topx = 0,
   leftx = 0,
-  leftw = document.getElementById("left_view")?.offsetWidth ?? 0,
-  reightw = document.getElementById("right_view")?.offsetWidth ?? 0;
+  leftw = left_view?.offsetWidth ?? 0,
+  reightw = right_view?.offsetWidth ?? 0;
 var showF12 = false;
 var selectPath;
 var design_view_index = 0;
@@ -788,6 +788,16 @@ function moveListener(event) {
   if (event.target === document.activeElement) return;
   event.preventDefault();
   let target_view;
+  if (window.getComputedStyle(left_view).display !== "none" && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {
+    document.body.style.cursor = "e-resize";
+    if (event.buttons == 1) {
+      left_view.resizing = true;
+      left_view.style.width = event.pageX + "px";
+      return;
+    }
+  } else {
+    document.body.style.cursor = null;
+  }
   if (event.buttons == 1 && PageDA.enableEdit) {
     if (instance_drag) {
       target_view = "left_view";
@@ -862,14 +872,6 @@ function moveListener(event) {
     case "canvas_view":
       time_down = 0;
       switch (idbutton) {
-        case "resize_left_view_line":
-          let resize_line = document.getElementById("resize_left_view_line");
-          let new_size = event.screenX;
-          if (new_size <= 640) {
-            resize_line.style.left = `${new_size - 4}px`;
-            left_view.style.width = `${new_size}px`;
-          }
-          break;
         case scrollTop.id:
           objscroll.hc = ((objscroll.y1 - objscroll.y) * scale) / (objscroll.h - scrollTop.offsetHeight - 13);
           topx -= (event.pageY - miny) * objscroll.hc;
@@ -1410,44 +1412,31 @@ function moveListener(event) {
       if (instance_drag) {
         dragInstanceUpdate(event);
       } else {
-        switch (idbutton) {
-          case "resize_left_view_line":
-            let resize_line = document.getElementById("resize_left_view_line");
-            let new_size = event.screenX;
-            let min_size = assets_view.style.display == "none" ? 180 : 320;
-            if (new_size >= min_size) {
-              resize_line.style.left = `${new_size - 4}px`;
-              left_view.style.width = `${new_size}px`;
-            }
-            break;
-          default:
-            if (typeof event.target.className == "string" && event.target.className?.includes("instance_demo")) {
-              previousX = event.pageX;
-              previousY = event.pageY;
-              instance_drag = event.target.firstChild;
-              let target_rect = instance_drag.getBoundingClientRect();
-              document.body.appendChild(instance_drag);
-              instance_drag.style.position = "absolute";
-              instance_drag.style.pointerEvents = "none";
-              instance_drag.style.left = target_rect.x + "px";
-              instance_drag.style.top = target_rect.y + "px";
-              instance_drag.style.transform = null;
-              instance_drag.style.zIndex = 2;
-            } else if (sortLayer) {
-              if (sortLayer.getAttribute("parentid")) {
+        if (typeof event.target.className == "string" && event.target.className?.includes("instance_demo")) {
+          previousX = event.pageX;
+          previousY = event.pageY;
+          instance_drag = event.target.firstChild;
+          let target_rect = instance_drag.getBoundingClientRect();
+          document.body.appendChild(instance_drag);
+          instance_drag.style.position = "absolute";
+          instance_drag.style.pointerEvents = "none";
+          instance_drag.style.left = target_rect.x + "px";
+          instance_drag.style.top = target_rect.y + "px";
+          instance_drag.style.transform = null;
+          instance_drag.style.zIndex = 2;
+        } else if (sortLayer) {
+          if (sortLayer.getAttribute("parentid")) {
+            ondragSortLayer(event);
+          } else {
+            if (sortLayer.offX == null) {
+              sortLayer.offX = event.pageX;
+              sortLayer.offY = event.pageY;
+            } else {
+              if (Math.abs(event.pageX - sortLayer.offX) > 2 || Math.abs(event.pageY - sortLayer.offY) > 2) {
                 ondragSortLayer(event);
-              } else {
-                if (sortLayer.offX == null) {
-                  sortLayer.offX = event.pageX;
-                  sortLayer.offY = event.pageY;
-                } else {
-                  if (Math.abs(event.pageX - sortLayer.offX) > 2 || Math.abs(event.pageY - sortLayer.offY) > 2) {
-                    ondragSortLayer(event);
-                  }
-                }
               }
             }
-            break;
+          }
         }
       }
       break;
@@ -2350,6 +2339,7 @@ function clickEvent(event) {
 function upListener(event) {
   // updateUIF12();
   if (event.target == document.activeElement) return;
+  left_view.resizing = false;
   console.log("up ", checkpad, action_list);
   event.preventDefault();
   let target_view;

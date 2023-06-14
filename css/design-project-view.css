@@ -258,11 +258,11 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   top: 86px;
   left: 0;
   height: calc(100% - 86px);
-  width: 260px;
   background-color: white;
   position: absolute;
   overflow-x: visible;
-  min-width: 208px !important;
+  min-width: 221px !important;
+  max-width: 448px !important;
 }
 
 #layer-search {

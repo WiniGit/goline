@@ -32,7 +32,6 @@ function setupRightView() {
     });
   }
   // create elements in design view
-  let right_view = document.getElementById("right_view");
   right_view.onkeydown = function (e) {
     if (e.key === "Enter" && document.activeElement.localName === "input") {
       document.activeElement.blur();
@@ -4497,8 +4496,6 @@ function hidePopup(event) {
 function isHidden(elHTML) {
   let bouncingClient = elHTML?.getBoundingClientRect();
   if (bouncingClient) {
-    let left_view = document.getElementById("left_view");
-    let right_view = document.getElementById("right_view");
     let offsetTop = 0;
     let offsetLeft = left_view.style.display == "none" ? 0 : left_view.offsetWidth;
     let offsetBottom = divMain.offsetHeight;

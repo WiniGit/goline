@@ -78,17 +78,6 @@
   background-color: #f1f1f1;
 }
 
-#resize_left_view_line {
-  padding: 0 4px;
-  position: absolute;
-  left: 256px;
-  top: 0;
-  height: 100%;
-  width: 4px;
-  border: none;
-  cursor: col-resize;
-}
-
 .layer-search-result {
   width: 100%;
   display: inline-flex;
