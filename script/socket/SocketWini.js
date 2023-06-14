@@ -692,13 +692,17 @@ socket.on("server-main", async (data) => {
   console.log(data);
   if (data.pageid === PageDA.obj.ID) {
     let copyList = [];
+    let initskin = false;
     let listData = data.data.filter((e) => e.GID !== wbase_parentID);
     if (data.token === UserService.getToken() || data.token === UserService.getRefreshToken()) {
       let thisAction = action_list[data.index];
       if (thisAction.tmpHTML) {
         wbase_list = wbase_list.filter((e) => {
           let check = thisAction.tmpHTML.every((eHTML) => eHTML.id !== e.GID);
-          if (!check) copyList.push(e);
+          if (!check) {
+            copyList.push(e);
+            if (e.ProjectID !== data.pid) initskin = true;
+          }
           return check;
         });
         thisAction.tmpHTML.forEach((e) => e.remove());
@@ -710,6 +714,15 @@ socket.on("server-main", async (data) => {
     if (data.enumEvent === EnumEvent.delete) {
       WbaseIO.delete(listData);
     } else {
+      if (initskin) {
+        let skinResponse = await $.get(WBaseDA.skin_url + `?pid=${data.pid}`);
+        ColorDA.list.push(...skinResponse.Data.ColorItems.filter((skin) => ColorDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        TypoDA.list.push(...skinResponse.Data.TextStyleItems.filter((skin) => TypoDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        EffectDA.list.push(...skinResponse.Data.EffectItems.filter((skin) => EffectDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        BorderDA.list.push(...skinResponse.Data.BorderItems.filter((skin) => BorderDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        PropertyDA.list.push(...skinResponse.Data.WPropertyItems.filter((skin) => PropertyDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        CateDA.initCate();
+      }
       await WbaseIO.addOrUpdate(listData, data.enumEvent);
       if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
         replaceAllLyerItemHTML();

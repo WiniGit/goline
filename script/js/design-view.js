@@ -1669,22 +1669,24 @@ function createEditBackground() {
     if (listColorID.length == 1 && listColorID[0]) {
       let colorSkin = ColorDA.list.find((colorItem) => listColorID[0] == colorItem.GID);
       let cateItem;
-      if (colorSkin.CateID != EnumCate.color) {
-        cateItem = CateDA.list_color_cate.find((e) => e.ID == colorSkin.CateID);
+      if (colorSkin) {
+        if (colorSkin.CateID != EnumCate.color) {
+          cateItem = CateDA.list_color_cate.find((e) => e.ID == colorSkin.CateID);
+        }
+        let skin_tile = wbaseSkinTile(
+          EnumCate.color,
+          function () {
+            let offset = header.getBoundingClientRect();
+            createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID);
+          },
+          function () {
+            deleteBackgroundColor().then((_) => updateUIBackground());
+          },
+        );
+        skin_tile.firstChild.firstChild.style.backgroundColor = `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`;
+        skin_tile.firstChild.lastChild.innerHTML = (cateItem ? `${cateItem.Name}/` : "") + colorSkin.Name;
+        editContainer.appendChild(skin_tile);
       }
-      let skin_tile = wbaseSkinTile(
-        EnumCate.color,
-        function () {
-          let offset = header.getBoundingClientRect();
-          createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID);
-        },
-        function () {
-          deleteBackgroundColor().then((_) => updateUIBackground());
-        },
-      );
-      skin_tile.firstChild.firstChild.style.backgroundColor = `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`;
-      skin_tile.firstChild.lastChild.innerHTML = (cateItem ? `${cateItem.Name}/` : "") + colorSkin.Name;
-      editContainer.appendChild(skin_tile);
     } else if (listColorID.length > 1) {
       header.appendChild(btnSelectSkin);
       let notiText = document.createElement("p");
@@ -2682,7 +2684,7 @@ function createEditEffect() {
         let list_effect = selected_list.filter((e) => e.StyleItem.DecorationItem?.EffectItem).map((e) => e.StyleItem.DecorationItem.EffectItem);
         let this_effect_type = list_effect[0].Type;
         if (list_effect.every((e) => e.Type == this_effect_type)) {
-          popup_edit_effect_style.style.display = "inline-flex";
+          popup_edit_effect_style.style.display = "flex";
           popup_edit_effect_style.firstChild.innerHTML = this_effect_type;
           for (let i = 0; i < popup_edit_effect_style.lastChild.childNodes.length; i++) {
             let eHTML = popup_edit_effect_style.lastChild.childNodes[i];
@@ -2692,7 +2694,7 @@ function createEditEffect() {
                 if (this_effect_type == ShadowType.layer_blur) {
                   eHTML.style.display = "none";
                 } else {
-                  eHTML.style.display = "inline-flex";
+                  eHTML.style.display = "flex";
                   let list_offsetX = list_effect.map((e) => e.OffsetX);
                   let firstValue = list_offsetX[0];
                   if (list_offsetX.some((e) => e != firstValue)) {
@@ -2703,7 +2705,7 @@ function createEditEffect() {
                 break;
               // input blur
               case 1:
-                eHTML.style.display = "inline-flex";
+                eHTML.style.display = "flex";
                 let list_blur = list_effect.map((e) => e.BlurRadius);
                 let firstBlurValue = list_blur[0];
                 if (list_blur.some((e) => e != firstBlurValue)) {
@@ -2716,7 +2718,7 @@ function createEditEffect() {
                 if (this_effect_type == ShadowType.layer_blur) {
                   eHTML.style.display = "none";
                 } else {
-                  eHTML.style.display = "inline-flex";
+                  eHTML.style.display = "flex";
                   let list_offsetY = list_effect.map((e) => e.OffsetY);
                   let firstValue = list_offsetY[0];
                   if (list_offsetY.some((e) => e != firstValue)) {
@@ -2730,7 +2732,7 @@ function createEditEffect() {
                 if (this_effect_type == ShadowType.layer_blur) {
                   eHTML.style.display = "none";
                 } else {
-                  eHTML.style.display = "inline-flex";
+                  eHTML.style.display = "flex";
                   let list_spread = list_effect.map((e) => e.SpreadRadius);
                   let firstValue = list_spread[0];
                   if (list_spread.some((e) => e != firstValue)) {
@@ -2742,7 +2744,7 @@ function createEditEffect() {
               // input colorvalue
               case 4:
                 if (list_effect.every((e) => e.ColorValue == list_effect[0].ColorValue)) {
-                  eHTML.style.display = "inline-flex";
+                  eHTML.style.display = "flex";
                   let color_value = list_effect[0].ColorValue;
                   for (let parameterHTML of eHTML.querySelector(".parameter-form").childNodes) {
                     // input type color & edit hex color
