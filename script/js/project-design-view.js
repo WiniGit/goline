@@ -321,8 +321,9 @@ function createWbaseHTML(rect_box, newObj) {
       wbase_list.push(...listNewWbase);
     } else {
       if (!rect_box.w) {
-        if (tool_state == ToolState.text) {
-          new_obj.StyleItem.FrameItem.Width = undefined = new_obj.StyleItem.FrameItem.Height;
+        if (tool_state === ToolState.text) {
+          new_obj.StyleItem.FrameItem.Width = null;
+          new_obj.StyleItem.FrameItem.Height = null;
           new_obj.StyleItem.TypoStyleItem.AutoSize = "Auto Width";
         }
       } else {
