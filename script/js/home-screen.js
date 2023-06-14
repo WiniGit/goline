@@ -156,6 +156,14 @@ $('body').on('click', `button.join-by-code`, function (ev) {
     $('.popup-background').css('display', 'flex');
 });
 
+$('body').on('click', `.popup-join-by-code .button-join`, function (ev) {
+    if ($('.popup-join-by-code input').val().length > 0) {
+        ProjectDA.joinbycode({ "code": $('.popup-join-by-code input').val() });
+    } else {
+        toastr["warning"]('Vui lòng điền mã code dự án');
+    }
+});
+
 $('body').on('input', '.search-input input', function (ev) {
     switch (url_tab) {
         case 'recent':
