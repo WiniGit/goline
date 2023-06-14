@@ -1358,18 +1358,18 @@ function moveListener(event) {
                       if (select_box_parentID !== wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g)) {
                         isFixedWhenScroll = true;
                       }
-                      if (!event.altKey) {
-                        selected_list.forEach((wbase) => {
-                          let wbaseHTML = document.getElementById(wbase.GID);
-                          let eHTMLRect = wbaseHTML.getBoundingClientRect();
-                          let eHTMLOffset = offsetScale(eHTMLRect.x, eHTMLRect.y);
-                          wbase.StyleItem.PositionItem.Left = `${eHTMLOffset.x - parent_offset1.x}px`;
-                          wbase.StyleItem.PositionItem.Top = `${eHTMLOffset.y - parent_offset1.y}px`;
+                      selected_list.forEach((wbase) => {
+                        let wbaseHTML = document.getElementById(wbase.GID);
+                        let eHTMLRect = wbaseHTML.getBoundingClientRect();
+                        let eHTMLOffset = offsetScale(eHTMLRect.x, eHTMLRect.y);
+                        wbase.StyleItem.PositionItem.Left = `${eHTMLOffset.x - parent_offset1.x}px`;
+                        wbase.StyleItem.PositionItem.Top = `${eHTMLOffset.y - parent_offset1.y}px`;
+                        if (!event.altKey) {
                           if (wbase.StyleItem.FrameItem.Width != null) wbaseHTML.style.width = wbaseHTML.offsetWidth + "px";
                           if (wbase.StyleItem.FrameItem.Height != null) wbaseHTML.style.height = wbaseHTML.offsetHeight + "px";
                           if (isFixedWhenScroll) wbase.StyleItem.PositionItem.FixPosition = false;
-                        });
-                      }
+                        }
+                      });
                       drag_start_list = JSON.parse(JSON.stringify(selected_list));
                       checkpad++;
                     }

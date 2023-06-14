@@ -234,9 +234,9 @@ html {
   pointer-events: none !important;
 }
 
-body:has(.wbaseItem-value[loading="true"]) {
+body:has(.wbaseItem-value[loading="true"]) * {
   cursor: wait !important;
-  pointer-events: none;
+  pointer-events: none !important;
 }
 
 body:has(.wbaseItem-value[loading="true"]) > #body::after {

@@ -694,8 +694,9 @@ socket.on("server-main", async (data) => {
     let copyList = [];
     let initskin = false;
     let listData = data.data.filter((e) => e.GID !== wbase_parentID);
+    let thisAction;
     if (data.token === UserService.getToken() || data.token === UserService.getRefreshToken()) {
-      let thisAction = action_list[data.index];
+      thisAction = action_list[data.index];
       if (thisAction.tmpHTML) {
         wbase_list = wbase_list.filter((e) => {
           let check = thisAction.tmpHTML.every((eHTML) => eHTML.id !== e.GID);
@@ -705,9 +706,7 @@ socket.on("server-main", async (data) => {
           }
           return check;
         });
-        thisAction.tmpHTML.forEach((e) => e.remove());
       }
-      thisAction.tmpHTML = null;
     }
     listData = initDOM(listData);
     arrange(listData);
@@ -724,6 +723,10 @@ socket.on("server-main", async (data) => {
         CateDA.initCate();
       }
       await WbaseIO.addOrUpdate(listData, data.enumEvent);
+      if (thisAction?.tmpHTML) {
+        thisAction.tmpHTML.forEach((e) => e.remove());
+        thisAction.tmpHTML = null;
+      }
       if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
         replaceAllLyerItemHTML();
         if (action_index === data.index) {
