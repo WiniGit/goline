@@ -1833,7 +1833,7 @@ function wdraw() {
         ctxr.drawImage(image, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
       } else {
         image = new Image(12, 12);
-        image.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4e3b6c3/lib/assets/Union.png";
+        image.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/Union.png";
         image.onload = () => {
           ctxr.drawImage(image, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
         };
