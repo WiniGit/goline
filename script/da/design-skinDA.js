@@ -176,7 +176,7 @@ class TypoDA {
             e.value.style.fontWeight = defaultTypo;
             e.value.style.letterSpacing = `${defaultTypo}px`;
             e.value.style.color = `#${defaultTypo.substring(2)}${defaultTypo.substring(0, 2)}`;
-            e.value.style.lineHeight = "unset";
+            e.value.style.lineHeight = null;
         });
         WiniIO.emitTypo(textStyleItem, EnumEvent.delete);
     }

@@ -141,7 +141,7 @@ async function initComponents(item, list, initListener = true) {
   if(item.AttributesItem.NameField && item.AttributesItem.NameField.trim() != "")
   $(item.value).attr("name-field", item.AttributesItem.NameField);
   item.value.setAttribute("Level", item.Level);
-  item.value.setAttribute("CateID", item.CateID);
+  item.value.setAttribute("cateid", item.CateID);
   //
   item.value.style.zIndex = item.Sort;
   item.value.style.order = item.Sort;
@@ -153,7 +153,7 @@ async function initComponents(item, list, initListener = true) {
     if (!item.IsShow) {
       item.value.setAttribute("lock", "true");
     }
-    item.value.setAttribute("ListID", item.ListID);
+    item.value.setAttribute("listid", item.ListID);
     item.value.setAttribute("IsWini", item.IsWini);
     setSizeObserver.observe(item.value, {
       attributeOldValue: true,
@@ -298,7 +298,7 @@ async function updateComponentContent(item) {
 }
 
 function initElement(wbaseHTML) {
-  switch (parseInt(wbaseHTML.getAttribute("CateID"))) {
+  switch (parseInt(wbaseHTML.getAttribute("cateid"))) {
     case EnumCate.checkbox:
       $(wbaseHTML.querySelector("input")).trigger("change");
       break;
@@ -377,12 +377,12 @@ const setSizeObserver = new MutationObserver((mutationList) => {
       if (widthValue != targetWbase.style.width) {
         changeSelectBox = true;
         if (targetWbase.style.width == "100%") {
-          targetWbase.style.minWidth = "unset";
+          targetWbase.style.minWidth = null;
           if (targetWbase.parentElement?.style?.flexDirection == "row") {
             targetWbase.style.flex = 1;
           }
-        } else if ((targetWbase.style.width == "fit-content" || targetWbase.style.width == "max-content") && targetWbase.getAttribute("CateID") != EnumCate.tool_text) {
-          targetWbase.style.minWidth = "unset";
+        } else if ((targetWbase.style.width == "fit-content" || targetWbase.style.width == "max-content") && targetWbase.getAttribute("cateid") != EnumCate.tool_text) {
+          targetWbase.style.minWidth = null;
         } else {
           targetWbase.style.minWidth = targetWbase.style.width;
         }
@@ -390,19 +390,19 @@ const setSizeObserver = new MutationObserver((mutationList) => {
       if (heightValue != targetWbase.style.height) {
         changeSelectBox = true;
         if (targetWbase.style.height == "100%") {
-          targetWbase.style.minHeight = "unset";
+          targetWbase.style.minHeight = null;
           if (targetWbase.parentElement?.style?.flexDirection == "column") {
             targetWbase.style.flex = 1;
           }
-        } else if ((targetWbase.style.height == "fit-content" || targetWbase.style.height == "max-content") && targetWbase.getAttribute("CateID") != EnumCate.tool_text) {
-          targetWbase.style.minHeight = "unset";
+        } else if ((targetWbase.style.height == "fit-content" || targetWbase.style.height == "max-content") && targetWbase.getAttribute("cateid") != EnumCate.tool_text) {
+          targetWbase.style.minHeight = null;
         } else {
           targetWbase.style.minHeight = targetWbase.style.height;
-          if (targetWbase.getAttribute("CateID") == EnumCate.tree) targetWbase.style.setProperty("--height", `${parseFloat(targetWbase.style.height.replace("px", "")) / ([...targetWbase.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1)}px`);
+          if (targetWbase.getAttribute("cateid") == EnumCate.tree) targetWbase.style.setProperty("--height", `${parseFloat(targetWbase.style.height.replace("px", "")) / ([...targetWbase.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1)}px`);
         }
       }
       if (changeSelectBox && document.getElementById("divSection") && checkpad < selected_list.length) {
-        switch (parseInt(targetWbase.getAttribute("CateID"))) {
+        switch (parseInt(targetWbase.getAttribute("cateid"))) {
           case EnumCate.checkbox:
             $(targetWbase.querySelector("input")).trigger("change");
             break;
@@ -436,7 +436,7 @@ const setSizeObserver = new MutationObserver((mutationList) => {
             break;
         }
       }
-      if (targetWbase.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => targetWbase.getAttribute("CateID") == cate) && targetWbase.style.width != "fit-content") {
+      if (targetWbase.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => targetWbase.getAttribute("cateid") == cate) && targetWbase.style.width != "fit-content") {
         let localResponsive = ProjectDA.obj.ResponsiveJson ?? ProjectDA.responsiveJson;
         let brpShortName = ["min-brp", ...localResponsive.BreakPoint.map((brp) => brp.Key.match(brpRegex).pop().replace(/[()]/g, ""))];
         let isContainBrp = false;
@@ -599,14 +599,14 @@ function initPositionStyle(item) {
     } else {
       item.value.style.left = valueL + "px";
     }
-    item.value.style.right = "unset";
+    item.value.style.right = null;
     if (isNaN(valueT)) {
       item.value.style.top = valueT;
     } else {
       item.value.style.top = valueT + "px";
     }
-    item.value.style.bottom = "unset";
-    item.value.style.transform = "none";
+    item.value.style.bottom = null;
+    item.value.style.transform = null;
   } else {
     let valueR = item.StyleItem.PositionItem.Right;
     let valueB = item.StyleItem.PositionItem.Bottom;
@@ -615,15 +615,15 @@ function initPositionStyle(item) {
         if (isNaN(valueL)) item.value.style.left = valueL;
         else item.value.style.left = valueL + "px";
         handleStyleSize(item);
-        item.value.style.right = "unset";
-        item.value.style.transform = "none";
+        item.value.style.right = null;
+        item.value.style.transform = null;
         break;
       case Constraints.right:
         if (isNaN(valueR)) item.value.style.right = valueR;
         else item.value.style.right = valueR + "px";
         handleStyleSize(item);
-        item.value.style.left = "unset";
-        item.value.style.transform = "none";
+        item.value.style.left = null;
+        item.value.style.transform = null;
         break;
       case Constraints.left_right:
         if (isNaN(valueL)) {
@@ -637,7 +637,7 @@ function initPositionStyle(item) {
           item.value.style.right = valueR + "px";
         }
         item.value.style.width = "auto";
-        item.value.style.transform = "none";
+        item.value.style.transform = null;
         break;
       case Constraints.center:
         item.value.style.left = `calc(50% + ${valueR})`;
@@ -647,7 +647,7 @@ function initPositionStyle(item) {
         item.value.style.left = valueL;
         item.value.style.right = valueR;
         item.value.style.width = "auto";
-        item.value.style.transform = "none";
+        item.value.style.transform = null;
         break;
       default:
         break;
@@ -657,13 +657,13 @@ function initPositionStyle(item) {
         if (isNaN(valueT)) item.value.style.top = valueT;
         else item.value.style.top = valueT + "px";
         handleStyleSize(item);
-        item.value.style.bottom = "unset";
+        item.value.style.bottom = null;
         break;
       case Constraints.bottom:
         if (isNaN(valueB)) item.value.style.bottom = valueB;
         else item.value.style.bottom = valueB + "px";
         handleStyleSize(item);
-        item.value.style.top = "unset";
+        item.value.style.top = null;
         break;
       case Constraints.top_bottom:
         if (isNaN(valueT)) {
@@ -823,8 +823,8 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     let thisClassList = [...wbaseItem.value.classList].filter((clName) => clName != "grid-layout");
     if (wbaseItem.WAutolayoutItem.IsWrap && isRow) {
       thisClassList.push("grid-layout");
-      wbaseItem.value.style.flexDirection = "unset";
-      wbaseItem.value.style.flexWrap = "unset";
+      wbaseItem.value.style.flexDirection = null;
+      wbaseItem.value.style.flexWrap = null;
     } else {
       wbaseItem.value.style.display = "flex";
       wbaseItem.value.style.flexDirection = isRow ? "row" : "column";

@@ -354,7 +354,7 @@ function createEditSizePosition() {
   };
   editXYRow.replaceChildren(edit_left, edit_top);
   let parentHTML = document.getElementById(select_box_parentID);
-  if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("CateID") == cate) && window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+  if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("cateid") == cate) && window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
     let isFixPos = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
     let iconFixPos = document.createElement("img");
     iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4e3b6c3/lib/assets/fix_position.svg";
@@ -1214,7 +1214,7 @@ function createConstraints() {
 
   if (select_box_parentID !== wbase_parentID) {
     let parentHTML = document.getElementById(select_box_parentID);
-    if (parentHTML.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("CateID") == cate) && !window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+    if (parentHTML.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
       let fixPosRow = document.createElement("div");
       fixPosRow.className = "row";
       fixPosRow.style.margin = "8px 0 0 8px";
@@ -1379,7 +1379,7 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
     if (isW && activeHug) {
       let framePage = selected_list[0].ListID.split(",")[1];
       framePage = document.getElementById(framePage);
-      activeHug = EnumCate.extend_frame.some((cate) => framePage.getAttribute("CateID") != cate) || framePage.querySelectorAll(".col-").length == 0;
+      activeHug = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") != cate) || framePage.querySelectorAll(".col-").length == 0;
     }
   } else if (isW && activeHug) {
     let listFramePage = selected_list.filter((wbaseItem) => EnumCate.extend_frame.some((cate) => wbaseItem.CateID == cate));
@@ -1544,7 +1544,7 @@ function updateUIDesignView() {
       let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
       let framePage = pageParent[pageParent.length - 1];
       if (framePage.classList.contains("variant")) framePage = pageParent[pageParent.length - 2];
-      let isPage = EnumCate.extend_frame.some((cate) => framePage?.getAttribute("CateID") == cate) && framePage.style.width != "fit-content";
+      let isPage = EnumCate.extend_frame.some((cate) => framePage?.getAttribute("cateid") == cate) && framePage.style.width != "fit-content";
       if (isPage) {
         let selectColByBrp = colNumberByBrp();
         listEditContainer.push(selectColByBrp);
@@ -4569,7 +4569,7 @@ function createEditVariants() {
     div_list_property.replaceChildren(...list_property_tile);
   }
   // TH đang chọn nhiều obj là component nhg ko có variants con nào
-  else if (select_box_parentID != wbase_parentID && document.getElementById(select_box_parentID).getAttribute("CateID") == EnumCate.tool_variant) {
+  else if (select_box_parentID != wbase_parentID && document.getElementById(select_box_parentID).getAttribute("cateid") == EnumCate.tool_variant) {
     btnTitle.style.pointerEvents = "none";
     action_add.style.display = "none";
     // TH các component này là những variant của 1 component cha

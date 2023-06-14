@@ -36,13 +36,13 @@ function createTextHTML(item) {
             transformX = "-50%";
             var thisComputeStyle = window.getComputedStyle(this);
             this.style.left = (parseFloat(thisComputeStyle.left.replace("px")) + this.offsetWidth / 2) + "px";
-            this.style.right = "unset";
+            this.style.right = null;
             break;
           case TextAlign.right:
             transformX = "-100%";
             var thisComputeStyle = window.getComputedStyle(this);
             this.style.left = (parseFloat(thisComputeStyle.left.replace("px")) + this.offsetWidth) + "px";
-            this.style.right = "unset";
+            this.style.right = null;
             break;
           default:
             break;
@@ -53,13 +53,13 @@ function createTextHTML(item) {
             transformY = "-50%";
             var thisComputeStyle = window.getComputedStyle(this);
             this.style.top = (parseFloat(thisComputeStyle.top.replace("px")) + this.offsetHeight / 2) + "px";
-            this.style.bottom = "unset";
+            this.style.bottom = null;
             break;
           case TextAlignVertical.bottom:
             transformY = "-100%";
             var thisComputeStyle = window.getComputedStyle(this);
             this.style.top = (parseFloat(thisComputeStyle.top.replace("px")) + this.offsetHeight) + "px";
-            this.style.bottom = "unset";
+            this.style.bottom = null;
             break;
           default:
             break;
@@ -164,7 +164,7 @@ function createTextHTML(item) {
         _enumObj = EnumObj.attributePosition;
         this.style.left = (thisRect.x - parentRect.x) + "px";
         this.style.top = (thisRect.y - parentRect.y) + "px";
-        this.style.transform = "none";
+        this.style.transform = null;
         updateConstraints(item);
       }
       let this_text = wbase_list.find((e) => e.GID === this.id);
@@ -243,8 +243,8 @@ const textObserver = new MutationObserver(mutationList => {
           } else if(targetText.style.width == "100%") {
             targetText.style.minWidth = "auto";
           }
-          if (targetText.style.height == "fit-content" && targetText.style.minHeight != "unset") {
-            targetText.style.minHeight = "unset";
+          if (targetText.style.height == "fit-content" && targetText.style.minHeight != null) {
+            targetText.style.minHeight = null;
             change = true;
           }
           if (change) {

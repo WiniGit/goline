@@ -1,0 +1,64 @@
+<!-- ! -->
+<div class="header_block1 row">
+    <img class="box32" src="/lib/assets/logo_wini.svg" alt="logo">
+    <div class="user-container col">
+        <div class="user-name semibold1 text-white">Duc Nguyen</div>
+        <div class="user-email regular0 text-subtitle-white">Ducnm@wini.vn</div>
+    </div>
+</div>
+<!-- ! -->
+<div class="header_block2 row">
+    <div class="search-input row">
+        <div class="box32 center">
+            <i class="fa-solid fa-search fa-sm"></i>
+        </div>
+        <input type="text" placeholder="Search" class="regular1 ">
+    </div>
+</div>
+<!-- ! -->
+<div class="header_block3 row">
+    <button type="button" class="join-by-code background-primary text-white button-transparent semibold1">Join by code</button>
+    <button class="button-transparent box32"><i class="fa-solid fa-bell text-white fa-lg"></i></button>
+    <button class="show-user-action button-transparent row">
+        <div class="box32 circular center">
+            <i class="fa-solid fa-circle text-white fa-2xl"></i>
+        </div>
+        <i class="fa-solid fa-chevron-down text-white fa-xs"></i>
+    </button>
+</div>
+
+<script>
+    $('.popup-background').append(
+        `<div class="popup-join-by-code col elevation7 popup-action ">
+            <div class="popup-header row">
+                <div class="semibold1 space">Join by code</div>
+                <button class="box32 center button-transparent close-popup" style="padding: 0;" type="button">
+                    <i class="fa-solid fa-close fa-xl"></i>
+                </button>
+            </div>
+            <div class="popup-body row">
+                <input class="regular1 text-body code-input" placeholder="Enter code" type="text">
+                <button class="button-join background-primary button-transparent" type="button">
+                    <span class="semibold1 text-white">Join</span>
+                </button>
+            </div>
+        </div>`
+    );
+
+    $('.popup-background').append(
+        `<div class="user-option dropdown-popup col home-popup">
+            <a class="option-tile show-profile row" href="/View/user-profile-view.html">
+                <span class="box32 center text-white"><i class="fa-solid fa-user"></i></span>
+                <span class="regular1 text-white">Profile</span>
+            </a>
+            <a class="option-tile change-password row">
+                <span class="box32 center text-white"><i class="fa-solid fa-key"></i></span>
+                <span class="regular1 text-white">Change password</span>
+            </a>
+            <a class="option-tile logout row" href="/View/login-tool-view.html">
+                <span class="box32 center text-white"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+                <span class="regular1 text-white">Logout</span>
+            </a>
+        </div>`
+    )
+</script>

@@ -406,7 +406,7 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   let wbase_tile = document.createElement("div");
   wbase_tile.id = `wbaseID:${wbaseItem.GID}`;
   wbase_tile.className = "layer_wbase_tile";
-  wbase_tile.setAttribute("CateID", wbaseItem.CateID);
+  wbase_tile.setAttribute("cateid", wbaseItem.CateID);
   layerContainer.appendChild(wbase_tile);
 
   let isShowListChid = isShowChildren;
@@ -901,7 +901,7 @@ function ondragSortLayer(event) {
     }
     let wbaseHTML = document.getElementById(wbaseID);
     // drag to centerY of layer
-    if (!listLayer[0].id.includes(selected_list[0].GID) && parent_cate.some((cate) => cate == listLayer[0].getAttribute("CateID")) && isInRange(event.pageY, rectCenterY - 6, rectCenterY + 6)) {
+    if (!listLayer[0].id.includes(selected_list[0].GID) && parent_cate.some((cate) => cate == listLayer[0].getAttribute("cateid")) && isInRange(event.pageY, rectCenterY - 6, rectCenterY + 6)) {
       let time = parseInt(sortLayer.getAttribute("time") ?? "0");
       time += 1;
       sortLayer.setAttribute("time", time);
@@ -924,7 +924,7 @@ function ondragSortLayer(event) {
       sortLayer.style.top = fromY + rectTopY - layerViewY + "px";
       sortLayer.style.width = minDistanceRect.width - (sortWbase.Level - 1) * 16 + "px";
       sortLayer.setAttribute("sort", sortWbase.Sort + 1);
-      sortLayer.setAttribute("parentid", wbaseHTML.getAttribute("ListID").split(",").pop());
+      sortLayer.setAttribute("parentid", wbaseHTML.getAttribute("listid").split(",").pop());
     } else {
       // drag to below of layer
       sortLayer.removeAttribute("time");
@@ -940,7 +940,7 @@ function ondragSortLayer(event) {
         sortLayer.setAttribute("parentid", wbaseID);
       } else {
         sortLayer.setAttribute("sort", sortWbase.Sort);
-        sortLayer.setAttribute("parentid", wbaseHTML.getAttribute("ListID").split(",").pop());
+        sortLayer.setAttribute("parentid", wbaseHTML.getAttribute("listid").split(",").pop());
       }
       sortLayer.style.width = `${minDistanceRect.width - spacing}px`;
     }
@@ -985,7 +985,7 @@ function endDragSortLayer() {
       if (newParentID === wbase_parentID) {
         let newParentHTML = divSection;
         thisWbaseItem.ListID = newParentID;
-        thisWbaseHTML.setAttribute("ListID", thisWbaseItem.ListID);
+        thisWbaseHTML.setAttribute("listid", thisWbaseItem.ListID);
         thisWbaseItem.Level = 1;
         thisWbaseHTML.setAttribute("Level", thisWbaseItem.Level);
         newParentHTML.childNodes.forEach((eHTML) => {
@@ -1022,8 +1022,8 @@ function endDragSortLayer() {
         ]);
       } else {
         let newParentHTML = document.getElementById(newParentID);
-        thisWbaseItem.ListID = newParentHTML.getAttribute("ListID") + `,${newParentID}`;
-        thisWbaseHTML.setAttribute("ListID", thisWbaseItem.ListID);
+        thisWbaseItem.ListID = newParentHTML.getAttribute("listid") + `,${newParentID}`;
+        thisWbaseHTML.setAttribute("listid", thisWbaseItem.ListID);
         thisWbaseItem.Level = thisWbaseItem.ListID.split(",").length;
         let children = [...newParentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParentHTML.getAttribute("level")) + 1}"]`)];
         thisWbaseHTML.setAttribute("Level", thisWbaseItem.Level);
@@ -1037,11 +1037,11 @@ function endDragSortLayer() {
         if (children.every((eHTML) => eHTML.id != thisWbaseHTML.id)) {
           if (window.getComputedStyle(newParentHTML).display.match(/(flex|grid)/g) && !thisWbaseHTML.classList.contains("fixed-position")) {
             thisWbaseHTML.style.position = "relative";
-            thisWbaseHTML.style.left = "unset";
-            thisWbaseHTML.style.top = "unset";
-            thisWbaseHTML.style.right = "unset";
-            thisWbaseHTML.style.bottom = "unset";
-            thisWbaseHTML.style.transform = "unset";
+            thisWbaseHTML.style.left = null;
+            thisWbaseHTML.style.top = null;
+            thisWbaseHTML.style.right = null;
+            thisWbaseHTML.style.bottom = null;
+            thisWbaseHTML.style.transform = null;
             newParentHTML.appendChild(thisWbaseHTML);
           } else {
             let thisWbaseRect = thisWbaseHTML.getBoundingClientRect();
@@ -1059,7 +1059,7 @@ function endDragSortLayer() {
           thisWbaseChild[j].Level = thisWbaseChild[j].ListID.split(",").length;
           let childHTML = document.getElementById(thisWbaseChild[j].GID);
           childHTML.setAttribute("Level", thisWbaseChild[j].Level);
-          childHTML.setAttribute("ListID", thisWbaseChild[j].ListID);
+          childHTML.setAttribute("listid", thisWbaseChild[j].ListID);
         }
         let newParentChildren = [...newParentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParentHTML.getAttribute("level")) + 1}"]`)];
         newParentChildren.sort((a, b) => parseInt(window.getComputedStyle(a).zIndex) - parseInt(window.getComputedStyle(b).zIndex));

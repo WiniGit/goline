@@ -55,7 +55,7 @@ let keyTimeStamp = 0;
 function keyUpEvent(event) {
   console.log("keyup:", keyid, event.key);
   isKeyUp = true;
-  if ((document.activeElement.localName === "input" && !document.activeElement.readOnly) || document.activeElement.getAttribute("CateID") == EnumCate.tool_text || action_list[action_index]?.index != undefined) return;
+  if ((document.activeElement.localName === "input" && !document.activeElement.readOnly) || document.activeElement.getAttribute("cateid") == EnumCate.tool_text || action_list[action_index]?.index != undefined) return;
   event.preventDefault();
 
   let isCtrlKey = isMac ? event.metaKey : event.ctrlKey;
@@ -98,7 +98,7 @@ function keyUpEvent(event) {
         if (isCtrlKey && event.altKey) {
           if (selected_list.some((e) => !e.IsWini)) createComponent();
         } else if (event.altKey) {
-          if (selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("CateID") != EnumCate.tool_variant) unComponent();
+          if (selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant) unComponent();
         }
         break;
       case "/": // /
@@ -529,7 +529,7 @@ var parent = divSection,
   parent_offset1 = { x: 0, y: 0 };
 function selectParent(event) {
   parent = divSection;
-  var current_level = parseInt(document.getElementById(select_box_parentID)?.getAttribute("Level") ?? "0") + 1;
+  var current_level = parseInt(document.getElementById(select_box_parentID)?.getAttribute("level") ?? "0") + 1;
   var list = [...parent.querySelectorAll(`.wbaseItem-value`)];
   var parent_cate = [...EnumCate.parent_cate];
   if (selected_list.every((e) => e.CateID != EnumCate.tool_variant && e.IsWini)) {
@@ -538,10 +538,9 @@ function selectParent(event) {
   let containVariant = selected_list.some((e) => e.CateID == EnumCate.tool_variant || document.getElementById(e.GID).querySelectorAll(".variant").length > 0);
   var objp = list.filter((eHTML) => {
     if (
-      eHTML.style.pointerEvents == "none" ||
-      parent_cate.every((cate) => cate != eHTML.getAttribute("CateID")) || // eHTML ko đc xếp loại là wbaseItem có item con
-      selected_list.some((wbase) => wbase.GID == eHTML.id || document.getElementById(wbase.GID)?.contains(eHTML)) || // eHTML ko thể là chính nó hoặc element con của nó
-      alt_list.some((wbase) => wbase.GID == eHTML.id || document.getElementById(wbase.GID)?.contains(eHTML)) // eHTML ko thể là chính nó hoặc element con của nó
+      parent_cate.every((cate) => cate != eHTML.getAttribute("cateid")) || // eHTML ko đc xếp loại là wbaseItem có item con
+      selected_list.some((wbase) => wbase.GID == eHTML.id || wbase.value.contains(eHTML)) || // eHTML ko thể là chính nó hoặc element con của nó
+      alt_list.some((wbase) => wbase.GID == eHTML.id || wbase.value?.contains(eHTML)) // eHTML ko thể là chính nó hoặc element con của nó
     ) {
       return false;
     }
@@ -549,11 +548,10 @@ function selectParent(event) {
     if (
       containVariant &&
       eHTML
-        .getAttribute("ListID")
-        .toLowerCase()
+        .getAttribute("listid")
         .split(",")
         .filter((id) => id != wbase_parentID)
-        .some((id) => document.getElementById(id).getAttribute("CateID") == EnumCate.tool_variant)
+        .some((id) => document.getElementById(id).getAttribute("cateid") == EnumCate.tool_variant)
     ) {
       return false;
     }
@@ -561,7 +559,7 @@ function selectParent(event) {
     //
     var is_enable = false;
     var target_level = parseInt(eHTML.getAttribute("Level"));
-    if (target_level <= current_level || (target_level == 2 && parent_cate.some((cate) => cate != EnumCate.textformfield && eHTML.parentElement.getAttribute("CateID") == cate))) {
+    if (target_level <= current_level || (target_level == 2 && parent_cate.some((cate) => cate != EnumCate.textformfield && eHTML.parentElement.getAttribute("cateid") == cate))) {
       is_enable = true;
     }
     return is_enable;
@@ -581,10 +579,13 @@ function selectParent(event) {
     return element_offset.x <= event.pageX / scale - leftx / scale && element_offset.x + eHTML.offsetWidth >= event.pageX / scale - leftx / scale && element_offset.y <= event.pageY / scale - topx / scale && element_offset.y + eHTML.offsetHeight >= event.pageY / scale - topx / scale;
   });
   if (parent) {
-    if (drag_start_list.length > 0 && drag_start_list[0].ParentID === parent.parentElement.id && parseInt(parent.getAttribute("Level")) > 1 && !(event.metaKey || (!isMac && event.ctrlKey))) {
+    if (drag_start_list.length > 0 && parseInt(parent.getAttribute("level")) > 1 && !(event.metaKey || (!isMac && event.ctrlKey))) {
       let pRect = parent.getBoundingClientRect();
       let grdPRect = parent.parentElement.getBoundingClientRect();
-      if ((pRect.x === grdPRect.x && pRect.y === grdPRect.y && pRect.width === grdPRect.width && pRect.height === grdPRect.height) || event.pageX / scale - leftx / scale - pRect.x <= 2 || element_offset.x + parent.offsetWidth - event.pageX / scale + leftx / scale <= 2 || event.pageY / scale - topx / scale - pRect.y <= 2 || pRect.y + parent.offsetWidth - event.pageY / scale + topx / scale <= 2) parent = parent.parentElement;
+      console.log("??????????",event.pageX);
+      if ((pRect.x === grdPRect.x && pRect.y === grdPRect.y && pRect.width === grdPRect.width && pRect.height === grdPRect.height) || event.pageX / scale - leftx / scale - pRect.x <= 3 || element_offset.x + parent.offsetWidth - event.pageX / scale + leftx / scale <= 3 || event.pageY / scale - topx / scale - pRect.y <= 3 || pRect.y + parent.offsetWidth - event.pageY / scale + topx / scale <= 3) {
+        parent = parent.parentElement;
+      }
     }
     let icon_show_children = document.getElementById(`pefixAction:${parent.id}`);
     if (icon_show_children) {
@@ -714,7 +715,7 @@ function centerViewInitListener() {
         window.getSelection().removeAllRanges();
       }
       return;
-    } else if (document.activeElement.getAttribute("CateID") == EnumCate.tool_text) {
+    } else if (document.activeElement.getAttribute("cateid") == EnumCate.tool_text) {
       return;
     } else if (event.key.toLowerCase() === "tab") {
       event.preventDefault();
@@ -763,7 +764,7 @@ const childObserver = new MutationObserver((mutationList) => {
       wbaseValue.className = listClass.join(" ");
     });
     mutation.addedNodes.forEach((wbaseValue) => {
-      if (EnumCate.extend_frame.some((cate) => wbaseValue.getAttribute("CateID") == cate) && wbaseValue.style.width != "fit-content") {
+      if (EnumCate.extend_frame.some((cate) => wbaseValue.getAttribute("cateid") == cate) && wbaseValue.style.width != "fit-content") {
         let localResponsive = ProjectDA.obj.ResponsiveJson ?? ProjectDA.responsiveJson;
         let closestBrp = localResponsive.BreakPoint.filter((brp) => wbaseValue.offsetWidth >= brp.Width);
         if (closestBrp.length > 0 && ProjectDA.obj.ResponsiveJson) {
@@ -774,7 +775,7 @@ const childObserver = new MutationObserver((mutationList) => {
           wbaseValue.className += ` ${closestBrp}`;
         }
         resizeWbase.observe(wbaseValue);
-      } else if (wbaseValue.getAttribute("CateID") == EnumCate.tool_variant) {
+      } else if (wbaseValue.getAttribute("cateid") == EnumCate.tool_variant) {
         childObserver.observe(wbaseValue, {
           childList: true,
         });
@@ -805,7 +806,7 @@ function moveListener(event) {
         divImgDoc.style.top = newTop + "px";
       }
       divImgDoc.setAttribute("offset", JSON.stringify({ x: event.clientX, y: event.clientY }));
-    } else if ((sortLayer || event.target.className == "layer_wbase_tile" || event.target.parentElement?.className == "layer_wbase_tile") && [ToolState.hand_tool, ...ToolState.resize_type].every((toolState) => tool_state != toolState)) {
+    } else if ((sortLayer || event.target.className == "layer_wbase_tile" || event.target.parentElement?.className == "layer_wbase_tile") && [ToolState.hand_tool, ...ToolState.resize_type].every((toolState) => tool_state != toolState) && drag_start_list.length === 0) {
       target_view = "left_view";
       if (selected_list.length == 1 && window.getComputedStyle(selected_list[0].value).pointerEvents !== "none" && !sortLayer) {
         let listLayer = [...document.getElementsByClassName("layer_wbase_tile")].filter((eLayer) => eLayer.offsetHeight > 0);
@@ -816,14 +817,14 @@ function moveListener(event) {
               preAction.className = preAction.className.replace("caret-down", "caret-right");
             }
           } else {
-            if (eLayer.getAttribute("CateID") == EnumCate.tool_variant) {
+            if (eLayer.getAttribute("cateid") == EnumCate.tool_variant) {
               if (selected_list[0].CateID === EnumCate.tool_variant || !selected_list[0].IsWini) {
                 let preAction = eLayer.querySelector(`.prefix-btn`);
                 if (preAction) {
                   preAction.className = preAction.className.replace("caret-right", "caret-down");
                 }
               }
-            } else if (EnumCate.parent_cate.some((cate) => cate == eLayer.getAttribute("CateID")) && eLayer.id.includes(selected_list[0].GID)) {
+            } else if (EnumCate.parent_cate.some((cate) => cate == eLayer.getAttribute("cateid")) && eLayer.id.includes(selected_list[0].GID)) {
               let preAction = eLayer.querySelector(`.prefix-btn`);
               if (preAction) {
                 preAction.className = preAction.className.replace("caret-right", "caret-down");
@@ -931,8 +932,8 @@ function moveListener(event) {
                           if (selected_list[i].StyleItem.PositionItem.ConstraintsX == Constraints.center) eHTML.style.transform = eHTML.style.transform.replace("translateX(-50%)", "");
                           if (scaleComponent) {
                             eHTML.style.top = thisOffset.y + "px";
-                            eHTML.style.bottom = "unset";
-                            eHTML.style.transform = "none";
+                            eHTML.style.bottom = null;
+                            eHTML.style.transform = null;
                           }
                         }
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
@@ -953,12 +954,12 @@ function moveListener(event) {
                         if (!isInFlex) {
                           let thisOffset = getWBaseOffset(selected_list[i]);
                           eHTML.style.left = thisOffset.x + "px";
-                          eHTML.style.right = "unset";
+                          eHTML.style.right = null;
                           if (selected_list[i].StyleItem.PositionItem.ConstraintsX == Constraints.center) eHTML.style.transform = eHTML.style.transform.replace("translateX(-50%)", "");
                           if (scaleComponent) {
                             eHTML.style.top = thisOffset.y + "px";
-                            eHTML.style.bottom = "unset";
-                            eHTML.style.transform = "none";
+                            eHTML.style.bottom = null;
+                            eHTML.style.transform = null;
                           }
                         }
                       }
@@ -979,8 +980,8 @@ function moveListener(event) {
                           if (selected_list[i].StyleItem.PositionItem.ConstraintsY == Constraints.center) eHTML.style.transform = eHTML.style.transform.replace("translateY(-50%)", "");
                           if (scaleComponent) {
                             eHTML.style.left = thisOffset.x + "px";
-                            eHTML.style.right = "unset";
-                            eHTML.style.transform = "none";
+                            eHTML.style.right = null;
+                            eHTML.style.transform = null;
                           }
                         }
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
@@ -1001,12 +1002,12 @@ function moveListener(event) {
                         if (!isInFlex) {
                           let thisOffset = getWBaseOffset(selected_list[i]);
                           eHTML.style.top = thisOffset.y + "px";
-                          eHTML.style.bottom = "unset";
+                          eHTML.style.bottom = null;
                           if (selected_list[i].StyleItem.PositionItem.ConstraintsY == Constraints.center) eHTML.style.transform = eHTML.style.transform.replace("translateY(-50%)", "");
                           if (scaleComponent) {
                             eHTML.style.left = thisOffset.x + "px";
-                            eHTML.style.right = "unset";
-                            eHTML.style.transform = "none";
+                            eHTML.style.right = null;
+                            eHTML.style.transform = null;
                           }
                         }
                       }
@@ -1025,7 +1026,7 @@ function moveListener(event) {
                           let thisOffset = getWBaseOffset(selected_list[i]);
                           selected_list[i].StyleItem.PositionItem.Left = thisOffset.x + "px";
                           selected_list[i].StyleItem.PositionItem.Top = thisOffset.y + "px";
-                          eHTML.style.transform = "none";
+                          eHTML.style.transform = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
@@ -1058,9 +1059,9 @@ function moveListener(event) {
                         if (!isInFlex) {
                           let thisOffset = getWBaseOffset(selected_list[i]);
                           eHTML.style.left = thisOffset.x + "px";
-                          eHTML.style.right = "unset";
+                          eHTML.style.right = null;
                           selected_list[i].StyleItem.PositionItem.Top = thisOffset.y + "px";
-                          eHTML.style.transform = "none";
+                          eHTML.style.transform = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
@@ -1090,9 +1091,9 @@ function moveListener(event) {
                         if (!isInFlex) {
                           let thisOffset = getWBaseOffset(selected_list[i]);
                           eHTML.style.top = thisOffset.y + "px";
-                          eHTML.style.bottom = "unset";
+                          eHTML.style.bottom = null;
                           selected_list[i].StyleItem.PositionItem.Left = thisOffset.x + "px";
-                          eHTML.style.transform = "none";
+                          eHTML.style.transform = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
@@ -1122,10 +1123,10 @@ function moveListener(event) {
                         if (!isInFlex) {
                           let thisOffset = getWBaseOffset(selected_list[i]);
                           eHTML.style.left = thisOffset.x + "px";
-                          eHTML.style.right = "unset";
+                          eHTML.style.right = null;
                           eHTML.style.top = thisOffset.y + "px";
-                          eHTML.style.bottom = "unset";
-                          eHTML.style.transform = "none";
+                          eHTML.style.bottom = null;
+                          eHTML.style.transform = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
@@ -1355,14 +1356,18 @@ function moveListener(event) {
                       if (select_box_parentID !== wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g)) {
                         isFixedWhenScroll = true;
                       }
-                      selected_list.forEach((wbase) => {
-                        let wbaseHTML = document.getElementById(wbase.GID);
-                        let eHTMLRect = wbaseHTML.getBoundingClientRect();
-                        let eHTMLOffset = offsetScale(eHTMLRect.x, eHTMLRect.y);
-                        wbase.StyleItem.PositionItem.Left = `${eHTMLOffset.x - parent_offset1.x}px`;
-                        wbase.StyleItem.PositionItem.Top = `${eHTMLOffset.y - parent_offset1.y}px`;
-                        if (isFixedWhenScroll) wbase.StyleItem.PositionItem.FixPosition = false;
-                      });
+                      if (!event.altKey) {
+                        selected_list.forEach((wbase) => {
+                          let wbaseHTML = document.getElementById(wbase.GID);
+                          let eHTMLRect = wbaseHTML.getBoundingClientRect();
+                          let eHTMLOffset = offsetScale(eHTMLRect.x, eHTMLRect.y);
+                          wbase.StyleItem.PositionItem.Left = `${eHTMLOffset.x - parent_offset1.x}px`;
+                          wbase.StyleItem.PositionItem.Top = `${eHTMLOffset.y - parent_offset1.y}px`;
+                          if (wbase.StyleItem.FrameItem.Width != null) wbaseHTML.style.width = wbaseHTML.offsetWidth + "px";
+                          if (wbase.StyleItem.FrameItem.Height != null) wbaseHTML.style.height = wbaseHTML.offsetHeight + "px";
+                          if (isFixedWhenScroll) wbase.StyleItem.PositionItem.FixPosition = false;
+                        });
+                      }
                       drag_start_list = JSON.parse(JSON.stringify(selected_list));
                       checkpad++;
                     }
@@ -1430,7 +1435,7 @@ function moveListener(event) {
               instance_drag.style.pointerEvents = "none";
               instance_drag.style.left = target_rect.x + "px";
               instance_drag.style.top = target_rect.y + "px";
-              instance_drag.style.transform = "none";
+              instance_drag.style.transform = null;
               instance_drag.style.zIndex = 2;
             } else if (sortLayer) {
               if (sortLayer.getAttribute("parentid")) {
@@ -1466,7 +1471,7 @@ function moveListener(event) {
         instance_drag.style.pointerEvents = "none";
         instance_drag.style.left = target_rect.x + "px";
         instance_drag.style.top = target_rect.y + "px";
-        instance_drag.style.transform = "none";
+        instance_drag.style.transform = null;
         instance_drag.style.zIndex = 2;
       }
       break;
@@ -1591,15 +1596,15 @@ function scanSelectList(event) {
 
     let parentElement = $(eHTML).parent(".wbaseItem-value")[0];
 
-    if (parentElement && EnumCate.show_name.every((cate) => parentElement.getAttribute("CateID") != cate)) {
+    if (parentElement && EnumCate.show_name.every((cate) => parentElement.getAttribute("cateid") != cate)) {
       return false;
     }
-    return elementIsInRange(eHTML, _range, EnumCate.show_name.some((cate) => eHTML.getAttribute("CateID") == cate) && !parentElement);
+    return elementIsInRange(eHTML, _range, EnumCate.show_name.some((cate) => eHTML.getAttribute("cateid") == cate) && !parentElement);
   });
   let checkList = [...newList];
-  newList = newList.filter((e) => checkList.every((item) => e.getAttribute("ListID").split(",").pop() !== item.id));
+  newList = newList.filter((e) => checkList.every((item) => e.getAttribute("listid").split(",").pop() !== item.id));
   if (selected_list.length > 0) {
-    newList = newList.filter((e) => e.getAttribute("ListID").split(",").pop() === select_box_parentID);
+    newList = newList.filter((e) => e.getAttribute("listid").split(",").pop() === select_box_parentID);
   }
   selected_list = [];
   let newListWBase = wbase_list.filter((e) => window.getComputedStyle(e.value).pointerEvents !== "none" && newList.some((eHTML) => e.GID == eHTML.id));
@@ -1617,14 +1622,14 @@ function checkHoverElement(event) {
     removeAllLine();
     removeAllText();
     let currentLevel = 1;
-    if (selected_list.length > 0) currentLevel = parseInt(selected_list[0].value.getAttribute("Level"));
+    if (selected_list.length > 0) currentLevel = parseInt(selected_list[0].value.getAttribute("level"));
     let _target = [...event.composedPath()].find((eHTML) => {
       if (!eHTML.classList?.contains("wbaseItem-value")) {
         return false;
       }
       let is_enable = false;
-      let target_level = parseInt(eHTML.getAttribute("Level"));
-      let target_cate = parseInt(eHTML.getAttribute("CateID"));
+      let target_level = parseInt(eHTML.getAttribute("level"));
+      let target_cate = parseInt(eHTML.getAttribute("cateid"));
       if (target_cate === EnumCate.textfield) return false;
       switch (target_level) {
         case 1:
@@ -1634,9 +1639,14 @@ function checkHoverElement(event) {
           break;
         default:
           let parentPage = $(eHTML).parents(`.wbaseItem-value[level="1"]`)[0];
-          if (target_level === 2 && EnumCate.show_name.some((cate) => cate == parentPage?.getAttribute("CateID"))) {
+          let listid = eHTML.getAttribute("listid").split(",");
+          if (target_level === 2 && EnumCate.show_name.some((cate) => cate == parentPage?.getAttribute("cateid"))) {
             is_enable = true;
-          } else if ((target_level <= currentLevel && eHTML.getAttribute("ListID").includes(parentPage?.id)) || event.metaKey || (!isMac && event.ctrlKey)) {
+          } else if (event.metaKey || (!isMac && event.ctrlKey)) {
+            is_enable = true;
+          } else if (target_level < currentLevel && listid.includes(parentPage?.id)) {
+            is_enable = true;
+          } else if (target_level === currentLevel && listid.pop() === select_box_parentID) {
             is_enable = true;
           }
           break;
@@ -1800,7 +1810,7 @@ function wdraw() {
   }
 
   // draw select_box
-  if (select_box != undefined && document.activeElement.getAttribute("CateID") != EnumCate.tool_text && ((checkpad == 0 && tool_state == ToolState.move) || ToolState.resize_type.some((tool) => tool == tool_state))) {
+  if (select_box != undefined && document.activeElement.getAttribute("cateid") != EnumCate.tool_text && ((checkpad == 0 && tool_state == ToolState.move) || ToolState.resize_type.some((tool) => tool == tool_state))) {
     var objset = offsetScale(select_box.x, select_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
     ctxr.strokeStyle = selected_list.every((e) => e.IsWini) ? "#7B61FF" : "#1890FF";
@@ -1814,7 +1824,7 @@ function wdraw() {
     }
   }
 
-  let listShowName = [...divSection.childNodes].filter((wbaseHTML) => wbaseHTML.getAttribute("IsWini") === "true" || EnumCate.show_name.some((cate) => wbaseHTML.getAttribute("CateID") == cate)).sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
+  let listShowName = [...divSection.childNodes].filter((wbaseHTML) => wbaseHTML.getAttribute("IsWini") === "true" || EnumCate.show_name.some((cate) => wbaseHTML.getAttribute("cateid") == cate)).sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
   for (let i = 0; i < listShowName.length; i++) {
     let wbaseHTML = listShowName[i];
     let wbaseRect = wbaseHTML.getBoundingClientRect();
@@ -2221,14 +2231,14 @@ function doubleClickEvent(event) {
       let currentLevel = selected_list.length > 0 ? selected_list[0].Level : 1;
       let target_element = element_path.slice(0, parent_index).find((eHTML) => eHTML.classList?.contains("wbaseItem-value") && eHTML.getAttribute("Level") == currentLevel + 1) ?? element_path[parent_index];
       if (selected_list.length == 1 && target_element?.id == selected_list[0].GID) {
-        if (target_element.getAttribute("CateID") == EnumCate.tool_text) {
+        if (target_element.getAttribute("cateid") == EnumCate.tool_text) {
           target_element.contentEditable = true;
           target_element.style.cursor = "text";
           target_element.focus();
         } else if (event.target.localName == "path") {
           selectPath?.remove();
           selectPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-          selectPath.setAttribute("parentID", selected_list[0].GID);
+          selectPath.setAttribute("parentid", selected_list[0].GID);
           selectPath.setAttribute("d", event.target.getAttribute("d"));
           selectPath.setAttribute("stroke-width", 1 / scale < 0.2 ? 0.2 : 1 / scale > 1 ? 1 : 1 / scale);
           selectPath.setAttribute("stroke", "black");
@@ -2350,7 +2360,7 @@ function upListener(event) {
     return;
   }
   for (let thisElement of event.composedPath()) {
-    if (typeof thisElement.className === "string" && thisElement.className?.includes("wini_popup")) {
+    if (thisElement.classList?.contains("wini_popup")) {
       break;
     } else if (thisElement.id == "left_view" || thisElement.id == "right_view" || thisElement.id == "F12_view" || thisElement.id == "popup_img_document") {
       break;
@@ -2670,7 +2680,7 @@ function upListener(event) {
 function elementIsInRange(element, range, checkAll = false) {
   // nếu checkAllObj = true thì phải toàn bộ Obj nằm trong range hàm mới return true
   let parentElemetList = element
-    .getAttribute("ListID")
+    .getAttribute("listid")
     .split(",")
     .filter((id) => id != wbase_parentID)
     .map((id) => document.getElementById(id));

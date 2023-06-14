@@ -1028,7 +1028,7 @@ class WbaseIO {
     wbase_list = wbase_list.filter((e) => !list.some((delete_item) => delete_item.GID == e.GID || e.ListID.includes(delete_item.GID)));
     arrange();
     if (reBuildParent.length) {
-      switch (parseInt(reBuildParent[0].getAttribute("CateID"))) {
+      switch (parseInt(reBuildParent[0].getAttribute("cateid"))) {
         case EnumCate.tree:
           reBuildParent = reBuildParent[0];
           createTree(
@@ -1134,7 +1134,7 @@ class WbaseIO {
         } else {
           let parentHTML = document.getElementById(wb.ParentID);
           if (parentHTML) {
-            switch (parseInt(parentHTML.getAttribute("CateID"))) {
+            switch (parseInt(parentHTML.getAttribute("cateid"))) {
               case EnumCate.tree:
                 createTree(
                   wbase_list.find((e) => e.GID === wb.ParentID),

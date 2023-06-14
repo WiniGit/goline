@@ -184,7 +184,7 @@ function frameHugChildrenSize() {
       wbaseItem.StyleItem.FrameItem.Height = Math.max(...childrenHTML.map((e) => e.offsetTop + e.offsetHeight)).toFixed(2);
       wbaseItem.value.style.right = `unset`;
       wbaseItem.value.style.bottom = `unset`;
-      wbaseItem.value.style.transform = "none";
+      wbaseItem.value.style.transform = null;
       wbaseItem.value.style.left = wbaseItem.StyleItem.PositionItem.Left;
       wbaseItem.value.style.top = wbaseItem.StyleItem.PositionItem.Top;
       wbaseItem.value.style.width = wbaseItem.StyleItem.FrameItem.Width + "px";
@@ -205,7 +205,7 @@ function frameHugChildrenSize() {
         }
         childHTML.style.right = `unset`;
         childHTML.style.left = `${childHTML.offsetLeft - dx}px`;
-        childHTML.style.transform = "none";
+        childHTML.style.transform = null;
       });
       wbaseItem.StyleItem.FrameItem.Width = Math.max(...childrenHTML.map((e) => e.offsetLeft + e.offsetWidth)).toFixed(2);
       wbaseItem.value.style.width = wbaseItem.StyleItem.FrameItem.Width + "px";
@@ -224,7 +224,7 @@ function frameHugChildrenSize() {
         }
         childHTML.style.bottom = `unset`;
         childHTML.style.top = `${childHTML.offsetTop - dy}px`;
-        childHTML.style.transform = "none";
+        childHTML.style.transform = null;
       });
       wbaseItem.StyleItem.FrameItem.Height = Math.max(...childrenHTML.map((e) => e.offsetTop + e.offsetHeight)).toFixed(2);
       wbaseItem.value.style.height = wbaseItem.StyleItem.FrameItem.Height + "px";
@@ -354,7 +354,7 @@ function updatePosition(position_item, wbaseItem) {
     elementHTML.style.bottom = `unset`;
     elementHTML.style.left = position_item.Left;
     elementHTML.style.top = position_item.Top;
-    elementHTML.style.transform = "none";
+    elementHTML.style.transform = null;
     updateConstraints(wbaseItem);
   } else if (position_item.Left != undefined) {
     if (!isNaN(position_item.Left)) position_item.Left = `${position_item.Left}px`;
@@ -412,11 +412,11 @@ function inputPositionItem(position_item) {
         $(wbaseItem.value).removeClass("fixed-position");
         if (isInLayout) {
           wbaseItem.value.style.position = "relative";
-          wbaseItem.value.style.left = "unset";
-          wbaseItem.value.style.right = "unset";
-          wbaseItem.value.style.top = "unset";
-          wbaseItem.value.style.bottom = "unset";
-          wbaseItem.value.style.transform = "none";
+          wbaseItem.value.style.left = null;
+          wbaseItem.value.style.right = null;
+          wbaseItem.value.style.top = null;
+          wbaseItem.value.style.bottom = null;
+          wbaseItem.value.style.transform = null;
         }
       }
     }
@@ -607,7 +607,7 @@ function selectResizeType(isW = true, type) {
             } else {
               let childrenHTML = [...wbase_eHTML.querySelectorAll(`.wbaseItem-value[level="${selected_list[i].Level + 1}"]`)];
               childrenHTML.forEach((childHTML) => {
-                if (childHTML.getAttribute("CateID") == EnumCate.textfield) {
+                if (childHTML.getAttribute("cateid") == EnumCate.textfield) {
                   childHTML.style.height = `fit-content`;
                 } else if (childHTML.style.height == "100%") {
                   let wbChild = wbase_list.find((e) => e.GID == childHTML.id);
@@ -709,11 +709,11 @@ async function addAutoLayout() {
     eHTML.style.justifyContent = wMainAxis(new_auto_layout.Alignment, isHorizontal);
     eHTML.childNodes.forEach((childHTML) => {
       childHTML.style.position = "relative";
-      childHTML.style.left = "unset";
-      childHTML.style.top = "unset";
-      childHTML.style.right = "unset";
-      childHTML.style.bottom = "unset";
-      childHTML.style.transform = "none";
+      childHTML.style.left = null;
+      childHTML.style.top = null;
+      childHTML.style.right = null;
+      childHTML.style.bottom = null;
+      childHTML.style.transform = null;
     });
     if (selected_list[0].Level === 1 && new_auto_layout.Direction === "Horizontal") {
       selected_list[0].StyleItem.FrameItem.Width = eHTML.offsetWidth;
@@ -755,7 +755,7 @@ async function addAutoLayout() {
       selected_list[i].Sort = i;
       selected_list[i].Level = selected_list[i].ListID.split(",").length;
       eHTML.setAttribute("Level", selected_list[i].Level);
-      eHTML.setAttribute("ListID", selected_list[i].ListID);
+      eHTML.setAttribute("listid", selected_list[i].ListID);
       eHTML.style.position = "relative";
       eHTML.style.left = null;
       eHTML.style.top = null;
@@ -773,7 +773,7 @@ async function addAutoLayout() {
           childSelect.ListID = thisListID.join(",");
           childSelect.Level = thisListID.length;
           childSelect.value.setAttribute("Level", childSelect.Level);
-          childSelect.value.setAttribute("ListID", childSelect.ListID);
+          childSelect.value.setAttribute("listid", childSelect.ListID);
         }
       }
     }
@@ -2318,7 +2318,7 @@ function combineAsVariant() {
     newPropertyItem.BasePropertyItems.push(newBaseProperty);
     selected_list[i].BasePropertyItems = [newBaseProperty];
     eHTML.setAttribute("Level", selected_list[i].Level);
-    eHTML.setAttribute("ListID", selected_list[i].ListID);
+    eHTML.setAttribute("listid", selected_list[i].ListID);
     eHTML.style.left = selected_list[i].StyleItem.PositionItem.Left;
     eHTML.style.top = selected_list[i].StyleItem.PositionItem.Top;
     eHTML.style.zIndex = i;
@@ -2332,7 +2332,7 @@ function combineAsVariant() {
         childSelect.ListID = thisListID.join(",");
         childSelect.Level = thisListID.length;
         childSelect.value.setAttribute("Level", childSelect.Level);
-        childSelect.value.setAttribute("ListID", childSelect.ListID);
+        childSelect.value.setAttribute("listid", childSelect.ListID);
       }
     }
   }
@@ -2717,7 +2717,7 @@ function createForm() {
       selected_list[i].Sort = i;
       selected_list[i].Level++;
       eHTML.setAttribute("Level", selected_list[i].Level);
-      eHTML.setAttribute("ListID", selected_list[i].ListID);
+      eHTML.setAttribute("listid", selected_list[i].ListID);
       eHTML.style.left = selected_list[i].StyleItem.PositionItem.Left;
       eHTML.style.top = selected_list[i].StyleItem.PositionItem.Top;
       eHTML.style.zIndex = i;
@@ -2731,7 +2731,7 @@ function createForm() {
           childSelect.ListID = thisListID.join(",");
           childSelect.Level = thisListID.length;
           childSelect.value.setAttribute("Level", childSelect.Level);
-          childSelect.value.setAttribute("ListID", childSelect.ListID);
+          childSelect.value.setAttribute("listid", childSelect.ListID);
         }
       }
     }

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    delete window.exports;
+    delete window.module;
+  </script>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style id="class-res"></style>
+  <style id="skin-class"></style>
+
+  <link rel="icon" sizes="any" type="image/svg+xml" href="/lib/assets/logo.svg" />
+  <title>Project - Wini</title>
+
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/home_styles.css" />
+
+  <script src="/script/appconfig.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://kit.fontawesome.com/1cf830eab3.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/js/jquery.validate.min.js"></script>
+  <script src="/js/bootstrap-toastr/toastr.js"></script>
+  <link href="/js/bootstrap-toastr/toastr.css" rel="stylesheet" />
+
+  <script src="/script/enum-obj-event.js"></script>
+  <script src="/script/user-service.js"></script>
+  <script src="/script/utils.js"></script>
+
+  <script type="text/javascript" src="/script/da/design-wbaseDA.js"></script>
+  <script type="text/javascript" src="/script/da/design-baseDA.js"></script>
+  <script type="text/javascript" src="/script/da/design-PageDA.js"></script>
+  <script type="text/javascript" src="/script/da/design-fileDA.js"></script>
+  <script type="text/javascript" src="/script/da/design-skinDA.js"></script>
+
+  <script type="text/javascript" src="/script/da/ProjectDA.js"></script>
+  <script type="text/javascript" src="/script/da/PermissionDA.js"></script>
+  <script type="text/javascript" src="/script/da/api-CollectionDA.js"></script>
+  <script type="text/javascript" src="/script/da/api-RequestDA.js"></script>
+  <script type="text/javascript" src="/script/da/api-InputDA.js"></script>
+  <script type="text/javascript" src="/script/da/api-OutputDA.js"></script>
+  <script type="text/javascript" src="/script/da/api-RouterDA.js"></script>
+
+  <script type="text/javascript" src="/script/js/project-design-popup.js"></script>
+
+  <link rel="stylesheet" href="/script/components/component-style.css" />
+
+  <link rel="stylesheet" href="/css/design-project-view.css" />
+  <link rel="stylesheet" href="/css/design-right-view.css" />
+  <link rel="stylesheet" href="/css/design-left-view.css" />
+  <link rel="stylesheet" href="/css/design-popup.css" />
+
+
+  <script src="/script/js/title-bar.js"></script>
+
+  <script>
+    var userItem = JSON.parse(Ultis.getStorage('customer'));
+
+    document.onkeydown = function (ev) {
+      if (ev.key == "F11" || ev.key == "F12") ev.preventDefault();
+    };
+    TitleBarDA.initDataStorage();
+    fetch("/View/title-bar.html")
+      .then((response) => response.text())
+      .then((text) => {
+        document.getElementById("title-bar").innerHTML = text;
+        TitleBarDA.updateTitleBar();
+      });
+  </script>
+</head>
+
+<body>
+  <div id="body">
+    <div class="col" style="z-index: 2; position: absolute; width: 100%; top: 0">
+      <div class="title-bar" id="title-bar" style="height: 38px; width: 100%"></div>
+      <div id="header" class="row">
+        <div id="create_tool" style="display: inline-flex; align-items: center"></div>
+        <p id="project_name" class="semibold2"></p>
+        <div id="share_tool" style="display: inline-flex; align-items: center"></div>
+      </div>
+    </div>
+    <div id="canvas_view" style="z-index: 0; position: absolute; top: 0">
+      <div id="divSection"></div>
+    </div>
+
+    <div id="left_view" class="elevation7">
+      <div id="tab_bar_left">
+        <i id="layer-search" class="fa-solid fa-magnifying-glass fa-xs"></i>
+        <button class="layer tab_left">Layer</button>
+        <button class="assets tab_left" style="opacity: 0.7">Assets</button>
+        <!-- <button class="base component tab_left">Base component</button> -->
+        <div id="btn_select_page">
+          <p></p>
+          <i class="fa-solid fa-chevron-up fa-xs"></i>
+        </div>
+      </div>
+      <div id="Layer" class="left_tab_view" style="display: block"></div>
+      <div id="Assets" class="left_tab_view" style="display: none"></div>
+      <!-- <div
+                id="Base component"
+                class="left_tab_view"
+                style="display: none"
+            ></div> -->
+      <div id="resize_left_view_line"></div>
+    </div>
+    <div id="right_view" class="elevation7" style="top: 86px">
+      <div id="tab_bar_right">
+        <button data-index="0" class="design tab_right text-label">
+          Design
+        </button>
+        <button data-index="1" class="prototype tab_right text-label" style="opacity: 0.7">
+          Prototype
+        </button>
+        <button data-index="2" class="set-state tab_right text-label" style="opacity: 0.7">
+          State
+        </button>
+        <button data-index="3" class="set-state tab_right text-label" style="opacity: 0.7">
+          Export
+        </button>
+      </div>
+      <div id="Design" class="right_tab_view" style="display: block"></div>
+      <div id="Prototype" class="prototype_setting_view right_tab_view" style="display: none"></div>
+      <div id="State" class="state_setting_view right_tab_view" style="display: none"></div>
+      <div id="Export" class="export_view right_tab_view" style="display: none">
+        <div class="download-project center">
+          <span class="regular1">Download <i class="fa-solid fa-download fa-sm"></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div id="f12_view"></div> -->
+  <div id="f12-container" class="f12-container col"></div>
+
+  <div class="popup-background wini_popup" id="create_skin_popup" style="z-index: 3">
+    <div class="popup-content">
+      <div class="popup-header row">
+        <span class="semibold1 title_create_skin">Create new</span>
+        <button class="button-primary box24 popup-close" onclick="closePopupSkin()">
+          <img src="/lib/assets/close.svg" />
+        </button>
+      </div>
+      <div class="popup-body row" id="input_new_skin_name">
+        <input class="popup-input space regular1" type="text" placeholder="skin name" name="projectName" />
+      </div>
+      <div class="popup-footer row" style="justify-content: end">
+        <button class="cancel-button semibold11 popup-close" onclick="closePopupSkin()">
+          Cancel
+        </button>
+        <button class="confirm-button team-create-popup-confirm semibold11" onclick="createNewSkin()">
+          Create skin
+        </button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="/script/js/project-design-header-view.js"></script>
+  <script type="text/javascript" src="/script/js/project-design-view.js"></script>
+  <script type="text/javascript" src="/script/js/project-design-popup-component.js"></script>
+  <script type="text/javascript" src="/script/js/project-design-left-view.js"></script>
+  <script type="text/javascript" src="/script/js/project-design-state-component.js"></script>
+  <script type="text/javascript" src="/script/js/design-view.js"></script>
+  <script type="text/javascript" src="/script/js/Wini.js"></script>
+  <script type="text/javascript" src="/script/js/design-edit-wbase-style-events.js"></script>
+  <script type="text/javascript" src="/script/js/design-right-click-function.js"></script>
+
+  <script type="text/javascript" src="/lib/assets/svg_icon.js"></script>
+  <script type="text/javascript" src="/script/components/handleData.js"></script>
+  <script type="text/javascript" src="/script/components/w_button.js"></script>
+  <script type="text/javascript" src="/script/components/w_checkbox.js"></script>
+  <script type="text/javascript" src="/script/components/w_frame.js"></script>
+  <script type="text/javascript" src="/script/components/w_variant.js"></script>
+  <script type="text/javascript" src="/script/components/w_progress_bar.js"></script>
+  <script type="text/javascript" src="/script/components/w_progress_circle.js"></script>
+  <script type="text/javascript" src="/script/components/w_radio_button.js"></script>
+  <script type="text/javascript" src="/script/components/w_rectangle.js"></script>
+  <script type="text/javascript" src="/script/components/w_svg.js"></script>
+  <script type="text/javascript" src="/script/components/w_switch.js"></script>
+  <script type="text/javascript" src="/script/components/w_text.js"></script>
+  <script type="text/javascript" src="/script/components/w_text_form_field.js"></script>
+  <script type="text/javascript" src="/script/components/w_date_picker.js"></script>
+  <script type="text/javascript" src="/script/components/w_table.js"></script>
+  <script type="text/javascript" src="/script/components/w_tree.js"></script>
+  <script type="text/javascript" src="/script/components/w_chart.js"></script>
+  <script type="text/javascript" src="/script/components/w_carousel.js"></script>
+
+  <script src="/script/js/design-setting-prototype.js"></script>
+  <script src="/script/js/design-setting-animation.js"></script>
+  <script src="/script/js/F12-container.js"></script>
+  <script src="/script/js/api-view.js"></script>
+  <script src="/script/js/design-download-project.js"></script>
+
+  <script src="/script/socket/socket.io.js"></script>
+  <script src="/script/socket/SocketWini.js"></script>
+</body>
+
+</html>

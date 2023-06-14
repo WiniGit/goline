@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" sizes="any" type="image/svg+xml" href="/lib/assets/logo.svg" />
+    <title>Wini</title>
+    <link rel="stylesheet" href="/css/home_styles.css">
+
+    <script src="/js/bootstrap-toastr/toastr.js"></script>
+    <link href="/js/bootstrap-toastr/toastr.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+
+    <script src="/script/appconfig.js"></script>
+
+    <script src="/script/utils.js"></script>
+   <script src="/script/user-service.js"></script>
+
+    <script src="/script/wini-function.js"></script>
+
+    <script>
+        check_loginSuccess();
+    </script>
+</head>
+
+<body class="col">
+    <div class="login-success-logo box80">
+        <img src="/lib/assets/logo.svg" alt="">
+    </div>
+
+    <div class="login-success col">
+        <span class="semibold4">Log in as <span class="login-success-customer-email"></span></span>
+        <a id="callback-href" class="login-success-open-app-button row semibold2 center">Open the desktop app</a>
+        <span class="regular1">
+            Not <span class="login-success-customer-email"></span>?
+            <a href="/View/login-web-view.html" class="regular1 login-success-another-account">Login with another account.</a>
+        </span>
+    </div>
+
+    <script src="/script/js/login-web-success.js"></script>
+</body>
+
+</html>
