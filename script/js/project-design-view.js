@@ -1393,10 +1393,6 @@ function dragAltEnd() {
     replaceAllLyerItemHTML();
     parent = divSection;
     addSelectList(alt_list);
-    if (parent_wbase) {
-      parent_wbase.ListChildID = parent_wbase.ListChildID.filter((id) => alt_list.every((altWb) => altWb.GID !== id));
-      parent_wbase.CountChild = parent_wbase.ListChildID.length;
-    }
     tmpAltHTML.forEach((tmp) => tmp.setAttribute("loading", "true"));
     action_list[action_index].tmpHTML = [...tmpAltHTML];
     tmpAltHTML = [];

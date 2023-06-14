@@ -707,37 +707,35 @@ socket.on("server-main", async (data) => {
     }
     listData = initDOM(listData);
     arrange(listData);
-    if (data.pageid === PageDA.obj.ID) {
-      if (data.enumEvent === EnumEvent.delete) {
-        WbaseIO.delete(listData);
-      } else {
-        await WbaseIO.addOrUpdate(listData, data.enumEvent);
-        if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
-          replaceAllLyerItemHTML();
-          if (action_index === data.index) {
-            clearActionListFrom(action_index - 1);
-            addSelectList(listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)));
-            action_list[action_index].enumEvent = EnumEvent.add;
-          } else {
-            let oldData = [];
-            if (!data.parentid) {
-              oldData.push({
-                GID: wbase_parentID,
-                ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
-                Level: 0,
-              });
-            }
-            action_list[data.index] = {
-              oldData: oldData,
-              selected: listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))),
-              enumObj: EnumObj.wBase,
-              enumEvent: EnumEvent.add,
-            };
-            oldData.push(...wbase_list.filter((wbaseItem) => wbaseItem.GID === data.parentid || action_list[data.index].selected.some((selectItem) => wbaseItem.ListID.includes(selectItem.GID))).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))));
+    if (data.enumEvent === EnumEvent.delete) {
+      WbaseIO.delete(listData);
+    } else {
+      await WbaseIO.addOrUpdate(listData, data.enumEvent);
+      if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
+        replaceAllLyerItemHTML();
+        if (action_index === data.index) {
+          clearActionListFrom(action_index - 1);
+          addSelectList(listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)));
+          action_list[action_index].enumEvent = EnumEvent.add;
+        } else {
+          let oldData = [];
+          if (!data.parentid) {
+            oldData.push({
+              GID: wbase_parentID,
+              ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
+              Level: 0,
+            });
           }
+          action_list[data.index] = {
+            oldData: oldData,
+            selected: listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))),
+            enumObj: EnumObj.wBase,
+            enumEvent: EnumEvent.add,
+          };
+          oldData.push(...wbase_list.filter((wbaseItem) => wbaseItem.GID === data.parentid || action_list[data.index].selected.some((selectItem) => wbaseItem.ListID.includes(selectItem.GID))).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))));
         }
       }
-    } 
+    }
     // else {
     //   if (data.enumEvent === EnumEvent.delete) {
     //     WbaseIO.delete(listData);

@@ -7,7 +7,7 @@ function setupLeftView() {
   let list_tab_view = document.getElementsByClassName("tab_left");
   for (let i = 0; i < list_tab_view.length; i++) {
     if (!PageDA.enableEdit) {
-      if(list_tab_view[i].innerHTML === "Assets") list_tab_view[i].style.display = "none";
+      if (list_tab_view[i].innerHTML === "Assets") list_tab_view[i].style.display = "none";
     }
     list_tab_view[i].onclick = function () {
       tabChange(this.innerHTML, "left_tab_view");
@@ -1497,4 +1497,297 @@ function checkboxLinkSkin(cateItem) {
       break;
   }
   return cateForm;
+}
+
+function dragInstanceUpdate(event) {
+  console.log("drag instance update");
+  selectParent(event);
+  instance_drag.style.left = instance_drag.offsetLeft + event.pageX - previousX + "px";
+  instance_drag.style.top = instance_drag.offsetTop + event.pageY - previousY + "px";
+  previousX = event.pageX;
+  previousY = event.pageY;
+  let parentHTML = parent;
+  let isTableParent = parentHTML.localName === "table";
+  document.getElementById(`demo_auto_layout`)?.remove();
+  if (isTableParent) {
+    console.log("table");
+    let availableCell = findCell(parentHTML, event);
+    if (availableCell) {
+      let distance = 0;
+      let cellChildren = [...availableCell.childNodes];
+      if (cellChildren.length > 0) {
+        cellChildren.sort((aHTML, bHTML) => {
+          let aRect = aHTML.getBoundingClientRect();
+          let bRect = bHTML.getBoundingClientRect();
+          let a_center_oy = Math.abs(event.pageY - (aRect.y + aRect.height / 2));
+          let b_center_oy = Math.abs(event.pageY - (bRect.y + bRect.height / 2));
+          return a_center_oy - b_center_oy;
+        });
+        let closestHTML = cellChildren[0];
+        let htmlRect = closestHTML.getBoundingClientRect();
+        zIndex = parseInt(window.getComputedStyle(closestHTML).zIndex);
+        distance = event.pageY - (htmlRect.y + htmlRect.height / 2);
+      }
+      $(instance_drag).addClass("drag-hide");
+      let demo = document.createElement("div");
+      demo.id = "demo_auto_layout";
+      demo.style.backgroundColor = "#1890FF";
+      demo.style.height = `${2.4 / scale}px`;
+      demo.style.width = `${instance_drag.firstChild.offsetWidth * 0.8}px`;
+      if (distance < 0) {
+        demo.style.zIndex = 0;
+        demo.style.zIndex = Math.max(...cellChildren.map((e) => parseInt(e.style.zIndex))) + 1;
+        availableCell.replaceChildren(demo, ...cellChildren);
+      } else {
+        demo.style.zIndex = Math.max(...cellChildren.map((e) => parseInt(e.style.zIndex))) + 1;
+        availableCell.replaceChildren(...cellChildren, demo);
+      }
+    }
+  } else if (window.getComputedStyle(parentHTML).display?.match(/(flex|grid)/g) && !select_component.StyleItem.PositionItem.FixPosition) {
+    console.log("flex|grid");
+    let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
+    let isGrid = window.getComputedStyle(parentHTML).display.match("grid");
+    if (parentHTML.style.flexDirection == "column") {
+      let zIndex = 0;
+      let distance = 0;
+      if (children.length > 0) {
+        children.sort((aHTML, bHTML) => {
+          let aRect = aHTML.getBoundingClientRect();
+          let bRect = bHTML.getBoundingClientRect();
+          let a_center_oy;
+          let b_center_oy;
+          if (isGrid) {
+            a_center_oy = Math.sqrt(Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) + Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2));
+            b_center_oy = Math.sqrt(Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) + Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2));
+          } else {
+            a_center_oy = Math.abs(event.pageY - (aRect.y + aRect.height / 2));
+            b_center_oy = Math.abs(event.pageY - (bRect.y + bRect.height / 2));
+          }
+          return a_center_oy - b_center_oy;
+        });
+        let closestHTML = children[0];
+        if (isGrid) {
+          closestHTML = children.find((childHTML) => childHTML.getBoundingClientRect().bottom >= event.pageX);
+        }
+        if (closestHTML) {
+          let closestRect = closestHTML.getBoundingClientRect();
+          zIndex = parseInt(window.getComputedStyle(closestHTML).order);
+          distance = event.pageY - (closestRect.y + closestRect.height / 2);
+          if (distance < 0) {
+            zIndex--;
+          }
+        } else {
+          zIndex = Math.max(...children.map((childHTML) => parseInt(childHTML.style.zIndex)));
+        }
+      }
+      $(instance_drag).addClass("drag-hide");
+      let demo = document.createElement("div");
+      demo.id = "demo_auto_layout";
+      demo.style.backgroundColor = "#1890FF";
+      demo.style.height = `${2.4 / scale}px`;
+      demo.style.width = `${instance_drag.firstChild.offsetWidth * 0.8}px`;
+      demo.style.order = zIndex;
+      switch (parseInt(parentHTML.getAttribute("cateid"))) {
+        case EnumCate.tree:
+          parentHTML.querySelector(".children-value").appendChild(demo);
+          break;
+        case EnumCate.carousel:
+          parentHTML.querySelector(".children-value").appendChild(demo);
+          break;
+        default:
+          parentHTML.appendChild(demo);
+          break;
+      }
+    } else {
+      let zIndex = 0;
+      let distance = 0;
+      if (children.length > 0) {
+        children.sort((aHTML, bHTML) => {
+          let aRect = aHTML.getBoundingClientRect();
+          let bRect = bHTML.getBoundingClientRect();
+          let a_center_ox;
+          let b_center_ox;
+          if (isGrid) {
+            a_center_ox = Math.sqrt(Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) + Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2));
+            b_center_ox = Math.sqrt(Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) + Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2));
+          } else {
+            a_center_ox = Math.abs(event.pageX - (aRect.x + aRect.width / 2));
+            b_center_ox = Math.abs(event.pageX - (bRect.x + bRect.width / 2));
+          }
+          return a_center_ox - b_center_ox;
+        });
+        let closestHTML = children[0];
+        if (isGrid) {
+          closestHTML = children.find((childHTML) => childHTML.getBoundingClientRect().bottom >= event.pageY);
+        }
+        if (closestHTML) {
+          let closestRect = closestHTML.getBoundingClientRect();
+          zIndex = parseInt(window.getComputedStyle(closestHTML).zIndex);
+          distance = event.pageX - (closestRect.x + closestRect.width / 2);
+          if (distance < 0) {
+            zIndex--;
+          }
+        } else {
+          zIndex = Math.max(...children.map((childHTML) => parseInt(childHTML.style.zIndex)));
+        }
+      }
+      $(instance_drag).addClass("drag-hide");
+      let demo = document.createElement("div");
+      demo.id = "demo_auto_layout";
+      demo.style.backgroundColor = "#1890FF";
+      demo.style.width = `${2.4 / scale}px`;
+      demo.style.height = `${instance_drag.firstChild.offsetHeight * 0.8}px`;
+      demo.style.order = zIndex;
+      switch (parseInt(parentHTML.getAttribute("cateid"))) {
+        case EnumCate.tree:
+          parentHTML.querySelector(".children-value").appendChild(demo);
+          break;
+        case EnumCate.carousel:
+          parentHTML.querySelector(".children-value").appendChild(demo);
+          break;
+        default:
+          parentHTML.appendChild(demo);
+          break;
+      }
+    }
+  } else {
+    $(instance_drag).removeClass("drag-hide");
+  }
+}
+
+function dragInstanceEnd(event) {
+  WBaseDA.enumEvent = EnumEvent.copy;
+  select_component.children = null;
+  let newParent = parent;
+  let parent_wbase;
+  let isTableParent = newParent.localName === "table";
+  if (newParent.id?.length === 36) parent_wbase = wbase_list.find((e) => e.GID === newParent.id);
+  let drag_to_layout = window.getComputedStyle(newParent).display.match(/(flex|grid)/g);
+  let newWb = JSON.parse(JSON.stringify(select_component));
+  newWb.GID = uuidv4();
+  newWb.value = instance_drag.firstChild;
+  newWb.value.id = newWb.GID;
+  newWb.ChildID = select_component.GID;
+  newWb.IsCopy = true;
+  newWb.IsWini = false;
+  newWb.StyleItem.FrameItem.Width = newWb.value.offsetWidth;
+  newWb.StyleItem.FrameItem.Height = newWb.value.offsetHeight;
+  newWb.value.style.width = newWb.value.offsetWidth + "px";
+  newWb.value.style.height = newWb.value.offsetHeight + "px";
+  newWb.value.removeAttribute("iswini");
+  if (isTableParent) {
+    let demo = document.getElementById("demo_auto_layout");
+    if (demo) {
+      zIndex = parseInt(demo.style.order) + 1;
+      demo.replaceWith(newWb.value);
+    }
+    let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
+    [...newParent.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
+      listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
+    });
+    parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
+    WBaseDA.listData.push(parent_wbase);
+  } else if (drag_to_layout) {
+    let demo = document.getElementById("demo_auto_layout");
+    if (demo) {
+      zIndex = parseInt(demo.style.order);
+      demo.remove();
+    }
+  }
+  $(newWb.value).removeClass("drag-hide");
+  if (parent_wbase) {
+    newWb.ParentID = newParent.id;
+    newWb.ListID = newParent.getAttribute("listid") + `,${newParent.id}`;
+    newWb.Level = newWb.ListID.split(",").length;
+    newWb.value.setAttribute("level", newWb.Level);
+    newWb.value.setAttribute("listid", newWb.ListID);
+  } else {
+    newWb.ParentID = wbase_parentID;
+    newWb.ListID = wbase_parentID;
+    newWb.Level = 1;
+    newWb.value.setAttribute("level", 1);
+    newWb.value.setAttribute("listid", wbase_parentID);
+  }
+  if (isTableParent) {
+    let wbaseChildren = [...newParent.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParent.getAttribute("level") ?? "0") + 1}"]`)];
+    for (let i = 0; i < wbaseChildren.length; i++) {
+      wbaseChildren[i].style.zIndex = i;
+    }
+    newWb.Sort = zIndex;
+    newWb.value.style.left = null;
+    newWb.value.style.top = null;
+    newWb.value.style.right = null;
+    newWb.value.style.bottom = null;
+    newWb.value.style.transform = null;
+    newWb.StyleItem.PositionItem.FixPosition = false;
+    newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+    newWb.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+  } else if (drag_to_layout) {
+    if (select_component.StyleItem.FrameItem.Width < 0 && parent_wbase.StyleItem.FrameItem.Width != undefined) {
+      newWb.StyleItem.FrameItem.Width = select_component.StyleItem.FrameItem.Width;
+      newWb.value.style.width = "100%";
+    }
+    if (select_component.StyleItem.FrameItem.Height < 0 && parent_wbase.StyleItem.FrameItem.Height != undefined) {
+      newWb.StyleItem.FrameItem.Height = select_component.StyleItem.FrameItem.Height;
+      newWb.value.style.height = "100%";
+    }
+    switch (parseInt(newParent.getAttribute("cateid"))) {
+      case EnumCate.tree:
+        newParent.querySelector(".children-value").appendChild(newWb.value);
+        break;
+      case EnumCate.carousel:
+        newParent.querySelector(".children-value").appendChild(newWb.value);
+        break;
+      default:
+        newParent.appendChild(newWb.value);
+        break;
+    }
+    newWb.StyleItem.PositionItem.FixPosition = false;
+    newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+    newWb.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+    $(newWb.value).removeClass("fixed-position");
+    newWb.value.style.position = "relative";
+    newWb.value.style.left = null;
+    newWb.value.style.right = null;
+    newWb.value.style.top = null;
+    newWb.value.style.bottom = null;
+    newWb.value.style.transform = null;
+    newWb.value.style.zIndex = zIndex + i;
+    newWb.value.style.order = zIndex + i;
+  } else {
+    let offset = offsetScale(event.pageX, event.pageY);
+    newWb.StyleItem.PositionItem.Top = offset.y - newWb.value.offsetHeight + "px";
+    newWb.StyleItem.PositionItem.Left = offset.x - newWb.value.offsetWidth + "px";
+    newWb.value.style.left = newWb.StyleItem.PositionItem.Left;
+    newWb.value.style.top = newWb.StyleItem.PositionItem.Top;
+    newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+    newWb.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+    newParent.appendChild(newWb.value);
+  }
+  WBaseDA.listData.push(newWb);
+  wbase_list.push(newWb);
+  if (parent_wbase) {
+    let children = [...newParent.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParent.getAttribute("level") ?? "0") + 1}"]`)];
+    children.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
+    for (let i = 0; i < children.length; i++) {
+      wbase_list.find((wbase) => wbase.GID == children[i].id).Sort = i;
+      children[i].style.zIndex = i;
+      children[i].style.order = i;
+    }
+    parent_wbase.CountChild = children.length;
+    parent_wbase.ListChildID = children.map((e) => e.id);
+    WBaseDA.listData.push(parent_wbase);
+  }
+  replaceAllLyerItemHTML();
+  parent = divSection;
+  addSelectList([newWb]);
+  newWb.value.setAttribute("loading", "true");
+  action_list[action_index].tmpHTML = [newWb.value];
+  let centerRect = newWb.value.getBoundingClientRect();
+  centerRect = offsetScale(centerRect.x + centerRect.width / 2, centerRect.y + centerRect.height / 2);
+  divSection.style.transition = "1s";
+  scrollbdClick(centerRect.x, centerRect.y, newWb.value.offsetWidth, newWb.value.offsetHeight);
+  divSection.style.transition = "none";
+  updateHoverWbase();
+  PageDA.saveSettingsPage();
 }

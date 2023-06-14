@@ -582,7 +582,7 @@ function selectParent(event) {
     if (drag_start_list.length > 0 && parseInt(parent.getAttribute("level")) > 1 && !(event.metaKey || (!isMac && event.ctrlKey))) {
       let pRect = parent.getBoundingClientRect();
       let grdPRect = parent.parentElement.getBoundingClientRect();
-      console.log("??????????",event.pageX);
+      console.log("??????????", event.pageX);
       if ((pRect.x === grdPRect.x && pRect.y === grdPRect.y && pRect.width === grdPRect.width && pRect.height === grdPRect.height) || event.pageX / scale - leftx / scale - pRect.x <= 3 || element_offset.x + parent.offsetWidth - event.pageX / scale + leftx / scale <= 3 || event.pageY / scale - topx / scale - pRect.y <= 3 || pRect.y + parent.offsetWidth - event.pageY / scale + topx / scale <= 3) {
         parent = parent.parentElement;
       }
@@ -1408,11 +1408,7 @@ function moveListener(event) {
       break;
     case "left_view":
       if (instance_drag) {
-        selectParent(event);
-        instance_drag.style.left = instance_drag.offsetLeft + event.pageX - previousX + "px";
-        instance_drag.style.top = instance_drag.offsetTop + event.pageY - previousY + "px";
-        previousX = event.pageX;
-        previousY = event.pageY;
+        dragInstanceUpdate(event);
       } else {
         switch (idbutton) {
           case "resize_left_view_line":
@@ -1530,6 +1526,8 @@ function moveListener(event) {
     rectOffset.w = rRect.w / scale;
     rectOffset.h = rRect.h / scale;
   }
+  document.body.style.setProperty("--loadingX", event.pageX + "px");
+  document.body.style.setProperty("--loadingY", event.pageY + "px");
   WiniIO.emitMouse({
     xMouse: mouseOffset.x,
     yMouse: mouseOffset.y,
@@ -2372,84 +2370,7 @@ function upListener(event) {
   if (instance_drag) {
     if (target_view) {
       if (instance_drag.getAttribute("componentid")) {
-        let list_relative = select_component.children;
-        let component = JSON.parse(JSON.stringify(select_component));
-        component.IsWini = false;
-        component.children = null;
-        component.ParentID = parent.id?.length === 36 ? parent.id : wbase_parentID;
-        list_relative = list_relative.filter((e) => e.ListID.includes(component.GID));
-        let list_new_wbase = createNewWbase(component, list_relative);
-        WBaseDA.listData.push(...list_new_wbase);
-        let new_wbase_item = list_new_wbase.pop();
-        let offset = offsetScale(instance_drag.offsetLeft, instance_drag.offsetTop);
-        let parentRect = document.getElementById(new_wbase_item.ParentID);
-        if (parentRect) {
-          parentRect = parentRect.getBoundingClientRect();
-          parentRect = offsetScale(parentRect.x, parentRect.y);
-        }
-        new_wbase_item.StyleItem.PositionItem.Top = `${offset.y - (parentRect?.y ?? 0)}px`;
-        new_wbase_item.StyleItem.PositionItem.Left = `${offset.x - (parentRect?.x ?? 0)}px`;
-        [...list_new_wbase, new_wbase_item].forEach((wbaseItem) => {
-          wbaseItem.ProjectID = null;
-          let colorSkinId = wbaseItem.StyleItem.DecorationItem?.ColorID;
-          if (colorSkinId && ColorDA.list.every((skin) => skin.GID != colorSkinId)) {
-            let colorSkin = ColorDA.listAssets.find((skin) => skin.GID == colorSkinId);
-            if (colorSkin) {
-              CateDA.needInit = true;
-              ColorDA.list.push(colorSkin);
-            }
-          }
-          let typoSkinId = wbaseItem.StyleItem.TextStyleID;
-          if (typoSkinId && TypoDA.list.every((skin) => skin.GID != typoSkinId)) {
-            let typoSkin = TypoDA.listAssets.find((skin) => skin.GID == typoSkinId);
-            if (typoSkin) {
-              CateDA.needInit = true;
-              TypoDA.list.push(typoSkin);
-            }
-          }
-          let borderSkinId = wbaseItem.StyleItem.DecorationItem?.BorderID;
-          if (borderSkinId && BorderDA.list.every((skin) => skin.GID != borderSkinId)) {
-            let borderSkin = BorderDA.listAssets.find((skin) => skin.GID == borderSkinId);
-            if (borderSkin) {
-              CateDA.needInit = true;
-              BorderDA.list.push(borderSkin);
-            }
-          }
-          let effectSkinId = wbaseItem.StyleItem.DecorationItem?.EffectID;
-          if (effectSkinId && EffectDA.list.every((skin) => skin.GID != effectSkinId)) {
-            let effectSkin = EffectDA.listAssets.find((skin) => skin.GID == effectSkinId);
-            if (effectSkin) {
-              CateDA.needInit = true;
-              EffectDA.list.push(effectSkin);
-            }
-          }
-          initComponents(
-            wbaseItem,
-            list_new_wbase.filter((el) => el.ParentID == wbaseItem.GID),
-          );
-          if (wbaseItem.StyleItem.FrameItem) {
-            if (wbaseItem.value.style.width != "100%" && wbaseItem.value.style.width != "fit-content") wbaseItem.value.style.minWidth = wbaseItem.StyleItem.FrameItem.Width + "px";
-            if (wbaseItem.value.style.height != "100%" && wbaseItem.value.style.height != "fit-content") wbaseItem.value.style.minHeight = wbaseItem.StyleItem.FrameItem.Height + "px";
-          }
-        });
-        wbase_list.push(...list_new_wbase, new_wbase_item);
-        arrange();
-        if (new_wbase_item.ParentID != wbase_parentID) {
-          let parentHTML = document.getElementById(new_wbase_item.ParentID);
-          parent.CountChild++;
-          parentHTML.appendChild(new_wbase_item.value);
-          let childrenHTML = [...parentHTML.childNodes];
-          childrenHTML.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
-          parent.ListChildID = childrenHTML.map((e) => e.id);
-          if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
-            new_wbase_item.value.style.position = "absolute";
-            new_wbase_item.value.style.left = `${new_wbase_item.StyleItem.PositionItem.Left}px`;
-            new_wbase_item.value.style.top = `${new_wbase_item.StyleItem.PositionItem.Top}px`;
-          }
-        }
-        replaceAllLyerItemHTML();
-        WBaseDA.enumEvent = EnumEvent.add;
-        addSelectList([new_wbase_item]);
+        dragInstanceEnd(event);
       } else {
         let url = window.getComputedStyle(instance_drag).backgroundImage.split(/"/)[1];
         let isSvgImg = url.endsWith(".svg");
@@ -2581,6 +2502,9 @@ function upListener(event) {
   switch (WBaseDA.enumEvent) {
     case EnumEvent.copy:
       WBaseDA.copy(WBaseDA.listData);
+      if (window.getComputedStyle(assets_view).display != "none") {
+        initUIAssetView();
+      }
       break;
     case EnumEvent.add:
       let list_add = [];
@@ -2611,9 +2535,7 @@ function upListener(event) {
         }
       }
       reloadTree(selected_list[0].value);
-      if (window.getComputedStyle(assets_view).display != "none") {
-        initUIAssetView();
-      }
+
       break;
     case EnumEvent.edit:
       let enumObj = EnumObj.framePosition;
