@@ -271,7 +271,7 @@ socketH.on('server-post', (data) => {
                         TeamDA.list = TeamDA.list.filter(e => e != TeamDA.selected);
                     } else {
                         $(`.team-child-nav[data-id=${TeamDA.selected.ID}]`).remove();
-                        TeamDA.selected.ListChild = TeamDA.list.ListChild.filter(e => e != TeamDA.selected);
+                        TeamDA.selected.ListChild = TeamDA.selected.ListChild.filter(e => e != TeamDA.selected);
                     }
                     break;
             }
