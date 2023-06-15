@@ -3499,6 +3499,10 @@ function createSkinTileHTML(enumCate, jsonSkin) {
       }),
     );
     projectViewBody.appendChild(popupEditOrDelete);
+    if (popupEditOrDelete.getBoundingClientRect().right > document.body.offsetWidth) {
+      popupEditOrDelete.style.left = null;
+      popupEditOrDelete.style.right = "0px";
+    }
   };
   switch (enumCate) {
     case EnumCate.color:
@@ -3696,7 +3700,7 @@ function popupEditSkin(enumCate, jsonSkin) {
   let property_text = document.createElement("p");
   property_text.innerHTML = "Properties";
   property_text.style.fontSize = "12px";
-  property_text.style.fontWeight = 600;
+  property_text.style.fontWeight = "600";
   property_text.style.margin = "4px 0 4px 8px";
   body.appendChild(property_text);
   switch (enumCate) {

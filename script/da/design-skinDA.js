@@ -311,7 +311,7 @@ class CateDA {
             }));
             //
             this.list_typo_cate = TypoDA.list.filter(e => {
-                e.FontWeight = e.FontWeight.replace("FontWeight.w", "");
+                e.FontWeight = e.FontWeight.toString().replace("FontWeight.w", "");
                 return e.CateID != EnumCate.typography;
             }).filterAndMap(e => e.CateID);
             this.list_typo_cate = this.list.filter((e) => this.list_typo_cate.some((id) => {
@@ -319,6 +319,7 @@ class CateDA {
                     e.ParentID = EnumCate.typography;
                     return true;
                 }
+                let x = 13;
                 return false;
             }));
             //

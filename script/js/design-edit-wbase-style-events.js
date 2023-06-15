@@ -1778,7 +1778,7 @@ function editTextStyle(text_style_item, onSubmit = true) {
     }
     if (text_style_item.FontWeight != undefined) {
       for (let wbaseItem of list_text) {
-        wbaseItem.StyleItem.TextStyleItem.FontWeight = parseFloat(text_style_item.FontWeight);
+        wbaseItem.StyleItem.TextStyleItem.FontWeight = text_style_item.FontWeight.toString();
         if (wbaseItem.CateID === EnumCate.chart) {
           createChart(wbaseItem);
         } else {
