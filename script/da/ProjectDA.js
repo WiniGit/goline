@@ -165,9 +165,9 @@ class ProjectDA {
         if (id == null) {
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
-            pid = urlParams.get('pid');
+            pid = urlParams.get('id');
         } else {
-            pid = id
+            pid = id;
         }
         let url = ProjectDA.urlCtr + 'GetByID?pid=' + pid;
         if (ProjectDA.obj.ID == 0) {

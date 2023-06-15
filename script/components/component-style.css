@@ -36,6 +36,9 @@
   overflow: hidden !important;
   outline: none;
 }
+.w-text * {
+  all: unset !important;
+}
 
 .w-svg {
   position: relative;
