@@ -56,21 +56,32 @@ $("body").on("click", `.popup-select-permission .option-tile`, function (ev) {
         $('.permission-selected').text($(this).text());
     }
     else {
-        if ($('#info-container').hasClass("team")) {
-            let cus = TeamDA.selected.CustomerTeamItems.find(e => e.ID == HomePopup.seleted_userID);
-            if (cus.Permission != $(this).data('id')) {
-                cus.Permission = $(this).data('id');
-                TeamDA.editCustomerTeam(cus);
+        if ($(this).hasClass('remove')) {
+            if ($('#info-container').hasClass("team")) {
+                let cus = TeamDA.selected.CustomerTeamItems.find(e => e.ID == HomePopup.seleted_userID);
+                TeamDA.deleteCustomerTeam(cus.ID);
             }
-        }
-        else {
-            let cus = ProjectDA.selected.CustomerProjectItems.find(e => e.ID == HomePopup.seleted_userID);
-            if (cus.Permission != $(this).data('id')) {
-                cus.Permission = $(this).data('id');
-                ProjectDA.editCustomerProject(cus);
+            else {
+                let cus = ProjectDA.selected.CustomerProjectItems.find(e => e.ID == HomePopup.seleted_userID);
+                ProjectDA.deleteCustomerProject(cus.ID);
             }
+        } else {
+            if ($('#info-container').hasClass("team")) {
+                let cus = TeamDA.selected.CustomerTeamItems.find(e => e.ID == HomePopup.seleted_userID);
+                if (cus.Permission != $(this).data('id')) {
+                    cus.Permission = $(this).data('id');
+                    TeamDA.editCustomerTeam(cus);
+                }
+            }
+            else {
+                let cus = ProjectDA.selected.CustomerProjectItems.find(e => e.ID == HomePopup.seleted_userID);
+                if (cus.Permission != $(this).data('id')) {
+                    cus.Permission = $(this).data('id');
+                    ProjectDA.editCustomerProject(cus);
+                }
+            }
+            $(`.popup-invite-member .member-row[data-id=${HomePopup.seleted_userID}] .button-change-permission>span:nth-child(1)`).text($(this).text());
         }
-        $(`.popup-invite-member .member-row[data-id=${HomePopup.seleted_userID}] .button-change-permission>span:nth-child(1)`).text($(this).text());
     }
 });
 
