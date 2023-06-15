@@ -63,7 +63,7 @@ $("body").on("click", `.popup-select-permission .option-tile`, function (ev) {
             }
             else {
                 let cus = ProjectDA.selected.CustomerProjectItems.find(e => e.ID == HomePopup.seleted_userID);
-                ProjectDA.deleteCustomerProject(cus);
+                ProjectDA.deleteCustomerProject(cus.ID);
             }
         } else {
             if ($('#info-container').hasClass("team")) {
