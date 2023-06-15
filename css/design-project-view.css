@@ -234,20 +234,35 @@ html {
   pointer-events: none !important;
 }
 
-body:has(.wbaseItem-value[loading="true"]) {
+body:has(.wbaseItem-value[loading="true"]) * {
   cursor: wait !important;
-  pointer-events: none;
+  pointer-events: none !important;
+}
+
+body:has(.wbaseItem-value[loading="true"]) > #body::after {
+  position: absolute;
+  content: "";
+  left: var(--loadingX);
+  top: var(--loadingY);
+  border: 5px solid #f3f3f3;
+  border-radius: 50%;
+  width: 20px;
+  aspect-ratio: 1 / 1;
+  border-top: 5px solid #3498db;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+  transition: 0.1s;
 }
 
 #left_view {
   top: 86px;
   left: 0;
   height: calc(100% - 86px);
-  width: 260px;
   background-color: white;
   position: absolute;
   overflow-x: visible;
-  min-width: 208px !important;
+  min-width: 221px !important;
+  max-width: 448px !important;
 }
 
 #layer-search {

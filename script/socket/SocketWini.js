@@ -692,52 +692,66 @@ socket.on("server-main", async (data) => {
   console.log(data);
   if (data.pageid === PageDA.obj.ID) {
     let copyList = [];
+    let initskin = false;
     let listData = data.data.filter((e) => e.GID !== wbase_parentID);
+    let thisAction;
     if (data.token === UserService.getToken() || data.token === UserService.getRefreshToken()) {
-      let thisAction = action_list[data.index];
+      thisAction = action_list[data.index];
       if (thisAction.tmpHTML) {
         wbase_list = wbase_list.filter((e) => {
           let check = thisAction.tmpHTML.every((eHTML) => eHTML.id !== e.GID);
-          if (!check) copyList.push(e);
+          if (!check) {
+            copyList.push(e);
+            if (e.ProjectID !== data.pid) initskin = true;
+          }
           return check;
         });
-        thisAction.tmpHTML.forEach((e) => e.remove());
       }
-      thisAction.tmpHTML = null;
     }
     listData = initDOM(listData);
     arrange(listData);
-    if (data.pageid === PageDA.obj.ID) {
-      if (data.enumEvent === EnumEvent.delete) {
-        WbaseIO.delete(listData);
-      } else {
-        await WbaseIO.addOrUpdate(listData, data.enumEvent);
-        if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
-          replaceAllLyerItemHTML();
-          if (action_index === data.index) {
-            clearActionListFrom(action_index - 1);
-            addSelectList(listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)));
-            action_list[action_index].enumEvent = EnumEvent.add;
-          } else {
-            let oldData = [];
-            if (!data.parentid) {
-              oldData.push({
-                GID: wbase_parentID,
-                ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
-                Level: 0,
-              });
-            }
-            action_list[data.index] = {
-              oldData: oldData,
-              selected: listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))),
-              enumObj: EnumObj.wBase,
-              enumEvent: EnumEvent.add,
-            };
-            oldData.push(...wbase_list.filter((wbaseItem) => wbaseItem.GID === data.parentid || action_list[data.index].selected.some((selectItem) => wbaseItem.ListID.includes(selectItem.GID))).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))));
+    if (data.enumEvent === EnumEvent.delete) {
+      WbaseIO.delete(listData);
+    } else {
+      if (initskin) {
+        let skinResponse = await $.get(WBaseDA.skin_url + `?pid=${data.pid}`);
+        ColorDA.list.push(...skinResponse.Data.ColorItems.filter((skin) => ColorDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        TypoDA.list.push(...skinResponse.Data.TextStyleItems.filter((skin) => TypoDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        EffectDA.list.push(...skinResponse.Data.EffectItems.filter((skin) => EffectDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        BorderDA.list.push(...skinResponse.Data.BorderItems.filter((skin) => BorderDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        PropertyDA.list.push(...skinResponse.Data.WPropertyItems.filter((skin) => PropertyDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        CateDA.initCate();
+      }
+      await WbaseIO.addOrUpdate(listData, data.enumEvent);
+      if (thisAction?.tmpHTML) {
+        thisAction.tmpHTML.forEach((e) => e.remove());
+        thisAction.tmpHTML = null;
+      }
+      if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
+        replaceAllLyerItemHTML();
+        if (action_index === data.index) {
+          clearActionListFrom(action_index - 1);
+          addSelectList(listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)));
+          action_list[action_index].enumEvent = EnumEvent.add;
+        } else {
+          let oldData = [];
+          if (!data.parentid) {
+            oldData.push({
+              GID: wbase_parentID,
+              ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
+              Level: 0,
+            });
           }
+          action_list[data.index] = {
+            oldData: oldData,
+            selected: listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))),
+            enumObj: EnumObj.wBase,
+            enumEvent: EnumEvent.add,
+          };
+          oldData.push(...wbase_list.filter((wbaseItem) => wbaseItem.GID === data.parentid || action_list[data.index].selected.some((selectItem) => wbaseItem.ListID.includes(selectItem.GID))).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))));
         }
       }
-    } 
+    }
     // else {
     //   if (data.enumEvent === EnumEvent.delete) {
     //     WbaseIO.delete(listData);
@@ -1028,7 +1042,7 @@ class WbaseIO {
     wbase_list = wbase_list.filter((e) => !list.some((delete_item) => delete_item.GID == e.GID || e.ListID.includes(delete_item.GID)));
     arrange();
     if (reBuildParent.length) {
-      switch (parseInt(reBuildParent[0].getAttribute("CateID"))) {
+      switch (parseInt(reBuildParent[0].getAttribute("cateid"))) {
         case EnumCate.tree:
           reBuildParent = reBuildParent[0];
           createTree(
@@ -1134,7 +1148,7 @@ class WbaseIO {
         } else {
           let parentHTML = document.getElementById(wb.ParentID);
           if (parentHTML) {
-            switch (parseInt(parentHTML.getAttribute("CateID"))) {
+            switch (parseInt(parentHTML.getAttribute("cateid"))) {
               case EnumCate.tree:
                 createTree(
                   wbase_list.find((e) => e.GID === wb.ParentID),

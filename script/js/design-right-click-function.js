@@ -26,7 +26,7 @@ var feature_list = [
             bringToFront();
         },
         isShow: function () {
-            return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("CateID") != EnumCate.table;
+            return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
         }
     },
     {
@@ -36,7 +36,7 @@ var feature_list = [
             bringFrontward();
         },
         isShow: function () {
-            return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("CateID") != EnumCate.table;
+            return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
         }
     },
     {
@@ -46,7 +46,7 @@ var feature_list = [
             sendToBack();
         },
         isShow: function () {
-            return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("CateID") != EnumCate.table;
+            return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
         }
     },
     {
@@ -56,7 +56,7 @@ var feature_list = [
             sendBackward();
         },
         isShow: function () {
-            return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("CateID") != EnumCate.table;
+            return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
         },
         spaceLine: true
     },
@@ -81,7 +81,7 @@ var feature_list = [
         shortKey: "Alt+K",
         onclick: unComponent,
         isShow: function () {
-            return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("CateID") != EnumCate.tool_variant;
+            return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant;
         }
     },
     {
@@ -163,17 +163,12 @@ function popupRightClick(event) {
 }
 
 function showOnOffUI() {
-    let left_view = document.getElementById("left_view");
-    let reize_left_view = document.getElementById("resize_left_view_line");
-    let right_view = document.getElementById("right_view");
     if (left_view.style.display != "none") {
         left_view.style.display = "none";
-        reize_left_view.style.display = "none";
         right_view.style.display = "none";
         scrollTop.style.right = "0px";
     } else {
         left_view.style.display = "block";
-        reize_left_view.style.display = "block";
         right_view.style.display = "block";
         scrollTop.style.right = "260px";
     }
@@ -234,7 +229,7 @@ function pasteWbase() {
         newSelectedList.push(minLevelItem);
     }
     arrange(list_new_wbase);
-    let copyToTable = parentHTML.getAttribute("CateID") == EnumCate.table;
+    let copyToTable = parentHTML.getAttribute("cateid") == EnumCate.table;
     let copyToLayout = window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g);
     let parentWbase;
     if (newParentID !== wbase_parentID) {
@@ -250,11 +245,11 @@ function pasteWbase() {
                 newSelectItem.IsDeleted = true;
             }
         } else if (copyToLayout) {
-            newSelectItem.value.style.left = "unset";
-            newSelectItem.value.style.top = "unset";
-            newSelectItem.value.style.right = "unset";
-            newSelectItem.value.style.bottom = "unset";
-            newSelectItem.value.style.transform = "none";
+            newSelectItem.value.style.left = null;
+            newSelectItem.value.style.top = null;
+            newSelectItem.value.style.right = null;
+            newSelectItem.value.style.bottom = null;
+            newSelectItem.value.style.transform = null;
             parentHTML.appendChild(newSelectItem.value);
         } else {
             initPositionStyle(newSelectItem);

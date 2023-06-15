@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+
+    <link rel="shortcut icon" href="/lib/assets/logo.svg">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/appbar.css">
+    <link rel="stylesheet" href="/css/home-old.css" />
+    <link rel="stylesheet" href="/css/layout-header.css" />
+    <link rel="stylesheet" href="/css/user-profile-view.css" />
+    <link rel="stylesheet" href="/css/popup-alert.css" />
+    <link rel="stylesheet" href="/css/popup-action.css" />
+    <link rel="stylesheet" href="/css/popup-dropdown.css" />
+
+    <script src="https://kit.fontawesome.com/bd12e96ffa.js" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="/js/jquery.validate.min.js"></script>
+
+    <script src="/js/bootstrap-toastr/toastr.min.js"></script>
+    <link href="/js/bootstrap-toastr/toastr.css" rel="stylesheet" />
+    <script type="text/javascript" src="/tool/qrcode.min.js"></script>
+
+    <script src="/script/appconfig.min.js"></script>
+
+    <script src="/script/utils.min.js"></script>
+
+    <script src="/script/common/PopupDA.min.js"></script>
+    <script src="/script/da/ProjectDA.min.js"></script>
+    <script src="/script/da/TeamDA.min.js"></script>
+    <script src="/script/da/PermissionDA.min.js"></script>
+
+    <script src="/script/enum-obj-event.min.js"></script>
+    <script src="/script/user-service.min.js"></script>
+    <script src="/script/wini-function.min.js"></script>
+    <script src="/script/socket/socket.io.min.js"></script>
+    <script src="/script/socket/SocketHome.js"></script>
+    <script src="/script/js/title-bar.min.js"></script>
+
+    <script>
+        var userItem = JSON.parse(Ultis.getStorage('customer'));
+    </script>
+</head>
+
+<body class="col">
+    <div class="appbar row"></div>
+    <div class="screen-header row"></div>
+    <div class="popup-background center col"></div>
+
+    <div class="user-profile-view center col">
+        <div class="bread-come-container row regular1 text-subtitle">
+            <a href="/View/home-screen.html?tab=recent" class="button-transparent">Home page</a>
+            <span class="box32 center"><i class="fa-solid fa-chevron-right fa-xs"></i></span>
+            <span class="button-transparent text-primary">User profile</span>
+        </div>
+
+        <div class="content-container col">
+            <div class="tab-header-bar col">
+                <div class="user-info-container row">
+                    <div class="user-avatar">
+                        <img src="/lib/assets/user-avatar.svg">
+                    </div>
+                    <div class="user-info col">
+                        <div class="row">
+                            <span class="semibold3 user-name"></span>
+                            <span class="box12"></span>
+                            <button class="update-account-button button-transparent regular11 center row" type="button">Upgade to Professional</button>
+                        </div>
+                        <div class="row">
+                            <i class="fa-solid fa-briefcase text-subtitle fa-lg" style="margin-right: 12px;"></i></span>
+                            <span class="user-company regular1 text-subtitle">None</span>
+                            <div class="box12"></div>
+                            <span class="box32 center text-subtitle"><i class="fa-solid fa-location-dot fa-lg"></i></span>
+                            <span class="user-location regular1 text-subtitle"></span>
+                            <div class="box12"></div>
+                            <span class="box32 center text-subtitle"><i class="fa-solid fa-envelope fa-lg"></i></span>
+                            <span class="user-email regular1 text-subtitle"></span>
+                        </div>
+                        <div class="row">
+                            <div class="count-container col team">
+                                <div class="semibold4 text-title">2</div>
+                                <div class="regular1 text-subtitle">Team Joined</div>
+                            </div>
+                            <div class="count-container col project">
+                                <div class="semibold4 text-title">20</div>
+                                <div class="regular1 text-subtitle">Project Joined</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-bar row">
+                    <div class="tab center regular1 text-subtitle user-infomation selected">User infomation</div>
+                    <div class="tab center regular1 text-subtitle user-security">Security</div>
+                </div>
+            </div>
+            <div class="tab-bar-view col">
+                <div class="tab-bar-view-name row border-bottom">
+                    <span class="semibold2">User infomation</span>
+                    <span class="space"></span>
+                    <button class="button-edit-profile button-transparent semibold2 ">Edit profile</button>
+                </div>
+                <div class="info-content-row row border-bottom">
+                    <div class="space row">
+                        <span style="background-color: #edf2fd; margin-right: 12px;" class="box32 circular center"><i class="fa-solid fa-user fa-lg" style="color: #1890FF;"></i></span>
+                        <span class="semibold2">Personal information</span>
+                    </div>
+                    <div class="space row">
+                        <span style="background-color: #edf2fd; margin-right: 12px;" class="box32 circular center"><i class="fa-solid fa-briefcase fa-lg" style="color: #1890FF;"></i></span>
+                        <span class="semibold2">Job information</span>
+                    </div>
+                </div>
+                <div class="tab-bar-content col"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script/js/user-profile-view.js"></script>
+</body>
+
+</html>

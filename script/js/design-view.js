@@ -32,7 +32,6 @@ function setupRightView() {
     });
   }
   // create elements in design view
-  let right_view = document.getElementById("right_view");
   right_view.onkeydown = function (e) {
     if (e.key === "Enter" && document.activeElement.localName === "input") {
       document.activeElement.blur();
@@ -354,7 +353,7 @@ function createEditSizePosition() {
   };
   editXYRow.replaceChildren(edit_left, edit_top);
   let parentHTML = document.getElementById(select_box_parentID);
-  if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("CateID") == cate) && window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+  if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("cateid") == cate) && window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
     let isFixPos = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
     let iconFixPos = document.createElement("img");
     iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/fix_position.svg";
@@ -1214,7 +1213,7 @@ function createConstraints() {
 
   if (select_box_parentID !== wbase_parentID) {
     let parentHTML = document.getElementById(select_box_parentID);
-    if (parentHTML.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("CateID") == cate) && !window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+    if (parentHTML.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
       let fixPosRow = document.createElement("div");
       fixPosRow.className = "row";
       fixPosRow.style.margin = "8px 0 0 8px";
@@ -1379,7 +1378,7 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
     if (isW && activeHug) {
       let framePage = selected_list[0].ListID.split(",")[1];
       framePage = document.getElementById(framePage);
-      activeHug = EnumCate.extend_frame.some((cate) => framePage.getAttribute("CateID") != cate) || framePage.querySelectorAll(".col-").length == 0;
+      activeHug = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") != cate) || framePage.querySelectorAll(".col-").length == 0;
     }
   } else if (isW && activeHug) {
     let listFramePage = selected_list.filter((wbaseItem) => EnumCate.extend_frame.some((cate) => wbaseItem.CateID == cate));
@@ -1544,7 +1543,7 @@ function updateUIDesignView() {
       let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
       let framePage = pageParent[pageParent.length - 1];
       if (framePage.classList.contains("variant")) framePage = pageParent[pageParent.length - 2];
-      let isPage = EnumCate.extend_frame.some((cate) => framePage?.getAttribute("CateID") == cate) && framePage.style.width != "fit-content";
+      let isPage = EnumCate.extend_frame.some((cate) => framePage?.getAttribute("cateid") == cate) && framePage.style.width != "fit-content";
       if (isPage) {
         let selectColByBrp = colNumberByBrp();
         listEditContainer.push(selectColByBrp);
@@ -1669,22 +1668,24 @@ function createEditBackground() {
     if (listColorID.length == 1 && listColorID[0]) {
       let colorSkin = ColorDA.list.find((colorItem) => listColorID[0] == colorItem.GID);
       let cateItem;
-      if (colorSkin.CateID != EnumCate.color) {
-        cateItem = CateDA.list_color_cate.find((e) => e.ID == colorSkin.CateID);
+      if (colorSkin) {
+        if (colorSkin.CateID != EnumCate.color) {
+          cateItem = CateDA.list_color_cate.find((e) => e.ID == colorSkin.CateID);
+        }
+        let skin_tile = wbaseSkinTile(
+          EnumCate.color,
+          function () {
+            let offset = header.getBoundingClientRect();
+            createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID);
+          },
+          function () {
+            deleteBackgroundColor().then((_) => updateUIBackground());
+          },
+        );
+        skin_tile.firstChild.firstChild.style.backgroundColor = `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`;
+        skin_tile.firstChild.lastChild.innerHTML = (cateItem ? `${cateItem.Name}/` : "") + colorSkin.Name;
+        editContainer.appendChild(skin_tile);
       }
-      let skin_tile = wbaseSkinTile(
-        EnumCate.color,
-        function () {
-          let offset = header.getBoundingClientRect();
-          createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID);
-        },
-        function () {
-          deleteBackgroundColor().then((_) => updateUIBackground());
-        },
-      );
-      skin_tile.firstChild.firstChild.style.backgroundColor = `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`;
-      skin_tile.firstChild.lastChild.innerHTML = (cateItem ? `${cateItem.Name}/` : "") + colorSkin.Name;
-      editContainer.appendChild(skin_tile);
     } else if (listColorID.length > 1) {
       header.appendChild(btnSelectSkin);
       let notiText = document.createElement("p");
@@ -2682,7 +2683,7 @@ function createEditEffect() {
         let list_effect = selected_list.filter((e) => e.StyleItem.DecorationItem?.EffectItem).map((e) => e.StyleItem.DecorationItem.EffectItem);
         let this_effect_type = list_effect[0].Type;
         if (list_effect.every((e) => e.Type == this_effect_type)) {
-          popup_edit_effect_style.style.display = "inline-flex";
+          popup_edit_effect_style.style.display = "flex";
           popup_edit_effect_style.firstChild.innerHTML = this_effect_type;
           for (let i = 0; i < popup_edit_effect_style.lastChild.childNodes.length; i++) {
             let eHTML = popup_edit_effect_style.lastChild.childNodes[i];
@@ -2692,7 +2693,7 @@ function createEditEffect() {
                 if (this_effect_type == ShadowType.layer_blur) {
                   eHTML.style.display = "none";
                 } else {
-                  eHTML.style.display = "inline-flex";
+                  eHTML.style.display = "flex";
                   let list_offsetX = list_effect.map((e) => e.OffsetX);
                   let firstValue = list_offsetX[0];
                   if (list_offsetX.some((e) => e != firstValue)) {
@@ -2703,7 +2704,7 @@ function createEditEffect() {
                 break;
               // input blur
               case 1:
-                eHTML.style.display = "inline-flex";
+                eHTML.style.display = "flex";
                 let list_blur = list_effect.map((e) => e.BlurRadius);
                 let firstBlurValue = list_blur[0];
                 if (list_blur.some((e) => e != firstBlurValue)) {
@@ -2716,7 +2717,7 @@ function createEditEffect() {
                 if (this_effect_type == ShadowType.layer_blur) {
                   eHTML.style.display = "none";
                 } else {
-                  eHTML.style.display = "inline-flex";
+                  eHTML.style.display = "flex";
                   let list_offsetY = list_effect.map((e) => e.OffsetY);
                   let firstValue = list_offsetY[0];
                   if (list_offsetY.some((e) => e != firstValue)) {
@@ -2730,7 +2731,7 @@ function createEditEffect() {
                 if (this_effect_type == ShadowType.layer_blur) {
                   eHTML.style.display = "none";
                 } else {
-                  eHTML.style.display = "inline-flex";
+                  eHTML.style.display = "flex";
                   let list_spread = list_effect.map((e) => e.SpreadRadius);
                   let firstValue = list_spread[0];
                   if (list_spread.some((e) => e != firstValue)) {
@@ -2742,7 +2743,7 @@ function createEditEffect() {
               // input colorvalue
               case 4:
                 if (list_effect.every((e) => e.ColorValue == list_effect[0].ColorValue)) {
-                  eHTML.style.display = "inline-flex";
+                  eHTML.style.display = "flex";
                   let color_value = list_effect[0].ColorValue;
                   for (let parameterHTML of eHTML.querySelector(".parameter-form").childNodes) {
                     // input type color & edit hex color
@@ -4495,8 +4496,6 @@ function hidePopup(event) {
 function isHidden(elHTML) {
   let bouncingClient = elHTML?.getBoundingClientRect();
   if (bouncingClient) {
-    let left_view = document.getElementById("left_view");
-    let right_view = document.getElementById("right_view");
     let offsetTop = 0;
     let offsetLeft = left_view.style.display == "none" ? 0 : left_view.offsetWidth;
     let offsetBottom = divMain.offsetHeight;
@@ -4569,7 +4568,7 @@ function createEditVariants() {
     div_list_property.replaceChildren(...list_property_tile);
   }
   // TH đang chọn nhiều obj là component nhg ko có variants con nào
-  else if (select_box_parentID != wbase_parentID && document.getElementById(select_box_parentID).getAttribute("CateID") == EnumCate.tool_variant) {
+  else if (select_box_parentID != wbase_parentID && document.getElementById(select_box_parentID).getAttribute("cateid") == EnumCate.tool_variant) {
     btnTitle.style.pointerEvents = "none";
     action_add.style.display = "none";
     // TH các component này là những variant của 1 component cha

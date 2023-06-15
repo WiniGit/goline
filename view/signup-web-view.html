@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        delete window.exports;
+        delete window.module;
+    </script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-signin-client_id" content="1024381494307-95bcqh537i2c8mg04l7r70bfr973mha4.apps.googleusercontent.com">
+
+    <title>Sign up</title>
+    <link rel="icon" sizes="any" type="image/svg+xml" href="/lib/assets/logo.svg" />
+
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/CSS/appbar.css" />
+    <link rel="stylesheet" href="/CSS/styles-old.css" />
+
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="/js/jquery.validate.min.js"></script>
+    <link href="/js/bootstrap-toastr/toastr.css" rel="stylesheet" />
+    <script src="/js/bootstrap-toastr/toastr.js"></script>
+    <script src="https://kit.fontawesome.com/bd12e96ffa.js" crossorigin="anonymous"></script>
+
+    <script src="/script/appconfig.js"></script>
+    <script src="/script/user-service.js"></script>
+
+    <script src="/script/enum-obj-event.js"></script>
+    <script src="/script/utils.js"></script>
+
+    <script src="/script/Common/PopupDA.js"></script>
+    <script src="/script/js/title-bar.js"></script>
+
+    <script src="/script/socket/socket.io.js"></script>
+    <script src="/script/socket/SocketHome.js"></script>
+    <script src="/script/socket/SocketGoogle.js"></script>
+
+    <script>
+        document.onkeydown = function (ev) {
+            if (ev.key == "F11") ev.preventDefault()
+        }
+        fetch('/View/title-bar.html')
+            .then(response => response.text())
+            .then(text => {
+                document.getElementById('title-bar').innerHTML = text;
+                TitleBarDA.updateTitleBar();
+            });
+    </script>
+</head>
+
+<body>
+    <div class="title-bar" id="title-bar"></div>
+    <div class="login-screen">
+        <div class="login-view  col">
+            <img class="wini-logo" src="/lib/assets/wini_technology.svg" alt="" />
+
+            <form id="signup-form" class="login_form center col">
+                <div class="text-title heading-2">Sign up</div>
+                <div class="text-body regular3">Become a member to enjoy exclusive platform</div>
+
+                <script src="https://accounts.google.com/gsi/client" async defer></script>
+                <div id="g_id_onload" data-client_id="1024381494307-95bcqh537i2c8mg04l7r70bfr973mha4.apps.googleusercontent.com" data-callback="handleCredentialResponse">
+                </div>
+                <div class="g_id_signin" data-type="standard"></div>
+
+                <div class="button-text-3 text-subtitle">or</div>
+
+                <div class="login-input-container row">
+                    <input class="text-title regular2" id="signup-input-fullname" type="text" name="Fullname" placeholder="Full name" required />
+                    <span class="input-label text-placeholder label-4">Full name <span class="text-error">*</span></span>
+                </div>
+
+                <div class="login-input-container row">
+                    <input class="text-title regular2" id="signup-input-email" type="email" name="Email" placeholder="Email" required />
+                    <span class="input-label text-placeholder label-4">Email <span class="text-error">*</span></span>
+                </div>
+
+                <div class="login-input-container row">
+                    <input class="text-title regular2" id="signup-input-mobile" type="text" name="Mobile" placeholder="Mobile" required />
+                    <span class="input-label text-placeholder label-4">Mobile <span class="text-error">*</span></span>
+                </div>
+
+                <div class="login-input-container row">
+                    <input class="text-title regular2" id="signup-input-password" type="password" name="Password" placeholder="Password" required />
+                    <span class="input-label text-placeholder label-4">Password <span class="text-error">*</span></span>
+                    <a class="suffix-button login-input-visible">
+                        <img class="login-input-visible-img" src="/lib/assets/eye-visible.svg" />
+                    </a>
+                </div>
+                <div class="login-input-container row">
+                    <input class="text-title regular2" id="signup-re-input-password" type="password" name="rePassword" placeholder="Re-enter Password" required />
+                    <span class="input-label text-placeholder label-4">Re-enter Password <span class="text-error">*</span></span>
+                    <a class="suffix-button login-input-visible">
+                        <img class="login-input-visible-img" src="/lib/assets/eye-visible.svg" />
+                    </a>
+                </div>
+
+                <button id="button-signup" type="submit" class="button-primary">
+                    <div id="loader"></div>
+                    <span id="btn-text">Sign up</span>
+                </button>
+
+                <a id="button-cancel-signup" class="button-primary" href="/View/login-web-view.html">Cancel</a>
+
+            </form>
+
+            <span class="login-version center"> © 2021 Wini.vn All Rights Reserved </span>
+        </div>
+        <div class="banner-view center">
+            <!-- <img src="/lib/assets/login_rightview_image.svg" /> -->
+        </div>
+    </div>
+
+    <script src="/script/js/signup-web-view.js"></script>
+    </script>
+    <script>
+        function handleCredentialResponse(response) {
+            // decodeJwtResponse() is a custom function defined by you
+            // to decode the credential response.
+            const responsePayload = Ultis.decodeJwtResponse(response.credential);
+            if (responsePayload.sub != null) {
+
+                var url = 'Customer/GoogleCallback';
+                emitGetGoogle(responsePayload, url);
+            }
+            //console.log("ID: " + responsePayload.sub);
+            //console.log('Full Name: ' + responsePayload.name);
+            //console.log('Given Name: ' + responsePayload.given_name);
+            //console.log('Family Name: ' + responsePayload.family_name);
+            //console.log("Image URL: " + responsePayload.picture);
+            //console.log("Email: " + responsePayload.email);
+        }
+
+    </script>
+    <!-- <script src="/test-electron.js"></script> -->
+</body>
+
+</html>
