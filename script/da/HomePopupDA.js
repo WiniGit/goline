@@ -78,6 +78,7 @@ class HomePopup {
                 <div data-id="0" class="${permission != 0 || HomePopup.seleted_userID == null ? "hide" : ""} option-tile regular1 text-white row">Owner</div>
                 <div data-id="1" class="${permission == 2 ? "hide" : ""} option-tile regular1 text-white row">Can edit</div>
                 <div data-id="2" class="option-tile regular1 text-white row">Can view</div>
+                <div data-id="" class="${permission != 0 || HomePopup.seleted_userID == null ? "hide" : ""} option-tile remove regular1 text-white row">Remove</div>
             </div>`;
         return popup;
     }
