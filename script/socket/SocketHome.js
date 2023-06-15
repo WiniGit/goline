@@ -266,12 +266,19 @@ socketH.on('server-post', (data) => {
                 case EnumEvent.edit:
                     break
                 case EnumEvent.delete:
-                    if (TeamDA.selected.ParentID == null) {
-                        $(`.team-nav[data-id=${TeamDA.selected.ID}]`).remove();
-                        TeamDA.list = TeamDA.list.filter(e => e != TeamDA.selected);
-                    } else {
-                        $(`.team-child-nav[data-id=${TeamDA.selected.ID}]`).remove();
-                        TeamDA.selected.ListChild = TeamDA.selected.ListChild.filter(e => e != TeamDA.selected);
+                    var userItem = JSON.parse(Ultis.getStorage('customer'));
+                    let upItem = TeamDA.selected.CustomerTeamItems.find(e => e.CustomerID == userItem.ID);
+                    if (data.data.Data == upItem.ID) {
+                        if (TeamDA.selected.ParentID == null) {
+                            $(`.team-nav[data-id=${TeamDA.selected.ID}]`).remove();
+                            TeamDA.list = TeamDA.list.filter(e => e != TeamDA.selected);
+                        } else {
+                            $(`.team-child-nav[data-id=${TeamDA.selected.ID}]`).remove();
+                            TeamDA.selected.ListChild = TeamDA.selected.ListChild.filter(e => e != TeamDA.selected);
+                        }
+                    }
+                    else {
+                        $(`#info-container .list-member .member-row[data-id=${data.data.Data}], .popup-invite-member .list-member .member-row[data-id=${data.data.Data}]`).remove();
                     }
                     break;
             }
@@ -318,9 +325,16 @@ socketH.on('server-post', (data) => {
                 case EnumEvent.edit:
                     break
                 case EnumEvent.delete:
-                    $(`.project-card[data-id=${ProjectDA.selected.ID}], .project-tile[data-id=${ProjectDA.selected.ID}]`).remove();
-                    ProjectDA.list = ProjectDA.list.filter(e => e != ProjectDA.selected);
-                    break
+                    var userItem = JSON.parse(Ultis.getStorage('customer'));
+                    let upItem = ProjectDA.selected.CustomerProjectItems.find(e => e.CustomerID == userItem.ID);
+                    if (data.data.Data == upItem.ID) {
+                        $(`.project-card[data-id=${ProjectDA.selected.ID}], .project-tile[data-id=${ProjectDA.selected.ID}]`).remove();
+                        ProjectDA.list = ProjectDA.list.filter(e => e != ProjectDA.selected);
+                    }
+                    else {
+                        $(`#info-container .list-member .member-row[data-id=${data.data.Data}], .popup-invite-member .list-member .member-row[data-id=${data.data.Data}]`).remove();
+                    }
+                    break;
             }
             break;
         //! POST collection
@@ -509,4 +523,3 @@ function emitPort(json, url, enumObj, enumEvent) {
         },
     );
 }
-
