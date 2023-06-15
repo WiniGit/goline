@@ -1769,6 +1769,11 @@ const imgMouseMove = new Image();
 let imgMouseSrc = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.10657 20L5 4L18 12.3526L11.7455 14.1567L8.10657 20Z" fill="#FAFAFA" stroke-linecap="square"/>
 </svg>`;
+const imgCom = new Image();
+let imgComSrc = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M3.375 2.625L4.08211 3.33211L5.29289 4.54289L6 5.25L6.70711 4.54289L7.91789 3.33211L8.625 2.625L7.91789 1.91789L6.70711 0.707107L6 0L5.29289 0.707107L4.08211 1.91789L3.375 2.625ZM7.21079 2.625L6 3.83579L4.78921 2.625L6 1.41421L7.21079 2.625ZM3.375 9.375L4.08211 10.0821L5.29289 11.2929L6 12L6.70711 11.2929L7.91789 10.0821L8.625 9.375L7.91789 8.66789L6.70711 7.45711L6 6.75L5.29289 7.45711L4.08211 8.66789L3.375 9.375ZM7.21079 9.375L6 10.5858L4.78921 9.375L6 8.16421L7.21079 9.375ZM0.707107 6.70711L0 6L0.707107 5.29289L1.91789 4.08211L2.625 3.375L3.33211 4.08211L4.54289 5.29289L5.25 6L4.54289 6.70711L3.33211 7.91789L2.625 8.625L1.91789 7.91789L0.707107 6.70711ZM2.625 7.21079L3.83579 6L2.625 4.78921L1.41421 6L2.625 7.21079ZM6.75 6L7.45711 6.70711L8.66789 7.91789L9.375 8.625L10.0821 7.91789L11.2929 6.70711L12 6L11.2929 5.29289L10.0821 4.08211L9.375 3.375L8.66789 4.08211L7.45711 5.29289L6.75 6ZM10.5858 6L9.375 7.21079L8.16421 6L9.375 4.78921L10.5858 6Z" fill="#7B61FF"/>
+</svg>
+`;
 function wdraw() {
   ctxr.clearRect(0, 0, width, height);
   ctxr.save();
@@ -1818,40 +1823,41 @@ function wdraw() {
     let scaleOffset = offsetScale(wbaseRect.x, wbaseRect.y);
     let canvasOff = offsetConvertScale(Math.round(scaleOffset.x), Math.round(scaleOffset.y));
     let isActive = selected_list.some((wbaseItem) => wbaseItem.GID === wbaseHTML.id) || hover_wbase?.GID === wbaseHTML.id || parent.id === wbaseHTML.id;
-    let isWini = wbaseHTML.getAttribute("IsWini") === "true";
+    let isWini = wbaseHTML.getAttribute("iswini") === "true";
     ctxr.fillStyle = isWini ? "#7B61FF" : isActive ? "#1890FF" : "grey";
     ctxr.font = "12px Inter";
     let txtoffX = 0;
-    let image;
+    let t = titleList.find((e) => e.id === wbaseHTML.id);
     if (isWini) {
-      let t = titleList.find((e) => e.id === wbaseHTML.id);
-      if (t && t.img) {
-        image = t.img;
-        ctxr.drawImage(image, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
-      } else {
-        image = new Image(12, 12);
-        image.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/Union.png";
-        image.onload = () => {
-          ctxr.drawImage(image, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
-        };
-      }
+      let coloredSvgXml = imgComSrc.replace("#7B61FF", Ultis.hexToRGB("7B61FF"));
+      imgCom.src = "data:image/svg+xml;charset=utf-8," + coloredSvgXml;
+      ctxr.drawImage(imgCom, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
       txtoffX = 16;
     }
     let txt = document.getElementById("inputName:" + wbaseHTML.id)?.value ?? wbase_list.find((e) => e.GID == wbaseHTML.id)?.name;
     ctxr.fillText(txt, canvasOff.x + txtoffX, canvasOff.y - Math.min(8 * scale, 12));
-    if (wbaseHTML.getAttribute("lock") !== "true")
-      titleList.push({
-        id: wbaseHTML.id,
-        value: {
+    if (wbaseHTML.getAttribute("lock") !== "true") {
+      if (t) {
+        t.value = {
           x: canvasOff.x,
           y: canvasOff.y - Math.min(8 * scale, 12) - 16,
           xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
           yMax: canvasOff.y,
-        },
-        img: image,
-      });
+        };
+      } else {
+        titleList.push({
+          id: wbaseHTML.id,
+          value: {
+            x: canvasOff.x,
+            y: canvasOff.y - Math.min(8 * scale, 12) - 16,
+            xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
+            yMax: canvasOff.y,
+          },
+        });
+      }
+    }
   }
-  titleList = titleList.slice(titleList.length - listShowName.length);
+  titleList = titleList.filter((e) => e != undefined && listShowName.some((wb) => wb.id === e.id));
 
   if (drag_prototype_endppoint && prototypePoint) {
     ctxr.beginPath();
