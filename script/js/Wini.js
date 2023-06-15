@@ -788,7 +788,7 @@ function moveListener(event) {
   if (event.target === document.activeElement) return;
   event.preventDefault();
   let target_view;
-  if (window.getComputedStyle(left_view).display !== "none" && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {
+  if (!instance_drag && window.getComputedStyle(left_view).display !== "none" && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {
     document.body.style.cursor = "e-resize";
     if (event.buttons == 1) {
       left_view.resizing = true;
@@ -2368,7 +2368,7 @@ function upListener(event) {
         newRect.Name = isSvgImg ? url.split("/").pop().replace(".svg", "") : "new rectangle";
         newRect.AttributesItem.Content = url.replace(urlImg, "");
         FileDA.getImageSize(url).then((imgSize) => {
-          let offset = offsetScale(Math.min(minx, event.pageX), Math.min(miny, event.pageY));
+          let offset = offsetScale(event.pageX, event.pageY);
           let newObj = createWbaseHTML(
             {
               w: imgSize.w,

@@ -2,7 +2,7 @@
   pointer-events: none !important;
 }
 
-.wbaseItem-value[lock="true"] .wbaseItem-value{
+.wbaseItem-value[lock="true"] .wbaseItem-value {
   pointer-events: none !important;
 }
 
@@ -313,6 +313,14 @@ label {
   transform: unset !important;
 }
 
+.w-table > .table-row > :not(td:has(> *)) {
+  min-width: 20px !important;
+}
+
+.w-table > :not(.table-row:has( .wbaseItem-value)) {
+  height: 20px !important;
+}
+
 .w-table > .table-row > .table-cell:last-child {
   border-right-width: 0 !important;
 }
@@ -405,10 +413,7 @@ label {
   color: var(--action-color);
 }
 
-.w-tree:has(
-    > .tile-item > :is(.fa-chevron-right, .fa-caret-right).btn-tree-action
-  )
-  > .w-tree {
+.w-tree:has(> .tile-item > :is(.fa-chevron-right, .fa-caret-right).btn-tree-action) > .w-tree {
   display: none !important;
 }
 

@@ -1749,8 +1749,8 @@ function dragInstanceEnd(event) {
     newWb.value.style.top = null;
     newWb.value.style.bottom = null;
     newWb.value.style.transform = null;
-    newWb.value.style.zIndex = zIndex + i;
-    newWb.value.style.order = zIndex + i;
+    newWb.value.style.zIndex = zIndex;
+    newWb.value.style.order = zIndex;
   } else {
     let offset = offsetScale(event.pageX, event.pageY);
     newWb.StyleItem.PositionItem.Top = offset.y - newWb.value.offsetHeight + "px";
@@ -1767,7 +1767,8 @@ function dragInstanceEnd(event) {
     let children = [...newParent.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParent.getAttribute("level") ?? "0") + 1}"]`)];
     children.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
     for (let i = 0; i < children.length; i++) {
-      wbase_list.find((wbase) => wbase.GID == children[i].id).Sort = i;
+      let wbChild = wbase_list.find((wbase) => wbase.GID == children[i].id);
+      if(wbChild) wbChild.Sort = i;
       children[i].style.zIndex = i;
       children[i].style.order = i;
     }

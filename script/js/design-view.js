@@ -812,7 +812,11 @@ function createAutoLayout() {
     let btn_extension = document.createElement("i");
     _row1.appendChild(btn_extension);
     btn_extension.className = "fa-solid fa-ellipsis icon_btn_default_style";
-    btn_extension.onclick = function () {};
+    btn_extension.onclick = function () {
+      setTimeout(function() {
+        
+      },200);
+    };
     // input edit child space
     let childSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.ChildSpace);
     if (!isEditTable) {
@@ -5221,8 +5225,10 @@ function mergeSkinTile(enumCate, jsonSkin) {
           demoColor.style.borderRadius = "50%";
           demoColor.style.border = "1px solid #8c8c8c";
           demoColor.style.backgroundColor = `#${option.Value.substring(2)}${option.Value.substring(0, 2)}`;
+          let cateItem;
+          if (option.CateID !== EnumCate.color) cateItem = CateDA.list_color_cate.find((e) => e.ID === option.CateID);
           let optionTitle = document.createElement("p");
-          optionTitle.innerHTML = option.Name;
+          optionTitle.innerHTML = (cateItem?.Name ?? "") + "/" + option.Name;
           optionTitle.className = "regular1";
           optionTitle.style.color = "#ffffff";
           optionTitle.style.margin = "6px 8px";
@@ -5275,8 +5281,10 @@ function mergeSkinTile(enumCate, jsonSkin) {
           demoText.style.justifyContent = "center";
           demoText.style.color = "#ffffff";
           demoText.style.fontWeight = option.FontWeight;
+          let cateItem;
+          if (option.CateID !== EnumCate.typography) cateItem = CateDA.list_typo_cate.find((e) => e.ID === option.CateID);
           let optionTitle = document.createElement("p");
-          optionTitle.innerHTML = option.Name + " || " + `${option.FontSize}px/${option.Height ? option.Height + "px" : "Auto"}`;
+          optionTitle.innerHTML = (cateItem?.Name ?? "") + "/" +  option.Name + " || " + `${option.FontSize}px/${option.Height ? option.Height + "px" : "Auto"}`;
           optionTitle.className = "regular1";
           optionTitle.style.color = "#ffffff";
           optionTitle.style.margin = "6px 8px";
@@ -5326,8 +5334,10 @@ function mergeSkinTile(enumCate, jsonSkin) {
           demoDiv.style.borderRadius = "50%";
           demoDiv.style.border = "1px solid #8c8c8c";
           demoDiv.style.backgroundColor = `#${option.ColorValue.substring(2)}${option.ColorValue.substring(0, 2)}`;
+          let cateItem;
+          if (option.CateID !== EnumCate.border) cateItem = CateDA.list_border_cate.find((e) => e.ID === option.CateID);
           let optionTitle = document.createElement("p");
-          optionTitle.innerHTML = option.Name;
+          optionTitle.innerHTML = (cateItem?.Name ?? "") + "/" + option.Name;
           optionTitle.className = "regular1";
           optionTitle.style.color = "#ffffff";
           optionTitle.style.margin = "6px 8px";
@@ -5373,8 +5383,10 @@ function mergeSkinTile(enumCate, jsonSkin) {
           demoDiv.style.backgroundColor = "#ffffff";
           demoDiv.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/effect-settings.svg"})`;
           demoDiv.style.backgroundSize = `contain`;
+          let cateItem;
+          if (option.CateID !== EnumCate.effect) cateItem = CateDA.list_effect_cate.find((e) => e.ID === option.CateID);
           let optionTitle = document.createElement("p");
-          optionTitle.innerHTML = option.Name;
+          optionTitle.innerHTML = (cateItem?.Name ?? "") + "/" + option.Name;
           optionTitle.className = "regular1";
           optionTitle.style.color = "#ffffff";
           optionTitle.style.margin = "6px 8px";

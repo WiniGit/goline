@@ -1585,7 +1585,7 @@ async function ctrlZ() {
           if (oldWBaseList.every((e) => e.GID !== newParent.GID)) {
             newParent.ListChildID = newParent.ListChildID.filter((id) => action.selected.every((e) => e.GID !== id));
             newParent.CountChild = newParent.ListChildID.length;
-            if (oldParent.CateID === EnumCate.tool_variant) {
+            if (oldParent?.CateID === EnumCate.tool_variant) {
               PropertyDA.list = PropertyDA.list.filter((e) => e.BaseID !== oldParent.GID);
               PropertyDA.list.push(...oldParent.PropertyItems);
             }
@@ -1599,14 +1599,14 @@ async function ctrlZ() {
           action.selected.forEach((e) => document.getElementById(e.GID)?.remove());
           for (let wbaseItem of listUpdate) {
             let children = wbase_list.filter((e) => e.ParentID === wbaseItem.GID);
-            await initComponents(wbaseItem, children, wbaseItem.GID !== oldParent.GID && wbaseItem.GID !== newParent.GID);
+            await initComponents(wbaseItem, children, wbaseItem.GID !== oldParent?.GID && wbaseItem.GID !== newParent.GID);
             wbaseItem.value.querySelectorAll(`.wbaseItem-value[level="${wbaseItem.Level + 1}"]`).forEach((child) => {
               let zIndex = wbaseItem.ListChildID.indexOf(child.id);
               children.find((e) => e.GID === child.id).Sort = zIndex;
               child.style.zIndex = zIndex;
               child.style.order = zIndex;
             });
-            if (wbaseItem.GID === oldParent.GID || wbaseItem.GID === newParent.GID) {
+            if (wbaseItem.GID === oldParent?.GID || wbaseItem.GID === newParent.GID) {
               let parentHTML = divSection;
               if (wbaseItem.Level > 1) parentHTML = document.getElementById(wbaseItem.ParentID);
               switch (parseInt(parentHTML.getAttribute("cateid"))) {
