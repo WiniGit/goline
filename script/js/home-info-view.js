@@ -81,7 +81,20 @@ $("body").on("keydown", ".keyword-block input", function (ev) {
     }
 });
 
-$("body").on("click", ".team-action-container .add-new-project", function (ev) { });
+$("body").on("click", ".team-action-container .add-new-project", function (ev) {
+    if (TeamDA.selected.ParentID == null) {
+        TeamDA.add({
+            ParentID: TeamDA.selected.ID,
+            Name: "New project"
+        });
+    } else {
+        ProjectDA.add({
+            ID: 0,
+            TeamID: TeamDA.selected,
+            Name: "Untitled"
+        });
+    }
+});
 
 $('body').on('click', `button.invite-member`, function (ev) {
     ev.stopPropagation();

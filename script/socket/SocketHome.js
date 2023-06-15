@@ -260,6 +260,8 @@ socketH.on('server-post', (data) => {
                     $('.popup-invite-member .list-member').append(popup_new_member);
 
                     ProjectDA.Permission = 2;
+
+                    toastr["success"]('Thêm thành công');
                     break
                 case EnumEvent.edit:
                     break
@@ -267,12 +269,10 @@ socketH.on('server-post', (data) => {
                     if (TeamDA.selected.ParentID == null) {
                         $(`.team-nav[data-id=${TeamDA.selected.ID}]`).remove();
                         TeamDA.list = TeamDA.list.filter(e => e != TeamDA.selected);
-                        
                     } else {
                         $(`.team-child-nav[data-id=${TeamDA.selected.ID}]`).remove();
                         TeamDA.selected.ListChild = TeamDA.list.ListChild.filter(e => e != TeamDA.selected);
                     }
-                    toastr["success"]('Thêm thành công');
                     break;
             }
             break;
