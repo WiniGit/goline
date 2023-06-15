@@ -326,6 +326,27 @@
     margin: 0 8px;
 }
 
+@media only screen and (max-width: 5760px) {
+    .home-view>#home-body>#content-container .project-content-container .project-card {
+        width: calc(100% / 7 - 8px);
+        height: 296px !important;
+    }
+}
+
+@media only screen and (max-width: 3840px) {
+    .home-view>#home-body>#content-container .project-content-container .project-card {
+        width: calc(100% / 6 - 8px);
+        height: 296px !important;
+    }
+}
+
+@media only screen and (max-width: 2880px) {
+    .home-view>#home-body>#content-container .project-content-container .project-card {
+        width: calc(20% - 8px);
+        height: 296px !important;
+    }
+}
+
 @media only screen and (max-width: 1920px) {
     .home-view>#home-body>#content-container .project-content-container .project-card {
         width: calc(25% - 8px);
