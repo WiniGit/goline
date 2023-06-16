@@ -813,9 +813,7 @@ function createAutoLayout() {
     _row1.appendChild(btn_extension);
     btn_extension.className = "fa-solid fa-ellipsis icon_btn_default_style";
     btn_extension.onclick = function () {
-      setTimeout(function() {
-        
-      },200);
+      setTimeout(function () {}, 200);
     };
     // input edit child space
     let childSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.ChildSpace);
@@ -1546,11 +1544,13 @@ function updateUIDesignView() {
     if (select_box_parentID != wbase_parentID) {
       let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
       let framePage = pageParent[pageParent.length - 1];
-      if (framePage.classList.contains("variant")) framePage = pageParent[pageParent.length - 2];
-      let isPage = EnumCate.extend_frame.some((cate) => framePage?.getAttribute("cateid") == cate) && framePage.style.width != "fit-content";
-      if (isPage) {
-        let selectColByBrp = colNumberByBrp();
-        listEditContainer.push(selectColByBrp);
+      if (framePage) {
+        if (framePage.classList.contains("variant")) framePage = pageParent[pageParent.length - 2];
+        let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
+        if (isPage) {
+          let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
+          listEditContainer.push(selectColByBrp);
+        }
       }
     }
     if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
@@ -2913,7 +2913,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
 
   let editColorForm = document.createElement("input");
   editColorForm.className = "edit-color-form";
-  editColorForm.maxLength = "6";
+  editColorForm.maxLength = 7;
   editColorForm.value = "000000";
 
   containerInput.appendChild(editColorForm);
@@ -2986,6 +2986,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
     isFocus = false;
     this.parentElement.style.border = "0.5px solid transparent";
     divider.style.backgroundColor = "transparent";
+    this.value = this.value.replace("#", "");
     if (this.value.length == 6) {
       funcSubmit(Ultis.percentToHex(parseFloat(editOpacity.value.replace("%", ""))) + this.value);
     } else {
@@ -5284,7 +5285,7 @@ function mergeSkinTile(enumCate, jsonSkin) {
           let cateItem;
           if (option.CateID !== EnumCate.typography) cateItem = CateDA.list_typo_cate.find((e) => e.ID === option.CateID);
           let optionTitle = document.createElement("p");
-          optionTitle.innerHTML = (cateItem?.Name ?? "") + "/" +  option.Name + " || " + `${option.FontSize}px/${option.Height ? option.Height + "px" : "Auto"}`;
+          optionTitle.innerHTML = (cateItem?.Name ?? "") + "/" + option.Name + " || " + `${option.FontSize}px/${option.Height ? option.Height + "px" : "Auto"}`;
           optionTitle.className = "regular1";
           optionTitle.style.color = "#ffffff";
           optionTitle.style.margin = "6px 8px";
@@ -5829,7 +5830,7 @@ function winiResponsive() {
 
 // ! select number col
 let copyBrpColSettings;
-function colNumberByBrp() {
+function colNumberByBrp(enable = true) {
   let editContainer = document.createElement("div");
   editContainer.id = "edit-col-number";
   editContainer.className = "edit-container";
@@ -5895,7 +5896,9 @@ function colNumberByBrp() {
           setTimeout(function () {
             if (!isNaN(parseInt(selectNumberInput.firstChild.value))) {
               let editW = document.getElementById("edit_frame_item_w");
-              [editW, ...document.getElementById("edit_size_position_div").querySelectorAll(".btn_resize.width")].forEach((editWH) => {
+              let editSizeContainer = document.getElementById("edit_size_position_div");
+              editSizeContainer = editSizeContainer?.querySelectorAll(".btn_resize.width") ?? [];
+              [editW, ...editSizeContainer].forEach((editWH) => {
                 editWH.style.pointerEvents = "none";
                 editWH.style.backgroundColor = "#f1f1f1";
               });
@@ -5996,19 +5999,23 @@ function colNumberByBrp() {
     let icon_add = document.createElement("i");
     header.appendChild(icon_add);
     icon_add.className = "fa-solid fa-plus fa-sm";
-    icon_add.onclick = function () {
-      let parentHTML = document.getElementById(select_box_parentID);
-      for (let wbaseItem of selected_list) {
-        wbaseItem.ListClassName = "col-";
-        wbaseItem.value.className = `wbaseItem-value ${wbaseItem.ListClassName}`;
-        wbaseItem.value.style.setProperty("--spacing", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
-        wbaseItem.value.style.setProperty("--count-child", parentHTML.childElementCount);
-      }
-      WBaseDA.edit(selected_list);
-      updateUIEditPosition();
-      updateUIColNumber();
-      updateUISelectBox();
-    };
+    if (enable) {
+      icon_add.onclick = function () {
+        let parentHTML = document.getElementById(select_box_parentID);
+        for (let wbaseItem of selected_list) {
+          wbaseItem.ListClassName = "col-";
+          wbaseItem.value.className = `wbaseItem-value ${wbaseItem.ListClassName}`;
+          wbaseItem.value.style.setProperty("--spacing", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
+          wbaseItem.value.style.setProperty("--count-child", parentHTML.childElementCount);
+        }
+        WBaseDA.edit(selected_list);
+        updateUIEditPosition();
+        updateUIColNumber();
+        updateUISelectBox();
+      };
+    } else {
+      $(header).addClass("disable");
+    }
   }
   editContainer.onauxclick = function (ev) {
     if (ev.button === 2)

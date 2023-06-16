@@ -787,11 +787,14 @@ async function addAutoLayout() {
       let parentHTML = document.getElementById(new_wbase_item.ParentID);
       if (parentHTML.getAttribute("cateid") == EnumCate.table) {
         let cellList = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
-        let availableCell = cellList.find(cd => cd.contentid.includes(selected_list[0].GID));
+        let availableCell = cellList.find((cd) => cd.contentid.includes(selected_list[0].GID));
         parentHTML.querySelector(`:scope > .table-row > .table-cell[id="${availableCell.id}"]`).appendChild(new_wbase_item.value);
-        cellList.forEach(cd => {
-          cd.contentid = cd.contentid.split(",").filter(id => selected_list.every(e => e.GID !== id)).join(",");
-          if(cd.id === availableCell.id) cd.contentid = new_wbase_item.GID;
+        cellList.forEach((cd) => {
+          cd.contentid = cd.contentid
+            .split(",")
+            .filter((id) => selected_list.every((e) => e.GID !== id))
+            .join(",");
+          if (cd.id === availableCell.id) cd.contentid = new_wbase_item.GID;
         });
       } else if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
         initPositionStyle(new_wbase_item);
@@ -965,7 +968,7 @@ function editLayoutStyle(auto_layout_item) {
             frame.Height = undefined;
             elementHTML.style.height = "fit-content";
             //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển height của nó về fixed
-            let list_child_fillH = wbase_list.where((e) => e.parentId == elementHTML.id && e.StyleItem.FrameItem.Height < 0);
+            let list_child_fillH = wbase_list.filter((e) => e.parentId == elementHTML.id && e.StyleItem.FrameItem.Height < 0);
             list_update.push(...list_child_fillH);
             for (let j = 0; j < list_child_fillH.length; j++) {
               let child_elementHTML = document.getElementById(list_child_fillH[j].GID);
@@ -1631,13 +1634,24 @@ async function editBackground(decorationItem, onSubmit = true) {
   if (decorationItem.ColorItem) {
     let new_color_value = decorationItem.ColorItem.Value;
     for (let wbaseItem of list_change_background) {
-      let elementHTML = document.getElementById(wbaseItem.GID);
       wbaseItem.StyleItem.DecorationItem.ColorID = decorationItem.ColorItem.GID;
       wbaseItem.StyleItem.DecorationItem.ColorValue = new_color_value;
-      if (wbaseItem.CateID == EnumCate.svg) {
-        await getColorSvg(wbaseItem);
-      } else {
-        elementHTML.style.backgroundColor = `#${new_color_value.substring(2)}${new_color_value.substring(0, 2)}`;
+      switch (wbaseItem.CateID) {
+        case EnumCate.svg:
+          await getColorSvg(wbaseItem);
+          break;
+        case EnumCate.radio_button:
+          wbaseItem.value.style.setProperty("--checked-border", `#${new_color_value.substring(2) + new_color_value.substring(2, 0)}`);
+          break;
+        case EnumCate.w_switch:
+          wbaseItem.value.style.setProperty("--checked-bg", `#${new_color_value.substring(2) + new_color_value.substring(2, 0)}`);
+          break;
+        case EnumCate.checkbox:
+          wbaseItem.value.style.setProperty("--checked-bg", `#${new_color_value.substring(2) + new_color_value.substring(2, 0)}`);
+          break;
+        default:
+          wbaseItem.value.style.backgroundColor = `#${new_color_value.substring(2)}${new_color_value.substring(0, 2)}`;
+          break;
       }
     }
   } else {
@@ -1645,11 +1659,22 @@ async function editBackground(decorationItem, onSubmit = true) {
       let new_color_value = decorationItem.ColorValue;
       for (let wbaseItem of list_change_background) {
         wbaseItem.StyleItem.DecorationItem.ColorValue = new_color_value;
-        if (wbaseItem.CateID == EnumCate.svg) {
-          await getColorSvg(wbaseItem);
-        } else {
-          let elementHTML = document.getElementById(wbaseItem.GID);
-          elementHTML.style.backgroundColor = `#${new_color_value.substring(2)}${new_color_value.substring(0, 2)}`;
+        switch (wbaseItem.CateID) {
+          case EnumCate.svg:
+            await getColorSvg(wbaseItem);
+            break;
+          case EnumCate.radio_button:
+            wbaseItem.value.style.setProperty("--checked-border", `#${new_color_value.substring(2) + new_color_value.substring(2, 0)}`);
+            break;
+          case EnumCate.w_switch:
+            wbaseItem.value.style.setProperty("--checked-bg", `#${new_color_value.substring(2) + new_color_value.substring(2, 0)}`);
+            break;
+          case EnumCate.checkbox:
+            wbaseItem.value.style.setProperty("--checked-bg", `#${new_color_value.substring(2) + new_color_value.substring(2, 0)}`);
+            break;
+          default:
+            wbaseItem.value.style.backgroundColor = `#${new_color_value.substring(2)}${new_color_value.substring(0, 2)}`;
+            break;
         }
       }
     }
@@ -2001,6 +2026,7 @@ function unlinkTypoSkin() {
       ColorValue: currentTextStyle.ColorValue,
       LetterSpacing: currentTextStyle.LetterSpacing,
       FontFamily: currentTextStyle.FontFamily,
+      Height: currentTextStyle.Height
     };
     listTypo[i].StyleItem.TextStyleID = newTextStyleItem.GID;
     listTypo[i].StyleItem.TextStyleItem = newTextStyleItem;

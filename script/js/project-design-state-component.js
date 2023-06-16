@@ -1446,10 +1446,10 @@ function editColorContainer(color, func) {
   let hexColor = document.createElement("input");
   hexColor.defaultValue = `${color.substring(2)}`;
   hexColor.className = "hex-color-value regular1";
-  hexColor.maxLength = 6;
+  hexColor.maxLength = 7;
   hexColor.onblur = function (e) {
     e.stopPropagation();
-    func(Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))) + this.value);
+    func(Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))) + this.value.replace("#", ""));
   };
   let opacityColor = document.createElement("input");
   opacityColor.defaultValue = `${Ultis.hexToPercent(color.substring(0, 2))}%`;

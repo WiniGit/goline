@@ -258,6 +258,7 @@ label {
 
 .radio-btn > input[type="radio"]:checked ~ .checkmark {
   display: block !important;
+  background-color: var(--checked-border);
 }
 
 .radio-btn > .checkmark {

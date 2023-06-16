@@ -1469,10 +1469,10 @@ function checkboxLinkSkin(cateItem) {
       }
       let listEffectCate = [];
       if (cateItem.ParentID == 1) {
-        listEffectCate = EffectDA.list.filter((e) => e.CateID != EnumCate.effect).filterAndMap((e) => e.CateID);
+        listEffectCate = StyleDA.listEffect.filter((e) => e.CateID != EnumCate.effect).filterAndMap((e) => e.CateID);
         listEffectCate = StyleDA.listCate.filter((e) => {
           let check = listEffectCate.some((id) => e.ID == id);
-          if (check) e.ParentID = EnumCate.border;
+          if (check) e.ParentID = EnumCate.effect;
           return check;
         });
       }
@@ -1768,7 +1768,7 @@ function dragInstanceEnd(event) {
     children.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
     for (let i = 0; i < children.length; i++) {
       let wbChild = wbase_list.find((wbase) => wbase.GID == children[i].id);
-      if(wbChild) wbChild.Sort = i;
+      if (wbChild) wbChild.Sort = i;
       children[i].style.zIndex = i;
       children[i].style.order = i;
     }

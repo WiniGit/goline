@@ -152,7 +152,7 @@ function keyUpEvent(event) {
         break;
       case "z": // z
         if (isCtrlKey && event.shiftKey) {
-          shiftCtrlZ();
+          // shiftCtrlZ();
         } else if (isCtrlKey && action_list.length > 0) {
           ctrlZ();
         }
@@ -785,7 +785,7 @@ const childObserver = new MutationObserver((mutationList) => {
 });
 
 function moveListener(event) {
-  if (event.target === document.activeElement) return;
+  if (event.target === document.activeElement || document.activeElement.localName === "input") return;
   event.preventDefault();
   let target_view;
   if (!instance_drag && window.getComputedStyle(left_view).display !== "none" && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {

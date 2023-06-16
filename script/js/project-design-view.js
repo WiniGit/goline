@@ -1417,7 +1417,7 @@ function handlePopupDispose(elementHTML, callback) {
   }
 }
 
-async function ctrlZ() {
+function ctrlZ() {
   if (action_index >= 0) {
     let action = action_list[action_index];
     action_index--;
@@ -1449,7 +1449,7 @@ async function ctrlZ() {
             arrange(listUpdate);
             let parentLevel = Math.min(...listUpdate.map((e) => e.Level));
             for (let wbaseItem of listUpdate) {
-              await initComponents(
+              initComponents(
                 wbaseItem,
                 wbase_list.filter((e) => e.ParentID === wbaseItem.GID),
                 wbaseItem.Level > parentLevel,
@@ -1512,7 +1512,7 @@ async function ctrlZ() {
           arrange(oldWBaseList);
           let parentLevel = Math.min(...oldWBaseList.map((e) => e.Level));
           for (let wbaseItem of oldWBaseList) {
-            await initComponents(
+            initComponents(
               wbaseItem,
               wbase_list.filter((e) => e.ParentID === wbaseItem.GID),
               wbaseItem.Level > parentLevel,
@@ -1599,7 +1599,7 @@ async function ctrlZ() {
           action.selected.forEach((e) => document.getElementById(e.GID)?.remove());
           for (let wbaseItem of listUpdate) {
             let children = wbase_list.filter((e) => e.ParentID === wbaseItem.GID);
-            await initComponents(wbaseItem, children, wbaseItem.GID !== oldParent?.GID && wbaseItem.GID !== newParent.GID);
+            initComponents(wbaseItem, children, wbaseItem.GID !== oldParent?.GID && wbaseItem.GID !== newParent.GID);
             wbaseItem.value.querySelectorAll(`.wbaseItem-value[level="${wbaseItem.Level + 1}"]`).forEach((child) => {
               let zIndex = wbaseItem.ListChildID.indexOf(child.id);
               children.find((e) => e.GID === child.id).Sort = zIndex;
@@ -1669,7 +1669,7 @@ async function ctrlZ() {
               }
             }
             let children = wbase_list.filter((e) => e.ParentID === wbaseItem.GID);
-            await initComponents(wbaseItem, children, wbaseItem.Level > parentLevel);
+            initComponents(wbaseItem, children, wbaseItem.Level > parentLevel);
             wbaseItem.value.querySelectorAll(`.wbaseItem-value[level="${wbaseItem.Level + 1}"]`).forEach((child) => {
               let zIndex = wbaseItem.ListChildID.indexOf(child.id);
               children.find((e) => e.GID === child.id).Sort = zIndex;
@@ -1737,7 +1737,7 @@ async function ctrlZ() {
             } else {
               listUpdate.push(wbaseItem);
             }
-            await initComponents(
+            initComponents(
               wbaseItem,
               wbase_list.filter((e) => e.ParentID === wbaseItem.GID),
               wbaseItem.Level > parentLevel,
