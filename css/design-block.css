@@ -154,7 +154,7 @@
 .prototype-view-container .select-action:hover {
     border-radius: 2px;
     box-sizing: border-box;
-    outline: 1px solid var(--border-overlay-color);
+    outline: 1px solid var(--divider-color);
 }
 
 .prototype-view-container .select-action:hover>span {
@@ -186,7 +186,7 @@
 
 .prototype-view-container .setting-container .select-event:hover {
     border-radius: 2px;
-    border: 1px solid var(--border-overlay-color);
+    border: 1px solid var(--divider-color);
 }
 
 .prototype-view-container .setting-container .select-event:hover>span {
@@ -213,7 +213,7 @@
 
 .prototype-view-container .setting-container .select-next-page:hover {
     border-radius: 2px;
-    border: 1px solid var(--border-overlay-color);
+    border: 1px solid var(--divider-color);
 }
 
 .prototype-view-container .setting-container .select-next-page:hover>span {
@@ -222,7 +222,7 @@
 
 .prototype-view-container .animation-container {
     margin-top: 4px;
-    border-top: 1px solid var(--border-overlay-color);
+    border-top: 1px solid var(--divider-color);
 }
 
 .prototype-view-container .animation-container .animation-review {
@@ -249,28 +249,28 @@
 .prototype-view-container .table-row {
     width: 100%;
     height: 32px;
-    border-bottom: 1px solid var(--border-overlay-color);
+    border-bottom: 1px solid var(--divider-color);
 }
 
 .prototype-view-container .table-row .row-index {
     min-width: 60px;
     padding: 6px 0;
     box-sizing: border-box;
-    border-right: 1px solid var(--border-overlay-color);
+    border-right: 1px solid var(--divider-color);
 }
 
 .prototype-view-container .table-row .row-key {
     flex: 1;
     padding: 6px 12px;
     box-sizing: border-box;
-    border-right: 1px solid var(--border-overlay-color);
+    border-right: 1px solid var(--divider-color);
 }
 
 .prototype-view-container .table-row .row-value {
     flex: 1;
     padding: 6px 12px;
     box-sizing: border-box;
-    border-right: 1px solid var(--border-overlay-color);
+    border-right: 1px solid var(--divider-color);
 }
 
 .prototype-view-container .table-row input {
@@ -317,7 +317,7 @@
     width: 100%;
     min-height: 44px;
     justify-content: center;
-    border-bottom: 1px solid var(--border-overlay-color);
+    border-bottom: 1px solid var(--divider-color);
 }
 
 .prototype-view-container .select-router-popup .list-router .router-tile:hover {

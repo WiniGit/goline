@@ -101,7 +101,7 @@
 }
 
 .border-bottom {
-    border-bottom: 1px solid var(--border-overlay-color);
+    border-bottom: 1px solid var(--divider-color);
 }
 
 .border-top-light {
@@ -114,10 +114,10 @@
 
 .divider-row {
     width: 100%;
-    border-bottom: 1px solid var(--border-overlay-color);
+    border-bottom: 1px solid var(--divider-color);
 }
 
 .divider-col {
     width: 100%;
-    border-bottom: 1px solid var(--border-overlay-color);
+    border-bottom: 1px solid var(--divider-color);
 }

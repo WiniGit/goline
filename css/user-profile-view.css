@@ -29,6 +29,7 @@
         min-width: 76%;
     }
 }
+
 @media only screen and (max-height: 1033px) {
     .user-profile-view .content-container {
         scale: 0.92;
