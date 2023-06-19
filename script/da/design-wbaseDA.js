@@ -1575,6 +1575,7 @@ class WBaseDA {
                     positionItem: e.StyleItem.PositionItem,
                     frameItem: e.StyleItem.FrameItem,
                     AttributesItem:  e.CateID === EnumCate.table && e.IsCopy ? e.AttributesItem : null,
+                    ListChildID: e.IsCopy ? null : e.ListChildID
                 }
             });
         } else {
@@ -1598,6 +1599,7 @@ class WBaseDA {
                     positionItem: e.StyleItem.PositionItem,
                     frameItem: e.StyleItem.FrameItem,
                     AttributesItem:  attrItem,
+                    ListChildID: e.IsCopy ? null : e.ListChildID
                 }
             });
         }

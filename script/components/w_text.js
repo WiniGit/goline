@@ -4,7 +4,7 @@ function createTextHTML(item) {
   $(item.value).addClass("w-text");
   if (!item.build) {
     item.value.contentEditable = false;
-    item.value.onfocus = function () {
+  item.value.onfocus = function () {
       item.isEditting = !item.isNew;
       if (item.inputActions) {
         inputActions = item.inputActions;
@@ -35,13 +35,13 @@ function createTextHTML(item) {
           case TextAlign.center:
             transformX = "-50%";
             var thisComputeStyle = window.getComputedStyle(this);
-            this.style.left = (parseFloat(thisComputeStyle.left.replace("px")) + this.offsetWidth / 2) + "px";
+            this.style.left = parseFloat(thisComputeStyle.left.replace("px")) + this.offsetWidth / 2 + "px";
             this.style.right = null;
             break;
           case TextAlign.right:
             transformX = "-100%";
             var thisComputeStyle = window.getComputedStyle(this);
-            this.style.left = (parseFloat(thisComputeStyle.left.replace("px")) + this.offsetWidth) + "px";
+            this.style.left = parseFloat(thisComputeStyle.left.replace("px")) + this.offsetWidth + "px";
             this.style.right = null;
             break;
           default:
@@ -52,13 +52,13 @@ function createTextHTML(item) {
           case TextAlignVertical.center:
             transformY = "-50%";
             var thisComputeStyle = window.getComputedStyle(this);
-            this.style.top = (parseFloat(thisComputeStyle.top.replace("px")) + this.offsetHeight / 2) + "px";
+            this.style.top = parseFloat(thisComputeStyle.top.replace("px")) + this.offsetHeight / 2 + "px";
             this.style.bottom = null;
             break;
           case TextAlignVertical.bottom:
             transformY = "-100%";
             var thisComputeStyle = window.getComputedStyle(this);
-            this.style.top = (parseFloat(thisComputeStyle.top.replace("px")) + this.offsetHeight) + "px";
+            this.style.top = parseFloat(thisComputeStyle.top.replace("px")) + this.offsetHeight + "px";
             this.style.bottom = null;
             break;
           default:
@@ -75,10 +75,12 @@ function createTextHTML(item) {
         e.preventDefault();
       } else {
         let timeNow = Date.now();
-        if (time != 0 && timeNow - time >= 900) { addInputAction(); }
+        if (time != 0 && timeNow - time >= 900) {
+          addInputAction();
+        }
         time = timeNow;
       }
-    }
+    };
     function addInputAction() {
       let selection = window.getSelection();
       inputActionIndex++;
@@ -88,7 +90,7 @@ function createTextHTML(item) {
         startOffset: selection.anchorOffset,
         endOffset: selection.focusOffset,
         focusNode: selection.focusNode?.textContent ?? item.value,
-        type: selection.type
+        type: selection.type,
       });
       if (inputActions.length > 30) {
         inputActions = inputActions.slice(1);
@@ -113,11 +115,10 @@ function createTextHTML(item) {
           range.selectNodeContents(item.value);
         } else {
           try {
-            let textChild = [...item.value.childNodes].find(text => text.nodeValue == inputAction.focusNode);
+            let textChild = [...item.value.childNodes].find((text) => text.nodeValue == inputAction.focusNode);
             if (textChild) {
               range.setStart(textChild, inputAction.startOffset);
-              if (inputAction.type === "Range")
-                range.setEnd(textChild, inputAction.endOffset);
+              if (inputAction.type === "Range") range.setEnd(textChild, inputAction.endOffset);
             } else if (inputAction.type === "Range") {
               range.setEnd(item.value, inputAction.startOffset);
               range.setEnd(item.value, inputAction.endOffset);
@@ -146,7 +147,7 @@ function createTextHTML(item) {
         select_box = selectBox(selected_list);
         wdraw();
       }
-    }
+    };
     item.value.onblur = function () {
       addInputAction();
       this.removeAttribute("isCtrlZ");
@@ -162,8 +163,8 @@ function createTextHTML(item) {
       }
       if (!window.getComputedStyle(item.value.parentElement).display.match(/(flex|grid|table)/g)) {
         _enumObj = EnumObj.attributePosition;
-        this.style.left = (thisRect.x - parentRect.x) + "px";
-        this.style.top = (thisRect.y - parentRect.y) + "px";
+        this.style.left = thisRect.x - parentRect.x + "px";
+        this.style.top = thisRect.y - parentRect.y + "px";
         this.style.transform = null;
         updateConstraints(item);
       }
@@ -186,7 +187,7 @@ function createTextHTML(item) {
         let listUpdate = [this_text];
         WBaseDA.edit(listUpdate, EnumObj.attribute, true);
         if (item.ParentID !== wbase_parentID) {
-          let parent = wbase_list.find(e => e.GID === item.ParentID);
+          let parent = wbase_list.find((e) => e.GID === item.ParentID);
           if (this.parentElement.localName === "td") {
             listUpdate.push(parent);
           } else if (parent.TreeData) {
@@ -194,7 +195,7 @@ function createTextHTML(item) {
               if (item.AttributesItem.NameField === `${property}`) {
                 item.AttributesItem.Content = `${parent.TreeData[property]}`;
                 item.value.innerText = item.AttributesItem.Content ?? "";
-              };
+              }
             }
           }
         }
@@ -222,13 +223,13 @@ function createTextHTML(item) {
   }
 }
 
-const textObserver = new MutationObserver(mutationList => {
-  mutationList.forEach(mutation => {
+const textObserver = new MutationObserver((mutationList) => {
+  mutationList.forEach((mutation) => {
     switch (mutation.type) {
       case "childList":
         let targetText = mutation.target;
         let fontFamily = window.getComputedStyle(targetText).fontFamily;
-        targetText.querySelectorAll("div").forEach(child => {
+        targetText.querySelectorAll("div").forEach((child) => {
           child.style.pointerEvents = "none";
           child.style.fontFamily = fontFamily;
         });
@@ -240,7 +241,7 @@ const textObserver = new MutationObserver(mutationList => {
           if (targetText.style.width == "fit-content") {
             targetText.style.width = "max-content";
             change = true;
-          } else if(targetText.style.width == "100%") {
+          } else if (targetText.style.width == "100%") {
             targetText.style.minWidth = "auto";
           }
           if (targetText.style.height == "fit-content" && targetText.style.minHeight != null) {
@@ -256,8 +257,8 @@ const textObserver = new MutationObserver(mutationList => {
       default:
         break;
     }
-  })
-})
+  });
+});
 
 function calcTextNode(node) {
   let width;
@@ -265,8 +266,7 @@ function calcTextNode(node) {
   let textNodes = textNodesUnder(node);
   if (textNodes.length > 0) {
     if (node.style.width == "fit-content" || node.style.width == "max-content") {
-      width = Math.max(...textNodes.map(textNode => caclTextSize(textNode.data, `${node.style.fontWeight} ${node.style.fontSize} ${node.style.fontFamily}`).width)) +
-        Math.max(...textNodes.map(textNode => textNode.data.length)) * parseFloat(node.style.letterSpacing.replace("px"));
+      width = Math.max(...textNodes.map((textNode) => caclTextSize(textNode.data, `${node.style.fontWeight} ${node.style.fontSize} ${node.style.fontFamily}`).width)) + Math.max(...textNodes.map((textNode) => textNode.data.length)) * parseFloat(node.style.letterSpacing.replace("px"));
     } else {
       width = node.offsetWidth;
     }

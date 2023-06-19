@@ -1521,7 +1521,6 @@ function dragInstanceUpdate(event) {
         });
         let closestHTML = cellChildren[0];
         let htmlRect = closestHTML.getBoundingClientRect();
-        zIndex = parseInt(window.getComputedStyle(closestHTML).zIndex);
         distance = event.pageY - (htmlRect.y + htmlRect.height / 2);
       }
       $(instance_drag).addClass("drag-hide");
@@ -1666,12 +1665,11 @@ function dragInstanceEnd(event) {
   newWb.ChildID = select_component.GID;
   newWb.IsCopy = true;
   newWb.IsWini = false;
-  newWb.StyleItem.FrameItem.Width = newWb.value.offsetWidth;
-  newWb.StyleItem.FrameItem.Height = newWb.value.offsetHeight;
   newWb.value.style.width = newWb.value.offsetWidth + "px";
   newWb.value.style.height = newWb.value.offsetHeight + "px";
   newWb.value.style.transform = null;
   newWb.value.removeAttribute("iswini");
+  let zIndex = 0;
   if (isTableParent) {
     let demo = document.getElementById("demo_auto_layout");
     if (demo) {

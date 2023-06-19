@@ -16,14 +16,17 @@
         parent.value.appendChild(e.value);
       } else {
         if (wbase_list.length > 0) {
-          parent = wbase_list.find((eP) => eP.GID === e.ParentID);
+          parent = document.getElementById(e.ParentID);
           if (parent) {
-            let jsonParent = JSON.parse(JSON.stringify(parent));
-            jsonParent.value = document.createElement("div");
-            jsonParent.value.id = jsonParent.GID;
-            jsonParent.value.appendChild(e.value);
-            e.ListID = jsonParent.ListID + `,${e.ParentID}`;
+            e.ListID = parent.getAttribute("listid") + `,${e.ParentID}`;
             e.Level = e.ListID.split(",").length;
+            let m = e.value;
+            e.ListID.split(',').filter(id => id !== wbase_parentID).reverse().forEach(id => {
+              let tmp = document.createElement("div");
+              tmp.id = id;
+              tmp.appendChild(m);
+              m = tmp;
+            })
           }
         }
         if (!parent) {

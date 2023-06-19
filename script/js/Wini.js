@@ -785,7 +785,7 @@ const childObserver = new MutationObserver((mutationList) => {
 });
 
 function moveListener(event) {
-  if (event.target === document.activeElement || document.activeElement.localName === "input") return;
+  if (event.target.contentEditable == true || (document.activeElement.localName === "input" && document.activeElement.readonly == true)) return;
   event.preventDefault();
   let target_view;
   if (!instance_drag && window.getComputedStyle(left_view).display !== "none" && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {
@@ -1515,8 +1515,10 @@ function moveListener(event) {
     rectOffset.w = rRect.w / scale;
     rectOffset.h = rRect.h / scale;
   }
-  document.body.style.setProperty("--loadingX", event.pageX + "px");
-  document.body.style.setProperty("--loadingY", event.pageY + "px");
+  if (document.body.querySelector(`.wbaseItem-value[loading="true"]`)) {
+    document.body.style.setProperty("--loadingX", event.pageX + "px");
+    document.body.style.setProperty("--loadingY", event.pageY + "px");
+  }
   WiniIO.emitMouse({
     xMouse: mouseOffset.x,
     yMouse: mouseOffset.y,
@@ -1766,17 +1768,17 @@ var listRectHover = []; // gid, x,y,x1,y1
 var listRectSelect = []; // gid, x,y,x1,y1
 let titleList = [];
 const imgMouseMove = new Image();
-let imgMouseSrc = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+let imgMouseSrc = `data:image/svg+xml;charset=utf-8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.10657 20L5 4L18 12.3526L11.7455 14.1567L8.10657 20Z" fill="#FAFAFA" stroke-linecap="square"/>
 </svg>`;
 const imgCom = new Image();
-let imgComSrc = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M3.375 2.625L4.08211 3.33211L5.29289 4.54289L6 5.25L6.70711 4.54289L7.91789 3.33211L8.625 2.625L7.91789 1.91789L6.70711 0.707107L6 0L5.29289 0.707107L4.08211 1.91789L3.375 2.625ZM7.21079 2.625L6 3.83579L4.78921 2.625L6 1.41421L7.21079 2.625ZM3.375 9.375L4.08211 10.0821L5.29289 11.2929L6 12L6.70711 11.2929L7.91789 10.0821L8.625 9.375L7.91789 8.66789L6.70711 7.45711L6 6.75L5.29289 7.45711L4.08211 8.66789L3.375 9.375ZM7.21079 9.375L6 10.5858L4.78921 9.375L6 8.16421L7.21079 9.375ZM0.707107 6.70711L0 6L0.707107 5.29289L1.91789 4.08211L2.625 3.375L3.33211 4.08211L4.54289 5.29289L5.25 6L4.54289 6.70711L3.33211 7.91789L2.625 8.625L1.91789 7.91789L0.707107 6.70711ZM2.625 7.21079L3.83579 6L2.625 4.78921L1.41421 6L2.625 7.21079ZM6.75 6L7.45711 6.70711L8.66789 7.91789L9.375 8.625L10.0821 7.91789L11.2929 6.70711L12 6L11.2929 5.29289L10.0821 4.08211L9.375 3.375L8.66789 4.08211L7.45711 5.29289L6.75 6ZM10.5858 6L9.375 7.21079L8.16421 6L9.375 4.78921L10.5858 6Z" fill="#7B61FF"/>
+let imgComSrc = `data:image/svg+xml;charset=utf-8,<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M3.375 2.625L4.08211 3.33211L5.29289 4.54289L6 5.25L6.70711 4.54289L7.91789 3.33211L8.625 2.625L7.91789 1.91789L6.70711 0.707107L6 0L5.29289 0.707107L4.08211 1.91789L3.375 2.625ZM7.21079 2.625L6 3.83579L4.78921 2.625L6 1.41421L7.21079 2.625ZM3.375 9.375L4.08211 10.0821L5.29289 11.2929L6 12L6.70711 11.2929L7.91789 10.0821L8.625 9.375L7.91789 8.66789L6.70711 7.45711L6 6.75L5.29289 7.45711L4.08211 8.66789L3.375 9.375ZM7.21079 9.375L6 10.5858L4.78921 9.375L6 8.16421L7.21079 9.375ZM0.707107 6.70711L0 6L0.707107 5.29289L1.91789 4.08211L2.625 3.375L3.33211 4.08211L4.54289 5.29289L5.25 6L4.54289 6.70711L3.33211 7.91789L2.625 8.625L1.91789 7.91789L0.707107 6.70711ZM2.625 7.21079L3.83579 6L2.625 4.78921L1.41421 6L2.625 7.21079ZM6.75 6L7.45711 6.70711L8.66789 7.91789L9.375 8.625L10.0821 7.91789L11.2929 6.70711L12 6L11.2929 5.29289L10.0821 4.08211L9.375 3.375L8.66789 4.08211L7.45711 5.29289L6.75 6ZM10.5858 6L9.375 7.21079L8.16421 6L9.375 4.78921L10.5858 6Z" fill="rgb(123, 97, 255)"/>
 </svg>
 `;
+imgCom.src = imgComSrc;
 function wdraw() {
   ctxr.clearRect(0, 0, width, height);
-  ctxr.save();
   ctxr.lineWidth = 1;
   ctxr.strokeStyle = "red";
   for (var i = 0; i < listLine.length; i++) {
@@ -1802,7 +1804,7 @@ function wdraw() {
   }
 
   // draw select_box
-  if (select_box != undefined && document.activeElement.getAttribute("cateid") != EnumCate.tool_text && ((checkpad == 0 && tool_state == ToolState.move) || ToolState.resize_type.some((tool) => tool == tool_state))) {
+  if (select_box && document.activeElement.getAttribute("cateid") != EnumCate.tool_text && ((checkpad == 0 && tool_state == ToolState.move) || ToolState.resize_type.some((tool) => tool == tool_state))) {
     var objset = offsetScale(select_box.x, select_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
     ctxr.strokeStyle = selected_list.every((e) => e.IsWini) ? "#7B61FF" : "#1890FF";
@@ -1816,7 +1818,7 @@ function wdraw() {
     }
   }
 
-  let listShowName = [...divSection.childNodes].filter((wbaseHTML) => wbaseHTML.getAttribute("IsWini") === "true" || EnumCate.show_name.some((cate) => wbaseHTML.getAttribute("cateid") == cate)).sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
+  let listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
   for (let i = 0; i < listShowName.length; i++) {
     let wbaseHTML = listShowName[i];
     let wbaseRect = wbaseHTML.getBoundingClientRect();
@@ -1829,8 +1831,6 @@ function wdraw() {
     let txtoffX = 0;
     let t = titleList.find((e) => e.id === wbaseHTML.id);
     if (isWini) {
-      let coloredSvgXml = imgComSrc.replace("#7B61FF", Ultis.hexToRGB("7B61FF"));
-      imgCom.src = "data:image/svg+xml;charset=utf-8," + coloredSvgXml;
       ctxr.drawImage(imgCom, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
       txtoffX = 16;
     }
@@ -1844,6 +1844,7 @@ function wdraw() {
           xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
           yMax: canvasOff.y,
         };
+        t.sort = i;
       } else {
         titleList.push({
           id: wbaseHTML.id,
@@ -1853,11 +1854,12 @@ function wdraw() {
             xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
             yMax: canvasOff.y,
           },
+          sort: i,
         });
       }
     }
   }
-  titleList = titleList.filter((e) => e != undefined && listShowName.some((wb) => wb.id === e.id));
+  titleList = titleList.filter((e) => e != undefined && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
 
   if (drag_prototype_endppoint && prototypePoint) {
     ctxr.beginPath();
@@ -1888,7 +1890,7 @@ function wdraw() {
       if (rRectCustomer) {
         let rRectColor = rRectCustomer?.color ?? Ultis.generateRandomColor();
         let coloredSvgXml = imgMouseSrc.replace("#FAFAFA", Ultis.hexToRGB(rRectColor.replace("#", "")));
-        imgMouseMove.src = "data:image/svg+xml;charset=utf-8," + coloredSvgXml;
+        imgMouseMove.src = coloredSvgXml;
         let mouseOffset = offsetConvertScale(Math.round(rRect.xMouse), Math.round(rRect.yMouse));
         let rectOffset;
         if (rRect.w) {
@@ -1914,6 +1916,7 @@ function wdraw() {
       ctxr.strokeRect(rRect.x, rRect.y, rRect.w, rRect.h);
     }
   }
+  listRect = [];
 }
 
 function getPagePrototypePoint(page) {
@@ -2226,7 +2229,6 @@ function doubleClickEvent(event) {
       if (selected_list.length == 1 && target_element?.id == selected_list[0].GID) {
         if (target_element.getAttribute("cateid") == EnumCate.tool_text) {
           target_element.contentEditable = true;
-          target_element.style.cursor = "text";
           target_element.focus();
         } else if (event.target.localName == "path") {
           selectPath?.remove();
@@ -2344,7 +2346,7 @@ function clickEvent(event) {
 
 function upListener(event) {
   // updateUIF12();
-  if (event.target == document.activeElement) return;
+  if (event.target.contentEditable == true || (document.activeElement.localName === "input" && document.activeElement.readonly == true)) return;
   left_view.resizing = false;
   console.log("up ", checkpad, action_list);
   event.preventDefault();

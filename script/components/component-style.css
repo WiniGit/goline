@@ -36,6 +36,11 @@
   overflow: hidden !important;
   outline: none;
 }
+
+.w-text[contentEditable="true"] {
+  cursor: text !important;
+}
+
 .w-text * {
   all: unset !important;
 }
