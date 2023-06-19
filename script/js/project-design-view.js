@@ -914,7 +914,7 @@ function dragWbaseEnd() {
         $(selectHTML).removeClass("drag-hide");
         if (new_parentID != wbase_parentID) {
           selected_list[i].ParentID = new_parentHTML.id;
-          selected_list[i].ListID = parent_wbase + `,${new_parentHTML.id}`;
+          selected_list[i].ListID = parent_wbase.ListID + `,${new_parentHTML.id}`;
           selected_list[i].Level = selected_list[i].ListID.split(",").length;
           selectHTML.setAttribute("level", selected_list[i].Level);
           selectHTML.setAttribute("listid", selected_list[i].ListID);

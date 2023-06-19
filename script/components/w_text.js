@@ -242,7 +242,7 @@ const textObserver = new MutationObserver((mutationList) => {
             targetText.style.width = "max-content";
             change = true;
           } else if (targetText.style.width == "100%") {
-            targetText.style.minWidth = "auto";
+            targetText.style.minWidth = null;
           }
           if (targetText.style.height == "fit-content" && targetText.style.minHeight != null) {
             targetText.style.minHeight = null;

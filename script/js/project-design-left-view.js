@@ -1692,7 +1692,7 @@ function dragInstanceEnd(event) {
   $(newWb.value).removeClass("drag-hide");
   if (parent_wbase) {
     newWb.ParentID = newParent.id;
-    newWb.ListID = newParent.getAttribute("listid") + `,${newParent.id}`;
+    newWb.ListID = parent_wbase.ListID + `,${newParent.id}`;
     newWb.Level = newWb.ListID.split(",").length;
     newWb.value.setAttribute("level", newWb.Level);
     newWb.value.setAttribute("listid", newWb.ListID);
