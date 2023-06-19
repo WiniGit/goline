@@ -245,6 +245,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 try {
   const ipcRenderer = require("electron").ipcRenderer;
   $("body").on("click", ".btn-play", async function () {
+    let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
     await push_dataProject();
 
     var router;
