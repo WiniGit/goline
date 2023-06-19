@@ -558,14 +558,14 @@ function selectParent(event) {
     if (event.metaKey || (!isMac && event.ctrlKey)) return true;
     //
     var is_enable = false;
-    var target_level = parseInt(eHTML.getAttribute("Level"));
+    var target_level = parseInt(eHTML.getAttribute("level"));
     if (target_level <= current_level || (target_level == 2 && parent_cate.some((cate) => cate != EnumCate.textformfield && eHTML.parentElement.getAttribute("cateid") == cate))) {
       is_enable = true;
     }
     return is_enable;
   });
   objp = objp.sort((a, b) => {
-    value = parseInt(b.getAttribute("Level")) - parseInt(a.getAttribute("Level"));
+    value = parseInt(b.getAttribute("level")) - parseInt(a.getAttribute("level"));
     if (value == 0) {
       return parseInt(window.getComputedStyle(b).zIndex) - parseInt(window.getComputedStyle(a).zIndex);
     } else {
@@ -582,8 +582,7 @@ function selectParent(event) {
     if (drag_start_list.length > 0 && parseInt(parent.getAttribute("level")) > 1 && !(event.metaKey || (!isMac && event.ctrlKey))) {
       let pRect = parent.getBoundingClientRect();
       let grdPRect = parent.parentElement.getBoundingClientRect();
-      console.log("??????????", event.pageX);
-      if ((pRect.x === grdPRect.x && pRect.y === grdPRect.y && pRect.width === grdPRect.width && pRect.height === grdPRect.height) || event.pageX / scale - leftx / scale - pRect.x <= 3 || element_offset.x + parent.offsetWidth - event.pageX / scale + leftx / scale <= 3 || event.pageY / scale - topx / scale - pRect.y <= 3 || pRect.y + parent.offsetWidth - event.pageY / scale + topx / scale <= 3) {
+      if ((pRect.x === grdPRect.x && pRect.y === grdPRect.y && pRect.width === grdPRect.width && pRect.height === grdPRect.height) || Math.abs(event.pageX / scale - leftx / scale - pRect.x) <= 3 || Math.abs(element_offset.x + parent.offsetWidth - event.pageX / scale + leftx / scale) <= 3 || Math.abs(event.pageY / scale - topx / scale - pRect.y) <= 3 || Math.abs(pRect.y + parent.offsetWidth - event.pageY / scale + topx / scale) <= 3) {
         parent = parent.parentElement;
       }
     }

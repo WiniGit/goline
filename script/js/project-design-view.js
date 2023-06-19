@@ -568,6 +568,11 @@ function dragWbaseUpdate(xp, yp, event) {
   document.getElementById(`demo_auto_layout`)?.remove();
   if (select_box_parentID !== wbase_parentID && select_box_parentID === drag_start_list[0].ParentID && select_box_parentID !== new_parentID) {
     let oldParentHTML = document.getElementById(select_box_parentID);
+    if (oldParentHTML.getAttribute("cateid") == EnumCate.tree) {
+      selected_list.forEach((wb) => {
+        oldParentHTML.querySelectorAll(`:scope > .w-tree .wbaseItem-value[id="${wb.GID}"]`).forEach((dlt) => dlt.remove());
+      });
+    }
     if (oldParentHTML.childElementCount - selected_list.length === 0) {
       if (oldParentHTML.style.width == null || oldParentHTML.style.width == "fit-content") {
         oldParentHTML.style.width = oldParentHTML.offsetWidth + "px";
@@ -818,7 +823,7 @@ function dragWbaseUpdate(xp, yp, event) {
       }
     }
     for (let i = 0; i < selected_list.length; i++) {
-      let selectHTML = document.getElementById(selected_list[i].GID);
+      let selectHTML = selected_list[i].value;
       selectHTML.style.position = "absolute";
       $(selectHTML).removeClass("drag-hide");
       if (zIndex) {
@@ -871,6 +876,11 @@ function dragWbaseEnd() {
     if (drag_start_list[0].ParentID !== new_parentID) {
       if (drag_start_list[0].ParentID !== wbase_parentID) {
         let oldParent = wbase_list.find((wbaseItem) => wbaseItem.GID === drag_start_list[0].ParentID);
+        if (oldParent.CateID === EnumCate.tree) {
+          selected_list.forEach((wb) => {
+            oldParent.value.querySelectorAll(`:scope > .w-tree .wbaseItem-value[id="${wb.GID}"]`).forEach((dlt) => dlt.remove());
+          });
+        }
         oldParent.ListChildID = oldParent.ListChildID.filter((id) => selected_list.every((e) => e.GID != id));
         oldParent.CountChild = oldParent.ListChildID.length;
         if (oldParent.CateID === EnumCate.table) {
@@ -910,7 +920,7 @@ function dragWbaseEnd() {
         demo.remove();
       }
       for (let i = 0; i < selected_list.length; i++) {
-        let selectHTML = document.getElementById(selected_list[i].GID);
+        let selectHTML = selected_list[i].value;
         $(selectHTML).removeClass("drag-hide");
         if (new_parentID != wbase_parentID) {
           selected_list[i].ParentID = new_parentHTML.id;

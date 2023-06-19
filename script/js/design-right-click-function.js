@@ -247,7 +247,8 @@ function pasteWbase() {
         }
       } else {
         let zIndex = Math.max(0, ...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)) + 1;
-        parentRect = newParent.getBoundingClientRect();
+        let parentRect = newParent.getBoundingClientRect();
+        parentRect = offsetScale(parentRect.x, parentRect.y);
         for (let i = 0; i < list_new_wbase.length; i++) {
           list_new_wbase[i].Sort = zIndex + i;
           if (list_new_wbase[i].StyleItem.FrameItem.Width < 0) {
@@ -257,8 +258,8 @@ function pasteWbase() {
             selected_list[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
           }
           let offset = offsetScale(minx, miny);
-          list_new_wbase[i].StyleItem.PositionItem.Top = `${offset.y - list_new_wbase[i].value.offsetHeight - offsetScale(0, parentRect.y).y}px`;
-          list_new_wbase[i].StyleItem.PositionItem.Left = `${offset.x - list_new_wbase[i].value.offsetWidth - offsetScale(parentRect.x, 0).x}px`;
+          list_new_wbase[i].StyleItem.PositionItem.Top = `${offset.y - list_new_wbase[i].value.offsetHeight - parentRect.y}px`;
+          list_new_wbase[i].StyleItem.PositionItem.Left = `${offset.x - list_new_wbase[i].value.offsetWidth - parentRect.x}px`;
           list_new_wbase[i].value.style.left = list_new_wbase[i].StyleItem.PositionItem.Left;
           list_new_wbase[i].value.style.top = list_new_wbase[i].StyleItem.PositionItem.Top;
           list_new_wbase[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
