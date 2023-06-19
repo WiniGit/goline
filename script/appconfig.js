@@ -8,6 +8,7 @@ var socketWiniFile = "https://server.wini.vn";
 
 // var urlFile = "https://file.wini.vn/";
 var urlFile = "https://demo.wini.vn/";
+var downloadUrl = "https://download.wini.vn/";
 
 // var domainApi = 'http://192.168.1.18:82/';
 

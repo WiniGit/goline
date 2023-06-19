@@ -60,8 +60,10 @@ function createTree(item, listChild) {
   }
   if (!item.build) {
     tree.querySelectorAll(".w-tree").forEach((wTree) => {
-      wTree.style.pointerEvents = "none";
-      wTree.querySelectorAll(".wbaseItem-value").forEach((e) => e.removeAttribute("level"));
+      wTree.querySelectorAll(".wbaseItem-value").forEach((e) => {
+        e.removeAttribute("level");
+        e.removeAttribute("listid");
+      });
     });
   }
   return tree;

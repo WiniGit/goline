@@ -203,7 +203,7 @@ function pasteWbase() {
     });
     let newParent;
     let parent_wbase;
-    if (selected_list.length === 1 && copy_item.every((id) => !selected_list[0].ListID.includes(id))) {
+    if (selected_list.length === 1 && copy_item.every((id) => selected_list[0].GID !== id && !selected_list[0].ListID.includes(id))) {
       newParent = selected_list[0].value;
       parent_wbase = selected_list[0];
       if (parent_wbase.CateID === EnumCate.table) {
@@ -294,30 +294,16 @@ function pasteWbase() {
       for (let i = 0; i < list_new_wbase.length; i++) {
         let selectHTML = list_new_wbase[i].value;
         list_new_wbase[i].Sort++;
-        if (parent_wbase?.CateID === EnumCate.table) {
-          alt_list[i].StyleItem.PositionItem.FixPosition = false;
-          alt_list[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
-          alt_list[i].StyleItem.PositionItem.ConstraintsY = Constraints.top;
-        } else if (window.getComputedStyle(new_parentHTML).display.match(/(flex|grid)/g) && !list_new_wbase[i].StyleItem.PositionItem.FixPosition) {
-          switch (parseInt(new_parentHTML.getAttribute("cateid"))) {
-            case EnumCate.tree:
-              new_parentHTML.querySelector(".children-value").appendChild(selectHTML);
-              break;
-            case EnumCate.carousel:
-              new_parentHTML.querySelector(".children-value").appendChild(selectHTML);
-              break;
-            default:
-              new_parentHTML.appendChild(selectHTML);
-              break;
-          }
-          selectHTML.style.zIndex = list_new_wbase[i].Sort;
+        document.getElementById(list_new_wbase[i].ChildID).parentElement.appendChild(selectHTML);
+        selectHTML.style.zIndex = list_new_wbase[i].Sort;
           selectHTML.style.order = list_new_wbase[i].Sort;
-        } else {
-          if (alt_list[i].ParentID === selected_list[0].ParentID) {
-            alt_list[i].StyleItem.PositionItem.FixPosition = selected_list.find((e) => e.GID === alt_list[i].ChildID).StyleItem.PositionItem.FixPosition;
-          }
-          updateConstraints(alt_list[i]);
-        }
+        if (parent_wbase?.CateID === EnumCate.table) {
+          let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
+          [...new_parentHTML.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
+            listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
+          });
+          parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
+        } 
         WBaseDA.listData.push(alt_list[i]);
         wbase_list.push(alt_list[i]);
       }

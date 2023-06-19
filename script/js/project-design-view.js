@@ -1311,10 +1311,6 @@ function dragAltEnd() {
         selectHTML.setAttribute("listid", wbase_parentID);
       }
       if (isTableParent) {
-        let wbaseChildren = [...new_parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
-        for (let j = 0; j < wbaseChildren.length; j++) {
-          wbaseChildren[j].style.zIndex = j;
-        }
         alt_list[i].Sort = zIndex + i + 1;
         selectHTML.style.left = null;
         selectHTML.style.top = null;
@@ -1367,7 +1363,7 @@ function dragAltEnd() {
       wbase_list.push(alt_list[i]);
     }
     if (parent_wbase) {
-      let children = [...new_parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(new_parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
+      let children = [...new_parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
       children.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
       for (let i = 0; i < children.length; i++) {
         wbase_list.find((wbase) => wbase.GID == children[i].id).Sort = i;
