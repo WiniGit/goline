@@ -500,11 +500,10 @@ function addSelectList(new_selected_list = []) {
     selected_list.sort((a, b) => a.Sort - b.Sort);
     select_box_parentID = selected_list[0].ParentID;
     let layerSelect = document.getElementById(`wbaseID:${selected_list[0].GID}`);
-    let layerParent = document.getElementById(`parentID:${wbase_parentID}`);
-    let layerParentRect = layerParent.getBoundingClientRect();
+    let layerParentRect = layer_view.lastChild.getBoundingClientRect();
     if (layerSelect && !isInRange(layerSelect.getBoundingClientRect().y, layerParentRect.y, layerParentRect.y + layerParentRect.height, true)) {
       let scrollToY = layerSelect.offsetTop - layerSelect.offsetHeight - document.getElementById("div_list_page").offsetHeight + 2;
-      layerParent.scrollTo({
+      layer_view.lastChild.scrollTo({
         top: scrollToY,
         behavior: "smooth",
       });
@@ -1370,11 +1369,9 @@ function dragAltEnd() {
         children[i].style.zIndex = i;
         children[i].style.order = i;
       }
-      if (parent_wbase) {
-        parent_wbase.CountChild = children.length;
-        parent_wbase.ListChildID = children.map((e) => e.id);
-        WBaseDA.listData.push(parent_wbase);
-      }
+      parent_wbase.CountChild = children.length;
+      parent_wbase.ListChildID = children.map((e) => e.id);
+      WBaseDA.listData.push(parent_wbase);
     }
     replaceAllLyerItemHTML();
     parent = divSection;

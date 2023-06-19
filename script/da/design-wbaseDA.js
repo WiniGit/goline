@@ -1467,6 +1467,7 @@ class WBaseDA {
 
     static delete(delete_list) {
         if (delete_list.length > 0) {
+            let offY = layer_view.lastChild.scrollTop;
             let enumObj;
             let parentWbase;
             if (delete_list[0].ParentID != wbase_parentID) {
@@ -1539,6 +1540,10 @@ class WBaseDA {
                 addSelectList();
                 WiniIO.emitMain(data);
             }
+            layer_view.lastChild.scrollTo({
+                top: offY,
+                behavior: "smooth",
+              });
         }
     }
 

@@ -207,82 +207,66 @@ function pasteWbase() {
       newParent = selected_list[0].value;
       parent_wbase = selected_list[0];
       if (parent_wbase.CateID === EnumCate.table) {
-        let availableCell = findCell(newParent, event);
-        availableCell.appendChild(new_obj.value);
+        let availableCell = findCell(newParent, { pageX: minx, pageY: miny });
+        list_new_wbase.forEach((newWb) => availableCell.appendChild(newWb.value));
         let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
         [...newParent.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
           listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
         });
         parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
-        listWb.push(parent_wbase);
-      } else if (window.getComputedStyle(newParent).display.match(/(flex|grid)/g)) {
-        new_obj.value.style.left = null;
-        new_obj.value.style.top = null;
-        new_obj.value.style.right = null;
-        new_obj.value.style.bottom = null;
-        new_obj.value.style.transform = null;
-        let children = [...newParent.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParent.getAttribute("level") ?? "0") + 1}"]`)];
-        if (newParent.style.flexDirection == "column") {
-          let zIndex = 0;
-          if (children.length > 0) {
-            children.sort((aHTML, bHTML) => {
-              let aHTMLRect = aHTML.getBoundingClientRect();
-              let bHTMLRect = bHTML.getBoundingClientRect();
-              let a_center_oy = Math.abs(rect_box.y - offsetScale(0, aHTMLRect.y + aHTMLRect.height / 2).y);
-              let b_center_oy = Math.abs(rect_box.y - offsetScale(0, bHTMLRect.y + bHTMLRect.height / 2).y);
-              return a_center_oy - b_center_oy;
-            });
-            let closestHTML = children[0];
-            let closestHTMLRect = closestHTML.getBoundingClientRect();
-            zIndex = parseInt(window.getComputedStyle(closestHTML).order);
-            let distance = rect_box.y - offsetScale(0, closestHTMLRect.y + closestHTMLRect.height / 2).y;
-            if (distance >= 0) {
-              zIndex++;
-            }
+        wbase_list.push(...list_new_wbase);
+        listWb.push(...list_new_wbase);
+      } else if (window.getComputedStyle(newParent).display.match(/(flex|grid)/g) && list_new_wbase.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
+        let zIndex = Math.max(0, ...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)) + 1;
+        for (let i = 0; i < list_new_wbase.length; i++) {
+          list_new_wbase[i].value.style.left = null;
+          list_new_wbase[i].value.style.top = null;
+          list_new_wbase[i].value.style.right = null;
+          list_new_wbase[i].value.style.bottom = null;
+          list_new_wbase[i].value.style.transform = null;
+          list_new_wbase[i].Sort = zIndex + i;
+          if (list_new_wbase[i].StyleItem.FrameItem.Width < 0 && parent_wbase.StyleItem.FrameItem.Width == null) {
+            selected_list[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
           }
-          new_obj.Sort = zIndex;
-          new_obj.value.style.zIndex = zIndex;
-          new_obj.value.style.order = zIndex;
-          let sort_children = children.filter((eHTML) => eHTML.style.zIndex >= zIndex);
-          let wbase_children = wbase_list.filter((e) => e.ParentID === rect_box.parentID && e.Sort >= zIndex);
-          for (let i = 0; i < wbase_children.length; i++) {
-            wbase_children[i].Sort++;
-            sort_children[i].style.zIndex = parseInt(sort_children[i].style.zIndex) + 1;
-            sort_children[i].style.order = parseInt(sort_children[i].style.order) + 1;
+          if (list_new_wbase[i].StyleItem.FrameItem.Height < 0 && parent_wbase.StyleItem.FrameItem.Height == null) {
+            selected_list[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
           }
-        } else {
-          let zIndex = 0;
-          if (children.length > 0) {
-            children.sort((aHTML, bHTML) => {
-              let aHTMLRect = aHTML.getBoundingClientRect();
-              let bHTMLRect = bHTML.getBoundingClientRect();
-              let a_center_ox = Math.abs(rect_box.x - offsetScale(aHTMLRect.x + aHTMLRect.width / 2, 0).x);
-              let b_center_ox = Math.abs(rect_box.x - offsetScale(bHTMLRect.x + bHTMLRect.width / 2, 0).x);
-              return a_center_ox - b_center_ox;
-            });
-            let closestHTML = children[0];
-            let closestHTMLRect = closestHTML.getBoundingClientRect();
-            zIndex = parseInt(window.getComputedStyle(closestHTML).order);
-            let distance = rect_box.x - offsetScale(closestHTMLRect.x + closestHTMLRect.width / 2, 0).x;
-            if (distance >= 0) {
-              zIndex++;
-            }
+          switch (parseInt(newParent.getAttribute("cateid"))) {
+            case EnumCate.tree:
+              newParent.querySelector(".children-value").appendChild(list_new_wbase[i].value);
+              break;
+            case EnumCate.carousel:
+              newParent.querySelector(".children-value").appendChild(list_new_wbase[i].value);
+              break;
+            default:
+              newParent.appendChild(list_new_wbase[i].value);
+              break;
           }
-          new_obj.Sort = zIndex;
-          new_obj.value.style.zIndex = zIndex;
-          new_obj.value.style.order = zIndex;
-          let sort_children = children.filter((eHTML) => eHTML.style.order >= zIndex);
-          let wbase_children = wbase_list.filter((e) => e.ParentID === rect_box.parentID && e.Sort >= zIndex);
-          for (let i = 0; i < wbase_children.length; i++) {
-            wbase_children[i].Sort++;
-            sort_children[i].style.zIndex = parseInt(sort_children[i].style.zIndex) + 1;
-            sort_children[i].style.order = parseInt(sort_children[i].style.order) + 1;
-          }
+          listWb.push(list_new_wbase[i]);
+          wbase_list.push(list_new_wbase[i]);
         }
-        parentHTML.appendChild(new_obj.value);
       } else {
-        initPositionStyle(new_obj);
-        parentHTML.appendChild(new_obj.value);
+        let zIndex = Math.max(0, ...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)) + 1;
+        parentRect = newParent.getBoundingClientRect();
+        for (let i = 0; i < list_new_wbase.length; i++) {
+          list_new_wbase[i].Sort = zIndex + i;
+          if (list_new_wbase[i].StyleItem.FrameItem.Width < 0) {
+            selected_list[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
+          }
+          if (list_new_wbase[i].StyleItem.FrameItem.Height < 0) {
+            selected_list[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
+          }
+          let offset = offsetScale(minx, miny);
+          list_new_wbase[i].StyleItem.PositionItem.Top = `${offset.y - list_new_wbase[i].value.offsetHeight - offsetScale(0, parentRect.y).y}px`;
+          list_new_wbase[i].StyleItem.PositionItem.Left = `${offset.x - list_new_wbase[i].value.offsetWidth - offsetScale(parentRect.x, 0).x}px`;
+          list_new_wbase[i].value.style.left = list_new_wbase[i].StyleItem.PositionItem.Left;
+          list_new_wbase[i].value.style.top = list_new_wbase[i].StyleItem.PositionItem.Top;
+          list_new_wbase[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
+          list_new_wbase[i].StyleItem.PositionItem.ConstraintsY = Constraints.top;
+          wbase_list.push(list_new_wbase[i]);
+          listWb.push(list_new_wbase[i]);
+          newParent.appendChild(list_new_wbase[i].value);
+        }
       }
     } else {
       if (list_new_wbase[0].ParentID === wbase_parentID) {
@@ -296,18 +280,35 @@ function pasteWbase() {
         list_new_wbase[i].Sort++;
         document.getElementById(list_new_wbase[i].ChildID).parentElement.appendChild(selectHTML);
         selectHTML.style.zIndex = list_new_wbase[i].Sort;
-          selectHTML.style.order = list_new_wbase[i].Sort;
+        selectHTML.style.order = list_new_wbase[i].Sort;
         if (parent_wbase?.CateID === EnumCate.table) {
           let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
-          [...new_parentHTML.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
+          [...newParent.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
             listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
           });
           parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
-        } 
-        WBaseDA.listData.push(alt_list[i]);
-        wbase_list.push(alt_list[i]);
+        }
+        listWb.push(list_new_wbase[i]);
+        wbase_list.push(list_new_wbase[i]);
       }
     }
+    if (parent_wbase) {
+      let children = [...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
+      children.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
+      for (let i = 0; i < children.length; i++) {
+        wbase_list.find((wbase) => wbase.GID == children[i].id).Sort = i;
+        children[i].style.zIndex = i;
+        children[i].style.order = i;
+      }
+      parent_wbase.CountChild = children.length;
+      parent_wbase.ListChildID = children.map((e) => e.id);
+      listWb.push(parent_wbase);
+    }
+    replaceAllLyerItemHTML();
+    addSelectList(list_new_wbase);
+    action_list[action_index].tmpHTML = [...tmpAltHTML];
+    tmpAltHTML = [];
+    WBaseDA.copy(listWb);
   } else {
     copy_item = null;
   }

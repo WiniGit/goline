@@ -1750,9 +1750,11 @@ function dragInstanceEnd(event) {
     newWb.value.style.zIndex = zIndex;
     newWb.value.style.order = zIndex;
   } else {
+    let parentRect = { x: 0, y: 0 };
+    if (parent_wbase) parentRect = newParent.getBoundingClientRect();
     let offset = offsetScale(event.pageX, event.pageY);
-    newWb.StyleItem.PositionItem.Top = offset.y - newWb.value.offsetHeight + "px";
-    newWb.StyleItem.PositionItem.Left = offset.x - newWb.value.offsetWidth + "px";
+    newWb.StyleItem.PositionItem.Top = `${offset.y - newWb.value.offsetHeight - offsetScale(0, parentRect.y).y}px`;
+    newWb.StyleItem.PositionItem.Left = `${offset.x - newWb.value.offsetWidth - offsetScale(parentRect.x, 0).x}px`;
     newWb.value.style.left = newWb.StyleItem.PositionItem.Left;
     newWb.value.style.top = newWb.StyleItem.PositionItem.Top;
     newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left;

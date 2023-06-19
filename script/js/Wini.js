@@ -21,7 +21,7 @@ var prototype_selected_page;
 const isMac = navigator.userAgent.indexOf("Mac OS X") != -1;
 
 document.onpaste = function (e) {
-  if (document.activeElement.contentEditable || document.activeElement.localName == "input" || document.activeElement.localName == "p" || copy_item) return;
+  if (document.activeElement.contentEditable == "true" || document.activeElement.localName == "input" || document.activeElement.localName == "p" || copy_item) return;
   e.stopPropagation();
   e.preventDefault();
   let fileList = [];
@@ -605,7 +605,7 @@ function selectParent(event) {
 
 var clearAction = false;
 function downListener(event) {
-  if (!document.getElementById("wini_features") && event.target !== document.activeElement && ToolState.create_new_type.every((ts) => ts !== tool_state)) {
+  if (!document.getElementById("wini_features") && event.target.localName != "input" && event.target.contentEditable != "true" && ToolState.create_new_type.every((ts) => ts !== tool_state)) {
     event.activeElement = document.activeElement;
     event.path = [...event.composedPath()];
     let mouseOffset = offsetScale(event.pageX, event.pageY);
@@ -785,7 +785,7 @@ const childObserver = new MutationObserver((mutationList) => {
 });
 
 function moveListener(event) {
-  if (event.target.contentEditable == true || (document.activeElement.localName === "input" && document.activeElement.readonly == true)) return;
+  if (event.target.contentEditable == "true" || (event.target.localName === "input" && (event.target.readonly == null || event.target.readonly != "true"))) return;
   event.preventDefault();
   let target_view;
   if (!instance_drag && window.getComputedStyle(left_view).display !== "none" && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {
@@ -1388,6 +1388,18 @@ function moveListener(event) {
                   }
                 } else {
                   scanSelectList(event);
+                  var xm = Math.min(minx, event.pageX),
+                    ym = Math.min(miny, event.pageY),
+                    xma = Math.max(minx, event.pageX),
+                    yma = Math.max(miny, event.pageY);
+                  objr = {
+                    gid: drawid,
+                    x: xm,
+                    y: ym - toph,
+                    w: xma - xm,
+                    h: yma - ym,
+                  };
+                  updateRects([objr]);
                 }
               }
             }
@@ -2346,7 +2358,7 @@ function clickEvent(event) {
 
 function upListener(event) {
   // updateUIF12();
-  if (event.target.contentEditable == true || (document.activeElement.localName === "input" && document.activeElement.readonly == true)) return;
+  if (event.target.contentEditable == "true" || (event.target.localName === "input" && (event.target.readonly == null || event.target.readonly != "true"))) return;
   left_view.resizing = false;
   console.log("up ", checkpad, action_list);
   event.preventDefault();
