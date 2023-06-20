@@ -500,11 +500,10 @@ function addSelectList(new_selected_list = []) {
     selected_list.sort((a, b) => a.Sort - b.Sort);
     select_box_parentID = selected_list[0].ParentID;
     let layerSelect = document.getElementById(`wbaseID:${selected_list[0].GID}`);
-    let layerParent = document.getElementById(`parentID:${wbase_parentID}`);
-    let layerParentRect = layerParent.getBoundingClientRect();
+    let layerParentRect = layer_view.lastChild.getBoundingClientRect();
     if (layerSelect && !isInRange(layerSelect.getBoundingClientRect().y, layerParentRect.y, layerParentRect.y + layerParentRect.height, true)) {
       let scrollToY = layerSelect.offsetTop - layerSelect.offsetHeight - document.getElementById("div_list_page").offsetHeight + 2;
-      layerParent.scrollTo({
+      layer_view.lastChild.scrollTo({
         top: scrollToY,
         behavior: "smooth",
       });
@@ -569,6 +568,11 @@ function dragWbaseUpdate(xp, yp, event) {
   document.getElementById(`demo_auto_layout`)?.remove();
   if (select_box_parentID !== wbase_parentID && select_box_parentID === drag_start_list[0].ParentID && select_box_parentID !== new_parentID) {
     let oldParentHTML = document.getElementById(select_box_parentID);
+    if (oldParentHTML.getAttribute("cateid") == EnumCate.tree) {
+      selected_list.forEach((wb) => {
+        oldParentHTML.querySelectorAll(`:scope > .w-tree .wbaseItem-value[id="${wb.GID}"]`).forEach((dlt) => dlt.remove());
+      });
+    }
     if (oldParentHTML.childElementCount - selected_list.length === 0) {
       if (oldParentHTML.style.width == null || oldParentHTML.style.width == "fit-content") {
         oldParentHTML.style.width = oldParentHTML.offsetWidth + "px";
@@ -819,7 +823,7 @@ function dragWbaseUpdate(xp, yp, event) {
       }
     }
     for (let i = 0; i < selected_list.length; i++) {
-      let selectHTML = document.getElementById(selected_list[i].GID);
+      let selectHTML = selected_list[i].value;
       selectHTML.style.position = "absolute";
       $(selectHTML).removeClass("drag-hide");
       if (zIndex) {
@@ -872,6 +876,11 @@ function dragWbaseEnd() {
     if (drag_start_list[0].ParentID !== new_parentID) {
       if (drag_start_list[0].ParentID !== wbase_parentID) {
         let oldParent = wbase_list.find((wbaseItem) => wbaseItem.GID === drag_start_list[0].ParentID);
+        if (oldParent.CateID === EnumCate.tree) {
+          selected_list.forEach((wb) => {
+            oldParent.value.querySelectorAll(`:scope > .w-tree .wbaseItem-value[id="${wb.GID}"]`).forEach((dlt) => dlt.remove());
+          });
+        }
         oldParent.ListChildID = oldParent.ListChildID.filter((id) => selected_list.every((e) => e.GID != id));
         oldParent.CountChild = oldParent.ListChildID.length;
         if (oldParent.CateID === EnumCate.table) {
@@ -911,11 +920,11 @@ function dragWbaseEnd() {
         demo.remove();
       }
       for (let i = 0; i < selected_list.length; i++) {
-        let selectHTML = document.getElementById(selected_list[i].GID);
+        let selectHTML = selected_list[i].value;
         $(selectHTML).removeClass("drag-hide");
         if (new_parentID != wbase_parentID) {
           selected_list[i].ParentID = new_parentHTML.id;
-          selected_list[i].ListID = parent_wbase + `,${new_parentHTML.id}`;
+          selected_list[i].ListID = parent_wbase.ListID + `,${new_parentHTML.id}`;
           selected_list[i].Level = selected_list[i].ListID.split(",").length;
           selectHTML.setAttribute("level", selected_list[i].Level);
           selectHTML.setAttribute("listid", selected_list[i].ListID);
@@ -1370,11 +1379,9 @@ function dragAltEnd() {
         children[i].style.zIndex = i;
         children[i].style.order = i;
       }
-      if (parent_wbase) {
-        parent_wbase.CountChild = children.length;
-        parent_wbase.ListChildID = children.map((e) => e.id);
-        WBaseDA.listData.push(parent_wbase);
-      }
+      parent_wbase.CountChild = children.length;
+      parent_wbase.ListChildID = children.map((e) => e.id);
+      WBaseDA.listData.push(parent_wbase);
     }
     replaceAllLyerItemHTML();
     parent = divSection;

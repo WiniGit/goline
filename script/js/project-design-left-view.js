@@ -1692,7 +1692,7 @@ function dragInstanceEnd(event) {
   $(newWb.value).removeClass("drag-hide");
   if (parent_wbase) {
     newWb.ParentID = newParent.id;
-    newWb.ListID = newParent.getAttribute("listid") + `,${newParent.id}`;
+    newWb.ListID = parent_wbase.ListID + `,${newParent.id}`;
     newWb.Level = newWb.ListID.split(",").length;
     newWb.value.setAttribute("level", newWb.Level);
     newWb.value.setAttribute("listid", newWb.ListID);
@@ -1750,9 +1750,14 @@ function dragInstanceEnd(event) {
     newWb.value.style.zIndex = zIndex;
     newWb.value.style.order = zIndex;
   } else {
+    let parentRect = { x: 0, y: 0 };
+    if (parent_wbase) {
+      parentRect = newParent.getBoundingClientRect();
+      parentRect = offsetScale(parentRect.x, parentRect.y);
+    }
     let offset = offsetScale(event.pageX, event.pageY);
-    newWb.StyleItem.PositionItem.Top = offset.y - newWb.value.offsetHeight + "px";
-    newWb.StyleItem.PositionItem.Left = offset.x - newWb.value.offsetWidth + "px";
+    newWb.StyleItem.PositionItem.Top = `${offset.y - newWb.value.offsetHeight - parentRect.y}px`;
+    newWb.StyleItem.PositionItem.Left = `${offset.x - newWb.value.offsetWidth - parentRect.x}px`;
     newWb.value.style.left = newWb.StyleItem.PositionItem.Left;
     newWb.value.style.top = newWb.StyleItem.PositionItem.Top;
     newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left;

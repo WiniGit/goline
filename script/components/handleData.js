@@ -380,27 +380,23 @@ const setSizeObserver = new MutationObserver((mutationList) => {
       if (widthValue != targetWbase.style.width) {
         changeSelectBox = true;
         if (targetWbase.style.width == "100%") {
-          targetWbase.style.minWidth = null;
+          // targetWbase.style.minWidth = null;
           if (targetWbase.parentElement?.style?.flexDirection == "row") {
             targetWbase.style.flex = 1;
           }
-        } else if ((targetWbase.style.width == "fit-content" || targetWbase.style.width == "max-content") && targetWbase.getAttribute("cateid") != EnumCate.tool_text) {
-          targetWbase.style.minWidth = null;
-        } else {
-          targetWbase.style.minWidth = targetWbase.style.width;
-        }
+        } 
       }
       if (heightValue != targetWbase.style.height) {
         changeSelectBox = true;
         if (targetWbase.style.height == "100%") {
-          targetWbase.style.minHeight = null;
+          // targetWbase.style.minHeight = null;
           if (targetWbase.parentElement?.style?.flexDirection == "column") {
             targetWbase.style.flex = 1;
           }
         } else if ((targetWbase.style.height == "fit-content" || targetWbase.style.height == "max-content") && targetWbase.getAttribute("cateid") != EnumCate.tool_text) {
-          targetWbase.style.minHeight = null;
+          // targetWbase.style.minHeight = null;
         } else {
-          targetWbase.style.minHeight = targetWbase.style.height;
+          // targetWbase.style.minHeight = targetWbase.style.height;
           if (targetWbase.getAttribute("cateid") == EnumCate.tree) targetWbase.style.setProperty("--height", `${parseFloat(targetWbase.style.height.replace("px", "")) / ([...targetWbase.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1)}px`);
         }
       }
@@ -766,7 +762,7 @@ function handleStyleSize(item) {
   } else {
     if ([Constraints.left, Constraints.right, Constraints.center].some((constX) => item.StyleItem.PositionItem.ConstraintsX === constX)) {
       item.value.style.width = `${item.StyleItem.FrameItem.Width}px`;
-      item.value.style.minWidth = `${item.StyleItem.FrameItem.Width}px`;
+      // item.value.style.minWidth = `${item.StyleItem.FrameItem.Width}px`;
     }
   }
   if (item.StyleItem.FrameItem.Height == undefined) {
@@ -781,7 +777,7 @@ function handleStyleSize(item) {
         item.value.style.height = `${item.StyleItem.FrameItem.Height * ([...item.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1)}px`;
       } else {
         item.value.style.height = `${item.StyleItem.FrameItem.Height}px`;
-        item.value.style.minHeight = `${item.StyleItem.FrameItem.Height}px`;
+        // item.value.style.minHeight = `${item.StyleItem.FrameItem.Height}px`;
       }
     }
   }

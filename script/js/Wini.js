@@ -21,7 +21,7 @@ var prototype_selected_page;
 const isMac = navigator.userAgent.indexOf("Mac OS X") != -1;
 
 document.onpaste = function (e) {
-  if (document.activeElement.contentEditable || document.activeElement.localName == "input" || document.activeElement.localName == "p" || copy_item) return;
+  if (document.activeElement.contentEditable == "true" || document.activeElement.localName == "input" || document.activeElement.localName == "p" || copy_item) return;
   e.stopPropagation();
   e.preventDefault();
   let fileList = [];
@@ -558,14 +558,14 @@ function selectParent(event) {
     if (event.metaKey || (!isMac && event.ctrlKey)) return true;
     //
     var is_enable = false;
-    var target_level = parseInt(eHTML.getAttribute("Level"));
+    var target_level = parseInt(eHTML.getAttribute("level"));
     if (target_level <= current_level || (target_level == 2 && parent_cate.some((cate) => cate != EnumCate.textformfield && eHTML.parentElement.getAttribute("cateid") == cate))) {
       is_enable = true;
     }
     return is_enable;
   });
   objp = objp.sort((a, b) => {
-    value = parseInt(b.getAttribute("Level")) - parseInt(a.getAttribute("Level"));
+    value = parseInt(b.getAttribute("level")) - parseInt(a.getAttribute("level"));
     if (value == 0) {
       return parseInt(window.getComputedStyle(b).zIndex) - parseInt(window.getComputedStyle(a).zIndex);
     } else {
@@ -582,8 +582,7 @@ function selectParent(event) {
     if (drag_start_list.length > 0 && parseInt(parent.getAttribute("level")) > 1 && !(event.metaKey || (!isMac && event.ctrlKey))) {
       let pRect = parent.getBoundingClientRect();
       let grdPRect = parent.parentElement.getBoundingClientRect();
-      console.log("??????????", event.pageX);
-      if ((pRect.x === grdPRect.x && pRect.y === grdPRect.y && pRect.width === grdPRect.width && pRect.height === grdPRect.height) || event.pageX / scale - leftx / scale - pRect.x <= 3 || element_offset.x + parent.offsetWidth - event.pageX / scale + leftx / scale <= 3 || event.pageY / scale - topx / scale - pRect.y <= 3 || pRect.y + parent.offsetWidth - event.pageY / scale + topx / scale <= 3) {
+      if ((pRect.x === grdPRect.x && pRect.y === grdPRect.y && pRect.width === grdPRect.width && pRect.height === grdPRect.height) || Math.abs(event.pageX / scale - leftx / scale - pRect.x) <= 3 || Math.abs(element_offset.x + parent.offsetWidth - event.pageX / scale + leftx / scale) <= 3 || Math.abs(event.pageY / scale - topx / scale - pRect.y) <= 3 || Math.abs(pRect.y + parent.offsetWidth - event.pageY / scale + topx / scale) <= 3) {
         parent = parent.parentElement;
       }
     }
@@ -605,7 +604,7 @@ function selectParent(event) {
 
 var clearAction = false;
 function downListener(event) {
-  if (!document.getElementById("wini_features") && event.target !== document.activeElement && ToolState.create_new_type.every((ts) => ts !== tool_state)) {
+  if (!document.getElementById("wini_features") && event.target.localName != "input" && event.target.contentEditable != "true" && ToolState.create_new_type.every((ts) => ts !== tool_state)) {
     event.activeElement = document.activeElement;
     event.path = [...event.composedPath()];
     let mouseOffset = offsetScale(event.pageX, event.pageY);
@@ -785,7 +784,7 @@ const childObserver = new MutationObserver((mutationList) => {
 });
 
 function moveListener(event) {
-  if (event.target.contentEditable == true || (document.activeElement.localName === "input" && document.activeElement.readonly == true)) return;
+  if (event.target.contentEditable == "true" || (event.target.localName === "input" && (event.target.readonly == null || event.target.readonly != "true"))) return;
   event.preventDefault();
   let target_view;
   if (!instance_drag && window.getComputedStyle(left_view).display !== "none" && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {
@@ -1388,6 +1387,18 @@ function moveListener(event) {
                   }
                 } else {
                   scanSelectList(event);
+                  var xm = Math.min(minx, event.pageX),
+                    ym = Math.min(miny, event.pageY),
+                    xma = Math.max(minx, event.pageX),
+                    yma = Math.max(miny, event.pageY);
+                  objr = {
+                    gid: drawid,
+                    x: xm,
+                    y: ym - toph,
+                    w: xma - xm,
+                    h: yma - ym,
+                  };
+                  updateRects([objr]);
                 }
               }
             }
@@ -2346,7 +2357,7 @@ function clickEvent(event) {
 
 function upListener(event) {
   // updateUIF12();
-  if (event.target.contentEditable == true || (document.activeElement.localName === "input" && document.activeElement.readonly == true)) return;
+  if (event.target.contentEditable == "true" || (event.target.localName === "input" && (event.target.readonly == null || event.target.readonly != "true"))) return;
   left_view.resizing = false;
   console.log("up ", checkpad, action_list);
   event.preventDefault();
