@@ -104,48 +104,47 @@ async function push_dataProject() {
       if (witem.PrototypeID != null) {
         let nextPagePrototype = list_page.find((e) => e.id == witem.PrototypeID);
         if (nextPagePrototype) {
-          let animation = witem.JsonEventItem?.find((e) => e.Name === "Animation");
-          let animation_class = "";
-          if (animation != null) {
-            animation_class += " animation_move";
-            console.log(animation);
-            switch (animation.Data.Animation) {
-              case EnumAnimation.MoveIn:
-                animation_class += " in";
-                break;
-              case EnumAnimation.MoveOut:
-                animation_class += " out";
-                break;
-              case EnumAnimation.SlideIn:
-                animation_class += " in";
-                break;
-              case EnumAnimation.SlideOut:
-                animation_class += " out";
-                break;
-              default:
-                animation_class += " in";
-                break;
-            }
-            switch (animation.Data.Direction) {
-              case "left":
-                animation_class += " left";
-                break;
-              case "right":
-                animation_class += " right";
-                break;
-              case "up":
-                animation_class += " up";
-                break;
-              case "down":
-                animation_class += " down";
-                break;
-              default:
-                animation_class += " left";
-                break;
-            }
-          }
-          $(nextPagePrototype).addClass(animation_class);
-
+          // let animation = witem.JsonEventItem?.find((e) => e.Name === "Animation");
+          // let animation_class = "";
+          // if (animation != null) {
+          //   animation_class += " animation_move";
+          //   console.log(animation);
+          //   switch (animation.Data.Animation) {
+          //     case EnumAnimation.MoveIn:
+          //       animation_class += " in";
+          //       break;
+          //     case EnumAnimation.MoveOut:
+          //       animation_class += " out";
+          //       break;
+          //     case EnumAnimation.SlideIn:
+          //       animation_class += " in";
+          //       break;
+          //     case EnumAnimation.SlideOut:
+          //       animation_class += " out";
+          //       break;
+          //     default:
+          //       animation_class += " in";
+          //       break;
+          //   }
+          //   switch (animation.Data.Direction) {
+          //     case "left":
+          //       animation_class += " left";
+          //       break;
+          //     case "right":
+          //       animation_class += " right";
+          //       break;
+          //     case "up":
+          //       animation_class += " up";
+          //       break;
+          //     case "down":
+          //       animation_class += " down";
+          //       break;
+          //     default:
+          //       animation_class += " left";
+          //       break;
+          //   }
+          // }
+          // $(nextPagePrototype).addClass(animation_class); //TODO: animation
           let clickElement = page;
           if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
 
@@ -249,11 +248,17 @@ try {
     await push_dataProject();
 
     var router;
-    if (ProjectDA.obj.RouterJson != null) {
-      router = JSON.parse(ProjectDA.obj.RouterJson);
-    } else {
-      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[list_page.length - 1].Name) }];
+    if (selected_list.length == 1 && list_page.some(e => e.ID == selected_list[0].ID)) {
+      router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(selected_list[0].Name) }];
     }
+    else {
+      if (ProjectDA.obj.RouterJson != null) {
+        router = JSON.parse(ProjectDA.obj.RouterJson);
+      } else {
+        router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(list_page[list_page.length - 1].Name) }];
+      }
+    }
+
     await $.post(
       "/view/download",
       {
