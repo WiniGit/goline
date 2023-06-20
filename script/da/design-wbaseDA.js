@@ -1651,7 +1651,8 @@ class WBaseDA {
 
     static assetsLoading = false;
     static getAssetsList(listId, keySearch = "") {
-        var url = `WBase/ListAssetsItem?listid=${listId}&keySearch=${keySearch}`;
+        let key = Ultis.toSlug(keySearch);
+        var url = `WBase/ListAssetsItem?listid=${listId}&keySearch=${key}`;
         WiniIO.emitGet(null, url, EnumObj.wBase, EnumEvent.get);
     }
 
@@ -1674,7 +1675,6 @@ class WBaseDA {
 }
 
 function addAction(enumEvent = EnumEvent.select, enumObj = EnumObj.wBase) {
-    console.log("add")
     clearActionListFrom(action_index);
     let oldData = [];
     if (select_box_parentID == wbase_parentID) {
