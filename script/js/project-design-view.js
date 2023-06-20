@@ -143,11 +143,9 @@ function createNewWbase(dataJson, list_contain_child = [], listId, sort) {
   new_wbase_item.ChildID = dataJson.ChildID ?? (dataJson.GID != "0" ? dataJson.GID : null);
   new_wbase_item.PropertyItems = null;
   new_wbase_item.value = null;
-  if (dataJson.PageID !== PageDA.obj.ID) {
-    new_wbase_item.ProtoType = null;
-    new_wbase_item.PrototypeID = null;
-    if (new_wbase_item.JsonEventItem) new_wbase_item.JsonEventItem = new_wbase_item.JsonEventItem.filter((e) => e.Name === "State");
-  }
+  new_wbase_item.ProtoType = null;
+  new_wbase_item.PrototypeID = null;
+  if (new_wbase_item.JsonEventItem) new_wbase_item.JsonEventItem = new_wbase_item.JsonEventItem.filter((e) => e.Name === "State");
   if (!listId) {
     let parent_wbase = wbase_list.find((e) => e.GID == new_wbase_item.ParentID);
     if (parent_wbase) {

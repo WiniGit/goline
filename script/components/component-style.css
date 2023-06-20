@@ -201,6 +201,10 @@ label {
   order: 1;
 }
 
+.textformfield .textfield > input::placeholder {
+  color: inherit;
+}
+
 .textformfield .textfield:has(> label) > input {
   transform: translateY(-50%);
 }

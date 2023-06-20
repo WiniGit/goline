@@ -373,10 +373,10 @@ socket.on("server-get", (data) => {
           let listAssets = data.data;
           listAssets = initDOM(listAssets);
           if (listAssets.length > 0) {
-            assets_list = assets_list.filter((wbaseItem) => wbaseItem.ProjectID !== listAssets[0].ProjectID);
+            assets_list = assets_list.filter((wb) => wb.PageID !== listAssets[0].PageID);
             assets_list.push(...listAssets);
             let listProjectID = listAssets.filterAndMap((e) => e.ProjectID);
-            ProjectDA.assetsList.filter((pro) => listProjectID.some((id) => pro.ID == id)).forEach((projectItem) => updateListComponentByProject(projectItem));
+            [...ProjectDA.assetsList, ProjectDA.obj].filter((pro) => listProjectID.some((id) => pro.ID == id)).forEach((projectItem) => updateListComponentByProject(projectItem));
           }
           break;
         default:

@@ -181,6 +181,20 @@
   padding: 6px;
 }
 
+.col:has(> .list_tile) > div:nth-child(2) {
+  display: none;
+}
+
+.col:has(> .list_tile > .fa-caret-down) > div:nth-child(2) {
+  display: flex;
+}
+
+.page-comp-container {
+  padding-left: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 #Assets > div {
   flex: 1;
   width: 100%;

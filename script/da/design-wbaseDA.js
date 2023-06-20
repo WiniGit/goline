@@ -1656,7 +1656,7 @@ class WBaseDA {
     }
 
     static reloadAssetsList() {
-        assets_list = assets_list.filter(e => e.ProjectID && e.ProjectID !== ProjectDA.obj.ID);
+        assets_list = assets_list.filter(e => e.ProjectID && e.PageID !== PageDA.obj.ID);
         let localAssets = wbase_list.filter(e => e.IsWini).map(e => e.GID);
         localAssets = wbase_list.filter(e => localAssets.some(id => id == e.GID || e.ListID.includes(id))).map(e => {
             let jsonE = JSON.parse(JSON.stringify(e));

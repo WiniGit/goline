@@ -712,17 +712,14 @@ function createListComponent(projectItem, isShowContent) {
   container.className = "col";
   let list_tile = document.createElement("div");
   list_tile.className = "list_tile row";
-  container.appendChild(list_tile);
   let prefix_action = document.createElement("i");
   prefix_action.className = `fa-solid fa-caret-${isShow ? "down" : "right"} fa-xs`;
-  list_tile.appendChild(prefix_action);
   let title = document.createElement("p");
   title.className = "title";
-  list_tile.appendChild(title);
+  list_tile.replaceChildren(prefix_action, title);
   let container_child = document.createElement("div");
   container_child.className = "col";
-  container_child.style.display = isShow ? "flex" : "none";
-  container.appendChild(container_child);
+  container.replaceChildren(list_tile, container_child);
   if (projectItem.ID === 0) {
     title.innerHTML = "Selected objects";
   } else if (projectItem.ID === ProjectDA.obj.ID) {
@@ -730,7 +727,7 @@ function createListComponent(projectItem, isShowContent) {
   } else {
     title.innerHTML = projectItem.Name;
   }
-  if (projectItem.ID === 0 || projectItem.ID === ProjectDA.obj.ID || isShow) {
+  if (projectItem.ID === 0 || isShow) {
     let list_component_parent = [];
     if (projectItem.ID === 0) {
       list_component_parent = selected_list.map((e) => {
@@ -738,17 +735,54 @@ function createListComponent(projectItem, isShowContent) {
         jsonE.ProjectID = 0;
         return jsonE;
       });
+      container_child.replaceChildren(...list_component_parent.map((comItem) => createComponentTile(comItem)));
+    } else if (projectItem.ID === ProjectDA.obj.ID) {
+      container_child.replaceChildren(
+        ...PageDA.list.map((page) => {
+          let listPageComp = assets_list.filter((e) => e.PageID === page.ID && assets_list.every((el) => !e.ListID.includes(el.GID)));
+          let showPageCom = select_component && listPageComp.some((e) => e.GID === select_component.GID);
+          let pageTileContainer = document.createElement("div");
+          pageTileContainer.className = "col page-comp-container";
+          let pageTile = document.createElement("div");
+          pageTile.className = "row list_tile";
+          let prefix = document.createElement("i");
+          prefix.className = `fa-solid fa-caret-${showPageCom ? "down" : "right"} fa-xs`;
+          let t = document.createElement("p");
+          t.className = "semibold1 title";
+          t.innerHTML = page.Name;
+          pageTile.replaceChildren(prefix, t);
+          let listComp = document.createElement("div");
+          listComp.className = "col";
+          if (showPageCom) {
+            listComp.replaceChildren(...listPageComp.map((comItem) => createComponentTile(comItem)));
+          }
+          pageTileContainer.replaceChildren(pageTile, listComp);
+          pageTile.onclick = function () {
+            showPageCom = !showPageCom;
+            if (showPageCom) {
+              prefix.className = "fa-solid fa-caret-down fa-xs";
+              listComp.replaceChildren(...listPageComp.map((comItem) => createComponentTile(comItem)));
+            } else {
+              prefix.className = "fa-solid fa-caret-right fa-xs";
+            }
+          };
+          return pageTileContainer;
+        }),
+      );
     } else {
       list_component_parent = assets_list.filter((e) => e.ProjectID === projectItem.ID && assets_list.every((el) => !e.ListID.includes(el.GID)));
+      container_child.replaceChildren(...list_component_parent.map((comItem) => createComponentTile(comItem)));
     }
-    container_child.replaceChildren(...list_component_parent.map((comItem) => createComponentTile(comItem)));
   }
   list_tile.onclick = function () {
     if (!WBaseDA.assetsLoading) {
       isShow = !isShow;
       if (isShow) {
-        if (projectItem.ID === 0 || projectItem.ID === ProjectDA.obj.ID) {
-          container_child.style.display = "flex";
+        if (projectItem.ID === 0) {
+          prefix_action.className = "fa-solid fa-caret-down fa-xs";
+        } else if (projectItem.ID === ProjectDA.obj.ID && PageDA.list.length === 1) {
+          let list_component_parent = assets_list.filter((e) => e.ProjectID === projectItem.ID && assets_list.every((el) => !e.ListID.includes(el.GID)));
+          container_child.replaceChildren(...list_component_parent.map((comItem) => createComponentTile(comItem)));
           prefix_action.className = "fa-solid fa-caret-down fa-xs";
         } else {
           WBaseDA.assetsLoading = true;
@@ -761,7 +795,6 @@ function createListComponent(projectItem, isShowContent) {
           WBaseDA.getAssetsList(projectItem.ID);
         }
       } else {
-        container_child.style.display = "none";
         prefix_action.className = "fa-solid fa-caret-right fa-xs";
       }
     }
@@ -816,7 +849,7 @@ function createComponentTile(item, space = 0) {
     };
   } else {
     select_tile.onclick = function () {
-      if (item.ProjectID === 0 || item.ProjectID === ProjectDA.obj.ID) {
+      if (item.ProjectID === 0) {
         select_component = JSON.parse(JSON.stringify(item));
         if (item.ProjectID === 0) {
           select_component.children = wbase_list.filter((e) => e.ListID.includes(item.GID)).map((e) => JSON.parse(JSON.stringify(e)));

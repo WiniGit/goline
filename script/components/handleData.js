@@ -21,12 +21,15 @@
             e.ListID = parent.getAttribute("listid") + `,${e.ParentID}`;
             e.Level = e.ListID.split(",").length;
             let m = e.value;
-            e.ListID.split(',').filter(id => id !== wbase_parentID).reverse().forEach(id => {
-              let tmp = document.createElement("div");
-              tmp.id = id;
-              tmp.appendChild(m);
-              m = tmp;
-            })
+            e.ListID.split(",")
+              .filter((id) => id !== wbase_parentID)
+              .reverse()
+              .forEach((id) => {
+                let tmp = document.createElement("div");
+                tmp.id = id;
+                tmp.appendChild(m);
+                m = tmp;
+              });
           }
         }
         if (!parent) {
@@ -141,8 +144,7 @@ async function initComponents(item, list, initListener = true) {
   }
   $(item.value).addClass("wbaseItem-value");
   initWbaseStyle(item);
-  if(item.AttributesItem.NameField && item.AttributesItem.NameField.trim() != "")
-  $(item.value).attr("name-field", item.AttributesItem.NameField);
+  if (item.AttributesItem.NameField && item.AttributesItem.NameField.trim() != "") $(item.value).attr("name-field", item.AttributesItem.NameField);
   item.value.setAttribute("Level", item.Level);
   item.value.setAttribute("cateid", item.CateID);
   //
@@ -157,7 +159,7 @@ async function initComponents(item, list, initListener = true) {
       item.value.setAttribute("lock", "true");
     }
     item.value.setAttribute("listid", item.ListID);
-    item.value.setAttribute("IsWini", item.IsWini);
+    if (item.IsWini) item.value.setAttribute("iswini", item.IsWini);
     setSizeObserver.observe(item.value, {
       attributeOldValue: true,
       attributes: true,
@@ -313,7 +315,7 @@ function initElement(wbaseHTML) {
       break;
     case EnumCate.textformfield:
       let textFieldRow = wbaseHTML.querySelector(".textfield");
-      if(textFieldRow) {
+      if (textFieldRow) {
         if (wbaseHTML.style.height == "fit-content") {
           textFieldRow.parentElement.style.height = "fit-content";
         } else {
@@ -334,7 +336,7 @@ function initElement(wbaseHTML) {
       } else {
         wbaseHTML.removeAttribute("tree-height");
       }
-      wbaseHTML.querySelectorAll(".children-value > .check-box").forEach(chbox => $(chbox.querySelector("input")).trigger("change"));
+      wbaseHTML.querySelectorAll(".children-value > .check-box").forEach((chbox) => $(chbox.querySelector("input")).trigger("change"));
       break;
     default:
       break;
@@ -384,7 +386,7 @@ const setSizeObserver = new MutationObserver((mutationList) => {
           if (targetWbase.parentElement?.style?.flexDirection == "row") {
             targetWbase.style.flex = 1;
           }
-        } 
+        }
       }
       if (heightValue != targetWbase.style.height) {
         changeSelectBox = true;
@@ -504,7 +506,7 @@ function getWBaseOffset(wbaseItem) {
 }
 
 function initSkinWbase(item) {
-  let isLocalItem = item.ProjectID === 0 || ((item.ProjectID ?? ProjectDA.obj.ID) === ProjectDA.obj.ID);
+  let isLocalItem = item.ProjectID === 0 || (item.ProjectID ?? ProjectDA.obj.ID) === ProjectDA.obj.ID;
   if (item.StyleItem.DecorationItem?.ColorID) {
     let colorID = item.StyleItem.DecorationItem.ColorID;
     let colorSkin = (isLocalItem ? ColorDA.list : ColorDA.listAssets).find((e) => e.GID == colorID || e.ListID?.includes(colorID));
