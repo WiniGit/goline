@@ -395,7 +395,7 @@ const setSizeObserver = new MutationObserver((mutationList) => {
           if (targetWbase.parentElement?.style?.flexDirection == "column") {
             targetWbase.style.flex = 1;
           }
-        } else if ((targetWbase.style.height == "fit-content" || targetWbase.style.height == "max-content") && targetWbase.getAttribute("cateid") != EnumCate.tool_text) {
+        } else if ((targetWbase.style.height == "fit-content") && targetWbase.getAttribute("cateid") != EnumCate.tool_text) {
           // targetWbase.style.minHeight = null;
         } else {
           // targetWbase.style.minHeight = targetWbase.style.height;
@@ -592,6 +592,7 @@ async function callAPI(request) {
 
 function initPositionStyle(item) {
   item.value.style.position = "absolute";
+  if(!item.StyleItem.PositionItem) console.log(item);
   if (item.ParentID === wbase_parentID) item.StyleItem.PositionItem.FixPosition = false;
   if (item.StyleItem.PositionItem.FixPosition) $(item.value).addClass("fixed-position");
   let valueL = item.StyleItem.PositionItem.Left;

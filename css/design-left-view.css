@@ -42,6 +42,7 @@
   font-size: 12px;
   line-height: 16px;
   padding-bottom: 8px;
+  box-sizing: border-box;
 }
 
 #div_list_page > .header {

@@ -428,27 +428,27 @@ function createEditSizePosition() {
     _row_resizing.style.display = "inline-flex";
     _row_resizing.style.width = "100%";
     _row_resizing.style.height = "32px";
-    let initResizeW = "Fixed";
-    if (selected_list.every((e) => e.StyleItem.FrameItem.Width != null && e.StyleItem.FrameItem.Width >= 0)) {
-      initResizeW = "Fixed";
-    } else if (selected_list.every((e) => e.value.style.width == "100%")) {
-      initResizeW = "Fill";
-    } else if (selected_list.every((e) => e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
-      initResizeW = "Hug";
+    let initResizeW = "fixed";
+    if (selected_list.every((e) => e.value.style.width == "100%")) {
+      initResizeW = "fill";
+    } else if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content")) {
+      initResizeW = "hug";
+    } else if (selected_list.every((e) => e.value.style.width)) {
+      initResizeW = "fixed";
     } else {
-      initResizeW = "Mixed";
+      initResizeW = "mixed";
     }
     let icon_resize_w = _btnSelectResizeType(true, initResizeW);
     icon_resize_w.style.marginRight = "8px";
-    let initResizeH = "Fixed";
-    if (selected_list.every((e) => e.StyleItem.FrameItem.Height != null && e.StyleItem.FrameItem.Height >= 0)) {
-      initResizeH = "Fixed";
-    } else if (selected_list.every((e) => e.value.style.height == "100%")) {
-      initResizeH = "Fill";
-    } else if (selected_list.every((e) => e.value.style.height == "fit-content" || e.value.style.height == "max-content")) {
-      initResizeH = "Hug";
+    let initResizeH = "fixed";
+     if (selected_list.every((e) => e.value.style.height == "100%")) {
+      initResizeH = "fill";
+    } else if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
+      initResizeH = "hug";
+    } else if (selected_list.every((e) => e.value.style.height)) {
+      initResizeH = "fixed";
     } else {
-      initResizeH = "Mixed";
+      initResizeH = "mixed";
     }
     let icon_resize_h = _btnSelectResizeType(false, initResizeH);
     _row_resizing.replaceChildren(icon_resize_w, icon_resize_h);
@@ -3289,7 +3289,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
   if (currentSkinID) {
     let usingSkin = document.getElementById(`skinID:${currentSkinID}`);
     if (usingSkin) {
-      usingSkin.style.background = "#5cbbff";
+      usingSkin.style.background = "#E6F7FF";
       body.scrollTo({
         top: (usingSkin.offsetTop ?? 0) - 36,
         behavior: "smooth",
@@ -3421,7 +3421,7 @@ function createCateSkinHTML(cateItem, currentSkinID) {
     default:
       break;
   }
-  if (childrenHTML.length === 0 && [EnumCate.color, EnumCate.typography, EnumCate.border, EnumCate.effect].every((ct) => cateItem.ID !== ct)) return document.createElement("div");
+  if (cateContainer.querySelectorAll(":scope > .skin_tile_option").length && [EnumCate.color, EnumCate.typography, EnumCate.border, EnumCate.effect].every((ct) => cateItem.ID !== ct)) return document.createElement("div");
   cateContainer.replaceChildren(...childrenHTML);
   return cateContainer;
 }

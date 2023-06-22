@@ -812,13 +812,15 @@ class WiniIO {
     obj.data = obj.data.reverse();
     console.log(Date.now(), " : ", obj);
     obj.data = [
-      ...obj.data.map((e) => {
-        let dtItem = JSON.parse(JSON.stringify(e));
-        dtItem.ListID = null;
-        dtItem.Level = null;
-        return dtItem;
-      }),
+      ...obj.data
+        .map((e) => {
+          let dtItem = JSON.parse(JSON.stringify(e));
+          dtItem.ListID = null;
+          dtItem.Level = null;
+          return dtItem;
+        })
     ];
+    if(obj.enumEvent !== EnumEvent.add) obj.data = obj.data.filter(e => e.CateID !== EnumCate.textfield);
     if (obj.pageid === PageDA.obj.ID && action_index >= 0 && action_index === action_list.length - 1) {
       action_list[action_index].enumObj = obj.enumObj;
       action_list[action_index].enumEvent = obj.enumEvent;

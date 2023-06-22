@@ -511,7 +511,7 @@ function selectResizeType(isW = true, type) {
           selected_list[i].StyleItem.FrameItem.Width = wbase_eHTML.offsetWidth;
           wbase_eHTML.style.width = `${wbase_eHTML.offsetWidth}px`;
           if (isHorizontal) {
-            wbase_eHTML.style.flex = "none";
+            wbase_eHTML.style.flex = null;
           }
         }
         break;

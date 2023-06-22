@@ -914,12 +914,11 @@ const observer_listPage = new ResizeObserver((entries) => {
 });
 
 function ondragSortLayer(event) {
+  console.log("drag sort layer update");
   let fromY = document.getElementById("div_list_page").offsetHeight;
   let listLayer = [...document.getElementsByClassName("layer_wbase_tile")].filter((e) => e.offsetHeight > 0);
   if (listLayer.length > 1) {
     listLayer.sort((a, b) => {
-      a.style.border = "1px solid transparent";
-      b.style.border = "1px solid transparent";
       let rectA = a.getBoundingClientRect();
       let distanceA = Math.min(Math.abs(event.pageY - rectA.y), Math.abs(event.pageY - rectA.y - rectA.height));
       let rectB = b.getBoundingClientRect();
@@ -931,56 +930,59 @@ function ondragSortLayer(event) {
     let rectCenterY = minDistanceRect.y + minDistanceRect.height / 2;
     let rectBotY = minDistanceRect.y + minDistanceRect.height;
     let wbaseID = listLayer[0]?.id?.replace("wbaseID:", "");
-    let layerViewY = document.getElementById(`parentID:${wbase_parentID}`).offsetTop + 41; // 40 is height of tab bar
+    let layerViewY = document.getElementById(`parentID:${wbase_parentID}`).getBoundingClientRect().y - 40; // 40 is height of tab bar
     let sortWbase = wbase_list.find((wbaseItem) => wbaseItem.GID === wbaseID);
     let parent_cate = [...EnumCate.parent_cate];
     if (selected_list[0].CateID !== EnumCate.tool_variant && selected_list[0].IsWini) {
       parent_cate.push(EnumCate.tool_variant);
     }
     let wbaseHTML = document.getElementById(wbaseID);
-    // drag to centerY of layer
-    if (!listLayer[0].id.includes(selected_list[0].GID) && parent_cate.some((cate) => cate == listLayer[0].getAttribute("cateid")) && isInRange(event.pageY, rectCenterY - 6, rectCenterY + 6)) {
-      let time = parseInt(sortLayer.getAttribute("time") ?? "0");
-      time += 1;
-      sortLayer.setAttribute("time", time);
-      sortLayer.style.display = "none";
-      updateHoverWbase(sortWbase);
-      if (time >= 8) {
-        let preAction = document.getElementById(`pefixAction:${wbaseID}`);
-        if (preAction.className.includes("caret-right")) {
-          preAction.className = preAction.className.replace("caret-right", "caret-down");
+    if (wbaseHTML) {
+      // drag to centerY of layer
+      sortLayer.setAttribute("relativeid", wbaseID);
+      if (!listLayer[0].id.includes(selected_list[0].GID) && parent_cate.some((cate) => cate == listLayer[0].getAttribute("cateid")) && isInRange(event.pageY, rectCenterY - 5, rectCenterY + 5)) {
+        let time = parseInt(sortLayer.getAttribute("time") ?? "0");
+        time += 1;
+        sortLayer.setAttribute("time", time);
+        sortLayer.style.display = "none";
+        updateHoverWbase(sortWbase);
+        if (time >= 6) {
+          let preAction = document.getElementById(`pefixAction:${wbaseID}`);
+          if (preAction.className.includes("caret-right")) {
+            preAction.className = preAction.className.replace("caret-right", "caret-down");
+          }
         }
-      }
-      let childHTML = [...wbaseHTML.querySelectorAll(":scope > .wbaseItem-value")];
-      sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))));
-      sortLayer.setAttribute("parentid", wbaseID);
-    } else if (Math.abs(event.pageY - rectTopY) <= Math.abs(event.pageY - rectBotY)) {
-      // drag to abbove of layer
-      sortLayer.removeAttribute("time");
-      sortLayer.style.display = "block";
-      updateHoverWbase();
-      sortLayer.style.top = fromY + rectTopY - layerViewY + "px";
-      sortLayer.style.width = minDistanceRect.width - (sortWbase.Level - 1) * 16 + "px";
-      sortLayer.setAttribute("sort", sortWbase.Sort + 1);
-      sortLayer.setAttribute("parentid", wbaseHTML.getAttribute("listid").split(",").pop());
-    } else {
-      // drag to below of layer
-      sortLayer.removeAttribute("time");
-      sortLayer.style.display = "block";
-      updateHoverWbase();
-      let preAction = document.getElementById(`pefixAction:${wbaseID}`);
-      sortLayer.style.top = fromY + rectBotY - layerViewY + "px";
-      let spacing = (sortWbase.Level - 1) * 16;
-      if (preAction.className.includes("caret-down")) {
-        spacing += 16;
         let childHTML = [...wbaseHTML.querySelectorAll(":scope > .wbaseItem-value")];
-        sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))) + 1);
+        sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))));
         sortLayer.setAttribute("parentid", wbaseID);
-      } else {
-        sortLayer.setAttribute("sort", sortWbase.Sort);
+      } else if (Math.abs(event.pageY - rectTopY) <= Math.abs(event.pageY - rectBotY)) {
+        // drag to abbove of layer
+        sortLayer.removeAttribute("time");
+        sortLayer.style.display = "block";
+        updateHoverWbase();
+        sortLayer.style.top = fromY + rectTopY - layerViewY + "px";
+        sortLayer.style.width = minDistanceRect.width - (sortWbase.Level - 1) * 16 + "px";
+        sortLayer.setAttribute("sort", sortWbase.Sort + 1);
         sortLayer.setAttribute("parentid", wbaseHTML.getAttribute("listid").split(",").pop());
+      } else {
+        // drag to below of layer
+        sortLayer.removeAttribute("time");
+        sortLayer.style.display = "block";
+        updateHoverWbase();
+        let preAction = document.getElementById(`pefixAction:${wbaseID}`);
+        sortLayer.style.top = fromY + rectBotY - layerViewY + "px";
+        let spacing = (sortWbase.Level - 1) * 16;
+        if (preAction.className.includes("caret-down")) {
+          spacing += 16;
+          let childHTML = [...wbaseHTML.querySelectorAll(":scope > .wbaseItem-value")];
+          sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))) + 1);
+          sortLayer.setAttribute("parentid", wbaseID);
+        } else {
+          sortLayer.setAttribute("sort", sortWbase.Sort);
+          sortLayer.setAttribute("parentid", wbaseHTML.getAttribute("listid").split(",").pop());
+        }
+        sortLayer.style.width = `${minDistanceRect.width - spacing}px`;
       }
-      sortLayer.style.width = `${minDistanceRect.width - spacing}px`;
     }
   }
 }
@@ -989,22 +991,20 @@ function endDragSortLayer() {
   let listUpdate = [];
   let thisWbaseItem = selected_list[0];
   let currentParent;
-  let thisWbaseHTML = document.getElementById(thisWbaseItem.GID);
-  if (sortLayer && thisWbaseItem) {
+  let thisWbaseHTML = thisWbaseItem?.value;
+  if (sortLayer && thisWbaseHTML) {
     let newParentID = sortLayer.getAttribute("parentid");
     let zIndex = parseInt(sortLayer.getAttribute("sort"));
     if (newParentID && zIndex != undefined) {
       thisWbaseHTML.style.order = zIndex;
       thisWbaseHTML.style.zIndex = zIndex;
-      let newParent;
-      if (newParentID !== wbase_parentID) newParent = wbase_list.find((e) => e.GID === newParentID);
       if (thisWbaseItem.ParentID != newParentID) {
         if (thisWbaseItem.ParentID != wbase_parentID) {
           currentParent = wbase_list.find((e) => e.GID === thisWbaseItem.ParentID);
           currentParent.ListChildID = currentParent.ListChildID.filter((id) => id !== thisWbaseItem.GID);
-          currentParent.CountChild = currentParent.length;
+          currentParent.CountChild = currentParent.ListChildID.length;
           if (currentParent.CountChild == 0 && currentParent.WAutolayoutItem) {
-            let oldParentHTML = document.getElementById(currentParent.GID);
+            let oldParentHTML = currentParent.value;
             oldParentHTML.style.width = oldParentHTML.offsetWidth + "px";
             oldParentHTML.style.height = oldParentHTML.offsetHeight + "px";
             currentParent.StyleItem.FrameItem.Height = oldParentHTML.offsetHeight;
@@ -1019,21 +1019,22 @@ function endDragSortLayer() {
           }
         }
       }
+      let isChangeParent = thisWbaseItem.ParentID != newParentID;
       thisWbaseItem.ParentID = newParentID;
       if (newParentID === wbase_parentID) {
         let newParentHTML = divSection;
         thisWbaseItem.ListID = newParentID;
         thisWbaseHTML.setAttribute("listid", thisWbaseItem.ListID);
         thisWbaseItem.Level = 1;
-        thisWbaseHTML.setAttribute("Level", thisWbaseItem.Level);
-        newParentHTML.childNodes.forEach((eHTML) => {
+        thisWbaseHTML.setAttribute("level", thisWbaseItem.Level);
+        [...newParentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParentHTML.getAttribute("level") ?? "0") + 1}"]`)].forEach((eHTML) => {
           if (eHTML.id != thisWbaseItem.GID && parseInt(window.getComputedStyle(eHTML).order) >= zIndex) {
             let thisZIndex = parseInt(window.getComputedStyle(eHTML).order) + zIndex;
             eHTML.style.order = thisZIndex;
             eHTML.style.zIndex = thisZIndex;
           }
         });
-        if ([...newParentHTML.childNodes].every((eHTML) => eHTML.id != thisWbaseItem.GID)) {
+        if (thisWbaseHTML.parentElement !== newParentHTML) {
           let thisWbaseRect = thisWbaseHTML.getBoundingClientRect();
           let offsetLevel1 = offsetScale(thisWbaseRect.x, thisWbaseRect.y);
           thisWbaseHTML.style.position = "absolute";
@@ -1041,85 +1042,139 @@ function endDragSortLayer() {
           thisWbaseHTML.style.top = offsetLevel1.y + "px";
           newParentHTML.appendChild(thisWbaseHTML);
         }
-        let newParentChildren = [...newParentHTML.childNodes].filter((eHTML) => eHTML.id?.length == 36);
+        let newParentChildren = [...newParentHTML.querySelectorAll(`.wbaseItem-value[level="1"]`)];
         newParentChildren.sort((a, b) => parseInt(window.getComputedStyle(a).order) - parseInt(window.getComputedStyle(b).order));
-        let childrenWbase = wbase_list.filter((wbaseItem) => wbaseItem.ParentID == wbase_parentID);
+        let childrenWbase = wbase_list.filter((wb) => wb.ParentID === wbase_parentID);
         for (let i = 0; i < newParentChildren.length; i++) {
-          let wbaseItemIndex = childrenWbase.find((wbaseItem) => wbaseItem.GID == newParentChildren[i].id);
+          let wbaseItemIndex = childrenWbase.find((wb) => wb.GID === newParentChildren[i].id);
           if (wbaseItemIndex) wbaseItemIndex.Sort = i;
           newParentChildren[i].style.order = i;
           newParentChildren[i].style.zIndex = i;
-          listUpdate.push(wbaseItemIndex);
         }
+        listUpdate.push(thisWbaseItem);
+        arrange();
         WBaseDA.parent([
           {
             GID: wbase_parentID,
-            ListChildID: listUpdate.map((wbaseItem) => wbaseItem.GID),
+            ListChildID: newParentChildren.map((wb) => wb.id),
           },
           ...listUpdate,
         ]);
       } else {
-        let newParentHTML = document.getElementById(newParentID);
-        thisWbaseItem.ListID = newParentHTML.getAttribute("listid") + `,${newParentID}`;
-        thisWbaseHTML.setAttribute("listid", thisWbaseItem.ListID);
+        let newParent;
+        if (newParentID !== wbase_parentID) newParent = wbase_list.find((e) => e.GID === newParentID);
+        let newParentHTML = newParent.value;
+        thisWbaseItem.ListID = newParent.ListID + `,${newParentID}`;
         thisWbaseItem.Level = thisWbaseItem.ListID.split(",").length;
-        let children = [...newParentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParentHTML.getAttribute("level")) + 1}"]`)];
-        thisWbaseHTML.setAttribute("Level", thisWbaseItem.Level);
-        children.forEach((eHTML) => {
-          if (eHTML.id != thisWbaseItem.GID && parseInt(window.getComputedStyle(eHTML).zIndex) >= zIndex) {
-            let thisZIndex = parseInt(window.getComputedStyle(eHTML).zIndex) + 1;
-            eHTML.style.order = thisZIndex;
-            eHTML.style.zIndex = thisZIndex;
-          }
-        });
-        if (children.every((eHTML) => eHTML.id != thisWbaseHTML.id)) {
-          if (window.getComputedStyle(newParentHTML).display.match(/(flex|grid)/g) && !thisWbaseHTML.classList.contains("fixed-position")) {
+        thisWbaseItem.Sort = zIndex;
+        thisWbaseHTML.setAttribute("level", thisWbaseItem.Level);
+        thisWbaseHTML.setAttribute("listid", thisWbaseItem.ListID);
+        if (thisWbaseItem.IsWini && thisWbaseItem.BasePropertyItems?.length > 0) {
+          thisWbaseItem.BasePropertyItems = thisWbaseItem.BasePropertyItems.filter((e) => PropertyDA.list.find((property) => property.GID === e.PropertyID)?.BaseID === new_parentID);
+        }
+        if (isChangeParent) {
+          if (newParent.CateID === EnumCate.table) {
+            let listCell = newParent.TableRows.reduce((a, b) => a.concat(b));
+            [...newParentHTML.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
+              let cellContents = [];
+              cell.childNodes.forEach((cellCt) => {
+                if (cellCt.id === sortLayer.getAttribute("relativeid")) {
+                  if (zIndex <= parseInt(cellCt.style.zIndex)) {
+                    cellContents.push(thisWbaseHTML, cellCt);
+                  } else {
+                    cellContents.push(cellCt, thisWbaseHTML);
+                  }
+                } else {
+                  cellContents.push(cellCt);
+                }
+              });
+              cell.replaceChildren(...cellContents);
+              listCell.find((e) => e.id === cell.id).contentid = cellContents.map((e) => e.id).join(",");
+            });
+            thisWbaseItem.StyleItem.PositionItem.FixPosition = false;
+            thisWbaseItem.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+            thisWbaseItem.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+            thisWbaseHTML.style.left = null;
+            thisWbaseHTML.style.top = null;
+            thisWbaseHTML.style.right = null;
+            thisWbaseHTML.style.bottom = null;
+            thisWbaseHTML.style.transform = null;
+          } else if (window.getComputedStyle(newParentHTML).display.match(/(flex|grid)/g) && !thisWbaseHTML.classList.contains("fixed-position")) {
             thisWbaseHTML.style.position = "relative";
             thisWbaseHTML.style.left = null;
             thisWbaseHTML.style.top = null;
             thisWbaseHTML.style.right = null;
             thisWbaseHTML.style.bottom = null;
             thisWbaseHTML.style.transform = null;
-            newParentHTML.appendChild(thisWbaseHTML);
+            thisWbaseItem.StyleItem.PositionItem.FixPosition = false;
+            thisWbaseItem.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+            thisWbaseItem.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+            if (thisWbaseItem.StyleItem.FrameItem.Width < 0 && newParent.StyleItem.FrameItem.Width == null) {
+              thisWbaseItem.StyleItem.FrameItem.Width = thisWbaseHTML.offsetWidth;
+              thisWbaseHTML.style.width = thisWbaseHTML.offsetWidth + "px";
+            }
+            if (thisWbaseItem.StyleItem.FrameItem.Height < 0 && newParent.StyleItem.FrameItem.Height == null) {
+              thisWbaseItem.StyleItem.FrameItem.Height = thisWbaseHTML.offsetHeight;
+              thisWbaseHTML.style.height = thisWbaseHTML.offsetHeight + "px";
+            }
+            switch (newParent.CateID) {
+              case EnumCate.tree:
+                newParentHTML.querySelector(".children-value").appendChild(thisWbaseHTML);
+                break;
+              case EnumCate.carousel:
+                newParentHTML.querySelector(".children-value").appendChild(thisWbaseHTML);
+                break;
+              default:
+                newParentHTML.appendChild(thisWbaseHTML);
+                break;
+            }
           } else {
+            if (thisWbaseItem.StyleItem.FrameItem.Width != null && thisWbaseItem.StyleItem.FrameItem.Width < 0) thisWbaseItem.StyleItem.FrameItem.Width = thisWbaseHTML.offsetWidth;
+            if (thisWbaseItem.StyleItem.FrameItem.Height != null && thisWbaseItem.StyleItem.FrameItem.Height < 0) thisWbaseItem.StyleItem.FrameItem.Height = thisWbaseHTML.offsetHeight;
             let thisWbaseRect = thisWbaseHTML.getBoundingClientRect();
             let offsetLevel1 = offsetScale(thisWbaseRect.x, thisWbaseRect.y);
             let newParentRect = newParentHTML.getBoundingClientRect();
             let parentOffLevel1 = offsetScale(newParentRect.x, newParentRect.y);
             thisWbaseHTML.style.position = "absolute";
             updatePosition({ Left: offsetLevel1.x - parentOffLevel1.x, Top: offsetLevel1.y - parentOffLevel1.y }, thisWbaseItem);
+            updateConstraints(thisWbaseItem);
             newParentHTML.appendChild(thisWbaseHTML);
           }
         }
-        let thisWbaseChild = wbase_list.filter((wbase) => wbase.ListID.includes(thisWbaseItem.GID));
-        for (let j = 0; j < thisWbaseChild.length; j++) {
-          thisWbaseChild[j].ListID = thisWbaseItem.ListID + `,${thisWbaseItem.GID}`;
-          thisWbaseChild[j].Level = thisWbaseChild[j].ListID.split(",").length;
-          let childHTML = document.getElementById(thisWbaseChild[j].GID);
-          childHTML.setAttribute("Level", thisWbaseChild[j].Level);
-          childHTML.setAttribute("listid", thisWbaseChild[j].ListID);
+        let children = wbase_list.filter((wbase) => wbase.ListID.includes(thisWbaseItem.GID));
+        for (let j = 0; j < children.length; j++) {
+          let child_listID = children[j].ListID.split(",");
+          let index = child_listID.indexOf(thisWbaseItem.GID);
+          let new_listID = thisWbaseItem.ListID.split(",").concat(child_listID.slice(index));
+          children[j].ListID = new_listID.join(",");
+          children[j].Level = new_listID.length;
+          let childHTML = children[j].value;
+          childHTML.setAttribute("level", new_listID.length);
+          childHTML.setAttribute("listid", new_listID.join(","));
         }
-        let newParentChildren = [...newParentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParentHTML.getAttribute("level")) + 1}"]`)];
+        let newParentChildren = [...newParentHTML.querySelectorAll(`.wbaseItem-value[level="${newParent.Level + 1}"]`)];
+        newParentChildren
+          .filter((e) => e.id != thisWbaseHTML.id && parseInt(e.style.zIndex) >= zIndex)
+          .forEach((e) => {
+            e.style.zIndex = parseInt(e.style.zIndex) + 1;
+            e.style.order = parseInt(e.style.zIndex) + 1;
+          });
         newParentChildren.sort((a, b) => parseInt(window.getComputedStyle(a).zIndex) - parseInt(window.getComputedStyle(b).zIndex));
         let childrenWbase = wbase_list.filter((e) => e.ParentID === newParentID);
         for (let i = 0; i < newParentChildren.length; i++) {
-          let wbaseItemIndex = childrenWbase.find((wbaseItem) => wbaseItem.GID === newParentChildren[i].id);
+          let wbaseItemIndex = childrenWbase.find((wb) => wb.GID === newParentChildren[i].id);
           if (wbaseItemIndex) wbaseItemIndex.Sort = i;
           newParentChildren[i].style.order = i;
           newParentChildren[i].style.zIndex = i;
-          listUpdate.push(wbaseItemIndex);
         }
-        newParent.ListChildID = newParentChildren.map((wbaseItem) => wbaseItem.id);
+        newParent.ListChildID = newParentChildren.map((wb) => wb.id);
         newParent.CountChild = newParentChildren.length;
-        listUpdate.unshift(newParent);
+        listUpdate.push(newParent, thisWbaseItem);
         WBaseDA.parent(listUpdate);
       }
       arrange();
-      if (newParent?.CateID === EnumCate.table) {
-        createTable(newParent);
-      }
       replaceAllLyerItemHTML();
-      addSelectList(selected_list);
+      addSelectList([thisWbaseItem]);
     }
   }
   sortLayer?.remove();

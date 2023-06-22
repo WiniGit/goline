@@ -785,7 +785,7 @@ const childObserver = new MutationObserver((mutationList) => {
 });
 
 function moveListener(event) {
-  if (event.target.contentEditable == "true" || (event.target.localName === "input" && (event.target.readonly == null || event.target.readonly != "true"))) return;
+  if (event.target.contentEditable == "true" || (event.target.localName === "input" && !event.target.readOnly)) return;
   event.preventDefault();
   let target_view;
   // check drag resize left view
@@ -850,7 +850,6 @@ function moveListener(event) {
         sortLayer.style.right = "0px";
         sortLayer.style.backgroundColor = "black";
         sortLayer.style.display = "block";
-        sortLayer.style.transform = "translate(0,-50%)";
         document.getElementById("Layer").appendChild(sortLayer);
       }
     } else if (sortSkin || event.target.className == "skin_tile_option") {
@@ -1528,27 +1527,29 @@ function moveListener(event) {
       }
       break;
   }
-  let mouseOffset = offsetScale(event.pageX, event.pageY);
-  let rectOffset;
-  let rRect = objr ?? select_box;
-  if (rRect) {
-    rectOffset = offsetScale(rRect.x, rRect.y);
-    rectOffset.w = rRect.w / scale;
-    rectOffset.h = rRect.h / scale;
+  if (target_view === "canvas_view") {
+    let mouseOffset = offsetScale(event.pageX, event.pageY);
+    let rectOffset;
+    let rRect = objr ?? select_box;
+    if (rRect) {
+      rectOffset = offsetScale(rRect.x, rRect.y);
+      rectOffset.w = rRect.w / scale;
+      rectOffset.h = rRect.h / scale;
+    }
+    if (document.body.querySelector(`.wbaseItem-value[loading="true"]`)) {
+      document.body.style.setProperty("--loadingX", event.pageX + "px");
+      document.body.style.setProperty("--loadingY", event.pageY + "px");
+    }
+    WiniIO.emitMouse({
+      xMouse: mouseOffset.x,
+      yMouse: mouseOffset.y,
+      x: rectOffset?.x,
+      y: rectOffset?.y,
+      w: rectOffset?.w,
+      h: rectOffset?.h,
+      isSelect: false,
+    });
   }
-  if (document.body.querySelector(`.wbaseItem-value[loading="true"]`)) {
-    document.body.style.setProperty("--loadingX", event.pageX + "px");
-    document.body.style.setProperty("--loadingY", event.pageY + "px");
-  }
-  WiniIO.emitMouse({
-    xMouse: mouseOffset.x,
-    yMouse: mouseOffset.y,
-    x: rectOffset?.x,
-    y: rectOffset?.y,
-    w: rectOffset?.w,
-    h: rectOffset?.h,
-    isSelect: false,
-  });
 }
 
 function handToolDrag(event) {
@@ -2330,8 +2331,8 @@ function clickEvent(event) {
               else addSelectList([hover_wbase]);
             }
           } else {
-            if (event.shiftKey && hover_wbase.ParentID === select_box_parentID) addSelectList([...selected_list, hover_wbase]);
-            else addSelectList([hover_wbase]);
+            if (event.shiftKey && hover_wbase?.ParentID === select_box_parentID) addSelectList([...selected_list, hover_wbase]);
+            else if (hover_wbase) addSelectList([hover_wbase]);
           }
           if (event.target.localName == "path" && selectPath?.getAttribute("parentID") == select_box_parentID) {
             selectPath?.remove();
@@ -2367,7 +2368,7 @@ function clickEvent(event) {
 
 function upListener(event) {
   // updateUIF12();
-  if (event.target.contentEditable == "true" || (event.target.localName === "input" && (event.target.readonly == null || event.target.readonly != "true"))) return;
+  if (event.target.contentEditable == "true" || (event.target.localName === "input" && !event.target.readOnly)) return;
   left_view.resizing = false;
   console.log("up ", checkpad, action_list);
   event.preventDefault();
@@ -2554,7 +2555,6 @@ function upListener(event) {
         }
       }
       reloadTree(selected_list[0].value);
-
       break;
     case EnumEvent.edit:
       let enumObj = EnumObj.framePosition;

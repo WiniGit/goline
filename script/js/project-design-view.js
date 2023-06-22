@@ -463,6 +463,7 @@ function arrange(list) {
 
 function addSelectList(new_selected_list = []) {
   new_selected_list = new_selected_list.filter((e) => e != undefined);
+  if (new_selected_list.length > 10) new_selected_list = new_selected_list.slice(0, 10);
   let isChange = false;
   if (selected_list.length > 0) {
     for (let e of selected_list) {
@@ -1014,14 +1015,10 @@ function dragWbaseEnd() {
         parent_wbase.ListChildID = children.map((e) => e.id);
       }
       WBaseDA.listData.push(...selected_list);
-      WBaseDA.listData.push(
-        parent_wbase ?? {
-          GID: wbase_parentID,
-          ListChildID: children.map((e) => e.id),
-        },
-      );
+      if (parent_wbase) WBaseDA.listData.push(parent_wbase);
     } else if (window.getComputedStyle(new_parentHTML).display.match(/(flex|grid)/g) && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
       WBaseDA.enumEvent = EnumEvent.parent;
+      handleStyleSize(parent_wbase);
       let children = [...new_parentHTML.querySelectorAll(`.wbaseItem-value[level="${(parent_wbase?.Level ?? 0) + 1}"]`)];
       children.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
       for (let i = 0; i < children.length; i++) {

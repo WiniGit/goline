@@ -238,10 +238,7 @@ const textObserver = new MutationObserver((mutationList) => {
         if (mutation.attributeName === "style") {
           let targetText = mutation.target;
           let change = false;
-          if (targetText.style.width == "fit-content") {
-            targetText.style.width = "max-content";
-            change = true;
-          } else if (targetText.style.width == "100%") {
+          if (targetText.style.width == "100%") {
             targetText.style.minWidth = null;
           }
           if (targetText.style.height == "fit-content" && targetText.style.minHeight != null) {
@@ -265,7 +262,7 @@ function calcTextNode(node) {
   let height;
   let textNodes = textNodesUnder(node);
   if (textNodes.length > 0) {
-    if (node.style.width == "fit-content" || node.style.width == "max-content") {
+    if (node.style.width == "fit-content") {
       width = Math.max(...textNodes.map((textNode) => caclTextSize(textNode.data, `${node.style.fontWeight} ${node.style.fontSize} ${node.style.fontFamily}`).width)) + Math.max(...textNodes.map((textNode) => textNode.data.length)) * parseFloat(node.style.letterSpacing.replace("px"));
     } else {
       width = node.offsetWidth;
