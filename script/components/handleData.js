@@ -506,7 +506,7 @@ function getWBaseOffset(wbaseItem) {
 }
 
 function initSkinWbase(item) {
-  let isLocalItem = item.ProjectID === 0 || (item.ProjectID ?? ProjectDA.obj.ID) === ProjectDA.obj.ID;
+  let isLocalItem = !item.ProjectID || item.ProjectID === ProjectDA.obj.ID;
   if (item.StyleItem.DecorationItem?.ColorID) {
     let colorID = item.StyleItem.DecorationItem.ColorID;
     let colorSkin = (isLocalItem ? ColorDA.list : ColorDA.listAssets).find((e) => e.GID == colorID || e.ListID?.includes(colorID));
@@ -550,6 +550,8 @@ function initSkinWbase(item) {
       if (typoSkin) {
         item.StyleItem.TextStyleID = typoSkin.GID;
         item.StyleItem.TextStyleItem = typoSkin;
+      } else if(item.StyleItem.TextStyleItem) {
+        item.StyleItem.TextStyleItem.IsStyle = false;
       }
     } else {
       item.StyleItem.TextStyleItem = {

@@ -605,23 +605,32 @@ async function initUIAssetView(reloadComponent = false) {
             .split(" ")
             .filter((text) => text != "")
             .join(" ");
+          content = Ultis.toSlug(content);
           let isContainLocal = false;
           updateListComponentByProject(ProjectDA.obj);
           [...document.getElementById(`component projectID:${ProjectDA.obj.ID}`).querySelectorAll(".assets-component-tile")].reverse().forEach((componentTile) => {
             let thisComponent = assets_list.find((com) => com.GID == componentTile.id.replace("Component:", ""));
-            if (content.split(" ").some((key) => thisComponent.Name.toLowerCase().includes(key))) {
-              componentTile.style.display = "flex";
+            if (content.split("-").some((key) => thisComponent.Name.toLowerCase().includes(key))) {
+              [...$(componentTile).parents(".list_tile")].forEach((parentTile) => {
+                let pre = parentTile.querySelector(":scope > .fa-caret-right");
+                if (pre) pre.className = "fa-solid fa-caret-down fa-xs";
+              });
               isContainLocal = true;
               componentTile.querySelectorAll(".assets-component-tile").forEach((childComponentTile) => {
-                childComponentTile.style.display = "flex";
+                [...$(childComponentTile).parents(".list_tile")].forEach((parentTile) => {
+                  let pre = parentTile.querySelector(":scope > .fa-caret-right");
+                  if (pre) pre.className = "fa-solid fa-caret-down fa-xs";
+                });
               });
-            } else {
-              componentTile.style.display = "none";
             }
           });
           if (!isContainLocal) updateListComponentByProject(ProjectDA.obj, false);
           if (content.length > 3) {
-            if (ProjectDA.obj.ListID && ProjectDA.obj.ListID.trim() != "") WBaseDA.getAssetsList(ProjectDA.obj.ListID, content);
+            if (ProjectDA.obj.ListID && ProjectDA.obj.ListID.trim() != "") {
+              let _listID = ProjectDA.obj.ListID;
+              if (PageDA.list.length > 1) _listID += `,${ProjectDA.obj.ID}`;
+              WBaseDA.getAssetsList(_listID, content);
+            }
           } else if (content.length == 0) {
             initUIAssetView();
             document.getElementById("search_input_assets").focus();
@@ -740,7 +749,7 @@ function createListComponent(projectItem, isShowContent) {
       container_child.replaceChildren(
         ...PageDA.list.map((page) => {
           let listPageComp = assets_list.filter((e) => e.PageID === page.ID && assets_list.every((el) => !e.ListID.includes(el.GID)));
-          let showPageCom = select_component && listPageComp.some((e) => e.GID === select_component.GID);
+          let showPageCom = isShowContent || (select_component && listPageComp.some((e) => e.GID === select_component.GID));
           let pageTileContainer = document.createElement("div");
           pageTileContainer.className = "col page-comp-container";
           let pageTile = document.createElement("div");
@@ -981,7 +990,7 @@ function endDragSortLayer() {
   let thisWbaseItem = selected_list[0];
   let currentParent;
   let thisWbaseHTML = document.getElementById(thisWbaseItem.GID);
-  if (sortLayer) {
+  if (sortLayer && thisWbaseItem) {
     let newParentID = sortLayer.getAttribute("parentid");
     let zIndex = parseInt(sortLayer.getAttribute("sort"));
     if (newParentID && zIndex != undefined) {
@@ -1037,7 +1046,7 @@ function endDragSortLayer() {
         let childrenWbase = wbase_list.filter((wbaseItem) => wbaseItem.ParentID == wbase_parentID);
         for (let i = 0; i < newParentChildren.length; i++) {
           let wbaseItemIndex = childrenWbase.find((wbaseItem) => wbaseItem.GID == newParentChildren[i].id);
-          wbaseItemIndex.Sort = i;
+          if (wbaseItemIndex) wbaseItemIndex.Sort = i;
           newParentChildren[i].style.order = i;
           newParentChildren[i].style.zIndex = i;
           listUpdate.push(wbaseItemIndex);
@@ -1095,7 +1104,7 @@ function endDragSortLayer() {
         let childrenWbase = wbase_list.filter((e) => e.ParentID === newParentID);
         for (let i = 0; i < newParentChildren.length; i++) {
           let wbaseItemIndex = childrenWbase.find((wbaseItem) => wbaseItem.GID === newParentChildren[i].id);
-          wbaseItemIndex.Sort = i;
+          if (wbaseItemIndex) wbaseItemIndex.Sort = i;
           newParentChildren[i].style.order = i;
           newParentChildren[i].style.zIndex = i;
           listUpdate.push(wbaseItemIndex);

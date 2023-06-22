@@ -1651,8 +1651,7 @@ class WBaseDA {
 
     static assetsLoading = false;
     static getAssetsList(listId, keySearch = "") {
-        let key = Ultis.toSlug(keySearch);
-        var url = `WBase/ListAssetsItem?listid=${listId}&keySearch=${key}`;
+        var url = `WBase/ListAssetsItem?listid=${listId}&keySearch=${keySearch}`;
         WiniIO.emitGet(null, url, EnumObj.wBase, EnumEvent.get);
     }
 

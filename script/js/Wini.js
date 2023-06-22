@@ -667,6 +667,7 @@ var idbutton = "";
 var objsc;
 var instance_drag;
 var sortLayer;
+var sortSkin;
 var listCurve = [];
 function centerViewInitListener() {
   window.addEventListener("mousemove", moveListener);
@@ -787,6 +788,7 @@ function moveListener(event) {
   if (event.target.contentEditable == "true" || (event.target.localName === "input" && (event.target.readonly == null || event.target.readonly != "true"))) return;
   event.preventDefault();
   let target_view;
+  // check drag resize left view
   if (!instance_drag && window.getComputedStyle(left_view).display !== "none" && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {
     document.body.style.cursor = "e-resize";
     if (event.buttons == 1) {
@@ -797,6 +799,7 @@ function moveListener(event) {
   } else {
     document.body.style.cursor = null;
   }
+  // check edit data
   if (event.buttons == 1 && PageDA.enableEdit) {
     if (instance_drag) {
       target_view = "left_view";
@@ -850,6 +853,8 @@ function moveListener(event) {
         sortLayer.style.transform = "translate(0,-50%)";
         document.getElementById("Layer").appendChild(sortLayer);
       }
+    } else if (sortSkin || event.target.className == "skin_tile_option") {
+      target_view = "right_view";
     } else {
       for (let thisElement of event.composedPath()) {
         if (typeof thisElement.className === "string" && thisElement.className?.includes("wini_popup")) {
@@ -861,6 +866,9 @@ function moveListener(event) {
           target_view = thisElement.id;
           break;
         } else if (thisElement.id == "left_view") {
+          target_view = thisElement.id;
+          break;
+        } else if (thisElement.id == "right_view") {
           target_view = thisElement.id;
           break;
         }
@@ -1450,6 +1458,8 @@ function moveListener(event) {
           }
         }
       }
+      break;
+    case "right_view":
       break;
     case "popup_img_document":
       if (event.target.className?.includes("img_folder_demo")) {
@@ -2268,7 +2278,7 @@ function doubleClickEvent(event) {
         }
         if (checkpad == 0) {
           if (element_path.some((ele) => ele.id == "canvas_view")) {
-            if (target_element != document && target_element.classList?.contains("textfield")) target_element = target_element.parentElement;
+            if (target_element != document && target_element && target_element.classList?.contains("textfield")) target_element = target_element.parentElement;
             if (clearAction) clearActionListFrom(action_index - 1);
             addSelectList(wbase_list.filter((element) => element.GID === target_element?.id));
           }

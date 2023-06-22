@@ -693,7 +693,6 @@ socket.on("server-main", async (data) => {
   if (data.pageid === PageDA.obj.ID) {
     let copyList = [];
     let initskin = false;
-    let listData = data.data.filter((e) => e.GID !== wbase_parentID);
     let thisAction;
     if (data.token === UserService.getToken() || data.token === UserService.getRefreshToken()) {
       thisAction = action_list[data.index];
@@ -708,18 +707,32 @@ socket.on("server-main", async (data) => {
         });
       }
     }
+    let importColor = [];
+    let importTypo = [];
+    let importBorder = [];
+    let importEffect = [];
+    let listData = initskin
+      ? data.data.filter((e) => {
+          if (e.GID !== wbase_parentID) {
+            if (e.StyleItem?.DecorationItem?.ColorID) importColor.push(e.StyleItem.DecorationItem.ColorID);
+            if (e.StyleItem?.DecorationItem?.BorderID) importBorder.push(e.StyleItem.DecorationItem.BorderID);
+            if (e.StyleItem?.DecorationItem?.EffectID) importEffect.push(e.StyleItem.DecorationItem.EffectID);
+            if (e.StyleItem?.TextStyleID) importTypo.push(e.StyleItem.TextStyleID);
+            return true;
+          }
+          return false;
+        })
+      : data.data.filter((e) => e.GID !== wbase_parentID);
     listData = initDOM(listData);
     arrange(listData);
     if (data.enumEvent === EnumEvent.delete) {
       WbaseIO.delete(listData);
     } else {
       if (initskin) {
-        let skinResponse = await $.get(WBaseDA.skin_url + `?pid=${data.pid}`);
-        ColorDA.list.push(...skinResponse.Data.ColorItems.filter((skin) => ColorDA.list.every((localSk) => skin.GID !== localSk.GID)));
-        TypoDA.list.push(...skinResponse.Data.TextStyleItems.filter((skin) => TypoDA.list.every((localSk) => skin.GID !== localSk.GID)));
-        EffectDA.list.push(...skinResponse.Data.EffectItems.filter((skin) => EffectDA.list.every((localSk) => skin.GID !== localSk.GID)));
-        BorderDA.list.push(...skinResponse.Data.BorderItems.filter((skin) => BorderDA.list.every((localSk) => skin.GID !== localSk.GID)));
-        PropertyDA.list.push(...skinResponse.Data.WPropertyItems.filter((skin) => PropertyDA.list.every((localSk) => skin.GID !== localSk.GID)));
+        ColorDA.list.push(...ColorDA.listAssets.filter((skin) => importColor.some((id) => skin.GID === id) && ColorDA.list.every((localSkin) => localSkin.GID !== id)));
+        TypoDA.list.push(...TypoDA.listAssets.filter((skin) => importTypo.some((id) => skin.GID === id) && TypoDA.list.every((localSkin) => localSkin.GID !== id)));
+        BorderDA.list.push(...BorderDA.listAssets.filter((skin) => importBorder.some((id) => skin.GID === id) && BorderDA.list.every((localSkin) => localSkin.GID !== id)));
+        EffectDA.list.push(...EffectDA.listAssets.filter((skin) => importEffect.some((id) => skin.GID === id) && EffectDA.list.every((localSkin) => localSkin.GID !== id)));
         CateDA.initCate();
       }
       await WbaseIO.addOrUpdate(listData, data.enumEvent);

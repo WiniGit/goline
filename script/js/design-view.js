@@ -3300,9 +3300,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
 
 function createCateSkinHTML(cateItem, currentSkinID) {
   let cateContainer = document.createElement("div");
-  cateContainer.className = `CateItemID:${cateItem.ID}`;
-  cateContainer.style.display = "inline-flex";
-  cateContainer.style.flexDirection = "column";
+  cateContainer.className = `CateItemID:${cateItem.ID} col cate-skin-tile`;
   cateContainer.style.width = "100%";
   let childrenHTML = [];
   if (cateItem.ParentID || selected_list.length == 0) {
@@ -3315,7 +3313,7 @@ function createCateSkinHTML(cateItem, currentSkinID) {
       let cateTitleTile = document.createElement("div");
       cateTitleTile.className = "row";
       let prefixIcon = document.createElement("i");
-      prefixIcon.className = "fa-solid fa-caret-right fa-2xs";
+      prefixIcon.className = "fa-solid fa-caret-down fa-2xs";
       prefixIcon.style.color = "#b2b2b2";
       prefixIcon.style.marginLeft = "8px";
       prefixIcon.style.padding = "10px";
@@ -3323,11 +3321,10 @@ function createCateSkinHTML(cateItem, currentSkinID) {
       prefixIcon.onclick = function (e) {
         e.stopPropagation();
         isShow = !isShow;
-        let skinTiles = cateContainer.querySelectorAll(".skin_tile_option");
         if (isShow) {
-          skinTiles.forEach((skinTile) => (skinTile.style.display = "flex"));
+          prefixIcon.className = "fa-solid fa-caret-down fa-2xs";
         } else {
-          skinTiles.forEach((skinTile) => (skinTile.style.display = "none"));
+          prefixIcon.className = "fa-solid fa-caret-right fa-2xs";
         }
       };
       cateTitleTile.appendChild(prefixIcon);
@@ -3424,8 +3421,8 @@ function createCateSkinHTML(cateItem, currentSkinID) {
     default:
       break;
   }
+  if (childrenHTML.length === 0 && [EnumCate.color, EnumCate.typography, EnumCate.border, EnumCate.effect].every((ct) => cateItem.ID !== ct)) return document.createElement("div");
   cateContainer.replaceChildren(...childrenHTML);
-  if (cateContainer.querySelectorAll(":scope > .skin_tile_option").length == 0) return document.createElement("div");
   return cateContainer;
 }
 
@@ -3538,7 +3535,6 @@ function createSkinTileHTML(enumCate, jsonSkin) {
       break;
     case EnumCate.typography:
       skin_tile.onclick = function (e) {
-        console.log("?????");
         e.stopPropagation();
         if (selected_list.length > 0) {
           editTextStyle(jsonSkin);
@@ -4901,7 +4897,8 @@ function mergeSkinDialog() {
   let closeBtn = document.createElement("i");
   closeBtn.className = "fa-solid fa-xmark fa-lg";
   closeBtn.style.padding = "8px";
-  closeBtn.onclick = function () {
+  closeBtn.onclick = function (e) {
+    e.stopPropagation();
     dialogBackground.remove();
   };
   header.appendChild(closeBtn);

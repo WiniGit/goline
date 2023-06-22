@@ -2548,3 +2548,7 @@ div:has(> .edit-color-container) {
 .preview-carousel-data:hover {
   background-color: #f1f1f1;
 }
+
+.cate-skin-tile:has(>  .row > .fa-caret-right) > :not(.row:first-child) {
+  display: none;
+}
