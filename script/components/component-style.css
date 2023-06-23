@@ -35,7 +35,6 @@
 
 .w-text {
   cursor: default;
-  word-break: break-word;
   text-overflow: ellipsis;
   overflow: hidden !important;
   outline: none;
@@ -47,6 +46,11 @@
 
 .w-text * {
   all: unset !important;
+}
+
+.w-text:not(.w-text[contenteditable="true"]) {
+  display: block;
+  white-space: nowrap;
 }
 
 .w-svg {

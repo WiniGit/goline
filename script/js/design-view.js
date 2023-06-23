@@ -710,28 +710,27 @@ function updateInputTLWH() {
     let btn_resize_with_height = document.getElementsByClassName("btn_resize");
     if (btn_resize_with_height.length > 0) {
       if (selected_list.every((e) => e.WAutolayoutItem || (!e.StyleItem.PositionItem.FixPosition && window.getComputedStyle(e.value.parentElement).display.match(/(flex|grid)/g)))) {
-        btn_resize_with_height[0].parentElement.style.display = "inline-flex";
+        btn_resize_with_height[0].parentElement.style.display = "flex";
         for (let option of btn_resize_with_height) {
           if (option.className.includes("width")) {
-            if (selected_list.every((e) => e.StyleItem.FrameItem?.Width >= 0)) {
-              option.childNodes[1].innerHTML = "fixed";
-            } else if (selected_list.every((e) => e.StyleItem.FrameItem?.Width < 0)) {
-              option.childNodes[1].innerHTML = "fill";
-            } else if (selected_list.every((e) => e.StyleItem.FrameItem?.Width == undefined)) {
+            if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content")) {
               option.childNodes[1].innerHTML = "hug";
+            } else if (selected_list.every((e) => e.value.style.width == "100%")) {
+              option.childNodes[1].innerHTML = "fill";
+            } else if (selected_list.every((e) => e.value.style.width)) {
+              option.childNodes[1].innerHTML = "fixed";
             } else {
-              option.childNodes[1].innerHTML = "Mixed";
+              option.childNodes[1].innerHTML = "mixed";
             }
           } else {
-            if (selected_list.every((e) => e.StyleItem.FrameItem?.Height >= 0)) {
-              ``;
-              option.childNodes[1].innerHTML = "fixed";
-            } else if (selected_list.every((e) => e.StyleItem.FrameItem?.Height < 0)) {
-              option.childNodes[1].innerHTML = "fill";
-            } else if (selected_list.every((e) => e.StyleItem.FrameItem?.Height == undefined)) {
+            if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
               option.childNodes[1].innerHTML = "hug";
+            } else if (selected_list.every((e) => e.value.style.height == "100%")) {
+              option.childNodes[1].innerHTML = "fill";
+            } else if (selected_list.every((e) => e.value.style.height)) {
+              option.childNodes[1].innerHTML = "fixed";
             } else {
-              option.childNodes[1].innerHTML = "Mixed";
+              option.childNodes[1].innerHTML = "mixed";
             }
           }
         }
@@ -2285,7 +2284,7 @@ let list_border_style = [BorderStyle.dashed, BorderStyle.dotted, BorderStyle.dou
 
 //! border
 function createEditBorder() {
-  let listBorder = selected_list.filter((wbaseItem) => wbaseItem.StyleItem.DecorationItem);
+  let listBorder = selected_list.filter((wb) => wb.StyleItem.DecorationItem);
   let editContainer = document.createElement("div");
   editContainer.id = "edit-border";
   editContainer.className = "edit-container";

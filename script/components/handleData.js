@@ -755,7 +755,7 @@ function initWbaseStyle(item) {
 function handleStyleSize(item) {
   if (item.StyleItem.FrameItem.Width == undefined) {
     item.value.style.width = "fit-content";
-    if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = "none";
+    if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
   } else if (item.StyleItem.FrameItem.Width < 0) {
     item.value.style.width = "100%";
   } else {
@@ -766,7 +766,7 @@ function handleStyleSize(item) {
   }
   if (item.StyleItem.FrameItem.Height == undefined) {
     item.value.style.height = "fit-content";
-    if (item.value.parentElement?.style?.flexDirection == "column") item.value.style.flex = "none";
+    if (item.value.parentElement?.style?.flexDirection == "column") item.value.style.flex = null;
   } else if (item.StyleItem.FrameItem.Height < 0) {
     item.value.style.height = "100%";
   } else {

@@ -4,8 +4,10 @@ function createTextHTML(item) {
   $(item.value).addClass("w-text");
   if (!item.build) {
     item.value.contentEditable = false;
-  item.value.onfocus = function () {
+    item.value.onfocus = function () {
       item.isEditting = !item.isNew;
+      item.value.addEventListener("keydown", inputKeyDown);
+      item.value.addEventListener("keyup", inputKeyUp);
       if (item.inputActions) {
         inputActions = item.inputActions;
         inputActionIndex = item.inputActionIndex;
@@ -70,7 +72,7 @@ function createTextHTML(item) {
     let inputActions = [];
     let inputActionIndex = -1;
     let time = 0;
-    item.value.onkeydown = function (e) {
+    function inputKeyDown(e) {
       if (e.key == "z" && (isMac ? e.metaKey : e.ctrlKey)) {
         e.preventDefault();
       } else {
@@ -80,7 +82,15 @@ function createTextHTML(item) {
         }
         time = timeNow;
       }
-    };
+    }
+    function inputKeyUp(e) {
+      if (e.key == "z" && (isMac ? e.metaKey : e.ctrlKey)) {
+        e.preventDefault();
+        ctrlZText();
+        select_box = selectBox(selected_list);
+        wdraw();
+      }
+    }
     function addInputAction() {
       let selection = window.getSelection();
       inputActionIndex++;
@@ -140,14 +150,6 @@ function createTextHTML(item) {
         inputActionIndex--;
       }
     }
-    item.value.onkeyup = function (e) {
-      if (e.key == "z" && (isMac ? e.metaKey : e.ctrlKey)) {
-        e.preventDefault();
-        ctrlZText();
-        select_box = selectBox(selected_list);
-        wdraw();
-      }
-    };
     item.value.onblur = function () {
       addInputAction();
       this.removeAttribute("isCtrlZ");
@@ -203,6 +205,8 @@ function createTextHTML(item) {
       item.isNew = false;
       item.isEditting = false;
       WBaseDA.isCtrlZ = false;
+      item.value.removeEventListener("keydown", inputKeyDown);
+      item.value.removeEventListener("keyup", inputKeyUp);
     };
     item.value.oninput = function (e) {
       if (this.innerHTML == "") {

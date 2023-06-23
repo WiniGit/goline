@@ -1528,6 +1528,10 @@ function moveListener(event) {
       }
       break;
   }
+  if (document.body.querySelector(`.wbaseItem-value[loading="true"]`)) {
+    document.body.style.setProperty("--loadingX", event.pageX + "px");
+    document.body.style.setProperty("--loadingY", event.pageY + "px");
+  }
   if (target_view === "canvas_view") {
     let mouseOffset = offsetScale(event.pageX, event.pageY);
     let rectOffset;
@@ -1536,10 +1540,6 @@ function moveListener(event) {
       rectOffset = offsetScale(rRect.x, rRect.y);
       rectOffset.w = rRect.w / scale;
       rectOffset.h = rRect.h / scale;
-    }
-    if (document.body.querySelector(`.wbaseItem-value[loading="true"]`)) {
-      document.body.style.setProperty("--loadingX", event.pageX + "px");
-      document.body.style.setProperty("--loadingY", event.pageY + "px");
     }
     WiniIO.emitMouse({
       xMouse: mouseOffset.x,
@@ -1656,7 +1656,7 @@ function checkHoverElement(event) {
             is_enable = true;
           } else if (event.metaKey || (!isMac && event.ctrlKey)) {
             is_enable = true;
-          } else if (target_level < currentLevel && listid.includes(parentPage?.id)) {
+          } else if (target_level < currentLevel && listid.includes(select_box_parentID)) {
             is_enable = true;
           } else if (target_level === currentLevel && listid.pop() === select_box_parentID) {
             is_enable = true;
@@ -2598,6 +2598,7 @@ function upListener(event) {
   }
   WBaseDA.enumEvent = null;
   WBaseDA.listData = [];
+  drag_start_list = [];
   checkpad = 0;
   objr = null;
   let mouseOffset = offsetScale(event.pageX, event.pageY);

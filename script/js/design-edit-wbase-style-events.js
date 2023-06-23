@@ -498,8 +498,9 @@ function updateConstraints(wbaseItem) {
 
 function selectResizeType(isW = true, type) {
   let enumObj = EnumObj.frame;
-  let parent_wbase = wbase_list.find((e) => e.GID == select_box_parentID);
-  let parentHTML = document.getElementById(parent_wbase?.GID);
+  let parent_wbase;
+  if (select_box_parentID !== wbase_parentID) parent_wbase = wbase_list.find((e) => e.GID == select_box_parentID);
+  let parentHTML = parent_wbase?.value;
   let isHorizontal = parent_wbase?.WAutolayoutItem?.Direction == "Horizontal";
   let list_update = [];
   list_update.push(...selected_list);
@@ -560,17 +561,19 @@ function selectResizeType(isW = true, type) {
         }
         break;
       case "fill":
-        if (parent_wbase.StyleItem.FrameItem.Width == null) {
-          parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
-          parentHTML.style.width = `${parentHTML.offsetWidth}px`;
-          list_update.push(parent_wbase);
-        }
-        for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = selected_list[i].value;
-          selected_list[i].StyleItem.FrameItem.Width = wbase_eHTML.offsetWidth === 0 ? -1 : -wbase_eHTML.offsetWidth;
-          wbase_eHTML.style.width = "100%";
-          if (!wbase_eHTML.style.flex && isHorizontal) wbase_eHTML.style.flex = 1;
-        }
+        if(parent_wbase) {
+          if (parent_wbase.StyleItem.FrameItem.Width == null) {
+            parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
+            parentHTML.style.width = `${parentHTML.offsetWidth}px`;
+            list_update.push(parent_wbase);
+          }
+          for (let i = 0; i < selected_list.length; i++) {
+            let wbase_eHTML = selected_list[i].value;
+            selected_list[i].StyleItem.FrameItem.Width = wbase_eHTML.offsetWidth === 0 ? -1 : -wbase_eHTML.offsetWidth;
+            wbase_eHTML.style.width = "100%";
+            if (isHorizontal) wbase_eHTML.style.flex = 1;
+          }
+        } else return;
         break;
       default:
         break;
@@ -634,17 +637,19 @@ function selectResizeType(isW = true, type) {
         }
         break;
       case "fill":
-        if (parent_wbase.StyleItem.FrameItem.Height == null) {
-          parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
-          parentHTML.style.height = `${parentHTML.offsetHeight}px`;
-          list_update.push(parent_wbase);
-        }
-        for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = selected_list[i].value;
-          selected_list[i].StyleItem.FrameItem.Height = wbase_eHTML.offsetHeight === 0 ? -1 : -wbase_eHTML.offsetHeight;
-          wbase_eHTML.style.height = "100%";
-          if (!wbase_eHTML.style.flex && !isHorizontal) wbase_eHTML.style.flex = 1;
-        }
+        if(parent_wbase) {
+          if (parent_wbase.StyleItem.FrameItem.Height == null) {
+            parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
+            parentHTML.style.height = `${parentHTML.offsetHeight}px`;
+            list_update.push(parent_wbase);
+          }
+          for (let i = 0; i < selected_list.length; i++) {
+            let wbase_eHTML = selected_list[i].value;
+            selected_list[i].StyleItem.FrameItem.Height = wbase_eHTML.offsetHeight === 0 ? -1 : -wbase_eHTML.offsetHeight;
+            wbase_eHTML.style.height = "100%";
+            if (!isHorizontal) wbase_eHTML.style.flex = 1;
+          }
+        } else return;
         break;
       default:
         break;
@@ -1922,7 +1927,6 @@ function editTextStyle(text_style_item, onSubmit = true) {
     }
   }
   if (onSubmit) {
-    console.log("????????????????????txt: ", text_style_item);
     if (_enumObj === EnumObj.textStyle && list_text.some((e) => e.StyleItem.TextStyleID === 0)) {
       list_text
         .filter((e) => e.StyleItem.TextStyleID === 0)
