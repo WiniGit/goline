@@ -2,6 +2,10 @@
   pointer-events: none !important;
 }
 
+.wbaseItem-value:has(> .fixed-position) {
+  position: relative;
+}
+
 .wbaseItem-value[lock="true"] .wbaseItem-value {
   pointer-events: none !important;
 }
@@ -327,7 +331,7 @@ label {
   min-width: 20px !important;
 }
 
-.w-table > :not(.table-row:has( .wbaseItem-value)) {
+.w-table > :not(.table-row:has(.wbaseItem-value)) {
   height: 20px !important;
 }
 
@@ -369,6 +373,10 @@ label {
   width: calc(100% - (var(--indent-space) * var(--tree-level)));
   justify-content: inherit;
   align-items: inherit;
+}
+
+.w-tree:has(> .tile-item > .children-value > .fixed-position) {
+  position: relative;
 }
 
 .w-tree > .tile-item {

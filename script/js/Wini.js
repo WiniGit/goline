@@ -584,6 +584,7 @@ function selectParent(event) {
       let grdPRect = parent.parentElement.getBoundingClientRect();
       if ((pRect.x === grdPRect.x && pRect.y === grdPRect.y && pRect.width === grdPRect.width && pRect.height === grdPRect.height) || Math.abs(event.pageX / scale - leftx / scale - pRect.x) <= 3 || Math.abs(element_offset.x + parent.offsetWidth - event.pageX / scale + leftx / scale) <= 3 || Math.abs(event.pageY / scale - topx / scale - pRect.y) <= 3 || Math.abs(pRect.y + parent.offsetWidth - event.pageY / scale + topx / scale) <= 3) {
         parent = parent.parentElement;
+        element_offset = offsetScale(grdPRect.x, grdPRect.y);
       }
     }
     let icon_show_children = document.getElementById(`pefixAction:${parent.id}`);
@@ -591,7 +592,7 @@ function selectParent(event) {
       icon_show_children.className = icon_show_children.className.replace("caret-right", "caret-down");
     }
   } else {
-    element_offset = undefined;
+    element_offset = null;
     parent = divSection;
   }
   offsetp.x = element_offset?.x ?? 0;
@@ -2332,7 +2333,7 @@ function clickEvent(event) {
             }
           } else {
             if (event.shiftKey && hover_wbase?.ParentID === select_box_parentID) addSelectList([...selected_list, hover_wbase]);
-            else if (hover_wbase) addSelectList([hover_wbase]);
+            else addSelectList([hover_wbase]);
           }
           if (event.target.localName == "path" && selectPath?.getAttribute("parentID") == select_box_parentID) {
             selectPath?.remove();

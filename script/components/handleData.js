@@ -382,7 +382,6 @@ const setSizeObserver = new MutationObserver((mutationList) => {
       if (widthValue != targetWbase.style.width) {
         changeSelectBox = true;
         if (targetWbase.style.width == "100%") {
-          // targetWbase.style.minWidth = null;
           if (targetWbase.parentElement?.style?.flexDirection == "row") {
             targetWbase.style.flex = 1;
           }
@@ -391,15 +390,11 @@ const setSizeObserver = new MutationObserver((mutationList) => {
       if (heightValue != targetWbase.style.height) {
         changeSelectBox = true;
         if (targetWbase.style.height == "100%") {
-          // targetWbase.style.minHeight = null;
           if (targetWbase.parentElement?.style?.flexDirection == "column") {
             targetWbase.style.flex = 1;
           }
-        } else if ((targetWbase.style.height == "fit-content") && targetWbase.getAttribute("cateid") != EnumCate.tool_text) {
-          // targetWbase.style.minHeight = null;
-        } else {
-          // targetWbase.style.minHeight = targetWbase.style.height;
-          if (targetWbase.getAttribute("cateid") == EnumCate.tree) targetWbase.style.setProperty("--height", `${parseFloat(targetWbase.style.height.replace("px", "")) / ([...targetWbase.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1)}px`);
+        } else if (targetWbase.getAttribute("cateid") == EnumCate.tree) {
+          targetWbase.style.setProperty("--height", `${parseFloat(targetWbase.style.height.replace("px", "")) / ([...targetWbase.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1)}px`);
         }
       }
       if (changeSelectBox && document.getElementById("divSection") && checkpad < selected_list.length) {
@@ -437,7 +432,7 @@ const setSizeObserver = new MutationObserver((mutationList) => {
             break;
         }
       }
-      if (targetWbase.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => targetWbase.getAttribute("cateid") == cate) && targetWbase.style.width != "fit-content") {
+      if (targetWbase.getAttribute("level") == 1 && EnumCate.extend_frame.some((cate) => targetWbase.getAttribute("cateid") == cate) && targetWbase.style.width != "fit-content") {
         let localResponsive = ProjectDA.obj.ResponsiveJson ?? ProjectDA.responsiveJson;
         let brpShortName = ["min-brp", ...localResponsive.BreakPoint.map((brp) => brp.Key.match(brpRegex).pop().replace(/[()]/g, ""))];
         let isContainBrp = false;
@@ -550,7 +545,7 @@ function initSkinWbase(item) {
       if (typoSkin) {
         item.StyleItem.TextStyleID = typoSkin.GID;
         item.StyleItem.TextStyleItem = typoSkin;
-      } else if(item.StyleItem.TextStyleItem) {
+      } else if (item.StyleItem.TextStyleItem) {
         item.StyleItem.TextStyleItem.IsStyle = false;
       }
     } else {
@@ -592,7 +587,6 @@ async function callAPI(request) {
 
 function initPositionStyle(item) {
   item.value.style.position = "absolute";
-  if(!item.StyleItem.PositionItem) console.log(item);
   if (item.ParentID === wbase_parentID) item.StyleItem.PositionItem.FixPosition = false;
   if (item.StyleItem.PositionItem.FixPosition) $(item.value).addClass("fixed-position");
   let valueL = item.StyleItem.PositionItem.Left;

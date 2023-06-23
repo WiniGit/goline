@@ -729,10 +729,10 @@ socket.on("server-main", async (data) => {
       WbaseIO.delete(listData);
     } else {
       if (initskin) {
-        ColorDA.list.push(...ColorDA.listAssets.filter((skin) => importColor.some((id) => skin.GID === id) && ColorDA.list.every((localSkin) => localSkin.GID !== id)));
-        TypoDA.list.push(...TypoDA.listAssets.filter((skin) => importTypo.some((id) => skin.GID === id) && TypoDA.list.every((localSkin) => localSkin.GID !== id)));
-        BorderDA.list.push(...BorderDA.listAssets.filter((skin) => importBorder.some((id) => skin.GID === id) && BorderDA.list.every((localSkin) => localSkin.GID !== id)));
-        EffectDA.list.push(...EffectDA.listAssets.filter((skin) => importEffect.some((id) => skin.GID === id) && EffectDA.list.every((localSkin) => localSkin.GID !== id)));
+        ColorDA.list.push(...ColorDA.listAssets.filter((skin) => importColor.some((id) => skin.GID === id && ColorDA.list.every((localSkin) => localSkin.GID !== id))));
+        TypoDA.list.push(...TypoDA.listAssets.filter((skin) => importTypo.some((id) => skin.GID === id && TypoDA.list.every((localSkin) => localSkin.GID !== id))));
+        BorderDA.list.push(...BorderDA.listAssets.filter((skin) => importBorder.some((id) => skin.GID === id && BorderDA.list.every((localSkin) => localSkin.GID !== id))));
+        EffectDA.list.push(...EffectDA.listAssets.filter((skin) => importEffect.some((id) => skin.GID === id && EffectDA.list.every((localSkin) => localSkin.GID !== id))));
         CateDA.initCate();
       }
       await WbaseIO.addOrUpdate(listData, data.enumEvent);
@@ -812,15 +812,14 @@ class WiniIO {
     obj.data = obj.data.reverse();
     console.log(Date.now(), " : ", obj);
     obj.data = [
-      ...obj.data
-        .map((e) => {
-          let dtItem = JSON.parse(JSON.stringify(e));
-          dtItem.ListID = null;
-          dtItem.Level = null;
-          return dtItem;
-        })
+      ...obj.data.map((e) => {
+        let dtItem = JSON.parse(JSON.stringify(e));
+        dtItem.ListID = null;
+        dtItem.Level = null;
+        return dtItem;
+      }),
     ];
-    if(obj.enumEvent !== EnumEvent.add) obj.data = obj.data.filter(e => e.CateID !== EnumCate.textfield);
+    if (obj.enumEvent !== EnumEvent.add) obj.data = obj.data.filter((e) => e.CateID !== EnumCate.textfield);
     if (obj.pageid === PageDA.obj.ID && action_index >= 0 && action_index === action_list.length - 1) {
       action_list[action_index].enumObj = obj.enumObj;
       action_list[action_index].enumEvent = obj.enumEvent;

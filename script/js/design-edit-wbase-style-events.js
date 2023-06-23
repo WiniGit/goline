@@ -524,7 +524,7 @@ function selectResizeType(isW = true, type) {
           let wbase_eHTML = selected_list[i].value;
           if (window.getComputedStyle(wbase_eHTML).display.match(/(flex|grid)/g) && selected_list[i].CateID != EnumCate.tool_text) {
             if (selected_list[i].WAutolayoutItem.Direction == "Horizontal") {
-              let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.style.width == "100%");
+              let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.value.style.width == "100%");
               list_update.push(...list_child);
               for (let editChild of list_child) {
                 let child_eHTML = editChild.value;
@@ -596,7 +596,7 @@ function selectResizeType(isW = true, type) {
           let wbase_eHTML = selected_list[i].value;
           if (window.getComputedStyle(wbase_eHTML).display.match(/(flex|grid)/g) && selected_list[i].CateID != EnumCate.tool_text) {
             if (selected_list[i].WAutolayoutItem.Direction == "Vertical") {
-              let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.StyleItem.FrameItem.Height < 0);
+              let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.value.style.height == "100%");
               list_update.push(...list_child);
               for (let j = 0; j < list_child.length; j++) {
                 let child_eHTML = document.getElementById(list_child[j].GID);
