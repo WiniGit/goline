@@ -29,7 +29,7 @@ async function initData() {
   updateHoverWbase();
   arrange();
   assets_list = wbase_list.filter((wbaseItem) => wbaseItem.IsWini);
-  $.get(WBaseDA.base_item_url).then((baseComponentResponse) => {
+  $.get(WBaseDA.base_item_url, function (baseComponentResponse) {
     base_component_list = baseComponentResponse.Data;
     console.log("base component:", base_component_list);
     base_component_list = initDOM(base_component_list);
@@ -37,10 +37,9 @@ async function initData() {
   console.log("in handle data: ", Date.now());
   for (let item of wbase_list) {
     item.value = null;
-    await initComponents(
-      item,
-      wbase_list.filter((e) => e.ParentID === item.GID),
-    );
+    let children = [];
+    if ([EnumCate.tool_variant,...EnumCate.parent_cate].some((ct) => ct == item.CateID)) children = wbase_list.filter((e) => e.ParentID === item.GID);
+    await initComponents(item, children);
   }
   console.log("out handle data: ", Date.now());
   if (PageDA.obj.scale !== undefined) {
@@ -685,7 +684,7 @@ function dragWbaseUpdate(xp, yp, event) {
           for (let i = 0; i < selected_list.length; i++) {
             let selectHTML = selected_list[i].value;
             $(selectHTML).removeClass("drag-hide");
-            selectHTML.style.position = "relative";
+            selectHTML.style.position = null;
             selectHTML.style.left = null;
             selectHTML.style.top = null;
             selectHTML.style.right = null;
@@ -775,7 +774,7 @@ function dragWbaseUpdate(xp, yp, event) {
           for (let i = 0; i < selected_list.length; i++) {
             let selectHTML = selected_list[i].value;
             $(selectHTML).removeClass("drag-hide");
-            selectHTML.style.position = "relative";
+            selectHTML.style.position = null;
             selectHTML.style.left = null;
             selectHTML.style.top = null;
             selectHTML.style.right = null;
@@ -978,7 +977,7 @@ function dragWbaseEnd() {
           selected_list[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
           selected_list[i].StyleItem.PositionItem.ConstraintsY = Constraints.top;
           $(selectHTML).removeClass("fixed-position");
-          selectHTML.style.position = "relative";
+          selectHTML.style.position = null;
           selectHTML.style.left = null;
           selectHTML.style.right = null;
           selectHTML.style.top = null;
@@ -1349,7 +1348,7 @@ function dragAltEnd() {
         alt_list[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
         alt_list[i].StyleItem.PositionItem.ConstraintsY = Constraints.top;
         $(selectHTML).removeClass("fixed-position");
-        selectHTML.style.position = "relative";
+        selectHTML.style.position = null;
         selectHTML.style.left = null;
         selectHTML.style.right = null;
         selectHTML.style.top = null;

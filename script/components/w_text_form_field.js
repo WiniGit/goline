@@ -6,7 +6,7 @@ function createTextFormFieldHTML(item, data) {
     $(item.value).addClass("textformfield");
   item.value.replaceChildren(...data.map(child => {
     if (child.CateID === EnumCate.textfield) createTextFieldHTML(child, item);
-    child.value.style.position = "relative";
+    child.value.style.position = null;
     if (child.value.style.width == "100%")
       child.value.style.flex = 1;
     return child.value;

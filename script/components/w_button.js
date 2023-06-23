@@ -3,7 +3,7 @@ function wbutton(item, data) {
   $(item.value).addClass("w-button");
   if (item.WAutolayoutItem) {
     item.value.replaceChildren(...data.map((child) => {
-      child.value.style.position = "relative";
+      child.value.style.position = null;
       if (child.StyleItem.PositionItem.FixPosition) {
         initPositionStyle(child);
       } else if (item.WAutolayoutItem.Direction === "Vertical" && child.value.style.height == "100%")
@@ -13,7 +13,7 @@ function wbutton(item, data) {
       return child.value;
     }));
   } else {
-    item.value.style.position = "relative";
+    item.value.style.position = null;
     item.value.replaceChildren(...data.map((child) => {
       initPositionStyle(child)
       return child.value;

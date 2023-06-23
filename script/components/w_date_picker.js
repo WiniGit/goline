@@ -8,7 +8,7 @@ var selectMonth = _time.getMonth();
 var selectYear = _time.getFullYear();
 function createDatePickerHTML(item) {
 	item.value = document.createElement("div");
-	item.value.style.position = "relative";
+	item.value.style.position = null;
 	var input = document.createElement("input");
 	input.type = "button";
 	input.value = selectDate.toString();

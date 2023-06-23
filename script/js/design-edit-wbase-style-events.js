@@ -411,7 +411,7 @@ function inputPositionItem(position_item) {
       } else {
         $(wbaseItem.value).removeClass("fixed-position");
         if (isInLayout) {
-          wbaseItem.value.style.position = "relative";
+          wbaseItem.value.style.position = null;
           wbaseItem.value.style.left = null;
           wbaseItem.value.style.right = null;
           wbaseItem.value.style.top = null;
@@ -507,7 +507,7 @@ function selectResizeType(isW = true, type) {
     switch (type) {
       case "fixed":
         for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = document.getElementById(selected_list[i].GID);
+          let wbase_eHTML = selected_list[i].value;
           selected_list[i].StyleItem.FrameItem.Width = wbase_eHTML.offsetWidth;
           wbase_eHTML.style.width = `${wbase_eHTML.offsetWidth}px`;
           if (isHorizontal) {
@@ -521,16 +521,16 @@ function selectResizeType(isW = true, type) {
           checkConstX = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g);
         }
         for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = document.getElementById(selected_list[i].GID);
+          let wbase_eHTML = selected_list[i].value;
           if (window.getComputedStyle(wbase_eHTML).display.match(/(flex|grid)/g) && selected_list[i].CateID != EnumCate.tool_text) {
             if (selected_list[i].WAutolayoutItem.Direction == "Horizontal") {
-              let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.StyleItem.FrameItem.Width < 0);
+              let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.style.width == "100%");
               list_update.push(...list_child);
-              for (let j = 0; j < list_child.length; j++) {
-                let child_eHTML = document.getElementById(list_child[j].GID);
-                list_child[j].StyleItem.FrameItem.Width = child_eHTML.offsetWidth;
+              for (let editChild of list_child) {
+                let child_eHTML = editChild.value;
+                editChild.StyleItem.FrameItem.Width = child_eHTML.offsetWidth;
                 child_eHTML.style.width = `${child_eHTML.offsetWidth}px`;
-                child_eHTML.style.flex = "none";
+                child_eHTML.style.flex = null;
               }
             } else {
               let childrenHTML = [...wbase_eHTML.querySelectorAll(`.wbaseItem-value[level="${selected_list[i].Level + 1}"]`)];
@@ -555,21 +555,21 @@ function selectResizeType(isW = true, type) {
           selected_list[i].StyleItem.FrameItem.Width = null;
           wbase_eHTML.style.width = `fit-content`;
           if (isHorizontal) {
-            wbase_eHTML.style.flex = "none";
+            wbase_eHTML.style.flex = null;
           }
         }
         break;
       case "fill":
-        if (parent_wbase.StyleItem.FrameItem.Width == undefined) {
+        if (parent_wbase.StyleItem.FrameItem.Width == null) {
           parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
           parentHTML.style.width = `${parentHTML.offsetWidth}px`;
           list_update.push(parent_wbase);
         }
         for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = document.getElementById(selected_list[i].GID);
+          let wbase_eHTML = selected_list[i].value;
           selected_list[i].StyleItem.FrameItem.Width = wbase_eHTML.offsetWidth === 0 ? -1 : -wbase_eHTML.offsetWidth;
           wbase_eHTML.style.width = "100%";
-          if (!wbase_eHTML.style.flex.includes("1")) wbase_eHTML.style.flex = isHorizontal ? 1 : "none";
+          if (!wbase_eHTML.style.flex && isHorizontal) wbase_eHTML.style.flex = 1;
         }
         break;
       default:
@@ -579,11 +579,11 @@ function selectResizeType(isW = true, type) {
     switch (type) {
       case "fixed":
         for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = document.getElementById(selected_list[i].GID);
+          let wbase_eHTML = selected_list[i].value;
           selected_list[i].StyleItem.FrameItem.Height = wbase_eHTML.offsetHeight;
           wbase_eHTML.style.height = `${wbase_eHTML.offsetHeight}px`;
           if (!isHorizontal) {
-            wbase_eHTML.style.flex = "none";
+            wbase_eHTML.style.flex = null;
           }
         }
         break;
@@ -593,7 +593,7 @@ function selectResizeType(isW = true, type) {
           checkConstY = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g);
         }
         for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = document.getElementById(selected_list[i].GID);
+          let wbase_eHTML = selected_list[i].value;
           if (window.getComputedStyle(wbase_eHTML).display.match(/(flex|grid)/g) && selected_list[i].CateID != EnumCate.tool_text) {
             if (selected_list[i].WAutolayoutItem.Direction == "Vertical") {
               let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.StyleItem.FrameItem.Height < 0);
@@ -602,7 +602,7 @@ function selectResizeType(isW = true, type) {
                 let child_eHTML = document.getElementById(list_child[j].GID);
                 list_child[j].StyleItem.FrameItem.Height = child_eHTML.offsetHeight;
                 child_eHTML.style.height = `${child_eHTML.offsetHeight}px`;
-                child_eHTML.style.flex = "none";
+                child_eHTML.style.flex = null;
               }
             } else {
               let childrenHTML = [...wbase_eHTML.querySelectorAll(`.wbaseItem-value[level="${selected_list[i].Level + 1}"]`)];
@@ -618,10 +618,10 @@ function selectResizeType(isW = true, type) {
               });
             }
           }
-          selected_list[i].StyleItem.FrameItem.Height = undefined;
+          selected_list[i].StyleItem.FrameItem.Height = null;
           wbase_eHTML.style.height = `fit-content`;
           if (!isHorizontal) {
-            wbase_eHTML.style.flex = "none";
+            wbase_eHTML.style.flex = null;
           }
           if (checkConstY) {
             if ([Constraints.center, Constraints.scale].some((constY) => selected_list[i].StyleItem.PositionItem.ConstraintsY === constY)) {
@@ -634,16 +634,16 @@ function selectResizeType(isW = true, type) {
         }
         break;
       case "fill":
-        if (parent_wbase.StyleItem.FrameItem.Height == undefined) {
+        if (parent_wbase.StyleItem.FrameItem.Height == null) {
           parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
           parentHTML.style.height = `${parentHTML.offsetHeight}px`;
           list_update.push(parent_wbase);
         }
         for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = document.getElementById(selected_list[i].GID);
+          let wbase_eHTML = selected_list[i].value;
           selected_list[i].StyleItem.FrameItem.Height = wbase_eHTML.offsetHeight === 0 ? -1 : -wbase_eHTML.offsetHeight;
           wbase_eHTML.style.height = "100%";
-          if (!wbase_eHTML.style.flex.includes("1")) wbase_eHTML.style.flex = !isHorizontal ? 1 : "none";
+          if (!wbase_eHTML.style.flex && !isHorizontal) wbase_eHTML.style.flex = 1;
         }
         break;
       default:
@@ -684,7 +684,7 @@ async function addAutoLayout() {
     }
     selected_list[0].StyleItem.PaddingItem = new_padding_item;
     eHTML.style.padding = `${new_padding_item.Top}px ${new_padding_item.Right}px ${new_padding_item.Bottom}px ${new_padding_item.Left}px`;
-    eHTML.style.display = "inline-flex";
+    eHTML.style.display = "flex";
     if (selected_list[0].CountChild > 0 && !(select_box_parentID === wbase_parentID && selected_list[0].value.querySelectorAll(".col-").length > 0)) {
       if (!(selected_list[0].StyleItem.FrameItem.Width < 0)) {
         selected_list[0].StyleItem.FrameItem.Width = null;
@@ -708,7 +708,7 @@ async function addAutoLayout() {
     eHTML.style.alignItems = wCrossAxis(new_auto_layout.Alignment, isHorizontal);
     eHTML.style.justifyContent = wMainAxis(new_auto_layout.Alignment, isHorizontal);
     eHTML.childNodes.forEach((childHTML) => {
-      childHTML.style.position = "relative";
+      childHTML.style.position = null;
       childHTML.style.left = null;
       childHTML.style.top = null;
       childHTML.style.right = null;
@@ -738,8 +738,8 @@ async function addAutoLayout() {
     new_wbase_item.CountChild = selected_list.length;
     new_wbase_item.ListChildID = selected_list.map((e) => e.GID);
     if (!(select_box_parentID == wbase_parentID && selected_list.every((wbaseItem) => wbaseItem.value.querySelectorAll(".col-").length > 0))) {
-      new_wbase_item.StyleItem.FrameItem.Width = undefined;
-      new_wbase_item.StyleItem.FrameItem.Height = undefined;
+      new_wbase_item.StyleItem.FrameItem.Width = null;
+      new_wbase_item.StyleItem.FrameItem.Height = null;
     } else {
       new_wbase_item.StyleItem.FrameItem.Width = select_box.w / scale;
       new_wbase_item.StyleItem.FrameItem.Height = select_box.h / scale;
@@ -754,9 +754,9 @@ async function addAutoLayout() {
       selected_list[i].ListID += `,${new_wbase_item.GID}`;
       selected_list[i].Sort = i;
       selected_list[i].Level = selected_list[i].ListID.split(",").length;
-      eHTML.setAttribute("Level", selected_list[i].Level);
+      eHTML.setAttribute("level", selected_list[i].Level);
       eHTML.setAttribute("listid", selected_list[i].ListID);
-      eHTML.style.position = "relative";
+      eHTML.style.position = null;
       eHTML.style.left = null;
       eHTML.style.top = null;
       eHTML.style.right = null;
@@ -766,13 +766,12 @@ async function addAutoLayout() {
       eHTML.style.order = i;
       if (selected_list[i].CountChild > 0) {
         for (let childSelect of wbase_list.filter((e) => e.ListID.includes(selected_list[i].GID))) {
-          childSelect.ListID = childSelect.ListID;
           let thisListID = childSelect.ListID.split(",");
           thisListID = thisListID.slice(thisListID.indexOf(selected_list[i].GID));
           thisListID.unshift(...selected_list[i].ListID.split(","));
           childSelect.ListID = thisListID.join(",");
           childSelect.Level = thisListID.length;
-          childSelect.value.setAttribute("Level", childSelect.Level);
+          childSelect.value.setAttribute("level", childSelect.Level);
           childSelect.value.setAttribute("listid", childSelect.ListID);
         }
       }
@@ -1205,9 +1204,8 @@ function removeLayout() {
       }
     }
     wbaseChildren.forEach((childWbase) => initPositionStyle(childWbase));
-    eHTML.style.display = "block";
     eHTML.style.position = "relative";
-    eHTML.style.padding = "0";
+    eHTML.style.padding = null;
     listUpdate.push(wbaseItem, ...wbaseChildren);
   }
   WBaseDA.edit(listUpdate, _enumObj);
@@ -2026,7 +2024,7 @@ function unlinkTypoSkin() {
       ColorValue: currentTextStyle.ColorValue,
       LetterSpacing: currentTextStyle.LetterSpacing,
       FontFamily: currentTextStyle.FontFamily,
-      Height: currentTextStyle.Height
+      Height: currentTextStyle.Height,
     };
     listTypo[i].StyleItem.TextStyleID = newTextStyleItem.GID;
     listTypo[i].StyleItem.TextStyleItem = newTextStyleItem;
