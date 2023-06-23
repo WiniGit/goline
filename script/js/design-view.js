@@ -1543,7 +1543,7 @@ function updateUIDesignView() {
     if (select_box_parentID != wbase_parentID) {
       let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
       let framePage = pageParent[pageParent.length - 1];
-      if (framePage.classList.contains("variant")) framePage = pageParent[pageParent.length - 2];
+      if (framePage?.classList?.contains("variant")) framePage = pageParent[pageParent.length - 2];
       if (framePage) {
         let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
         if (isPage) {

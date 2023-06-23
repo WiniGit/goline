@@ -506,15 +506,25 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
     };
     if (PageDA.enableEdit)
       icon_lock.onclick = function () {
+        let listUpdate = [];
         wbaseItem.IsShow = !wbaseItem.IsShow;
         if (wbaseItem.IsShow) {
           wbaseItem.value.removeAttribute("lock");
           icon_lock.className = "fa-solid fa-lock-open fa-xs is-lock";
           layerContainer.querySelectorAll(".is-lock").forEach((lockBtn) => {
-            let valueHTML = document.getElementById(lockBtn.parentElement.id.replace("wbaseID:", ""));
-            if (valueHTML.getAttribute("lock") !== "true" && $(valueHTML).parents(`.wbaseItem-value[lock="true"]`).length === 0) {
+            if (lockBtn.parentElement.getAttribute("cateid") != EnumCate.textfield) {
               lockBtn.className = "fa-solid fa-lock-open fa-xs is-lock";
               lockBtn.style.pointerEvents = "auto";
+              listUpdate.push(lockBtn.parentElement.id.replace("wbaseID:", ""));
+            }
+          });
+          listUpdate = wbase_list.filter((e) => {
+            if (listUpdate.some((id) => e.GID === id)) {
+              e.value.removeAttribute("lock");
+              e.IsShow = true;
+              return true;
+            } else {
+              return false;
             }
           });
         } else {
@@ -527,7 +537,8 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
             }
           });
         }
-        WBaseDA.edit([wbaseItem], EnumObj.wBase);
+        listUpdate.push(wbaseItem);
+        WBaseDA.edit(listUpdate, EnumObj.wBase);
       };
   }
   if (PageDA.enableEdit) {
