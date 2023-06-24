@@ -14,7 +14,7 @@ async function initData() {
   action_list = [];
   action_index = -1;
   let skinResponse = await $.get(WBaseDA.skin_url + `?pid=${ProjectDA.obj.ID}`);
-  let wbaseResponse = await $.get(WBaseDA.wbase_url + `?pageid=${PageDA.obj.ID}`);
+  let wbaseResponse = await WBaseDA.apiGetInitWbase();
   console.log("get server done: ", Date.now());
   ColorDA.list = skinResponse.Data.ColorItems;
   TypoDA.list = skinResponse.Data.TextStyleItems;
@@ -23,7 +23,7 @@ async function initData() {
   PropertyDA.list = skinResponse.Data.WPropertyItems;
   CateDA.initCate();
   wbase_list = [];
-  wbase_list = initDOM(wbaseResponse.Data);
+  wbase_list = initDOM(wbaseResponse);
   parent = divSection;
   selected_list = [];
   updateHoverWbase();
@@ -38,7 +38,7 @@ async function initData() {
   for (let item of wbase_list) {
     item.value = null;
     let children = [];
-    if ([EnumCate.tool_variant,...EnumCate.parent_cate].some((ct) => ct == item.CateID)) children = wbase_list.filter((e) => e.ParentID === item.GID);
+    if ([EnumCate.tool_variant, ...EnumCate.parent_cate].some((ct) => ct == item.CateID)) children = wbase_list.filter((e) => e.ParentID === item.GID);
     await initComponents(item, children);
   }
   console.log("out handle data: ", Date.now());
@@ -542,7 +542,7 @@ function addSelectList(new_selected_list = []) {
 
 function updateUISelectBox() {
   select_box = selectBox(selected_list);
-                wdraw();
+  wdraw();
 }
 
 function findCell(table, event) {

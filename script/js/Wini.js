@@ -762,6 +762,14 @@ function centerViewInitListener() {
   [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
     resizeWbase.observe(page);
   });
+  [...divSection.querySelectorAll(`.wbaseItem-value`)].forEach((wbValue) => {
+    setSizeObserver.observe(wbValue, {
+      attributeOldValue: true,
+      attributes: true,
+      childList: EnumCate.parent_cate.some((cate) => wbValue.getAttribute("cateid") === cate),
+    });
+  });
+  listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
 }
 
 const childObserver = new MutationObserver((mutationList) => {
@@ -789,12 +797,14 @@ const childObserver = new MutationObserver((mutationList) => {
         });
       }
     });
+    if (mutation.target === divSection) {
+      listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
+    }
   });
 });
 
 var lstc = [];
 function moveListener(event) {
-  console.log("???move-in: ", performance.now());
   if (event.target.contentEditable == "true" || (event.target.localName === "input" && !event.target.readOnly)) return;
   event.preventDefault();
   let target_view;
@@ -941,7 +951,8 @@ function moveListener(event) {
                 switch (tool_state) {
                   case ToolState.resize_left:
                     for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = document.getElementById(selected_list[i].GID);
+                      let eHTML = selected_list[i].value;
+                      eHTML.style.minWidth = null;
                       let scaleComponent = EnumCate.scale_size_component.some((cate) => selected_list[i].CateID === cate);
                       if (checkpad == i) {
                         if (!isInFlex) {
@@ -965,7 +976,8 @@ function moveListener(event) {
                     break;
                   case ToolState.resize_right:
                     for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = document.getElementById(selected_list[i].GID);
+                      let eHTML = selected_list[i].value;
+                      eHTML.style.minWidth = null;
                       let scaleComponent = EnumCate.scale_size_component.some((cate) => selected_list[i].CateID === cate);
                       if (checkpad == i) {
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
@@ -989,7 +1001,8 @@ function moveListener(event) {
                     break;
                   case ToolState.resize_top:
                     for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = document.getElementById(selected_list[i].GID);
+                      let eHTML = selected_list[i].value;
+                      eHTML.style.minHeight = null;
                       let scaleComponent = EnumCate.scale_size_component.some((cate) => selected_list[i].CateID === cate);
                       if (checkpad == i) {
                         if (!isInFlex) {
@@ -1013,7 +1026,8 @@ function moveListener(event) {
                     break;
                   case ToolState.resize_bot:
                     for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = document.getElementById(selected_list[i].GID);
+                      let eHTML = selected_list[i].value;
+                      eHTML.style.minHeight = null;
                       let scaleComponent = EnumCate.scale_size_component.some((cate) => selected_list[i].CateID === cate);
                       if (checkpad == i) {
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
@@ -1037,7 +1051,9 @@ function moveListener(event) {
                     break;
                   case ToolState.resize_top_left:
                     for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = document.getElementById(selected_list[i].GID);
+                      let eHTML = selected_list[i].value;
+                      eHTML.style.minWidth = null;
+                      eHTML.style.minHeight = null;
                       let scaleComponent = EnumCate.scale_size_component.some((cate) => selected_list[i].CateID === cate);
                       if (checkpad == i) {
                         if (!isInFlex) {
@@ -1071,7 +1087,9 @@ function moveListener(event) {
                     break;
                   case ToolState.resize_top_right:
                     for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = document.getElementById(selected_list[i].GID);
+                      let eHTML = selected_list[i].value;
+                      eHTML.style.minWidth = null;
+                      eHTML.style.minHeight = null;
                       let scaleComponent = EnumCate.scale_size_component.some((cate) => selected_list[i].CateID === cate);
                       if (checkpad == i) {
                         if (!isInFlex) {
@@ -1103,7 +1121,9 @@ function moveListener(event) {
                     break;
                   case ToolState.resize_bot_left:
                     for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = document.getElementById(selected_list[i].GID);
+                      let eHTML = selected_list[i].value;
+                      eHTML.style.minWidth = null;
+                      eHTML.style.minHeight = null;
                       let scaleComponent = EnumCate.scale_size_component.some((cate) => selected_list[i].CateID === cate);
                       if (checkpad == i) {
                         if (!isInFlex) {
@@ -1135,7 +1155,9 @@ function moveListener(event) {
                     break;
                   case ToolState.resize_bot_right:
                     for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = document.getElementById(selected_list[i].GID);
+                      let eHTML = selected_list[i].value;
+                      eHTML.style.minWidth = null;
+                      eHTML.style.minHeight = null;
                       let scaleComponent = EnumCate.scale_size_component.some((cate) => selected_list[i].CateID === cate);
                       if (checkpad == i) {
                         if (!isInFlex) {
@@ -1368,7 +1390,7 @@ function moveListener(event) {
                         break;
                       }
                     }
-                    if (checkpad == 0) {
+                    if (checkpad === 0) {
                       drag_start_list = [];
                       let isFixedWhenScroll = false;
                       if (select_box_parentID !== wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g)) {
@@ -1387,7 +1409,6 @@ function moveListener(event) {
                         }
                       });
                       drag_start_list = JSON.parse(JSON.stringify(selected_list));
-                      wdraw();
                       checkpad++;
                     }
                     if (Math.abs(event.pageX - previousX) > 2 || Math.abs(event.pageY - previousY) > 2) {
@@ -1397,6 +1418,7 @@ function moveListener(event) {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event);
                       }
                       updateInputTLWH();
+                      wdraw();
                     }
                   } else {
                     addSelectList();
@@ -1435,6 +1457,23 @@ function moveListener(event) {
           }
           break;
       }
+      let mouseOffset = offsetScale(event.pageX, event.pageY);
+      let rectOffset;
+      let rRect = objr ?? select_box;
+      if (rRect) {
+        rectOffset = offsetScale(rRect.x, rRect.y);
+        rectOffset.w = rRect.w / scale;
+        rectOffset.h = rRect.h / scale;
+      }
+      WiniIO.emitMouse({
+        xMouse: mouseOffset.x,
+        yMouse: mouseOffset.y,
+        x: rectOffset?.x,
+        y: rectOffset?.y,
+        w: rectOffset?.w,
+        h: rectOffset?.h,
+        isSelect: false,
+      });
       break;
     case "left_view":
       if (instance_drag) {
@@ -1537,30 +1576,10 @@ function moveListener(event) {
       }
       break;
   }
-  if (document.body.querySelector(`.wbaseItem-value[loading="true"]`)) {
+  if (checkpad === 0 && document.body.querySelector(`.wbaseItem-value[loading="true"]`)) {
     document.body.style.setProperty("--loadingX", event.pageX + "px");
     document.body.style.setProperty("--loadingY", event.pageY + "px");
   }
-  if (target_view === "canvas_view") {
-    let mouseOffset = offsetScale(event.pageX, event.pageY);
-    let rectOffset;
-    let rRect = objr ?? select_box;
-    if (rRect) {
-      rectOffset = offsetScale(rRect.x, rRect.y);
-      rectOffset.w = rRect.w / scale;
-      rectOffset.h = rRect.h / scale;
-    }
-    WiniIO.emitMouse({
-      xMouse: mouseOffset.x,
-      yMouse: mouseOffset.y,
-      x: rectOffset?.x,
-      y: rectOffset?.y,
-      w: rectOffset?.w,
-      h: rectOffset?.h,
-      isSelect: false,
-    });
-  }
-  console.log("???move-out: ", performance.now());
 }
 
 function handToolDrag(event) {
@@ -1810,8 +1829,10 @@ let imgComSrc = `data:image/svg+xml;charset=utf-8,<svg width="12" height="12" vi
 </svg>
 `;
 imgCom.src = imgComSrc;
+let drawIn = 0;
+let listShowName = [];
 function wdraw() {
-  console.log("??????????wdraw-in: ", performance.now());
+  // drawIn = performance.now();
   ctxr.clearRect(0, 0, width, height);
   ctxr.lineWidth = 1;
   ctxr.strokeStyle = "red";
@@ -1833,12 +1854,12 @@ function wdraw() {
     ctxr.strokeRect(objse.x, objse.y, hover_box.w, hover_box.h);
   } else if (parent?.id?.length == 36 && checkpad > 0) {
     let parentRect = parent.getBoundingClientRect();
-    ctxr.strokeStyle = parent.getAttribute("IsWini") == "true" ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = parent.getAttribute("iswini") == "true" ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(parentRect.x, parentRect.y, parentRect.width, parentRect.height);
   }
 
   // draw select_box
-  if (select_box && document.activeElement.getAttribute("cateid") != EnumCate.tool_text && ((checkpad == 0 && tool_state == ToolState.move) || ToolState.resize_type.some((tool) => tool == tool_state))) {
+  if (select_box && document.activeElement.contentEditable != "true" && ((checkpad == 0 && tool_state == ToolState.move) || ToolState.resize_type.some((tool) => tool == tool_state))) {
     var objset = offsetScale(select_box.x, select_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
     ctxr.strokeStyle = selected_list.every((e) => e.IsWini) ? "#7B61FF" : "#1890FF";
@@ -1852,7 +1873,6 @@ function wdraw() {
     }
   }
 
-  let listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
   for (let i = 0; i < listShowName.length; i++) {
     let wbaseHTML = listShowName[i];
     let wbaseRect = wbaseHTML.getBoundingClientRect();
@@ -1895,16 +1915,6 @@ function wdraw() {
   }
   titleList = titleList.filter((e) => e != undefined && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
 
-  if (drag_prototype_endppoint && prototypePoint) {
-    ctxr.beginPath();
-    ctxr.strokeStyle = "#E14337";
-    ctxr.lineWidth = 2;
-    ctxr.moveTo(prototypePoint.x, prototypePoint.y);
-
-    // let controlPoint1 =
-    ctxr.bezierCurveTo(prototypePoint.x + (drag_prototype_endppoint.x - prototypePoint.x) * 0.5, prototypePoint.y, prototypePoint.x + (drag_prototype_endppoint.x - prototypePoint.x) * 0.5, drag_prototype_endppoint.y, drag_prototype_endppoint.x, drag_prototype_endppoint.y);
-    ctxr.stroke();
-  }
   //! draw prototype
   drawCurvePrototype();
 
@@ -1951,7 +1961,7 @@ function wdraw() {
     }
   }
   listRect = [];
-  console.log("??????????wdraw-out: ", performance.now());
+  // console.log("??????????wdraw-out: ", drawIn - performance.now());
 }
 
 function getPagePrototypePoint(page) {
@@ -2002,10 +2012,19 @@ var isHorizontal = true;
 var direction;
 // vẽ đường các đường nối trong màn hình prototype
 function drawCurvePrototype() {
-  ctxr.beginPath();
-  ctxr.lineWidth = 2;
-
   if (design_view_index == 1) {
+    if (drag_prototype_endppoint && prototypePoint) {
+      ctxr.beginPath();
+      ctxr.strokeStyle = "#E14337";
+      ctxr.lineWidth = 2;
+      ctxr.moveTo(prototypePoint.x, prototypePoint.y);
+
+      // let controlPoint1 =
+      ctxr.bezierCurveTo(prototypePoint.x + (drag_prototype_endppoint.x - prototypePoint.x) * 0.5, prototypePoint.y, prototypePoint.x + (drag_prototype_endppoint.x - prototypePoint.x) * 0.5, drag_prototype_endppoint.y, drag_prototype_endppoint.x, drag_prototype_endppoint.y);
+      ctxr.stroke();
+    }
+    ctxr.beginPath();
+    ctxr.lineWidth = 2;
     //nếu là màn hình prototype
     listCurve = [];
     for (let witem of wbase_list) {
@@ -2547,7 +2566,7 @@ function upListener(event) {
         list_add = selected_list.filter((e) => e.CateID !== EnumCate.tool_text);
       }
       // ! add wbase thường
-      if (!event.altKey)
+      if (!event.altKey) {
         for (let addItem of list_add) {
           let eHTML = document.getElementById(addItem.GID);
           if (addItem.StyleItem.FrameItem?.Width != undefined && addItem.StyleItem.FrameItem.Width > 0) {
@@ -2557,15 +2576,11 @@ function upListener(event) {
             addItem.StyleItem.FrameItem.Height = eHTML?.offsetHeight ?? addItem.StyleItem.FrameItem.Height;
           }
         }
+      }
       action_list[action_index].selected = [...list_add.filter((e) => e.ParentID === selected_list[0].ParentID).map((wbasItem) => JSON.parse(JSON.stringify(wbasItem)))];
       if (list_add.length > 0) {
         let isUpdateTable = list_add.some((e) => e.CateID === EnumCate.table);
         WBaseDA.add(list_add, undefined, isUpdateTable ? EnumEvent.edit : EnumEvent.add, isUpdateTable ? EnumObj.wBaseAttribute : EnumObj.wBase);
-        if (CateDA.needInit) {
-          setTimeout(function () {
-            CateDA.initCate();
-          }, 250);
-        }
       }
       reloadTree(selected_list[0].value);
       break;

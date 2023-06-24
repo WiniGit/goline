@@ -690,7 +690,7 @@ socket.on("server-post", (data) => {
 socket.on("server-main", async (data) => {
   console.log("server-main");
   console.log(data);
-  if (data.pageid === PageDA.obj.ID) {
+  if (!document.getElementById("body").querySelector(".loading-view") && data.pageid === PageDA.obj.ID) {
     let copyList = [];
     let initskin = false;
     let thisAction;
@@ -1044,13 +1044,9 @@ class WbaseIO {
         }
       }
       let eHTML = document.getElementById(wbaseItem.GID);
-      let layerHTML = document.getElementById(`wbaseID:${wbaseItem.GID}`);
-      try {
+      if (eHTML) {
         if ($(eHTML).parents(".w-tree")) reBuildParent = $(eHTML).parents(".w-tree");
         eHTML.remove();
-        layerHTML?.parentElement?.remove();
-      } catch (error) {
-        console.log(error);
       }
     }
     wbase_list = wbase_list.filter((e) => !list.some((delete_item) => delete_item.GID == e.GID || e.ListID.includes(delete_item.GID)));
