@@ -323,7 +323,7 @@ function createComponent() {
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);
-  wdraw();
+                wdraw();
   updateUIDesignView();
   replaceAllLyerItemHTML();
 }
@@ -336,7 +336,7 @@ function unComponent() {
   }
   assets_list = assets_list.filter((e) => component_list.every((wbaseItem) => wbaseItem.GID != e.GID));
   WBaseDA.edit(component_list, EnumObj.wBase);
-  wdraw();
+                wdraw();
   updateUIDesignView();
   replaceAllLyerItemHTML();
 }

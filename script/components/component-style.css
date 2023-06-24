@@ -38,6 +38,7 @@
   text-overflow: ellipsis;
   overflow: hidden !important;
   outline: none;
+  overflow-wrap: break-word;
 }
 
 .w-text[contentEditable="true"] {
@@ -50,7 +51,7 @@
 
 .w-text:not(.w-text[contenteditable="true"]) {
   display: block;
-  white-space: nowrap;
+  /* white-space: nowrap; */
 }
 
 .w-svg {

@@ -1416,11 +1416,32 @@ class WBaseDefault {
 }
 class WBaseDA {
     static wbase_url = domainApi + "/WBase/ListItem";
+    static style_url = domainApi + "/Style/ListItemByPid";
+    static attribute_url = domainApi + "/Attribute/ListItemByPid";
+    static autoLayout_url = domainApi + "/WAutoLayout/ListItem";
     static base_item_url = domainApi + "/WBase/listBaseitem";
     static skin_url = domainApi + "/Style/ListCacheItem";
     static enumEvent;
     static listData = [];
     static isCtrlZ = false;
+
+
+    static async apiGetInitWbase() {
+        let attributeData = await $.get(this.attribute_url + `?pageid=${PageDA.obj.ID}`);
+        attributeData = attributeData.Data;
+        let autoLayoutData = await $.get(this.autoLayout_url + `?pageid=${PageDA.obj.ID}`);
+        autoLayoutData = autoLayoutData.Data;
+        let styleData = await $.get(this.style_url + `?pageid=${PageDA.obj.ID}`);
+        styleData = styleData.Data;
+        let WbData = await $.get(this.wbase_url + `?pageid=${PageDA.obj.ID}`);
+        WbData = WbData.Data;
+        WbData.forEach(wb => {
+            wb.AttributesItem = attributeData.find(e => e.GID == wb.AttributeID);
+            wb.StyleItem = styleData.find(e => e.GID == wb.StyleID);
+            wb.WAutolayoutItem = autoLayoutData.find(e => e.GID == wb.AutoLayoutID);
+        })
+        return WbData;
+    }
 
     static add(list_wbase_item, pageid, enumEvent = EnumEvent.add, enumObj = EnumObj.wBase) {
         let data = {

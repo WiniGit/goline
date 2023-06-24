@@ -195,7 +195,7 @@ function update_UI_selectDataPopup() {
         selected_list[0].JsonEventItem = selected_list[0].JsonEventItem.filter(e => e.Name != "Prototype" && e.Name != "Animation");
         WBaseDA.edit(selected_list, EnumObj.wBaseAttribute);
         update_UI_prorotypeContainer();
-        wdraw();
+                wdraw();
     });
     // add prototype
     $('body').on('click', '.setting-interactions .add-interaction', function (ev) {
@@ -205,7 +205,7 @@ function update_UI_selectDataPopup() {
         selected_list[0].JsonEventItem.push({ Name: "Prototype", Data: [] }, { Name: "Animation", Data: {} });
         WBaseDA.edit(selected_list, EnumObj.wBaseAttribute);
         update_UI_prorotypeContainer();
-        wdraw();
+                wdraw();
     });
     // show popup select action
     $('body').on('click', '.select-action', function (ev) {
@@ -221,7 +221,7 @@ function update_UI_selectDataPopup() {
         selected_list[0].ProtoType = $(this).data('index');
         WBaseDA.edit(selected_list, EnumObj.wbase);
         update_dataUI_interactionTile();
-        wdraw();
+                wdraw();
         $('.prototype-popup-select').css('display', 'none');
     });
     // show popup select event
@@ -250,7 +250,7 @@ function update_UI_selectDataPopup() {
         selected_list[0].PrototypeID = $(this).data('id');
         WBaseDA.edit(selected_list, EnumObj.wbase);
         update_dataUI_interactionTile();
-        wdraw();
+                wdraw();
         $('.prototype-popup-select').hide();
     });
     // show popup setting data

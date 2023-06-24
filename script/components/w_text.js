@@ -88,7 +88,7 @@ function createTextHTML(item) {
         e.preventDefault();
         ctrlZText();
         select_box = selectBox(selected_list);
-        wdraw();
+                wdraw();
       }
     }
     function addInputAction() {
@@ -222,7 +222,7 @@ function createTextHTML(item) {
     };
     textObserver.observe(item.value, {
       childList: true,
-      attributes: true,
+      // attributes: true,
     });
   }
 }
@@ -239,21 +239,21 @@ const textObserver = new MutationObserver((mutationList) => {
         });
         break;
       case "attributes":
-        if (mutation.attributeName === "style") {
-          let targetText = mutation.target;
-          let change = false;
-          if (targetText.style.width == "100%") {
-            targetText.style.minWidth = null;
-          }
-          if (targetText.style.height == "fit-content" && targetText.style.minHeight != null) {
-            targetText.style.minHeight = null;
-            change = true;
-          }
-          if (change) {
-            select_box = selectBox(selected_list);
-            wdraw();
-          }
-        }
+        // if (mutation.attributeName === "style") {
+        //   let targetText = mutation.target;
+        //   let change = false;
+        //   if (targetText.style.width == "100%") {
+        //     targetText.style.minWidth = null;
+        //   }
+        //   if (targetText.style.height == "fit-content" && targetText.style.minHeight != null) {
+        //     targetText.style.minHeight = null;
+        //     change = true;
+        //   }
+        //   if (change) {
+        //     select_box = selectBox(selected_list);
+        //         // wdraw();
+        //   }
+        // }
         break;
       default:
         break;

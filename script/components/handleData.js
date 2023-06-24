@@ -160,11 +160,6 @@ async function initComponents(item, list, initListener = true) {
     }
     item.value.setAttribute("listid", item.ListID);
     if (item.IsWini) item.value.setAttribute("iswini", item.IsWini);
-    setSizeObserver.observe(item.value, {
-      attributeOldValue: true,
-      attributes: true,
-      childList: EnumCate.parent_cate.some((cate) => item.CateID === cate),
-    });
   }
   if (initListener) {
     addListenFromSection(item);
@@ -455,7 +450,7 @@ const setSizeObserver = new MutationObserver((mutationList) => {
             targetWbase.className = targetClassList.join(" ");
             resizeWbase.observe(targetWbase);
           }
-          if (changeSelectBox) updateUISelectBox();
+          if (changeSelectBox && checkpad == 0) updateUISelectBox();
         }
       }
     }
