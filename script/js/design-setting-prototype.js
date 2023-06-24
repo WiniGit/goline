@@ -144,6 +144,15 @@ function update_UI_selectDataPopup() {
 }
 
 { // Prototype
+    function checkPage() {
+        if (selected_list[0].ParentID != wbase_parentID) {
+            return $(selected_list[0].value).parents(`.wbaseItem-value[level="1"]`)[0]?.id;
+        } else {
+            return selected_list[0].GID;
+        }
+    }
+
+
     function create_UI_selectNextPage() {
         let list_option = '<div data-id="" class="page-option regular11 select-option row text-white">None</div>';
 
@@ -152,7 +161,7 @@ function update_UI_selectDataPopup() {
         let list_page = wbase_list.filter(e =>
             e.Level == 1
             && (e.CateID == EnumCate.tool_frame || e.CateID == EnumCate.form)
-            && e.GID != $(selected_list[0].value).parents(`.wbaseItem-value[level="1"]`)[0]?.id
+            && (e.GID != checkPage())
             && !selected_list[0].ListID.includes(e.GID)
         );
         if (list_page.length > 0) {
