@@ -92,7 +92,7 @@ for (let i = 0; i < list_cate.length; i++) {
     case EnumCate.effect:
       demo_skin = document.createElement("img");
       demo_skin.className = "box20";
-      demo_skin.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/effect-settings.svg";
+      demo_skin.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/effect-settings.svg";
       break;
     default:
       break;
@@ -110,16 +110,16 @@ let list_tool = [
     expand: function () {
       console.log("move");
     },
-    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/move.svg",
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/move.svg",
   },
   {
     message: ToolState.hand_tool,
-    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/hand.svg",
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/hand.svg",
   },
 ];
 
 let logo_wini = document.createElement("img");
-logo_wini.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/logo_wini.svg";
+logo_wini.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/logo_wini.svg";
 logo_wini.style.padding = "12px";
 logo_wini.style.width = "24px";
 logo_wini.style.height = "24px";
@@ -286,7 +286,7 @@ button_share.onclick = function () {
 };
 
 let button_play = document.createElement("img");
-button_play.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/play.svg";
+button_play.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/play.svg";
 button_play.className = "btn-play";
 let input_scale = document.createElement("div");
 input_scale.className = "regular1 input-scale";
@@ -373,14 +373,14 @@ function permissionTool() {
           expand: function () {
             console.log("frame");
           },
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/frame.svg",
+          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/frame.svg",
         },
         {
           message: ToolState.rectangle,
           expand: function () {
             console.log("rectangle");
           },
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/rectangle.svg",
+          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/rectangle.svg",
         },
         {
           message: ToolState.base_component,
@@ -393,11 +393,11 @@ function permissionTool() {
             $("#choose-component-popup").css("display", "flex");
             $("#choose-component-popup").removeAttr("cateid");
           },
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/base_component.svg",
+          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/base_component.svg",
         },
         {
           message: ToolState.text,
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/text.svg",
+          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/text.svg",
         },
       ],
       list_tool.pop(),

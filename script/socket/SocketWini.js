@@ -469,9 +469,10 @@ socket.on("server-get", (data) => {
             WiniIO.emitInit();
             permissionTool();
             initData();
-            CollectionDA.getListDocument();
-            InputDA.init();
-            OutputDA.init();
+            // TODO: next vesion code blow
+            // CollectionDA.getListDocument();
+            // InputDA.init();
+            // OutputDA.init();
           } catch (error) {
             toastr["error"]["Bạn không có quyền truy cập dự án này!"];
           }
@@ -713,15 +714,15 @@ socket.on("server-main", async (data) => {
     let importEffect = [];
     let listData = initskin
       ? data.data.filter((e) => {
-          if (e.GID !== wbase_parentID) {
-            if (e.StyleItem?.DecorationItem?.ColorID) importColor.push(e.StyleItem.DecorationItem.ColorID);
-            if (e.StyleItem?.DecorationItem?.BorderID) importBorder.push(e.StyleItem.DecorationItem.BorderID);
-            if (e.StyleItem?.DecorationItem?.EffectID) importEffect.push(e.StyleItem.DecorationItem.EffectID);
-            if (e.StyleItem?.TextStyleID) importTypo.push(e.StyleItem.TextStyleID);
-            return true;
-          }
-          return false;
-        })
+        if (e.GID !== wbase_parentID) {
+          if (e.StyleItem?.DecorationItem?.ColorID) importColor.push(e.StyleItem.DecorationItem.ColorID);
+          if (e.StyleItem?.DecorationItem?.BorderID) importBorder.push(e.StyleItem.DecorationItem.BorderID);
+          if (e.StyleItem?.DecorationItem?.EffectID) importEffect.push(e.StyleItem.DecorationItem.EffectID);
+          if (e.StyleItem?.TextStyleID) importTypo.push(e.StyleItem.TextStyleID);
+          return true;
+        }
+        return false;
+      })
       : data.data.filter((e) => e.GID !== wbase_parentID);
     listData = initDOM(listData);
     arrange(listData);

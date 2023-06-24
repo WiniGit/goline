@@ -163,8 +163,8 @@ function update_UI_selectDataPopup() {
 
     function update_dataUI_interactionTile() {
         let endPage = wbase_list.find(e => e.GID == selected_list[0].PrototypeID);
-        $('.content-container .page-end, .select-next-page>span').text(`${endPage?.Name ?? "Not selected"}`);
-        $('.content-container .event-handle, .select-action>span').text(`${ProtoTypeDA.get_actionTitle(selected_list[0].ProtoType)}`);
+        $('.content-container .page-end, .select-next-page>div').text(`${endPage?.Name ?? "Not selected"}`);
+        $('.content-container .event-handle, .select-action>div').text(`${ProtoTypeDA.get_actionTitle(selected_list[0].ProtoType)}`);
     }
     // show popup detail
     $('body').on('click', '.interaction-tile .content-container', function (ev) {
@@ -195,7 +195,7 @@ function update_UI_selectDataPopup() {
         selected_list[0].JsonEventItem = selected_list[0].JsonEventItem.filter(e => e.Name != "Prototype" && e.Name != "Animation");
         WBaseDA.edit(selected_list, EnumObj.wBaseAttribute);
         update_UI_prorotypeContainer();
-                wdraw();
+        wdraw();
     });
     // add prototype
     $('body').on('click', '.setting-interactions .add-interaction', function (ev) {
@@ -205,15 +205,14 @@ function update_UI_selectDataPopup() {
         selected_list[0].JsonEventItem.push({ Name: "Prototype", Data: [] }, { Name: "Animation", Data: {} });
         WBaseDA.edit(selected_list, EnumObj.wBaseAttribute);
         update_UI_prorotypeContainer();
-                wdraw();
+        wdraw();
     });
     // show popup select action
     $('body').on('click', '.select-action', function (ev) {
         ev.stopPropagation();
         $('.prototype-popup-select').css('display', 'none');
-
-        $('.selecte-action-popup').css('top', 28);
-        $('.selecte-action-popup').css('width', 196);
+        // $('.selecte-action-popup').css('top', 28);
+        // $('.selecte-action-popup').css('width', 196);
         $('.selecte-action-popup').css('display', 'flex');
         // update_UI_prototypeData();
     });
@@ -222,7 +221,7 @@ function update_UI_selectDataPopup() {
         selected_list[0].ProtoType = $(this).data('index');
         WBaseDA.edit(selected_list, EnumObj.wbase);
         update_dataUI_interactionTile();
-                wdraw();
+        wdraw();
         $('.prototype-popup-select').css('display', 'none');
     });
     // show popup select event
@@ -230,9 +229,9 @@ function update_UI_selectDataPopup() {
         ev.stopPropagation();
         $('.prototype-popup-select').css('display', 'none');
 
-        $('.selecte-event-popup').css('top', 28);
-        $('.selecte-event-popup').css('left', 0);
-        $('.selecte-event-popup').css('width', 140);
+        // $('.selecte-event-popup').css('top', 28);
+        // $('.selecte-event-popup').css('left', 0);
+        // $('.selecte-event-popup').css('width', 140);
         $('.selecte-event-popup').css('display', 'flex');
         // update_UI_prototypeData();
     });
@@ -241,8 +240,8 @@ function update_UI_selectDataPopup() {
         ev.stopPropagation();
         $('.prototype-popup-select').css('display', 'none');
         create_UI_selectNextPage();
-        $('.selecte-next-page-popup').css('top', 28);
-        $('.selecte-next-page-popup').css('width', 140);
+        // $('.selecte-next-page-popup').css('top', 28);
+        // $('.selecte-next-page-popup').css('width', 140);
         $('.selecte-next-page-popup').css('display', 'flex');
         // update_UI_prototypeData();
     });
@@ -251,7 +250,7 @@ function update_UI_selectDataPopup() {
         selected_list[0].PrototypeID = $(this).data('id');
         WBaseDA.edit(selected_list, EnumObj.wbase);
         update_dataUI_interactionTile();
-                wdraw();
+        wdraw();
         $('.prototype-popup-select').hide();
     });
     // show popup setting data
@@ -345,7 +344,12 @@ function update_UI_selectDataPopup() {
             '    <span class="row semibold11 text-subtitle">None</span>' +
             '</div>';
 
-        let list = JSON.parse(ProjectDA.obj.RouterJson).filter(e => e.Name.includes(search_value) || e.Route.includes(search_value));
+        let list = [];
+        try {
+            list = JSON.parse(ProjectDA.obj.RouterJson).filter(e => e.Name.includes(search_value) || e.Route.includes(search_value));
+        } catch (error) {
+
+        }
         if (list.length > 0) {
             for (let item of list) {
                 list_router +=
@@ -562,5 +566,9 @@ $('body').on('click', function (ev) {
     if (!$('.prototype-popup-select').is(ev.target)) {
         $('.prototype-popup-select').css('display', 'none');
     }
-})
+});
+
+$('body').on('click', '.selecte- .selecte->*', function (ev) {
+    $('.prototype-popup-select').css('display', 'none');
+});
 //  && $('.prototype-popup-select').has(ev.target).length == 1

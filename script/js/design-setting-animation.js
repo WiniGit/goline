@@ -52,8 +52,8 @@ class EnumTiming {
 $('body').on("click", ".select-animation-container", function (ev) {
     ev.stopPropagation();
     $('.select-animation-popup').css({
-        top: $(this).offset().top - $('.setting-interaction-popup').offset().top + 32,
-        display: 'block',
+        // top: $(this).offset().top - $('.setting-interaction-popup').offset().top + 32,
+        display: 'flex',
     });
 });
 
@@ -79,8 +79,8 @@ $('body').on("click", ".select-direction-container .direction-option", function 
 $('body').on("click", ".select-timing-container", function (ev) {
     ev.stopPropagation();
     $('.select-timing-popup').css({
-        top: $(this).offset().top - $('.setting-interaction-popup').offset().top + 32,
-        display: 'block',
+        // top: $(this).offset().top - $('.setting-interaction-popup').offset().top + 32,
+        display: 'flex',
     });
 });
 $('body').on("click", ".select-timing-container .timing-option", function (ev) {

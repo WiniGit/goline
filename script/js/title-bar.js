@@ -50,7 +50,7 @@ class TitleBarDA {
     static createTab(item) {
         let tab =
             '<div data-id="' + item.ID + '" class="nav-tab row">' +
-            '    <img class="box16" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@7925dd0/lib/assets/pen.svg">' +
+            '    <img class="box16" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@4ff51a0/lib/assets/pen.svg">' +
             '    <span class="semibold1 tab-title">' + item.Name + '</span>' +
             '    <button data-id="' + item.ID + '" class="tab-close button-transparent">' +
             '       <i class="fa-solid fa-close fa-sm"></i>' +
