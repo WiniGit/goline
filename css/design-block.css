@@ -299,6 +299,7 @@
 /* router */
 .prototype-view-container .select-router-popup {
     height: 400px;
+    min-width: 360px;
 }
 
 .prototype-view-container .select-router-popup .search-container {
@@ -460,22 +461,16 @@
 
 .prototype-popup {
     z-index: 3;
-
     top: 32px;
     right: 264px;
-
     position: absolute;
-
     max-width: 280px;
     width: fit-content;
     height: fit-content;
-
     border-radius: 2px;
-
     padding: 4px 0;
     box-sizing: border-box;
     background-color: white;
-
     display: none;
 }
 
@@ -529,7 +524,7 @@
     padding: 0 12px;
 }
 
-[class*="select-"] {
+[class*=" select-"] {
     min-width: 120px;
 
     cursor: pointer;

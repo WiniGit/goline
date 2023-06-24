@@ -146,10 +146,13 @@ function update_UI_selectDataPopup() {
 { // Prototype
     function create_UI_selectNextPage() {
         let list_option = '<div data-id="" class="page-option regular11 select-option row text-white">None</div>';
+
+        $(selected_list[0].value).parents(`wbaseItem-value[level="1"]`);
+
         let list_page = wbase_list.filter(e =>
             e.Level == 1
             && (e.CateID == EnumCate.tool_frame || e.CateID == EnumCate.form)
-            // && e.GID != selected_list[0].GID
+            && e.GID != $(selected_list[0].value).parents(`.wbaseItem-value[level="1"]`)[0].id
             && !selected_list[0].ListID.includes(e.GID)
         );
         if (list_page.length > 0) {
@@ -568,7 +571,13 @@ $('body').on('click', function (ev) {
     }
 });
 
-$('body').on('click', '.selecte- .selecte->*', function (ev) {
+$('body').on('click', function (ev) {
+    if (!$('.prototype-popup').is(ev.target) && $('.prototype-popup').has(ev.target).length == 0) {
+        $('.prototype-popup').css('display', 'none');
+    }
+});
+
+$('body').on('click', '[class*=".selecte-"], [class*="selecte-"]>*', function (ev) {
     $('.prototype-popup-select').css('display', 'none');
 });
 //  && $('.prototype-popup-select').has(ev.target).length == 1
