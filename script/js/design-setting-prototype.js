@@ -211,9 +211,8 @@ function update_UI_selectDataPopup() {
     $('body').on('click', '.select-action', function (ev) {
         ev.stopPropagation();
         $('.prototype-popup-select').css('display', 'none');
-
-        $('.selecte-action-popup').css('top', 28);
-        $('.selecte-action-popup').css('width', 196);
+        // $('.selecte-action-popup').css('top', 28);
+        // $('.selecte-action-popup').css('width', 196);
         $('.selecte-action-popup').css('display', 'flex');
         // update_UI_prototypeData();
     });
@@ -230,9 +229,9 @@ function update_UI_selectDataPopup() {
         ev.stopPropagation();
         $('.prototype-popup-select').css('display', 'none');
 
-        $('.selecte-event-popup').css('top', 28);
-        $('.selecte-event-popup').css('left', 0);
-        $('.selecte-event-popup').css('width', 140);
+        // $('.selecte-event-popup').css('top', 28);
+        // $('.selecte-event-popup').css('left', 0);
+        // $('.selecte-event-popup').css('width', 140);
         $('.selecte-event-popup').css('display', 'flex');
         // update_UI_prototypeData();
     });
@@ -241,8 +240,8 @@ function update_UI_selectDataPopup() {
         ev.stopPropagation();
         $('.prototype-popup-select').css('display', 'none');
         create_UI_selectNextPage();
-        $('.selecte-next-page-popup').css('top', 28);
-        $('.selecte-next-page-popup').css('width', 140);
+        // $('.selecte-next-page-popup').css('top', 28);
+        // $('.selecte-next-page-popup').css('width', 140);
         $('.selecte-next-page-popup').css('display', 'flex');
         // update_UI_prototypeData();
     });
