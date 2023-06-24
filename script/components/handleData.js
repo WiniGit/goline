@@ -455,7 +455,7 @@ const setSizeObserver = new MutationObserver((mutationList) => {
             targetWbase.className = targetClassList.join(" ");
             resizeWbase.observe(targetWbase);
           }
-          if (changeSelectBox) updateUISelectBox();
+          if (changeSelectBox && checkpad == 0) updateUISelectBox();
         }
       }
     }

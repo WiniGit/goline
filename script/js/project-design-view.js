@@ -127,9 +127,9 @@ function toolStateChange(toolState) {
   }
   if ([ToolState.hand_tool, ...ToolState.create_new_type].some((tool) => tool_state == tool)) {
     addSelectList();
+    listLine = [];
+    listText = [];
     updateHoverWbase();
-    removeAllLine();
-    removeAllText();
   }
 }
 
@@ -542,7 +542,7 @@ function addSelectList(new_selected_list = []) {
 
 function updateUISelectBox() {
   select_box = selectBox(selected_list);
-  wdraw();
+                wdraw();
 }
 
 function findCell(table, event) {

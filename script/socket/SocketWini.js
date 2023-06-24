@@ -780,7 +780,7 @@ socket.on("server-mouse", (data) => {
   if (data.data.ID !== UserService.getUser().ID) {
     listRect = listRect.filter((e) => e.ID !== data.data.ID);
     listRect.push(data.data);
-    wdraw();
+    // wdraw();
   }
 });
 // socket.on("server-update", (data) => {

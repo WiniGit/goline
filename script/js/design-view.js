@@ -5,7 +5,7 @@ function setupRightView() {
     list_tab_view[i].onclick = function () {
       design_view_index = $(this).data("index");
       tabChange(this.innerHTML, "right_tab_view");
-      wdraw();
+                wdraw();
       let list_tab_view = document.getElementsByClassName("tab_right");
       for (let j = 0; j < list_tab_view.length; j++) {
         list_tab_view[j].style.opacity = 0.7;

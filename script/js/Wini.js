@@ -527,10 +527,17 @@ document.addEventListener("contextmenu", (event) => event.preventDefault());
 var parent = divSection,
   offsetp = { x: 0, y: 0 },
   parent_offset1 = { x: 0, y: 0 };
+let listWbOnScreen = [];
 function selectParent(event) {
   parent = divSection;
   var current_level = parseInt(document.getElementById(select_box_parentID)?.getAttribute("level") ?? "0") + 1;
-  var list = [...parent.querySelectorAll(`.wbaseItem-value`)];
+  if (checkpad == 0) {
+    listWbOnScreen = [];
+    lstc.forEach((e) => {
+      listWbOnScreen.push(e, ...e.querySelectorAll(".wbaseItem-value"));
+    });
+  }
+  var list = listWbOnScreen;
   var parent_cate = [...EnumCate.parent_cate];
   if (selected_list.every((e) => e.CateID != EnumCate.tool_variant && e.IsWini)) {
     parent_cate.push(EnumCate.tool_variant);
@@ -785,7 +792,9 @@ const childObserver = new MutationObserver((mutationList) => {
   });
 });
 
+var lstc = [];
 function moveListener(event) {
+  console.log("???move-in: ", performance.now());
   if (event.target.contentEditable == "true" || (event.target.localName === "input" && !event.target.readOnly)) return;
   event.preventDefault();
   let target_view;
@@ -1166,6 +1175,7 @@ function moveListener(event) {
                   addSelectList([hover_wbase]);
                 }
                 if (select_box && !objr) {
+                  if (checkpad == 0) lstc = [...parent.querySelectorAll(":scope > .wbaseItem-value")].filter((eHTML) => !isHidden(eHTML));
                   selectParent(event);
                   // top left
                   let select_box_o1 = select_box.o1;
@@ -1198,7 +1208,6 @@ function moveListener(event) {
                     select_box.o7.y = objsc.o7.y + yp;
                     select_box.o8.y = objsc.o8.y + yp;
                     select_box.o9.y = objsc.o9.y + yp;
-                    var lstc = [...parent.querySelectorAll(":scope > .wbaseItem-value")].filter((eHTML) => !isHidden(eHTML));
                     const b = (scale < 1 ? Math.floor(3 / scale) : 5) / scale;
                     // const b = 5;
                     var listt = lstc.filter((m) => {
@@ -1378,6 +1387,7 @@ function moveListener(event) {
                         }
                       });
                       drag_start_list = JSON.parse(JSON.stringify(selected_list));
+                      wdraw();
                       checkpad++;
                     }
                     if (Math.abs(event.pageX - previousX) > 2 || Math.abs(event.pageY - previousY) > 2) {
@@ -1387,7 +1397,6 @@ function moveListener(event) {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event);
                       }
                       updateInputTLWH();
-                      wdraw();
                     }
                   } else {
                     addSelectList();
@@ -1551,6 +1560,7 @@ function moveListener(event) {
       isSelect: false,
     });
   }
+  console.log("???move-out: ", performance.now());
 }
 
 function handToolDrag(event) {
@@ -1630,9 +1640,9 @@ function checkHoverElement(event) {
     let wbase_item = wbase_list.find((e) => e.GID == titleHover.id);
     updateHoverWbase(wbase_item, event.altKey);
   } else if (event.target !== divSection) {
-    removeAllRectHovers();
-    removeAllLine();
-    removeAllText();
+    listRectHover = [];
+    listLine = [];
+    listText = [];
     let currentLevel = 1;
     if (selected_list.length > 0) currentLevel = parseInt(selected_list[0].value.getAttribute("level"));
     let _target = [...event.composedPath()].find((eHTML) => {
@@ -1801,6 +1811,7 @@ let imgComSrc = `data:image/svg+xml;charset=utf-8,<svg width="12" height="12" vi
 `;
 imgCom.src = imgComSrc;
 function wdraw() {
+  console.log("??????????wdraw-in: ", performance.now());
   ctxr.clearRect(0, 0, width, height);
   ctxr.lineWidth = 1;
   ctxr.strokeStyle = "red";
@@ -1940,6 +1951,7 @@ function wdraw() {
     }
   }
   listRect = [];
+  console.log("??????????wdraw-out: ", performance.now());
 }
 
 function getPagePrototypePoint(page) {
