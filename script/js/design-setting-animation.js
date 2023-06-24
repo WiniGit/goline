@@ -63,7 +63,7 @@ $('body').on("click", ".select-animation-container .animation-option", function 
     animation_item.Data.Animation = $(this).data('enum');
     WBaseDA.edit(selected_list, EnumObj.attribute);
     $(".selected-animation").text(EnumAnimation.get_animationName($(this).data('enum')));
-    $('.animation_popup').hide();
+    $('.prototype-popup-select').hide();
 });
 
 $('body').on("click", ".select-direction-container .direction-option", function (ev) {
@@ -90,7 +90,7 @@ $('body').on("click", ".select-timing-container .timing-option", function (ev) {
     animation_item.Data.Timing = $(this).data('enum');
     WBaseDA.edit(selected_list, EnumObj.attribute);
     $(".selected-timing").text(EnumTiming.get_timingName($(this).data('enum')));
-    $('.animation_popup').hide();
+    $('.prototype-popup-select').hide();
 });
 
 $('body').on("blur", '.animate-time', function (ev) {
@@ -104,8 +104,8 @@ $('body').on("blur", '.animate-time', function (ev) {
 
 
 $('body').on("click", function (ev) {
-    if (!$('.animation_popup').is(ev.target)) {
-        $('.animation_popup').hide();
+    if (!$('.prototype-popup-select').is(ev.target)) {
+        $('.prototype-popup-select').hide();
     }
 });
 
