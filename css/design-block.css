@@ -475,6 +475,8 @@
     padding: 4px 0;
     box-sizing: border-box;
     background-color: white;
+
+    display: none;
 }
 
 .popupt-layout {

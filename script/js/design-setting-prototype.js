@@ -163,8 +163,8 @@ function update_UI_selectDataPopup() {
 
     function update_dataUI_interactionTile() {
         let endPage = wbase_list.find(e => e.GID == selected_list[0].PrototypeID);
-        $('.content-container .page-end, .select-next-page>div').text(`${endPage?.Name ?? "Not selected"}`);
-        $('.content-container .event-handle, .select-action>div').text(`${ProtoTypeDA.get_actionTitle(selected_list[0].ProtoType)}`);
+        $('.content-container .page-end, .select-next-page>span').text(`${endPage?.Name ?? "Not selected"}`);
+        $('.content-container .event-handle, .select-action>span').text(`${ProtoTypeDA.get_actionTitle(selected_list[0].ProtoType)}`);
     }
     // show popup detail
     $('body').on('click', '.interaction-tile .content-container', function (ev) {
