@@ -65,13 +65,13 @@ function keyUpEvent(event) {
       case "enter": // enter
         break;
       case "f12": // f12
-        showF12 = !showF12;
-        if (showF12) {
-          RequestDA.init();
-        } else {
-          $(".f12-container").css("display", "none");
-        }
-        break;
+        // showF12 = !showF12;
+        // if (showF12) {
+        //   RequestDA.init();
+        // } else {
+        //   $(".f12-container").css("display", "none");
+        // }
+        // break;
       case "//": // \
         if (isCtrlKey) {
         }
