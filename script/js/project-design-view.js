@@ -68,7 +68,7 @@ async function initData() {
   centerViewInitListener();
   setTimeout(function () {
     toolStateChange(ToolState.move);
-  }, 100);
+  }, 80);
 }
 
 function input_scale_set(value) {
@@ -308,7 +308,7 @@ function createWbaseHTML(rect_box, newObj) {
         newParent = document.getElementById(new_obj.ParentID);
         newListID = newParent.getAttribute("listid") + `,${new_obj.ParentID}`;
       }
-      let listNewWbase = createNewWbase(new_obj, relativeWbase, newListID, newParent.querySelectorAll(":scope > .wbaseItem-value").length);
+      let listNewWbase = createNewWbase(new_obj, relativeWbase, newListID, newParent.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParent.getAttribute("level")??"0") + 1}"]`).length);
       listNewWbase.forEach((wbaseItem) => {
         initComponents(
           wbaseItem,

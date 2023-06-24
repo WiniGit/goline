@@ -175,15 +175,15 @@ function frameHugChildrenSize() {
         if (childHTML.style.height == "auto") {
           childHTML.style.height = childHTML.offsetHeight + "px";
         }
-        childHTML.style.right = `unset`;
-        childHTML.style.bottom = `unset`;
+        childHTML.style.right = null;
+        childHTML.style.bottom = null;
         childHTML.style.left = `${childHTML.offsetLeft - dx}px`;
         childHTML.style.top = `${childHTML.offsetTop - dy}px`;
       });
       wbaseItem.StyleItem.FrameItem.Width = Math.max(...childrenHTML.map((e) => e.offsetLeft + e.offsetWidth)).toFixed(2);
       wbaseItem.StyleItem.FrameItem.Height = Math.max(...childrenHTML.map((e) => e.offsetTop + e.offsetHeight)).toFixed(2);
-      wbaseItem.value.style.right = `unset`;
-      wbaseItem.value.style.bottom = `unset`;
+      wbaseItem.value.style.right = null;
+      wbaseItem.value.style.bottom = null;
       wbaseItem.value.style.transform = null;
       wbaseItem.value.style.left = wbaseItem.StyleItem.PositionItem.Left;
       wbaseItem.value.style.top = wbaseItem.StyleItem.PositionItem.Top;
@@ -555,6 +555,7 @@ function selectResizeType(isW = true, type) {
           }
           selected_list[i].StyleItem.FrameItem.Width = null;
           wbase_eHTML.style.width = `fit-content`;
+          wbase_eHTML.style.minWidth = null;
           if (isHorizontal) {
             wbase_eHTML.style.flex = null;
           }
@@ -623,6 +624,7 @@ function selectResizeType(isW = true, type) {
           }
           selected_list[i].StyleItem.FrameItem.Height = null;
           wbase_eHTML.style.height = `fit-content`;
+          wbase_eHTML.style.minHeight = null;
           if (!isHorizontal) {
             wbase_eHTML.style.flex = null;
           }

@@ -963,7 +963,7 @@ function ondragSortLayer(event) {
             preAction.className = preAction.className.replace("caret-right", "caret-down");
           }
         }
-        let childHTML = [...wbaseHTML.querySelectorAll(":scope > .wbaseItem-value")];
+        let childHTML = [...wbaseHTML.querySelectorAll(`:scope > .wbaseItem-value[level="1"]`)];
         sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))));
         sortLayer.setAttribute("parentid", wbaseID);
       } else if (Math.abs(event.pageY - rectTopY) <= Math.abs(event.pageY - rectBotY)) {
@@ -985,7 +985,7 @@ function ondragSortLayer(event) {
         let spacing = (sortWbase.Level - 1) * 16;
         if (preAction.className.includes("caret-down")) {
           spacing += 16;
-          let childHTML = [...wbaseHTML.querySelectorAll(":scope > .wbaseItem-value")];
+          let childHTML = [...wbaseHTML.querySelectorAll(`:scope > .wbaseItem-value[level="1"]`)];
           sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))) + 1);
           sortLayer.setAttribute("parentid", wbaseID);
         } else {
