@@ -1635,7 +1635,7 @@ function scanSelectList(event) {
       return false;
     }
 
-    let parentElement = $(eHTML).parent(".wbaseItem-value")[0];
+    let parentElement = $(eHTML).parent(`.wbaseItem-value[level="1"]`)[0];
 
     if (parentElement && EnumCate.show_name.every((cate) => parentElement.getAttribute("cateid") != cate)) {
       return false;
