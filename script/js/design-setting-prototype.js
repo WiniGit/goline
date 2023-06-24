@@ -152,7 +152,7 @@ function update_UI_selectDataPopup() {
         let list_page = wbase_list.filter(e =>
             e.Level == 1
             && (e.CateID == EnumCate.tool_frame || e.CateID == EnumCate.form)
-            && e.GID != $(selected_list[0].value).parents(`.wbaseItem-value[level="1"]`)[0].id
+            && e.GID != $(selected_list[0].value).parents(`.wbaseItem-value[level="1"]`)[0]?.id
             && !selected_list[0].ListID.includes(e.GID)
         );
         if (list_page.length > 0) {

@@ -145,23 +145,23 @@ function showSearchResult() {
         result.className = "layer-search-result row";
         let cateImg = document.createElement("img");
         if (wb.IsWini && wb.CateID != EnumCate.tool_variant) {
-          cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/component.svg";
+          cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/component.svg";
         } else {
           switch (wb.CateID) {
             case EnumCate.tool_frame:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/frame_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_black.svg";
               break;
             case EnumCate.tool_rectangle:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/rectangle_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rectangle_black.svg";
               break;
             case EnumCate.tool_text:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/text_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text_black.svg";
               break;
             case EnumCate.tool_variant:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/multiple_component.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/multiple_component.svg";
               break;
             default:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/base_component_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component_black.svg";
               break;
           }
         }
@@ -427,23 +427,23 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   let icon_wbase = document.createElement("img");
   wbase_tile.appendChild(icon_wbase);
   if (wbaseItem.IsWini && wbaseItem.CateID != EnumCate.tool_variant) {
-    icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/component.svg";
+    icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/component.svg";
   } else {
     switch (wbaseItem.CateID) {
       case EnumCate.tool_frame:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/frame_black.svg";
+        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_black.svg";
         break;
       case EnumCate.tool_rectangle:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/rectangle_black.svg";
+        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rectangle_black.svg";
         break;
       case EnumCate.tool_text:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/text_black.svg";
+        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text_black.svg";
         break;
       case EnumCate.tool_variant:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/multiple_component.svg";
+        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/multiple_component.svg";
         break;
       default:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/base_component_black.svg";
+        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component_black.svg";
         break;
     }
   }

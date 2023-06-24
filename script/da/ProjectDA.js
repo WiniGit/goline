@@ -44,7 +44,7 @@ class ProjectDA {
     };
 
     static initLayoutResponsive() {
-        fetch("https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/css/css_Responsive.txt")
+        fetch("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/css/css_Responsive.txt")
             .then((response) => response.text()
                 .then((text) => {
                     let colCss = text.replace(/(\.grid-layout ){0,1}\.{1}col[0-9]{1,2}/g, mtc => `.min-brp ${mtc}`);
@@ -197,7 +197,7 @@ class ProjectDA {
                 '    <div class="project-card col elevation7"  data-id="' + item.ID + '">' +
                 '        <div class="design-preview background-grey3"></div>' +
                 '        <div class="project-info row background-white">' +
-                '            <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@4d0f8a1/lib/assets/pen.svg" class="box32">' +
+                '            <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/pen.svg" class="box32">' +
                 '                <div class="col">' +
                 '                    <input class="button-text-5 text-title" type="text" value="' + item.Name + '" disabled>' +
                 '                        <span class="regular11 text-subtitle">Editor ' + Ultis.getTimeEdit(item.DateUpdate) + ' ago</span>' +
