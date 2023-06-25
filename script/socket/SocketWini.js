@@ -1173,7 +1173,7 @@ class WbaseIO {
                 );
                 break;
               default:
-                if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+                if (!window.getComputedStyle(parentHTML).display.match("flex")) {
                   initPositionStyle(wb);
                 }
                 parentHTML.appendChild(wb.value);

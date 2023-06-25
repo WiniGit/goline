@@ -1,6 +1,6 @@
 function alignPosition(align_value) {
   // điều kiện để edit toàn bộ các element con khi nhấn btn align là user chỉ đang chọn 1 obj frame stack trên màn hình và obj này ko nằm trong 1 frame stack cha khác
-  let is_edit_children = selected_list.length == 1 && [...EnumCate.extend_frame, EnumCate.tool_variant].some((cate) => selected_list[0].CateID == cate) && selected_list[0].CountChild > 0 && !selected_list[0].StyleItem.PositionItem.FixPosition && (selected_list[0].Level === 1 || window.getComputedStyle(document.getElementById(selected_list[0].ParentID)).display.match(/(flex|grid)/g));
+  let is_edit_children = selected_list.length == 1 && [...EnumCate.extend_frame, EnumCate.tool_variant].some((cate) => selected_list[0].CateID == cate) && selected_list[0].CountChild > 0 && !selected_list[0].StyleItem.PositionItem.FixPosition && (selected_list[0].Level === 1 || window.getComputedStyle(document.getElementById(selected_list[0].ParentID)).display.match("flex"));
   let listUpdate;
   switch (align_value) {
     case "align left":
@@ -242,7 +242,7 @@ function frameHugChildrenSize() {
 function inputFrameItem(frame_item, isRatioWH) {
   let _enumObj = EnumObj.frame;
   if (frame_item.Width != undefined && frame_item.Height != undefined) {
-    if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g)) _enumObj = EnumObj.framePosition;
+    if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) _enumObj = EnumObj.framePosition;
     for (let wbaseItem of selected_list) {
       wbaseItem.StyleItem.FrameItem.Width = frame_item.Width;
       wbaseItem.StyleItem.FrameItem.Height = frame_item.Height;
@@ -250,7 +250,7 @@ function inputFrameItem(frame_item, isRatioWH) {
       if (_enumObj === EnumObj.framePosition) updateConstraints(wbaseItem);
     }
   } else if (frame_item.Width != undefined) {
-    if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g)) _enumObj = EnumObj.framePosition;
+    if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) _enumObj = EnumObj.framePosition;
     for (let wbaseItem of selected_list) {
       if (isRatioWH) {
         let ratio = wbaseItem.value.offsetHeight / wbaseItem.value.offsetWidth;
@@ -264,7 +264,7 @@ function inputFrameItem(frame_item, isRatioWH) {
       if (_enumObj === EnumObj.framePosition) updateConstraints(wbaseItem);
     }
   } else if (frame_item.Height != undefined) {
-    if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g)) _enumObj = EnumObj.framePosition;
+    if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) _enumObj = EnumObj.framePosition;
     for (let wbaseItem of selected_list) {
       if (isRatioWH) {
         var ratio = wbaseItem.value.offsetWidth / wbaseItem.value.offsetHeight;
@@ -403,7 +403,7 @@ function inputPositionItem(position_item) {
     }
   }
   if (position_item.FixPosition != undefined) {
-    let isInLayout = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g);
+    let isInLayout = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
     for (let wbaseItem of selected_list) {
       wbaseItem.StyleItem.PositionItem.FixPosition = position_item.FixPosition;
       if (position_item.FixPosition) {
@@ -519,11 +519,11 @@ function selectResizeType(isW = true, type) {
       case "hug":
         let checkConstX = false;
         if (select_box_parentID !== wbase_parentID) {
-          checkConstX = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g);
+          checkConstX = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
         }
         for (let i = 0; i < selected_list.length; i++) {
           let wbase_eHTML = selected_list[i].value;
-          if (window.getComputedStyle(wbase_eHTML).display.match(/(flex|grid)/g) && selected_list[i].CateID != EnumCate.tool_text) {
+          if (window.getComputedStyle(wbase_eHTML).display.match("flex") && selected_list[i].CateID != EnumCate.tool_text) {
             if (selected_list[i].WAutolayoutItem.Direction == "Horizontal") {
               let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.value.style.width == "100%");
               list_update.push(...list_child);
@@ -594,11 +594,11 @@ function selectResizeType(isW = true, type) {
       case "hug":
         let checkConstY = false;
         if (select_box_parentID !== wbase_parentID) {
-          checkConstY = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g);
+          checkConstY = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
         }
         for (let i = 0; i < selected_list.length; i++) {
           let wbase_eHTML = selected_list[i].value;
-          if (window.getComputedStyle(wbase_eHTML).display.match(/(flex|grid)/g) && selected_list[i].CateID != EnumCate.tool_text) {
+          if (window.getComputedStyle(wbase_eHTML).display.match("flex") && selected_list[i].CateID != EnumCate.tool_text) {
             if (selected_list[i].WAutolayoutItem.Direction == "Vertical") {
               let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.value.style.height == "100%");
               list_update.push(...list_child);
@@ -770,7 +770,7 @@ async function addAutoLayout() {
             .join(",");
           if (cd.id === availableCell.id) cd.contentid = new_wbase_item.GID;
         });
-      } else if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+      } else if (!window.getComputedStyle(parentHTML).display.match("flex")) {
         initPositionStyle(new_wbase_item);
         parentHTML.appendChild(new_wbase_item.value);
       } else {
@@ -1147,7 +1147,7 @@ function removeLayout() {
   let listUpdate = [];
   let listLayout = selected_list.filter((e) => e.WAutolayoutItem);
   for (let wbaseItem of listLayout) {
-    let eHTML = document.getElementById(wbaseItem.GID);
+    let eHTML = wbaseItem.value;
     let eHTMLRect = eHTML.getBoundingClientRect();
     let offseteHTMLRect = offsetScale(eHTMLRect.x, eHTMLRect.y);
     let currentSize = {
@@ -1188,8 +1188,7 @@ function removeLayout() {
       }
     }
     wbaseChildren.forEach((childWbase) => initPositionStyle(childWbase));
-    eHTML.style.position = "relative";
-    eHTML.style.padding = null;
+    removeAutoLayoutProperty(eHTML);
     listUpdate.push(wbaseItem, ...wbaseChildren);
   }
   WBaseDA.edit(listUpdate, _enumObj);
@@ -1814,7 +1813,7 @@ function editTextStyle(text_style_item, onSubmit = true) {
       _enumObj = EnumObj.frame;
       let checkConst = false;
       if (select_box_parentID !== wbase_parentID) {
-        checkConst = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g);
+        checkConst = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
       }
       for (let wbaseItem of list_text.filter((e) => e.CateID !== EnumCate.chart)) {
         switch (text_style_item.AutoSize) {
@@ -2354,7 +2353,7 @@ function combineAsVariant() {
     let childrenHTML = [...parentHTML.childNodes];
     childrenHTML.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
     parent_wbase.ListChildID = childrenHTML.map((e) => e.id);
-    if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+    if (!window.getComputedStyle(parentHTML).display.match("flex")) {
       initPositionStyle(new_wbase_item);
     }
   }
@@ -2753,7 +2752,7 @@ function createForm() {
       let childrenHTML = [...parentHTML.childNodes];
       childrenHTML.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
       parent_wbase.ListChildID = childrenHTML.map((e) => e.id);
-      if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+      if (!window.getComputedStyle(parentHTML).display.match("flex")) {
         initPositionStyle(new_wbase_item);
       }
     }

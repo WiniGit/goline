@@ -343,14 +343,14 @@ function createWbaseHTML(rect_box, newObj) {
         let availableCell = findCell(parentHTML, { pageX: offsetConvertScale(rect_box.x, 0).x, pageY: offsetConvertScale(0, rect_box.y).y });
         availableCell.appendChild(new_obj.value);
         parent_wbase.TableRows.reduce((a, b) => a.concat(b)).find((cell) => cell.id === availableCell.id).contentid = [...availableCell.childNodes].map((e) => e.id).join(",");
-      } else if (window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+      } else if (window.getComputedStyle(parentHTML).display.match("flex")) {
         new_obj.value.style.left = null;
         new_obj.value.style.top = null;
         new_obj.value.style.right = null;
         new_obj.value.style.bottom = null;
         new_obj.value.style.transform = null;
         let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
-        if (parentHTML.style.flexDirection == "column") {
+        if (parentHTML.classList.contains("w-col")) {
           let zIndex = 0;
           if (children.length > 0) {
             children.sort((aHTML, bHTML) => {
@@ -619,8 +619,7 @@ function dragWbaseUpdate(xp, yp, event) {
         }
       }
     }
-  } else if (window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g) && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
-    console.log("flex|grid");
+  } else if (window.getComputedStyle(parentHTML).display.match("flex") && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
     let isGrid = window.getComputedStyle(parentHTML).flexWrap.match("wrap");
     if (parentHTML.classList.contains("w-col")) {
@@ -894,7 +893,7 @@ function dragWbaseEnd() {
         }
       }
       WBaseDA.enumEvent = EnumEvent.parent;
-      let drag_to_layout = window.getComputedStyle(new_parentHTML).display.match(/(flex|grid)/g) && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition);
+      let drag_to_layout = window.getComputedStyle(new_parentHTML).display.match("flex") && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition);
       let zIndex;
       let demo = document.getElementById("demo_auto_layout");
       if (demo) {
@@ -999,7 +998,7 @@ function dragWbaseEnd() {
       }
       WBaseDA.listData.push(...selected_list);
       if (parent_wbase) WBaseDA.listData.push(parent_wbase);
-    } else if (window.getComputedStyle(new_parentHTML).display.match(/(flex|grid)/g) && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
+    } else if (window.getComputedStyle(new_parentHTML).display.match('flex') && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
       WBaseDA.enumEvent = EnumEvent.parent;
       handleStyleSize(parent_wbase);
       let children = [...new_parentHTML.querySelectorAll(`.wbaseItem-value[level="${(parent_wbase?.Level ?? 0) + 1}"]`)];
@@ -1040,7 +1039,7 @@ function dragAltUpdate(xp, yp, event) {
   let parentHTML = parent;
   if (alt_list.length == 0) {
     let isFixedWhenScroll = false;
-    if (!window.getComputedStyle(selected_list[0].value.parentElement).display.match(/(flex|grid)/g)) {
+    if (!window.getComputedStyle(selected_list[0].value.parentElement).display.match("flex")) {
       isFixedWhenScroll = true;
     }
     for (let i = 0; i < selected_list.length; i++) {
@@ -1098,11 +1097,11 @@ function dragAltUpdate(xp, yp, event) {
         availableCell.replaceChildren(...cellChildren, demo);
       }
     }
-  } else if (window.getComputedStyle(parentHTML).display?.match(/(flex|grid)/g) && alt_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
+  } else if (window.getComputedStyle(parentHTML).display?.match("flex") && alt_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
     console.log("flex|grid");
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
-    let isGrid = window.getComputedStyle(parentHTML).display.match("grid");
-    if (parentHTML.style.flexDirection == "column") {
+    let isGrid = window.getComputedStyle(parentHTML).flexWrap.match("wrap");
+    if (parentHTML.classList.contains("w-col")) {
       let zIndex = 0;
       let distance = 0;
       if (children.length > 0) {
@@ -1261,7 +1260,7 @@ function dragAltEnd() {
     let parent_wbase;
     let zIndex;
     if (new_parentID !== wbase_parentID) parent_wbase = wbase_list.find((e) => e.GID === new_parentID);
-    let drag_to_layout = window.getComputedStyle(new_parentHTML).display.match(/(flex|grid)/g);
+    let drag_to_layout = window.getComputedStyle(new_parentHTML).display.match("flex");
     if (isTableParent) {
       let demo = document.getElementById("demo_auto_layout");
       if (demo) {
@@ -1440,7 +1439,7 @@ function ctrlZ() {
                     break;
                   default:
                     let oldValue = document.getElementById(wbaseItem.GID);
-                    if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+                    if (!window.getComputedStyle(parentHTML).display.match("flex")) {
                       initPositionStyle(wbaseItem);
                     }
                     if (oldValue) {
@@ -1503,7 +1502,7 @@ function ctrlZ() {
                   break;
                 default:
                   let oldValue = document.getElementById(wbaseItem.GID);
-                  if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+                  if (!window.getComputedStyle(parentHTML).display.match("flex")) {
                     initPositionStyle(wbaseItem);
                   }
                   if (oldValue) {
@@ -1592,7 +1591,7 @@ function ctrlZ() {
                   break;
                 default:
                   let oldValue = document.getElementById(wbaseItem.GID);
-                  if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+                  if (!window.getComputedStyle(parentHTML).display.match("flex")) {
                     initPositionStyle(wbaseItem);
                   }
                   if (oldValue) {
@@ -1662,7 +1661,7 @@ function ctrlZ() {
                   break;
                 default:
                   let oldValue = document.getElementById(wbaseItem.GID);
-                  if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+                  if (!window.getComputedStyle(parentHTML).display.match("flex")) {
                     initPositionStyle(wbaseItem);
                   }
                   if (oldValue) {
@@ -1728,7 +1727,7 @@ function ctrlZ() {
                   break;
                 default:
                   let oldValue = document.getElementById(wbaseItem.GID);
-                  if (!window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+                  if (!window.getComputedStyle(parentHTML).display.match("flex")) {
                     initPositionStyle(wbaseItem);
                   }
                   if (oldValue) {
@@ -1808,7 +1807,7 @@ function shiftCtrlZ() {
                 !oldHTML,
               );
               if (oldHTML) {
-                if (window.getComputedStyle(oldHTML.parentElement).display.match(/(flex|grid)/g)) {
+                if (window.getComputedStyle(oldHTML.parentElement).display.match("flex")) {
                   wbaseItem.value.style.left = null;
                   wbaseItem.value.style.top = null;
                 } else {
@@ -1846,7 +1845,7 @@ function shiftCtrlZ() {
             !oldHTML,
           );
           if (oldHTML) {
-            if (window.getComputedStyle(oldHTML.parentElement).display.match(/(flex|grid)/g)) {
+            if (window.getComputedStyle(oldHTML.parentElement).display.match("flex")) {
               wbaseItem.value.style.left = null;
               wbaseItem.value.style.top = null;
             } else {
@@ -1881,7 +1880,7 @@ function shiftCtrlZ() {
             );
             currentParent.value.id = currentParent.GID;
             if (oldHTML) {
-              if (window.getComputedStyle(oldHTML.parentElement).display.match(/(flex|grid)/g)) {
+              if (window.getComputedStyle(oldHTML.parentElement).display.match("flex")) {
                 currentParent.value.style.left = null;
                 currentParent.value.style.top = null;
               } else {
@@ -1914,7 +1913,7 @@ function shiftCtrlZ() {
             );
             oldParentWBase.value.id = oldParentWBase.GID;
             if (oldHTML) {
-              if (window.getComputedStyle(oldHTML.parentElement).display.match(/(flex|grid)/g)) {
+              if (window.getComputedStyle(oldHTML.parentElement).display.match("flex")) {
                 oldParentWBase.value.style.left = null;
                 oldParentWBase.value.style.top = null;
               } else {

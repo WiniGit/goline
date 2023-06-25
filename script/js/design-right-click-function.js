@@ -216,7 +216,7 @@ function pasteWbase() {
         parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
         wbase_list.push(...list_new_wbase);
         listWb.push(...list_new_wbase);
-      } else if (window.getComputedStyle(newParent).display.match(/(flex|grid)/g) && list_new_wbase.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
+      } else if (window.getComputedStyle(newParent).display.match("flex") && list_new_wbase.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
         let zIndex = Math.max(0, ...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)) + 1;
         for (let i = 0; i < list_new_wbase.length; i++) {
           list_new_wbase[i].value.style.left = null;

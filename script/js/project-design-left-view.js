@@ -1092,7 +1092,7 @@ function endDragSortLayer() {
             thisWbaseHTML.style.right = null;
             thisWbaseHTML.style.bottom = null;
             thisWbaseHTML.style.transform = null;
-          } else if (window.getComputedStyle(newParentHTML).display.match(/(flex|grid)/g) && !thisWbaseHTML.classList.contains("fixed-position")) {
+          } else if (window.getComputedStyle(newParentHTML).display.match("flex") && !thisWbaseHTML.classList.contains("fixed-position")) {
             thisWbaseHTML.style.position = null;
             thisWbaseHTML.style.left = null;
             thisWbaseHTML.style.top = null;
@@ -1747,7 +1747,7 @@ function dragInstanceEnd(event) {
   let parent_wbase;
   let isTableParent = newParent.localName === "table";
   if (newParent.id?.length === 36) parent_wbase = wbase_list.find((e) => e.GID === newParent.id);
-  let drag_to_layout = window.getComputedStyle(newParent).display.match(/(flex|grid)/g);
+  let drag_to_layout = window.getComputedStyle(newParent).display.match("flex");
   let newWb = JSON.parse(JSON.stringify(select_component));
   newWb.GID = uuidv4();
   newWb.value = instance_drag.firstChild;

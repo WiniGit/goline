@@ -177,7 +177,7 @@ function createEditAlign() {
   let targetHTML = selected_list[0].value;
   let isEnable = false;
   if (selected_list.length > 1) {
-    isEnable = !window.getComputedStyle(targetHTML.parentElement).display.match(/(flex|grid)/g) || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
+    isEnable = !window.getComputedStyle(targetHTML.parentElement).display.match("flex") || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
   } else {
     isEnable = (!window.getComputedStyle(targetHTML).display.match(/(flex|grid|table)/g) && selected_list[0].CountChild > 0) || !window.getComputedStyle(targetHTML.parentElement).display.match(/(flex|grid|table)/g) || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
     if (selected_list[0].ParentID === wbase_parentID && (selected_list[0].CountChild === 0 || selected_list[0].WAutolayoutItem)) {
@@ -335,7 +335,7 @@ function createEditSizePosition() {
   };
   editXYRow.replaceChildren(edit_left, edit_top);
   let parentHTML = document.getElementById(select_box_parentID);
-  if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("cateid") == cate) && window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+  if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("cateid") == cate) && window.getComputedStyle(parentHTML).display.match("flex")) {
     let isFixPos = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
     let iconFixPos = document.createElement("img");
     iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/fix_position.svg";
@@ -402,7 +402,7 @@ function createEditSizePosition() {
     selected_list.every((e) => {
       // các scale component luôn cần có size cố định
       if (EnumCate.scale_size_component.some((cate) => e.CateID === cate)) return false;
-      return e.WAutolayoutItem || (e.value.parentElement && window.getComputedStyle(e.value.parentElement).display.match(/(flex|grid)/g));
+      return e.WAutolayoutItem || (e.value.parentElement && window.getComputedStyle(e.value.parentElement).display.match("flex"));
     })
   ) {
     // third line contain btn select resizing type width height (fixed width height, fit content, fill container)
@@ -656,7 +656,7 @@ function updateInputTLWH() {
     edit_height.lastChild.value = list_height.length == 1 ? list_height[0] : "Mixed";
     //
     let parentHTML = document.getElementById(select_box_parentID);
-    if (parentHTML && window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g) && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
+    if (parentHTML && window.getComputedStyle(parentHTML).display.match("flex") && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
       edit_left.style.pointerEvents = "none";
       edit_top.style.pointerEvents = "none";
       edit_left.lastChild.disabled = true;
@@ -691,7 +691,7 @@ function updateInputTLWH() {
     // update button select resizing type
     let btn_resize_with_height = document.getElementsByClassName("btn_resize");
     if (btn_resize_with_height.length > 0) {
-      if (selected_list.every((e) => e.WAutolayoutItem || (!e.StyleItem.PositionItem.FixPosition && window.getComputedStyle(e.value.parentElement).display.match(/(flex|grid)/g)))) {
+      if (selected_list.every((e) => e.WAutolayoutItem || (!e.StyleItem.PositionItem.FixPosition && window.getComputedStyle(e.value.parentElement).display.match("flex")))) {
         btn_resize_with_height[0].parentElement.style.display = "flex";
         for (let option of btn_resize_with_height) {
           if (option.className.includes("width")) {
@@ -1196,7 +1196,7 @@ function createConstraints() {
 
   if (select_box_parentID !== wbase_parentID) {
     let parentHTML = document.getElementById(select_box_parentID);
-    if (parentHTML.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g)) {
+    if (parentHTML.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match("flex")) {
       let fixPosRow = document.createElement("div");
       fixPosRow.className = "row";
       fixPosRow.style.margin = "8px 0 0 8px";

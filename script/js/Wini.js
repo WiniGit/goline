@@ -947,7 +947,7 @@ function moveListener(event) {
                   removeAllRectHovers();
                 }
                 let isInFlex = false;
-                if (select_box_parentID != wbase_parentID) isInFlex = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g);
+                if (select_box_parentID != wbase_parentID) isInFlex = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
                 switch (tool_state) {
                   case ToolState.resize_left:
                     for (let i = 0; i < selected_list.length; i++) {
@@ -1393,7 +1393,7 @@ function moveListener(event) {
                     if (checkpad === 0) {
                       drag_start_list = [];
                       let isFixedWhenScroll = false;
-                      if (select_box_parentID !== wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g)) {
+                      if (select_box_parentID !== wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) {
                         isFixedWhenScroll = true;
                       }
                       selected_list.forEach((wbase) => {
@@ -2595,7 +2595,7 @@ function upListener(event) {
     case EnumEvent.edit:
       let enumObj = EnumObj.framePosition;
       let isInFlex = false;
-      if (select_box_parentID != wbase_parentID) isInFlex = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid)/g);
+      if (select_box_parentID != wbase_parentID) isInFlex = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
       for (let wbaseItem of selected_list) {
         let eHTML = wbaseItem.value;
         if (wbaseItem.CateID == EnumCate.tool_text) {
