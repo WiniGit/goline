@@ -355,8 +355,7 @@ const setSizeObserver = new MutationObserver((mutationList) => {
       initElement(targetWbase);
     } else if (mutation.type === "childList" && window.getComputedStyle(targetWbase).display.includes("flex")) {
       targetWbase.querySelectorAll(`.col-[level="${parseInt(targetWbase.getAttribute("level")) + 1}"]`).forEach((childCol) => {
-        childCol.style.setProperty("--spacing", targetWbase.style.flexDirection == "column" ? targetWbase.style.rowGap : targetWbase.style.columnGap);
-        childCol.style.setProperty("--count-child", targetWbase.childElementCount);
+        childCol.style.setProperty("--gutter", targetWbase.style.flexDirection == "column" ? targetWbase.style.rowGap : targetWbase.style.columnGap);
       });
     }
     if (mutation.attributeName === "style") {
@@ -581,55 +580,36 @@ async function callAPI(request) {
 }
 
 function initPositionStyle(item) {
-  item.value.style.position = "absolute";
   if (item.ParentID === wbase_parentID) item.StyleItem.PositionItem.FixPosition = false;
   if (item.StyleItem.PositionItem.FixPosition) $(item.value).addClass("fixed-position");
   let valueL = item.StyleItem.PositionItem.Left;
   let valueT = item.StyleItem.PositionItem.Top;
   if (item.ParentID === wbase_parentID) {
-    if (isNaN(valueL)) {
-      item.value.style.left = valueL;
-    } else {
-      item.value.style.left = valueL + "px";
-    }
-    item.value.style.right = null;
-    if (isNaN(valueT)) {
-      item.value.style.top = valueT;
-    } else {
-      item.value.style.top = valueT + "px";
-    }
-    item.value.style.bottom = null;
+    item.value.style.left = valueL;
+
+    item.value.style.top = valueT;
+
     item.value.style.transform = null;
   } else {
     let valueR = item.StyleItem.PositionItem.Right;
     let valueB = item.StyleItem.PositionItem.Bottom;
     switch (item.StyleItem.PositionItem.ConstraintsX) {
       case Constraints.left:
-        if (isNaN(valueL)) item.value.style.left = valueL;
-        else item.value.style.left = valueL + "px";
+        item.value.style.left = valueL;
         handleStyleSize(item);
         item.value.style.right = null;
         item.value.style.transform = null;
         break;
       case Constraints.right:
-        if (isNaN(valueR)) item.value.style.right = valueR;
-        else item.value.style.right = valueR + "px";
+        item.value.style.right = valueR;
         handleStyleSize(item);
         item.value.style.left = null;
         item.value.style.transform = null;
         break;
       case Constraints.left_right:
-        if (isNaN(valueL)) {
-          item.value.style.left = valueL;
-        } else {
-          item.value.style.left = valueL + "px";
-        }
-        if (isNaN(valueR)) {
-          item.value.style.right = valueR;
-        } else {
-          item.value.style.right = valueR + "px";
-        }
-        item.value.style.width = "auto";
+        item.value.style.left = valueL;
+        item.value.style.right = valueR;
+        item.value.style.width = null;
         item.value.style.transform = null;
         break;
       case Constraints.center:
@@ -639,7 +619,7 @@ function initPositionStyle(item) {
       case Constraints.scale:
         item.value.style.left = valueL;
         item.value.style.right = valueR;
-        item.value.style.width = "auto";
+        item.value.style.width = null;
         item.value.style.transform = null;
         break;
       default:
@@ -647,29 +627,19 @@ function initPositionStyle(item) {
     }
     switch (item.StyleItem.PositionItem.ConstraintsY) {
       case Constraints.top:
-        if (isNaN(valueT)) item.value.style.top = valueT;
-        else item.value.style.top = valueT + "px";
+        item.value.style.top = valueT;
         handleStyleSize(item);
         item.value.style.bottom = null;
         break;
       case Constraints.bottom:
-        if (isNaN(valueB)) item.value.style.bottom = valueB;
-        else item.value.style.bottom = valueB + "px";
+        item.value.style.bottom = valueB;
         handleStyleSize(item);
         item.value.style.top = null;
         break;
       case Constraints.top_bottom:
-        if (isNaN(valueT)) {
-          item.value.style.top = valueT;
-        } else {
-          item.value.style.top = valueT + "px";
-        }
-        if (isNaN(valueB)) {
-          item.value.style.bottom = valueB;
-        } else {
-          item.value.style.bottom = valueB + "px";
-        }
-        item.value.style.height = "auto";
+        item.value.style.top = valueT;
+        item.value.style.bottom = valueB;
+        item.value.style.height = null;
         break;
       case Constraints.center:
         item.value.style.top = `calc(50% + ${valueB})`;
@@ -680,7 +650,7 @@ function initPositionStyle(item) {
       case Constraints.scale:
         item.value.style.top = valueT;
         item.value.style.bottom = valueB;
-        item.value.style.height = "auto";
+        item.value.style.height = null;
         break;
       default:
         break;
@@ -689,16 +659,12 @@ function initPositionStyle(item) {
 }
 
 function initWbaseStyle(item) {
-  item.value.style.boxSizing = "border-box";
   if (item.StyleItem.FrameItem) {
     handleStyleSize(item);
   }
   if (item.StyleItem.DecorationItem) {
     if (EnumCate.noImgBg.every((cate) => item.CateID != cate) && item.AttributesItem.Content && item.AttributesItem.Content.trim() != "") {
       item.value.style.backgroundImage = `url(${urlImg + item.AttributesItem.Content.replaceAll(" ", "%20")})`;
-      item.value.style.backgroundRepeat = "no-repeat";
-      item.value.style.backgroundSize = "cover";
-      item.value.style.backgroundPosition = "center";
     }
     if (item.StyleItem.DecorationItem.ColorValue) {
       let color_value = item.StyleItem.DecorationItem.ColorValue;
@@ -754,9 +720,9 @@ function handleStyleSize(item) {
   } else if (item.StyleItem.FrameItem.Width < 0) {
     item.value.style.width = "100%";
   } else {
+    if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
     if ([Constraints.left, Constraints.right, Constraints.center].some((constX) => item.StyleItem.PositionItem.ConstraintsX === constX)) {
       item.value.style.width = `${item.StyleItem.FrameItem.Width}px`;
-      // item.value.style.minWidth = `${item.StyleItem.FrameItem.Width}px`;
     }
   }
   if (item.StyleItem.FrameItem.Height == undefined) {
@@ -771,7 +737,6 @@ function handleStyleSize(item) {
         item.value.style.height = `${item.StyleItem.FrameItem.Height * ([...item.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1)}px`;
       } else {
         item.value.style.height = `${item.StyleItem.FrameItem.Height}px`;
-        // item.value.style.minHeight = `${item.StyleItem.FrameItem.Height}px`;
       }
     }
   }
@@ -797,11 +762,7 @@ function handleStyleSize(item) {
 
 function handleStyleLayout(wbaseItem, onlyPadding = false) {
   if (onlyPadding) {
-    if (EnumCate.data_component.some((cate) => wbaseItem.CateID === cate)) {
-      wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
-    } else {
-      wbaseItem.value.style.padding = `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`;
-    }
+    wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
     return;
   }
   if (wbaseItem.CateID === EnumCate.table) {
@@ -813,39 +774,33 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     wbaseItem.value.style.setProperty("--gap", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
   } else {
     let isRow = wbaseItem.WAutolayoutItem.Direction === "Horizontal";
-    let thisClassList = [...wbaseItem.value.classList].filter((clName) => clName != "grid-layout");
-    if (wbaseItem.WAutolayoutItem.IsWrap && isRow) {
-      thisClassList.push("grid-layout");
-      wbaseItem.value.style.flexDirection = null;
-      wbaseItem.value.style.flexWrap = null;
-    } else {
-      wbaseItem.value.style.display = "flex";
-      wbaseItem.value.style.flexDirection = isRow ? "row" : "column";
-      wbaseItem.value.style.flexWrap = wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap";
-    }
-    wbaseItem.value.className = thisClassList.join(" ");
     if (isRow) {
-      if (wbaseItem.CateID === EnumCate.table) wbaseItem.value.setAttribute("direction", "row");
-      wbaseItem.value.style.columnGap = `${wbaseItem.WAutolayoutItem.ChildSpace}px`;
-      wbaseItem.value.style.rowGap = `${wbaseItem.WAutolayoutItem.RunSpace}px`;
-      wbaseItem.value.style.alignItems = wCrossAxis(wbaseItem.WAutolayoutItem.Alignment, true);
-      wbaseItem.value.style.justifyContent = wMainAxis(wbaseItem.WAutolayoutItem.Alignment, true);
+      $(wbaseItem.value).addClass("w-row");
     } else {
-      wbaseItem.value.style.rowGap = `${wbaseItem.WAutolayoutItem.ChildSpace}px`;
-      wbaseItem.value.style.columnGap = `${wbaseItem.WAutolayoutItem.RunSpace}px`;
-      wbaseItem.value.style.alignItems = wCrossAxis(wbaseItem.WAutolayoutItem.Alignment, false);
-      wbaseItem.value.style.justifyContent = wMainAxis(wbaseItem.WAutolayoutItem.Alignment, false);
+      $(wbaseItem.value).addClass("w-col");
     }
+    wbaseItem.value.style.setProperty("--flex-wrap", wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap");
+    wbaseItem.value.style.setProperty("--child-space", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
+    wbaseItem.value.style.setProperty("--run-space", `${wbaseItem.WAutolayoutItem.RunSpace}px`);
+    wbaseItem.value.style.setProperty("--main-axis-align", wMainAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
+    wbaseItem.value.style.setProperty("--cross-axis-align", wCrossAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
     wbaseItem.value.querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`).forEach((childCol) => {
-      childCol.style.setProperty("--spacing", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
-      childCol.style.setProperty("--count-child", wbaseItem.CountChild);
+      childCol.style.setProperty("--guttter", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
     });
-    if (EnumCate.data_component.some((cate) => wbaseItem.CateID === cate)) {
-      wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
-    } else {
-      wbaseItem.value.style.padding = `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`;
-    }
+    wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
   }
+}
+
+function removeAutoLayoutProperty(eHTML) {
+  eHTML.style.removeProperty("--flex-wrap");
+  eHTML.style.removeProperty("--child-space");
+  eHTML.style.removeProperty("--run-space");
+  eHTML.style.removeProperty("--main-axis-align");
+  eHTML.style.removeProperty("--cross-axis-align");
+  eHTML.querySelectorAll(`.col-[level="${parseInt(eHTML.getAttribute("level")) + 1}"]`).forEach((childCol) => {
+    childCol.style.removeProperty("--guttter");
+  });
+  eHTML.style.removeProperty("--padding");
 }
 
 function addStyleComponents(item, elements) {

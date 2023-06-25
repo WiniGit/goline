@@ -42,6 +42,7 @@ async function initData() {
     await initComponents(item, children);
   }
   console.log("out handle data: ", Date.now());
+  centerViewInitListener();
   if (PageDA.obj.scale !== undefined) {
     topx = PageDA.obj.topx;
     leftx = PageDA.obj.leftx;
@@ -55,17 +56,16 @@ async function initData() {
   } else {
     initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
   }
-  divSection.querySelectorAll(`.wbaseItem-value[cateid="${EnumCate.tool_text}"]`).forEach((eText) => {
-    let newSize = calcTextNode(eText);
-    eText.style.minWidth = newSize.width + "px";
-    eText.style.minHeight = newSize.height + "px";
-  });
+  // divSection.querySelectorAll(`.wbaseItem-value[cateid="${EnumCate.tool_text}"]`).forEach((eText) => {
+  //   let newSize = calcTextNode(eText);
+  //   eText.style.minWidth = newSize.width + "px";
+  //   eText.style.minHeight = newSize.height + "px";
+  // });
   document.getElementById("body").querySelector(".loading-view").remove();
   setupRightView();
   setupLeftView();
   [...document.getElementById("btn_select_page").childNodes].find((e) => e.localName == "p").innerHTML = PageDA.obj.Name;
   console.log("show done: ", Date.now());
-  centerViewInitListener();
   setTimeout(function () {
     toolStateChange(ToolState.move);
   }, 80);
@@ -308,7 +308,7 @@ function createWbaseHTML(rect_box, newObj) {
         newParent = document.getElementById(new_obj.ParentID);
         newListID = newParent.getAttribute("listid") + `,${new_obj.ParentID}`;
       }
-      let listNewWbase = createNewWbase(new_obj, relativeWbase, newListID, newParent.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParent.getAttribute("level")??"0") + 1}"]`).length);
+      let listNewWbase = createNewWbase(new_obj, relativeWbase, newListID, newParent.querySelectorAll(`.wbaseItem-value[level="${parseInt(newParent.getAttribute("level") ?? "0") + 1}"]`).length);
       listNewWbase.forEach((wbaseItem) => {
         initComponents(
           wbaseItem,
@@ -622,8 +622,8 @@ function dragWbaseUpdate(xp, yp, event) {
   } else if (window.getComputedStyle(parentHTML).display.match(/(flex|grid)/g) && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
     console.log("flex|grid");
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
-    let isGrid = window.getComputedStyle(parentHTML).display.match("grid");
-    if (parentHTML.style.flexDirection === "column") {
+    let isGrid = window.getComputedStyle(parentHTML).flexWrap.match("wrap");
+    if (parentHTML.classList.contains("w-col")) {
       let zIndex = 0;
       let distance = 0;
       if (children.length > 0) {
@@ -685,11 +685,6 @@ function dragWbaseUpdate(xp, yp, event) {
             let selectHTML = selected_list[i].value;
             $(selectHTML).removeClass("drag-hide");
             selectHTML.style.position = null;
-            selectHTML.style.left = null;
-            selectHTML.style.top = null;
-            selectHTML.style.right = null;
-            selectHTML.style.bottom = null;
-            selectHTML.style.transform = null;
             selected_list[i].Sort = zIndex + i;
             selectHTML.style.zIndex = zIndex + i;
             selectHTML.style.order = zIndex + i;
@@ -774,12 +769,6 @@ function dragWbaseUpdate(xp, yp, event) {
           for (let i = 0; i < selected_list.length; i++) {
             let selectHTML = selected_list[i].value;
             $(selectHTML).removeClass("drag-hide");
-            selectHTML.style.position = null;
-            selectHTML.style.left = null;
-            selectHTML.style.top = null;
-            selectHTML.style.right = null;
-            selectHTML.style.bottom = null;
-            selectHTML.style.transform = null;
             selected_list[i].Sort = zIndex + i;
             selectHTML.style.zIndex = zIndex + i;
             selectHTML.style.order = zIndex + i;
@@ -806,9 +795,9 @@ function dragWbaseUpdate(xp, yp, event) {
     }
   } else {
     console.log("stack");
-    let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
     let zIndex;
-    if (drag_start_list[0].ParentID != new_parentID) {
+    if (drag_start_list[0].ParentID != new_parentID && select_box_parentID != new_parentID) {
+      let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
       if (children.length > 0) {
         zIndex =
           Math.max(
@@ -822,30 +811,25 @@ function dragWbaseUpdate(xp, yp, event) {
     }
     for (let i = 0; i < selected_list.length; i++) {
       let selectHTML = selected_list[i].value;
-      selectHTML.style.position = "absolute";
       $(selectHTML).removeClass("drag-hide");
-      if (zIndex) {
-        selectHTML.style.zIndex = zIndex + i;
-        selectHTML.style.order = zIndex + i;
-        selected_list[i].Sort = zIndex + i;
-      } else {
-        selectHTML.style.zIndex = drag_start_list[i].Sort;
-        selectHTML.style.order = drag_start_list[i].Sort;
-        selected_list[i].Sort = drag_start_list[i].Sort;
-      }
       selected_list[i].StyleItem.PositionItem.Left = `${parseFloat(`${drag_start_list[i].StyleItem.PositionItem.Left}`.replace("px", "")) + xp + parent_offset1.x - offsetp.x}px`;
       selected_list[i].StyleItem.PositionItem.Top = `${parseFloat(`${drag_start_list[i].StyleItem.PositionItem.Top}`.replace("px", "")) + yp + parent_offset1.y - offsetp.y}px`;
       selectHTML.style.left = selected_list[i].StyleItem.PositionItem.Left;
       selectHTML.style.top = selected_list[i].StyleItem.PositionItem.Top;
-      selectHTML.style.right = null;
-      selectHTML.style.bottom = null;
-      selectHTML.style.transform = null;
       if (selectHTML.parentElement !== parentHTML) {
+        if (zIndex) {
+          selectHTML.style.zIndex = zIndex + i;
+          selectHTML.style.order = zIndex + i;
+          selected_list[i].Sort = zIndex + i;
+        } else {
+          selectHTML.style.zIndex = drag_start_list[i].Sort;
+          selectHTML.style.order = drag_start_list[i].Sort;
+          selected_list[i].Sort = drag_start_list[i].Sort;
+        }
+        selectHTML.style.right = null;
+        selectHTML.style.bottom = null;
+        selectHTML.style.transform = null;
         parentHTML.appendChild(selectHTML);
-      }
-      if (new_parentID === wbase_parentID) {
-        selected_list[i].ParentID = wbase_parentID;
-      } else {
         selected_list[i].ParentID = new_parentID;
       }
     }

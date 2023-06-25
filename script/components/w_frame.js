@@ -3,7 +3,6 @@ function createFrameHTML(item, data) {
   $(item.value).addClass("w-frame");
   if (item.WAutolayoutItem) {
     item.value.replaceChildren(...data.map((child) => {
-      child.value.style.position = null;
       if (child.StyleItem.PositionItem.FixPosition) {
         initPositionStyle(child);
       } else if (item.WAutolayoutItem.Direction === "Vertical" && child.value.style.height == "100%")
@@ -13,14 +12,10 @@ function createFrameHTML(item, data) {
       return child.value;
     }));
   } else {
-    item.value.style.position = null;
+    $(item.value).addClass("w-stack")
     item.value.replaceChildren(...data.map((child) => {
       initPositionStyle(child);
-      child.value.style.setProperty("--spacing", `0px`);
-      child.value.style.setProperty("--count-child", item.CountChild);
       return child.value;
     }));
   }
-  if (item.build && item.Level === 1)
-    $(item.value).addClass("w-page");
 }

@@ -138,6 +138,30 @@
 .layer_wbase_tile > .prefix-btn {
   pointer-events: none;
   visibility: hidden;
+  padding: 12px 6px;
+  box-sizing: border-box;
+}
+
+.layer_wbase_tile > img {
+  width: 16px;
+  height: 16px;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component_black.svg);
+}
+
+:matches(.layer_wbase_tile[cateid="140"],.layer_wbase_tile[cateid="128"]) > img {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_black.svg) !important;
+}
+.layer_wbase_tile[cateid="138"] > img {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rectangle_black.svg) !important;
+}
+.layer_wbase_tile[cateid="139"] > img {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text_black.svg) !important;
+}
+.layer_wbase_tile[cateid="238"] > img {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/multiple_component.svg) !important;
+}
+.layer_wbase_tile[iswini="true"]:not(.layer_wbase_tile[cateid="238"]) > img {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/component.svg) !important;
 }
 
 .layer_wbase_tile:has(> .fa-caret-down) + .col {
@@ -147,6 +171,12 @@
 .col:has(> .col:not(:empty)) > .layer_wbase_tile > .prefix-btn {
   pointer-events: auto !important;
   visibility: visible !important;
+}
+
+#Assets > .col > .col {
+  width: 100%;
+  overflow: scroll;
+  flex: 1;
 }
 
 #search_input_assets {

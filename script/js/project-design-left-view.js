@@ -406,14 +406,13 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   wbase_tile.id = `wbaseID:${wbaseItem.GID}`;
   wbase_tile.className = "layer_wbase_tile";
   wbase_tile.setAttribute("cateid", wbaseItem.CateID);
+  wbase_tile.setAttribute("iswini", wbaseItem.IsWini);
   layerContainer.appendChild(wbase_tile);
 
   let isShowListChid = isShowChildren;
   let icon_caret_right = document.createElement("i");
   icon_caret_right.id = `pefixAction:${wbaseItem.GID}`;
   icon_caret_right.className = `fa-solid fa-caret-${isShowListChid ? "down" : "right"} fa-xs prefix-btn`;
-  icon_caret_right.style.padding = "12px 6px";
-  icon_caret_right.style.boxSizing = "border-box";
   icon_caret_right.style.marginLeft = `${(wbaseItem.Level - 1) * 16}px`;
   icon_caret_right.addEventListener("click", function () {
     isShowListChid = !this.className.includes("caret-down");
@@ -426,29 +425,6 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   wbase_tile.appendChild(icon_caret_right);
   let icon_wbase = document.createElement("img");
   wbase_tile.appendChild(icon_wbase);
-  if (wbaseItem.IsWini && wbaseItem.CateID != EnumCate.tool_variant) {
-    icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/component.svg";
-  } else {
-    switch (wbaseItem.CateID) {
-      case EnumCate.tool_frame:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_black.svg";
-        break;
-      case EnumCate.tool_rectangle:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rectangle_black.svg";
-        break;
-      case EnumCate.tool_text:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text_black.svg";
-        break;
-      case EnumCate.tool_variant:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/multiple_component.svg";
-        break;
-      default:
-        icon_wbase.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component_black.svg";
-        break;
-    }
-  }
-  icon_wbase.style.width = "16px";
-  icon_wbase.style.height = "16px";
   icon_wbase.ondblclick = function (e) {
     e.stopPropagation();
     let objCenter = document.getElementById(wbaseItem.GID);
@@ -456,7 +432,7 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
     centerRect = offsetScale(centerRect.x + centerRect.width / 2, centerRect.y + centerRect.height / 2);
     divSection.style.transition = "1s";
     scrollbdClick(centerRect.x, centerRect.y, objCenter.offsetWidth, objCenter.offsetHeight);
-    divSection.style.transition = "none";
+    divSection.style.transition = null;
     updateHoverWbase();
     PageDA.saveSettingsPage();
     if (wbaseItem.CateID !== EnumCate.textfield) addSelectList([wbaseItem]);
@@ -592,9 +568,6 @@ async function initUIAssetView(reloadComponent = false) {
     component_div.className = "col";
     let scroll_div = document.createElement("div");
     scroll_div.className = "col";
-    scroll_div.style.overflowY = "scroll";
-    scroll_div.style.height = "100%";
-    scroll_div.style.flex = 1;
     let instance_div = document.createElement("div");
     // create list component tile assets view
     let search_container = document.createElement("div");
@@ -963,9 +936,10 @@ function ondragSortLayer(event) {
             preAction.className = preAction.className.replace("caret-right", "caret-down");
           }
         }
-        let childHTML = [...wbaseHTML.querySelectorAll(`:scope > .wbaseItem-value[level="1"]`)];
+        let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level")??"0") + 1}"]`)];
         sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))));
         sortLayer.setAttribute("parentid", wbaseID);
+        console.log("children-----")
       } else if (Math.abs(event.pageY - rectTopY) <= Math.abs(event.pageY - rectBotY)) {
         // drag to abbove of layer
         sortLayer.removeAttribute("time");
@@ -985,7 +959,7 @@ function ondragSortLayer(event) {
         let spacing = (sortWbase.Level - 1) * 16;
         if (preAction.className.includes("caret-down")) {
           spacing += 16;
-          let childHTML = [...wbaseHTML.querySelectorAll(`:scope > .wbaseItem-value[level="1"]`)];
+          let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level")??"0") + 1}"]`)];
           sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))) + 1);
           sortLayer.setAttribute("parentid", wbaseID);
         } else {

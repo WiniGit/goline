@@ -5,7 +5,7 @@ function setupRightView() {
     list_tab_view[i].onclick = function () {
       design_view_index = $(this).data("index");
       tabChange(this.innerHTML, "right_tab_view");
-                wdraw();
+      wdraw();
       let list_tab_view = document.getElementsByClassName("tab_right");
       for (let j = 0; j < list_tab_view.length; j++) {
         list_tab_view[j].style.opacity = 0.7;
@@ -138,42 +138,36 @@ function createEditAlign() {
   editAlignContainer.id = "edit_align_div";
   let listAlignItem = [
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_left.svg",
       onclick: function () {
         alignPosition("align left");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_horizontal_center.svg",
       onclick: function () {
         alignPosition("align horizontal center");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_right.svg",
       onclick: function () {
         alignPosition("align right");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_top.svg",
       onclick: function () {
         alignPosition("align top");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_vertical_center.svg",
       onclick: function () {
         alignPosition("align vertical center");
         updateUIEditPosition();
       },
     },
     {
-      scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_bottom.svg",
       onclick: function () {
         alignPosition("align bottom");
         updateUIEditPosition();
@@ -192,7 +186,6 @@ function createEditAlign() {
   }
   for (let alignItem of listAlignItem) {
     let btnAlign = document.createElement("img");
-    btnAlign.src = alignItem.scr;
     btnAlign.className = "img-button size-32";
     btnAlign.style.opacity = isEnable ? 1 : 0.4;
     if (isEnable) btnAlign.onclick = alignItem.onclick;
@@ -200,22 +193,11 @@ function createEditAlign() {
   }
   let btn_extend = document.createElement("div");
   btn_extend.className = "img-button";
-  btn_extend.style.width = "40px";
-  btn_extend.style.height = "32px";
-  btn_extend.style.boxSizing = "border-box";
-  btn_extend.style.position = "relative";
   let icon_extend = document.createElement("img");
-  icon_extend.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/extend_align.svg";
   icon_extend.className = "img-button size-32";
-  icon_extend.style.padding = "0";
   let icon_down = document.createElement("i");
   icon_down.className = "fa-solid fa-chevron-down fa-2xs";
-  icon_down.style.position = "absolute";
-  icon_down.style.right = "2px";
-  icon_down.style.top = "50%";
-  icon_down.style.transform = "translate(0, -50%)";
-  btn_extend.appendChild(icon_extend);
-  btn_extend.appendChild(icon_down);
+  btn_extend.replaceChildren(icon_extend, icon_down);
   editAlignContainer.appendChild(btn_extend);
   return editAlignContainer;
 }
@@ -441,7 +423,7 @@ function createEditSizePosition() {
     let icon_resize_w = _btnSelectResizeType(true, initResizeW);
     icon_resize_w.style.marginRight = "8px";
     let initResizeH = "fixed";
-     if (selected_list.every((e) => e.value.style.height == "100%")) {
+    if (selected_list.every((e) => e.value.style.height == "100%")) {
       initResizeH = "fill";
     } else if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
       initResizeH = "hug";
@@ -1447,53 +1429,34 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
 // create alignment type table UI
 function _alignTable(isVertical = true, value) {
   let alignment_type = document.createElement("div");
-  alignment_type.style.width = "64px";
-  alignment_type.style.height = "64px";
-  alignment_type.style.margin = "0 32px 0 56px";
-  alignment_type.style.border = "1.5px solid #e5e5e5";
-  alignment_type.style.borderRadius = "4px";
-  alignment_type.style.position = "relative";
-  let top_left = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "left vertical" : "top horizontal"}.svg`);
+  alignment_type.className = "layout-align-table";
+  alignment_type.setAttribute("oy", isVertical);
+  let top_left = _btnAlignType();
   top_left.id = AlignmentType.top_left;
-  top_left.style.top = "0";
-  top_left.style.left = "0";
-  let top_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "center vertical" : "top horizontal"}.svg`);
+  //
+  let top_center = _btnAlignType();
   top_center.id = AlignmentType.top_center;
-  top_center.style.top = "0";
-  top_center.style.left = "50%";
-  top_center.style.transform = "translate(-50%, 0)";
-  let top_right = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "right vertical" : "top horizontal"}.svg`);
+  //
+  let top_right = _btnAlignType();
   top_right.id = AlignmentType.top_right;
-  top_right.style.top = "0";
-  top_right.style.right = "0";
-  let left_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "left vertical" : "center horizontal"}.svg`);
+  //
+  let left_center = _btnAlignType();
   left_center.id = AlignmentType.left_center;
-  left_center.style.left = "0";
-  left_center.style.top = "50%";
-  left_center.style.transform = "translate(0, -50%)";
-  let center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "center vertical" : "center horizontal"}.svg`);
+  //
+  let center = _btnAlignType();
   center.id = AlignmentType.center;
-  center.style.left = "50%";
-  center.style.top = "50%";
-  center.style.transform = "translate(-50%, -50%)";
-  let right_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "right vertical" : "center horizontal"}.svg`);
+  //
+  let right_center = _btnAlignType();
   right_center.id = AlignmentType.right_center;
-  right_center.style.right = "0";
-  right_center.style.top = "50%";
-  right_center.style.transform = "translate(0, -50%)";
-  let bottom_left = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "left vertical" : "bottom horizontal"}.svg`);
+  //
+  let bottom_left = _btnAlignType();
   bottom_left.id = AlignmentType.bottom_left;
-  bottom_left.style.left = "0";
-  bottom_left.style.bottom = "0";
-  let bottom_center = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "center vertical" : "bottom horizontal"}.svg`);
+  //
+  let bottom_center = _btnAlignType();
   bottom_center.id = AlignmentType.bottom_center;
-  bottom_center.style.left = "50%";
-  bottom_center.style.bottom = "0";
-  bottom_center.style.transform = "translate(-50%, 0)";
-  let bottom_right = _btnAlignType(`https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "right vertical" : "bottom horizontal"}.svg`);
+  //
+  let bottom_right = _btnAlignType();
   bottom_right.id = AlignmentType.bottom_right;
-  bottom_right.style.bottom = "0";
-  bottom_right.style.right = "0";
   [top_left, top_center, top_right, left_center, center, right_center, bottom_left, bottom_center, bottom_right].forEach((alignBtn) => {
     if (value == alignBtn.id) {
       alignBtn.style.opacity = 1;
@@ -1503,10 +1466,9 @@ function _alignTable(isVertical = true, value) {
   return alignment_type;
 }
 
-function _btnAlignType(src) {
+function _btnAlignType() {
   let img = document.createElement("img");
   img.className = "layout_btn_align_type";
-  img.src = src;
   img.onclick = function () {
     let list_align_type = document.getElementsByClassName("layout_btn_align_type");
     for (alignType of list_align_type) {
@@ -6000,8 +5962,7 @@ function colNumberByBrp(enable = true) {
         for (let wbaseItem of selected_list) {
           wbaseItem.ListClassName = "col-";
           wbaseItem.value.className = `wbaseItem-value ${wbaseItem.ListClassName}`;
-          wbaseItem.value.style.setProperty("--spacing", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
-          wbaseItem.value.style.setProperty("--count-child", parentHTML.childElementCount);
+          wbaseItem.value.style.setProperty("--gutter", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
         }
         WBaseDA.edit(selected_list);
         updateUIEditPosition();
@@ -6040,8 +6001,7 @@ function colNumberByBrp(enable = true) {
                 for (let wbaseItem of selected_list) {
                   wbaseItem.ListClassName = copyBrpColSettings;
                   wbaseItem.value.className = `wbaseItem-value ${copyBrpColSettings}`;
-                  wbaseItem.value.style.setProperty("--spacing", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
-                  wbaseItem.value.style.setProperty("--count-child", parentHTML.childElementCount);
+                  wbaseItem.value.style.setProperty("--gutter", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
                 }
                 WBaseDA.edit(selected_list);
                 updateUIEditPosition();

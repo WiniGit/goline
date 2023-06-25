@@ -320,12 +320,12 @@ function createComponent() {
   for (let i = 0; i < un_component_list.length; i++) {
     un_component_list[i].IsWini = true;
     un_component_list[i].value.setAttribute("iswini", "true");
+    document.getElementById(`wbaseID:${un_component_list[i]}`).setAttribute("iswini", "true");
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);
-                wdraw();
+  wdraw();
   updateUIDesignView();
-  replaceAllLyerItemHTML();
 }
 
 function unComponent() {
@@ -333,12 +333,12 @@ function unComponent() {
   for (let i = 0; i < component_list.length; i++) {
     component_list[i].IsWini = false;
     component_list[i].value.removeAttribute("iswini");
+    document.getElementById(`wbaseID:${component_list[i]}`).removeAttribute("iswini");
   }
   assets_list = assets_list.filter((e) => component_list.every((wbaseItem) => wbaseItem.GID != e.GID));
   WBaseDA.edit(component_list, EnumObj.wBase);
-                wdraw();
+  wdraw();
   updateUIDesignView();
-  replaceAllLyerItemHTML();
 }
 
 function showImgDocument() {

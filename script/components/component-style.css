@@ -2,12 +2,54 @@
   pointer-events: none !important;
 }
 
-.wbaseItem-value:has(> .fixed-position) {
+/* .wbaseItem-value:has(> .fixed-position) {
   position: relative;
-}
+} */
 
 .wbaseItem-value[lock="true"] .wbaseItem-value {
   pointer-events: none !important;
+}
+
+.wbaseItem-value {
+  position: relative;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.wbaseItem-value.w-stack > * {
+  position: absolute !important;
+}
+
+.wbaseItem-value.w-col {
+  display: flex;
+  flex-direction: column;
+  align-items: var(--cross-axis-align);
+  justify-content: var(--main-axis-align);
+  row-gap: var(--child-space);
+  column-gap: var(--run-space);
+  flex-wrap: var(--flex-wrap);
+  padding: var(--padding);
+}
+
+:is(.wbaseItem-value.w-col, .wbaseItem-value.w-row) > .wbaseItem-value {
+  left: unset !important;
+  top: unset !important;
+  right: unset !important;
+  bottom: unset !important;
+  transform: unset !important;
+}
+
+.wbaseItem-value.w-row {
+  display: flex;
+  flex-direction: row;
+  align-items: var(--cross-axis-align);
+  justify-content: var(--main-axis-align);
+  column-gap: var(--child-space);
+  row-gap: var(--run-space);
+  flex-wrap: var(--flex-wrap);
+  padding: var(--padding);
 }
 
 .w-frame.w-page {
@@ -21,16 +63,6 @@
 
 .w-frame.w-page > .fixed-position {
   position: fixed !important;
-}
-
-.w-rect.wbaseItem-value {
-  box-sizing: border-box !important;
-}
-
-.wbaseItem-value.grid-layout {
-  display: grid !important;
-  grid-template-columns: repeat(24, 1fr);
-  grid-auto-rows: min-content;
 }
 
 .w-text {
@@ -73,9 +105,9 @@
   position: relative;
   display: inline-block;
   width: 36px;
-  height: fit-content !important;
-  min-height: fit-content !important;
-  aspect-ratio: 9 / 5 !important;
+  height: unset !important;
+  aspect-ratio: 9 / 5;
+  /* padding-top: calc(5 / 9 * 100%); */
   background-color: var(--unchecked-bg) !important;
   border-radius: 50vw !important;
   border: none;
@@ -147,6 +179,10 @@
 }
 
 /* textformfield */
+.textformfield {
+  position: relative;
+}
+
 .textformfield {
   border-radius: 4px;
   display: flex;

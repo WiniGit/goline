@@ -47,14 +47,14 @@ class ProjectDA {
         fetch("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/css/css_Responsive.txt")
             .then((response) => response.text()
                 .then((text) => {
-                    let colCss = text.replace(/(\.grid-layout ){0,1}\.{1}col[0-9]{1,2}/g, mtc => `.min-brp ${mtc}`);
-                    colCss += text.substring(text.indexOf(`/* .grid-layout */`)).replace(/(\.grid-layout ){1}\.{1}col[0-9]{1,2}/g, mtc => `.min-brp${mtc}`);
+                    let colCss = text.replace(/(\.w-grid ){0,1}\.{1}col[0-9]{1,2}/g, mtc => `.min-brp ${mtc}`);
+                    colCss += text.substring(text.indexOf(`/* .w-grid */`)).replace(/(\.w-grid ){1}\.{1}col[0-9]{1,2}/g, mtc => `.min-brp${mtc}`);
                     let localResponsive = ProjectDA.obj.ResponsiveJson ?? ProjectDA.responsiveJson;
                     for (let brp of localResponsive.BreakPoint) {
                         let thisCss = text;
                         let shortName = brp.Key.match(brpRegex).pop().replace(/[()]/g, "");
-                        colCss += thisCss.replace(/(\.grid-layout ){0,1}\.{1}col[0-9]{1,2}/g, mtc => `.${shortName} ${mtc}-${shortName}`);
-                        colCss += thisCss.substring(text.indexOf(`/* .grid-layout */`)).replace(/(\.grid-layout ){1}\.{1}col[0-9]{1,2}/g, mtc => `.${shortName}${mtc}-${shortName}`);
+                        colCss += thisCss.replace(/(\.w-grid ){0,1}\.{1}col[0-9]{1,2}/g, mtc => `.${shortName} ${mtc}-${shortName}`);
+                        colCss += thisCss.substring(text.indexOf(`/* .w-grid */`)).replace(/(\.w-grid ){1}\.{1}col[0-9]{1,2}/g, mtc => `.${shortName}${mtc}-${shortName}`);
                     }
                     document.getElementById("class-res").innerHTML = colCss;
                 }));

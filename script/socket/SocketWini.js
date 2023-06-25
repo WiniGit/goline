@@ -420,7 +420,7 @@ socket.on("server-get", (data) => {
         case EnumEvent.getProjectByID:
           ProjectDA.obj = data.data;
           if (ProjectDA.obj.ResponsiveJson) ProjectDA.obj.ResponsiveJson = JSON.parse(ProjectDA.obj.ResponsiveJson);
-          ProjectDA.initLayoutResponsive();
+          // ProjectDA.initLayoutResponsive();
           let projectTitle = document.getElementById("project_name");
           if (projectTitle) {
             projectTitle.innerHTML = ProjectDA.obj?.Name;
@@ -469,8 +469,8 @@ socket.on("server-get", (data) => {
             WiniIO.emitInit();
             permissionTool();
             initData();
+            CollectionDA.getListDocument();
             // TODO: next vesion code blow
-            // CollectionDA.getListDocument();
             // InputDA.init();
             // OutputDA.init();
           } catch (error) {

@@ -547,6 +547,44 @@ input[type="color"]::-webkit-color-swatch {
   margin-right: 2px;
 }
 
+#edit_align_div > .img-button:nth-child(1) {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_left.svg);
+}
+#edit_align_div > .img-button:nth-child(2) {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_horizontal_center.svg);
+}
+#edit_align_div > .img-button:nth-child(3) {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_right.svg);
+}
+#edit_align_div > .img-button:nth-child(4) {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_top.svg);
+}
+#edit_align_div > .img-button:nth-child(5) {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_vertical_center.svg);
+}
+#edit_align_div > .img-button:nth-child(6) {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_bottom.svg);
+}
+
+#edit_align_div > .img-button:last-child {
+  width: 40px;
+  height: 32px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+#edit_align_div > .img-button:last-child > img {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/extend_align.svg);
+  padding: 0;
+}
+
+#edit_align_div > .img-button:last-child > i {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 #div_frame_size_direction {
   display: inline-flex;
   width: 100%;
@@ -604,6 +642,15 @@ input[type="color"]::-webkit-color-swatch {
   border-color: #1890ff !important;
 }
 
+.layout-align-table {
+  width: 64px;
+  height: 64px;
+  margin: 0 32px 0 56px;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 4px;
+  position: relative;
+}
+
 .layout_btn_align_type {
   width: 20px;
   height: 20px;
@@ -613,6 +660,101 @@ input[type="color"]::-webkit-color-swatch {
 
 .layout_btn_align_type:hover {
   opacity: 0.5;
+}
+
+.layout-align-table > #TopLeft {
+  top: 0;
+  left: 0;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/top%20horizontal.svg);
+}
+
+.layout-align-table[oy="true"] > #TopLeft {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/left%20vertical.svg);
+}
+
+.layout-align-table > #TopCenter {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/top%20horizontal.svg);
+}
+
+.layout-align-table[oy="true"] > #TopCenter {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20vertical.svg);
+}
+
+.layout-align-table > #TopRight {
+  top: 0;
+  right: 0;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/top%20horizontal.svg);
+}
+
+.layout-align-table[oy="true"] > #TopRight {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/right%20vertical.svg);
+}
+
+.layout-align-table > #LeftCenter {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20horizontal.svg);
+}
+
+.layout-align-table[oy="true"] > #LeftCenter {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/left%20vertical.svg);
+}
+
+.layout-align-table > #Center {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20horizontal.svg);
+}
+
+.layout-align-table[oy="true"] > #Center {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20vertical.svg);
+}
+
+.layout-align-table > #RightCenter {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20horizontal.svg);
+}
+
+.layout-align-table[oy="true"] > #RightCenter {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/right%20vertical.svg);
+}
+
+.layout-align-table > #BottomLeft {
+  bottom: 0;
+  left: 0;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/bottom%20horizontal.svg);
+}
+
+.layout-align-table[oy="true"] > #BottomLeft {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/left%20vertical.svg);
+}
+
+.layout-align-table > #BottomCenter {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/bottom%20horizontal.svg);
+}
+
+.layout-align-table[oy="true"] > #BottomCenter {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20vertical.svg);
+}
+
+.layout-align-table > #BottomRight {
+  bottom: 0;
+  right: 0;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/bottom%20horizontal.svg);
+}
+
+.layout-align-table[oy="true"] > #BottomRight {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/right%20vertical.svg);
 }
 
 .text_field_right_view {

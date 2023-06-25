@@ -562,7 +562,7 @@ function selectResizeType(isW = true, type) {
         }
         break;
       case "fill":
-        if(parent_wbase) {
+        if (parent_wbase) {
           if (parent_wbase.StyleItem.FrameItem.Width == null) {
             parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
             parentHTML.style.width = `${parentHTML.offsetWidth}px`;
@@ -639,7 +639,7 @@ function selectResizeType(isW = true, type) {
         }
         break;
       case "fill":
-        if(parent_wbase) {
+        if (parent_wbase) {
           if (parent_wbase.StyleItem.FrameItem.Height == null) {
             parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
             parentHTML.style.height = `${parentHTML.offsetHeight}px`;
@@ -675,24 +675,27 @@ async function addAutoLayout() {
   };
   let new_padding_item = {
     GID: uuidv4(),
-    Top: 0,
-    Left: 0,
-    Right: 0,
-    Bottom: 0,
+    Top: 8,
+    Left: 8,
+    Right: 8,
+    Bottom: 8,
   };
   if (selected_list.length === 1 && EnumCate.extend_frame.some((cate) => cate === selected_list[0].CateID) && !selected_list[0].WAutolayoutItem) {
-    let eHTML = document.getElementById(selected_list[0].GID);
+    let eHTML = selected_list[0].value;
     selected_list[0].AutoLayoutID = new_auto_layout.GID;
     selected_list[0].WAutolayoutItem = new_auto_layout;
-    if (selected_list[0].StyleItem.PaddingID) {
-      new_padding_item.GID = selected_list[0].StyleItem.PaddingID;
-    } else {
-      selected_list[0].StyleItem.PaddingID = null;
-    }
+    selected_list[0].StyleItem.PaddingID = new_padding_item.GID;
     selected_list[0].StyleItem.PaddingItem = new_padding_item;
-    eHTML.style.padding = `${new_padding_item.Top}px ${new_padding_item.Right}px ${new_padding_item.Bottom}px ${new_padding_item.Left}px`;
-    eHTML.style.display = "flex";
-    if (selected_list[0].CountChild > 0 && !(select_box_parentID === wbase_parentID && selected_list[0].value.querySelectorAll(".col-").length > 0)) {
+    eHTML.style.setProperty("--padding", "8px");
+    if (selected_list[0].Level === 1 && new_auto_layout.Direction === "Horizontal") {
+      selected_list[0].StyleItem.FrameItem.Width = eHTML.offsetWidth;
+      if (selected_list[0].CountChild > 0) selected_list[0].StyleItem.FrameItem.Height = null;
+      eHTML.style.width = eHTML.offsetWidth + "px";
+    } else if (selected_list[0].Level === 1 && new_auto_layout.Direction === "Vertical") {
+      if (selected_list[0].CountChild > 0) selected_list[0].StyleItem.FrameItem.Width = null;
+      selected_list[0].StyleItem.FrameItem.Height = eHTML.offsetHeight;
+      eHTML.style.height = eHTML.offsetHeight + "px";
+    } else if (selected_list[0].CountChild > 0 && !(select_box_parentID === wbase_parentID && selected_list[0].value.querySelectorAll(".col-").length > 0)) {
       if (!(selected_list[0].StyleItem.FrameItem.Width < 0)) {
         selected_list[0].StyleItem.FrameItem.Width = null;
         eHTML.style.width = "fit-content";
@@ -702,37 +705,8 @@ async function addAutoLayout() {
         eHTML.style.height = "fit-content";
       }
     }
-    let isHorizontal = new_auto_layout.Direction == "Horizontal";
-    if (isHorizontal) {
-      eHTML.style.flexDirection = "row";
-      eHTML.style.columnGap = new_auto_layout.ChildSpace + "px";
-      eHTML.style.rowGap = new_auto_layout.RunSpace + "px";
-    } else {
-      eHTML.style.flexDirection = "column";
-      eHTML.style.rowGap = new_auto_layout.ChildSpace + "px";
-      eHTML.style.columnGap = new_auto_layout.RunSpace + "px";
-    }
-    eHTML.style.alignItems = wCrossAxis(new_auto_layout.Alignment, isHorizontal);
-    eHTML.style.justifyContent = wMainAxis(new_auto_layout.Alignment, isHorizontal);
-    eHTML.childNodes.forEach((childHTML) => {
-      childHTML.style.position = null;
-      childHTML.style.left = null;
-      childHTML.style.top = null;
-      childHTML.style.right = null;
-      childHTML.style.bottom = null;
-      childHTML.style.transform = null;
-    });
-    if (selected_list[0].Level === 1 && new_auto_layout.Direction === "Horizontal") {
-      selected_list[0].StyleItem.FrameItem.Width = eHTML.offsetWidth;
-      if (selected_list[0].CountChild > 0) selected_list[0].StyleItem.FrameItem.Height = null;
-      eHTML.style.width = eHTML.offsetWidth + "px";
-    } else if (selected_list[0].Level === 1 && new_auto_layout.Direction === "Vertical") {
-      if (selected_list[0].CountChild > 0) selected_list[0].StyleItem.FrameItem.Width = null;
-      selected_list[0].StyleItem.FrameItem.Height = eHTML.offsetHeight;
-      eHTML.style.height = eHTML.offsetHeight + "px";
-    }
+    handleStyleLayout(selected_list[0]);
     WBaseDA.edit(selected_list, EnumObj.padddingWbaseFrame);
-    selected_list[0].StyleItem.PaddingID = selected_list[0].StyleItem.PaddingItem.GID;
     addSelectList(selected_list);
   } else {
     let list_update = [...selected_list];
@@ -756,19 +730,13 @@ async function addAutoLayout() {
     new_wbase_item.Sort = selected_list[0].Sort;
     new_wbase_item.Level = selected_list[0].Level;
     for (let i = 0; i < selected_list.length; i++) {
-      let eHTML = document.getElementById(selected_list[i].GID);
+      let eHTML = selected_list[i].value;
       selected_list[i].ParentID = new_wbase_item.GID;
       selected_list[i].ListID += `,${new_wbase_item.GID}`;
       selected_list[i].Sort = i;
       selected_list[i].Level = selected_list[i].ListID.split(",").length;
       eHTML.setAttribute("level", selected_list[i].Level);
       eHTML.setAttribute("listid", selected_list[i].ListID);
-      eHTML.style.position = null;
-      eHTML.style.left = null;
-      eHTML.style.top = null;
-      eHTML.style.right = null;
-      eHTML.style.bottom = null;
-      eHTML.style.transform = null;
       eHTML.style.zIndex = i;
       eHTML.style.order = i;
       if (selected_list[i].CountChild > 0) {
@@ -996,55 +964,64 @@ function editLayoutStyle(auto_layout_item) {
       case "TopLeft":
         for (let i = 0; i < selected_list.length; i++) {
           selected_list[i].WAutolayoutItem.Alignment = "TopLeft";
-          handleStyleLayout(selected_list[i]);
+          selected_list[i].value.style.setProperty("--main-axis-align", wMainAxis("TopLeft", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
+          selected_list[i].value.style.setProperty("--cross-axis-align", wCrossAxis("TopLeft", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
         }
         break;
       case "TopCenter":
         for (let i = 0; i < selected_list.length; i++) {
           selected_list[i].WAutolayoutItem.Alignment = "TopCenter";
-          handleStyleLayout(selected_list[i]);
+          selected_list[i].value.style.setProperty("--main-axis-align", wMainAxis("TopCenter", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
+          selected_list[i].value.style.setProperty("--cross-axis-align", wCrossAxis("TopCenter", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
         }
         break;
       case "TopRight":
         for (let i = 0; i < selected_list.length; i++) {
           selected_list[i].WAutolayoutItem.Alignment = "TopRight";
-          handleStyleLayout(selected_list[i]);
+          selected_list[i].value.style.setProperty("--main-axis-align", wMainAxis("TopRight", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
+          selected_list[i].value.style.setProperty("--cross-axis-align", wCrossAxis("TopRight", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
         }
         break;
       case "LeftCenter":
         for (let i = 0; i < selected_list.length; i++) {
           selected_list[i].WAutolayoutItem.Alignment = "LeftCenter";
-          handleStyleLayout(selected_list[i]);
+          selected_list[i].value.style.setProperty("--main-axis-align", wMainAxis("LeftCenter", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
+          selected_list[i].value.style.setProperty("--cross-axis-align", wCrossAxis("LeftCenter", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
         }
         break;
       case "Center":
         for (let i = 0; i < selected_list.length; i++) {
           selected_list[i].WAutolayoutItem.Alignment = "Center";
-          handleStyleLayout(selected_list[i]);
+          selected_list[i].value.style.setProperty("--main-axis-align", wMainAxis("Center", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
+          selected_list[i].value.style.setProperty("--cross-axis-align", wCrossAxis("Center", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
         }
         break;
       case "RightCenter":
         for (let i = 0; i < selected_list.length; i++) {
           selected_list[i].WAutolayoutItem.Alignment = "RightCenter";
-          handleStyleLayout(selected_list[i]);
+          selected_list[i].value.style.setProperty("--main-axis-align", wMainAxis("RightCenter", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
+          selected_list[i].value.style.setProperty("--cross-axis-align", wCrossAxis("RightCenter", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
         }
         break;
       case "BottomLeft":
         for (let i = 0; i < selected_list.length; i++) {
           selected_list[i].WAutolayoutItem.Alignment = "BottomLeft";
-          handleStyleLayout(selected_list[i]);
+          selected_list[i].value.style.setProperty("--main-axis-align", wMainAxis("BottomLeft", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
+          selected_list[i].value.style.setProperty("--cross-axis-align", wCrossAxis("BottomLeft", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
         }
         break;
       case "BottomCenter":
         for (let i = 0; i < selected_list.length; i++) {
           selected_list[i].WAutolayoutItem.Alignment = "BottomCenter";
-          handleStyleLayout(selected_list[i]);
+          selected_list[i].value.style.setProperty("--main-axis-align", wMainAxis("BottomCenter", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
+          selected_list[i].value.style.setProperty("--cross-axis-align", wCrossAxis("BottomCenter", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
         }
         break;
       case "BottomRight":
         for (let i = 0; i < selected_list.length; i++) {
           selected_list[i].WAutolayoutItem.Alignment = "BottomRight";
-          handleStyleLayout(selected_list[i]);
+          selected_list[i].value.style.setProperty("--main-axis-align", wMainAxis("BottomRight", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
+          selected_list[i].value.style.setProperty("--cross-axis-align", wCrossAxis("BottomRight", selected_list[i].WAutolayoutItem.Direction === "Horizontal"));
         }
         break;
       default:
@@ -1102,7 +1079,7 @@ function editLayoutStyle(auto_layout_item) {
         elementHTML.style.rowGap = `${auto_layout_item.ChildSpace}px`;
       }
       elementHTML.querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`).forEach((childCol) => {
-        childCol.style.setProperty("--spacing", `${auto_layout_item.ChildSpace}px`);
+        childCol.style.setProperty("--gutter", `${auto_layout_item.ChildSpace}px`);
       });
     }
   }
