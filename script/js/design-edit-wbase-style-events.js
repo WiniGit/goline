@@ -1058,7 +1058,7 @@ function editLayoutStyle(auto_layout_item) {
     list_update.push(...selected_list);
     // thực hiện update cho list frame hoặc form có autoLayout
     for (let wbaseItem of selected_list) {
-      let elementHTML = document.getElementById(wbaseItem.GID);
+      let elementHTML = wbaseItem.value;
       // update giá trị childSpace mới ( khoảng cách giữa các phần tử con )
       wbaseItem.WAutolayoutItem.ChildSpace = auto_layout_item.ChildSpace;
       let is_horizontal = wbaseItem.WAutolayoutItem.Direction == "Horizontal";
@@ -1073,11 +1073,7 @@ function editLayoutStyle(auto_layout_item) {
           wbaseItem.WAutolayoutItem.Alignment = wbaseItem.WAutolayoutItem.Alignment.replace("SpaceBetween", "Top");
         }
       }
-      if (is_horizontal) {
-        elementHTML.style.columnGap = `${auto_layout_item.ChildSpace}px`;
-      } else {
-        elementHTML.style.rowGap = `${auto_layout_item.ChildSpace}px`;
-      }
+      elementHTML.style.setProperty("--child-space", `${auto_layout_item.ChildSpace}px`);
       elementHTML.querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`).forEach((childCol) => {
         childCol.style.setProperty("--gutter", `${auto_layout_item.ChildSpace}px`);
       });
@@ -1111,7 +1107,7 @@ function editLayoutStyle(auto_layout_item) {
             wbaseItem.value.style.width = wbaseItem.StyleItem.FrameItem.Width + "px";
           }
           if (wbaseItem.CountChild > 0) {
-            let listFillHChild = [...wbaseItem.value.querySelectorAll(":scope > .wbaseItem-value")].filter((childHTML) => childHTML.style.height == "100%");
+            let listFillHChild = [...wbaseItem.value.querySelectorAll(`.wbaseItem-value[level="${wbaseItem.Level + 1}"]`)].filter((childHTML) => childHTML.style.height == "100%");
             listFillHChild.forEach((childHTML) => {
               let childItem = wbase_list.find((e) => e.GID === childHTML.id);
               childItem.StyleItem.FrameItem.Height = childHTML.offsetHeight;
@@ -1130,12 +1126,7 @@ function editLayoutStyle(auto_layout_item) {
       let elementHTML = wbaseItem.value;
       // update giá trị RunSpace mới ( khoảng cách giữa các phần tử con )
       wbaseItem.WAutolayoutItem.RunSpace = auto_layout_item.RunSpace;
-      let is_horizontal = wbaseItem.WAutolayoutItem.Direction == "Horizontal";
-      if (is_horizontal) {
-        elementHTML.style.rowGap = `${auto_layout_item.RunSpace}px`;
-      } else {
-        elementHTML.style.columnGap = `${auto_layout_item.RunSpace}px`;
-      }
+      elementHTML.style.setProperty("--run-space", `${auto_layout_item.RunSpace}px`);
     }
   }
   WBaseDA.edit(list_update, _enumObj);
