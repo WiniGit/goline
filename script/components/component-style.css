@@ -33,7 +33,7 @@
   padding: var(--padding);
 }
 
-:is(.wbaseItem-value.w-col, .wbaseItem-value.w-row) > .wbaseItem-value {
+:is(.wbaseItem-value.w-col, .wbaseItem-value.w-row) > .wbaseItem-value:not(.wbaseItem-value.fixed-position) {
   left: unset !important;
   top: unset !important;
   right: unset !important;
