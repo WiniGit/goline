@@ -44,9 +44,9 @@ async function initData() {
   console.log("out handle data: ", Date.now());
   centerViewInitListener();
   if (PageDA.obj.scale !== undefined) {
-    topx = PageDA.obj.topx;
-    leftx = PageDA.obj.leftx;
-    scale = PageDA.obj.scale;
+    topx = -139456;
+    leftx = -3805;
+    scale = 0.5;
     divSection.style.top = topx + "px";
     divSection.style.left = leftx + "px";
     divSection.style.transform = `scale(${scale}, ${scale})`;

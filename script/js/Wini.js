@@ -222,8 +222,8 @@ function filterElementByOffset(x, y, right, bottom, listWb) {
         xMin: parseFloat(e.StyleItem.PositionItem.Left.replace("px", "")),
         yMin: parseFloat(e.StyleItem.PositionItem.Top.replace("px", "")),
       };
-      originOffset.xMax = originOffset.xMin + e.value.offsetWidth;
-      originOffset.yMax = originOffset.yMin + e.value.offsetHeight;
+      originOffset.xMax = originOffset.xMin + $(e.value).width();
+      originOffset.yMax = originOffset.yMin + $(e.value).height();
       if (isInRange(originOffset.xMin, x, right) && (isInRange(bottom, originOffset.yMin, originOffset.yMax) || isInRange(originOffset.yMax, y, bottom))) {
         return true;
       }
@@ -238,7 +238,7 @@ function filterElementByOffset(x, y, right, bottom, listWb) {
       }
       return false;
     } else return false;
-  });
+  }).map(e => e.value);
 }
 
 document.ondragover = function (e) {
@@ -696,7 +696,7 @@ function scrollScale(x, y) {
 function moveScreen(list) {
   positionScrollLeft();
   positionScrollTop();
-  let children = filterElementByOffset(-leftx, -topx, -leftx + divMain.offsetWidth * scale, -topx + divMain.offsetHeight * scale, list);
+  let children = filterElementByOffset(-leftx, -topx, -leftx + divMain.offsetWidth / scale, -topx + divMain.offsetHeight / scale, list);
   divSection.replaceChildren(...children);
 }
 
