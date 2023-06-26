@@ -36,6 +36,21 @@ input[type="color"]::-webkit-color-swatch {
   position: relative;
 }
 
+#edit_size_position_div {
+  gap: 2px;
+}
+
+#group_btn_frame_direction > img:first-child {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_vertical.svg);
+  background-color: #e5e5e5;
+  padding: 4px 2.5px;
+}
+
+#group_btn_frame_direction > img:last-child {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_horizontal.svg);
+  padding: 2.5px 4px;
+}
+
 .action-container {
   display: flex;
   flex-direction: row;
@@ -707,7 +722,7 @@ input[type="color"]::-webkit-color-swatch {
 .layout-align-table > #Center {
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20horizontal.svg);
 }
 

@@ -206,7 +206,6 @@ function createEditAlign() {
 function createEditSizePosition() {
   let edit_size_position_div = document.createElement("div");
   edit_size_position_div.id = "edit_size_position_div";
-  edit_size_position_div.style.gap = "2px";
   edit_size_position_div.className = "edit-container";
   if (selected_list.every((e) => EnumCate.extend_frame.some((cate) => e.CateID === cate))) {
     let div_frame_size_direction = document.createElement("div");
@@ -271,14 +270,8 @@ function createEditSizePosition() {
       group_btn_frame_direction.id = "group_btn_frame_direction";
       group_btn_frame_direction.className = "group_btn_direction";
       let btn_vertical = document.createElement("img");
-      group_btn_frame_direction.appendChild(btn_vertical);
-      btn_vertical.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_vertical.svg";
-      btn_vertical.style.backgroundColor = "#e5e5e5";
-      btn_vertical.style.padding = "4px 2.5px";
       let btn_horizontal = document.createElement("img");
-      group_btn_frame_direction.appendChild(btn_horizontal);
-      btn_horizontal.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_horizontal.svg";
-      btn_horizontal.style.padding = "2.5px 4px";
+      group_btn_frame_direction.replaceChildren(btn_vertical,btn_horizontal);
       btn_vertical.onclick = function () {
         if (this.style.backgroundColor == "transparent") {
           this.style.backgroundColor = "#e5e5e5";
@@ -338,8 +331,8 @@ function createEditSizePosition() {
   if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("cateid") == cate) && window.getComputedStyle(parentHTML).display.match("flex")) {
     let isFixPos = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
     let iconFixPos = document.createElement("img");
-    iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/fix_position.svg";
     iconFixPos.className = "img-button size-28 tlwh-option";
+    iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/fix_position.svg";
     if (isFixPos) {
       iconFixPos.style.border = "1px solid #e5e5e5";
     }
@@ -407,13 +400,13 @@ function createEditSizePosition() {
   ) {
     // third line contain btn select resizing type width height (fixed width height, fit content, fill container)
     let _row_resizing = document.createElement("div");
-    _row_resizing.style.display = "inline-flex";
+    _row_resizing.style.className = "row";
     _row_resizing.style.width = "100%";
     _row_resizing.style.height = "32px";
     let initResizeW = "fixed";
     if (selected_list.every((e) => e.value.style.width == "100%")) {
       initResizeW = "fill";
-    } else if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content")) {
+    } else if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
       initResizeW = "hug";
     } else if (selected_list.every((e) => e.value.style.width)) {
       initResizeW = "fixed";
@@ -460,7 +453,7 @@ function createEditSizePosition() {
   if (selected_list.every((e) => e.CateID !== EnumCate.table)) {
     // fourth line contain input edit rotate and radius and button radius detail
     let _row4 = document.createElement("div");
-    _row4.style.display = "inline-flex";
+    _row4.style.className = "row";
     _row4.style.width = "100%";
     _row4.style.alignItems = "center";
     // input edit rotate
@@ -518,10 +511,7 @@ function createEditSizePosition() {
       _row_radius_detail.id = "row_radius_detail";
       let icon_HTML = document.createElement("img");
       icon_HTML.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/radius_rect.svg";
-      icon_HTML.style.boxSizing = "border-box";
-      icon_HTML.style.width = "24px";
-      icon_HTML.style.height = "24px";
-      icon_HTML.style.padding = "6px";
+      icon_HTML.className = "img-button size-24"
       _row_radius_detail.appendChild(icon_HTML);
       let input_top_left = document.createElement("input");
       let list_radius_top_left = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.TopLeft);
@@ -695,7 +685,7 @@ function updateInputTLWH() {
         btn_resize_with_height[0].parentElement.style.display = "flex";
         for (let option of btn_resize_with_height) {
           if (option.className.includes("width")) {
-            if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content")) {
+            if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
               option.childNodes[1].innerHTML = "hug";
             } else if (selected_list.every((e) => e.value.style.width == "100%")) {
               option.childNodes[1].innerHTML = "fill";

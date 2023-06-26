@@ -218,7 +218,7 @@ function createTextHTML(item) {
         // this.style.minHeight = newSize.height + "px";
         select_box = selectBox(selected_list);
       }
-      updateInputTLWH();
+      // updateInputTLWH();
     };
     textObserver.observe(item.value, {
       childList: true,
@@ -237,23 +237,6 @@ const textObserver = new MutationObserver((mutationList) => {
           child.style.pointerEvents = "none";
           child.style.fontFamily = fontFamily;
         });
-        break;
-      case "attributes":
-        // if (mutation.attributeName === "style") {
-        //   let targetText = mutation.target;
-        //   let change = false;
-        //   if (targetText.style.width == "100%") {
-        //     targetText.style.minWidth = null;
-        //   }
-        //   if (targetText.style.height == "fit-content" && targetText.style.minHeight != null) {
-        //     targetText.style.minHeight = null;
-        //     change = true;
-        //   }
-        //   if (change) {
-        //     select_box = selectBox(selected_list);
-        //         // wdraw();
-        //   }
-        // }
         break;
       default:
         break;
