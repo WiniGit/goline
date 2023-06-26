@@ -477,7 +477,6 @@ function addListenFromSection(item) {
   item.value.id = item.GID;
   if (item.ParentID == wbase_parentID) {
     initPositionStyle(item);
-    divSection.appendChild(item.value);
   }
 }
 
@@ -794,8 +793,7 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
       childCol.style.setProperty("--gutter", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
     });
   }
-  if(wbaseItem.StyleItem.PaddingItem) 
-  wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
+  if (wbaseItem.StyleItem.PaddingItem) wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
   else console.log(wbaseItem.GID);
 }
 

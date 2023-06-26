@@ -56,11 +56,7 @@ async function initData() {
   } else {
     initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
   }
-  // divSection.querySelectorAll(`.wbaseItem-value[cateid="${EnumCate.tool_text}"]`).forEach((eText) => {
-  //   let newSize = calcTextNode(eText);
-  //   eText.style.minWidth = newSize.width + "px";
-  //   eText.style.minHeight = newSize.height + "px";
-  // });
+  divSection.replaceChildren(...wbase_list.filter((e) => e.Level === 1).slice(0, 8).map(e => e.value));
   document.getElementById("body").querySelector(".loading-view").remove();
   setupRightView();
   setupLeftView();
@@ -998,7 +994,7 @@ function dragWbaseEnd() {
       }
       WBaseDA.listData.push(...selected_list);
       if (parent_wbase) WBaseDA.listData.push(parent_wbase);
-    } else if (window.getComputedStyle(new_parentHTML).display.match('flex') && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
+    } else if (window.getComputedStyle(new_parentHTML).display.match("flex") && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
       WBaseDA.enumEvent = EnumEvent.parent;
       handleStyleSize(parent_wbase);
       let children = [...new_parentHTML.querySelectorAll(`.wbaseItem-value[level="${(parent_wbase?.Level ?? 0) + 1}"]`)];
