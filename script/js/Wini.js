@@ -214,6 +214,13 @@ document.body.onresize = function () {
 };
 var divMain = document.getElementById("canvas_view");
 var divSection = document.getElementById("divSection");
+
+function filterElementByOffset(x, y, right, bottom) {
+  return wbase_list.filter(e => {
+    
+  })
+}
+
 document.ondragover = function (e) {
   e.stopPropagation();
   e.preventDefault();
