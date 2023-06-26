@@ -779,8 +779,10 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
   } else {
     let isRow = wbaseItem.WAutolayoutItem.Direction === "Horizontal";
     if (isRow) {
+      $(wbaseItem.value).removeClass("w-col");
       $(wbaseItem.value).addClass("w-row");
     } else {
+      $(wbaseItem.value).removeClass("w-row");
       $(wbaseItem.value).addClass("w-col");
     }
     wbaseItem.value.style.setProperty("--flex-wrap", wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap");

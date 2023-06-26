@@ -4452,9 +4452,9 @@ function isHidden(elHTML) {
   let bouncingClient = elHTML?.getBoundingClientRect();
   if (bouncingClient) {
     let offsetTop = 0;
-    let offsetLeft = left_view.style.display == "none" ? 0 : left_view.offsetWidth;
+    let offsetLeft = left_view.offsetWidth;
     let offsetBottom = divMain.offsetHeight;
-    let offsetRight = divMain.offsetWidth - (right_view.style.display == "none" ? 0 : right_view.offsetWidth);
+    let offsetRight = divMain.offsetWidth - right_view.offsetWidth;
     if (bouncingClient.right > offsetLeft && bouncingClient.x < offsetRight && bouncingClient.bottom > offsetTop && bouncingClient.y < offsetBottom) {
       return false;
     } else if (bouncingClient.right < offsetLeft && bouncingClient.right > offsetRight && bouncingClient.bottom > offsetTop && bouncingClient.y < offsetBottom) {
