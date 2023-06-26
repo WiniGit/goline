@@ -794,7 +794,7 @@ function createAutoLayout() {
     _row1.appendChild(btn_extension);
     btn_extension.className = "fa-solid fa-ellipsis icon_btn_default_style";
     btn_extension.onclick = function () {
-      setTimeout(function () {}, 200);
+      setTimeout(function () { }, 200);
     };
     // input edit child space
     let childSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.ChildSpace);
@@ -2450,7 +2450,7 @@ function createEditBorder() {
       });
       btnSelectBorderSide.appendChild(dropdown_type);
 
-      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/more-horizontal.svg", null, function () {});
+      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/more-horizontal.svg", null, function () { });
       edit_line_action2.className = "action-button";
       action_edit_line_container.appendChild(edit_line_action2);
 
@@ -2823,7 +2823,7 @@ function createEditEffect() {
       btn_select_eType.firstChild.innerHTML = eTypeValues.length == 1 ? eTypeValues[0] : "Mixed";
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () { });
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
 
@@ -3088,7 +3088,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
   let title = document.createElement("span");
   title.style.pointerEvents = "none";
   title.style.flex = 1;
-  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/library-black.svg", null, function () {});
+  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/library-black.svg", null, function () { });
 
   header.appendChild(title);
   header.appendChild(action1);
@@ -3165,8 +3165,9 @@ function updateTableSkinBody(enumCate, currentSkinID) {
   if (!dropdown) return;
   let body = document.createElement("div");
   let noti_empty_skin = document.createElement("p");
-  noti_empty_skin.style.fontWeight = "500";
-  noti_empty_skin.style.margin = "0 16px";
+  // noti_empty_skin.style.fontWeight = "500";
+  noti_empty_skin.style.margin = "8px 16px";
+  noti_empty_skin.className = "regular0 text-subtitle";
   let searchContainer = document.createElement("div");
   searchContainer.className = "row search-skins";
   let prefixIcon = document.createElement("i");
@@ -4317,7 +4318,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       btn_select_eType.firstChild.innerHTML = jsonSkin.Type;
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () { });
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
       //
