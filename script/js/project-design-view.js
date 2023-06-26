@@ -51,12 +51,11 @@ async function initData() {
     divSection.style.left = leftx + "px";
     divSection.style.transform = `scale(${scale}, ${scale})`;
     input_scale_set(scale * 100);
-    positionScrollLeft();
-    positionScrollTop();
   } else {
     initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
   }
-  divSection.replaceChildren(...wbase_list.filter((e) => e.Level === 1).slice(0, 8).map(e => e.value));
+  moveScreen();
+  // divSection.replaceChildren(...wbase_list.filter((e) => e.Level === 1).slice(0, 8).map(e => e.value));
   document.getElementById("body").querySelector(".loading-view").remove();
   setupRightView();
   setupLeftView();

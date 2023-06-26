@@ -209,16 +209,36 @@ document.body.onresize = function () {
   canvasr.height = height;
   objscroll.w = width - leftw - reightw;
   objscroll.h = height - 48;
-  positionScrollLeft();
-  positionScrollTop();
+  moveScreen();
 };
 var divMain = document.getElementById("canvas_view");
 var divSection = document.getElementById("divSection");
 
-function filterElementByOffset(x, y, right, bottom) {
-  return wbase_list.filter(e => {
-    
-  })
+function filterElementByOffset(x, y, right, bottom, listWb) {
+  if (!listWb) listWb = wbase_list;
+  return listWb.filter((e) => {
+    if (e.Level === 1) {
+      let originOffset = {
+        xMin: parseFloat(e.StyleItem.PositionItem.Left.replace("px", "")),
+        yMin: parseFloat(e.StyleItem.PositionItem.Top.replace("px", "")),
+      };
+      originOffset.xMax = originOffset.xMin + e.value.offsetWidth;
+      originOffset.yMax = originOffset.yMin + e.value.offsetHeight;
+      if (isInRange(originOffset.xMin, x, right) && (isInRange(bottom, originOffset.yMin, originOffset.yMax) || isInRange(originOffset.yMax, y, bottom))) {
+        return true;
+      }
+      if (isInRange(originOffset.yMin, y, bottom) && (isInRange(right, originOffset.xMin, originOffset.xMax) || isInRange(originOffset.xMax, x, right))) {
+        return true;
+      }
+      if (isInRange(originOffset.xMax, x, right) && (isInRange(originOffset.yMax, y, bottom) || isInRange(bottom, originOffset.yMin, originOffset.yMax))) {
+        return true;
+      }
+      if (isInRange(originOffset.yMax, y, bottom) && (isInRange(originOffset.xMax, x, right) || isInRange(right, originOffset.xMin, originOffset.xMax))) {
+        return true;
+      }
+      return false;
+    } else return false;
+  });
 }
 
 document.ondragover = function (e) {
@@ -348,8 +368,7 @@ function initScroll(listp) {
     //objscroll.hc = ((objscroll.y1 - objscroll.y) * scale) / objscroll.h;
 
     input_scale_set(scale * 100);
-    positionScrollLeft();
-    positionScrollTop();
+    moveScreen();
     //var divd = document.getElementById();
   }
 }
@@ -664,17 +683,23 @@ function scrollbdClick(x, y, w, h) {
 }
 
 function scrollScale(x, y) {
-  if (topx != y) {
-    topx = y;
-    divSection.style.top = topx + "px";
-    positionScrollTop();
-  }
   if (leftx != x) {
     leftx = x;
     divSection.style.left = leftx + "px";
-    positionScrollLeft();
+  }
+  if (topx != y) {
+    topx = y;
+    divSection.style.top = topx + "px";
   }
 }
+
+function moveScreen(list) {
+  positionScrollLeft();
+  positionScrollTop();
+  let children = filterElementByOffset(-leftx, -topx, -leftx + divMain.offsetWidth * scale, -topx + divMain.offsetHeight * scale, list);
+  divSection.replaceChildren(...children);
+}
+
 var checkpad = 0;
 var listbox = [],
   lists = [];
@@ -2235,7 +2260,7 @@ function updateRectSelects(list = []) {
 }
 
 function paintCanvas(check) {
-  wdraw();
+  moveScreen();
   l = leftx / scale - Math.floor(leftx / scale);
   t = topx / scale - Math.floor(topx / scale);
   //alert(l + " " +t);
@@ -2243,6 +2268,7 @@ function paintCanvas(check) {
   canvas.style.left = (l - 1) * scale + "px";
   ////canvasr.style.top = (1-t) * scale + "px";
   ////canvasr.style.left = (1-l) * scale + "px";
+  wdraw();
   PageDA.settingsPage = true;
   if (scale >= 16) {
     if (check) painLine(l, t);
@@ -2348,8 +2374,6 @@ function doubleClickEvent(event) {
 function clickEvent(event) {
   console.log("clickEvent " + checkpad);
   if (tool_state != ToolState.hand_tool) {
-    positionScrollLeft();
-    positionScrollTop();
     previousX = event.pageX;
     previousY = event.pageY;
     if (event.button == 2) {

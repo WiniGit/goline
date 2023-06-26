@@ -427,7 +427,7 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   wbase_tile.appendChild(icon_wbase);
   icon_wbase.ondblclick = function (e) {
     e.stopPropagation();
-    let objCenter = document.getElementById(wbaseItem.GID);
+    let objCenter = wbaseItem.value;
     let centerRect = objCenter.getBoundingClientRect();
     centerRect = offsetScale(centerRect.x + centerRect.width / 2, centerRect.y + centerRect.height / 2);
     divSection.style.transition = "1s";
