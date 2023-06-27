@@ -179,7 +179,7 @@ function createEditAlign() {
   if (selected_list.length > 1) {
     isEnable = !window.getComputedStyle(targetHTML.parentElement).display.match("flex") || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
   } else {
-    isEnable = (!window.getComputedStyle(targetHTML).display.match(/(flex|grid|table)/g) && selected_list[0].CountChild > 0) || !window.getComputedStyle(targetHTML.parentElement).display.match(/(flex|grid|table)/g) || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
+    isEnable = (!window.getComputedStyle(targetHTML).display.match(/(flex|table)/g) && selected_list[0].CountChild > 0) || !window.getComputedStyle(targetHTML.parentElement).display.match(/(flex|table)/g) || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
     if (selected_list[0].ParentID === wbase_parentID && (selected_list[0].CountChild === 0 || selected_list[0].WAutolayoutItem)) {
       isEnable = false;
     }
@@ -1502,7 +1502,7 @@ function updateUIDesignView() {
           let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
           listEditContainer.push(selectColByBrp);
         }
-      }
+      } 
     }
     if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
       let editAutoLayout = createAutoLayout();

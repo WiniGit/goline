@@ -427,6 +427,9 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   wbase_tile.appendChild(icon_wbase);
   icon_wbase.ondblclick = function (e) {
     e.stopPropagation();
+    let pPage = wbaseItem.value;
+    if (wbaseItem.Level > 1) pPage = $(wbaseItem.value).parents(`.wbaseItem-value[level="1"]`)[0];
+    if (!divSection.contains(pPage)) divSection.appendChild(pPage);
     let objCenter = wbaseItem.value;
     let centerRect = objCenter.getBoundingClientRect();
     centerRect = offsetScale(centerRect.x + centerRect.width / 2, centerRect.y + centerRect.height / 2);
@@ -478,7 +481,7 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
       });
     }
     wbase_tile.onclick = function () {
-      addSelectList([wbaseItem]);
+      if (divSection.contains(wbaseItem.value)) addSelectList([wbaseItem]);
     };
     if (PageDA.enableEdit)
       icon_lock.onclick = function () {
@@ -936,10 +939,10 @@ function ondragSortLayer(event) {
             preAction.className = preAction.className.replace("caret-right", "caret-down");
           }
         }
-        let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level")??"0") + 1}"]`)];
+        let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level") ?? "0") + 1}"]`)];
         sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))));
         sortLayer.setAttribute("parentid", wbaseID);
-        console.log("children-----")
+        console.log("children-----");
       } else if (Math.abs(event.pageY - rectTopY) <= Math.abs(event.pageY - rectBotY)) {
         // drag to abbove of layer
         sortLayer.removeAttribute("time");
@@ -959,7 +962,7 @@ function ondragSortLayer(event) {
         let spacing = (sortWbase.Level - 1) * 16;
         if (preAction.className.includes("caret-down")) {
           spacing += 16;
-          let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level")??"0") + 1}"]`)];
+          let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level") ?? "0") + 1}"]`)];
           sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))) + 1);
           sortLayer.setAttribute("parentid", wbaseID);
         } else {

@@ -43,19 +43,19 @@ async function initData() {
   }
   console.log("out handle data: ", Date.now());
   centerViewInitListener();
-  if (PageDA.obj.scale !== undefined) {
-    topx = -139456;
-    leftx = -3805;
-    scale = 0.5;
-    divSection.style.top = topx + "px";
-    divSection.style.left = leftx + "px";
-    divSection.style.transform = `scale(${scale}, ${scale})`;
-    input_scale_set(scale * 100);
-  } else {
-    initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
-  }
+  // if (PageDA.obj.scale !== undefined) {
+  //   topx = -139456;
+  //   leftx = -3805;
+  //   scale = 0.5;
+  //   divSection.style.top = topx + "px";
+  //   divSection.style.left = leftx + "px";
+  //   divSection.style.transform = `scale(${scale}, ${scale})`;
+  //   input_scale_set(scale * 100);
+  // } else {
+  //   initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
+  // }
   moveScreen();
-  // divSection.replaceChildren(...wbase_list.filter((e) => e.Level === 1).slice(0, 8).map(e => e.value));
+  // divSection.replaceChildren(...wbase_list.filter((e) => e.Level === 1).map(e => e.value));
   document.getElementById("body").querySelector(".loading-view").remove();
   setupRightView();
   setupLeftView();

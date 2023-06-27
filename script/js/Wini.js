@@ -216,29 +216,32 @@ var divSection = document.getElementById("divSection");
 
 function filterElementByOffset(x, y, right, bottom, listWb) {
   if (!listWb) listWb = wbase_list;
-  return listWb.filter((e) => {
-    if (e.Level === 1) {
-      let originOffset = {
-        xMin: parseFloat(e.StyleItem.PositionItem.Left.replace("px", "")),
-        yMin: parseFloat(e.StyleItem.PositionItem.Top.replace("px", "")),
-      };
-      originOffset.xMax = originOffset.xMin + $(e.value).width();
-      originOffset.yMax = originOffset.yMin + $(e.value).height();
-      if (isInRange(originOffset.xMin, x, right) && (isInRange(bottom, originOffset.yMin, originOffset.yMax) || isInRange(originOffset.yMax, y, bottom))) {
-        return true;
-      }
-      if (isInRange(originOffset.yMin, y, bottom) && (isInRange(right, originOffset.xMin, originOffset.xMax) || isInRange(originOffset.xMax, x, right))) {
-        return true;
-      }
-      if (isInRange(originOffset.xMax, x, right) && (isInRange(originOffset.yMax, y, bottom) || isInRange(bottom, originOffset.yMin, originOffset.yMax))) {
-        return true;
-      }
-      if (isInRange(originOffset.yMax, y, bottom) && (isInRange(originOffset.xMax, x, right) || isInRange(right, originOffset.xMin, originOffset.xMax))) {
-        return true;
-      }
-      return false;
-    } else return false;
-  }).map(e => e.value);
+  return listWb
+    .filter((e) => {
+      if (e.Level === 1) {
+        let originOffset = {
+          xMin: parseFloat(e.StyleItem.PositionItem.Left.replace("px", "")),
+          yMin: parseFloat(e.StyleItem.PositionItem.Top.replace("px", "")),
+        };
+        console.log("????????: ", e.Name, $(e.value).width(), "-", $(e.value).height());
+        originOffset.xMax = originOffset.xMin + $(e.value).width();
+        originOffset.yMax = originOffset.yMin + $(e.value).height();
+        if (isInRange(originOffset.xMin, x, right) && (isInRange(bottom, originOffset.yMin, originOffset.yMax) || isInRange(originOffset.yMax, y, bottom))) {
+          return true;
+        }
+        if (isInRange(originOffset.yMin, y, bottom) && (isInRange(right, originOffset.xMin, originOffset.xMax) || isInRange(originOffset.xMax, x, right))) {
+          return true;
+        }
+        if (isInRange(originOffset.xMax, x, right) && (isInRange(originOffset.yMax, y, bottom) || isInRange(bottom, originOffset.yMin, originOffset.yMax))) {
+          return true;
+        }
+        if (isInRange(originOffset.yMax, y, bottom) && (isInRange(originOffset.xMax, x, right) || isInRange(right, originOffset.xMin, originOffset.xMax))) {
+          return true;
+        }
+        return false;
+      } else return false;
+    })
+    .map((e) => e.value);
 }
 
 document.ondragover = function (e) {
