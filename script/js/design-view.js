@@ -179,7 +179,7 @@ function createEditAlign() {
   if (selected_list.length > 1) {
     isEnable = !window.getComputedStyle(targetHTML.parentElement).display.match("flex") || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
   } else {
-    isEnable = (!window.getComputedStyle(targetHTML).display.match(/(flex|grid|table)/g) && selected_list[0].CountChild > 0) || !window.getComputedStyle(targetHTML.parentElement).display.match(/(flex|grid|table)/g) || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
+    isEnable = (!window.getComputedStyle(targetHTML).display.match(/(flex|table)/g) && selected_list[0].CountChild > 0) || !window.getComputedStyle(targetHTML.parentElement).display.match(/(flex|table)/g) || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
     if (selected_list[0].ParentID === wbase_parentID && (selected_list[0].CountChild === 0 || selected_list[0].WAutolayoutItem)) {
       isEnable = false;
     }
@@ -200,6 +200,11 @@ function createEditAlign() {
   btn_extend.replaceChildren(icon_extend, icon_down);
   editAlignContainer.appendChild(btn_extend);
   return editAlignContainer;
+}
+
+function updateUIEditAlign() {
+  let newEditAlign = createEditAlign();
+  document.getElementById("edit_align_div").replaceWith(newEditAlign);
 }
 
 // edit position UI
@@ -339,6 +344,7 @@ function createEditSizePosition() {
     iconFixPos.onclick = function () {
       isFixPos = !isFixPos;
       inputPositionItem({ FixPosition: isFixPos });
+      updateUIEditAlign();
       updateUIEditPosition();
     };
     editXYRow.appendChild(iconFixPos);
@@ -784,7 +790,7 @@ function createAutoLayout() {
     _row1.appendChild(btn_extension);
     btn_extension.className = "fa-solid fa-ellipsis icon_btn_default_style";
     btn_extension.onclick = function () {
-      setTimeout(function () { }, 200);
+      setTimeout(function () {}, 200);
     };
     // input edit child space
     let childSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.ChildSpace);
@@ -2443,7 +2449,7 @@ function createEditBorder() {
       });
       btnSelectBorderSide.appendChild(dropdown_type);
 
-      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/more-horizontal.svg", null, function () { });
+      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/more-horizontal.svg", null, function () {});
       edit_line_action2.className = "action-button";
       action_edit_line_container.appendChild(edit_line_action2);
 
@@ -2816,7 +2822,7 @@ function createEditEffect() {
       btn_select_eType.firstChild.innerHTML = eTypeValues.length == 1 ? eTypeValues[0] : "Mixed";
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () { });
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () {});
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
 
@@ -3081,7 +3087,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
   let title = document.createElement("span");
   title.style.pointerEvents = "none";
   title.style.flex = 1;
-  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/library-black.svg", null, function () { });
+  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/library-black.svg", null, function () {});
 
   header.appendChild(title);
   header.appendChild(action1);
@@ -4311,7 +4317,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       btn_select_eType.firstChild.innerHTML = jsonSkin.Type;
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () { });
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () {});
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
       //
@@ -5804,14 +5810,17 @@ function colNumberByBrp(enable = true) {
           .filter((colClass) => !colClass.includes("col-") && !colClass.match(/col[0-9]{1,2}/g))
           .join(" ")
           .trim();
-        if (wbaseItem.ListClassName === "") wbaseItem.ListClassName = null;
+        if (wbaseItem.ListClassName === "") {
+          wbaseItem.ListClassName = null;
+        } else {
+          wbaseItem.ListClassName.split(" ").forEach((clName) => $(wbaseItem.value).addClass(clName));
+        }
         if (wbaseItem.StyleItem.FrameItem.Width != null && wbaseItem.StyleItem.FrameItem.Width < 0) {
           wbaseItem.value.style.width = wbaseItem.value.offsetWidth + "px";
           wbaseItem.value.style.minWidth = wbaseItem.value.offsetWidth + "px";
           wbaseItem.StyleItem.FrameItem.Width = wbaseItem.value.offsetWidth;
           eObj = EnumObj.baseFrame;
         }
-        wbaseItem.value.className = `wbaseItem-value ${wbaseItem.ListClassName}`;
       }
       WBaseDA.edit(selected_list, eObj);
       updateUIEditPosition();
@@ -5912,10 +5921,7 @@ function colNumberByBrp(enable = true) {
                   }
                 });
                 wbaseItem.ListClassName = listColClass.join(" ");
-                wbaseItem.value.className = `wbaseItem-value ${listColClass.join(" ")}`;
-                if (wbaseItem.WAutolayoutItem.IsWrap && wbaseItem.WAutolayoutItem.Direction === "Horizontal") {
-                  $(wbaseItem.value).addClass("grid-layout");
-                }
+                listColClass.forEach((clName) => $(wbaseItem.value).addClass(clName));
               }
             } else {
               for (let wbaseItem of selected_list) {
@@ -5929,10 +5935,7 @@ function colNumberByBrp(enable = true) {
                 });
                 listColClass.push(`col${option}${shortName}`);
                 wbaseItem.ListClassName = listColClass.join(" ");
-                wbaseItem.value.className = `wbaseItem-value ${listColClass.join(" ")}`;
-                if (wbaseItem.WAutolayoutItem?.IsWrap && wbaseItem.WAutolayoutItem?.Direction === "Horizontal") {
-                  $(wbaseItem.value).addClass("grid-layout");
-                }
+                listColClass.forEach((clName) => $(wbaseItem.value).addClass(clName));
               }
             }
             WBaseDA.edit(selected_list);
@@ -5955,8 +5958,8 @@ function colNumberByBrp(enable = true) {
         let parentHTML = document.getElementById(select_box_parentID);
         for (let wbaseItem of selected_list) {
           wbaseItem.ListClassName = "col-";
-          wbaseItem.value.className = `wbaseItem-value ${wbaseItem.ListClassName}`;
-          wbaseItem.value.style.setProperty("--gutter", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
+          wbaseItem.ListClassName.split(" ").forEach((clName) => $(wbaseItem.value).addClass(clName));
+          wbaseItem.value.style.setProperty("--gutter", parentHTML.style.getPropertyValue("--child-space"));
         }
         WBaseDA.edit(selected_list);
         updateUIEditPosition();

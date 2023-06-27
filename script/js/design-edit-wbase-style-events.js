@@ -1130,6 +1130,17 @@ function editLayoutStyle(auto_layout_item) {
       elementHTML.style.setProperty("--run-space", `${auto_layout_item.RunSpace}px`);
     }
   }
+  if (auto_layout_item.IsScroll != undefined) {
+    list_update.push(...selected_list);
+    for (let wbaseItem of selected_list) {
+      let elementHTML = wbaseItem.value;
+      if(auto_layout_item.IsScroll) {
+        elementHTML.setAttribute("scroll", "true");
+      } else {
+        elementHTML.removeAttribute("scroll", "true");
+      }
+    }
+  }
   WBaseDA.edit(list_update, _enumObj);
   updateUISelectBox();
 }
