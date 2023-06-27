@@ -5935,6 +5935,11 @@ function colNumberByBrp(enable = true) {
                 });
                 listColClass.push(`col${option}${shortName}`);
                 wbaseItem.ListClassName = listColClass.join(" ");
+                [...wbaseItem.value.classList].forEach(clName => {
+                  if(clName.match(/col[0-9]{1,2}/g) || clName.includes("col-")) {
+                    $(wbaseItem.value).removeClass(clName);
+                  }
+                })
                 listColClass.forEach((clName) => $(wbaseItem.value).addClass(clName));
               }
             }
