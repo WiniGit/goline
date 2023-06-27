@@ -861,3 +861,7 @@
   min-width: auto !important;
   flex: 0 calc(100% - var(--gutter)) !important;
 }
+
+.col-:last-child {
+  --gutter: 0px !important; 
+}

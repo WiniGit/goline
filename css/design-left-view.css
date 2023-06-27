@@ -102,6 +102,14 @@
   color: #ffffff;
 }
 
+#Layer > div:nth-child(3) {
+  position: absolute;
+  height: 1px;
+  right: 0px;
+  background-color: black;
+  display: block;
+}
+
 .layer_wbase_tile {
   width: 100%;
   display: inline-flex;
@@ -148,7 +156,7 @@
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component_black.svg);
 }
 
-:is(.layer_wbase_tile[cateid="140"],.layer_wbase_tile[cateid="128"]) > img {
+:is(.layer_wbase_tile[cateid="140"], .layer_wbase_tile[cateid="128"]) > img {
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_black.svg) !important;
 }
 .layer_wbase_tile[cateid="138"] > img {

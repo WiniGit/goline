@@ -778,6 +778,7 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     wbaseItem.value.style.setProperty("--gap", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
   } else {
     let isRow = wbaseItem.WAutolayoutItem.Direction === "Horizontal";
+    $(wbaseItem.value).removeClass("w-stack");
     if (isRow) {
       $(wbaseItem.value).removeClass("w-col");
       $(wbaseItem.value).addClass("w-row");
