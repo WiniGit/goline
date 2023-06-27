@@ -43,23 +43,29 @@ async function initData() {
   }
   console.log("out handle data: ", Date.now());
   centerViewInitListener();
-  // if (PageDA.obj.scale !== undefined) {
-  //   topx = -139456;
-  //   leftx = -3805;
-  //   scale = 0.5;
-  //   divSection.style.top = topx + "px";
-  //   divSection.style.left = leftx + "px";
-  //   divSection.style.transform = `scale(${scale}, ${scale})`;
-  //   input_scale_set(scale * 100);
-  // } else {
-  //   initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
-  // }
+  if (PageDA.obj.scale !== undefined) {
+    topx = PageDA.obj.topx;
+    leftx = PageDA.obj.leftx;
+    scale = PageDA.obj.scale;
+    divSection.style.top = topx + "px";
+    divSection.style.left = leftx + "px";
+    divSection.style.transform = `scale(${scale}, ${scale})`;
+    input_scale_set(scale * 100);
+  } else {
+    initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
+  }
+  wbase_list
+    .filter((e) => e.Level === 1)
+    .forEach((e) => {
+      divSection.replaceChildren(e.value);
+      e.StyleItem.PositionItem.Right = `${parseFloat(e.StyleItem.PositionItem.Left.replace("px")) + e.value.offsetWidth}px`;
+      e.StyleItem.PositionItem.Bottom = `${parseFloat(e.StyleItem.PositionItem.Top.replace("px")) + e.value.offsetHeight}px`;
+    });
   moveScreen();
-  // divSection.replaceChildren(...wbase_list.filter((e) => e.Level === 1).map(e => e.value));
   document.getElementById("body").querySelector(".loading-view").remove();
   setupRightView();
   setupLeftView();
-  [...document.getElementById("btn_select_page").childNodes].find((e) => e.localName == "p").innerHTML = PageDA.obj.Name;
+  document.getElementById("btn_select_page").querySelector("p").innerHTML = PageDA.obj.Name;
   console.log("show done: ", Date.now());
   setTimeout(function () {
     toolStateChange(ToolState.move);

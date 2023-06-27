@@ -427,9 +427,6 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   wbase_tile.appendChild(icon_wbase);
   icon_wbase.ondblclick = function (e) {
     e.stopPropagation();
-    let pPage = wbaseItem.value;
-    if (wbaseItem.Level > 1) pPage = $(wbaseItem.value).parents(`.wbaseItem-value[level="1"]`)[0];
-    if (!divSection.contains(pPage)) divSection.appendChild(pPage);
     let objCenter = wbaseItem.value;
     let centerRect = objCenter.getBoundingClientRect();
     centerRect = offsetScale(centerRect.x + centerRect.width / 2, centerRect.y + centerRect.height / 2);
@@ -481,7 +478,12 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
       });
     }
     wbase_tile.onclick = function () {
-      if (divSection.contains(wbaseItem.value)) addSelectList([wbaseItem]);
+      if (!divSection.contains(wbaseItem.value)) {
+        let pPage = wbaseItem.value;
+        if (wbaseItem.Level > 1) pPage = $(wbaseItem.value).parents(`.wbaseItem-value[level="1"]`)[0];
+        divSection.appendChild(pPage);
+      }
+      addSelectList([wbaseItem]);
     };
     if (PageDA.enableEdit)
       icon_lock.onclick = function () {

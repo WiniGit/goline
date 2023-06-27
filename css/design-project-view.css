@@ -224,12 +224,12 @@ html {
 
 #divSection {
   position: absolute !important;
-  right: unset !important;
-  bottom: unset !important;
 }
 
 #divSection > .wbaseItem-value {
   position: absolute !important;
+  right: unset !important;
+  bottom: unset !important;
 }
 
 #divSection .drag-hide {

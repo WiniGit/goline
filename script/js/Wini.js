@@ -219,26 +219,28 @@ function filterElementByOffset(x, y, right, bottom, listWb) {
   return listWb
     .filter((e) => {
       if (e.Level === 1) {
-        let originOffset = {
+        let eOffset = {
           xMin: parseFloat(e.StyleItem.PositionItem.Left.replace("px", "")),
           yMin: parseFloat(e.StyleItem.PositionItem.Top.replace("px", "")),
+          xMax: parseFloat(e.StyleItem.PositionItem.Right.replace("px", "")),
+          yMax: parseFloat(e.StyleItem.PositionItem.Bottom.replace("px", "")),
         };
-        console.log("????????: ", e.Name, $(e.value).width(), "-", $(e.value).height());
-        originOffset.xMax = originOffset.xMin + $(e.value).width();
-        originOffset.yMax = originOffset.yMin + $(e.value).height();
-        if (isInRange(originOffset.xMin, x, right) && (isInRange(bottom, originOffset.yMin, originOffset.yMax) || isInRange(originOffset.yMax, y, bottom))) {
+        if (isInRange(eOffset.xMin, x, right) && (isInRange(bottom, eOffset.yMin, eOffset.yMax) || isInRange(eOffset.yMax, y, bottom))) {
           return true;
         }
-        if (isInRange(originOffset.yMin, y, bottom) && (isInRange(right, originOffset.xMin, originOffset.xMax) || isInRange(originOffset.xMax, x, right))) {
+        if (isInRange(eOffset.yMin, y, bottom) && (isInRange(right, eOffset.xMin, eOffset.xMax) || isInRange(eOffset.xMax, x, right))) {
           return true;
         }
-        if (isInRange(originOffset.xMax, x, right) && (isInRange(originOffset.yMax, y, bottom) || isInRange(bottom, originOffset.yMin, originOffset.yMax))) {
+        if (isInRange(eOffset.xMax, x, right) && (isInRange(eOffset.yMax, y, bottom) || isInRange(bottom, eOffset.yMin, eOffset.yMax))) {
           return true;
         }
-        if (isInRange(originOffset.yMax, y, bottom) && (isInRange(originOffset.xMax, x, right) || isInRange(right, originOffset.xMin, originOffset.xMax))) {
+        if (isInRange(eOffset.yMax, y, bottom) && (isInRange(eOffset.xMax, x, right) || isInRange(right, eOffset.xMin, eOffset.xMax))) {
           return true;
         }
-        return false;
+        if(isInRange(x, eOffset.xMin, eOffset.xMax) && isInRange(y, eOffset.yMin, eOffset.yMax) && isInRange(right, eOffset.xMin, eOffset.xMax) && isInRange(bottom, eOffset.yMin, eOffset.yMax)) {
+          return true;
+        };
+        return isInRange(eOffset.xMin, x, right) && isInRange(eOffset.yMin, y, bottom) && isInRange(eOffset.xMax, x, right) && isInRange(eOffset.yMax, y, bottom);
       } else return false;
     })
     .map((e) => e.value);
@@ -682,10 +684,11 @@ function scrollbdClick(x, y, w, h) {
   input_scale_set(scale * 100);
   scrollScale(width / 2 - x * scale, height / 2 + -y * scale, true);
   divSection.style.transform = `scale(${scale}, ${scale})`;
+  moveScreen();
   paintCanvas(true);
 }
 
-function scrollScale(x, y) {
+function scrollScale(x, y) {``
   if (leftx != x) {
     leftx = x;
     divSection.style.left = leftx + "px";
@@ -697,9 +700,9 @@ function scrollScale(x, y) {
 }
 
 function moveScreen(list) {
-  positionScrollLeft();
-  positionScrollTop();
-  let children = filterElementByOffset(-leftx, -topx, -leftx + divMain.offsetWidth / scale, -topx + divMain.offsetHeight / scale, list);
+  // positionScrollLeft();
+  // positionScrollTop();
+  let children = filterElementByOffset(-leftx/scale, -topx/scale, (-leftx + divMain.offsetWidth) / scale, (-topx + divMain.offsetHeight) / scale, list);
   divSection.replaceChildren(...children);
 }
 
@@ -2263,7 +2266,6 @@ function updateRectSelects(list = []) {
 }
 
 function paintCanvas(check) {
-  moveScreen();
   l = leftx / scale - Math.floor(leftx / scale);
   t = topx / scale - Math.floor(topx / scale);
   //alert(l + " " +t);
