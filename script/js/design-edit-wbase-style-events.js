@@ -1134,6 +1134,7 @@ function editLayoutStyle(auto_layout_item) {
     list_update.push(...selected_list);
     for (let wbaseItem of selected_list) {
       let elementHTML = wbaseItem.value;
+      wbaseItem.WAutolayoutItem.IsScroll = auto_layout_item.IsScroll;
       if(auto_layout_item.IsScroll) {
         elementHTML.setAttribute("scroll", "true");
       } else {
