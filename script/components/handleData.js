@@ -794,7 +794,7 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     wbaseItem.value.querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`).forEach((childCol) => {
       childCol.style.setProperty("--gutter", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
     });
-    if (wbaseItem.WAutolayoutItem.IsScroll) wbaseItem.value.setAttribute("scroll");
+    if (wbaseItem.WAutolayoutItem.IsScroll) wbaseItem.value.setAttribute("scroll", "true");
   }
   if (wbaseItem.StyleItem.PaddingItem) wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
   else console.log(wbaseItem.GID);
