@@ -36,6 +36,21 @@ input[type="color"]::-webkit-color-swatch {
   position: relative;
 }
 
+#edit_size_position_div {
+  gap: 2px;
+}
+
+#group_btn_frame_direction > img:first-child {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_vertical.svg);
+  background-color: #e5e5e5;
+  padding: 4px 2.5px;
+}
+
+#group_btn_frame_direction > img:last-child {
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_horizontal.svg);
+  padding: 2.5px 4px;
+}
+
 .action-container {
   display: flex;
   flex-direction: row;
@@ -707,7 +722,7 @@ input[type="color"]::-webkit-color-swatch {
 .layout-align-table > #Center {
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20horizontal.svg);
 }
 
@@ -2708,4 +2723,42 @@ div:has(> .edit-color-container) {
 
 .cate-skin-tile:has(> .row > .fa-caret-right) > :not(.row:first-child) {
   display: none;
+}
+
+#edit_auto_layout_div .check-box-label {
+  height: 36px;
+  padding: 4px 8px;
+}
+
+#edit_auto_layout_div .check-box-label[disabled="true"] {
+  position: relative;
+  color: #c4c4c4 !important;
+}
+
+.check-box-label[disabled="true"]:hover:after {
+  content: "can't scroll with same hug-content direction";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 60%);
+  background-color: #000000;
+  padding: 8px 6px;
+  font-size: 11px;
+  color: white !important;
+  white-space: nowrap;
+  border-radius: 2px;
+}
+
+#edit_auto_layout_div .check-box-label > input {
+  margin-right: 8px;
+  pointer-events: none;
+  width: fit-content;
+}
+
+#edit_auto_layout_div .check-box-label + .text_field_right_view {
+  display: none;
+}
+
+#edit_auto_layout_div .check-box-label:has(> input:checked) + .text_field_right_view {
+  display: flex;
 }

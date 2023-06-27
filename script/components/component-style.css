@@ -2,10 +2,6 @@
   pointer-events: none !important;
 }
 
-/* .wbaseItem-value:has(> .fixed-position) {
-  position: relative;
-} */
-
 .wbaseItem-value[lock="true"] .wbaseItem-value {
   pointer-events: none !important;
 }
@@ -33,7 +29,15 @@
   padding: var(--padding);
 }
 
-:is(.wbaseItem-value.w-col, .wbaseItem-value.w-row) > .wbaseItem-value {
+.wbaseItem-value.w-col[scroll="true"] {
+  overflow-y: scroll;
+}
+
+.wbaseItem-value.w-row[scroll="true"] {
+  overflow-x: scroll;
+}
+
+:is(.wbaseItem-value.w-col, .wbaseItem-value.w-row) > .wbaseItem-value:not(.wbaseItem-value.fixed-position) {
   left: unset !important;
   top: unset !important;
   right: unset !important;

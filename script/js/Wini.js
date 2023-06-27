@@ -804,6 +804,7 @@ const childObserver = new MutationObserver((mutationList) => {
 });
 
 var lstc = [];
+var dragTime = 0;
 function moveListener(event) {
   if (event.target.contentEditable == "true" || (event.target.localName === "input" && !event.target.readOnly)) return;
   event.preventDefault();
@@ -821,6 +822,8 @@ function moveListener(event) {
   }
   // check edit data
   if (event.buttons == 1 && PageDA.enableEdit) {
+    dragTime++;
+    if (dragTime < 2) return;
     if (instance_drag) {
       target_view = "left_view";
     } else if (document.getElementById("popup_img_document")?.getAttribute("offset")) {
@@ -865,11 +868,6 @@ function moveListener(event) {
           }
         });
         sortLayer = document.createElement("div");
-        sortLayer.style.position = "absolute";
-        sortLayer.style.height = "1px";
-        sortLayer.style.right = "0px";
-        sortLayer.style.backgroundColor = "black";
-        sortLayer.style.display = "block";
         document.getElementById("Layer").appendChild(sortLayer);
       }
     } else if (sortSkin || event.target.className == "skin_tile_option") {
@@ -1199,197 +1197,13 @@ function moveListener(event) {
                 if (select_box && !objr) {
                   if (checkpad == 0) lstc = [...parent.querySelectorAll(":scope > .wbaseItem-value")].filter((eHTML) => !isHidden(eHTML));
                   selectParent(event);
-                  // // top left
+                  // top left
                   let select_box_o1 = select_box.o1;
-                  // // bottom right
+                  // bottom right
                   let select_box_o9 = select_box.o9;
                   if ((isInRange(event.pageX, select_box_o1.x, select_box_o9.x) && isInRange(event.pageY, select_box_o1.y, select_box_o9.y) && checkpad == 0) || checkpad != 0 || (selected_list.length === 1 && hover_wbase === selected_list[0])) {
-                    // if (checkpad == 0) {
-                    //   listLine = [];
-                    //   // listRectHover = [];
-                    //   listText = [];
-                    //   objsc = JSON.parse(JSON.stringify(select_box)); // get position before drag of select box
-                    // }
-                    // select_box.x = objsc.x + xp;
-                    // select_box.o1.x = objsc.o1.x + xp;
-                    // select_box.o2.x = objsc.o2.x + xp;
-                    // select_box.o3.x = objsc.o3.x + xp;
-                    // select_box.o4.x = objsc.o4.x + xp;
-                    // select_box.o5.x = objsc.o5.x + xp;
-                    // select_box.o6.x = objsc.o6.x + xp;
-                    // select_box.o7.x = objsc.o7.x + xp;
-                    // select_box.o8.x = objsc.o8.x + xp;
-                    // select_box.o9.x = objsc.o9.x + xp;
-                    // select_box.y = objsc.y + yp;
-                    // select_box.o1.y = objsc.o1.y + yp;
-                    // select_box.o2.y = objsc.o2.y + yp;
-                    // select_box.o3.y = objsc.o3.y + yp;
-                    // select_box.o4.y = objsc.o4.y + yp;
-                    // select_box.o5.y = objsc.o5.y + yp;
-                    // select_box.o6.y = objsc.o6.y + yp;
-                    // select_box.o7.y = objsc.o7.y + yp;
-                    // select_box.o8.y = objsc.o8.y + yp;
-                    // select_box.o9.y = objsc.o9.y + yp;
-                    // const b = (scale < 1 ? Math.floor(3 / scale) : 5) / scale;
-                    // // const b = 5;
-                    // var listt = lstc.filter((m) => {
-                    //   if (selected_list.some((e) => e.GID == m.id)) return false;
-                    //   let mRect = m.getBoundingClientRect();
-                    //   return Math.abs(mRect.x - select_box.x) <= b || Math.abs(mRect.x - select_box.o5.x) <= b || Math.abs(mRect.x - select_box.o9.x) <= b || Math.abs(mRect.x + mRect.width / 2 - select_box.x) <= b || Math.abs(mRect.x + mRect.width / 2 - select_box.o5.x) <= b || Math.abs(mRect.x + mRect.width / 2 - select_box.o9.x) <= b || Math.abs(mRect.x + mRect.width - select_box.x) <= b || Math.abs(mRect.x + mRect.width - select_box.o5.x) <= b || Math.abs(mRect.x + mRect.width - select_box.o9.x) <= b || Math.abs(mRect.y - select_box.y) <= b || Math.abs(mRect.y - select_box.o5.y) <= b || Math.abs(mRect.y - select_box.o9.y) <= b || Math.abs(mRect.y + mRect.height / 2 - select_box.y) <= b || Math.abs(mRect.y + mRect.height / 2 - select_box.o5.y) <= b || Math.abs(mRect.y + mRect.height / 2 - select_box.o9.y) <= b || Math.abs(mRect.y + mRect.height - select_box.y) <= b || Math.abs(mRect.y + mRect.height - select_box.o5.y) <= b || Math.abs(mRect.y + mRect.height - select_box.o9.y) <= b;
-                    // });
-                    // listLine = [];
-                    // listText = [];
                     var xb = 0,
                       yb = 0;
-                    //   tx = -2;
-                    // for (var i = 0; i < listt.length; i++) {
-                    //   let eHTMLRect = listt[i].getBoundingClientRect();
-                    //   var o1 = {
-                    //     x: eHTMLRect.x,
-                    //     y: eHTMLRect.y,
-                    //   };
-                    //   var o2 = {
-                    //     x: eHTMLRect.x + eHTMLRect.width / 2,
-                    //     y: eHTMLRect.y + eHTMLRect.height / 2,
-                    //   };
-                    //   var o3 = {
-                    //     x: eHTMLRect.x + eHTMLRect.width,
-                    //     y: eHTMLRect.y + eHTMLRect.height,
-                    //   };
-                    //   var xt1 = o1.x - select_box.x,
-                    //     xt2 = o1.x - select_box.o5.x,
-                    //     xt3 = o1.x - select_box.o9.x,
-                    //     xt4 = o2.x - select_box.x,
-                    //     xt5 = o2.x - select_box.o5.x,
-                    //     xt6 = o2.x - select_box.o9.x,
-                    //     xt7 = o3.x - select_box.x,
-                    //     xt8 = o3.x - select_box.o5.x,
-                    //     xt9 = o3.x - select_box.o9.x,
-                    //     yt1 = o1.y - select_box.y,
-                    //     yt2 = o1.y - select_box.o5.y,
-                    //     yt3 = o1.y - select_box.o9.y,
-                    //     yt4 = o2.y - select_box.y,
-                    //     yt5 = o2.y - select_box.o5.y,
-                    //     yt6 = o2.y - select_box.o9.y,
-                    //     yt7 = o3.y - select_box.y,
-                    //     yt8 = o3.y - select_box.o5.y,
-                    //     yt9 = o3.y - select_box.o9.y;
-                    //   if (Math.abs(xt1) <= b || Math.abs(xt2) <= b || Math.abs(xt3) <= b) {
-                    //     var checktt = Math.abs(xt2) <= b;
-                    //     xb = Math.abs(xt1) <= b ? xt1 : checktt ? xt2 : Math.abs(xt3) <= b ? xt3 : bx;
-                    //     var listl = checktt ? [o1.y, o3.y, select_box.o5.y] : [o1.y, select_box.y, o3.y, checktt ? select_box.o5.y : select_box.o9.y];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: o1.x + tx, y: m - tx };
-                    //       }),
-                    //     );
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: o1.x,
-                    //       y: Math.min(...listl),
-                    //       x1: o1.x,
-                    //       y1: Math.max(...listl),
-                    //       l: true,
-                    //       s: 1,
-                    //     });
-                    //   } else if (Math.abs(xt4) <= b || Math.abs(xt5) <= b || Math.abs(xt6) <= b) {
-                    //     var checktt = Math.abs(xt5) <= b;
-                    //     xb = Math.abs(xt4) <= b ? xt4 : checktt ? xt5 : Math.abs(xt6) <= b ? xt6 : bx;
-                    //     var listl = checktt ? [o1.y, o3.y, select_box.o5.y] : [o1.y, select_box.y, o3.y, checktt ? select_box.o5.y : select_box.o9.y];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: o2.x + tx, y: m - tx };
-                    //       }),
-                    //     );
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: o2.x,
-                    //       y: Math.min(...listl),
-                    //       x1: o2.x,
-                    //       y1: Math.max(...listl),
-                    //       l: true,
-                    //       s: 2,
-                    //     });
-                    //   } else if (Math.abs(xt7) <= b || Math.abs(xt8) <= b || Math.abs(xt9) <= b) {
-                    //     var checktt = Math.abs(xt8) <= b;
-                    //     var listl = checktt ? [o1.y, o3.y, select_box.o5.y] : [o1.y, select_box.y, o3.y, checktt ? select_box.o5.y : select_box.o9.y];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: o3.x + tx, y: m - tx };
-                    //       }),
-                    //     );
-                    //     xb = Math.abs(xt7) <= b ? xt7 : Math.abs(xt8) <= b ? xt8 : Math.abs(xt9) <= b ? xt9 : bx;
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: o3.x,
-                    //       y: Math.min(...listl),
-                    //       x1: o3.x,
-                    //       y1: Math.max(...listl),
-                    //       l: true,
-                    //       s: 3,
-                    //     });
-                    //   } else if (Math.abs(yt1) <= b || Math.abs(yt2) <= b || Math.abs(yt3) <= b) {
-                    //     var checktt = Math.abs(yt2) <= b;
-                    //     var listl = [o1.x, select_box.x, o3.x, checktt ? select_box.o5.x : select_box.o9.x];
-                    //     var listl = checktt ? [o1.x, o3.x, select_box.o5.x] : [o1.x, select_box.x, o3.x, select_box.o9.x];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: m + tx, y: o1.y - tx };
-                    //       }),
-                    //     );
-                    //     yb = Math.abs(yt1) <= b ? yt1 : checktt ? yt2 : Math.abs(yt3) <= b ? yt3 : by;
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: Math.min(...listl),
-                    //       y: o1.y,
-                    //       x1: Math.max(...listl),
-                    //       y1: o1.y,
-                    //       l: true,
-                    //       s: 4,
-                    //     });
-                    //   } else if (Math.abs(yt4) <= b || Math.abs(yt5) <= b || Math.abs(yt6) <= b) {
-                    //     var checktt = Math.abs(yt5) <= b;
-                    //     var listl = checktt ? [o1.x, o3.x, select_box.o5.x] : [o1.x, select_box.x, o3.x, select_box.o9.x];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: m + tx, y: o2.y - tx };
-                    //       }),
-                    //     );
-                    //     yb = Math.abs(yt4) <= b ? yt4 : checktt ? yt5 : Math.abs(yt6) <= b ? yt6 : by;
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: Math.min(...listl),
-                    //       y: o2.y,
-                    //       x1: Math.max(...listl),
-                    //       y1: o2.y,
-                    //       l: true,
-                    //       s: 5,
-                    //     });
-                    //   } else if (Math.abs(yt7) <= b || Math.abs(yt8) <= b || Math.abs(yt9) <= b) {
-                    //     var checktt = Math.abs(yt8) <= b;
-                    //     var listl = checktt ? [o1.x, o3.x, select_box.o5.x] : [o1.x, select_box.x, o3.x, select_box.o9.x];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: m + tx, y: o3.y - tx };
-                    //       }),
-                    //     );
-                    //     yb = Math.abs(yt7) <= b ? yt7 : checktt ? yt8 : Math.abs(yt9) <= b ? yt9 : by;
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: Math.min(...listl),
-                    //       y: o3.y,
-                    //       x1: Math.max(...listl),
-                    //       y1: o3.y,
-                    //       l: true,
-                    //       s: 6,
-                    //     });
-                    //   }
-                    //   if (listLine.length > 4) {
-                    //     listLine = listLine.splice(0, 5);
-                    //     listText = listText.splice(0, 5);
-                    //     break;
-                    //   }
-                    // }
                     if (checkpad === 0) {
                       drag_start_list = [];
                       let isFixedWhenScroll = false;
@@ -2635,6 +2449,7 @@ function upListener(event) {
   WBaseDA.listData = [];
   drag_start_list = [];
   checkpad = 0;
+  dragTime = 0;
   objr = null;
   if (target_view === divMain) {
     let mouseOffset = offsetScale(event.pageX, event.pageY);

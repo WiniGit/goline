@@ -715,12 +715,16 @@ function initWbaseStyle(item) {
 
 function handleStyleSize(item) {
   if (item.StyleItem.FrameItem.Width == undefined) {
-    item.value.style.width = "fit-content";
-    if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
+    if (item.CateID === EnumCate.tool_text) {
+      item.value.style.width = "max-content";
+    } else {
+      item.value.style.width = "fit-content";
+    }
+    // if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
   } else if (item.StyleItem.FrameItem.Width < 0) {
     item.value.style.width = "100%";
   } else {
-    if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
+    // if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
     if ([Constraints.left, Constraints.right, Constraints.center].some((constX) => item.StyleItem.PositionItem.ConstraintsX === constX)) {
       item.value.style.width = `${item.StyleItem.FrameItem.Width}px`;
     }
@@ -774,9 +778,12 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     wbaseItem.value.style.setProperty("--gap", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
   } else {
     let isRow = wbaseItem.WAutolayoutItem.Direction === "Horizontal";
+    $(wbaseItem.value).removeClass("w-stack");
     if (isRow) {
+      $(wbaseItem.value).removeClass("w-col");
       $(wbaseItem.value).addClass("w-row");
     } else {
+      $(wbaseItem.value).removeClass("w-row");
       $(wbaseItem.value).addClass("w-col");
     }
     wbaseItem.value.style.setProperty("--flex-wrap", wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap");
@@ -785,10 +792,12 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     wbaseItem.value.style.setProperty("--main-axis-align", wMainAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
     wbaseItem.value.style.setProperty("--cross-axis-align", wCrossAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
     wbaseItem.value.querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`).forEach((childCol) => {
-      childCol.style.setProperty("--guttter", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
+      childCol.style.setProperty("--gutter", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
     });
-    wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
   }
+  if(wbaseItem.StyleItem.PaddingItem) 
+  wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
+  else console.log(wbaseItem.GID);
 }
 
 function removeAutoLayoutProperty(eHTML) {
@@ -800,7 +809,7 @@ function removeAutoLayoutProperty(eHTML) {
   eHTML.style.removeProperty("--main-axis-align");
   eHTML.style.removeProperty("--cross-axis-align");
   eHTML.querySelectorAll(`.col-[level="${parseInt(eHTML.getAttribute("level")) + 1}"]`).forEach((childCol) => {
-    childCol.style.removeProperty("--guttter");
+    childCol.style.removeProperty("--gutter");
   });
   eHTML.style.removeProperty("--padding");
   $(wbaseItem.value).addClass("w-stack");

@@ -684,7 +684,7 @@ async function addAutoLayout() {
     let eHTML = selected_list[0].value;
     selected_list[0].AutoLayoutID = new_auto_layout.GID;
     selected_list[0].WAutolayoutItem = new_auto_layout;
-    selected_list[0].StyleItem.PaddingID = new_padding_item.GID;
+    selected_list[0].StyleItem.PaddingID = null;
     selected_list[0].StyleItem.PaddingItem = new_padding_item;
     eHTML.style.setProperty("--padding", "8px");
     if (selected_list[0].Level === 1 && new_auto_layout.Direction === "Horizontal") {
@@ -707,6 +707,7 @@ async function addAutoLayout() {
     }
     handleStyleLayout(selected_list[0]);
     WBaseDA.edit(selected_list, EnumObj.padddingWbaseFrame);
+    selected_list[0].StyleItem.PaddingID = new_padding_item.GID;
     addSelectList(selected_list);
   } else {
     let list_update = [...selected_list];
@@ -1817,7 +1818,7 @@ function editTextStyle(text_style_item, onSubmit = true) {
                 initPositionStyle(wbaseItem);
               }
             }
-            wbaseItem.value.style.width = "fit-content";
+            wbaseItem.value.style.width = "max-content";
             wbaseItem.StyleItem.FrameItem.Width = undefined;
             wbaseItem.value.style.height = "fit-content";
             wbaseItem.StyleItem.FrameItem.Height = undefined;
