@@ -4,6 +4,7 @@ function create_stateContainer() {
   $(".state_setting_view").html(state_container);
   if (selected_list.length > 0) {
     state_container = state_view.querySelector(".state_setting_view .state-container");
+    state_container.appendChild(specifyClass());
     state_container.appendChild(createDataForm());
     if (selected_list.length === 1) {
       state_container.appendChild(createAttributeComponent());
@@ -261,6 +262,83 @@ $("body").on("click", ".effect-setting .abort-skin-button", function (e) {
   $("#popup_table_skin").remove();
   $("#state-setting_UI").html(create_UI_State());
 });
+
+function specifyClass() {
+  let specifyClass = document.createElement("div");
+  specifyClass.className = "state-container-body-UI col";
+  let header = document.createElement("div");
+  header.className = "header semibold1 row";
+  header.innerHTML = "Specify class";
+  let iconAdd = document.createElement("i");
+  iconAdd.className = "fa-solid fa-plus";
+  header.appendChild(iconAdd);
+  let body = document.createElement("div");
+  body.className = "body col";
+  let responsiveClss = ["col-", "min-brp", "sm", "md", "lg", "xl", "xxl"];
+  let classList = selected_list
+    .map((e) => {
+      if (!e.ListClassName || e.ListClassName.trim() === "") return [];
+      return e.ListClassName.split(" ");
+    })
+    .reduce((a, b) => a.concat(b))
+    .filter((clName) => responsiveClss.every((resClss) => resClss !== clName) && !clName.match(/col[0-9]{1,2}/g));
+  body.replaceChildren(
+    ...classList.map((clsName) => {
+      let clsNameContainer = document.createElement("div");
+      clsNameContainer.className = "row input-class-container";
+      let inputCls = document.createElement("input");
+      inputCls.value = clsName;
+      inputCls.className = "regular1";
+      let iconRemove = document.createElement("i");
+      iconRemove.className = "fa-solid fa-minus fa-sm";
+      clsNameContainer.replaceChildren(inputCls, iconRemove);
+      let oldValue = "";
+      inputCls.onblur = function () {
+        this.value = Ultis.toSlug(this.value);
+        if (responsiveClss.every((resCls) => resCls !== this.value) && !this.value.startsWith("w-") && this.value !== "wbaseItem-value") {
+          for (let wb of selected_list) {
+            if (!wb.value.classList.contains(this.value)) {
+              $(wb.value).removeClass(oldValue);
+              $(wb.value).addClass(this.value);
+              wb.ListClassName = wb.ListClassName.trim() + ` ${this.value}`;
+            }
+          }
+          oldValue = this.value;
+          WBaseDA.edit(selected_list);
+        }
+      };
+      return clsNameContainer;
+    }),
+  );
+  iconAdd.onclick = function () {
+    let clsNameContainer = document.createElement("div");
+    clsNameContainer.className = "row input-class-container";
+    let inputCls = document.createElement("input");
+    inputCls.placeholder = "new class name";
+    inputCls.className = "regular1";
+    let iconRemove = document.createElement("i");
+    iconRemove.className = "fa-solid fa-minus fa-sm";
+    clsNameContainer.replaceChildren(inputCls, iconRemove);
+    body.appendChild(clsNameContainer);
+    let oldValue = "";
+    inputCls.onblur = function () {
+      this.value = Ultis.toSlug(this.value);
+      if (responsiveClss.every((resCls) => resCls !== this.value) && !this.value.startsWith("w-") && this.value !== "wbaseItem-value") {
+        for (let wb of selected_list) {
+          if (!wb.value.classList.contains(this.value)) {
+            $(wb.value).removeClass(oldValue);
+            $(wb.value).addClass(this.value);
+            wb.ListClassName = wb.ListClassName.trim() + ` ${this.value}`;
+          }
+        }
+        oldValue = this.value;
+        WBaseDA.edit(selected_list);
+      }
+    };
+  };
+  specifyClass.replaceChildren(header, body);
+  return specifyClass;
+}
 
 function update_StyleState(componentState) {
   if (selected_list[0].JsonEventItem == null) selected_list[0].JsonEventItem = [];

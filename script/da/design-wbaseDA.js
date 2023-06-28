@@ -393,6 +393,7 @@ var current_page = {
     ProjectID: 1,
     Permission: EnumPermission.owner,
 };
+// var componentClss = ["w-col", "w-row", "w-stack", "wbaseItem-value", "fixed-position", "w-frame", "w-page","w-table","w-text","w-tree", "tile-item", ""];
 var wbase_parentID = "019cc638-18b3-434d-8c4a-973537cde698";
 var select_box_parentID = "019cc638-18b3-434d-8c4a-973537cde698";
 var tool_state = ToolState.move;

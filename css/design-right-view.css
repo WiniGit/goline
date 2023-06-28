@@ -2762,3 +2762,32 @@ div:has(> .edit-color-container) {
 #edit_auto_layout_div .check-box-label:has(> input:checked) + .text_field_right_view {
   display: flex;
 }
+
+.input-class-container {
+  width: calc(100% - 22px);
+  box-sizing: border-box;
+  gap: 8px;
+  margin: 2px 10px 2px 12px;
+}
+
+.input-class-container > input {
+  width: 100%;
+  outline: none;
+  border: 1px solid #e5e5e5;
+  padding: 4px 6px;
+  box-sizing: border-box;
+}
+
+.input-class-container > i {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-class-container > i:hover {
+  background-color: #f1f1f1;
+  border-radius: 2px;
+}
