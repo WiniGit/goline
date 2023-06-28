@@ -858,6 +858,9 @@ class WiniIO {
       }
       return;
     }
+    if(obj.data.some(e => e.GID === wbase_parentID)) {
+    toastr["warning"]("Nhớ thao tác này để báo Thuno nếu có lỗi, please!!!!!!!");
+    }
     socket.emit("client-main", obj);
   }
 
