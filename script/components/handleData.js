@@ -786,7 +786,7 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
       $(wbaseItem.value).removeClass("w-row");
       $(wbaseItem.value).addClass("w-col");
     }
-    wbaseItem.value.style.setProperty("--flex-wrap", wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap");
+    wbaseItem.value.setAttribute("wrap", wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap");
     wbaseItem.value.style.setProperty("--child-space", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
     wbaseItem.value.style.setProperty("--run-space", `${wbaseItem.WAutolayoutItem.RunSpace}px`);
     wbaseItem.value.style.setProperty("--main-axis-align", wMainAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
@@ -796,8 +796,7 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     });
     if (wbaseItem.WAutolayoutItem.IsScroll) wbaseItem.value.setAttribute("scroll", "true");
   }
-  if (wbaseItem.StyleItem.PaddingItem) wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
-  else console.log(wbaseItem.GID);
+  wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
 }
 
 function removeAutoLayoutProperty(eHTML) {
