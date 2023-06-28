@@ -42,7 +42,7 @@ function get_data_outputFromJson(json, outputID, index) {
 
 async function push_dataProject() {
   var page_script = "";
-  document.body.getAttribute;
+  // document.body.getAttribute;
 
   var list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
   list_page = list_page.map((wb) => {
