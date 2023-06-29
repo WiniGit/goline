@@ -859,7 +859,7 @@ class WiniIO {
       return;
     }
     if (obj.data.some((e) => e.GID === wbase_parentID)) {
-      toastr["warning"]("Nhớ thao tác này để báo Thuno nếu load lại có mất hết sorry ae, please!!!!!!!");
+      toastr["warning"]("Nhớ thao tác này để báo Thuno nếu load lại có mất hết sorry ace!!!!!!!");
     }
     socket.emit("client-main", obj);
   }

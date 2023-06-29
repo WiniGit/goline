@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="css/responsive-col.css">
     <style>
       * {
         box-sizing: border-box;
@@ -11,6 +12,7 @@
 
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        margin: 0;
       }
 
       .parent {
@@ -18,46 +20,46 @@
         display: flex;
         padding: 20px;
         flex-wrap: wrap;
-        gap: 8px;
+        --gutter: 16px;
+        gap: var(--gutter);
       }
 
       .child {
         background-color: #0074d9;
         padding: 20px;
-        /* flex-grow: 1; */
         color: white;
       }
 
       .child-test {
               padding: 20px;
-              width: 300px;
+              flex: 1;
               background-color: azure;
       }
 
       .child-one {
-        flex: 0 calc(30% - 8px);
+        /* flex: 0 calc(30% - 8px); */
         background-color: red;
       }
       .child-two {
-        flex: 0 calc(20% - 8px);
+        /* flex: 0 calc(20% - 8px); */
       }
       .child-three {
-        flex: 0 calc(10% - 8px);
+        /* flex: 0 calc(10% - 8px); */
         background-color: #3d9970;
       }
       .child-four {
-        flex: 0 calc(50% - 8px);
+        /* flex: 0 calc(50% - 8px); */
         background-color: #c5c5c5;
       }
     </style>
   </head>
-  <body>
-    <div class="parent">
-      <div class="child child-one">child</div>
-      <div class="child child-two">child</div>
-      <div class="child child-three">child</div>
+  <body class="min-brp">
+    <div class="parent w-row">
+      <div class="child child-one col8">child</div>
+      <div class="child child-two col4">child</div>
+      <div class="child child-three col8">child</div>
+      <div class="child child-four col4">child</div>
       <div class="child-test">child</div>
-      <div class="child child-four">child</div>
     </div>
   </body>
 </html>

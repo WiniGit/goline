@@ -292,7 +292,7 @@ function specifyClass() {
       let iconRemove = document.createElement("i");
       iconRemove.className = "fa-solid fa-minus fa-sm";
       clsNameContainer.replaceChildren(inputCls, iconRemove);
-      let oldValue = "";
+      let oldValue = clsName;
       inputCls.onblur = function () {
         this.value = Ultis.toSlug(this.value);
         if (responsiveClss.every((resCls) => resCls !== this.value) && !this.value.startsWith("w-") && this.value !== "wbaseItem-value") {
@@ -306,6 +306,20 @@ function specifyClass() {
           oldValue = this.value;
           WBaseDA.edit(selected_list);
         }
+      };
+      iconRemove.onclick = function () {
+        for (let wb of selected_list) {
+          if (wb.value.classList.contains(oldValue)) {
+            $(wb.value).removeClass(oldValue);
+            if (wb.ListClassName) {
+              wb.ListClassName = wb.ListClassName.split(" ")
+                .filter((clsName) => clsName != oldValue)
+                .join(" ");
+            }
+          }
+        }
+        WBaseDA.edit(selected_list);
+        clsNameContainer.remove();
       };
       return clsNameContainer;
     }),
@@ -328,12 +342,30 @@ function specifyClass() {
           if (!wb.value.classList.contains(this.value)) {
             $(wb.value).removeClass(oldValue);
             $(wb.value).addClass(this.value);
-            wb.ListClassName = wb.ListClassName.trim() + ` ${this.value}`;
+            if (!wb.ListClassName || wb.ListClassName.trim() === "") {
+              wb.ListClassName = this.value;
+            } else {
+              wb.ListClassName = wb.ListClassName.trim() + ` ${this.value}`;
+            }
           }
         }
         oldValue = this.value;
         WBaseDA.edit(selected_list);
       }
+    };
+    iconRemove.onclick = function () {
+      for (let wb of selected_list) {
+        if (wb.value.classList.contains(oldValue)) {
+          $(wb.value).removeClass(oldValue);
+          if (wb.ListClassName) {
+            wb.ListClassName = wb.ListClassName.split(" ")
+              .filter((clsName) => clsName != oldValue)
+              .join(" ");
+          }
+        }
+      }
+      WBaseDA.edit(selected_list);
+      clsNameContainer.remove();
     };
   };
   specifyClass.replaceChildren(header, body);
