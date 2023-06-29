@@ -244,6 +244,8 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 try {
   const ipcRenderer = require("electron").ipcRenderer;
   $("body").on("click", ".btn-play", async function () {
+    $('.btn-play').html(`<i class="fa-solid fa-spinner fa-spin"></i>`);
+
     let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
     await push_dataProject();
 
@@ -270,6 +272,7 @@ try {
         // window.open(`https://wini.vn`);
         // ${ProjectDA.obj.Code}/Views/${router[0].PageName}.html
         ipcRenderer.send("asynchronous-play", `${ProjectDA.obj.Code}`);
+        $('.btn-play').html(`<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/play.svg" class="btn-play">`);
       },
     );
   });
