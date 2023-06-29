@@ -5815,6 +5815,11 @@ function colNumberByBrp(enable = true) {
         } else {
           wbaseItem.ListClassName.split(" ").forEach((clName) => $(wbaseItem.value).addClass(clName));
         }
+        wbaseItem.value.classList.forEach((cls) => {
+          if (cls.includes("col-") || colClass.match(/col[0-9]{1,2}/g)) {
+            $(wbaseItem.value).removeClass(cls);
+          }
+        });
         if (wbaseItem.StyleItem.FrameItem.Width != null && wbaseItem.StyleItem.FrameItem.Width < 0) {
           wbaseItem.value.style.width = wbaseItem.value.offsetWidth + "px";
           wbaseItem.value.style.minWidth = wbaseItem.value.offsetWidth + "px";
@@ -5898,7 +5903,7 @@ function colNumberByBrp(enable = true) {
             if (brpColValues.length > 1) {
               firstValue = "Mixed";
             }
-            let normalCol = [2, 3, 4, 6, 8, 12, 24];
+            let normalCol = [0, 1, 2, 3, 4, 6, 8, 12, 24];
             for (let option of options) {
               if (normalCol.every((num) => num != option.getAttribute("value"))) option.style.display = "none";
               if (firstValue == option.getAttribute("value")) option.firstChild.style.opacity = 1;
@@ -5935,11 +5940,11 @@ function colNumberByBrp(enable = true) {
                 });
                 listColClass.push(`col${option}${shortName}`);
                 wbaseItem.ListClassName = listColClass.join(" ");
-                [...wbaseItem.value.classList].forEach(clName => {
-                  if(clName.match(/col[0-9]{1,2}/g) || clName.includes("col-")) {
+                [...wbaseItem.value.classList].forEach((clName) => {
+                  if (clName.match(/col[0-9]{1,2}/g) || clName.includes("col-")) {
                     $(wbaseItem.value).removeClass(clName);
                   }
-                })
+                });
                 listColClass.forEach((clName) => $(wbaseItem.value).addClass(clName));
               }
             }

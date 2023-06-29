@@ -823,7 +823,7 @@ function moveListener(event) {
   // check edit data
   if (event.buttons == 1 && PageDA.enableEdit) {
     dragTime++;
-    if (dragTime < 4) return;
+    if (dragTime < 4 && design_view_index !== 1) return;
     if (instance_drag) {
       target_view = "left_view";
     } else if (document.getElementById("popup_img_document")?.getAttribute("offset")) {
