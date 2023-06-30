@@ -810,7 +810,7 @@ function moveListener(event) {
   event.preventDefault();
   let target_view;
   // check drag resize left view
-  if (!instance_drag && left_view.offsetWidth > 0 && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {
+  if ((!instance_drag && left_view.offsetWidth > 0 && isInRange(event.pageX, left_view.offsetWidth - 8, left_view.offsetWidth + 8)) || left_view.resizing) {
     document.body.style.cursor = "e-resize";
     if (event.buttons == 1) {
       left_view.resizing = true;

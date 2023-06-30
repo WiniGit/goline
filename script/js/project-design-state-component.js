@@ -367,6 +367,7 @@ function specifyClass() {
       WBaseDA.edit(selected_list);
       clsNameContainer.remove();
     };
+    inputCls.focus();
   };
   specifyClass.replaceChildren(header, body);
   return specifyClass;

@@ -468,7 +468,7 @@ function addSelectList(new_selected_list = []) {
     for (let e of selected_list) {
       let selectHTML = document.getElementById(`wbaseID:${e.GID}`);
       if (selectHTML) {
-        selectHTML.style.backgroundColor = "transparent";
+        selectHTML.style.backgroundColor = null;
       }
     }
   }
@@ -500,7 +500,7 @@ function addSelectList(new_selected_list = []) {
     let layerSelect = document.getElementById(`wbaseID:${selected_list[0].GID}`);
     let layerParentRect = layer_view.lastChild.getBoundingClientRect();
     if (layerSelect && !isInRange(layerSelect.getBoundingClientRect().y, layerParentRect.y, layerParentRect.y + layerParentRect.height, true)) {
-      let scrollToY = layerSelect.offsetTop - layerSelect.offsetHeight - document.getElementById("div_list_page").offsetHeight + 2;
+      let scrollToY = layerSelect.offsetTop - layerSelect.offsetHeight - document.getElementById("div_list_page").offsetHeight - 8;
       layer_view.lastChild.scrollTo({
         top: scrollToY,
         behavior: "smooth",
@@ -1027,7 +1027,7 @@ function dragWbaseEnd() {
   select_box_parentID = selected_list[0].ParentID;
   parent = divSection;
   updateHoverWbase();
-  addSelectList(selected_list);
+  addSelectList([...selected_list]);
 }
 
 // ALT copy
@@ -1576,7 +1576,7 @@ function ctrlZ() {
             if (wbaseItem.GID === oldParent?.GID || wbaseItem.GID === newParent.GID) {
               let parentHTML = divSection;
               if (wbaseItem.Level > 1) parentHTML = document.getElementById(wbaseItem.ParentID);
-              switch (parseInt(parentHTML.getAttribute("cateid"))) {
+              switch (parseInt(parentHTML?.getAttribute("cateid")??"0")) {
                 case EnumCate.tree:
                   createTree(
                     wbase_list.find((e) => e.GID === wbaseItem.ParentID),

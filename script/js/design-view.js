@@ -1495,8 +1495,8 @@ function updateUIDesignView() {
   } else {
     let editAlign = createEditAlign();
     let editSizePosition = createEditSizePosition();
-    let selectClass = selectionClass();
-    listEditContainer.push(editAlign, editSizePosition, selectClass);
+    // let selectClass = selectionClass();
+    listEditContainer.push(editAlign, editSizePosition);
     if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
       let editConstraints = createConstraints();
       listEditContainer.push(editConstraints);
@@ -5813,16 +5813,17 @@ function colNumberByBrp(enable = true) {
       let eObj;
       for (let wbaseItem of selected_list) {
         wbaseItem.ListClassName = wbaseItem.ListClassName.split(" ")
-          .filter((colClass) => !colClass.includes("col-") && !colClass.match(/col[0-9]{1,2}/g))
+          .filter((cls) => !cls.includes("col-") && !cls.match(/col[0-9]{1,2}/g))
           .join(" ")
           .trim();
         if (wbaseItem.ListClassName === "") {
           wbaseItem.ListClassName = null;
         } else {
-          wbaseItem.ListClassName.split(" ").forEach((clName) => $(wbaseItem.value).addClass(clName));
+          wbaseItem.ListClassName.split(" ").forEach((cls) => $(wbaseItem.value).addClass(cls));
         }
-        wbaseItem.value.classList.forEach((cls) => {
-          if (cls.includes("col-") || colClass.match(/col[0-9]{1,2}/g)) {
+        let oldClassList = [...wbaseItem.value.classList];
+        oldClassList.forEach((cls) => {
+          if (cls.includes("col-") || cls.match(/col[0-9]{1,2}/g)) {
             $(wbaseItem.value).removeClass(cls);
           }
         });
@@ -5946,7 +5947,8 @@ function colNumberByBrp(enable = true) {
                 });
                 listColClass.push(`col${option}${shortName}`);
                 wbaseItem.ListClassName = listColClass.join(" ");
-                [...wbaseItem.value.classList].forEach((clName) => {
+                let oldClassList = [...wbaseItem.value.classList];
+                oldClassList.forEach((clName) => {
                   if (clName.match(/col[0-9]{1,2}/g) || clName.includes("col-")) {
                     $(wbaseItem.value).removeClass(clName);
                   }
