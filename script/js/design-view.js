@@ -2872,7 +2872,6 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
 
   let editColorForm = document.createElement("input");
   editColorForm.className = "edit-color-form";
-  editColorForm.maxLength = 7;
   editColorForm.value = "000000";
 
   containerInput.appendChild(editColorForm);
@@ -2940,6 +2939,13 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
     this.parentElement.style.border = "0.5px solid #1890FF";
     divider.style.backgroundColor = "#1890FF";
     startHexColor = this.value;
+  };
+  editColorForm.oninput = function () {
+    if (this.value.startsWith("#")) {
+      editColorForm.maxLength = 7;
+    } else {
+      editColorForm.maxLength = 6;
+    }
   };
   editColorForm.onblur = function () {
     isFocus = false;

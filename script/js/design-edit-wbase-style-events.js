@@ -1135,7 +1135,7 @@ function editLayoutStyle(auto_layout_item) {
     for (let wbaseItem of selected_list) {
       let elementHTML = wbaseItem.value;
       wbaseItem.WAutolayoutItem.IsScroll = auto_layout_item.IsScroll;
-      if(auto_layout_item.IsScroll) {
+      if (auto_layout_item.IsScroll) {
         elementHTML.setAttribute("scroll", "true");
       } else {
         elementHTML.removeAttribute("scroll", "true");
@@ -1602,13 +1602,13 @@ function addBackgroundColor() {
 async function deleteBackgroundColor() {
   let list_change_background = selected_list.filter((e) => e.StyleItem.DecorationItem);
   for (let wbaseItem of list_change_background) {
-    var elementHTML = document.getElementById(wbaseItem.GID);
-    wbaseItem.StyleItem.DecorationItem.ColorID = undefined;
-    wbaseItem.StyleItem.DecorationItem.ColorValue = undefined;
+    var elementHTML = wbaseItem.value;
+    wbaseItem.StyleItem.DecorationItem.ColorID = null;
+    wbaseItem.StyleItem.DecorationItem.ColorValue = null;
     if (wbaseItem.CateID == EnumCate.svg) {
       await getColorSvg(wbaseItem);
     } else {
-      elementHTML.style.backgroundColor = "transparent";
+      elementHTML.style.backgroundColor = null;
     }
   }
   WBaseDA.edit(list_change_background, EnumObj.decoration);

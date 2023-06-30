@@ -25,7 +25,7 @@ class FileDA {
       if (listFile.some((e) => eHTML.getAttribute("fileID") == e.ID)) {
         eHTML.style.backgroundColor = "#e6f7ff";
       } else {
-        eHTML.style.backgroundColor = "transparent";
+        eHTML.style.backgroundColor = null;
       }
     }
     );

@@ -589,7 +589,7 @@ function selectFolder(collectionItem, search = "") {
       let prefixIcon = [...eHTML.childNodes].find((e) => e.localName == "i");
       prefixIcon.className = "fa-regular fa-folder-open";
     } else {
-      eHTML.style.backgroundColor = "transparent";
+      eHTML.style.backgroundColor = null;
       let prefixIcon = [...eHTML.childNodes].find((e) => e.localName == "i");
       prefixIcon.className = "fa-regular fa-folder";
     }

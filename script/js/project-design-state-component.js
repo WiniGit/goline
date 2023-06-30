@@ -1556,7 +1556,13 @@ function editColorContainer(color, func) {
   let hexColor = document.createElement("input");
   hexColor.defaultValue = `${color.substring(2)}`;
   hexColor.className = "hex-color-value regular1";
-  hexColor.maxLength = 7;
+  hexColor.oninput = function () {
+    if (this.value.startsWith("#")) {
+      hexColor.maxLength = 7;
+    } else {
+      hexColor.maxLength = 6;
+    }
+  };
   hexColor.onblur = function (e) {
     e.stopPropagation();
     func(Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))) + this.value.replace("#", ""));

@@ -64,7 +64,10 @@ function setupLeftView() {
   if (!PageDA.enableEdit) {
     btn_add_page.style.display = "none";
   }
-  div_list_page.replaceChildren(header_page, ...PageDA.list.map((pageItem) => createPageTile(pageItem)));
+  let bodyPage = document.createElement("div");
+  bodyPage.className = "col";
+  bodyPage.replaceChildren(...PageDA.list.map((pageItem) => createPageTile(pageItem)));
+  div_list_page.replaceChildren(header_page, bodyPage);
   // add event unfocus when click white space
   layer_view.onclick = function (event) {
     if (event.target.readOnly == true) {
@@ -936,10 +939,10 @@ function ondragSortLayer(event) {
             preAction.className = preAction.className.replace("caret-right", "caret-down");
           }
         }
-        let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level")??"0") + 1}"]`)];
+        let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level") ?? "0") + 1}"]`)];
         sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))));
         sortLayer.setAttribute("parentid", wbaseID);
-        console.log("children-----")
+        console.log("children-----");
       } else if (Math.abs(event.pageY - rectTopY) <= Math.abs(event.pageY - rectBotY)) {
         // drag to abbove of layer
         sortLayer.removeAttribute("time");
@@ -959,7 +962,7 @@ function ondragSortLayer(event) {
         let spacing = (sortWbase.Level - 1) * 16;
         if (preAction.className.includes("caret-down")) {
           spacing += 16;
-          let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level")??"0") + 1}"]`)];
+          let childHTML = [...wbaseHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(wbaseHTML.getAttribute("level") ?? "0") + 1}"]`)];
           sortLayer.setAttribute("sort", Math.max(0, ...childHTML.map((eHTML) => parseInt(window.getComputedStyle(eHTML).zIndex))) + 1);
           sortLayer.setAttribute("parentid", wbaseID);
         } else {
