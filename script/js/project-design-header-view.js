@@ -211,8 +211,8 @@ button_share.onclick = function () {
     $(this).next(".wpopup-select-permission").show();
   });
   $('body').on('click', '.wpopup-select-permission .permission-option', function (ev) {
-      $('.selected_permission').text($(this).text());
-      ProjectDA.permission = $(this).data('permission');
+    $('.selected_permission').text($(this).text());
+    ProjectDA.permission = $(this).data('permission');
   });
 
   $("body").on("click", ".edit-member-permission", function (ev) {
@@ -284,10 +284,14 @@ button_share.onclick = function () {
     }
   });
 };
+let button_play = document.createElement("div");
+button_play.className = "box48 center btn-play";
 
-let button_play = document.createElement("img");
-button_play.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/play.svg";
-button_play.className = "btn-play";
+let button_play_img = document.createElement("img");
+button_play_img.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/play.svg";
+button_play_img.className = "";
+button_play.appendChild(button_play_img);
+
 let input_scale = document.createElement("div");
 input_scale.className = "regular1 input-scale";
 input_scale.innerHTML = "20%";
