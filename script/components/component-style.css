@@ -29,20 +29,25 @@
 .wbaseItem-value.w-col {
   display: flex;
   flex-direction: column;
+  row-gap: var(--child-space);
+  column-gap: var(--run-space);
 }
 
 .wbaseItem-value.w-row {
   display: flex;
   flex-direction: row;
+  column-gap: var(--child-space);
+  row-gap: var(--run-space);
+}
+
+.wbaseItem-value:is(.w-row, .w-col) {
+  align-items: var(--cross-axis-align);
+  justify-content: var(--main-axis-align);
+  padding: var(--padding);
 }
 
 .wbaseItem-value:is(.w-row, .w-col) > * {
   flex-shrink: 0;
-  align-items: var(--cross-axis-align);
-  justify-content: var(--main-axis-align);
-  column-gap: var(--child-space);
-  row-gap: var(--run-space);
-  padding: var(--padding);
 }
 
 .wbaseItem-value.w-col[scroll="true"] {
