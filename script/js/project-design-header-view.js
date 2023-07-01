@@ -210,9 +210,9 @@ button_share.onclick = function () {
     $(".permission_popup").hide();
     $(this).next(".wpopup-select-permission").show();
   });
-  $('body').on('click', '.wpopup-select-permission .permission-option', function (ev) {
-    $('.selected_permission').text($(this).text());
-    ProjectDA.permission = $(this).data('permission');
+  $("body").on("click", ".wpopup-select-permission .permission-option", function (ev) {
+    $(".selected_permission").text($(this).text());
+    ProjectDA.permission = $(this).data("permission");
   });
 
   $("body").on("click", ".edit-member-permission", function (ev) {
@@ -289,8 +289,14 @@ button_play.className = "box48 center btn-play";
 
 let button_play_img = document.createElement("img");
 button_play_img.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/play.svg";
-button_play_img.className = "";
 button_play.appendChild(button_play_img);
+
+let history = document.createElement("div");
+history.className = "box48 center btn-history";
+
+let history_img = document.createElement("img");
+history_img.src = "/lib/assets/history.svg";
+history.appendChild(history_img);
 
 let input_scale = document.createElement("div");
 input_scale.className = "regular1 input-scale";
@@ -299,7 +305,7 @@ let icon_down = document.createElement("i");
 icon_down.className = "fa-solid fa-chevron-down fa-xs";
 icon_down.style.marginLeft = "4px";
 input_scale.appendChild(icon_down);
-share_tool.replaceChildren(customer_circle, button_share, button_play, input_scale);
+share_tool.replaceChildren(customer_circle, button_share, history, button_play, input_scale);
 
 //
 function customerList() {

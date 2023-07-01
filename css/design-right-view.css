@@ -140,7 +140,6 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .show-color-container {
-  -webkit-appearance: none;
   border: 0.5px solid #e5e5e5;
   width: 16px;
   height: 16px;
@@ -174,7 +173,7 @@ input[type="color"]::-webkit-color-swatch {
   flex: 1;
   height: 24px;
   border: none;
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: start;
@@ -222,8 +221,9 @@ input[type="color"]::-webkit-color-swatch {
 .popup_select_device {
   width: 260px;
   top: 92px;
+  right: 1px;
   border-radius: 4px;
-  overflow: hidden;
+  overflow: hidden scroll;
 }
 
 .popup_select_device div {
@@ -551,15 +551,12 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #edit_align_div {
-  padding-left: 8px;
-  padding-bottom: 8px;
+  padding: 2px 8px;
   display: flex;
   width: 100%;
+  box-sizing: border-box;
+  justify-content: space-between;
   border-bottom: 1px solid #e5e5e5;
-}
-
-#edit_align_div > .img-button {
-  margin-right: 2px;
 }
 
 #edit_align_div > .img-button:nth-child(1) {
@@ -581,23 +578,9 @@ input[type="color"]::-webkit-color-swatch {
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_bottom.svg);
 }
 
-#edit_align_div > .img-button:last-child {
-  width: 40px;
-  height: 32px;
-  box-sizing: border-box;
-  position: relative;
-}
-
-#edit_align_div > .img-button:last-child > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/extend_align.svg);
-  padding: 0;
-}
-
-#edit_align_div > .img-button:last-child > i {
-  position: absolute;
-  right: 2px;
-  top: 50%;
-  transform: translateY(-50%);
+#edit_align_div[enable="false"] > .img-button {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 #div_frame_size_direction {
@@ -773,7 +756,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .text_field_right_view {
-  display: inline-flex;
+  display: flex;
   height: 32px;
   padding-left: 8px;
   align-items: center;
@@ -1017,10 +1000,6 @@ input[type="color"]::-webkit-color-swatch {
 
 .group_btn_select:hover > img:nth-child(2) {
   border-color: #e5e5e5;
-}
-
-.c_white {
-  color: white;
 }
 
 .connstraints-rect {

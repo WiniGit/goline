@@ -1,153 +1,168 @@
 function alignPosition(align_value) {
-  // điều kiện để edit toàn bộ các element con khi nhấn btn align là user chỉ đang chọn 1 obj frame stack trên màn hình và obj này ko nằm trong 1 frame stack cha khác
-  let is_edit_children = selected_list.length == 1 && [...EnumCate.extend_frame, EnumCate.tool_variant].some((cate) => selected_list[0].CateID == cate) && selected_list[0].CountChild > 0 && !selected_list[0].StyleItem.PositionItem.FixPosition && (selected_list[0].Level === 1 || window.getComputedStyle(document.getElementById(selected_list[0].ParentID)).display.match("flex"));
-  let listUpdate;
+  let is_edit_children = (selected_list.length === 1 && [...selected_list[0].value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].some((childWb) => window.getComputedStyle(childWb).position == "absolute")) || !selected_list.every((wb) => window.getComputedStyle(wb.value).position == "absolute");
+  let listUpdate = [];
   switch (align_value) {
     case "align left":
-      if (selected_list.length == 1) {
-        if (is_edit_children) {
-          let children = wbase_list.filter((e) => e.ParentID == selected_list[0].GID);
-          listUpdate = children;
-          for (let child of children) {
-            updatePosition({ Left: "0px" }, child);
+      if (is_edit_children) {
+        for (let wb of selected_list) {
+          let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
+          if (children.length > 0) {
+            children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            for (let child of children) {
+              child.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+              updatePosition({ Left: "0px" }, child);
+            }
+            listUpdate(...children);
           }
-        } else {
-          updatePosition({ Left: "0px" }, selected_list[0]);
         }
+      } else if (selected_list.length === 1) {
+        selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.left;
+        updatePosition({ Left: "0px" }, selected_list[0]);
+        listUpdate(...selected_list);
       } else {
         let minX = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px"))));
-        for (let wbaseItem of selected_list) {
-          updatePosition({ Left: minX }, wbaseItem);
+        for (let wb of selected_list) {
+          updatePosition({ Left: minX }, wb);
         }
+        listUpdate(...selected_list);
       }
       break;
     case "align horizontal center":
-      if (selected_list.length == 1) {
-        if (is_edit_children) {
-          let children = wbase_list.filter((e) => e.ParentID == selected_list[0].GID);
-          listUpdate = children;
-          let parentHTML = document.getElementById(selected_list[0].GID);
-          let parentWidth = Math.round(parentHTML.getBoundingClientRect().width / scale);
-          for (let child of children) {
-            let childHTML = document.getElementById(child.GID);
-            let new_offsetX = (parentWidth - Math.round(childHTML.getBoundingClientRect().width / scale)) / 2;
-            updatePosition({ Left: new_offsetX }, child);
+      if (is_edit_children) {
+        for (let wb of selected_list) {
+          let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
+          if (children.length > 0) {
+            children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            let parentW = Math.round(wb.value.getBoundingClientRect().width / scale);
+            for (let child of children) {
+              child.StyleItem.PositionItem.ConstraintsX = Constraints.center;
+              let newOffX = `${(parentW - Math.round(child.value.getBoundingClientRect().width / scale)) / 2}px`;
+              updatePosition({ Left: newOffX }, child);
+            }
+            listUpdate(...children);
           }
-        } else {
-          let childHTML = document.getElementById(selected_list[0].GID);
-          let parentWidth = Math.round(childHTML.parentElement.getBoundingClientRect().width / scale);
-          let new_offsetX = (parentWidth - Math.round(childHTML.getBoundingClientRect().width / scale)) / 2;
-          updatePosition({ Left: new_offsetX }, selected_list[0]);
         }
+      } else if (selected_list.length === 1) {
+        let parentW = Math.round(selected_list[0].value.parentElement.getBoundingClientRect().width / scale);
+        selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.center;
+        let newOffX = `${(parentW - Math.round(selected_list[0].value.getBoundingClientRect().width / scale)) / 2}px`;
+        updatePosition({ Left: newOffX }, selected_list[0]);
+        listUpdate(...selected_list);
       } else {
         let minX = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px"))));
         let maxX = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px")) + Math.round(e.value.getBoundingClientRect().width / scale)));
-        let center_offsetX = minX + (maxX - minX) / 2;
-        for (let wbaseItem of selected_list) {
-          let childHTML = document.getElementById(wbaseItem.GID);
-          let new_offsetX = center_offsetX - Math.round(childHTML.getBoundingClientRect().width / scale) / 2;
-          updatePosition({ Left: new_offsetX }, wbaseItem);
+        let newOffX = minX + (maxX - minX) / 2;
+        for (let wb of selected_list) {
+          let new_offsetX = newOffX - Math.round(wb.value.getBoundingClientRect().width / scale) / 2;
+          updatePosition({ Left: new_offsetX }, wb);
         }
+        listUpdate(...selected_list);
       }
       break;
     case "align right":
-      if (selected_list.length == 1) {
-        if (is_edit_children) {
-          let children = wbase_list.filter((e) => e.ParentID == selected_list[0].GID);
-          listUpdate = children;
-          let parentHTML = document.getElementById(selected_list[0].GID);
-          let parentWidth = Math.round(parentHTML.getBoundingClientRect().width / scale);
-          for (let child of children) {
-            let childHTML = document.getElementById(child.GID);
-            let new_offsetX = parentWidth - Math.round(childHTML.getBoundingClientRect().width / scale);
-            updatePosition({ Left: new_offsetX }, child);
+      if (is_edit_children) {
+        for (let wb of selected_list) {
+          let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
+          if (children.length > 0) {
+            children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            for (let child of children) {
+              child.StyleItem.PositionItem.ConstraintsX = Constraints.right;
+              updatePosition({ Right: "0px" }, child);
+            }
+            listUpdate(...children);
           }
-        } else {
-          let childHTML = document.getElementById(selected_list[0].GID);
-          let parentWidth = Math.round(childHTML.parentElement.getBoundingClientRect().width / scale);
-          let new_offsetX = parentWidth - Math.round(childHTML.getBoundingClientRect().width / scale);
-          updatePosition({ Left: new_offsetX }, selected_list[0]);
         }
+      } else if (selected_list.length === 1) {
+        selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.right;
+        updatePosition({ Right: "0px" }, selected_list[0]);
+        listUpdate(...selected_list);
       } else {
         let maxX = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px")) + Math.round(e.value.getBoundingClientRect().width / scale)));
-        for (let wbaseItem of selected_list) {
-          let childHTML = document.getElementById(wbaseItem.GID);
-          let new_offsetX = maxX - Math.round(childHTML.getBoundingClientRect().width / scale);
-          updatePosition({ Left: new_offsetX }, wbaseItem);
+        for (let wb of selected_list) {
+          let newOffX = maxX - Math.round(wb.value.getBoundingClientRect().width / scale);
+          updatePosition({ Left: newOffX }, wb);
         }
       }
       break;
     case "align top":
-      if (selected_list.length == 1) {
-        if (is_edit_children) {
-          let children = wbase_list.filter((e) => e.ParentID == selected_list[0].GID);
-          listUpdate = children;
-          for (let child of children) {
-            updatePosition({ Top: "0px" }, child);
+      if (is_edit_children) {
+        for (let wb of selected_list) {
+          let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
+          if (children.length > 0) {
+            children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            for (let child of children) {
+              child.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+              updatePosition({ Top: "0px" }, child);
+            }
+            listUpdate(...children);
           }
-        } else {
-          updatePosition({ Top: "0px" }, selected_list[0]);
         }
+      } else if (selected_list.length === 1) {
+        selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.top;
+        updatePosition({ Top: "0px" }, selected_list[0]);
+        listUpdate(...selected_list);
       } else {
         let minY = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px"))));
-        for (let e of selected_list) {
-          updatePosition({ Top: minY }, e);
+        for (let wb of selected_list) {
+          updatePosition({ Top: minY }, wb);
         }
+        listUpdate(...selected_list);
       }
       break;
     case "align vertical center":
-      if (selected_list.length == 1) {
-        if (is_edit_children) {
-          let children = wbase_list.filter((e) => e.ParentID == selected_list[0].GID);
-          listUpdate = children;
-          let parentHTML = document.getElementById(selected_list[0].GID);
-          let parentHeight = Math.round(parentHTML.getBoundingClientRect().height / scale);
-          for (let child of children) {
-            let childHTML = document.getElementById(child.GID);
-            let new_offsetY = (parentHeight - Math.round(childHTML.getBoundingClientRect().height / scale)) / 2;
-            updatePosition({ Top: new_offsetY }, child);
+      if (is_edit_children) {
+        for (let wb of selected_list) {
+          let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
+          if (children.length > 0) {
+            children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            let parentH = Math.round(wb.value.getBoundingClientRect().height / scale);
+            for (let child of children) {
+              child.StyleItem.PositionItem.ConstraintsY = Constraints.center;
+              let newOffY = `${(parentH - Math.round(child.value.getBoundingClientRect().height / scale)) / 2}px`;
+              updatePosition({ Top: newOffY }, child);
+            }
+            listUpdate(...children);
           }
-        } else {
-          let childHTML = document.getElementById(selected_list[0].GID);
-          let parentHeight = Math.round(childHTML.parentElement.getBoundingClientRect().height / scale);
-          let new_offsetY = (parentHeight - Math.round(childHTML.getBoundingClientRect().height / scale)) / 2;
-          updatePosition({ Top: new_offsetY }, selected_list[0]);
         }
+      } else if (selected_list.length === 1) {
+        let parentH = Math.round(selected_list[0].value.parentElement.getBoundingClientRect().height / scale);
+        selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.center;
+        let newOffY = `${(parentH - Math.round(selected_list[0].value.getBoundingClientRect().height / scale)) / 2}px`;
+        updatePosition({ Top: newOffY }, selected_list[0]);
+        listUpdate(...selected_list);
       } else {
         let minY = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px"))));
         let maxY = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px")) + Math.round(e.value.getBoundingClientRect().height / scale)));
-        let center_offsetY = minY + (maxY - minY) / 2;
-        for (let wbaseItem of selected_list) {
-          let childHTML = document.getElementById(wbaseItem.GID);
-          let new_offsetY = center_offsetY - Math.round(childHTML.getBoundingClientRect().height / scale) / 2;
-          updatePosition({ Top: new_offsetY }, wbaseItem);
+        let newOffY = minY + (maxY - minY) / 2;
+        for (let wb of selected_list) {
+          let new_offsetY = newOffY - Math.round(wb.value.getBoundingClientRect().height / scale) / 2;
+          updatePosition({ Top: new_offsetY }, wb);
         }
+        listUpdate(...selected_list);
       }
       break;
     case "align bottom":
-      if (selected_list.length == 1) {
-        if (is_edit_children) {
-          let children = wbase_list.filter((e) => e.ParentID == selected_list[0].GID);
-          listUpdate = children;
-          let parentHTML = document.getElementById(selected_list[0].GID);
-          let parentHeight = Math.round(parentHTML.getBoundingClientRect().height / scale);
-          for (let child of children) {
-            let childHTML = document.getElementById(child.GID);
-            let new_offsetY = parentHeight - Math.round(childHTML.getBoundingClientRect().height / scale);
-            updatePosition({ Top: new_offsetY }, child);
+      if (is_edit_children) {
+        for (let wb of selected_list) {
+          let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
+          if (children.length > 0) {
+            children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            for (let child of children) {
+              child.StyleItem.PositionItem.ConstraintsY = Constraints.bottom;
+              updatePosition({ Bottom: "0px" }, child);
+            }
+            listUpdate(...children);
           }
-        } else {
-          let childHTML = document.getElementById(selected_list[0].GID);
-          let parentHeight = Math.round(childHTML.parentElement.getBoundingClientRect().height / scale);
-          let new_offsetY = parentHeight - Math.round(childHTML.getBoundingClientRect().height / scale);
-          updatePosition({ Top: new_offsetY }, selected_list[0]);
         }
+      } else if (selected_list.length === 1) {
+        selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.bottom;
+        updatePosition({ Bottom: "0px" }, selected_list[0]);
+        listUpdate(...selected_list);
       } else {
         let maxY = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px")) + Math.round(e.value.getBoundingClientRect().height / scale)));
-        for (let e of selected_list) {
-          let childHTML = document.getElementById(e.GID);
-          let new_offsetY = maxY - Math.round(childHTML.getBoundingClientRect().height / scale);
-          updatePosition({ Top: new_offsetY }, e);
+        for (let wb of selected_list) {
+          let newOffY = maxY - Math.round(wb.value.getBoundingClientRect().height / scale);
+          updatePosition({ Top: newOffY }, wb);
         }
       }
       break;
@@ -350,8 +365,8 @@ function updatePosition(position_item, wbaseItem) {
     if (elementHTML.style.height == "auto") {
       elementHTML.style.height = elementHTML.offsetHeight + "px";
     }
-    elementHTML.style.right = `unset`;
-    elementHTML.style.bottom = `unset`;
+    elementHTML.style.right = null;
+    elementHTML.style.bottom = null;
     elementHTML.style.left = position_item.Left;
     elementHTML.style.top = position_item.Top;
     elementHTML.style.transform = null;
@@ -362,8 +377,17 @@ function updatePosition(position_item, wbaseItem) {
     if (elementHTML.style.width == "auto") {
       elementHTML.style.width = elementHTML.offsetWidth + "px";
     }
-    elementHTML.style.right = `unset`;
+    elementHTML.style.right = null;
     elementHTML.style.left = position_item.Left;
+    if (elementHTML.style.transform) elementHTML.style.transform = elementHTML.style.transform.replace("translateX(-50%)", "");
+    updateConstraints(wbaseItem);
+  } else if (position_item.Right != undefined) {
+    let elementHTML = document.getElementById(wbaseItem.GID);
+    if (elementHTML.style.width == "auto") {
+      elementHTML.style.width = elementHTML.offsetWidth + "px";
+    }
+    elementHTML.style.left = null;
+    elementHTML.style.right = position_item.Right;
     if (elementHTML.style.transform) elementHTML.style.transform = elementHTML.style.transform.replace("translateX(-50%)", "");
     updateConstraints(wbaseItem);
   } else if (position_item.Top != undefined) {
@@ -372,8 +396,17 @@ function updatePosition(position_item, wbaseItem) {
     if (elementHTML.style.height == "auto") {
       elementHTML.style.height = elementHTML.offsetHeight + "px";
     }
-    elementHTML.style.bottom = `unset`;
+    elementHTML.style.bottom = null;
     elementHTML.style.top = position_item.Top;
+    if (elementHTML.style.transform) elementHTML.style.transform = elementHTML.style.transform.replace("translateY(-50%)", "");
+    updateConstraints(wbaseItem);
+  } else if (position_item.Bottom != undefined) {
+    let elementHTML = document.getElementById(wbaseItem.GID);
+    if (elementHTML.style.height == "auto") {
+      elementHTML.style.height = elementHTML.offsetHeight + "px";
+    }
+    elementHTML.style.top = null;
+    elementHTML.style.bottom = position_item.Bottom;
     if (elementHTML.style.transform) elementHTML.style.transform = elementHTML.style.transform.replace("translateY(-50%)", "");
     updateConstraints(wbaseItem);
   }

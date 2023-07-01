@@ -136,69 +136,20 @@ function createCanvasBackground() {
 function createEditAlign() {
   let editAlignContainer = document.createElement("div");
   editAlignContainer.id = "edit_align_div";
-  let listAlignItem = [
-    {
-      onclick: function () {
-        alignPosition("align left");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align horizontal center");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align right");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align top");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align vertical center");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align bottom");
-        updateUIEditPosition();
-      },
-    },
-  ];
-  let targetHTML = selected_list[0].value;
-  let isEnable = false;
-  if (selected_list.length > 1) {
-    isEnable = !window.getComputedStyle(targetHTML.parentElement).display.match("flex") || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
-  } else {
-    isEnable = (!window.getComputedStyle(targetHTML).display.match(/(flex|table)/g) && selected_list[0].CountChild > 0) || !window.getComputedStyle(targetHTML.parentElement).display.match(/(flex|table)/g) || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
-    if (selected_list[0].ParentID === wbase_parentID && (selected_list[0].CountChild === 0 || selected_list[0].WAutolayoutItem)) {
-      isEnable = false;
-    }
-  }
-  for (let alignItem of listAlignItem) {
-    let btnAlign = document.createElement("img");
-    btnAlign.className = "img-button size-32";
-    btnAlign.style.opacity = isEnable ? 1 : 0.4;
-    if (isEnable) btnAlign.onclick = alignItem.onclick;
-    editAlignContainer.appendChild(btnAlign);
-  }
-  let btn_extend = document.createElement("div");
-  btn_extend.className = "img-button";
-  let icon_extend = document.createElement("img");
-  icon_extend.className = "img-button size-32";
-  let icon_down = document.createElement("i");
-  icon_down.className = "fa-solid fa-chevron-down fa-2xs";
-  btn_extend.replaceChildren(icon_extend, icon_down);
-  editAlignContainer.appendChild(btn_extend);
+  let isEnable = selected_list.every((wb) => (window.getComputedStyle(wb.value).position == "absolute" && (selected_list.length > 1 || wb.Level > 1)) || [...wb.value.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)].some((childWb) => window.getComputedStyle(childWb).position == "absolute"));
+  editAlignContainer.setAttribute("enable", isEnable);
+  editAlignContainer.replaceChildren(
+    ...["align left", "align horizontal center", "align right", "align top", "align vertical center", "align bottom"].map((alignType) => {
+      let btnAlign = document.createElement("img");
+      btnAlign.className = "img-button size-32";
+      if (isEnable)
+        btnAlign.onclick = function () {
+          alignPosition(alignType);
+          updateUIEditPosition();
+        };
+        return btnAlign;
+    }),
+  );
   return editAlignContainer;
 }
 
@@ -221,7 +172,6 @@ function createEditSizePosition() {
       e.stopPropagation();
       let popup = document.createElement("div");
       popup.className = "popup_select_device col wini_popup popup_remove";
-      popup.style.left = edit_size_position_div.getBoundingClientRect().x + "px";
       for (let i = 0; i < listDevice.length; i++) {
         let col = document.createElement("nav");
         col.className = "col";
@@ -257,7 +207,6 @@ function createEditSizePosition() {
       document.getElementById("body").appendChild(popup);
       if (popup.getBoundingClientRect().bottom > document.body.getBoundingClientRect().bottom) {
         popup.style.height = `${document.body.getBoundingClientRect().bottom - popup.getBoundingClientRect().y}px`;
-        popup.style.overflowY = "scroll";
       }
     };
     let btn_title = document.createElement("p");
