@@ -12,19 +12,19 @@ function alignPosition(align_value) {
               child.StyleItem.PositionItem.ConstraintsX = Constraints.left;
               updatePosition({ Left: "0px" }, child);
             }
-            listUpdate(...children);
+            listUpdate.push(...children);
           }
         }
       } else if (selected_list.length === 1) {
         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.left;
         updatePosition({ Left: "0px" }, selected_list[0]);
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       } else {
         let minX = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px"))));
         for (let wb of selected_list) {
           updatePosition({ Left: minX }, wb);
         }
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       }
       break;
     case "align horizontal center":
@@ -39,7 +39,7 @@ function alignPosition(align_value) {
               let newOffX = `${(parentW - Math.round(child.value.getBoundingClientRect().width / scale)) / 2}px`;
               updatePosition({ Left: newOffX }, child);
             }
-            listUpdate(...children);
+            listUpdate.push(...children);
           }
         }
       } else if (selected_list.length === 1) {
@@ -47,7 +47,7 @@ function alignPosition(align_value) {
         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.center;
         let newOffX = `${(parentW - Math.round(selected_list[0].value.getBoundingClientRect().width / scale)) / 2}px`;
         updatePosition({ Left: newOffX }, selected_list[0]);
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       } else {
         let minX = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px"))));
         let maxX = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px")) + Math.round(e.value.getBoundingClientRect().width / scale)));
@@ -56,7 +56,7 @@ function alignPosition(align_value) {
           let new_offsetX = newOffX - Math.round(wb.value.getBoundingClientRect().width / scale) / 2;
           updatePosition({ Left: new_offsetX }, wb);
         }
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       }
       break;
     case "align right":
@@ -69,13 +69,13 @@ function alignPosition(align_value) {
               child.StyleItem.PositionItem.ConstraintsX = Constraints.right;
               updatePosition({ Right: "0px" }, child);
             }
-            listUpdate(...children);
+            listUpdate.push(...children);
           }
         }
       } else if (selected_list.length === 1) {
         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.right;
         updatePosition({ Right: "0px" }, selected_list[0]);
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       } else {
         let maxX = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px")) + Math.round(e.value.getBoundingClientRect().width / scale)));
         for (let wb of selected_list) {
@@ -94,19 +94,19 @@ function alignPosition(align_value) {
               child.StyleItem.PositionItem.ConstraintsY = Constraints.top;
               updatePosition({ Top: "0px" }, child);
             }
-            listUpdate(...children);
+            listUpdate.push(...children);
           }
         }
       } else if (selected_list.length === 1) {
         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.top;
         updatePosition({ Top: "0px" }, selected_list[0]);
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       } else {
         let minY = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px"))));
         for (let wb of selected_list) {
           updatePosition({ Top: minY }, wb);
         }
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       }
       break;
     case "align vertical center":
@@ -121,7 +121,7 @@ function alignPosition(align_value) {
               let newOffY = `${(parentH - Math.round(child.value.getBoundingClientRect().height / scale)) / 2}px`;
               updatePosition({ Top: newOffY }, child);
             }
-            listUpdate(...children);
+            listUpdate.push(...children);
           }
         }
       } else if (selected_list.length === 1) {
@@ -129,7 +129,7 @@ function alignPosition(align_value) {
         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.center;
         let newOffY = `${(parentH - Math.round(selected_list[0].value.getBoundingClientRect().height / scale)) / 2}px`;
         updatePosition({ Top: newOffY }, selected_list[0]);
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       } else {
         let minY = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px"))));
         let maxY = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px")) + Math.round(e.value.getBoundingClientRect().height / scale)));
@@ -138,7 +138,7 @@ function alignPosition(align_value) {
           let new_offsetY = newOffY - Math.round(wb.value.getBoundingClientRect().height / scale) / 2;
           updatePosition({ Top: new_offsetY }, wb);
         }
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       }
       break;
     case "align bottom":
@@ -151,13 +151,13 @@ function alignPosition(align_value) {
               child.StyleItem.PositionItem.ConstraintsY = Constraints.bottom;
               updatePosition({ Bottom: "0px" }, child);
             }
-            listUpdate(...children);
+            listUpdate.push(...children);
           }
         }
       } else if (selected_list.length === 1) {
         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.bottom;
         updatePosition({ Bottom: "0px" }, selected_list[0]);
-        listUpdate(...selected_list);
+        listUpdate.push(...selected_list);
       } else {
         let maxY = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px")) + Math.round(e.value.getBoundingClientRect().height / scale)));
         for (let wb of selected_list) {
@@ -436,7 +436,22 @@ function inputPositionItem(position_item) {
     }
   }
   if (position_item.FixPosition != undefined) {
-    let isInLayout = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
+    let parentHTML = document.getElementById(select_box_parentID);
+    let isInLayout = window.getComputedStyle(parentHTML).display.match("flex");
+    let eObj;
+    if (parentHTML.querySelectorAll(`.wbaseItem-value[level=${selected_list[0].Level}]`).length === selected_list.length) {
+      let pWb = wbase_list.find(e => e.GID === select_box_parentID);
+      if (pWb.StyleItem.FrameItem.Width == null) {
+        pWb.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
+        parentHTML.style.width = parentHTML.offsetWidth + "px";
+        eObj = pWb;
+      }
+      if (pWb.StyleItem.FrameItem.Height == null) {
+        pWb.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
+        parentHTML.style.height = parentHTML.offsetHeight + "px";
+        eObj = pWb;
+      }
+    }
     for (let wbaseItem of selected_list) {
       wbaseItem.StyleItem.PositionItem.FixPosition = position_item.FixPosition;
       if (position_item.FixPosition) {
@@ -453,6 +468,11 @@ function inputPositionItem(position_item) {
         }
       }
     }
+    if (eObj) {
+      WBaseDA.edit([eObj, ...selected_list], EnumObj.framePosition);
+      updateUISelectBox();
+      return;
+    }
   }
   WBaseDA.edit(selected_list, EnumObj.position);
   updateUISelectBox();
@@ -465,7 +485,7 @@ function updateConstraints(wbaseItem) {
     constX = wbaseItem.StyleItem.PositionItem.ConstraintsX;
     constY = wbaseItem.StyleItem.PositionItem.ConstraintsY;
   }
-  let wbaseHTML = document.getElementById(wbaseItem.GID);
+  let wbaseHTML = wbaseItem.value;
   switch (constX) {
     case Constraints.left:
       var leftValue = `${Math.round((wbaseHTML.getBoundingClientRect().x - wbaseHTML.parentElement.getBoundingClientRect().x) / scale) - parseFloat(window.getComputedStyle(wbaseHTML.parentElement).borderLeftWidth?.replace("px") ?? "0")}px`;
@@ -534,78 +554,85 @@ function selectResizeType(isW = true, type) {
   let parent_wbase;
   if (select_box_parentID !== wbase_parentID) parent_wbase = wbase_list.find((e) => e.GID == select_box_parentID);
   let parentHTML = parent_wbase?.value;
-  let isHorizontal = parent_wbase?.WAutolayoutItem?.Direction == "Horizontal";
   let list_update = [];
   list_update.push(...selected_list);
   if (isW) {
     switch (type) {
       case "fixed":
-        for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = selected_list[i].value;
-          selected_list[i].StyleItem.FrameItem.Width = wbase_eHTML.offsetWidth;
-          wbase_eHTML.style.width = `${wbase_eHTML.offsetWidth}px`;
-          if (isHorizontal) {
-            wbase_eHTML.style.flex = null;
+        for (let wb of selected_list) {
+          wb.StyleItem.FrameItem.Width = wb.value.offsetWidth;
+          wb.value.style.width = `${wb.value.offsetWidth}px`;
+          if (parentHTML.classList.contains("w-row")) {
+            wb.value.style.flex = null;
           }
         }
         break;
       case "hug":
         let checkConstX = false;
-        if (select_box_parentID !== wbase_parentID) {
-          checkConstX = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
+        if (parent_wbase) {
+          checkConstX = parentHTML.classList.contains("w-stack");
         }
-        for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = selected_list[i].value;
-          if (window.getComputedStyle(wbase_eHTML).display.match("flex") && selected_list[i].CateID != EnumCate.tool_text) {
-            if (selected_list[i].WAutolayoutItem.Direction == "Horizontal") {
-              let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.value.style.width == "100%");
+        for (let wb of selected_list) {
+          let wbHTML = wb.value;
+          if (window.getComputedStyle(wbHTML).display.match("flex")) {
+            if (wbHTML.classList.contains("w-row")) {
+              let list_child = wbase_list.filter((e) => e.ParentID == wb.GID && e.value.style.width == "100%");
               list_update.push(...list_child);
-              for (let editChild of list_child) {
-                let child_eHTML = editChild.value;
-                editChild.StyleItem.FrameItem.Width = child_eHTML.offsetWidth;
-                child_eHTML.style.width = `${child_eHTML.offsetWidth}px`;
-                child_eHTML.style.flex = null;
+              for (let childWb of list_child) {
+                childWb.StyleItem.FrameItem.Width = childWb.value.offsetWidth;
+                childWb.value.style.width = `${childWb.value.offsetWidth}px`;
+                childWb.value.style.flex = null;
               }
             } else {
-              let childrenHTML = [...wbase_eHTML.querySelectorAll(`.wbaseItem-value[level="${selected_list[i].Level + 1}"]`)];
-              childrenHTML.forEach((childHTML) => {
-                if (childHTML.style.width == "100%") {
-                  let wbChild = wbase_list.find((e) => e.GID == childHTML.id);
-                  list_update.push(wbChild);
-                  wbChild.StyleItem.FrameItem.Width = childHTML.offsetWidth;
-                  childHTML.style.width = `${childHTML.offsetWidth}px`;
-                }
-              });
+              let childrenHTML = [...wbHTML.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)];
+              let fillChild = childrenHTML.filter(e => e.style.width == "100%");
+              if (childrenHTML.length === fillChild.length) {
+                fillChild.sort((a, b) => b.offsetWidth - a.offsetWidth);
+                let wbChild = wbase_list.find((e) => e.GID == fillChild[0].id);
+                wbChild.StyleItem.FrameItem.Width = wbChild.value.offsetWidth;
+                wbChild.style.width = wbChild.value.offsetWidth + "px";
+                list_update.push(wbChild);
+              }
             }
           }
           if (checkConstX) {
-            if ([Constraints.center, Constraints.scale].some((constX) => selected_list[i].StyleItem.PositionItem.ConstraintsX === constX)) {
+            if ([Constraints.center, Constraints.scale].some((constX) => wb.StyleItem.PositionItem.ConstraintsX === constX)) {
               enumObj = EnumObj.framePosition;
-              selected_list[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
-              selected_list[i].StyleItem.PositionItem.Left = wbase_eHTML.offsetLeft + "px";
-              initPositionStyle(selected_list[i]);
+              wb.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+              wb.StyleItem.PositionItem.Left = wbase_eHTML.offsetLeft + "px";
+              initPositionStyle(wb);
             }
           }
-          selected_list[i].StyleItem.FrameItem.Width = null;
-          wbase_eHTML.style.width = `fit-content`;
-          wbase_eHTML.style.minWidth = null;
-          if (isHorizontal) {
-            wbase_eHTML.style.flex = null;
+          if (wbHTML.style.width == "100%") {
+            wbHTML.style.flex = null;
           }
+          wb.StyleItem.FrameItem.Width = null;
+          wbHTML.style.width = "fit-content";
+          wbHTML.style.minWidth = null;
         }
         break;
       case "fill":
         if (parent_wbase) {
-          if (parent_wbase.StyleItem.FrameItem.Width == null) {
-            parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
-            parentHTML.style.width = `${parentHTML.offsetWidth}px`;
-            list_update.push(parent_wbase);
+          if (!parentHTML.style.width || parentHTML.style.width == "fit-content") {
+            if (parentHTML.classList.contains("w-row")) {
+              parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
+              parentHTML.style.width = `${parentHTML.offsetWidth}px`;
+              list_update.push(parent_wbase);
+            } else {
+              let childrenHTML = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
+              let fillChild = childrenHTML.filter(e => e.style.width != "100%");
+              if (fillChild.every(e => selected_list.some(wb => e.id === wb.GID))) {
+                parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
+                parentHTML.style.width = `${parentHTML.offsetWidth}px`;
+                list_update.push(parent_wbase);
+              }
+            }
           }
-          for (let i = 0; i < selected_list.length; i++) {
-            let wbase_eHTML = selected_list[i].value;
-            selected_list[i].StyleItem.FrameItem.Width = wbase_eHTML.offsetWidth === 0 ? -1 : -wbase_eHTML.offsetWidth;
-            wbase_eHTML.style.width = "100%";
-            if (isHorizontal) wbase_eHTML.style.flex = 1;
+          for (let wb of selected_list) {
+            let wbHTML = wb.value;
+            wb.StyleItem.FrameItem.Width = wbHTML.offsetWidth === 0 ? -1 : -wbHTML.offsetWidth;
+            wbHTML.style.width = "100%";
+            if (parentHTML.classList.contains("w-row")) wbHTML.style.flex = 1;
           }
         } else return;
         break;
@@ -615,74 +642,80 @@ function selectResizeType(isW = true, type) {
   } else {
     switch (type) {
       case "fixed":
-        for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = selected_list[i].value;
-          selected_list[i].StyleItem.FrameItem.Height = wbase_eHTML.offsetHeight;
-          wbase_eHTML.style.height = `${wbase_eHTML.offsetHeight}px`;
-          if (!isHorizontal) {
-            wbase_eHTML.style.flex = null;
+        for (let wb of selected_list) {
+          wb.StyleItem.FrameItem.Height = wb.value.offsetHeight;
+          wb.value.style.height = `${wb.value.offsetHeight}px`;
+          if (parentHTML.classList.contains("w-col")) {
+            wb.value.style.flex = null;
           }
         }
         break;
       case "hug":
         let checkConstY = false;
-        if (select_box_parentID !== wbase_parentID) {
-          checkConstY = !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
+        if (parent_wbase) {
+          checkConstY = parentHTML.classList.contains("w-stack");
         }
-        for (let i = 0; i < selected_list.length; i++) {
-          let wbase_eHTML = selected_list[i].value;
-          if (window.getComputedStyle(wbase_eHTML).display.match("flex") && selected_list[i].CateID != EnumCate.tool_text) {
-            if (selected_list[i].WAutolayoutItem.Direction == "Vertical") {
-              let list_child = wbase_list.filter((e) => e.ParentID == wbase_eHTML.id && e.value.style.height == "100%");
+        for (let wb of selected_list) {
+          let wbHTML = wb.value;
+          if (window.getComputedStyle(wbHTML).display.match("flex")) {
+            if (wbHTML.classList.contains("w-col")) {
+              let list_child = wbase_list.filter((e) => e.ParentID == wb.GID && e.value.style.height == "100%");
               list_update.push(...list_child);
-              for (let j = 0; j < list_child.length; j++) {
-                let child_eHTML = document.getElementById(list_child[j].GID);
-                list_child[j].StyleItem.FrameItem.Height = child_eHTML.offsetHeight;
-                child_eHTML.style.height = `${child_eHTML.offsetHeight}px`;
-                child_eHTML.style.flex = null;
+              for (let childWb of list_child) {
+                childWb.StyleItem.FrameItem.Height = childWb.value.offsetHeight;
+                childWb.value.style.height = `${childWb.value.offsetHeight}px`;
+                childWb.value.style.flex = null;
               }
             } else {
-              let childrenHTML = [...wbase_eHTML.querySelectorAll(`.wbaseItem-value[level="${selected_list[i].Level + 1}"]`)];
-              childrenHTML.forEach((childHTML) => {
-                if (childHTML.getAttribute("cateid") == EnumCate.textfield) {
-                  childHTML.style.height = `fit-content`;
-                } else if (childHTML.style.height == "100%") {
-                  let wbChild = wbase_list.find((e) => e.GID == childHTML.id);
-                  list_update.push(wbChild);
-                  wbChild.StyleItem.FrameItem.Height = childHTML.offsetHeight;
-                  childHTML.style.height = `${childHTML.offsetHeight}px`;
-                }
-              });
+              let childrenHTML = [...wbHTML.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)];
+              let fillChild = childrenHTML.filter(e => e.style.height == "100%");
+              if (childrenHTML.length === fillChild.length) {
+                fillChild.sort((a, b) => b.offsetHeight - a.offsetHeight);
+                let wbChild = wbase_list.find((e) => e.GID == fillChild[0].id);
+                wbChild.StyleItem.FrameItem.Height = wbChild.value.offsetHeight;
+                wbChild.style.height = wbChild.value.offsetHeight + "px";
+                list_update.push(wbChild);
+              }
             }
-          }
-          selected_list[i].StyleItem.FrameItem.Height = null;
-          wbase_eHTML.style.height = `fit-content`;
-          wbase_eHTML.style.minHeight = null;
-          if (!isHorizontal) {
-            wbase_eHTML.style.flex = null;
           }
           if (checkConstY) {
-            if ([Constraints.center, Constraints.scale].some((constY) => selected_list[i].StyleItem.PositionItem.ConstraintsY === constY)) {
+            if ([Constraints.center, Constraints.scale].some((constY) => wb.StyleItem.PositionItem.ConstraintsY === constY)) {
               enumObj = EnumObj.framePosition;
-              selected_list[i].StyleItem.PositionItem.ConstraintsY = Constraints.top;
-              selected_list[i].StyleItem.PositionItem.Top = wbase_eHTML.offsetTop + "px";
-              initPositionStyle(selected_list[i]);
+              wb.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+              wb.StyleItem.PositionItem.Top = wbase_eHTML.offsetTop + "px";
+              initPositionStyle(wb);
             }
           }
+          if (wbHTML.style.height == "100%") {
+            wbHTML.style.flex = null;
+          }
+          wb.StyleItem.FrameItem.Height = null;
+          wbHTML.style.height = "fit-content";
+          wbHTML.style.minHeight = null;
         }
         break;
       case "fill":
         if (parent_wbase) {
-          if (parent_wbase.StyleItem.FrameItem.Height == null) {
-            parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
-            parentHTML.style.height = `${parentHTML.offsetHeight}px`;
-            list_update.push(parent_wbase);
+          if (!parentHTML.style.height || parentHTML.style.height == "fit-content") {
+            if (parentHTML.classList.contains("w-col")) {
+              parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
+              parentHTML.style.height = `${parentHTML.offsetHeight}px`;
+              list_update.push(parent_wbase);
+            } else {
+              let childrenHTML = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
+              let fillChild = childrenHTML.filter(e => e.style.height != "100%");
+              if (fillChild.every(e => selected_list.some(wb => e.id === wb.GID))) {
+                parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
+                parentHTML.style.height = `${parentHTML.offsetHeight}px`;
+                list_update.push(parent_wbase);
+              }
+            }
           }
-          for (let i = 0; i < selected_list.length; i++) {
-            let wbase_eHTML = selected_list[i].value;
-            selected_list[i].StyleItem.FrameItem.Height = wbase_eHTML.offsetHeight === 0 ? -1 : -wbase_eHTML.offsetHeight;
-            wbase_eHTML.style.height = "100%";
-            if (!isHorizontal) wbase_eHTML.style.flex = 1;
+          for (let wb of selected_list) {
+            let wbHTML = wb.value;
+            wb.StyleItem.FrameItem.Height = wbHTML.offsetHeight === 0 ? -1 : -wbHTML.offsetHeight;
+            wbHTML.style.height = "100%";
+            if (parentHTML.classList.contains("w-col")) wbHTML.style.flex = 1;
           }
         } else return;
         break;
@@ -2307,26 +2340,24 @@ function combineAsVariant() {
   let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.variant));
   new_wbase_item = createNewWbase(new_wbase_item).pop();
   new_wbase_item.IsWini = true;
-  new_wbase_item.StyleItem.PositionItem.Left = `${
-    Math.min(
-      ...selected_list.map((e) => {
-        let leftValue = getWBaseOffset(e).x;
-        e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
-        e.StyleItem.PositionItem.Left = `${leftValue}px`;
-        return leftValue;
-      }),
-    ).toFixed(2) - 8
-  }px`;
-  new_wbase_item.StyleItem.PositionItem.Top = `${
-    Math.min(
-      ...selected_list.map((e) => {
-        let topValue = getWBaseOffset(e).y;
-        e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
-        e.StyleItem.PositionItem.Top = `${topValue}px`;
-        return topValue;
-      }),
-    ).toFixed(2) - 8
-  }px`;
+  new_wbase_item.StyleItem.PositionItem.Left = `${Math.min(
+    ...selected_list.map((e) => {
+      let leftValue = getWBaseOffset(e).x;
+      e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+      e.StyleItem.PositionItem.Left = `${leftValue}px`;
+      return leftValue;
+    }),
+  ).toFixed(2) - 8
+    }px`;
+  new_wbase_item.StyleItem.PositionItem.Top = `${Math.min(
+    ...selected_list.map((e) => {
+      let topValue = getWBaseOffset(e).y;
+      e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+      e.StyleItem.PositionItem.Top = `${topValue}px`;
+      return topValue;
+    }),
+  ).toFixed(2) - 8
+    }px`;
   new_wbase_item.CountChild = selected_list.length;
   new_wbase_item.ListChildID = selected_list.map((e) => e.GID);
   new_wbase_item.StyleItem.FrameItem.Width = select_box.w / scale + 16;

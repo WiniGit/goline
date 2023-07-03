@@ -1713,11 +1713,11 @@ function createDataForm() {
     inputNameField.id = "name-field-vl";
     inputNameField.className = "regular1";
     let listNameFieldVl = selected_list.filterAndMap((wbaseItem) => wbaseItem.AttributesItem.NameField);
-    inputNameField.defaultValue = listNameFieldVl.length === 1 ? listNameFieldVl[0] : "Mixed";
+    inputNameField.defaultValue = listNameFieldVl.length === 1 ? listNameFieldVl[0] : "mixed";
     inputNameFieldContainer.replaceChildren(labelNameField, inputNameField);
     inputNameField.onblur = function (e) {
       e.stopPropagation();
-      if (this.value != (listNameFieldVl.length === 1 ? listNameFieldVl[0] : "Mixed")) editJsonItem({ NameField: this.value });
+      if (this.value != (listNameFieldVl.length === 1 ? listNameFieldVl[0] : "mixed")) editJsonItem({ NameField: this.value });
     };
     body.replaceChildren(inputNameFieldContainer);
   }

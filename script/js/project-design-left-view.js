@@ -3,22 +3,8 @@ function setupLeftView() {
   // layer view HTML
   left_view.style.width = `${left_view.offsetWidth}px`;
   // setup tab change
-  let list_tab_view = document.getElementsByClassName("tab_left");
-  for (let i = 0; i < list_tab_view.length; i++) {
-    if (!PageDA.enableEdit) {
-      if (list_tab_view[i].innerHTML === "Assets") list_tab_view[i].style.display = "none";
-    }
-    list_tab_view[i].onclick = function () {
-      tabChange(this.innerHTML, "left_tab_view");
-      if (this.innerHTML === "Assets") {
-        assets_view.style.display = "inline-flex";
-        let btnIcon = [...btn_select_page.childNodes].find((e) => e.localName == "i");
-        btnIcon.className = btnIcon.className.replace("fa-chevron-up", "fa-chevron-down");
-        div_list_page.style.display = "none";
-        select_component = undefined;
-        initUIAssetView(true);
-      }
-    };
+  if (!PageDA.enableEdit) {
+    left_view.querySelector(".assets.tab_left").style.display = "none";
   }
   // btn select page
   let btn_select_page = document.getElementById("btn_select_page");
@@ -85,6 +71,19 @@ function setupLeftView() {
   show_list_tile.style.height = "100%";
   replaceAllLyerItemHTML();
 }
+
+$("body").on("click", ".tab_left", function () {
+  tabChange(this.innerHTML, "left_tab_view");
+  if (this.innerHTML === "Assets") {
+    assets_view.style.display = "flex";
+    let btn_select_page = document.getElementById("btn_select_page");
+    let btnIcon = btn_select_page.querySelector(":scope > i");
+    btnIcon.className = btnIcon.className.replace("fa-chevron-up", "fa-chevron-down");
+    document.getElementById("div_list_page").style.display = "none";
+    select_component = undefined;
+    initUIAssetView(true);
+  }
+})
 
 function showSearchResult() {
   tabChange("Layer", "left_tab_view");
@@ -1631,7 +1630,7 @@ function dragInstanceUpdate(event) {
         availableCell.replaceChildren(...cellChildren, demo);
       }
     }
-  } else if (window.getComputedStyle(parentHTML).display?.match(/(flex|grid)/g) && !select_component.StyleItem.PositionItem.FixPosition) {
+  } else if (window.getComputedStyle(parentHTML).display?.match("flex") && !select_component.StyleItem.PositionItem.FixPosition) {
     console.log("flex|grid");
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
     let isGrid = window.getComputedStyle(parentHTML).display.match("grid");

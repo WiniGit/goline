@@ -1482,10 +1482,10 @@ function checkHoverElement(event) {
     listLine = [];
     listText = [];
     let currentLevel = 1;
-    let currentPPage = wbase_parentID;
+    let currentListPPage = [];
     if (selected_list.length > 0) {
       currentLevel = parseInt(selected_list[0].value.getAttribute("level"));
-      if (currentLevel > 1) $(selected_list[0].value).parents(`.wbaseItem-value[level="1"]`)[0]?.id;
+      if (currentLevel > 1) currentListPPage = [...$(selected_list[0].value).parents(`.wbaseItem-value`)];
     }
     let _target = [...event.composedPath()].find((eHTML) => {
       if (!eHTML.classList?.contains("wbaseItem-value")) {
@@ -1502,15 +1502,14 @@ function checkHoverElement(event) {
           }
           break;
         default:
-          let parentPage = $(eHTML).parents(`.wbaseItem-value[level="1"]`)[0];
+          let parentPage = $(eHTML).parents(`.wbaseItem-value`)[0];
           let listid = eHTML.getAttribute("listid").split(",");
+          let eParentId = listid.pop();
           if (target_level === 2 && EnumCate.show_name.some((cate) => cate == parentPage?.getAttribute("cateid"))) {
             is_enable = true;
           } else if (event.metaKey || (!isMac && event.ctrlKey)) {
             is_enable = true;
-          } else if (target_level < currentLevel && listid.includes(currentPPage)) {
-            is_enable = true;
-          } else if (target_level === currentLevel && listid.pop() === select_box_parentID) {
+          } else if (target_level <= currentLevel && currentListPPage.some(pPage => pPage.id === eParentId)) {
             is_enable = true;
           }
           break;

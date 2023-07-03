@@ -80,7 +80,7 @@ async function initComponents(item, list, initListener = true) {
       break;
     case EnumCate.form:
       createFrameHTML(item, list);
-      $(item.value).addClass("wbase-form");
+      $(item.value).addClass("w-form");
       break;
     case EnumCate.tool_variant:
       createVariantHTML(item, list);

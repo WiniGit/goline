@@ -62,12 +62,10 @@
 
 .wbaseItem-value.w-col[wrap="wrap"][scroll="true"] {
   overflow: scroll hidden !important;
-  align-items: flex-start !important;
 }
 
 .wbaseItem-value.w-row[wrap="wrap"][scroll="true"] {
   overflow: hidden scroll !important;
-  align-items: flex-start !important;
 }
 
 :is(.wbaseItem-value.w-col, .wbaseItem-value.w-row) > .wbaseItem-value:not(.wbaseItem-value.fixed-position) {

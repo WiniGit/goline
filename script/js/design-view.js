@@ -1,31 +1,5 @@
 function setupRightView() {
   // setup tab change
-  let list_tab_view = document.getElementsByClassName("tab_right");
-  for (let i = 0; i < list_tab_view.length; i++) {
-    list_tab_view[i].onclick = function () {
-      design_view_index = $(this).data("index");
-      tabChange(this.innerHTML, "right_tab_view");
-      wdraw();
-      let list_tab_view = document.getElementsByClassName("tab_right");
-      for (let j = 0; j < list_tab_view.length; j++) {
-        list_tab_view[j].style.opacity = 0.7;
-      }
-      this.style.opacity = 1;
-      switch (design_view_index) {
-        case 0:
-          updateUIDesignView();
-          break;
-        case 1:
-          update_UI_prototypeView();
-          break;
-        case 2:
-          create_stateContainer();
-          break;
-        default:
-          break;
-      }
-    };
-  }
   if (!PageDA.enableEdit) {
     [...document.getElementsByClassName("right_tab_view")].forEach((rightView) => {
       rightView.style.pointerEvents = "none";
@@ -40,6 +14,98 @@ function setupRightView() {
   updateUIDesignView();
 }
 
+$("body").on("click", ".tab_right", function () {
+  if (design_view_index != $(this).data("index")) {
+    design_view_index = $(this).data("index");
+    tabChange(this.innerHTML, "right_tab_view");
+    wdraw();
+    let list_tab_view = document.getElementsByClassName("tab_right");
+    for (let i = 0; i < list_tab_view.length; i++) {
+      list_tab_view[i].style.opacity = 0.7;
+    }
+    this.style.opacity = 1;
+    switch (design_view_index) {
+      case 0:
+        updateUIDesignView();
+        break;
+      case 1:
+        update_UI_prototypeView();
+        break;
+      case 2:
+        create_stateContainer();
+        break;
+      default:
+        break;
+    }
+  }
+});
+
+// update UI design view when selected change
+function updateUIDesignView() {
+  let scrollY = design_view.scrollTop;
+  let listEditContainer = [];
+  if (selected_list.length == 0) {
+    let editCanvasBground = createCanvasBackground();
+    listEditContainer.push(editCanvasBground);
+    let winiRes = winiResponsive();
+    listEditContainer.push(winiRes);
+    let breakpoint = createBreakpoint();
+    listEditContainer.push(breakpoint);
+    let localSkins = createSelectionSkins();
+    listEditContainer.push(localSkins);
+  } else {
+    let editAlign = createEditAlign();
+    let editSizePosition = createEditSizePosition();
+    // let selectClass = selectionClass();
+    listEditContainer.push(editAlign, editSizePosition);
+    if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
+      let editConstraints = createConstraints();
+      listEditContainer.push(editConstraints);
+    }
+    if (select_box_parentID != wbase_parentID) {
+      let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
+      let framePage = pageParent[pageParent.length - 1];
+      if (framePage?.classList?.contains("variant")) framePage = pageParent[pageParent.length - 2];
+      if (framePage) {
+        let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
+        if (isPage) {
+          let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
+          listEditContainer.push(selectColByBrp);
+        }
+      }
+    }
+    if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
+      let editAutoLayout = createAutoLayout();
+      listEditContainer.push(editAutoLayout);
+    }
+    //
+    if (selected_list.length > 0 && selected_list.every((wbaseItem) => wbaseItem.StyleItem.DecorationItem && wbaseItem.StyleItem.DecorationItem.ColorValue == selected_list[0].StyleItem.DecorationItem.ColorValue)) {
+      let editBackground = createEditBackground();
+      listEditContainer.push(editBackground);
+    }
+    if (selected_list.some((e) => e.StyleItem.TextStyleItem)) {
+      let editTextStyle = createEditTextStyle();
+      listEditContainer.push(editTextStyle);
+    }
+    if (selected_list.some((e) => e.StyleItem.DecorationItem)) {
+      if (selected_list.length > 1 || selected_list[0].CateID !== EnumCate.w_switch) {
+        let editBorder = createEditBorder();
+        listEditContainer.push(editBorder);
+      }
+      let editEffect = createEditEffect();
+      listEditContainer.push(editEffect);
+    }
+    let editVariants = createEditVariants();
+    listEditContainer.push(editVariants);
+  }
+  design_view.replaceChildren(...listEditContainer);
+  design_view.scrollTo({
+    top: scrollY,
+    behavior: "smooth",
+  });
+}
+
+//
 // edit canvas background color
 function createCanvasBackground() {
   var canvas_view_background = document.createElement("div");
@@ -146,8 +212,9 @@ function createEditAlign() {
         btnAlign.onclick = function () {
           alignPosition(alignType);
           updateUIEditPosition();
+          updateUIConstraints();
         };
-        return btnAlign;
+      return btnAlign;
     }),
   );
   return editAlignContainer;
@@ -164,10 +231,10 @@ function createEditSizePosition() {
   edit_size_position_div.id = "edit_size_position_div";
   edit_size_position_div.className = "edit-container";
   if (selected_list.every((e) => EnumCate.extend_frame.some((cate) => e.CateID === cate))) {
-    let div_frame_size_direction = document.createElement("div");
-    div_frame_size_direction.id = "div_frame_size_direction";
+    let pageDeviceContainer = document.createElement("div");
+    pageDeviceContainer.className = "page-device-container row";
     let btn_select_frame_size = document.createElement("button");
-    div_frame_size_direction.appendChild(btn_select_frame_size);
+    pageDeviceContainer.appendChild(btn_select_frame_size);
     btn_select_frame_size.onclick = function (e) {
       e.stopPropagation();
       let popup = document.createElement("div");
@@ -213,55 +280,51 @@ function createEditSizePosition() {
     btn_title.className = "semibold1";
     let listSize = selected_list.filter((e) => EnumCate.extend_frame.some((cate) => e.CateID == cate)).filterAndMap((e) => `${parseInt(e.StyleItem.FrameItem.Width)}x${parseInt(e.StyleItem.FrameItem.Height)}`);
     btn_title.innerHTML = listSize.length === 1 ? listDevice.reduce((a, b) => a.concat(b)).find((device) => `${device.Width}x${device.Height}` === listSize[0])?.Name ?? "Device size" : "Device size";
-    btn_title.style.margin = "0";
-    btn_title.style.marginRight = "4px";
     let btn_icon_down = document.createElement("i");
     btn_icon_down.className = "fa-solid fa-chevron-down fa-2xs";
     btn_select_frame_size.replaceChildren(btn_title, btn_icon_down);
-    if (selected_list.every((e) => !e.WAutolayoutItem)) {
-      let group_btn_frame_direction = document.createElement("div");
-      div_frame_size_direction.appendChild(group_btn_frame_direction);
-      group_btn_frame_direction.id = "group_btn_frame_direction";
-      group_btn_frame_direction.className = "group_btn_direction";
-      let btn_vertical = document.createElement("img");
-      let btn_horizontal = document.createElement("img");
-      group_btn_frame_direction.replaceChildren(btn_vertical, btn_horizontal);
-      btn_vertical.onclick = function () {
-        if (this.style.backgroundColor == "transparent") {
-          this.style.backgroundColor = "#e5e5e5";
-          btn_horizontal.style.backgroundColor = "transparent";
-        }
-      };
-      btn_horizontal.onclick = function () {
-        if (this.style.backgroundColor == "transparent") {
-          this.style.backgroundColor = "#e5e5e5";
-          btn_vertical.style.backgroundColor = "transparent";
-        }
-      };
-    }
-    if (selected_list.every((e) => !e.WAutolayoutItem)) {
-      let icon_resize_to_fit = document.createElement("img");
-      div_frame_size_direction.appendChild(icon_resize_to_fit);
-      icon_resize_to_fit.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/resize_to_fit.svg";
-      icon_resize_to_fit.className = "img-button size-32";
-      icon_resize_to_fit.style.borderRadius = "2px";
-      icon_resize_to_fit.style.padding = "6px 8px";
-      icon_resize_to_fit.onclick = function () {
-        frameHugChildrenSize();
-      };
-    }
-    edit_size_position_div.appendChild(div_frame_size_direction);
+    // if (selected_list.every((e) => !e.WAutolayoutItem)) {
+    //   let group_btn_frame_direction = document.createElement("div");
+    //   pageDeviceContainer.appendChild(group_btn_frame_direction);
+    //   group_btn_frame_direction.id = "group_btn_frame_direction";
+    //   group_btn_frame_direction.className = "group_btn_direction";
+    //   let btn_vertical = document.createElement("img");
+    //   let btn_horizontal = document.createElement("img");
+    //   group_btn_frame_direction.replaceChildren(btn_vertical, btn_horizontal);
+    //   btn_vertical.onclick = function () {
+    //     if (this.style.backgroundColor == "transparent") {
+    //       this.style.backgroundColor = "#e5e5e5";
+    //       btn_horizontal.style.backgroundColor = "transparent";
+    //     }
+    //   };
+    //   btn_horizontal.onclick = function () {
+    //     if (this.style.backgroundColor == "transparent") {
+    //       this.style.backgroundColor = "#e5e5e5";
+    //       btn_vertical.style.backgroundColor = "transparent";
+    //     }
+    //   };
+    // }
+    // if (selected_list.every((e) => !e.WAutolayoutItem)) {
+    //   let icon_resize_to_fit = document.createElement("img");
+    //   pageDeviceContainer.appendChild(icon_resize_to_fit);
+    //   icon_resize_to_fit.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/resize_to_fit.svg";
+    //   icon_resize_to_fit.className = "img-button size-32";
+    //   icon_resize_to_fit.style.borderRadius = "2px";
+    //   icon_resize_to_fit.style.padding = "6px 8px";
+    //   icon_resize_to_fit.onclick = function () {
+    //     frameHugChildrenSize();
+    //   };
+    // }
+    edit_size_position_div.appendChild(pageDeviceContainer);
   }
 
   //
-  let editXYRow = document.createElement("div");
-  editXYRow.className = "row";
-  editXYRow.style.width = "100%";
+  let editXYContainer = document.createElement("div");
+  editXYContainer.className = "row";
   // input edit left position
   let list_offsetX = selected_list.filterAndMap((wbaseItem) => `${getWBaseOffset(wbaseItem).x}`.replace(".00", ""));
-  let edit_left = _textField("82px", undefined, "X", list_offsetX.length == 1 ? list_offsetX[0] : "Mixed");
+  let edit_left = _textField("82px", undefined, "X", list_offsetX.length == 1 ? list_offsetX[0] : "mixed");
   edit_left.id = "edit_position_item_left";
-  edit_left.style.marginRight = "8px";
   edit_left.lastChild.onblur = function () {
     let newValue = parseFloat(this.value);
     if (!isNaN(newValue)) {
@@ -271,7 +334,7 @@ function createEditSizePosition() {
   };
   // input edit right position
   let list_offsetY = selected_list.filterAndMap((wbaseItem) => `${getWBaseOffset(wbaseItem).y}`.replace(".00", ""));
-  let edit_top = _textField("82px", undefined, "Y", list_offsetY.length == 1 ? list_offsetY[0] : "Mixed");
+  let edit_top = _textField("82px", undefined, "Y", list_offsetY.length == 1 ? list_offsetY[0] : "mixed");
   edit_top.id = "edit_position_item_top";
   edit_top.lastChild.onblur = function () {
     let newValue = parseFloat(this.value);
@@ -280,7 +343,7 @@ function createEditSizePosition() {
     }
     updateInputTLWH();
   };
-  editXYRow.replaceChildren(edit_left, edit_top);
+  editXYContainer.replaceChildren(edit_left, edit_top);
   let parentHTML = document.getElementById(select_box_parentID);
   if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("cateid") == cate) && window.getComputedStyle(parentHTML).display.match("flex")) {
     let isFixPos = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
@@ -289,26 +352,32 @@ function createEditSizePosition() {
     iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/fix_position.svg";
     if (isFixPos) {
       iconFixPos.style.border = "1px solid #e5e5e5";
+    } else {
+      edit_top.lastChild.disabled = true;
+      edit_left.lastChild.disabled = true;
     }
     iconFixPos.onclick = function () {
       isFixPos = !isFixPos;
       inputPositionItem({ FixPosition: isFixPos });
+      if (isFixPos) {
+        iconFixPos.style.border = "1px solid #e5e5e5";
+      } else {
+        edit_top.lastChild.disabled = true;
+        edit_left.lastChild.disabled = true;
+      }
       updateUIEditAlign();
-      updateUIEditPosition();
     };
-    editXYRow.appendChild(iconFixPos);
+    editXYContainer.appendChild(iconFixPos);
   }
-  edit_size_position_div.appendChild(editXYRow);
+  edit_size_position_div.appendChild(editXYContainer);
   //
   //
-  let editWHRow = document.createElement("div");
-  editWHRow.className = "row";
-  editWHRow.style.width = "100%";
+  let editWHContainer = document.createElement("div");
+  editWHContainer.className = "row";
   // input edit width
   let list_width = selected_list.filterAndMap((e) => e.value.offsetWidth);
-  let edit_width = _textField("82px", undefined, "W", list_width.length == 1 ? list_width[0] : "Mixed");
+  let edit_width = _textField("82px", undefined, "W", list_width.length == 1 ? list_width[0] : "mixed");
   edit_width.id = "edit_frame_item_w";
-  edit_width.style.marginRight = "8px";
   edit_width.lastChild.onblur = function () {
     let newValue = parseFloat(this.value);
     if (!isNaN(newValue)) {
@@ -318,7 +387,7 @@ function createEditSizePosition() {
   };
   // input edit height
   let list_height = selected_list.filterAndMap((e) => e.value.offsetHeight);
-  let edit_height = _textField("82px", undefined, "H", list_height.length == 1 ? list_height[0] : "Mixed");
+  let edit_height = _textField("82px", undefined, "H", list_height.length == 1 ? list_height[0] : "mixed");
   edit_height.id = "edit_frame_item_h";
   edit_height.lastChild.onblur = function () {
     let newValue = parseFloat(this.value);
@@ -343,21 +412,19 @@ function createEditSizePosition() {
       }
     };
   }
-  editWHRow.replaceChildren(edit_width, edit_height, icon_ratioWH);
-  edit_size_position_div.appendChild(editWHRow);
+  editWHContainer.replaceChildren(edit_width, edit_height, icon_ratioWH);
+  edit_size_position_div.appendChild(editWHContainer);
 
   if (
     selected_list.every((e) => {
       // các scale component luôn cần có size cố định
       if (EnumCate.scale_size_component.some((cate) => e.CateID === cate)) return false;
-      return e.WAutolayoutItem || (e.value.parentElement && window.getComputedStyle(e.value.parentElement).display.match("flex"));
+      return e.WAutolayoutItem || (e.value.parentElement && window.getComputedStyle(e.value.parentElement).display.match(/(flex|table)/g));
     })
   ) {
-    // third line contain btn select resizing type width height (fixed width height, fit content, fill container)
-    let _row_resizing = document.createElement("div");
-    _row_resizing.style.className = "row";
-    _row_resizing.style.width = "100%";
-    _row_resizing.style.height = "32px";
+    let resizeContainer = document.createElement("div");
+    resizeContainer.className = "row";
+    resizeContainer.style.height = "32px";
     let initResizeW = "fixed";
     if (selected_list.every((e) => e.value.style.width == "100%")) {
       initResizeW = "fill";
@@ -369,7 +436,6 @@ function createEditSizePosition() {
       initResizeW = "mixed";
     }
     let icon_resize_w = _btnSelectResizeType(true, initResizeW);
-    icon_resize_w.style.marginRight = "8px";
     let initResizeH = "fixed";
     if (selected_list.every((e) => e.value.style.height == "100%")) {
       initResizeH = "fill";
@@ -381,52 +447,42 @@ function createEditSizePosition() {
       initResizeH = "mixed";
     }
     let icon_resize_h = _btnSelectResizeType(false, initResizeH);
-    _row_resizing.replaceChildren(icon_resize_w, icon_resize_h);
-    edit_size_position_div.appendChild(_row_resizing);
-    var isFixedW = selected_list.every((e) => e.StyleItem.FrameItem?.Width >= 0);
-    var isFixedH = selected_list.every((e) => e.StyleItem.FrameItem?.Height >= 0);
-    if (isFixedW && isFixedH) {
+    resizeContainer.replaceChildren(icon_resize_w, icon_resize_h);
+    edit_size_position_div.appendChild(resizeContainer);
+    if (initResizeW == "fixed" && initResizeH == "fixed") {
       icon_ratioWH.style.display = "block";
     } else {
       icon_ratioWH.style.display = "none";
     }
-    if (isFixedW) {
-      edit_width.style.pointerEvents = "auto";
+    if (initResizeW == "fixed") {
       edit_width.lastChild.disabled = false;
     } else {
-      edit_width.style.pointerEvents = "none";
       edit_width.lastChild.disabled = true;
     }
-    if (isFixedH) {
-      edit_height.style.pointerEvents = "auto";
+    if (initResizeH == "fixed") {
       edit_height.lastChild.disabled = false;
     } else {
-      edit_height.style.pointerEvents = "none";
       edit_height.lastChild.disabled = true;
     }
   }
   if (selected_list.every((e) => e.CateID !== EnumCate.table)) {
-    // fourth line contain input edit rotate and radius and button radius detail
-    let _row4 = document.createElement("div");
-    _row4.style.className = "row";
-    _row4.style.width = "100%";
-    _row4.style.alignItems = "center";
+    let radiusContainer = document.createElement("div");
+    radiusContainer.className = "row";
     // input edit rotate
     let edit_rotate = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rotate_rect.svg", undefined, "0");
-    edit_rotate.style.marginRight = "8px";
 
     // input edit radius
     let list_seleted_radius = selected_list.filter((e) => e.StyleItem.FrameItem?.TopLeft != undefined);
     if (list_seleted_radius.length > 0) {
       let list_radius_value = list_seleted_radius.map((e) => [e.StyleItem.FrameItem.TopLeft, e.StyleItem.FrameItem.TopRight, e.StyleItem.FrameItem.BottomLeft, e.StyleItem.FrameItem.BottomRight]);
       list_radius_value = [].concat(...list_radius_value).filterAndMap();
-      let edit_radius = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/radius_rect.svg", undefined, list_radius_value.length == 1 ? list_radius_value[0] : "Mixed");
+      let edit_radius = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/radius_rect.svg", undefined, list_radius_value.length == 1 ? list_radius_value[0] : "mixed");
       edit_radius.lastChild.onblur = function () {
         let newValue = parseFloat(this.value);
         if (isNaN(newValue)) {
           let list_radius_value = list_seleted_radius.map((e) => [e.StyleItem.FrameItem.TopLeft, e.StyleItem.FrameItem.TopRight, e.StyleItem.FrameItem.BottomLeft, e.StyleItem.FrameItem.BottomRight]);
           list_radius_value = [].concat(...list_radius_value).filterAndMap();
-          this.value = list_radius_value.length == q ? list_radius_value[0] : "Mixed";
+          this.value = list_radius_value.length == q ? list_radius_value[0] : "mixed";
         } else {
           inputFrameItem({
             TopLeft: newValue,
@@ -441,26 +497,18 @@ function createEditSizePosition() {
         }
       };
       let icon_radius_detail = document.createElement("img");
-      icon_radius_detail.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/radius_detail.svg";
-      icon_radius_detail.className = "img-button size-24";
-      icon_radius_detail.style.marginLeft = "24px";
-      icon_radius_detail.style.border = "1px solid transparent";
-      icon_radius_detail.style.borderRadius = "2px";
+      icon_radius_detail.setAttribute("show-details", false);
+      icon_radius_detail.className = "radius-details img-button size-24";
       icon_radius_detail.onclick = function () {
-        if (this.style.borderColor == "transparent") {
-          _row_radius_detail.style.display = "inline-flex";
-          this.style.borderColor = "#e5e5e5";
-          edit_radius.lastChild.disabled = true;
+        icon_radius_detail.setAttribute("show-details", icon_radius_detail.getAttribute("show-details") != "true");
+        if (icon_radius_detail.getAttribute("show-details") == "true") {
           edit_radius.style.pointerEvents = "none";
         } else {
-          _row_radius_detail.style.display = "none";
-          this.style.borderColor = "transparent";
-          edit_radius.lastChild.disabled = false;
           edit_radius.style.pointerEvents = "auto";
         }
       };
-      _row4.replaceChildren(edit_rotate, edit_radius, icon_radius_detail);
-      edit_size_position_div.appendChild(_row4);
+      radiusContainer.replaceChildren(edit_rotate, edit_radius, icon_radius_detail);
+      edit_size_position_div.appendChild(radiusContainer);
       // fifth line contain 4 rect radius topleft, topright, botleft, botright
       let _row_radius_detail = document.createElement("div");
       _row_radius_detail.id = "row_radius_detail";
@@ -470,16 +518,16 @@ function createEditSizePosition() {
       _row_radius_detail.appendChild(icon_HTML);
       let input_top_left = document.createElement("input");
       let list_radius_top_left = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.TopLeft);
-      input_top_left.value = list_radius_top_left.length == 1 ? list_radius_top_left[0] : "Mixed";
+      input_top_left.value = list_radius_top_left.length == 1 ? list_radius_top_left[0] : "mixed";
       let input_top_right = document.createElement("input");
       let list_radius_top_right = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.TopRight);
-      input_top_right.value = list_radius_top_right.length == 1 ? list_radius_top_right[0] : "Mixed";
+      input_top_right.value = list_radius_top_right.length == 1 ? list_radius_top_right[0] : "mixed";
       let input_bot_left = document.createElement("input");
       let list_radius_bot_left = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.BottomLeft);
-      input_bot_left.value = list_radius_bot_left.length == 1 ? list_radius_bot_left[0] : "Mixed";
+      input_bot_left.value = list_radius_bot_left.length == 1 ? list_radius_bot_left[0] : "mixed";
       let input_bot_right = document.createElement("input");
       let list_radius_bot_right = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.BottomRight);
-      input_bot_right.value = list_radius_bot_right.length == 1 ? list_radius_bot_right[0] : "Mixed";
+      input_bot_right.value = list_radius_bot_right.length == 1 ? list_radius_bot_right[0] : "mixed";
       [input_top_left, input_top_right, input_bot_right, input_bot_left].forEach((element_input) => {
         element_input.onfocus = function () {
           this.setSelectionRange(0, this.value.length);
@@ -492,13 +540,13 @@ function createEditSizePosition() {
           let list_top_left_value = selected_list.filter((e) => e.StyleItem.FrameItem?.TopLeft != undefined).map((e) => e.StyleItem.FrameItem.TopLeft);
           let top_left_value = list_top_left_value[0];
           list_top_left_value = list_top_left_value.filter((e) => e != top_left_value);
-          this.value = list_top_left_value.length == 0 ? top_left_value : "Mixed";
+          this.value = list_top_left_value.length == 0 ? top_left_value : "mixed";
         } else {
           inputFrameItem({ TopLeft: newValue });
           if (this.value == input_top_right.value && this.value == input_bot_left.value && this.value == input_bot_right.value) {
             edit_radius.lastChild.value = this.value;
           } else {
-            edit_radius.lastChild.value = "Mixed";
+            edit_radius.lastChild.value = "mixed";
           }
         }
       };
@@ -508,13 +556,13 @@ function createEditSizePosition() {
           let list_top_right_value = selected_list.filter((e) => e.StyleItem.FrameItem?.Topright != undefined).map((e) => e.StyleItem.FrameItem.TopRight);
           let top_right_value = list_top_right_value[0];
           list_top_right_value = list_top_right_value.filter((e) => e != top_right_value);
-          this.value = list_top_right_value.length == 0 ? top_right_value : "Mixed";
+          this.value = list_top_right_value.length == 0 ? top_right_value : "mixed";
         } else {
           inputFrameItem({ TopRight: newValue });
           if (this.value == input_top_left.value && this.value == input_bot_left.value && this.value == input_bot_right.value) {
             edit_radius.lastChild.value = this.value;
           } else {
-            edit_radius.lastChild.value = "Mixed";
+            edit_radius.lastChild.value = "mixed";
           }
         }
       };
@@ -524,13 +572,13 @@ function createEditSizePosition() {
           let list_bot_left_value = selected_list.filter((e) => e.StyleItem.FrameItem?.BottomLeft != undefined).map((e) => e.StyleItem.FrameItem.BottomLeft);
           let bot_left_value = list_bot_left_value[0];
           list_bot_left_value = list_bot_left_value.filter((e) => e != bot_left_value);
-          this.value = list_bot_left_value.length == 0 ? bot_left_value : "Mixed";
+          this.value = list_bot_left_value.length == 0 ? bot_left_value : "mixed";
         } else {
           inputFrameItem({ BottomLeft: newValue });
           if (this.value == input_top_right.value && this.value == input_top_left.value && this.value == input_bot_right.value) {
             edit_radius.lastChild.value = this.value;
           } else {
-            edit_radius.lastChild.value = "Mixed";
+            edit_radius.lastChild.value = "mixed";
           }
         }
       };
@@ -540,13 +588,13 @@ function createEditSizePosition() {
           let list_bot_right_value = selected_list.filter((e) => e.StyleItem.FrameItem?.BottomRight != undefined).map((e) => e.StyleItem.FrameItem.BottomRight);
           let bot_right_value = list_bot_right_value[0];
           list_bot_right_value = list_bot_right_value.filter((e) => e != bot_right_value);
-          this.value = list_bot_right_value.length == 0 ? bot_right_value : "Mixed";
+          this.value = list_bot_right_value.length == 0 ? bot_right_value : "mixed";
         } else {
           inputFrameItem({ BottomRight: newValue });
           if (this.value == input_top_right.value && this.value == input_top_left.value && this.value == input_bot_left.value) {
             edit_radius.lastChild.value = this.value;
           } else {
-            edit_radius.lastChild.value = "Mixed";
+            edit_radius.lastChild.value = "mixed";
           }
         }
       };
@@ -586,79 +634,73 @@ function updateInputTLWH() {
   if (document.getElementById("edit_size_position_div")) {
     let edit_left = document.getElementById("edit_position_item_left");
     let list_offsetX = selected_list.filterAndMap((wbaseItem) => `${getWBaseOffset(wbaseItem).x}`.replace(".00", ""));
-    edit_left.lastChild.value = list_offsetX.length == 1 ? list_offsetX[0] : "Mixed";
+    edit_left.lastChild.value = list_offsetX.length == 1 ? list_offsetX[0] : "mixed";
     // Y
     let edit_top = document.getElementById("edit_position_item_top");
     let list_offsetY = selected_list.filterAndMap((wbaseItem) => `${getWBaseOffset(wbaseItem).y}`.replace(".00", ""));
-    edit_top.lastChild.value = list_offsetY.length == 1 ? list_offsetY[0] : "Mixed";
+    edit_top.lastChild.value = list_offsetY.length == 1 ? list_offsetY[0] : "mixed";
     // W
     let edit_width = document.getElementById("edit_frame_item_w");
     let list_width = selected_list.filterAndMap((e) => (document.getElementById(e.GID) ?? e.value).offsetWidth);
-    edit_width.lastChild.value = list_width.length == 1 ? list_width[0] : "Mixed";
+    edit_width.lastChild.value = list_width.length == 1 ? list_width[0] : "mixed";
     // H
     let edit_height = document.getElementById("edit_frame_item_h");
     let list_height = selected_list.filterAndMap((e) => (document.getElementById(e.GID) ?? e.value).offsetHeight);
-    edit_height.lastChild.value = list_height.length == 1 ? list_height[0] : "Mixed";
+    edit_height.lastChild.value = list_height.length == 1 ? list_height[0] : "mixed";
     //
     let parentHTML = document.getElementById(select_box_parentID);
-    if (parentHTML && window.getComputedStyle(parentHTML).display.match("flex") && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
-      edit_left.style.pointerEvents = "none";
-      edit_top.style.pointerEvents = "none";
+    if (parentHTML && window.getComputedStyle(parentHTML).display.match(/(flex|table)/g) && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
       edit_left.lastChild.disabled = true;
       edit_top.lastChild.disabled = true;
     } else {
-      edit_left.style.pointerEvents = "auto";
-      edit_top.style.pointerEvents = "auto";
       edit_left.lastChild.disabled = false;
       edit_top.lastChild.disabled = false;
     }
-    var isFixedW = selected_list.every((e) => e.StyleItem.FrameItem?.Width >= 0);
-    var isFixedH = selected_list.every((e) => e.StyleItem.FrameItem?.Height >= 0);
-    if (isFixedW && isFixedH) {
+    let resizeWType = "fixed";
+    if (selected_list.every((e) => e.value.style.width == "100%")) {
+      resizeWType = "fill";
+    } else if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
+      resizeWType = "hug";
+    } else if (selected_list.every((e) => e.value.style.width)) {
+      resizeWType = "fixed";
+    } else {
+      resizeWType = "mixed";
+    }
+    let resizeHType = "fixed";
+    if (selected_list.every((e) => e.value.style.height == "100%")) {
+      resizeHType = "fill";
+    } else if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
+      resizeHType = "hug";
+    } else if (selected_list.every((e) => e.value.style.height)) {
+      resizeHType = "fixed";
+    } else {
+      resizeHType = "mixed";
+    }
+    if (resizeWType == "fixed" && resizeHType == "fixed") {
       edit_width.parentElement.lastChild.style.display = "block";
     } else {
       edit_width.parentElement.lastChild.style.display = "none";
     }
-    if (isFixedW) {
-      edit_width.style.pointerEvents = "auto";
+    if (resizeWType == "fixed") {
       edit_width.lastChild.disabled = false;
     } else {
-      edit_width.style.pointerEvents = "none";
       edit_width.lastChild.disabled = true;
     }
-    if (isFixedH) {
-      edit_height.style.pointerEvents = "auto";
+    if (resizeHType == "fixed") {
       edit_height.lastChild.disabled = false;
     } else {
-      edit_height.style.pointerEvents = "none";
       edit_height.lastChild.disabled = true;
     }
     // update button select resizing type
     let btn_resize_with_height = document.getElementsByClassName("btn_resize");
     if (btn_resize_with_height.length > 0) {
-      if (selected_list.every((e) => e.WAutolayoutItem || (!e.StyleItem.PositionItem.FixPosition && window.getComputedStyle(e.value.parentElement).display.match("flex")))) {
+      if (selected_list.every((e) => e.WAutolayoutItem || (!e.StyleItem.PositionItem.FixPosition && window.getComputedStyle(parentHTML).display.match(/(flex|table)/g)))) {
         btn_resize_with_height[0].parentElement.style.display = "flex";
         for (let option of btn_resize_with_height) {
           if (option.className.includes("width")) {
-            if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
-              option.childNodes[1].innerHTML = "hug";
-            } else if (selected_list.every((e) => e.value.style.width == "100%")) {
-              option.childNodes[1].innerHTML = "fill";
-            } else if (selected_list.every((e) => e.value.style.width)) {
-              option.childNodes[1].innerHTML = "fixed";
-            } else {
-              option.childNodes[1].innerHTML = "mixed";
-            }
+            option.childNodes[1].innerHTML = resizeWType;
           } else {
-            if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
-              option.childNodes[1].innerHTML = "hug";
-            } else if (selected_list.every((e) => e.value.style.height == "100%")) {
-              option.childNodes[1].innerHTML = "fill";
-            } else if (selected_list.every((e) => e.value.style.height)) {
-              option.childNodes[1].innerHTML = "fixed";
-            } else {
-              option.childNodes[1].innerHTML = "mixed";
-            }
+            option.childNodes[1].innerHTML = resizeHType;
           }
         }
       } else {
@@ -710,7 +752,6 @@ function createAutoLayout() {
     // group btn edit auto layout direction
     let group_btn_direction = document.createElement("div");
     group_btn_direction.className = "group_btn_direction";
-    if (autoLayoutList.some((wbaseItem) => wbaseItem.CateID === EnumCate.tool_text)) group_btn_direction.style.pointerEvents = "none";
     _row1.appendChild(group_btn_direction);
     let btn_vertical = document.createElement("i");
     btn_vertical.className = "fa-solid fa-arrow-down fa-xs";
@@ -739,12 +780,12 @@ function createAutoLayout() {
     _row1.appendChild(btn_extension);
     btn_extension.className = "fa-solid fa-ellipsis icon_btn_default_style";
     btn_extension.onclick = function () {
-      setTimeout(function () {}, 200);
+      setTimeout(function () { }, 200);
     };
     // input edit child space
     let childSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.ChildSpace);
     if (!isEditTable) {
-      let input_child_space = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "vertical" : "horizontal"} child spacing.svg`, undefined, childSpaceValues.length == 1 ? childSpaceValues[0] : "Mixed");
+      let input_child_space = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "vertical" : "horizontal"} child spacing.svg`, undefined, childSpaceValues.length == 1 ? childSpaceValues[0] : "mixed");
       input_child_space.style.position = "absolute";
       input_child_space.style.left = "0";
       input_child_space.style.bottom = "0";
@@ -754,7 +795,7 @@ function createAutoLayout() {
           editLayoutStyle({ ChildSpace: newValue });
           updateUIAutoLayout();
         } else {
-          this.value = childSpaceValues.length == 1 ? childSpaceValues[0] : "Mixed";
+          this.value = childSpaceValues.length == 1 ? childSpaceValues[0] : "mixed";
         }
       };
       _row1.appendChild(input_child_space);
@@ -775,14 +816,14 @@ function createAutoLayout() {
           editLayoutStyle({ IsWrap: this.firstChild.checked });
         };
         let runSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.RunSpace);
-        let inputRunSpace = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "horizontal" : "vertical"} child spacing.svg`, undefined, runSpaceValues.length == 1 ? runSpaceValues[0] : "Mixed");
+        let inputRunSpace = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "horizontal" : "vertical"} child spacing.svg`, undefined, runSpaceValues.length == 1 ? runSpaceValues[0] : "mixed");
         inputRunSpace.lastChild.onblur = function () {
           let newValue = parseFloat(this.value);
           if (newValue != undefined) {
             editLayoutStyle({ RunSpace: newValue });
             updateUIAutoLayout();
           } else {
-            this.value = runSpaceValues.length == 1 ? runSpaceValues[0] : "Mixed";
+            this.value = runSpaceValues.length == 1 ? runSpaceValues[0] : "mixed";
           }
         };
         isGridRow.replaceChildren(btnIsGrid, inputRunSpace);
@@ -810,20 +851,20 @@ function createAutoLayout() {
     // input padding
     let isShowPadDetails = false;
     let paddingLefts = autoLayoutList.filterAndMap((e) => e.StyleItem.PaddingItem.Left);
-    let padLeftValue = paddingLefts.length == 1 ? paddingLefts[0] : "Mixed";
+    let padLeftValue = paddingLefts.length == 1 ? paddingLefts[0] : "mixed";
     let paddingTops = autoLayoutList.filterAndMap((e) => e.StyleItem.PaddingItem.Top);
-    let padTopValue = paddingTops.length == 1 ? paddingTops[0] : "Mixed";
+    let padTopValue = paddingTops.length == 1 ? paddingTops[0] : "mixed";
     let paddingRights = autoLayoutList.filterAndMap((e) => e.StyleItem.PaddingItem.Right);
-    let padRightValue = paddingRights.length == 1 ? paddingRights[0] : "Mixed";
+    let padRightValue = paddingRights.length == 1 ? paddingRights[0] : "mixed";
     let paddingBots = autoLayoutList.filterAndMap((e) => e.StyleItem.PaddingItem.Bottom);
-    let padBotValue = paddingBots.length == 1 ? paddingBots[0] : "Mixed";
+    let padBotValue = paddingBots.length == 1 ? paddingBots[0] : "mixed";
     let paddingContainer = document.createElement("div");
     paddingContainer.className = "row";
     paddingContainer.style.flexWrap = "wrap";
     paddingContainer.style.gap = "4px";
     paddingContainer.style.marginTop = "6px";
     editContainer.appendChild(paddingContainer);
-    let input_padding_horizontal = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding horizontal.svg", undefined, padLeftValue == padRightValue ? padLeftValue : "Mixed");
+    let input_padding_horizontal = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding horizontal.svg", undefined, padLeftValue == padRightValue ? padLeftValue : "mixed");
     input_padding_horizontal.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
       if (newValue != undefined) {
@@ -833,11 +874,11 @@ function createAutoLayout() {
         input_padding_right.lastChild.value = this.value;
         padRightValue = this.value;
       } else {
-        this.value = padLeftValue == padRightValue ? padLeftValue : "Mixed";
+        this.value = padLeftValue == padRightValue ? padLeftValue : "mixed";
       }
     };
     paddingContainer.appendChild(input_padding_horizontal);
-    let input_padding_vertical = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding vertical.svg", undefined, padTopValue == padBotValue ? padTopValue : "Mixed");
+    let input_padding_vertical = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding vertical.svg", undefined, padTopValue == padBotValue ? padTopValue : "mixed");
     input_padding_vertical.style.marginLeft = "6px";
     input_padding_vertical.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
@@ -848,7 +889,7 @@ function createAutoLayout() {
         input_padding_bottom.lastChild.value = this.value;
         padBotValue = this.value;
       } else {
-        this.value = padTopValue == padBotValue ? padTopValue : "Mixed";
+        this.value = padTopValue == padBotValue ? padTopValue : "mixed";
       }
     };
     paddingContainer.appendChild(input_padding_vertical);
@@ -858,7 +899,7 @@ function createAutoLayout() {
       if (newValue != undefined) {
         inputPadding({ Left: newValue });
         padLeftValue = this.value;
-        input_padding_horizontal.lastChild.value = padLeftValue == padRightValue ? padLeftValue : "Mixed";
+        input_padding_horizontal.lastChild.value = padLeftValue == padRightValue ? padLeftValue : "mixed";
       } else {
         this.value = padLeftValue;
       }
@@ -871,7 +912,7 @@ function createAutoLayout() {
       if (newValue != undefined) {
         inputPadding({ Top: newValue });
         padTopValue = this.value;
-        input_padding_vertical.lastChild.value = padTopValue == padBotValue ? padTopValue : "Mixed";
+        input_padding_vertical.lastChild.value = padTopValue == padBotValue ? padTopValue : "mixed";
       } else {
         this.value = padTopValue;
       }
@@ -889,7 +930,7 @@ function createAutoLayout() {
       if (newValue != undefined) {
         inputPadding({ Right: newValue });
         padRightValue = this.value;
-        input_padding_horizontal.lastChild.value = padLeftValue == padRightValue ? padLeftValue : "Mixed";
+        input_padding_horizontal.lastChild.value = padLeftValue == padRightValue ? padLeftValue : "mixed";
       } else {
         this.value = padRightValue;
       }
@@ -902,7 +943,7 @@ function createAutoLayout() {
       if (newValue != undefined) {
         inputPadding({ Bottom: newValue });
         padBotValue = this.value;
-        input_padding_vertical.lastChild.value = padTopValue == padBotValue ? padTopValue : "Mixed";
+        input_padding_vertical.lastChild.value = padTopValue == padBotValue ? padTopValue : "mixed";
       } else {
         this.value = padBotValue;
       }
@@ -1009,9 +1050,9 @@ function createConstraints() {
   editConstContainer.className = "row";
   bodyContainer.appendChild(editConstContainer);
   let constraintsXValues = selected_list.filterAndMap((e) => e.StyleItem.PositionItem.ConstraintsX);
-  let constraintsX = constraintsXValues.length == 1 ? constraintsXValues[0] : "Mixed";
+  let constraintsX = constraintsXValues.length == 1 ? constraintsXValues[0] : "mixed";
   let constraintsYValues = selected_list.filterAndMap((e) => e.StyleItem.PositionItem.ConstraintsY);
-  let constraintsY = constraintsYValues.length == 1 ? constraintsYValues[0] : "Mixed";
+  let constraintsY = constraintsYValues.length == 1 ? constraintsYValues[0] : "mixed";
 
   let constraintsRect = document.createElement("div");
   constraintsRect.className = "connstraints-rect";
@@ -1024,11 +1065,11 @@ function createConstraints() {
 
   let listContraintsX = [Constraints.left, Constraints.right, Constraints.center];
   let listContraintsY = [Constraints.top, Constraints.bottom, Constraints.center];
-  if (selected_list.every((wbaseItem) => EnumCate.scale_size_component.every((cate) => wbaseItem.CateID != cate))) {
-    if (selected_list.every((wbaseItem) => wbaseItem.StyleItem.FrameItem.Width != null)) {
+  if (selected_list.every((wb) => EnumCate.scale_size_component.every((cate) => wb.CateID != cate))) {
+    if (selected_list.every((wb) => wb.value.style.width && wb.value.style.width != "fit-content" && wb.value.style.width != "max-content")) {
       listContraintsX.push(Constraints.left_right, Constraints.scale);
     }
-    if (selected_list.every((wbaseItem) => wbaseItem.StyleItem.FrameItem.Height != null)) {
+    if (selected_list.every((wb) => wb.value.style.height && wb.value.style.height != "fit-content")) {
       listContraintsY.push(Constraints.top_bottom, Constraints.scale);
     }
   }
@@ -1105,7 +1146,7 @@ function createConstraints() {
   }
 
   let dropdownConstX = _btnDropDownSelect(
-    constraintsX !== "Mixed" ? listContraintsX : ["Mixed", ...listContraintsX],
+    constraintsX !== "mixed" ? listContraintsX : ["mixed", ...listContraintsX],
     function (options) {
       for (let option of options) {
         if (option.getAttribute("value") == constraintsX) {
@@ -1123,7 +1164,7 @@ function createConstraints() {
   dropdownConstX.firstChild.innerHTML = constraintsX;
 
   let dropdownConstY = _btnDropDownSelect(
-    constraintsY !== "Mixed" ? listContraintsY : ["Mixed", ...listContraintsY],
+    constraintsY !== "mixed" ? listContraintsY : ["mixed", ...listContraintsY],
     function (options) {
       for (let option of options) {
         if (option.getAttribute("value") == constraintsY) {
@@ -1144,7 +1185,7 @@ function createConstraints() {
 
   if (select_box_parentID !== wbase_parentID) {
     let parentHTML = document.getElementById(select_box_parentID);
-    if (parentHTML.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match("flex")) {
+    if (parentHTML.getAttribute("level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match("flex")) {
       let fixPosRow = document.createElement("div");
       fixPosRow.className = "row";
       fixPosRow.style.margin = "8px 0 0 8px";
@@ -1215,63 +1256,50 @@ function _btnSelectResizeType(isW = true, type) {
       let resize_type_option = document.createElement("div");
       resize_type_option.className = "resize_type_option";
       let icon_check = document.createElement("span");
-      icon_check.style.transform = "scale(0.6)";
-      icon_check.style.margin = "0";
       icon_check.innerHTML = SVGIcon.check_mark.replace("#000", "#fff");
-      resize_type_option.appendChild(icon_check);
       let icon_option_type = document.createElement("span");
-      icon_option_type.style.margin = "4px 4px 4px 0";
       if (!isW) {
         icon_option_type.style.transform = "rotate(90deg)";
       }
-      resize_type_option.appendChild(icon_option_type);
+      resize_type_option.replaceChildren(icon_check, icon_option_type);
       switch (i) {
         case 0:
-          resize_type_option.innerHTML += "Mixed";
-          resize_type_option.style.color = "#e5e5e5";
-          resize_type_option.style.borderBottom = "1px solid #e5e5e5";
-          resize_type_option.style.pointerEvents = "none";
+          resize_type_option.innerHTML += "mixed";
           break;
         case 1:
           if (type != "fixed") icon_check.style.visibility = "hidden";
           icon_option_type.innerHTML = SVGIcon.fixed_size.replace("#000", "#fff");
-          resize_type_option.innerHTML += `Fixed ${isW ? "width" : "height"}`;
+          resize_type_option.innerHTML += `fixed ${isW ? "width" : "height"}`;
           resize_type_option.onclick = function (e) {
             e.stopPropagation();
             selectResizeType(isW, "fixed");
-            btn_resize.blur();
-            updateUIAutoSizeWH();
+            popup_list_resize_type.remove();
             updateInputTLWH();
             updateUIConstraints();
-            popup_list_resize_type.remove();
           };
           break;
         case 2:
           if (type != "hug") icon_check.style.visibility = "hidden";
           icon_option_type.innerHTML = SVGIcon.hug_content.replace("#000", "#fff");
-          resize_type_option.innerHTML += "Hug contents";
+          resize_type_option.innerHTML += "hug contents";
           resize_type_option.onclick = function (e) {
             e.stopPropagation();
             selectResizeType(isW, "hug");
-            btn_resize.blur();
-            updateUIAutoSizeWH();
+            popup_list_resize_type.remove();
             updateInputTLWH();
             updateUIConstraints();
-            popup_list_resize_type.remove();
           };
           break;
         case 3:
           if (type != "fill") icon_check.style.visibility = "hidden";
           icon_option_type.innerHTML = SVGIcon.fill_container.replace("#000", "#fff");
-          resize_type_option.innerHTML += "Fill container";
+          resize_type_option.innerHTML += "fill container";
           resize_type_option.onclick = function (e) {
             e.stopPropagation();
             selectResizeType(isW, "fill");
-            btn_resize.blur();
-            updateUIAutoSizeWH();
+            popup_list_resize_type.remove();
             updateInputTLWH();
             updateUIConstraints();
-            popup_list_resize_type.remove();
           };
           break;
         default:
@@ -1293,56 +1321,64 @@ function _btnSelectResizeType(isW = true, type) {
 
 //
 function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
+  var parentHTML;
   var activeFill = false;
+  if (select_box_parentID !== wbase_parentID) {
+    parentHTML = document.getElementById(select_box_parentID);
+    activeFill = window.getComputedStyle(parentHTML).display.match(/(flex|table)/g);
+  }
   var activeHug = false;
-  var parent_wbase;
-  activeHug = selected_list.every((e) => (e.WAutolayoutItem && !e.WAutolayoutItem.IsScroll && !(isW && (e.CateID === EnumCate.textformfield || e.CateID === EnumCate.tree))) || e.CateID === EnumCate.tool_text || e.CateID === EnumCate.table);
-  if (activeHug) {
-    if (isW && selected_list.some((selectItem) => selectItem.WAutolayoutItem && selectItem.WAutolayoutItem.Direction === "Horizontal" && (selectItem.WAutolayoutItem.IsWrap || selectItem.WAutolayoutItem.IsScroll))) {
-      activeHug = false;
-    } else if (!isW && selected_list.some((selectItem) => selectItem.WAutolayoutItem && selectItem.WAutolayoutItem.Direction === "Vertical" && (selectItem.WAutolayoutItem.IsWrap || selectItem.WAutolayoutItem.IsScroll))) {
-      activeHug = false;
-    }
-  }
-  if (select_box_parentID != wbase_parentID) {
-    parent_wbase = wbase_list.find((e) => e.GID == select_box_parentID);
-    if (isW && activeHug) {
-      let framePage = selected_list[0].ListID.split(",")[1];
-      framePage = document.getElementById(framePage);
-      activeHug = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") != cate) || framePage.querySelectorAll(".col-").length == 0;
-    }
-  } else if (isW && activeHug) {
-    let listFramePage = selected_list.filter((wbaseItem) => EnumCate.extend_frame.some((cate) => wbaseItem.CateID == cate));
-    for (let framePage of listFramePage) {
-      activeHug = document.getElementById(framePage.GID).querySelectorAll(".col-").length == 0;
-    }
-  }
-  if (parent_wbase?.WAutolayoutItem != undefined) {
-    if (selected_list.some((e) => e.CateID === EnumCate.tree) && !isW) {
-      activeFill = false;
-    } else if (parent_wbase.WAutolayoutItem.IsWrap) {
-      if (isW && parent_wbase.WAutolayoutItem.Direction == "Horizontal") {
-        activeFill = true;
-      } else if (!isW && parent_wbase.WAutolayoutItem.Direction == "Vertical") activeFill = true;
-    } else {
-      if (parent_wbase.WAutolayoutItem.IsScroll) {
-        if (isW && parent_wbase.WAutolayoutItem.Direction == "Vertical") {
-          activeFill = true;
-        } else if (!isW && parent_wbase.WAutolayoutItem.Direction == "Horizontal") {
-          activeFill = true;
+  activeHug = selected_list.every((e) => {
+    if (e.CateID === EnumCate.tool_text || e.CateID === EnumCate.table) return true;
+    if (e.WAutolayoutItem && !(e.WAutolayoutItem.IsScroll && e.WAutolayoutItem.IsWrap)) {
+      if (isW) {
+        if (e.CateID !== EnumCate.textformfield) {
+          if (e.WAutolayoutItem.Direction === "Horizontal") {
+            return !e.WAutolayoutItem.IsWrap && !e.WAutolayoutItem.IsScroll;
+          } else if ([...e.value.querySelectorAll(`.wbaseItem-value[level="${e.Level + 1}"]`)].every(childHTML => !childHTML.classList.contains("col-"))) {
+            return !e.WAutolayoutItem.IsScroll;
+          }
         }
       } else {
-        activeFill = true;
+        if (e.WAutolayoutItem.Direction === "Vertical") {
+          return !e.WAutolayoutItem.IsWrap && !e.WAutolayoutItem.IsScroll;
+        } else {
+          return !e.WAutolayoutItem.IsScroll;
+        }
       }
     }
-  }
+    return false;
+  });
+  if (activeFill)
+    activeFill = selected_list.every(e => {
+      if (isW) {
+        if (e.CateID !== EnumCate.tree) {
+          if (parentHTML.classList.contains("w-row")) {
+            if (parentHTML.style.width && parentHTML.style.width != "fit-content") {
+              return parentHTML.getAttribute("wrap") == "wrap" || parentHTML.getAttribute("scroll") != "true";
+            }
+          } else {
+            return parentHTML.getAttribute("wrap") != "wrap";
+          }
+        }
+      } else {
+        if (parentHTML.classList.contains("w-row")) {
+          return parentHTML.getAttribute("wrap") != "wrap";
+        } else {
+          if (parentHTML.style.height && parentHTML.style.height != "fit-content") {
+            return parentHTML.getAttribute("wrap") == "wrap" || parentHTML.getAttribute("scroll") != "true";
+          }
+        }
+      }
+      return false;
+    })
   if (activeFill) {
-    popup_list_resize_type.childNodes[3].style.display = "inline-flex";
+    popup_list_resize_type.childNodes[3].style.display = "flex";
   } else {
     popup_list_resize_type.childNodes[3].style.display = "none";
   }
   if (activeHug) {
-    popup_list_resize_type.childNodes[2].style.display = "inline-flex";
+    popup_list_resize_type.childNodes[2].style.display = "flex";
   } else {
     popup_list_resize_type.childNodes[2].style.display = "none";
   }
@@ -1366,7 +1402,7 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
       popup_list_resize_type.childNodes[3].firstChild.style.visibility = "visible";
       break;
     default:
-      popup_list_resize_type.firstChild.style.display = "inline-flex";
+      popup_list_resize_type.firstChild.style.display = "flex";
       for (var i = 1; i < popup_list_resize_type.childNodes.length; i++) {
         popup_list_resize_type.childNodes[i].firstChild.style.visibility = "hidden";
       }
@@ -1427,72 +1463,6 @@ function _btnAlignType() {
   };
   return img;
 }
-
-// update UI design view when selected change
-function updateUIDesignView() {
-  let scrollY = design_view.scrollTop;
-  let listEditContainer = [];
-  if (selected_list.length == 0) {
-    let editCanvasBground = createCanvasBackground();
-    listEditContainer.push(editCanvasBground);
-    let winiRes = winiResponsive();
-    listEditContainer.push(winiRes);
-    let breakpoint = createBreakpoint();
-    listEditContainer.push(breakpoint);
-    let localSkins = createSelectionSkins();
-    listEditContainer.push(localSkins);
-  } else {
-    let editAlign = createEditAlign();
-    let editSizePosition = createEditSizePosition();
-    // let selectClass = selectionClass();
-    listEditContainer.push(editAlign, editSizePosition);
-    if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
-      let editConstraints = createConstraints();
-      listEditContainer.push(editConstraints);
-    }
-    if (select_box_parentID != wbase_parentID) {
-      let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
-      let framePage = pageParent[pageParent.length - 1];
-      if (framePage?.classList?.contains("variant")) framePage = pageParent[pageParent.length - 2];
-      if (framePage) {
-        let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
-        if (isPage) {
-          let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
-          listEditContainer.push(selectColByBrp);
-        }
-      }
-    }
-    if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
-      let editAutoLayout = createAutoLayout();
-      listEditContainer.push(editAutoLayout);
-    }
-    //
-    if (selected_list.length > 0 && selected_list.every((wbaseItem) => wbaseItem.StyleItem.DecorationItem && wbaseItem.StyleItem.DecorationItem.ColorValue == selected_list[0].StyleItem.DecorationItem.ColorValue)) {
-      let editBackground = createEditBackground();
-      listEditContainer.push(editBackground);
-    }
-    if (selected_list.some((e) => e.StyleItem.TextStyleItem)) {
-      let editTextStyle = createEditTextStyle();
-      listEditContainer.push(editTextStyle);
-    }
-    if (selected_list.some((e) => e.StyleItem.DecorationItem)) {
-      if (selected_list.length > 1 || selected_list[0].CateID !== EnumCate.w_switch) {
-        let editBorder = createEditBorder();
-        listEditContainer.push(editBorder);
-      }
-      let editEffect = createEditEffect();
-      listEditContainer.push(editEffect);
-    }
-    let editVariants = createEditVariants();
-    listEditContainer.push(editVariants);
-  }
-  design_view.replaceChildren(...listEditContainer);
-  design_view.scrollTo({
-    top: scrollY,
-    behavior: "smooth",
-  });
-}
-
 //! background-color || img
 function createEditBackground() {
   let editContainer = document.createElement("div");
@@ -1792,11 +1762,11 @@ function createEditTextStyle() {
     // select font-family
     let fontFamilyValues = listTextStyle.filterAndMap((e) => e.StyleItem.TextStyleItem.FontFamily);
     let btn_select_font_family = _btnInputSelect(
-      fontFamilyValues.length == 1 ? list_font_family : ["Mixed", ...list_font_family],
+      fontFamilyValues.length == 1 ? list_font_family : ["mixed", ...list_font_family],
       function (options) {
         let firstValue = fontFamilyValues[0];
         if (fontFamilyValues.length > 1) {
-          firstValue = "Mixed";
+          firstValue = "mixed";
         }
         for (let option of options) {
           if (firstValue == option.getAttribute("value")) {
@@ -1814,7 +1784,7 @@ function createEditTextStyle() {
         updateUITextStyle();
       },
     );
-    btn_select_font_family.firstChild.value = fontFamilyValues.length == 1 ? fontFamilyValues[0] : "Mixed";
+    btn_select_font_family.firstChild.value = fontFamilyValues.length == 1 ? fontFamilyValues[0] : "mixed";
     btn_select_font_family.style.marginTop = "8px";
     btn_select_font_family.style.marginBottom = "8px";
     text_style_attribute.appendChild(btn_select_font_family);
@@ -1827,11 +1797,11 @@ function createEditTextStyle() {
     // select font-weight
     let fWeightValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.FontWeight);
     let btn_select_font_weight = _btnDropDownSelect(
-      fWeightValues.length == 1 ? list_font_weight : ["Mixed", ...list_font_weight],
+      fWeightValues.length == 1 ? list_font_weight : ["mixed", ...list_font_weight],
       function (options) {
         let firstFWeight = fWeightValues[0];
         if (fWeightValues.length > 1) {
-          firstFWeight = "Mixed";
+          firstFWeight = "mixed";
         }
         for (let option of options) {
           if (option.getAttribute("value") == firstFWeight) {
@@ -1846,16 +1816,16 @@ function createEditTextStyle() {
         updateUITextStyle();
       },
     );
-    btn_select_font_weight.firstChild.innerHTML = fWeightValues.length == 1 ? fWeightValues[0] : "Mixed";
+    btn_select_font_weight.firstChild.innerHTML = fWeightValues.length == 1 ? fWeightValues[0] : "mixed";
     div_font_size_weight.appendChild(btn_select_font_weight);
     // select font-size
     let fSizeValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.FontSize);
     let btn_select_font_size = _btnInputSelect(
-      fSizeValues.length == 1 ? list_font_size : ["Mixed", ...list_font_size],
+      fSizeValues.length == 1 ? list_font_size : ["mixed", ...list_font_size],
       function (options) {
         let firstValue = fSizeValues[0];
         if (fSizeValues.length > 1) {
-          firstValue = "Mixed";
+          firstValue = "mixed";
         }
         for (let option of options) {
           if (firstValue == option.getAttribute("value")) {
@@ -1873,7 +1843,7 @@ function createEditTextStyle() {
       },
       true,
     );
-    btn_select_font_size.firstChild.value = fSizeValues.length == 1 ? fSizeValues[0] : "Mixed";
+    btn_select_font_size.firstChild.value = fSizeValues.length == 1 ? fSizeValues[0] : "mixed";
     btn_select_font_size.style.flex = 1;
     div_font_size_weight.appendChild(btn_select_font_size);
     if (listTextStyle.some((e) => e.CateID !== EnumCate.chart)) {
@@ -1886,7 +1856,7 @@ function createEditTextStyle() {
       text_style_attribute.appendChild(div_height_spacing);
       // input line-height
       let lineHeightValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.Height);
-      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/line-height.svg", undefined, lineHeightValues.length == 1 ? (lineHeightValues[0] == null ? "Auto" : lineHeightValues[0]) : "Mixed", "25px");
+      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/line-height.svg", undefined, lineHeightValues.length == 1 ? (lineHeightValues[0] == null ? "Auto" : lineHeightValues[0]) : "mixed", "25px");
       input_line_height.style.flex = 1;
       input_line_height.style.marginRight = "8px";
       input_line_height.lastChild.onblur = function () {
@@ -1901,7 +1871,7 @@ function createEditTextStyle() {
       div_height_spacing.appendChild(input_line_height);
       // input letter spacing
       let lSpacingValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.LetterSpacing);
-      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/letter-spacing.svg", undefined, lSpacingValues.length == 1 ? lSpacingValues[0] : "Mixed", "28px");
+      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/letter-spacing.svg", undefined, lSpacingValues.length == 1 ? lSpacingValues[0] : "mixed", "28px");
       input_letter_spacing.style.flex = 1;
       input_letter_spacing.lastChild.onblur = function () {
         if (!isNaN(parseFloat(this.value))) {
@@ -1967,7 +1937,7 @@ function createEditTextStyle() {
         updateUITextStyle();
       },
     );
-    let firstTextAlign = textAlignValues.length == 1 ? textAlignValues[0] : "Mixed";
+    let firstTextAlign = textAlignValues.length == 1 ? textAlignValues[0] : "mixed";
     for (let alignOption of group_btn_text_align.childNodes) {
       if (alignOption.getAttribute("value") == firstTextAlign) {
         alignOption.style.backgroundColor = "#e5e5e5";
@@ -1999,7 +1969,7 @@ function createEditTextStyle() {
       },
     );
     group_btn_text_align_vertical.style.marginLeft = "42px";
-    let firstTextAlignVertical = alignVerticalValues.length == 1 ? alignVerticalValues[0] : "Mixed";
+    let firstTextAlignVertical = alignVerticalValues.length == 1 ? alignVerticalValues[0] : "mixed";
     for (let alginVerticalOption of group_btn_text_align_vertical.childNodes) {
       if (alginVerticalOption.getAttribute("value") == firstTextAlignVertical) {
         alginVerticalOption.style.backgroundColor = "#e5e5e5";
@@ -2050,7 +2020,7 @@ function updateUIAutoSizeWH(groupBtn) {
     });
   let firstAutoSize = select_list_auto_size[0];
   if (select_list_auto_size.some((e) => e != firstAutoSize)) {
-    firstAutoSize = "Mixed";
+    firstAutoSize = "mixed";
   }
   if (group_btn_auto_size) {
     for (let autoSizeOption of group_btn_auto_size.childNodes) {
@@ -2079,7 +2049,7 @@ function _btnInputSelect(list = [], func_on_show_popup, onclick, acceptAll = fal
     if (acceptAll) {
       onclick(this.value);
     } else {
-      if (list.filter((vl) => vl != "Mixed").some((vl) => vl.toString().toLowerCase() === input.value.toLowerCase())) {
+      if (list.filter((vl) => vl != "mixed").some((vl) => vl.toString().toLowerCase() === input.value.toLowerCase())) {
         onclick(list.find((vl) => vl.toLowerCase() === input.value.toLowerCase()));
       } else {
         this.value = inputValue;
@@ -2103,7 +2073,7 @@ function _btnInputSelect(list = [], func_on_show_popup, onclick, acceptAll = fal
       popup_select.style.width = btn_select.offsetWidth + "px";
       for (let i = 0; i < list.length; i++) {
         let option = document.createElement("div");
-        if (list[i] != "Mixed")
+        if (list[i] != "mixed")
           option.onclick = function (e) {
             e.stopPropagation();
             onclick(this.getAttribute("value"));
@@ -2161,7 +2131,7 @@ function _btnDropDownSelect(list = [], func_on_show_popup, onclick) {
       popup_select_option.style.width = btnDropDownSelect.offsetWidth + "px";
       for (let i = 0; i < list.length; i++) {
         let option = document.createElement("div");
-        if (isString ? list[i] != "Mixed" : list[i].value != "Mixed")
+        if (isString ? list[i] != "mixed" : list[i].value != "mixed")
           option.onclick = function (e) {
             e.stopPropagation();
             popup_select_option.style.display = "none";
@@ -2299,7 +2269,7 @@ function createEditBorder() {
       editContainer.appendChild(formEditLine);
       let borderStyles = listBorder.filterAndMap((e) => e.StyleItem.DecorationItem.BorderItem?.BorderStyle);
       let btnSelectStyle = _btnDropDownSelect(
-        borderStyles.length == 1 ? list_border_style : ["Mixed", ...list_border_style],
+        borderStyles.length == 1 ? list_border_style : ["mixed", ...list_border_style],
         function (options) {
           let firstStyle = borderStyles[0];
           for (let option of options) {
@@ -2312,7 +2282,7 @@ function createEditBorder() {
           updateUIBorder();
         },
       );
-      btnSelectStyle.firstChild.innerHTML = borderStyles.length == 1 ? borderStyles[0] : "Mixed";
+      btnSelectStyle.firstChild.innerHTML = borderStyles.length == 1 ? borderStyles[0] : "mixed";
       formEditLine.appendChild(btnSelectStyle);
       //
       let widthValues = listBorder.filterAndMap((e) => {
@@ -2330,11 +2300,11 @@ function createEditBorder() {
             if (eListWidth.every((value) => value == eListWidth[0])) {
               return eListWidth[0];
             } else {
-              return "Mixed";
+              return "mixed";
             }
         }
       });
-      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/stroke-width.svg", undefined, widthValues.length == 1 ? widthValues[0] : "Mixed", "28px");
+      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/stroke-width.svg", undefined, widthValues.length == 1 ? widthValues[0] : "mixed", "28px");
       edit_stroke_width.lastChild.onblur = function () {
         let newValue = parseFloat(this.value);
         if (newValue != undefined) {
@@ -2362,7 +2332,7 @@ function createEditBorder() {
           }
         } else {
           let thisWidthValues = [input_border_left, input_border_top, input_border_right, input_border_bottom].filterAndMap((_input) => _input.value);
-          this.value = thisWidthValues.length == 1 ? thisWidthValues[0] : "Mixed";
+          this.value = thisWidthValues.length == 1 ? thisWidthValues[0] : "mixed";
         }
       };
       formEditLine.appendChild(edit_stroke_width);
@@ -2385,7 +2355,7 @@ function createEditBorder() {
           dropdown_type.childNodes[0].style.display = "flex";
           for (let i = 0; i < dropdown_type.childNodes.length; i++) {
             let type = dropdown_type.childNodes[i].getAttribute("type");
-            dropdown_type.childNodes[i].firstChild.style.opacity = type == "Mixed" ? 1 : 0;
+            dropdown_type.childNodes[i].firstChild.style.opacity = type == "mixed" ? 1 : 0;
           }
         }
       });
@@ -2398,7 +2368,7 @@ function createEditBorder() {
       });
       btnSelectBorderSide.appendChild(dropdown_type);
 
-      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/more-horizontal.svg", null, function () {});
+      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/more-horizontal.svg", null, function () { });
       edit_line_action2.className = "action-button";
       action_edit_line_container.appendChild(edit_line_action2);
 
@@ -2454,7 +2424,7 @@ function createEditBorder() {
         updateUIBorder();
       };
       group_custom_border_side.appendChild(input_border_bottom);
-      let firstSideValue = sideValues.length == 1 ? sideValues[0] : "Mixed";
+      let firstSideValue = sideValues.length == 1 ? sideValues[0] : "mixed";
       if (firstSideValue == BorderSide.custom) {
         group_custom_border_side.style.display = "flex";
         btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-all-black.svg`;
@@ -2467,7 +2437,7 @@ function createEditBorder() {
               list_width = listBorder.map((e) => e.StyleItem.DecorationItem.BorderItem.Width.split(" ").pop());
               inputValue = list_width[0];
               if (list_width.some((e) => e != inputValue)) {
-                inputValue = "Mixed";
+                inputValue = "mixed";
               }
               break;
             case 1:
@@ -2475,7 +2445,7 @@ function createEditBorder() {
               list_width = listBorder.map((e) => e.StyleItem.DecorationItem.BorderItem.Width.split(" ").shift());
               inputValue = list_width[0];
               if (list_width.some((e) => e != inputValue)) {
-                inputValue = "Mixed";
+                inputValue = "mixed";
               }
               break;
             case 2:
@@ -2483,7 +2453,7 @@ function createEditBorder() {
               list_width = listBorder.map((e) => e.StyleItem.DecorationItem.BorderItem.Width.split(" ")[1]);
               inputValue = list_width[0];
               if (list_width.some((e) => e != inputValue)) {
-                inputValue = "Mixed";
+                inputValue = "mixed";
               }
               break;
             case 3:
@@ -2491,7 +2461,7 @@ function createEditBorder() {
               list_width = listBorder.map((e) => e.StyleItem.DecorationItem.BorderItem.Width.split(" ")[2]);
               inputValue = list_width[0];
               if (list_width.some((e) => e != inputValue)) {
-                inputValue = "Mixed";
+                inputValue = "mixed";
               }
               break;
             default:
@@ -2609,7 +2579,7 @@ function createEditEffect() {
                   let list_offsetX = list_effect.map((e) => e.OffsetX);
                   let firstValue = list_offsetX[0];
                   if (list_offsetX.some((e) => e != firstValue)) {
-                    firstValue = "Mixed";
+                    firstValue = "mixed";
                   }
                   eHTML.lastChild.value = firstValue;
                 }
@@ -2620,7 +2590,7 @@ function createEditEffect() {
                 let list_blur = list_effect.map((e) => e.BlurRadius);
                 let firstBlurValue = list_blur[0];
                 if (list_blur.some((e) => e != firstBlurValue)) {
-                  firstBlurValue = "Mixed";
+                  firstBlurValue = "mixed";
                 }
                 eHTML.lastChild.value = firstBlurValue;
                 break;
@@ -2633,7 +2603,7 @@ function createEditEffect() {
                   let list_offsetY = list_effect.map((e) => e.OffsetY);
                   let firstValue = list_offsetY[0];
                   if (list_offsetY.some((e) => e != firstValue)) {
-                    firstValue = "Mixed";
+                    firstValue = "mixed";
                   }
                   eHTML.lastChild.value = firstValue;
                 }
@@ -2647,7 +2617,7 @@ function createEditEffect() {
                   let list_spread = list_effect.map((e) => e.SpreadRadius);
                   let firstValue = list_spread[0];
                   if (list_spread.some((e) => e != firstValue)) {
-                    firstValue = "Mixed";
+                    firstValue = "mixed";
                   }
                   eHTML.lastChild.value = firstValue;
                 }
@@ -2748,11 +2718,11 @@ function createEditEffect() {
       // select effect type
       let eTypeValues = listEffect.filterAndMap((e) => e.StyleItem.DecorationItem.EffectItem.Type);
       let btn_select_eType = _btnDropDownSelect(
-        eTypeValues.length == 1 ? list_effect_type : ["Mixed", ...list_effect_type],
+        eTypeValues.length == 1 ? list_effect_type : ["mixed", ...list_effect_type],
         function (options) {
           let firstEType = eTypeValues[0];
           if (eTypeValues.length > 1) {
-            firstEType = "Mixed";
+            firstEType = "mixed";
           }
           for (let option of options) {
             if (option.getAttribute("value") == firstEType) {
@@ -2768,10 +2738,10 @@ function createEditEffect() {
         },
       );
       btn_select_eType.id = "btn_select_effect_type";
-      btn_select_eType.firstChild.innerHTML = eTypeValues.length == 1 ? eTypeValues[0] : "Mixed";
+      btn_select_eType.firstChild.innerHTML = eTypeValues.length == 1 ? eTypeValues[0] : "mixed";
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () { });
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
 
@@ -2934,7 +2904,7 @@ function selectBorderSide(params, onclick) {
   let list = [
     {
       src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-all-white.svg",
-      name: "Mixed",
+      name: "mixed",
     },
     {
       src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-all-white.svg",
@@ -3042,7 +3012,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
   let title = document.createElement("span");
   title.style.pointerEvents = "none";
   title.style.flex = 1;
-  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/library-black.svg", null, function () {});
+  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/library-black.svg", null, function () { });
 
   header.appendChild(title);
   header.appendChild(action1);
@@ -3944,7 +3914,7 @@ function popupEditSkin(enumCate, jsonSkin) {
           if (listWidth.every((value) => value == listWidth[0])) {
             edit_stroke_width.lastChild.value = listWidth[0];
           } else {
-            edit_stroke_width.lastChild.value = "Mixed";
+            edit_stroke_width.lastChild.value = "mixed";
           }
           break;
       }
@@ -3976,7 +3946,7 @@ function popupEditSkin(enumCate, jsonSkin) {
               if (listWidth.every((value) => value == listWidth[0])) {
                 this.value = listWidth[0];
               } else {
-                this.value = "Mixed";
+                this.value = "mixed";
               }
               break;
           }
@@ -3999,7 +3969,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         let thisSkin = BorderDA.list.find((e) => e.GID == jsonSkin.GID);
         if (value == BorderSide.custom) {
           group_custom_border_side.style.display = "flex";
-          edit_stroke_width.lastChild.value = thisSkin.BorderSide == BorderSide.all ? thisSkin.Width.split(" ")[0] : "Mixed";
+          edit_stroke_width.lastChild.value = thisSkin.BorderSide == BorderSide.all ? thisSkin.Width.split(" ")[0] : "mixed";
           editBorderSkin({ BorderSide: BorderSide.custom }, thisSkin);
           input_border_top.lastChild.value = thisSkin.Width.split(" ")[0];
           input_border_right.lastChild.value = thisSkin.Width.split(" ")[1];
@@ -4272,7 +4242,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       btn_select_eType.firstChild.innerHTML = jsonSkin.Type;
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () { });
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
       //
@@ -4511,7 +4481,7 @@ function createEditVariants() {
       } else if (list_baseProperty_name.length == 1) {
         firstValue = list_baseProperty_name[0];
       } else {
-        firstValue = "Mixed";
+        firstValue = "mixed";
       }
       let property_tile = _selectPropertyVariant(property_item, firstValue, function (option, property) {
         let deleteBaseProperty = option.trim().replace("-", "") == "" || option.trim() == "none";
@@ -4596,7 +4566,7 @@ function createEditVariants() {
         let list_baseProperty_name = list_base_property.filter((e) => e.PropertyID == property_item.GID).map((e) => e.Name);
         let firstValue = list_baseProperty_name[0];
         if (list_baseProperty_name.some((e) => e != firstValue)) {
-          firstValue = "Mixed";
+          firstValue = "mixed";
         }
         let property_tile = _selectPropertyVariant(
           property_item,
@@ -4719,15 +4689,15 @@ function _selectPropertyVariant(property_item, title, onSelect, enableInput = tr
       dropdown.style.display = "inline-flex";
       dropdown.style.zIndex = 2;
       let list_baseProperty_name = [];
-      if (input_baseProperty_name.value == "Mixed") {
-        list_baseProperty_name.push("Mixed");
+      if (input_baseProperty_name.value == "mixed") {
+        list_baseProperty_name.push("mixed");
       }
       list_baseProperty_name.push(...property_item.BasePropertyItems.filterAndMap((e) => e.Name));
       let list_option = [];
       for (let i = 0; i < list_baseProperty_name.length; i++) {
         let option = document.createElement("div");
         option.setAttribute("value", list_baseProperty_name[i]);
-        if (list_baseProperty_name[i] == "Mixed") {
+        if (list_baseProperty_name[i] == "mixed") {
           option.style.borderBottom = "1px solid #c4c4c4";
           option.style.pointerEvents = "none";
           option.style.opacity = 0.7;
@@ -5853,11 +5823,11 @@ function colNumberByBrp(enable = true) {
           });
         }
         let selectNumberInput = _btnInputSelect(
-          brpColValues.length == 1 ? totalCol : ["Mixed", ...totalCol],
+          brpColValues.length == 1 ? totalCol : ["mixed", ...totalCol],
           function (options) {
             let firstValue = brpColValues[0];
             if (brpColValues.length > 1) {
-              firstValue = "Mixed";
+              firstValue = "mixed";
             }
             let normalCol = [0, 1, 2, 3, 4, 6, 8, 12, 24];
             for (let option of options) {
@@ -5911,7 +5881,7 @@ function colNumberByBrp(enable = true) {
             updateUISelectBox();
           },
         );
-        selectNumberInput.firstChild.value = brpColValues.length == 1 ? brpColValues[0] : "Mixed";
+        selectNumberInput.firstChild.value = brpColValues.length == 1 ? brpColValues[0] : "mixed";
         brpTile.replaceChildren(brpTitle, selectNumberInput);
         return brpTile;
       }),
@@ -5923,12 +5893,22 @@ function colNumberByBrp(enable = true) {
     if (enable) {
       icon_add.onclick = function () {
         let parentHTML = document.getElementById(select_box_parentID);
+        let eObj;
+        let listUpdate = [];
         for (let wbaseItem of selected_list) {
           wbaseItem.ListClassName = "col-";
           wbaseItem.ListClassName.split(" ").forEach((clName) => $(wbaseItem.value).addClass(clName));
           wbaseItem.value.style.setProperty("--gutter", parentHTML.style.getPropertyValue("--child-space"));
         }
-        WBaseDA.edit(selected_list);
+        if (parentHTML.classList.contains("w-row") && (!parentHTML.style.width || parentHTML.style.width == "fit-content")) {
+          let wbParent = wbase_list.find(e => e.GID === select_box_parentID);
+          parentHTML.style.width = parentHTML.offsetWidth + "px";
+          wbParent.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
+          eObj = EnumObj.baseFrame;
+          listUpdate.push(wbParent);
+        }
+        listUpdate.push(...selected_list);
+        WBaseDA.edit(listUpdate, eObj);
         updateUIEditPosition();
         updateUIColNumber();
         updateUISelectBox();
