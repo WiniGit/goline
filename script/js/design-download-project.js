@@ -272,7 +272,7 @@ try {
         // window.open(`https://wini.vn`);
         // ${ProjectDA.obj.Code}/Views/${router[0].PageName}.html
         ipcRenderer.send("asynchronous-play", `${ProjectDA.obj.Code}`);
-        $('.btn-play').html(`<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/play.svg" class="btn-play">`);
+        $('.btn-play').html(`<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/play.svg" class="btn-play">`);
       },
     );
   });

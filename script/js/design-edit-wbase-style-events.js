@@ -437,39 +437,51 @@ function inputPositionItem(position_item) {
   }
   if (position_item.FixPosition != undefined) {
     let parentHTML = document.getElementById(select_box_parentID);
+    let parentWb;
     let isInLayout = window.getComputedStyle(parentHTML).display.match("flex");
     let eObj;
-    if (parentHTML.querySelectorAll(`.wbaseItem-value[level=${selected_list[0].Level}]`).length === selected_list.length) {
-      let pWb = wbase_list.find(e => e.GID === select_box_parentID);
-      if (pWb.StyleItem.FrameItem.Width == null) {
-        pWb.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
+    if (parentHTML.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level}"]`).length === selected_list.length) {
+      parentWb = wbase_list.find(e => e.GID === select_box_parentID);
+      if (parentWb.StyleItem.FrameItem.Width == null) {
+        parentWb.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
         parentHTML.style.width = parentHTML.offsetWidth + "px";
-        eObj = pWb;
+        eObj = EnumObj.framePosition;
       }
-      if (pWb.StyleItem.FrameItem.Height == null) {
-        pWb.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
+      if (parentWb.StyleItem.FrameItem.Height == null) {
+        parentWb.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
         parentHTML.style.height = parentHTML.offsetHeight + "px";
-        eObj = pWb;
+        eObj = EnumObj.framePosition;
       }
     }
-    for (let wbaseItem of selected_list) {
-      wbaseItem.StyleItem.PositionItem.FixPosition = position_item.FixPosition;
+    for (let wb of selected_list) {
+      wb.StyleItem.PositionItem.FixPosition = position_item.FixPosition;
+      if (wb.value.style.width == "100%") {
+        wb.StyleItem.FrameItem.Width = wb.value.offsetWidth;
+        wb.value.style.width = wb.value.offsetWidth + "px";
+        eObj = EnumObj.framePosition;
+      }
+      if (wb.value.style.height == "100%") {
+        wb.StyleItem.FrameItem.Height = wb.value.offsetHeight;
+        wb.value.style.height = wb.value.offsetHeight + "px";
+        eObj = EnumObj.framePosition;
+      }
+      wb.value.style.flex = null;
       if (position_item.FixPosition) {
-        updateConstraints(wbaseItem);
+        updateConstraints(wb);
       } else {
-        $(wbaseItem.value).removeClass("fixed-position");
+        $(wb.value).removeClass("fixed-position");
         if (isInLayout) {
-          wbaseItem.value.style.position = null;
-          wbaseItem.value.style.left = null;
-          wbaseItem.value.style.right = null;
-          wbaseItem.value.style.top = null;
-          wbaseItem.value.style.bottom = null;
-          wbaseItem.value.style.transform = null;
+          wb.value.style.position = null;
+          wb.value.style.left = null;
+          wb.value.style.right = null;
+          wb.value.style.top = null;
+          wb.value.style.bottom = null;
+          wb.value.style.transform = null;
         }
       }
     }
     if (eObj) {
-      WBaseDA.edit([eObj, ...selected_list], EnumObj.framePosition);
+      WBaseDA.edit(parentWb ? [parentWb, ...selected_list] : selected_list, eObj);
       updateUISelectBox();
       return;
     }
@@ -750,8 +762,15 @@ async function addAutoLayout() {
     let eHTML = selected_list[0].value;
     selected_list[0].AutoLayoutID = new_auto_layout.GID;
     selected_list[0].WAutolayoutItem = new_auto_layout;
-    selected_list[0].StyleItem.PaddingID = null;
-    selected_list[0].StyleItem.PaddingItem = new_padding_item;
+    if (!selected_list[0].StyleItem.PaddingItem) {
+      selected_list[0].StyleItem.PaddingID = null;
+      selected_list[0].StyleItem.PaddingItem = new_padding_item;
+    } else {
+      selected_list[0].StyleItem.PaddingItem.Top = 8;
+      selected_list[0].StyleItem.PaddingItem.Left = 8;
+      selected_list[0].StyleItem.PaddingItem.Right = 8;
+      selected_list[0].StyleItem.PaddingItem.Bottom = 8;
+    }
     eHTML.style.setProperty("--padding", "8px");
     if (selected_list[0].Level === 1 && new_auto_layout.Direction === "Horizontal") {
       selected_list[0].StyleItem.FrameItem.Width = eHTML.offsetWidth;
@@ -1213,7 +1232,6 @@ function editLayoutStyle(auto_layout_item) {
 }
 
 function removeLayout() {
-  let _enumObj = EnumObj.basePositionFrame;
   let listUpdate = [];
   let listLayout = selected_list.filter((e) => e.WAutolayoutItem);
   for (let wbaseItem of listLayout) {
@@ -1224,8 +1242,8 @@ function removeLayout() {
       width: eHTML.offsetWidth,
       height: eHTML.offsetHeight,
     };
-    wbaseItem.AutoLayoutID = undefined;
-    wbaseItem.WAutolayoutItem = undefined;
+    wbaseItem.AutoLayoutID = null;
+    wbaseItem.WAutolayoutItem = null;
     if (eHTML.style.width == "fit-content") {
       wbaseItem.StyleItem.FrameItem.Width = currentSize.width;
       eHTML.style.width = currentSize.width + "px";
@@ -1247,12 +1265,10 @@ function removeLayout() {
       childWbase.StyleItem.PositionItem.Top = `${Math.round(childOffset.y - offseteHTMLRect.y)}px`;
 
       if (childHTML.style.width == "100%") {
-        _enumObj = EnumObj.basePositionFrame;
         childWbase.StyleItem.FrameItem.Width = childCurrentSize.width;
         childHTML.style.width = childCurrentSize.width + "px";
       }
       if (childHTML.style.height == "100%") {
-        _enumObj = EnumObj.basePositionFrame;
         childWbase.StyleItem.FrameItem.Height = childCurrentSize.height;
         childHTML.style.height = childCurrentSize.height + "px";
       }
@@ -1261,7 +1277,7 @@ function removeLayout() {
     removeAutoLayoutProperty(eHTML);
     listUpdate.push(wbaseItem, ...wbaseChildren);
   }
-  WBaseDA.edit(listUpdate, _enumObj);
+  WBaseDA.edit(listUpdate, EnumObj.basePositionFrame);
 }
 
 function inputPadding(padding_item) {

@@ -621,7 +621,7 @@ function dragWbaseUpdate(xp, yp, event) {
     }
   } else if (window.getComputedStyle(parentHTML).display.match("flex") && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
-    let isGrid = window.getComputedStyle(parentHTML).flexWrap.match("wrap");
+    let isGrid = window.getComputedStyle(parentHTML).flexWrap == "wrap";
     if (parentHTML.classList.contains("w-col")) {
       let zIndex = 0;
       let distance = 0;
@@ -1098,9 +1098,9 @@ function dragAltUpdate(xp, yp, event) {
       }
     }
   } else if (window.getComputedStyle(parentHTML).display?.match("flex") && alt_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
-    console.log("flex|grid");
+    console.log("flex");
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
-    let isGrid = window.getComputedStyle(parentHTML).flexWrap.match("wrap");
+    let isGrid = window.getComputedStyle(parentHTML).flexWrap == "wrap";
     if (parentHTML.classList.contains("w-col")) {
       let zIndex = 0;
       let distance = 0;
@@ -1508,7 +1508,7 @@ function ctrlZ() {
                   if (oldValue) {
                     try {
                       oldValue?.replaceWith(wbaseItem.value);
-                    } catch (error) {}
+                    } catch (error) { }
                   } else {
                     parentHTML.appendChild(wbaseItem.value);
                   }
@@ -1576,7 +1576,7 @@ function ctrlZ() {
             if (wbaseItem.GID === oldParent?.GID || wbaseItem.GID === newParent.GID) {
               let parentHTML = divSection;
               if (wbaseItem.Level > 1) parentHTML = document.getElementById(wbaseItem.ParentID);
-              switch (parseInt(parentHTML?.getAttribute("cateid")??"0")) {
+              switch (parseInt(parentHTML?.getAttribute("cateid") ?? "0")) {
                 case EnumCate.tree:
                   createTree(
                     wbase_list.find((e) => e.GID === wbaseItem.ParentID),
@@ -1733,7 +1733,7 @@ function ctrlZ() {
                   if (oldValue) {
                     try {
                       oldValue?.replaceWith(wbaseItem.value);
-                    } catch (error) {}
+                    } catch (error) { }
                   } else {
                     parentHTML.appendChild(wbaseItem.value);
                   }

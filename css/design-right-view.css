@@ -50,13 +50,13 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #group_btn_frame_direction > img:first-child {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame_vertical.svg);
   background-color: #e5e5e5;
   padding: 4px 2.5px;
 }
 
 #group_btn_frame_direction > img:last-child {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame_horizontal.svg);
   padding: 2.5px 4px;
 }
 
@@ -584,22 +584,22 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #edit_align_div > .img-button:nth-child(1) {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_left.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/layout_align_left.svg);
 }
 #edit_align_div > .img-button:nth-child(2) {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_horizontal_center.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/layout_align_horizontal_center.svg);
 }
 #edit_align_div > .img-button:nth-child(3) {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_right.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/layout_align_right.svg);
 }
 #edit_align_div > .img-button:nth-child(4) {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_top.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/layout_align_top.svg);
 }
 #edit_align_div > .img-button:nth-child(5) {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_vertical_center.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/layout_align_vertical_center.svg);
 }
 #edit_align_div > .img-button:nth-child(6) {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/layout_align_bottom.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/layout_align_bottom.svg);
 }
 
 #edit_align_div[enable="false"] > .img-button {
@@ -631,7 +631,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #edit_size_position_div .radius-details {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/radius_detail.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_detail.svg);
   margin-left: 22px;
   border: 1px solid transparent;
   border-radius: 2px;
@@ -704,96 +704,96 @@ input[type="color"]::-webkit-color-swatch {
 .layout-align-table > #TopLeft {
   top: 0;
   left: 0;
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/top%20horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/top%20horizontal.svg);
 }
 
 .layout-align-table[oy="true"] > #TopLeft {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/left%20vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/left%20vertical.svg);
 }
 
 .layout-align-table > #TopCenter {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/top%20horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/top%20horizontal.svg);
 }
 
 .layout-align-table[oy="true"] > #TopCenter {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/center%20vertical.svg);
 }
 
 .layout-align-table > #TopRight {
   top: 0;
   right: 0;
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/top%20horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/top%20horizontal.svg);
 }
 
 .layout-align-table[oy="true"] > #TopRight {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/right%20vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/right%20vertical.svg);
 }
 
 .layout-align-table > #LeftCenter {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/center%20horizontal.svg);
 }
 
 .layout-align-table[oy="true"] > #LeftCenter {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/left%20vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/left%20vertical.svg);
 }
 
 .layout-align-table > #Center {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/center%20horizontal.svg);
 }
 
 .layout-align-table[oy="true"] > #Center {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/center%20vertical.svg);
 }
 
 .layout-align-table > #RightCenter {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/center%20horizontal.svg);
 }
 
 .layout-align-table[oy="true"] > #RightCenter {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/right%20vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/right%20vertical.svg);
 }
 
 .layout-align-table > #BottomLeft {
   bottom: 0;
   left: 0;
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/bottom%20horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/bottom%20horizontal.svg);
 }
 
 .layout-align-table[oy="true"] > #BottomLeft {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/left%20vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/left%20vertical.svg);
 }
 
 .layout-align-table > #BottomCenter {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/bottom%20horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/bottom%20horizontal.svg);
 }
 
 .layout-align-table[oy="true"] > #BottomCenter {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/center%20vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/center%20vertical.svg);
 }
 
 .layout-align-table > #BottomRight {
   bottom: 0;
   right: 0;
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/bottom%20horizontal.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/bottom%20horizontal.svg);
 }
 
 .layout-align-table[oy="true"] > #BottomRight {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/right%20vertical.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/right%20vertical.svg);
 }
 
 .text_field_right_view {

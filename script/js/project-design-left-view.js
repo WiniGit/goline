@@ -147,23 +147,23 @@ function showSearchResult() {
         result.className = "layer-search-result row";
         let cateImg = document.createElement("img");
         if (wb.IsWini && wb.CateID != EnumCate.tool_variant) {
-          cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/component.svg";
+          cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/component.svg";
         } else {
           switch (wb.CateID) {
             case EnumCate.tool_frame:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame_black.svg";
               break;
             case EnumCate.tool_rectangle:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rectangle_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle_black.svg";
               break;
             case EnumCate.tool_text:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text_black.svg";
               break;
             case EnumCate.tool_variant:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/multiple_component.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/multiple_component.svg";
               break;
             default:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/base_component_black.svg";
               break;
           }
         }
@@ -1631,9 +1631,9 @@ function dragInstanceUpdate(event) {
       }
     }
   } else if (window.getComputedStyle(parentHTML).display?.match("flex") && !select_component.StyleItem.PositionItem.FixPosition) {
-    console.log("flex|grid");
+    console.log("flex");
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
-    let isGrid = window.getComputedStyle(parentHTML).display.match("grid");
+    let isGrid = window.getComputedStyle(parentHTML).flexWrap == "wrap";
     if (parentHTML.style.flexDirection == "column") {
       let zIndex = 0;
       let distance = 0;

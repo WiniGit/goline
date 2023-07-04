@@ -92,7 +92,7 @@ for (let i = 0; i < list_cate.length; i++) {
     case EnumCate.effect:
       demo_skin = document.createElement("img");
       demo_skin.className = "box20";
-      demo_skin.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg";
+      demo_skin.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg";
       break;
     default:
       break;
@@ -110,16 +110,16 @@ let list_tool = [
     expand: function () {
       console.log("move");
     },
-    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/move.svg",
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/move.svg",
   },
   {
     message: ToolState.hand_tool,
-    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/hand.svg",
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/hand.svg",
   },
 ];
 
 let logo_wini = document.createElement("img");
-logo_wini.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/logo_wini.svg";
+logo_wini.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/logo_wini.svg";
 logo_wini.style.padding = "12px";
 logo_wini.style.width = "24px";
 logo_wini.style.height = "24px";
@@ -288,14 +288,14 @@ let button_play = document.createElement("div");
 button_play.className = "box48 center btn-play";
 
 let button_play_img = document.createElement("img");
-button_play_img.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/play.svg";
+button_play_img.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/play.svg";
 button_play.appendChild(button_play_img);
 
 let history = document.createElement("div");
 history.className = "box48 center btn-history";
 
 let history_img = document.createElement("img");
-history_img.src = "/lib/assets/history.svg";
+history_img.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/history.svg";
 history.appendChild(history_img);
 
 let input_scale = document.createElement("div");
@@ -383,14 +383,14 @@ function permissionTool() {
           expand: function () {
             console.log("frame");
           },
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame.svg",
+          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame.svg",
         },
         {
           message: ToolState.rectangle,
           expand: function () {
             console.log("rectangle");
           },
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rectangle.svg",
+          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle.svg",
         },
         {
           message: ToolState.base_component,
@@ -403,11 +403,11 @@ function permissionTool() {
             $("#choose-component-popup").css("display", "flex");
             $("#choose-component-popup").removeAttr("cateid");
           },
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component.svg",
+          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/base_component.svg",
         },
         {
           message: ToolState.text,
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text.svg",
+          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text.svg",
         },
       ],
       list_tool.pop(),

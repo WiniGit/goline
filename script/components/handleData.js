@@ -800,8 +800,8 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
 }
 
 function removeAutoLayoutProperty(eHTML) {
-  $(wbaseItem.value).removeClass("w-row");
-  $(wbaseItem.value).removeClass("w-col");
+  $(eHTML).removeClass("w-row");
+  $(eHTML).removeClass("w-col");
   eHTML.style.removeProperty("--flex-wrap");
   eHTML.style.removeProperty("--child-space");
   eHTML.style.removeProperty("--run-space");
@@ -811,7 +811,7 @@ function removeAutoLayoutProperty(eHTML) {
     childCol.style.removeProperty("--gutter");
   });
   eHTML.style.removeProperty("--padding");
-  $(wbaseItem.value).addClass("w-stack");
+  $(eHTML).addClass("w-stack");
 }
 
 function addStyleComponents(item, elements) {

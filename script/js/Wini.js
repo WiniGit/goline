@@ -945,7 +945,10 @@ function moveListener(event) {
                   removeAllRectHovers();
                 }
                 let isInFlex = false;
-                if (select_box_parentID != wbase_parentID) isInFlex = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
+                let parentHTML = document.getElementById(select_box_parentID);
+                if (select_box_parentID != wbase_parentID) {
+                  isInFlex = window.getComputedStyle(parentHTML).display.match("flex");
+                }
                 switch (tool_state) {
                   case ToolState.resize_left:
                     for (let i = 0; i < selected_list.length; i++) {
@@ -962,6 +965,8 @@ function moveListener(event) {
                             eHTML.style.bottom = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-row")) {
+                          eHTML.style.flex = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -989,6 +994,8 @@ function moveListener(event) {
                             eHTML.style.bottom = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-row")) {
+                          eHTML.style.flex = null;
                         }
                       }
                       if (scaleComponent) scaleComponent = eHTML.offsetHeight / eHTML.offsetWidth;
@@ -1012,6 +1019,8 @@ function moveListener(event) {
                             eHTML.style.right = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-col")) {
+                          eHTML.style.flex = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                       }
@@ -1039,6 +1048,8 @@ function moveListener(event) {
                             eHTML.style.right = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-col")) {
+                          eHTML.style.flex = null;
                         }
                       }
                       if (scaleComponent) scaleComponent = eHTML.offsetWidth / eHTML.offsetHeight;
@@ -1060,6 +1071,7 @@ function moveListener(event) {
                           selected_list[i].StyleItem.PositionItem.Top = thisOffset.y + "px";
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1097,6 +1109,7 @@ function moveListener(event) {
                           selected_list[i].StyleItem.PositionItem.Top = thisOffset.y + "px";
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1131,6 +1144,7 @@ function moveListener(event) {
                           selected_list[i].StyleItem.PositionItem.Left = thisOffset.x + "px";
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1166,6 +1180,7 @@ function moveListener(event) {
                           eHTML.style.bottom = null;
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
