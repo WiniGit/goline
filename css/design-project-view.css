@@ -47,6 +47,34 @@ html {
 }
 */
 
+body[enable="false"] .right_tab_view {
+  pointer-events: none !important;
+}
+
+body[enable="false"] .assets.tab_left {
+  display: none !important;
+}
+
+body[enable="false"] #div_list_page > .header > .fa-plus {
+  display: none !important;
+}
+
+body[enable="false"] .layer_wbase_tile > .is-lock {
+  display: none !important;
+}
+
+body[enable="false"] .f12-container {
+  pointer-events: none !important;
+}
+
+body[enable="false"] .btn-tool-state:nth-child(n + 3):nth-child(-n + 6) {
+  display: none !important;
+}
+
+body:has(#history-view) :is(.btn-tool-state:nth-child(2), .btn-history) {
+  display: none !important;
+}
+
 #header {
   width: 100%;
   height: 48px;
@@ -55,10 +83,6 @@ html {
   justify-content: space-between;
   align-items: center;
   position: relative;
-  /* position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 2; */
 }
 
 .btn-tool-state {
@@ -235,7 +259,14 @@ html {
   display: none !important;
 }
 
-#divSection *:not(.wbaseItem-value, tr:has(.wbaseItem-value), td:has(> .wbaseItem-value), .tile-item:has(.wbaseItem-value), .children-value:has(> .wbaseItem-value)) {
+#divSection
+  *:not(
+    .wbaseItem-value,
+    tr:has(.wbaseItem-value),
+    td:has(> .wbaseItem-value),
+    .tile-item:has(.wbaseItem-value),
+    .children-value:has(> .wbaseItem-value)
+  ) {
   pointer-events: none !important;
 }
 
@@ -281,14 +312,23 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   margin-top: 2px;
 }
 
-#right_view {
-  top: 0;
+:is(#right_view, #history-view) {
+  top: 86px;
   right: 0;
   height: calc(100% - 86px);
   width: 260px;
   background-color: white;
   position: fixed;
   overflow-x: visible;
+}
+
+#history-view {
+  padding: 0 !important;
+}
+
+#history-view > .header_design_style {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 2px 8px;
 }
 
 :is(.left_tab_view, .right_tab_view) {
@@ -360,7 +400,7 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   border-bottom: 1px solid #e5e5e5;
 }
 
-:is(.tab_left,.tab_right) {
+:is(.tab_left, .tab_right) {
   padding: 4px;
   margin-right: 8px;
   background-color: transparent;
@@ -613,7 +653,11 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   box-sizing: border-box;
 }
 
-.setting-state-container .list-field-setting .field-setting .field-header .field-name {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-header
+  .field-name {
   flex: 1;
 }
 
@@ -622,7 +666,11 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   height: 32px;
 }
 
-.setting-state-container .list-field-setting .field-setting .field-value .skin-container {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-value
+  .skin-container {
   flex: 1;
   height: 32px;
   padding-left: 16px;
@@ -630,11 +678,20 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   box-sizing: border-box;
 }
 
-.setting-state-container .list-field-setting .field-setting .field-value .skin-container:hover {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-value
+  .skin-container:hover {
   background-color: rgba(0, 53, 128, 0.04);
 }
 
-.setting-state-container .list-field-setting .field-setting .field-value .skin-container .skin-color {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-value
+  .skin-container
+  .skin-color {
   padding: 0;
   overflow: hidden;
   border-radius: 50%;
@@ -642,7 +699,12 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   border: 1px solid rgba(0, 53, 128, 0.18);
 }
 
-.setting-state-container .list-field-setting .field-setting .field-value .skin-container .skin-name {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-value
+  .skin-container
+  .skin-name {
   flex: 1;
   margin-left: 8px;
 }

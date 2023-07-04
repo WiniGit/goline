@@ -29,7 +29,6 @@ input[type="color"]::-webkit-color-swatch {
   display: flex;
   min-height: 48px;
   flex-direction: column;
-  justify-content: center;
   box-sizing: border-box;
   border-bottom: 1px solid #dfdfdf;
   padding: 8px;
@@ -93,7 +92,7 @@ input[type="color"]::-webkit-color-swatch {
 
 .header_design_style {
   width: 100%;
-  display: inline-flex;
+  display: flex;
   box-sizing: border-box;
   align-items: center;
 }
@@ -109,12 +108,12 @@ input[type="color"]::-webkit-color-swatch {
   text-align: left;
 }
 
-.header_design_style > i {
+.header_design_style i {
   padding: 12px 8px;
   border-radius: 2px;
 }
 
-.header_design_style > i:hover {
+.header_design_style i:hover {
   background-color: #f1f1f1;
 }
 

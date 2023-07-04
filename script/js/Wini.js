@@ -542,7 +542,7 @@ function selectParent(event) {
   if (selected_list.every((e) => e.CateID != EnumCate.tool_variant && e.IsWini)) {
     parent_cate.push(EnumCate.tool_variant);
   }
-  let containVariant = selected_list.some((e) => e.CateID == EnumCate.tool_variant || document.getElementById(e.GID).querySelectorAll(".variant").length > 0);
+  let containVariant = selected_list.some((e) => e.CateID == EnumCate.tool_variant || document.getElementById(e.GID).querySelectorAll(".w-variant").length > 0);
   var objp = list.filter((eHTML) => {
     if (
       parent_cate.every((cate) => cate != eHTML.getAttribute("cateid")) || // eHTML ko đc xếp loại là wbaseItem có item con
@@ -612,7 +612,7 @@ function selectParent(event) {
 
 var clearAction = false;
 function downListener(event) {
-  if (!document.getElementById("wini_features") && event.target.localName != "input" && event.target.contentEditable != "true" && ToolState.create_new_type.every((ts) => ts !== tool_state)) {
+  if (!document.getElementById("wini_features") && event.target.localName != "input" && event.target.contentEditable != "true" && ToolState.create_new_type.every((ts) => ts !== tool_state) && document.body.contains(right_view)) {
     event.activeElement = document.activeElement;
     event.path = [...event.composedPath()];
     let mouseOffset = offsetScale(event.pageX, event.pageY);
@@ -754,12 +754,12 @@ function centerViewInitListener() {
     } else return;
   });
   window.addEventListener("keyup", keyUpEvent, false);
-  [divSection, ...divSection.querySelectorAll(".wbaseItem-value.variant")].forEach((parentPage) => {
+  [divSection, ...divSection.querySelectorAll(".wbaseItem-value.w-variant")].forEach((parentPage) => {
     childObserver.observe(parentPage, {
       childList: true,
     });
   });
-  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
+  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
     resizeWbase.observe(page);
   });
   [...divSection.querySelectorAll(`.wbaseItem-value`)].forEach((wbValue) => {
@@ -1396,9 +1396,9 @@ function moveListener(event) {
       } else {
         var xp = event.pageX - minx,
           yp = event.pageY - miny;
-        if (tool_state === ToolState.hand_tool) {
+        if (tool_state === ToolState.hand_tool && event.buttons == 1) {
           handToolDrag(event);
-        } else if (event.target.id == "canvas_view" || divSection.contains(event.target)) {
+        } else if ((event.target.id == "canvas_view" || divSection.contains(event.target)) && document.body.contains(right_view)) {
           if (event.buttons === 1) {
             scanSelectList(event);
           } else {

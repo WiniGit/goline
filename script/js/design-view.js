@@ -1,10 +1,5 @@
 function setupRightView() {
   // setup tab change
-  if (!PageDA.enableEdit) {
-    [...document.getElementsByClassName("right_tab_view")].forEach((rightView) => {
-      rightView.style.pointerEvents = "none";
-    });
-  }
   // create elements in design view
   right_view.onkeydown = function (e) {
     if (e.key === "Enter" && document.activeElement.localName === "input") {
@@ -3105,20 +3100,30 @@ function updateTableSkinBody(enumCate, currentSkinID) {
   searchContainer.replaceChildren(prefixIcon, inputSearch);
   function searchSkins() {
     let searchContent = inputSearch.value.toLowerCase();
-    let listSkinTile = body.querySelectorAll(".skin_tile_option");
     if (searchContent.trim() == "") {
-      listSkinTile.forEach((skinTile) => {
-        skinTile.style.display = "flex";
+      let listTile = body.querySelectorAll(":is(.cate-skin-tile, .skin_tile_option)");
+      listTile.forEach((tile) => {
+        tile.style.display = "flex";
       });
     } else {
-      listSkinTile.forEach((skinTile) => {
-        let skinName = skinTile.querySelector(".skin-name").innerHTML;
-        if (skinName.toLowerCase().includes(searchContent)) {
-          skinTile.style.display = "flex";
+      body.querySelectorAll(".cate-skin-tile").forEach(cateSkTile => {
+        let listSkinTile = cateSkTile.querySelectorAll(".skin_tile_option");
+        let numberResult = 0;
+        listSkinTile.forEach((skinTile) => {
+          let skinName = skinTile.querySelector(".skin-name").innerHTML;
+          if (skinName.toLowerCase().includes(searchContent)) {
+            skinTile.style.display = "flex";
+            numberResult++;
+          } else {
+            skinTile.style.display = "none";
+          }
+        });
+        if (numberResult) {
+          cateSkTile.style.display = "flex";
         } else {
-          skinTile.style.display = "none";
+          cateSkTile.style.display = "none";
         }
-      });
+      })
     }
   }
   switch (enumCate) {

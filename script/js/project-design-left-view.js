@@ -2,10 +2,6 @@
 function setupLeftView() {
   // layer view HTML
   left_view.style.width = `${left_view.offsetWidth}px`;
-  // setup tab change
-  if (!PageDA.enableEdit) {
-    left_view.querySelector(".assets.tab_left").style.display = "none";
-  }
   // btn select page
   let btn_select_page = document.getElementById("btn_select_page");
   btn_select_page.firstChild.innerHTML = PageDA.obj.Name;
@@ -47,9 +43,6 @@ function setupLeftView() {
     PageDA.add(newPage);
   };
   header_page.appendChild(btn_add_page);
-  if (!PageDA.enableEdit) {
-    btn_add_page.style.display = "none";
-  }
   let bodyPage = document.createElement("div");
   bodyPage.className = "col";
   bodyPage.replaceChildren(...PageDA.list.map((pageItem) => createPageTile(pageItem)));
@@ -482,64 +475,63 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
     wbase_tile.onclick = function () {
       addSelectList([wbaseItem]);
     };
-    if (PageDA.enableEdit)
-      icon_lock.onclick = function () {
-        let listUpdate = [];
-        wbaseItem.IsShow = !wbaseItem.IsShow;
-        if (wbaseItem.IsShow) {
-          wbaseItem.value.removeAttribute("lock");
-          icon_lock.className = "fa-solid fa-lock-open fa-xs is-lock";
-          layerContainer.querySelectorAll(".is-lock").forEach((lockBtn) => {
-            if (lockBtn.parentElement.getAttribute("cateid") != EnumCate.textfield) {
-              lockBtn.className = "fa-solid fa-lock-open fa-xs is-lock";
-              lockBtn.style.pointerEvents = "auto";
-              listUpdate.push(lockBtn.parentElement.id.replace("wbaseID:", ""));
-            }
-          });
-          listUpdate = wbase_list.filter((e) => {
-            if (listUpdate.some((id) => e.GID === id)) {
-              e.value.removeAttribute("lock");
-              e.IsShow = true;
-              return true;
-            } else {
-              return false;
-            }
-          });
-        } else {
-          wbaseItem.value.setAttribute("lock", "true");
-          icon_lock.className = "fa-solid fa-lock fa-xs is-lock";
-          layerContainer.querySelectorAll(".is-lock").forEach((lockBtn) => {
-            if (lockBtn !== icon_lock) {
-              lockBtn.className = "fa-solid fa-lock fa-xs is-lock";
-              lockBtn.style.pointerEvents = "none";
-            }
-          });
-        }
-        listUpdate.push(wbaseItem);
-        WBaseDA.edit(listUpdate, EnumObj.wBase);
-      };
+    icon_lock.onclick = function () {
+      let listUpdate = [];
+      wbaseItem.IsShow = !wbaseItem.IsShow;
+      if (wbaseItem.IsShow) {
+        wbaseItem.value.removeAttribute("lock");
+        icon_lock.className = "fa-solid fa-lock-open fa-xs is-lock";
+        layerContainer.querySelectorAll(".is-lock").forEach((lockBtn) => {
+          if (lockBtn.parentElement.getAttribute("cateid") != EnumCate.textfield) {
+            lockBtn.className = "fa-solid fa-lock-open fa-xs is-lock";
+            lockBtn.style.pointerEvents = "auto";
+            listUpdate.push(lockBtn.parentElement.id.replace("wbaseID:", ""));
+          }
+        });
+        listUpdate = wbase_list.filter((e) => {
+          if (listUpdate.some((id) => e.GID === id)) {
+            e.value.removeAttribute("lock");
+            e.IsShow = true;
+            return true;
+          } else {
+            return false;
+          }
+        });
+      } else {
+        wbaseItem.value.setAttribute("lock", "true");
+        icon_lock.className = "fa-solid fa-lock fa-xs is-lock";
+        layerContainer.querySelectorAll(".is-lock").forEach((lockBtn) => {
+          if (lockBtn !== icon_lock) {
+            lockBtn.className = "fa-solid fa-lock fa-xs is-lock";
+            lockBtn.style.pointerEvents = "none";
+          }
+        });
+      }
+      listUpdate.push(wbaseItem);
+      WBaseDA.edit(listUpdate, EnumObj.wBase);
+    };
   }
-  if (PageDA.enableEdit) {
-    inputWBaseName.ondblclick = function () {
+  inputWBaseName.ondblclick = function () {
+    if (PageDA.enableEdit) {
       this.style.cursor = "text";
       this.style.outline = "2px solid #1890FF";
       this.readOnly = false;
       this.setSelectionRange(0, this.value.length);
       this.focus();
-    };
-    inputWBaseName.onblur = function () {
-      if (!sortLayer && !this.readOnly) {
-        this.style.cursor = "auto";
-        this.style.outline = "none";
-        this.readOnly = true;
-        window.getSelection().removeAllRanges();
-        if (wbaseItem.Name != this.value) {
-          wbaseItem.Name = this.value;
-          WBaseDA.edit([wbaseItem], EnumObj.wBase);
-        }
+    } else return;
+  };
+  inputWBaseName.onblur = function () {
+    if (!sortLayer && !this.readOnly) {
+      this.style.cursor = "auto";
+      this.style.outline = "none";
+      this.readOnly = true;
+      window.getSelection().removeAllRanges();
+      if (wbaseItem.Name != this.value) {
+        wbaseItem.Name = this.value;
+        WBaseDA.edit([wbaseItem], EnumObj.wBase);
       }
-    };
-  }
+    }
+  };
 
   return layerContainer;
 }
