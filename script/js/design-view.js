@@ -2643,7 +2643,6 @@ function createEditEffect() {
         }
       }
       effect_setting.className = "action-button";
-      effect_setting.style.marginLeft = "0px";
       effect_setting.style.overflow = "visible";
       effect_setting.style.position = "relative";
       div_select_eType.appendChild(effect_setting);
@@ -3340,6 +3339,9 @@ function createSkinTileHTML(enumCate, jsonSkin) {
     popupEdit.style.top = e.pageY + "px";
     popupEdit.style.left = e.pageX + "px";
     document.getElementById("body").appendChild(popupEdit);
+    if(popupEdit.getBoundingClientRect().bottom >= document.body.offsetHeight) {
+      popupEdit.style.top = `${document.body.offsetHeight - popupEdit.offsetHeight}px`;
+    }
   }
   skin_tile.onauxclick = function (e) {
     e.stopPropagation();
@@ -4086,131 +4088,131 @@ function popupEditSkin(enumCate, jsonSkin) {
       //
       let div_select_eType = document.createElement("div");
       div_select_eType.style.width = "calc(100% - 16px)";
-      div_select_eType.style.display = "inline-flex";
+      div_select_eType.style.display = "flex";
       div_select_eType.style.marginLeft = "8px";
       div_select_eType.style.alignItems = "center";
       body.appendChild(div_select_eType);
       // popup edit effect type attribute
       let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg", null, function () {
-        setTimeout(function () {
-          let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-          let popupEditEffect = document.createElement("div");
-          let offset = effect_setting.getBoundingClientRect();
-          popupEditEffect.style.left = offset.x - 8 + "px";
-          popupEditEffect.style.top = offset.y + "px";
-          popupEditEffect.style.transform = "translate(-100%,-80%)";
-          popupEditEffect.className = "popup_edit_effect_attribute wini_popup col";
-          let popup_title = document.createElement("span");
-          popup_title.innerHTML = thisSkin.Type;
-          popupEditEffect.appendChild(popup_title);
-          let btn_close = document.createElement("i");
-          btn_close.className = "fa-solid fa-xmark";
-          btn_close.style.padding = "6px";
-          btn_close.style.float = "right";
-          btn_close.onclick = function () {
-            popupEditEffect.remove();
-          };
-          popup_title.appendChild(btn_close);
-          let div_attribute = document.createElement("div");
-          popupEditEffect.appendChild(div_attribute);
-          if (thisSkin.Type != ShadowType.layer_blur) {
-            let input_offsetX = _textField("84px", undefined, "X", "0", undefined);
-            input_offsetX.lastChild.value = thisSkin.OffsetX;
-            input_offsetX.lastChild.onblur = function () {
-              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-              if (!NaN(parseFloat(this.value))) {
-                editEffectSkin({ OffsetX: parseFloat(this.value) }, thisSkin);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
-                      ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              } else {
-                this.value = thisSkin.OffsetX;
-              }
-            };
-            div_attribute.appendChild(input_offsetX);
-          }
-          let input_blur = _textField("84px", undefined, "Blur", "0", undefined);
-          input_blur.lastChild.value = thisSkin.BlurRadius;
-          input_blur.lastChild.onblur = function () {
+        let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+        let popupEditEffect = document.createElement("div");
+        let offset = effect_setting.getBoundingClientRect();
+        popupEditEffect.style.left = offset.x - 8 + "px";
+        popupEditEffect.style.top = offset.y + "px";
+        popupEditEffect.style.transform = "translate(-100%,-80%)";
+        popupEditEffect.className = "popup_edit_effect_attribute wini_popup col";
+        let popup_title = document.createElement("span");
+        popup_title.innerHTML = thisSkin.Type;
+        popupEditEffect.appendChild(popup_title);
+        let btn_close = document.createElement("i");
+        btn_close.className = "fa-solid fa-xmark";
+        btn_close.style.padding = "6px";
+        btn_close.style.float = "right";
+        btn_close.onclick = function () {
+          popupEditEffect.remove();
+        };
+        popup_title.appendChild(btn_close);
+        let div_attribute = document.createElement("div");
+        popupEditEffect.appendChild(div_attribute);
+        if (thisSkin.Type != ShadowType.layer_blur) {
+          let input_offsetX = _textField("84px", undefined, "X", "0", undefined);
+          input_offsetX.lastChild.value = thisSkin.OffsetX;
+          input_offsetX.lastChild.onblur = function () {
             let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
             if (!NaN(parseFloat(this.value))) {
-              editEffectSkin({ BlurRadius: parseFloat(this.value) }, thisSkin);
-              if (thisSkin.Type == ShadowType.layer_blur) {
-                demoShadow.style.filter = `blur(${thisSkin.BlurRadius}px)`;
-              } else {
-                let effect_color = thisSkin.ColorValue;
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} 
+              editEffectSkin({ OffsetX: parseFloat(this.value) }, thisSkin);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
                       ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              }
             } else {
-              this.value = thisSkin.BlurRadius;
+              this.value = thisSkin.OffsetX;
             }
           };
-          div_attribute.appendChild(input_blur);
-          if (thisSkin.Type != ShadowType.layer_blur) {
-            let input_offsetY = _textField("84px", undefined, "Y", "0", undefined);
-            input_offsetY.lastChild.value = thisSkin.OffsetY;
-            input_offsetY.lastChild.onblur = function () {
-              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-              if (!NaN(parseFloat(this.value))) {
-                editEffectSkin({ OffsetY: parseFloat(this.value) }, thisSkin);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
-                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              } else {
-                this.value = thisSkin.OffsetY;
-              }
-            };
-            let input_spread = _textField("84px", undefined, "Spread", "0", undefined);
-            input_spread.lastChild.value = thisSkin.SpreadRadius;
-            input_spread.lastChild.onblur = function () {
-              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-              if (!NaN(parseFloat(this.value))) {
-                editEffectSkin({ SpreadRadius: parseFloat(this.value) }, thisSkin);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
-                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              } else {
-                this.value = thisSkin.OffsetY;
-              }
-            };
-            div_attribute.appendChild(input_offsetY);
-            div_attribute.appendChild(input_spread);
-            let inputEffectColor = createEditColorForm(
-              function (newColor) {
-                let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-                editEffectSkin({ ColorValue: newColor }, thisSkin, false);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${newColor.substring(2)}${newColor.substring(0, 2)} 
-                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              },
-              function (newColor) {
-                let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-                editEffectSkin({ ColorValue: newColor }, thisSkin);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${newColor.substring(2)}${newColor.substring(0, 2)} 
-                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              },
-            );
-            inputEffectColor.style.margin = "4px";
-            var formEditColor = [...inputEffectColor.childNodes].find((e) => e.className == "parameter-form");
-            formEditColor.childNodes.forEach((e) => {
-              switch (e.className) {
-                case "show-color-container":
-                  e.value = `#${thisSkin.ColorValue.substring(2)}`;
-                  break;
-                case "edit-color-form":
-                  e.value = thisSkin.ColorValue.substring(2).toUpperCase();
-                  break;
-                case "edit-opacity-form":
-                  e.value = Ultis.hexToPercent(thisSkin.ColorValue.substring(0, 2)) + "%";
-                  break;
-                default:
-                  break;
-              }
-            });
-            div_attribute.appendChild(inputEffectColor);
+          div_attribute.appendChild(input_offsetX);
+        }
+        let input_blur = _textField("84px", undefined, "Blur", "0", undefined);
+        input_blur.lastChild.value = thisSkin.BlurRadius;
+        input_blur.lastChild.onblur = function () {
+          let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+          if (!NaN(parseFloat(this.value))) {
+            editEffectSkin({ BlurRadius: parseFloat(this.value) }, thisSkin);
+            if (thisSkin.Type == ShadowType.layer_blur) {
+              demoShadow.style.filter = `blur(${thisSkin.BlurRadius}px)`;
+            } else {
+              let effect_color = thisSkin.ColorValue;
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} 
+                      ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            }
+          } else {
+            this.value = thisSkin.BlurRadius;
           }
-          document.getElementById("body").appendChild(popupEditEffect);
-        }, 200);
+        };
+        div_attribute.appendChild(input_blur);
+        if (thisSkin.Type != ShadowType.layer_blur) {
+          let input_offsetY = _textField("84px", undefined, "Y", "0", undefined);
+          input_offsetY.lastChild.value = thisSkin.OffsetY;
+          input_offsetY.lastChild.onblur = function () {
+            let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+            if (!NaN(parseFloat(this.value))) {
+              editEffectSkin({ OffsetY: parseFloat(this.value) }, thisSkin);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
+                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            } else {
+              this.value = thisSkin.OffsetY;
+            }
+          };
+          let input_spread = _textField("84px", undefined, "Spread", "0", undefined);
+          input_spread.lastChild.value = thisSkin.SpreadRadius;
+          input_spread.lastChild.onblur = function () {
+            let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+            if (!NaN(parseFloat(this.value))) {
+              editEffectSkin({ SpreadRadius: parseFloat(this.value) }, thisSkin);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
+                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            } else {
+              this.value = thisSkin.OffsetY;
+            }
+          };
+          div_attribute.appendChild(input_offsetY);
+          div_attribute.appendChild(input_spread);
+          let inputEffectColor = createEditColorForm(
+            function (newColor) {
+              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+              editEffectSkin({ ColorValue: newColor }, thisSkin, false);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${newColor.substring(2)}${newColor.substring(0, 2)} 
+                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            },
+            function (newColor) {
+              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+              editEffectSkin({ ColorValue: newColor }, thisSkin);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${newColor.substring(2)}${newColor.substring(0, 2)} 
+                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            },
+          );
+          inputEffectColor.style.margin = "4px";
+          var formEditColor = [...inputEffectColor.childNodes].find((e) => e.className == "parameter-form");
+          formEditColor.childNodes.forEach((e) => {
+            switch (e.className) {
+              case "show-color-container":
+                e.value = `#${thisSkin.ColorValue.substring(2)}`;
+                break;
+              case "edit-color-form":
+                e.value = thisSkin.ColorValue.substring(2).toUpperCase();
+                break;
+              case "edit-opacity-form":
+                e.value = Ultis.hexToPercent(thisSkin.ColorValue.substring(0, 2)) + "%";
+                break;
+              default:
+                break;
+            }
+          });
+          div_attribute.appendChild(inputEffectColor);
+        }
+        document.getElementById("body").appendChild(popupEditEffect);
+        if (popupEditEffect.getBoundingClientRect().bottom >= document.body.offsetHeight) {
+          popupEditEffect.style.top = `${document.body.offsetHeight - popupEditEffect.offsetHeight}px`;
+        }
       });
       effect_setting.className = "action-button";
-      effect_setting.style.marginLeft = "0px";
       div_select_eType.appendChild(effect_setting);
       // select effect type
       let btn_select_eType = _btnDropDownSelect(

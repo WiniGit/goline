@@ -300,6 +300,8 @@
       buttonToday.className = "footer";
       buttonToday.innerHTML = "Today";
       pickerContainer.replaceChildren(header, dateTable, buttonToday);
+      document.body.appendChild(pickerContainer);
+      let offset = this.getBoundingClientRect();
     });
     document.body.querySelector(".parent.w-row").appendChild(inputPicker);
   </script>

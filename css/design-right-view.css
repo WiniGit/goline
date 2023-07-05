@@ -1180,10 +1180,13 @@ input[type="color"]::-webkit-color-swatch {
   margin-left: 8px;
 }
 
+.edit-container .popup_edit_effect_attribute {
+  display: none;
+}
+
 .popup_edit_effect_attribute {
   width: 240px;
   height: fit-content;
-  display: none;
   align-items: flex-start;
   background-color: #ffffff !important;
   border-radius: 4px;
