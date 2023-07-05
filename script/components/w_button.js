@@ -1,5 +1,6 @@
 function wbutton(item, data) {
-  item.value = document.createElement("div");
+  item.value = document.createElement("button");
+  item.value.type = "button";
   $(item.value).addClass("w-button");
   if (item.WAutolayoutItem) {
     item.value.replaceChildren(...data.map((child) => {

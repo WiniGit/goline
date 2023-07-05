@@ -4,15 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="css/responsive-col.css">
+    <link rel="stylesheet" href="css/responsive-col.css" />
+    <script
+      src="https://code.jquery.com/jquery-3.6.1.min.js"
+      integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/1cf830eab3.js"
+      crossorigin="anonymous"
+    ></script>
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
       * {
         box-sizing: border-box;
+        font-family: "Inter";
       }
 
+      html,
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+            Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+            "Segoe UI Symbol"; */
         margin: 0;
+        height: 100%;
       }
 
       .parent {
@@ -22,44 +37,270 @@
         flex-wrap: wrap;
         --gutter: 16px;
         gap: var(--gutter);
+        height: 100%;
       }
 
-      .child {
-        background-color: #0074d9;
-        padding: 20px;
-        color: white;
+      .w-input-date-picker {
+        display: flex;
+        width: 200px;
+        align-items: center;
+        background-color: white;
+        border: 1px solid #00358014;
+        border-radius: 4px;
+        height: fit-content;
+        padding: 8px 16px;
+        column-gap: 8px;
+        position: relative;
       }
 
-      .child-test {
-              padding: 20px;
-              flex: 1;
-              background-color: azure;
+      .w-input-date-picker > input {
+        position: absolute;
+        width: 0;
+        height: 0;
+        inset: 0 0 0 0;
+        outline: none;
+        border: none;
       }
 
-      .child-one {
-        /* flex: 0 calc(30% - 8px); */
-        background-color: red;
+      .w-input-date-picker > p {
+        margin: 0;
+        flex: 1;
+        width: 100%;
+        font-size: 14px;
+        color: #9fb0c7;
       }
-      .child-two {
-        /* flex: 0 calc(20% - 8px); */
+
+      .w-input-date-picker > i {
+        font-size: 14px;
+        color: #9fb0c7;
       }
-      .child-three {
-        /* flex: 0 calc(10% - 8px); */
-        background-color: #3d9970;
+
+      body:has(.w-date-picker-table) {
+        position: relative;
       }
-      .child-four {
-        /* flex: 0 calc(50% - 8px); */
-        background-color: #c5c5c5;
+
+      .w-date-picker-table {
+        position: absolute;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        border-radius: 8px;
+        height: fit-content;
+      }
+
+      .w-date-picker-table > .header {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+      }
+
+      .w-date-picker-table > .header > span {
+        width: 100%;
+        flex: 1;
+        text-align: center;
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: bold;
+      }
+
+      .w-date-picker-table > .header > i {
+        font-size: 16px;
+        color: #4b6281;
+      }
+
+      .w-date-picker-table > .body {
+        display: flex;
+        flex-direction: column;
+        padding: 12px 16px;
+        border-top: 1px solid #00358014;
+        border-bottom: 1px solid #00358014;
+      }
+
+      .w-date-picker-table > .body > div {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .date-picker-circle {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        line-height: 22px;
+        font-weight: 400;
+        border-radius: 50%;
+      }
+
+      .w-date-picker-table > .footer {
+        padding: 16px 0;
+        text-align: center;
+        width: 100%;
+        font-size: 14px;
+        line-height: 22px;
+        color: #366ae2;
+        font-weight: 500;
       }
     </style>
   </head>
-  <body class="min-brp">
-    <div class="parent w-row">
-      <div class="child child-one col8">child</div>
-      <div class="child child-two col4">child</div>
-      <div class="child child-three col8">child</div>
-      <div class="child child-four col4">child</div>
-      <div class="child-test">child</div>
-    </div>
+  <body>
+    <div class="parent w-row"></div>
   </body>
+  <script>
+    const _time = new Date();
+    var selectDate = new Date(
+      _time.getFullYear(),
+      _time.getMonth(),
+      _time.getDate()
+    );
+    var selectMonth = _time.getMonth();
+    var selectYear = _time.getFullYear();
+    let inputPicker = document.createElement("label");
+    inputPicker.className = "w-input-date-picker";
+    var input = document.createElement("input");
+    input.value = selectDate.toString();
+    let textValue = document.createElement("p");
+    textValue.innerHTML = "From date";
+    let btnCalendar = document.createElement("i");
+    btnCalendar.className = "fa-regular fa-calendar-days fa-sm";
+    inputPicker.replaceChildren(input, textValue, btnCalendar);
+    inputPicker.addEventListener("click", function (ev) {
+      let pickerContainer = document.createElement("div");
+      pickerContainer.className = "w-date-picker-table";
+      var header = document.createElement("div");
+      header.className = "header";
+      var iconDoubleLeft = document.createElement("i");
+      iconDoubleLeft.className = "fa-solid fa-angles-left";
+      var iconLeft = document.createElement("i");
+      iconLeft.className = "fa-solid fa-angle-left";
+      iconLeft.style.marginLeft = "12px";
+      var iconRight = document.createElement("i");
+      iconRight.className = "fa-solid fa-angle-right";
+      iconRight.style.marginRight = "12px";
+      var iconDoubleRight = document.createElement("i");
+      iconDoubleRight.className = "fa-solid fa-angles-right";
+      var title = document.createElement("span");
+      header.replaceChildren(
+        iconDoubleLeft,
+        iconLeft,
+        title,
+        iconRight,
+        iconDoubleRight
+      );
+      var dateTable = document.createElement("div");
+      dateTable.className = "body";
+      var lineWeekDay = document.createElement("div");
+      for (var i = 0; i < 7; i++) {
+        var weekday = document.createElement("div");
+        weekday.className = "date-picker-circle";
+        var weekdayTitle = "";
+        switch (i) {
+          case 0:
+            weekdayTitle = "Su";
+            break;
+          case 1:
+            weekdayTitle = "Mo";
+            break;
+          case 2:
+            weekdayTitle = "Tu";
+            break;
+          case 3:
+            weekdayTitle = "We";
+            break;
+          case 4:
+            weekdayTitle = "Th";
+            break;
+          case 5:
+            weekdayTitle = "Fr";
+            break;
+          case 6:
+            weekdayTitle = "Sa";
+            break;
+          default:
+            break;
+        }
+        weekday.innerHTML = weekdayTitle;
+        lineWeekDay.appendChild(weekday);
+      }
+      dateTable.appendChild(lineWeekDay);
+      var monthName = "";
+      switch (selectMonth) {
+        case 0:
+          monthName = "January";
+          break;
+        case 1:
+          monthName = "February";
+          break;
+        case 2:
+          monthName = "March";
+          break;
+        case 3:
+          monthName = "April";
+          break;
+        case 4:
+          monthName = "May";
+          break;
+        case 5:
+          monthName = "June";
+          break;
+        case 6:
+          monthName = "July";
+          break;
+        case 7:
+          monthName = "August";
+          break;
+        case 8:
+          monthName = "September";
+          break;
+        case 9:
+          monthName = "October";
+          break;
+        case 10:
+          monthName = "November";
+          break;
+        case 11:
+          monthName = "December";
+          break;
+        default:
+          break;
+      }
+      title.innerHTML = `${monthName} ${selectYear}`;
+      const firstDayOfMonth = new Date(selectYear, selectMonth, 1);
+      const _today = new Date(
+        _time.getFullYear(),
+        _time.getMonth(),
+        _time.getDate()
+      );
+      for (var j = 0; j < 6; j++) {
+        var lineDate = document.createElement("div");
+        for (var i = 0; i < 7; i++) {
+          var dateHTML = document.createElement("div");
+          dateHTML.className = "date-picker-circle";
+          var dateNumber = i + j + j * 6 - firstDayOfMonth.getDay();
+          const timeValue = new Date(selectYear, selectMonth, dateNumber + 1);
+          dateHTML.id = timeValue.valueOf();
+          if (timeValue.valueOf() == _today.valueOf()) {
+            dateHTML.style.border = "1px solid #366AE2";
+          }
+          if (timeValue.getMonth() != selectMonth) {
+            dateHTML.style.color = "#9FB0C7";
+          }
+          if (selectDate.valueOf() == timeValue.valueOf()) {
+            dateHTML.style.backgroundColor = "#366AE2";
+            dateHTML.style.color = "white";
+          }
+          dateHTML.innerHTML = timeValue.getDate();
+          lineDate.appendChild(dateHTML);
+        }
+        dateTable.appendChild(lineDate);
+      }
+      var buttonToday = document.createElement("div");
+      buttonToday.className = "footer";
+      buttonToday.innerHTML = "Today";
+      pickerContainer.replaceChildren(header, dateTable, buttonToday);
+    });
+    document.body.querySelector(".parent.w-row").appendChild(inputPicker);
+  </script>
 </html>

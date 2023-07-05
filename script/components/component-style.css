@@ -6,6 +6,11 @@
   pointer-events: none !important;
 }
 
+.w-button {
+  outline: none;
+  border: none;
+}
+
 .wbaseItem-value {
   position: relative;
   box-sizing: border-box;
@@ -21,13 +26,11 @@
 .wbaseItem-value.w-col[wrap="wrap"] {
   flex-wrap: wrap !important;
   align-content: var(--cross-axis-align);
-  align-items: unset !important;
 }
 
 .wbaseItem-value.w-row[wrap="wrap"] {
   flex-wrap: wrap !important;
   align-content: var(--cross-axis-align);
-  align-items: unset !important;
 }
 
 .wbaseItem-value.w-col {
