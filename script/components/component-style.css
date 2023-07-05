@@ -56,12 +56,12 @@
 
 .wbaseItem-value.w-col[scroll="true"] {
   overflow: hidden scroll !important;
-  align-items: flex-start !important;
+  justify-content: flex-start !important;
 }
 
 .wbaseItem-value.w-row[scroll="true"] {
   overflow: scroll hidden !important;
-  align-items: flex-start !important;
+  justify-content: flex-start !important;
 }
 
 .wbaseItem-value.w-col[wrap="wrap"][scroll="true"] {
