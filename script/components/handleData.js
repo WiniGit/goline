@@ -160,6 +160,11 @@ async function initComponents(item, list, initListener = true) {
     }
     item.value.setAttribute("listid", item.ListID);
     if (item.IsWini) item.value.setAttribute("iswini", item.IsWini);
+    setSizeObserver.observe(item.value, {
+      attributeOldValue: true,
+      attributes: true,
+      childList: EnumCate.parent_cate.some((cate) => item.CateID === cate),
+    });
   }
   if (initListener) {
     addListenFromSection(item);
@@ -351,7 +356,7 @@ function initElement(wbaseHTML) {
 const setSizeObserver = new MutationObserver((mutationList) => {
   mutationList.forEach((mutation) => {
     let targetWbase = mutation.target;
-    if (mutation.attributeName === "id") {
+      if (mutation.attributeName === "id") {
       initElement(targetWbase);
     } else if (mutation.type === "childList" && window.getComputedStyle(targetWbase).display.includes("flex")) {
       targetWbase.querySelectorAll(`.col-[level="${parseInt(targetWbase.getAttribute("level")) + 1}"]`).forEach((childCol) => {

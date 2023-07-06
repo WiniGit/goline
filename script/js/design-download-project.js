@@ -50,6 +50,7 @@ async function push_dataProject() {
     cloneValue.style.position = null;
     cloneValue.style.top = null;
     cloneValue.style.left = null;
+    let cssString = "";
     [cloneValue, ...cloneValue.querySelectorAll(".wbaseItem-value")].forEach((wbValue) => {
       wbValue.removeAttribute("listid");
       wbValue.removeAttribute("lock");
@@ -67,7 +68,24 @@ async function push_dataProject() {
         default:
           break;
       }
+      if (wbValue !== cloneValue) {
+        cssString += `
+        /*  */
+        `;
+      }
+      let computStyle = window.getComputedStyle(document.getElementById(wbValue.id));
+      let wbCss = `.wbaseItem-value[id="${wbValue.id}"] {`;
+      for (let i = 0; i < wbValue.style.length; i++) {
+        wbCss += `
+        ${wbValue.style[i]}: ${wbValue.style[i].startsWith("--") ? wbValue.style.getPropertyValue(wbValue.style[i]) : computStyle[wbValue.style[i]]};
+        `
+      }
+      wbCss += `
+    }`;
+      cssString += wbCss;
+      wbValue.style = null;
     });
+    cloneValue.cssString = cssString;
     $(cloneValue).addClass("w-page");
     cloneValue.Name = Ultis.toSlug(wb.Name);
     return cloneValue;
@@ -157,33 +175,36 @@ async function push_dataProject() {
           }
         }
       }
-      // }
     }
+    console.log(page.cssString);
+
     await $.post(
       "/view/build",
       {
         Sort: list_page.indexOf(page),
         Name: page.Name,
+        Type: 1,
         Code: ProjectDA.obj.Code.toLowerCase(),
-        Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
+        Item: `<link rel="stylesheet" href="/Styles/${page.Name}.css" />${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
       },
       function (data) {
         console.log("data-start: ", data);
       },
     );
 
-    // await $.post(
-    //   "/view/build",
-    //   {
-    //     Sort: list_page.indexOf(page),
-    //     Name: Ultis.toSlug(page.Name),
-    //     Code: ProjectDA.obj.Code.toLowerCase(),
-    //     Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
-    //   },
-    //   function (data) {
-    //     console.log("data-start", data);
-    //   },
-    // );
+    await $.post(
+      "/view/build",
+      {
+        Sort: list_page.indexOf(page),
+        Name: page.Name,
+        Type: 0,
+        Code: ProjectDA.obj.Code.toLowerCase(),
+        Item: page.cssString,
+      },
+      function (data) {
+        console.log("data-start: ", data);
+      },
+    );
   }
   // await $.get(
   //   `https://server.wini.vn/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`,

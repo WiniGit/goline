@@ -15,14 +15,14 @@ function createRadioButton(wbaseItem) {
 	input.value = wbaseItem.AttributesItem.Content;
 	let checkmark = document.createElement("span");
 	checkmark.className = "checkmark";
-	toggle.style.setProperty("--checked-border", `#${wbaseItem.StyleItem.DecorationItem.ColorValue.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue.substring(2, 0)}`);
+	toggle.style.setProperty("--checked-border", `#${wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2, 0)}`);
 	toggle.style.setProperty("--unchecked-border", `#${wbaseItem.StyleItem.DecorationItem.BorderItem?.ColorValue?.substring(2) + wbaseItem.StyleItem.DecorationItem.BorderItem?.ColorValue?.substring(2, 0)}`);
 	toggle.replaceChildren(input, checkmark);
 	input.onchange = function (e) {
 		e.stopImmediatePropagation();
 		e.stopPropagation();
 		wbaseItem.JsonItem.Checked = this.checked;
-		toggle.style.setProperty("--checked-border", `#${wbaseItem.StyleItem.DecorationItem.ColorValue.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue.substring(2, 0)}`);
+		toggle.style.setProperty("--checked-border", `#${wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2, 0)}`);
 		toggle.style.setProperty("--unchecked-border", `#${wbaseItem.StyleItem.DecorationItem.BorderItem?.ColorValue?.substring(2) + wbaseItem.StyleItem.DecorationItem.BorderItem?.ColorValue?.substring(2, 0)}`);
 		if (this.checked) {
 			if (this.name && this.name !== "") {

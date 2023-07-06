@@ -14,6 +14,7 @@
       src="https://kit.fontawesome.com/1cf830eab3.js"
       crossorigin="anonymous"
     ></script>
+    <script src="script/utils.js"></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
       * {
@@ -36,7 +37,7 @@
         padding: 20px;
         flex-wrap: wrap;
         --gutter: 16px;
-        gap: var(--gutter);
+        gap: let(--gutter);
         height: 100%;
       }
 
@@ -87,6 +88,11 @@
         background-color: white;
         border-radius: 8px;
         height: fit-content;
+        box-shadow: 0 0 12px 0 #00204d1f;
+      }
+
+      .w-date-picker-table * {
+        cursor: context-menu;
       }
 
       .w-date-picker-table > .header {
@@ -98,15 +104,17 @@
       .w-date-picker-table > .header > span {
         width: 100%;
         flex: 1;
+        margin: 0 24px;
         text-align: center;
         font-size: 16px;
         line-height: 24px;
         font-weight: bold;
       }
 
-      .w-date-picker-table > .header > i {
+      .w-date-picker-table > .header > * {
         font-size: 16px;
         color: #4b6281;
+        cursor: pointer;
       }
 
       .w-date-picker-table > .body {
@@ -114,6 +122,9 @@
         flex-direction: column;
         padding: 12px 16px;
         border-top: 1px solid #00358014;
+      }
+
+      .w-date-picker-table > .body:has(div:nth-child(5)) {
         border-bottom: 1px solid #00358014;
       }
 
@@ -123,8 +134,9 @@
       }
 
       .date-picker-circle {
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
+        margin: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -132,16 +144,56 @@
         line-height: 22px;
         font-weight: 400;
         border-radius: 50%;
+        color: #00204de5;
+      }
+
+      :is(.month-picker-circle, .year-picker-circle) {
+        width: 56px;
+        height: 32px;
+        margin: 8px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        line-height: 22px;
+        font-weight: 400;
+        border-radius: 24px;
+        color: #00204de5;
+        cursor: pointer;
+      }
+
+      .w-date-picker-table div:not(div:first-child) > .date-picker-circle {
+        cursor: pointer;
+      }
+
+      /*  */
+      :is(
+          .date-picker-circle,
+          .month-picker-circle,
+          .year-picker-circle
+        )[selected="true"] {
+        background-color: #366ae2;
+        color: white;
+      }
+
+      .date-picker-circle[in-range="false"] {
+        opacity: 0 !important;
+        pointer-events: none !important;
       }
 
       .w-date-picker-table > .footer {
-        padding: 16px 0;
+        display: none;
+        margin: 16px 0;
+        cursor: pointer;
         text-align: center;
-        width: 100%;
         font-size: 14px;
         line-height: 22px;
         color: #366ae2;
         font-weight: 500;
+      }
+
+      .w-date-picker-table > .body:has(div:nth-child(5)) + .footer {
+        display: block;
       }
     </style>
   </head>
@@ -149,159 +201,417 @@
     <div class="parent w-row"></div>
   </body>
   <script>
+    function differentInDay(date1, date2) {
+      return (date1.getTime() - date2.getTime()) / (1000 * 3600 * 24);
+    }
+    function inRangeTime(date, startDate, endDate) {
+      return (
+        differentInDay(date, startDate) > -1 &&
+        differentInDay(endDate, date) > -1
+      );
+    }
     const _time = new Date();
-    var selectDate = new Date(
+    const startDate = new Date(
+      _time.getFullYear() - 100,
+      _time.getMonth(),
+      _time.getDate()
+    );
+    const endDate = new Date(
+      _time.getFullYear() + 100,
+      _time.getMonth(),
+      _time.getDate()
+    );
+    const today = new Date(
       _time.getFullYear(),
       _time.getMonth(),
       _time.getDate()
     );
-    var selectMonth = _time.getMonth();
-    var selectYear = _time.getFullYear();
+    let selectDate = today;
+    let selectMonth = _time.getMonth();
+    let selectYear = _time.getFullYear();
     let inputPicker = document.createElement("label");
     inputPicker.className = "w-input-date-picker";
-    var input = document.createElement("input");
+    let input = document.createElement("input");
     input.value = selectDate.toString();
     let textValue = document.createElement("p");
     textValue.innerHTML = "From date";
     let btnCalendar = document.createElement("i");
     btnCalendar.className = "fa-regular fa-calendar-days fa-sm";
     inputPicker.replaceChildren(input, textValue, btnCalendar);
-    inputPicker.addEventListener("click", function (ev) {
-      let pickerContainer = document.createElement("div");
-      pickerContainer.className = "w-date-picker-table";
-      var header = document.createElement("div");
-      header.className = "header";
-      var iconDoubleLeft = document.createElement("i");
-      iconDoubleLeft.className = "fa-solid fa-angles-left";
-      var iconLeft = document.createElement("i");
-      iconLeft.className = "fa-solid fa-angle-left";
-      iconLeft.style.marginLeft = "12px";
-      var iconRight = document.createElement("i");
-      iconRight.className = "fa-solid fa-angle-right";
-      iconRight.style.marginRight = "12px";
-      var iconDoubleRight = document.createElement("i");
-      iconDoubleRight.className = "fa-solid fa-angles-right";
-      var title = document.createElement("span");
-      header.replaceChildren(
-        iconDoubleLeft,
-        iconLeft,
-        title,
-        iconRight,
-        iconDoubleRight
-      );
-      var dateTable = document.createElement("div");
-      dateTable.className = "body";
-      var lineWeekDay = document.createElement("div");
-      for (var i = 0; i < 7; i++) {
-        var weekday = document.createElement("div");
-        weekday.className = "date-picker-circle";
-        var weekdayTitle = "";
-        switch (i) {
-          case 0:
-            weekdayTitle = "Su";
-            break;
-          case 1:
-            weekdayTitle = "Mo";
-            break;
-          case 2:
-            weekdayTitle = "Tu";
-            break;
-          case 3:
-            weekdayTitle = "We";
-            break;
-          case 4:
-            weekdayTitle = "Th";
-            break;
-          case 5:
-            weekdayTitle = "Fr";
-            break;
-          case 6:
-            weekdayTitle = "Sa";
-            break;
-          default:
-            break;
+    input.addEventListener("focus", function (ev) {
+      if (this.getAttribute("onshowpicker") === "true") {
+        this.removeAttribute("onshowpicker");
+      } else {
+        let pickerContainer = document.createElement("div");
+        pickerContainer.className = "w-date-picker-table";
+        let header = document.createElement("div");
+        header.className = "header";
+        let iconDoubleLeft = document.createElement("i");
+        iconDoubleLeft.className = "fa-solid fa-angles-left";
+        let iconLeft = document.createElement("i");
+        iconLeft.className = "fa-solid fa-angle-left";
+        iconLeft.style.marginLeft = "12px";
+        let iconRight = document.createElement("i");
+        iconRight.className = "fa-solid fa-angle-right";
+        iconRight.style.marginRight = "12px";
+        let iconDoubleRight = document.createElement("i");
+        iconDoubleRight.className = "fa-solid fa-angles-right";
+        iconDoubleLeft.onclick = function () {};
+        let title = document.createElement("span");
+        header.replaceChildren(
+          iconDoubleLeft,
+          iconLeft,
+          title,
+          iconRight,
+          iconDoubleRight
+        );
+        let dateTable = document.createElement("div");
+        dateTable.className = "body";
+        let lineWeekDay = document.createElement("div");
+        for (let i = 0; i < 7; i++) {
+          let weekday = document.createElement("div");
+          weekday.className = "date-picker-circle";
+          let weekdayTitle = "";
+          switch (i) {
+            case 0:
+              weekdayTitle = "Su";
+              break;
+            case 1:
+              weekdayTitle = "Mo";
+              break;
+            case 2:
+              weekdayTitle = "Tu";
+              break;
+            case 3:
+              weekdayTitle = "We";
+              break;
+            case 4:
+              weekdayTitle = "Th";
+              break;
+            case 5:
+              weekdayTitle = "Fr";
+              break;
+            case 6:
+              weekdayTitle = "Sa";
+              break;
+            default:
+              break;
+          }
+          weekday.innerHTML = weekdayTitle;
+          lineWeekDay.appendChild(weekday);
         }
-        weekday.innerHTML = weekdayTitle;
-        lineWeekDay.appendChild(weekday);
-      }
-      dateTable.appendChild(lineWeekDay);
-      var monthName = "";
-      switch (selectMonth) {
-        case 0:
-          monthName = "January";
-          break;
-        case 1:
-          monthName = "February";
-          break;
-        case 2:
-          monthName = "March";
-          break;
-        case 3:
-          monthName = "April";
-          break;
-        case 4:
-          monthName = "May";
-          break;
-        case 5:
-          monthName = "June";
-          break;
-        case 6:
-          monthName = "July";
-          break;
-        case 7:
-          monthName = "August";
-          break;
-        case 8:
-          monthName = "September";
-          break;
-        case 9:
-          monthName = "October";
-          break;
-        case 10:
-          monthName = "November";
-          break;
-        case 11:
-          monthName = "December";
-          break;
-        default:
-          break;
-      }
-      title.innerHTML = `${monthName} ${selectYear}`;
-      const firstDayOfMonth = new Date(selectYear, selectMonth, 1);
-      const _today = new Date(
-        _time.getFullYear(),
-        _time.getMonth(),
-        _time.getDate()
-      );
-      for (var j = 0; j < 6; j++) {
-        var lineDate = document.createElement("div");
-        for (var i = 0; i < 7; i++) {
-          var dateHTML = document.createElement("div");
-          dateHTML.className = "date-picker-circle";
-          var dateNumber = i + j + j * 6 - firstDayOfMonth.getDay();
-          const timeValue = new Date(selectYear, selectMonth, dateNumber + 1);
-          dateHTML.id = timeValue.valueOf();
-          if (timeValue.valueOf() == _today.valueOf()) {
-            dateHTML.style.border = "1px solid #366AE2";
+        //
+        let firstDayOfMonth = new Date(selectYear, selectMonth, 1);
+        function showDateInMonth() {
+          let monthName = "";
+          switch (selectMonth) {
+            case 0:
+              monthName = "January";
+              break;
+            case 1:
+              monthName = "February";
+              break;
+            case 2:
+              monthName = "March";
+              break;
+            case 3:
+              monthName = "April";
+              break;
+            case 4:
+              monthName = "May";
+              break;
+            case 5:
+              monthName = "June";
+              break;
+            case 6:
+              monthName = "July";
+              break;
+            case 7:
+              monthName = "August";
+              break;
+            case 8:
+              monthName = "September";
+              break;
+            case 9:
+              monthName = "October";
+              break;
+            case 10:
+              monthName = "November";
+              break;
+            case 11:
+              monthName = "December";
+              break;
+            default:
+              break;
           }
-          if (timeValue.getMonth() != selectMonth) {
-            dateHTML.style.color = "#9FB0C7";
+          title.innerHTML = `${monthName} ${selectYear}`;
+          let dateWeekLines = [];
+          for (let j = 0; j < 6; j++) {
+            let lineDate = document.createElement("div");
+            for (let i = 0; i < 7; i++) {
+              let dateHTML = document.createElement("div");
+              dateHTML.className = "date-picker-circle";
+              let dateNumber = i + j + j * 6 - firstDayOfMonth.getDay();
+              const timeValue = new Date(
+                selectYear,
+                selectMonth,
+                dateNumber + 1
+              );
+              dateHTML.id = timeValue.valueOf();
+              if (timeValue.valueOf() == today.valueOf()) {
+                dateHTML.style.border = "1px solid #366AE2";
+              }
+              if (!inRangeTime(timeValue, startDate, endDate)) {
+                dateHTML.setAttribute("in-range", "false");
+              } else if (selectDate.valueOf() == timeValue.valueOf()) {
+                dateHTML.setAttribute("selected", "true");
+              } else if (timeValue.getMonth() != selectMonth) {
+                dateHTML.style.color = "#9FB0C7";
+              }
+              dateHTML.innerHTML = timeValue.getDate();
+              dateHTML.onclick = function () {
+                selectDate = timeValue;
+                textValue.innerHTML = Ultis.datetoString(
+                  selectDate,
+                  "dd/MM/yyyy"
+                );
+                pickerContainer.remove();
+              };
+              lineDate.appendChild(dateHTML);
+            }
+            dateWeekLines.push(lineDate);
           }
-          if (selectDate.valueOf() == timeValue.valueOf()) {
-            dateHTML.style.backgroundColor = "#366AE2";
-            dateHTML.style.color = "white";
-          }
-          dateHTML.innerHTML = timeValue.getDate();
-          lineDate.appendChild(dateHTML);
+          dateTable.replaceChildren(lineWeekDay, ...dateWeekLines);
+          //
+          iconDoubleLeft.onclick = function () {
+            selectYear--;
+            firstDayOfMonth = new Date(selectYear, selectMonth, 1);
+            showDateInMonth();
+          };
+          iconLeft.onclick = function () {
+            firstDayOfMonth = new Date(selectYear, selectMonth - 1, 1);
+            selectMonth = firstDayOfMonth.getMonth();
+            selectYear = firstDayOfMonth.getFullYear();
+            showDateInMonth();
+          };
+          title.onclick = showMonthInYear;
+          iconDoubleRight.onclick = function () {
+            selectYear++;
+            firstDayOfMonth = new Date(selectYear, selectMonth, 1);
+            showDateInMonth();
+          };
+          iconRight.onclick = function () {
+            firstDayOfMonth = new Date(selectYear, selectMonth + 1, 1);
+            selectMonth = firstDayOfMonth.getMonth();
+            selectYear = firstDayOfMonth.getFullYear();
+            showDateInMonth();
+          };
+          //
         }
-        dateTable.appendChild(lineDate);
+        function showMonthInYear() {
+          title.innerHTML = selectYear;
+          let monthLines = [];
+          for (let i = 0; i < 4; i++) {
+            let monthLine = document.createElement("div");
+            for (let j = 0; j < 3; j++) {
+              let monthHTML = document.createElement("div");
+              monthHTML.className = "month-picker-circle";
+              let monthNumber = i * 3 + j;
+              switch (monthNumber) {
+                case 0:
+                  monthHTML.innerHTML = "Jan";
+                  break;
+                case 1:
+                  monthHTML.innerHTML = "Feb";
+                  break;
+                case 2:
+                  monthHTML.innerHTML = "Mar";
+                  break;
+                case 3:
+                  monthHTML.innerHTML = "Apr";
+                  break;
+                case 4:
+                  monthHTML.innerHTML = "May";
+                  break;
+                case 5:
+                  monthHTML.innerHTML = "Jun";
+                  break;
+                case 6:
+                  monthHTML.innerHTML = "Jul";
+                  break;
+                case 7:
+                  monthHTML.innerHTML = "Aug";
+                  break;
+                case 8:
+                  monthHTML.innerHTML = "Sep";
+                  break;
+                case 9:
+                  monthHTML.innerHTML = "Oct";
+                  break;
+                case 10:
+                  monthHTML.innerHTML = "Nov";
+                  break;
+                case 11:
+                  monthHTML.innerHTML = "Dec";
+                  break;
+                default:
+                  break;
+              }
+              let timeValue = new Date(selectYear, monthNumber, 1);
+              if (
+                selectYear === today.getFullYear() &&
+                today.getMonth() === monthNumber
+              ) {
+                monthHTML.style.border = "1px solid #366AE2";
+              }
+              if (
+                selectYear === selectDate.getFullYear() &&
+                selectDate.getMonth() === monthNumber
+              ) {
+                monthHTML.setAttribute("selected", "true");
+              }
+              monthHTML.onclick = function () {
+                firstDayOfMonth = timeValue;
+                selectMonth = monthNumber;
+                showDateInMonth();
+              };
+              monthLine.appendChild(monthHTML);
+            }
+            monthLines.push(monthLine);
+          }
+          dateTable.replaceChildren(...monthLines);
+          iconDoubleLeft.onclick = function () {
+            if (selectYear - 10 < startDate.getFullYear()) {
+              selectYear = startDate.getFullYear();
+            } else {
+              selectYear -= 10;
+            }
+            showMonthInYear();
+          };
+          iconLeft.onclick = function () {
+            if (selectYear - 1 >= startDate.getFullYear()) {
+              selectYear--;
+              showMonthInYear();
+            }
+          };
+          title.onclick = function () {
+            showYearInRange(selectYear);
+          };
+          iconDoubleRight.onclick = function () {
+            if (selectYear + 10 < endDate.getFullYear()) {
+              selectYear = endDate.getFullYear();
+            } else {
+              selectYear += 10;
+            }
+            showMonthInYear();
+          };
+          iconRight.onclick = function () {
+            if (selectYear + 1 <= endDate.getFullYear()) {
+              selectYear++;
+              showMonthInYear();
+            }
+          };
+        }
+        function showYearInRange(focusYear) {
+          let firstYearInTable =
+            focusYear - ((focusYear - startDate.getFullYear()) % 12);
+          title.innerHTML = `${firstYearInTable}-${firstYearInTable + 11}`;
+          let yearLines = [];
+          for (let i = 0; i < 4; i++) {
+            let yearLine = document.createElement("div");
+            for (let j = 0; j < 3; j++) {
+              let yearHTML = document.createElement("div");
+              yearHTML.className = "year-picker-circle";
+              let yearNumber = i * 3 + j + firstYearInTable;
+              yearHTML.innerHTML = yearNumber;
+              if (yearNumber === today.getFullYear()) {
+                yearHTML.style.border = "1px solid #366AE2";
+              }
+              if (selectYear === yearNumber) {
+                yearHTML.setAttribute("selected", "true");
+              }
+              yearHTML.onclick = function () {
+                selectYear = yearNumber;
+                showMonthInYear();
+              };
+              yearLine.appendChild(yearHTML);
+            }
+            yearLines.push(yearLine);
+          }
+          dateTable.replaceChildren(...yearLines);
+          iconDoubleLeft.onclick = function () {
+            let preRange = selectYear;
+            if (preRange - 20 < startDate.getFullYear()) {
+              preRange = startDate.getFullYear();
+            } else {
+              preRange -= 20;
+            }
+            showYearInRange(preRange);
+          };
+          iconLeft.onclick = function () {
+            let preRange = selectYear;
+            if (preRange - 10 < startDate.getFullYear()) {
+              preRange = startDate.getFullYear();
+            } else {
+              preRange -= 10;
+            }
+            showYearInRange(preRange);
+          };
+          iconDoubleRight.onclick = function () {
+            let nextRange = selectYear;
+            if (nextRange + 20 > endDate.getFullYear()) {
+              nextRange = endDate.getFullYear();
+            } else {
+              nextRange += 20;
+            }
+            showYearInRange(nextRange);
+          };
+          iconRight.onclick = function () {
+            let nextRange = selectYear;
+            if (nextRange + 10 > endDate.getFullYear()) {
+              nextRange = endDate.getFullYear();
+            } else {
+              nextRange += 10;
+            }
+            showYearInRange(nextRange);
+          };
+        }
+        showDateInMonth();
+        let buttonToday = document.createElement("div");
+        buttonToday.className = "footer";
+        buttonToday.innerHTML = "Today";
+        buttonToday.addEventListener("click", function () {
+          selectDate = today;
+          textValue.innerHTML = Ultis.datetoString(selectDate, "dd/MM/yyyy");
+          pickerContainer.remove();
+        });
+        pickerContainer.replaceChildren(header, dateTable, buttonToday);
+        document.body.appendChild(pickerContainer);
+        let offset = this.parentElement.getBoundingClientRect();
+        if (
+          offset.bottom + pickerContainer.offsetHeight + 16 >
+            document.body.offsetHeight &&
+          offset.y - pickerContainer.offsetHeight - 16 > 0
+        ) {
+          pickerContainer.style.left = offset.x + "px";
+          pickerContainer.style.top = `${offset.y - 2}px`;
+        } else {
+          pickerContainer.style.left = offset.x + "px";
+          pickerContainer.style.top = `${offset.bottom + 2}px`;
+        }
+        pickerContainer.addEventListener("click", function () {
+          input.setAttribute("onshowpicker", "true");
+        });
+        input.onblur = function () {
+          setTimeout(function () {
+            if (input.getAttribute("onshowpicker") === "true") {
+              input.focus();
+            } else if (document.body.contains(pickerContainer)) {
+              pickerContainer.remove();
+            }
+          }, 150);
+        };
       }
-      var buttonToday = document.createElement("div");
-      buttonToday.className = "footer";
-      buttonToday.innerHTML = "Today";
-      pickerContainer.replaceChildren(header, dateTable, buttonToday);
-      document.body.appendChild(pickerContainer);
-      let offset = this.getBoundingClientRect();
     });
     document.body.querySelector(".parent.w-row").appendChild(inputPicker);
   </script>

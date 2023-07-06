@@ -9,6 +9,7 @@
 .w-button {
   outline: none;
   border: none;
+  background-color: unset;
 }
 
 .wbaseItem-value {
@@ -141,7 +142,6 @@
   width: 36px;
   height: unset !important;
   aspect-ratio: 9 / 5;
-  /* padding-top: calc(5 / 9 * 100%); */
   background-color: var(--unchecked-bg) !important;
   border-radius: 50vw !important;
   border: none;
