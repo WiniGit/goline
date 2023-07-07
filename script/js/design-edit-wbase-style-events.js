@@ -1825,12 +1825,13 @@ function editTextStyle(text_style_item, onSubmit = true) {
   let _enumObj;
   if (text_style_item.IsStyle) {
     _enumObj = EnumObj.style;
-    for (let i = 0; i < list_text.length; i++) {
-      let eHTML = document.getElementById(list_text[i].GID);
-      list_text[i].StyleItem.TextStyleID = text_style_item.GID;
-      list_text[i].StyleItem.TextStyleItem = text_style_item;
+    for (let wb of list_text) {
+      let eHTML = wb.value;
+      wb.StyleItem.TextStyleID = text_style_item.GID;
+      wb.StyleItem.TextStyleItem = text_style_item;
       eHTML.style.color = `#${text_style_item.ColorValue.substring(2)}${text_style_item.ColorValue.substring(0, 2)}`;
       eHTML.style.fontFamily = text_style_item.FontFamily;
+      if(wb.CateID === EnumCate.textformfield) eHTML.style.setProperty("--suffix-size", `${text_style_item.FontSize}px`);
       eHTML.style.fontSize = `${text_style_item.FontSize}px`;
       eHTML.style.fontWeight = text_style_item.FontWeight;
       eHTML.style.lineHeight = text_style_item.Height == null ? undefined : `${text_style_item.Height}px`;
@@ -1859,12 +1860,13 @@ function editTextStyle(text_style_item, onSubmit = true) {
       }
     }
     if (text_style_item.FontSize != undefined) {
-      for (let wbaseItem of list_text) {
-        wbaseItem.StyleItem.TextStyleItem.FontSize = parseFloat(text_style_item.FontSize);
-        if (wbaseItem.CateID === EnumCate.chart) {
-          createChart(wbaseItem);
+      for (let wb of list_text) {
+        wb.StyleItem.TextStyleItem.FontSize = parseFloat(text_style_item.FontSize);
+        if (wb.CateID === EnumCate.chart) {
+          createChart(wb);
         } else {
-          wbaseItem.value.style.fontSize = `${text_style_item.FontSize}px`;
+          if(wb.CateID === EnumCate.textformfield) wb.value.style.setProperty("--suffix-size", `${text_style_item.FontSize}px`);
+          wb.value.style.fontSize = `${text_style_item.FontSize}px`;
         }
       }
     }
@@ -2024,8 +2026,9 @@ function editTypoSkin(text_style_item, thisSkin) {
   if (text_style_item.FontSize != undefined) {
     thisSkin.FontSize = parseFloat(text_style_item.FontSize);
     let listRelative = wbase_list.filter((e) => e.StyleItem.TextStyleID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.fontSize = thisSkin.FontSize + "px";
+    for (let wb of listRelative) {
+      wb.value.style.fontSize = thisSkin.FontSize + "px";
+      if(wb.CateID === EnumCate.textformfield) wb.value.style.setProperty("--suffix-size", `${text_style_item.FontSize}px`);
     }
   }
   if (text_style_item.FontWeight != undefined) {

@@ -1470,7 +1470,8 @@ function createEditBackground() {
   editContainer.appendChild(header);
 
   let title = document.createElement("p");
-  title.innerHTML = "Background";
+  let checkedComponent = selected_list.every(wb => EnumCate.scale_size_component.some(ct => wb.CateID === ct));
+  title.innerHTML = checkedComponent ? "Checked primary color" : "Background";
   header.appendChild(title);
 
   if (isBgImg) {
@@ -1562,6 +1563,7 @@ function createEditBackground() {
         skin_tile.firstChild.firstChild.style.backgroundColor = `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`;
         skin_tile.firstChild.lastChild.innerHTML = (cateItem ? `${cateItem.Name}/` : "") + colorSkin.Name;
         editContainer.appendChild(skin_tile);
+        if (checkedComponent) skin_tile.lastChild.style.display = "none";
       }
     } else if (listColorID.length > 1) {
       header.appendChild(btnSelectSkin);
@@ -1634,6 +1636,7 @@ function createEditBackground() {
         }
         listEditColorForm.push(formEdit);
       }
+      if (checkedComponent) listEditColorForm.forEach(colorForm => colorForm.querySelector(".action-button:last-child").style.display = "none");
       colorsSelectionList.replaceChildren(...listEditColorForm);
       if (listEditColorForm.length <= 1) {
         header.appendChild(btnSelectSkin);
@@ -2763,8 +2766,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
 
   let editColorTile = document.createElement("div");
   editColorTile.className = "container-edit-tile";
-  editColorTile.style.width = "auto";
-  editColorTile.style.paddingLeft = "4px";
+  editColorTile.style.padding = "0 4px";
 
   let containerInput = document.createElement("div");
   containerInput.className = "parameter-form";
@@ -3339,7 +3341,7 @@ function createSkinTileHTML(enumCate, jsonSkin) {
     popupEdit.style.top = e.pageY + "px";
     popupEdit.style.left = e.pageX + "px";
     document.getElementById("body").appendChild(popupEdit);
-    if(popupEdit.getBoundingClientRect().bottom >= document.body.offsetHeight) {
+    if (popupEdit.getBoundingClientRect().bottom >= document.body.offsetHeight) {
       popupEdit.style.top = `${document.body.offsetHeight - popupEdit.offsetHeight}px`;
     }
   }

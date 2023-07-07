@@ -62,6 +62,12 @@ async function push_dataProject() {
         case EnumCate.tool_text:
           wbValue.removeAttribute("contenteditable");
           break;
+        case EnumCate.textformfield:
+          if(wbValue.querySelector(".wbaseItem-value:has(> .textfield) > label")) {
+            let wbItem = wbase_list.find(e => e.GID === wbValue.id);
+            if(wbItem) wbValue.setAttribute("placeholder", wbItem.JsonItem.HintText);
+          }
+          break;
         case EnumCate.textfield:
           wbValue.style.pointerEvents = null;
           break;
@@ -177,6 +183,7 @@ async function push_dataProject() {
           }
         }
       }
+
     }
     console.log(page.cssString);
 

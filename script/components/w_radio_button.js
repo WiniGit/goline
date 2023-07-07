@@ -4,7 +4,7 @@ function createRadioHTML(item) {
 
 function createRadioButton(wbaseItem) {
 	let toggle = wbaseItem.value ?? document.createElement(!wbaseItem || wbaseItem.build ? "label" : "div");
-	$(toggle).addClass("radio-btn");
+	$(toggle).addClass("w-radio-btn");
 	toggle.htmlFor = `input-${wbaseItem.GID}`;
 	let input = document.createElement("input");
 	input.type = "radio";

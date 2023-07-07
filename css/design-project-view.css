@@ -270,6 +270,10 @@ body:has(#history-view) :is(.btn-tool-state:nth-child(2), .btn-history) {
   pointer-events: none !important;
 }
 
+#divSection .wbaseItem-value:has( > div.textfield) {
+  pointer-events: none !important;
+}
+
 body:has(.wbaseItem-value[loading="true"]) * {
   cursor: wait !important;
   pointer-events: none !important;

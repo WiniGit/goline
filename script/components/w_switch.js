@@ -4,7 +4,7 @@ function createSwitchHTML(item) {
 
 function createSwitch(initValue = false, wbaseItem) {
 	let toggle = document.createElement(!wbaseItem || wbaseItem.build ? "label" : "div");
-	$(toggle).addClass("switch");
+	$(toggle).addClass("w-switch");
 	toggle.setAttribute("value", initValue);
 	let input = document.createElement("input");
 	input.type = "checkbox";
@@ -18,7 +18,7 @@ function createSwitch(initValue = false, wbaseItem) {
 		if (wbaseItem.AttributesItem.NameField !== "")
 			input.name = wbaseItem.AttributesItem.NameField;
 		slider.style.backgroundColor = `#${wbaseItem.JsonItem.DotColor.substring(2) + wbaseItem.JsonItem.DotColor.substring(2, 0)}`;
-		toggle.style.setProperty("--checked-bg", `#${wbaseItem.StyleItem.DecorationItem.ColorValue.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue.substring(2, 0)}`);
+		toggle.style.setProperty("--checked-bg", `#${wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2, 0)}`);
 		toggle.style.setProperty("--unchecked-bg", `#${wbaseItem.JsonItem.InactiveColor.substring(2) + wbaseItem.JsonItem.InactiveColor.substring(2, 0)}`);
 	}
 	input.onchange = function (e) {
@@ -26,7 +26,7 @@ function createSwitch(initValue = false, wbaseItem) {
 		e.stopPropagation();
 		if (wbaseItem) {
 			wbaseItem.AttributesItem.Content = `${this.checked}`;
-			toggle.style.setProperty("--checked-bg", `#${wbaseItem.StyleItem.DecorationItem.ColorValue.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue.substring(2, 0)}`);
+			toggle.style.setProperty("--checked-bg", `#${wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2, 0)}`);
 			toggle.style.setProperty("--unchecked-bg", `#${wbaseItem.JsonItem.InactiveColor.substring(2) + wbaseItem.JsonItem.InactiveColor.substring(2, 0)}`);
 		}
 	}

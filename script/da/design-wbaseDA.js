@@ -218,6 +218,16 @@ class ChartType {
   static list = [...this.axes_chart, this.doughnut, this.pie, this.radar, this.polar];
 }
 
+class WTextFormFieldType {
+  static text = "text";
+  static obscureText = "obscure text";
+  static datePicker = "date picker";
+  static monthPicker = "month picker";
+  static yearPicker = "year picker";
+
+  static list = [this.text, this.obscureText, this.datePicker, this.monthPicker, this.yearPicker];
+}
+
 class ValidateType {
   static is_email = 0;
   static maxCharacter = 1;

@@ -21,7 +21,7 @@ function drawCheckMark(checkboxHTML) {
 
 function createCheckbox(initValue = false, wbaseItem) {
   let toggle = document.createElement(!wbaseItem || wbaseItem.build ? "label" : "div");
-  $(toggle).addClass("check-box");
+  $(toggle).addClass("w-check-box");
   toggle.setAttribute("value", initValue);
   let input = document.createElement("input");
   input.type = "checkbox";

@@ -1511,7 +1511,7 @@ function editJsonItemByCate() {
                     divSection.querySelectorAll(".w-textformfield.helper-text").forEach((element) => {
                       $(element).removeClass("helper-text");
                       $(element).removeAttr("helper-text");
-                      element.style.removeProperty("--state-color");
+                      element.style.removeProperty("--state-color"); 
                     });
                   });
                 }, 200);

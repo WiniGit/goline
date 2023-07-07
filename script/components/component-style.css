@@ -136,7 +136,7 @@
 }
 
 /* switch */
-.switch {
+.w-switch {
   position: relative;
   display: inline-block;
   width: 36px;
@@ -148,7 +148,7 @@
   outline: none;
 }
 
-.switch > input {
+.w-switch > input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -156,7 +156,7 @@
   outline: none;
 }
 
-.switch > .slider {
+.w-switch > .slider {
   position: absolute;
   height: calc(100% - 4px);
   aspect-ratio: 1 / 1;
@@ -168,18 +168,18 @@
   border-radius: 50%;
 }
 
-.switch:has(> input:checked) {
+.w-switch:has(> input:checked) {
   background-color: var(--checked-bg) !important;
 }
 
-.switch > input:checked + .slider {
+.w-switch > input:checked + .slider {
   -webkit-transform: translateX(calc(0.8 * (100% + 4px)));
   -ms-transform: translateX(calc(0.8 * (100% + 4px)));
   transform: translateX(calc(0.8 * (100% + 4px)));
 }
 
 /*checkbox*/
-.check-box {
+.w-check-box {
   position: relative;
   width: 24px;
   aspect-ratio: 1 / 1 !important;
@@ -188,7 +188,7 @@
   display: inline-block;
 }
 
-.check-box > input {
+.w-check-box > input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -196,16 +196,16 @@
   width: 0;
 }
 
-.check-box:has(> input:checked) {
+.w-check-box:has(> input:checked) {
   background-color: var(--checked-bg) !important;
   border: none !important;
 }
 
-.check-box > input:checked ~ .checkmark {
+.w-check-box > input:checked ~ .checkmark {
   display: block;
 }
 
-.check-box > .checkmark {
+.w-check-box > .checkmark {
   left: 0;
   top: 0;
   display: none;
@@ -227,9 +227,10 @@
 }
 
 .wbaseItem-value.w-textformfield .wbaseItem-value:has(> .textfield) {
-  width: 100%;
+  width: 100% !important;
   flex: 1;
   align-items: center;
+  display: flex;
 }
 
 .w-textformfield.helper-text {
@@ -248,13 +249,6 @@
   font-family: inherit;
   font-weight: inherit;
   transform: translate(-7.5%, 92.5%) scale(0.85);
-}
-
-.w-textformfield > .wbaseItem-value[name-field="Textfield"] {
-  display: flex;
-  align-items: center;
-  width: 100% !important;
-  flex: 1;
 }
 
 .w-textformfield .textfield {
@@ -309,6 +303,7 @@ label {
 .textfield > input:focus ~ label {
   transform: scale(0.75) translate(-12.5%, -12.5%);
   text-align: start;
+  color: var(--focus-color);
 }
 
 .w-textformfield .textfield:has(> label) > input:focus {
@@ -319,13 +314,14 @@ label {
   transform: none;
 }
 
-.w-textformfield .textfield + .obscure-btn-txtfd {
+.w-textformfield .textfield + .suffix-btn-txtfd {
+  width: var(--suffix-size);
   position: relative;
   box-sizing: border-box;
   aspect-ratio: 1 / 1;
 }
 
-.w-textformfield .textfield + .obscure-btn-txtfd > * {
+.w-textformfield .textfield + .suffix-btn-txtfd > * {
   position: absolute;
   box-sizing: border-box;
   top: 50%;
@@ -333,8 +329,12 @@ label {
   transform: translate(-50%, -50%);
 }
 
+.w-textformfield:has(> .w-date-picker-popup) {
+  position: relative;
+}
+
 /* radio */
-.radio-btn {
+.w-radio-btn {
   display: block;
   position: relative;
   width: 20px;
@@ -345,18 +345,18 @@ label {
   background-color: transparent !important;
 }
 
-.radio-btn > input {
+.w-radio-btn > input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
 }
 
-.radio-btn > input[type="radio"]:checked ~ .checkmark {
+.w-radio-btn > input[type="radio"]:checked ~ .checkmark {
   display: block !important;
   background-color: var(--checked-border);
 }
 
-.radio-btn > .checkmark {
+.w-radio-btn > .checkmark {
   display: none;
   position: absolute;
   top: 50%;
@@ -367,7 +367,7 @@ label {
   aspect-ratio: 1 / 1;
 }
 
-.radio-btn:has(> input[type="radio"]:checked) {
+.w-radio-btn:has(> input[type="radio"]:checked) {
   border-color: var(--checked-border) !important;
 }
 

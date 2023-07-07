@@ -336,7 +336,7 @@ function initElement(wbaseHTML) {
       } else {
         wbaseHTML.removeAttribute("tree-height");
       }
-      wbaseHTML.querySelectorAll(".children-value > .check-box").forEach((chbox) => $(chbox.querySelector("input")).trigger("change"));
+      wbaseHTML.querySelectorAll(".children-value > .w-check-box").forEach((chbox) => $(chbox.querySelector("input")).trigger("change"));
       break;
     default:
       break;
@@ -700,6 +700,7 @@ function initWbaseStyle(item) {
   if (item.StyleItem.TextStyleItem && item.CateID !== EnumCate.chart) {
     item.value.style.fontFamily = item.StyleItem.TextStyleItem.FontFamily;
     item.value.style.fontSize = `${item.StyleItem.TextStyleItem.FontSize}px`;
+    if(item.CateID === EnumCate.textformfield) item.value.style.setProperty("--suffix-size", `${item.StyleItem.TextStyleItem.FontSize}px`);
     item.value.style.fontWeight = item.StyleItem.TextStyleItem.FontWeight;
     item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing ?? 0}px`;
     item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue?.substring(2)}${item.StyleItem.TextStyleItem.ColorValue?.substring(0, 2)}`;
