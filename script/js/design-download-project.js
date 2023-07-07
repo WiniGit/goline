@@ -73,11 +73,10 @@ async function push_dataProject() {
         /*  */
         `;
       }
-      let computStyle = window.getComputedStyle(document.getElementById(wbValue.id));
       let wbCss = `.wbaseItem-value[id="${wbValue.id}"] {`;
       for (let i = 0; i < wbValue.style.length; i++) {
         wbCss += `
-        ${wbValue.style[i]}: ${wbValue.style[i].startsWith("--") ? wbValue.style.getPropertyValue(wbValue.style[i]) : computStyle[wbValue.style[i]]};
+        ${wbValue.style[i]}: ${wbValue.style[i].startsWith("--") ? wbValue.style.getPropertyValue(wbValue.style[i]) : wbValue.style[wbValue.style[i]]};
         `
       }
       wbCss += `
