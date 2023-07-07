@@ -83,7 +83,7 @@ async function push_dataProject() {
       wbCss += `
     }`;
       cssString += wbCss;
-      wbValue.style = null;
+      wbValue.removeAttribute("style");
     });
     cloneValue.cssString = cssString;
     $(cloneValue).addClass("w-page");
