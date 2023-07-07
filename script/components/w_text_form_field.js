@@ -3,7 +3,7 @@ const txtfd_eye_off = `<svg width="100%" height="100%" viewBox="0 0 24 24" fill=
 
 function createTextFormFieldHTML(item, data) {
   item.value = document.createElement("div");
-    $(item.value).addClass("textformfield");
+    $(item.value).addClass("w-textformfield");
   item.value.replaceChildren(...data.map(child => {
     if (child.CateID === EnumCate.textfield) createTextFieldHTML(child, item);
     child.value.style.position = null;
@@ -16,7 +16,6 @@ function createTextFormFieldHTML(item, data) {
 function createTextFieldHTML(item, parent) {
   if (!item.value?.id) {
     item.value = document.createElement("div");
-    $(item.value).addClass("row");
   }
   let textField = document.createElement("div");
   $(textField).addClass("textfield");

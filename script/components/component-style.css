@@ -212,12 +212,12 @@
   transition: 0.4s;
 }
 
-/* textformfield */
-.textformfield {
+/* w-textformfield */
+.w-textformfield {
   position: relative;
 }
 
-.textformfield {
+.w-textformfield {
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -226,18 +226,18 @@
   box-sizing: border-box;
 }
 
-.wbaseItem-value.textformfield .wbaseItem-value:has(> .textfield) {
+.wbaseItem-value.w-textformfield .wbaseItem-value:has(> .textfield) {
   width: 100%;
   flex: 1;
   align-items: center;
 }
 
-.textformfield.helper-text {
+.w-textformfield.helper-text {
   overflow: visible !important;
   border-color: var(--state-color) !important;
 }
 
-.textformfield.helper-text::after {
+.w-textformfield.helper-text::after {
   content: attr(helper-text);
   color: var(--state-color);
   position: absolute;
@@ -250,7 +250,14 @@
   transform: translate(-7.5%, 92.5%) scale(0.85);
 }
 
-.textformfield .textfield {
+.w-textformfield > .wbaseItem-value[name-field="Textfield"] {
+  display: flex;
+  align-items: center;
+  width: 100% !important;
+  flex: 1;
+}
+
+.w-textformfield .textfield {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -261,7 +268,7 @@
   background-color: transparent !important;
 }
 
-.textformfield .textfield > input,
+.w-textformfield .textfield > input,
 label {
   border: none;
   outline: none;
@@ -271,7 +278,7 @@ label {
   transition: 0.4s;
 }
 
-.textformfield .textfield > input {
+.w-textformfield .textfield > input {
   min-width: 0;
   width: 100%;
   background-color: transparent;
@@ -280,11 +287,11 @@ label {
   order: 1;
 }
 
-.textformfield .textfield > input::placeholder {
+.w-textformfield .textfield > input::placeholder {
   color: inherit;
 }
 
-.textformfield .textfield:has(> label) > input {
+.w-textformfield .textfield:has(> label) > input {
   transform: translateY(-50%);
 }
 
@@ -294,7 +301,7 @@ label {
   line-height: 0.8;
 }
 
-.textformfield .textfield.content > label {
+.w-textformfield .textfield.content > label {
   transform: scale(0.75) translate(-12.5%, -12.5%);
   text-align: start;
 }
@@ -304,21 +311,21 @@ label {
   text-align: start;
 }
 
-.textformfield .textfield:has(> label) > input:focus {
+.w-textformfield .textfield:has(> label) > input:focus {
   transform: none;
 }
 
-.textformfield .textfield.content:has(> label) > input {
+.w-textformfield .textfield.content:has(> label) > input {
   transform: none;
 }
 
-.textformfield .textfield + .obscure-btn-txtfd {
+.w-textformfield .textfield + .obscure-btn-txtfd {
   position: relative;
   box-sizing: border-box;
   aspect-ratio: 1 / 1;
 }
 
-.textformfield .textfield + .obscure-btn-txtfd > * {
+.w-textformfield .textfield + .obscure-btn-txtfd > * {
   position: absolute;
   box-sizing: border-box;
   top: 50%;

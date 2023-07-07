@@ -1508,7 +1508,7 @@ function editJsonItemByCate() {
                     popupMessageValid.style.transform = `translate(calc(-100% - 16px), ${document.body.offsetHeight - popupMessageValid.getBoundingClientRect().bottom}px)`;
                   }
                   handlePopupDispose(popupMessageValid, function () {
-                    divSection.querySelectorAll(".textformfield.helper-text").forEach((element) => {
+                    divSection.querySelectorAll(".w-textformfield.helper-text").forEach((element) => {
                       $(element).removeClass("helper-text");
                       $(element).removeAttr("helper-text");
                       element.style.removeProperty("--state-color");
