@@ -63,9 +63,9 @@ async function push_dataProject() {
           wbValue.removeAttribute("contenteditable");
           break;
         case EnumCate.textformfield:
-          if(wbValue.querySelector(".wbaseItem-value:has(> .textfield) > label")) {
-            let wbItem = wbase_list.find(e => e.GID === wbValue.id);
-            if(wbItem) wbValue.setAttribute("placeholder", wbItem.JsonItem.HintText);
+          if (wbValue.querySelector(".wbaseItem-value:has(> .textfield) > label")) {
+            let wbItem = wbase_list.find((e) => e.GID === wbValue.id);
+            if (wbItem) wbValue.setAttribute("placeholder", wbItem.JsonItem.HintText);
           }
           break;
         case EnumCate.textfield:
@@ -86,7 +86,7 @@ async function push_dataProject() {
       for (let i = 0; i < wbValue.style.length; i++) {
         wbCss += `
         ${wbValue.style[i]}: ${wbValue.style[i].startsWith("--") ? wbValue.style.getPropertyValue(wbValue.style[i]) : wbValue.style[wbValue.style[i]]};
-        `
+        `;
       }
       wbCss += `
     }`;
@@ -99,6 +99,19 @@ async function push_dataProject() {
     return cloneValue;
   });
 
+  await $.post(
+    "/view/build",
+    {
+      Sort: 0,
+      Name: page.Name,
+      Type: 1,
+      Code: ProjectDA.obj.Code.toLowerCase(),
+    },
+    function (data) {
+      console.log("data-start: ", data);
+    },
+  );
+
   for (let page of list_page) {
     page_script = "";
     var list_itemShow = get_listItemInside(page.id);
@@ -110,7 +123,7 @@ async function push_dataProject() {
           if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
 
           $(clickElement).addClass("event-click");
-          let new_url = '';
+          let new_url = "";
           // if (isDemo == true) {
           //   let new_router = RouterDA.list.find((e) => e.Id == router_item.RouterID);
           //   if (new_router != null) {
@@ -175,7 +188,7 @@ async function push_dataProject() {
           if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
 
           $(clickElement).addClass("event-click");
-          let new_url = '';
+          let new_url = "";
           new_url = `/${Ultis.toSlug(nextPagePrototype.Name)}`;
           // }
           if (new_url.length > 0) {
@@ -183,14 +196,13 @@ async function push_dataProject() {
           }
         }
       }
-
     }
     console.log(page.cssString);
 
     await $.post(
       "/view/build",
       {
-        Sort: list_page.indexOf(page),
+        Sort: list_page.indexOf(page) + 1,
         Name: page.Name,
         Type: 1,
         Code: ProjectDA.obj.Code.toLowerCase(),
@@ -204,7 +216,7 @@ async function push_dataProject() {
     await $.post(
       "/view/build",
       {
-        Sort: list_page.indexOf(page),
+        Sort: list_page.indexOf(page) + 1,
         Name: page.Name,
         Type: 0,
         Code: ProjectDA.obj.Code.toLowerCase(),
@@ -274,16 +286,15 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 try {
   const ipcRenderer = require("electron").ipcRenderer;
   $("body").on("click", ".btn-play", async function () {
-    $('.btn-play').html(`<i class="fa-solid fa-spinner fa-spin text-white"></i>`);
+    $(".btn-play").html(`<i class="fa-solid fa-spinner fa-spin text-white"></i>`);
 
     let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
     await push_dataProject();
 
     var router;
-    if (selected_list.length == 1 && list_page.some(e => e.ID == selected_list[0].ID)) {
+    if (selected_list.length == 1 && list_page.some((e) => e.ID == selected_list[0].ID)) {
       router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(selected_list[0].Name) }];
-    }
-    else {
+    } else {
       if (ProjectDA.obj.RouterJson != null) {
         router = JSON.parse(ProjectDA.obj.RouterJson);
       } else {
@@ -302,8 +313,8 @@ try {
         // window.open(`https://wini.vn`);
         // ${ProjectDA.obj.Code}/Views/${router[0].PageName}.html
         ipcRenderer.send("asynchronous-play", `${ProjectDA.obj.Code}`);
-        $('.btn-play').html(`<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/play.svg" class="btn-play">`);
+        $(".btn-play").html(`<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/play.svg" class="btn-play">`);
       },
     );
   });
-} catch (error) { }
+} catch (error) {}
