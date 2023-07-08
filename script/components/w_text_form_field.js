@@ -89,7 +89,7 @@ function createTextFieldHTML(item, parent) {
         item.value.appendChild(obscureBtn);
         break;
       default:
-        item.value.parentElement.setAttribute("type", parent.JsonItem?.Type);
+        item.value.setAttribute("type", parent.JsonItem?.Type);
         // date || month || year picker
         let calendarBtn = document.createElement("div");
         calendarBtn.className = "suffix-btn-txtfd calendar-icon";
