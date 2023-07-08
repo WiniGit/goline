@@ -103,7 +103,7 @@ async function push_dataProject() {
     "/view/build",
     {
       Sort: 0,
-      Name: page.Name,
+      Name: "",
       Type: 2,
       Code: ProjectDA.obj.Code.toLowerCase(),
     },
