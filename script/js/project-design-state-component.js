@@ -1270,21 +1270,27 @@ function editJsonItemByCate() {
       };
       inputFieldPlaceholder.replaceChildren(labelPlaceholder, inputPlaceholder);
       //
-      let obscureCheckRow = document.createElement("div");
-      obscureCheckRow.className = "row";
-      let checkboxObsucre = document.createElement("input");
-      checkboxObsucre.id = "txtfd-check-obscure";
-      checkboxObsucre.type = "checkbox";
-      checkboxObsucre.defaultChecked = selected_list[0].JsonItem.ObscureText;
-      checkboxObsucre.onchange = function (e) {
-        e.stopPropagation();
-        editJsonItem({ ObscureText: this.checked });
-      };
-      let labelObscure = document.createElement("label");
-      labelObscure.className = "regular1";
-      labelObscure.htmlFor = "txtfd-check-obscure";
-      labelObscure.innerHTML = "Password type";
-      obscureCheckRow.replaceChildren(checkboxObsucre, labelObscure);
+      let txtfdTypeRow = document.createElement("div");
+      txtfdTypeRow.className = "row";
+      txtfdTypeRow.style.columnGap = "48px";
+      let txtfdTypeTitle = document.createElement("div");
+      txtfdTypeTitle.className = "regular1";
+      txtfdTypeTitle.innerHTML = "Input type";
+      let drpBtnTxtfdType = _btnDropDownSelect(
+        WTextFormFieldType.list,
+        function (options) {
+          for (let option of options) {
+            let initVl = option.getAttribute("value");
+            option.firstChild.style.opacity = initVl === selected_list[0].JsonItem.Type ? 1 : 0;
+          }
+        },
+        function (option) {
+          editJsonItem({ TextFormFieldType: option });
+          drpBtnTxtfdType.firstChild.innerHTML = option;
+        },
+      );
+      drpBtnTxtfdType.firstChild.innerHTML = selected_list[0].JsonItem.Type;
+      txtfdTypeRow.replaceChildren(txtfdTypeTitle, drpBtnTxtfdType);
       //
       let enableRow = document.createElement("div");
       enableRow.className = "row";
@@ -1511,7 +1517,7 @@ function editJsonItemByCate() {
                     divSection.querySelectorAll(".w-textformfield.helper-text").forEach((element) => {
                       $(element).removeClass("helper-text");
                       $(element).removeAttr("helper-text");
-                      element.style.removeProperty("--state-color"); 
+                      element.style.removeProperty("--state-color");
                     });
                   });
                 }, 200);
@@ -1526,7 +1532,7 @@ function editJsonItemByCate() {
       listValidateTile();
       validateContainer.replaceChildren(validateHeader, validateBody);
       //
-      jsonItemEditUI.replaceChildren(title, inputFieldInitValue, inputFieldLabel, inputFieldPlaceholder, obscureCheckRow, enableRow, validateContainer);
+      jsonItemEditUI.replaceChildren(title, inputFieldInitValue, inputFieldLabel, inputFieldPlaceholder, txtfdTypeRow , enableRow, validateContainer);
       break;
     default:
       break;

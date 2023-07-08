@@ -221,9 +221,9 @@ class ChartType {
 class WTextFormFieldType {
   static text = "text";
   static obscureText = "obscure text";
-  static datePicker = "date picker";
-  static monthPicker = "month picker";
-  static yearPicker = "year picker";
+  static datePicker = "date";
+  static monthPicker = "month";
+  static yearPicker = "year";
 
   static list = [this.text, this.obscureText, this.datePicker, this.monthPicker, this.yearPicker];
 }

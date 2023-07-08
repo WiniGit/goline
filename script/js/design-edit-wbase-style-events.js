@@ -2542,8 +2542,8 @@ function editJsonItem(jsonItem, onSubmit = true) {
     selected_list[0].JsonItem.HintText = jsonItem.HintText;
     let thislabel = selected_list[0].value.querySelector(".textfield > label");
     if (!thislabel) selected_list[0].value.querySelector(".textfield > input").placeholder = jsonItem.HintText;
-  } else if (jsonItem.ObscureText != undefined) {
-    selected_list[0].JsonItem.ObscureText = jsonItem.ObscureText;
+  } else if (jsonItem.TextFormFieldType) {
+    selected_list[0].JsonItem.Type = jsonItem.TextFormFieldType;
     createTextFieldHTML(
       wbase_list.find((e) => e.CateID === EnumCate.textfield && e.ParentID === selected_list[0].GID),
       selected_list[0],

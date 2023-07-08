@@ -5,13 +5,14 @@ const txtfd_calendar = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" hei
 function createTextFormFieldHTML(item, data) {
   item.value = document.createElement("div");
   $(item.value).addClass("w-textformfield");
-  item.value.replaceChildren(...data.map(child => {
-    if (child.CateID === EnumCate.textfield) createTextFieldHTML(child, item);
-    child.value.style.position = null;
-    if (child.value.style.width == "100%")
-      child.value.style.flex = 1;
-    return child.value;
-  }));
+  item.value.replaceChildren(
+    ...data.map((child) => {
+      if (child.CateID === EnumCate.textfield) createTextFieldHTML(child, item);
+      child.value.style.position = null;
+      if (child.value.style.width == "100%") child.value.style.flex = 1;
+      return child.value;
+    }),
+  );
 }
 
 function createTextFieldHTML(item, parent) {
@@ -25,8 +26,7 @@ function createTextFieldHTML(item, parent) {
   input.id = `textfield-${item.GID}`;
   children.push(input);
   if (parent) {
-    if (parent.AttributesItem.NameField !== "")
-      input.name = parent.AttributesItem.NameField;
+    if (parent.AttributesItem.NameField !== "") input.name = parent.AttributesItem.NameField;
     input.readOnly = parent.JsonItem.ReadOnly;
     input.disabled = !parent.JsonItem.Enabled;
     input.value = parent.AttributesItem.Content ?? "";
@@ -54,55 +54,48 @@ function createTextFieldHTML(item, parent) {
       } else {
         input.placeholder = parent.JsonItem.HintText;
       }
-      if (parent.JsonItem.AutoValidate) { }
-    }
+      if (parent.JsonItem.AutoValidate) {
+      }
+    };
     input.onfocus = function (e) {
       e.stopPropagation();
       if (parent.JsonItem?.HintText) {
         this.placeholder = parent.JsonItem.HintText;
       }
-    }
+    };
   }
   textField.replaceChildren(...children);
   item.value.replaceChildren(textField);
   if (parent) {
     let focusColor = "#1890ff";
     if (parent.JsonEventItem) {
-      let eventFocus = parent.JsonEventItem.find(evt => evt.Name === "State")?.ListState?.find(state => state.Type === ComponentState.focus);
+      let eventFocus = parent.JsonEventItem.find((evt) => evt.Name === "State")?.ListState?.find((state) => state.Type === ComponentState.focus);
       if (eventFocus && eventFocus.BorderSkinID && eventFocus.BorderSkinID != "") {
-        let borderSkin = BorderDA.list.find(skin => skin.GID === eventFocus.BorderSkinID);
+        let borderSkin = BorderDA.list.find((skin) => skin.GID === eventFocus.BorderSkinID);
         focusColor = `#${borderSkin.ColorValue.substring(2)}${borderSkin.ColorValue.substring(0, 2)}`;
       }
     }
     item.value.style.setProperty("--focus-color", focusColor);
+    parent.JsonItem.Type ??= WTextFormFieldType.text;
     switch (parent.JsonItem?.Type) {
       case WTextFormFieldType.text:
         break;
       case WTextFormFieldType.obscureText:
         input.type = "password";
-        let isShowPass = false;
         let obscureBtn = document.createElement("div");
         obscureBtn.className = "suffix-btn-txtfd eye-icon";
-        if (isShowPass) {
-          input.type = "text";
-          obscureBtn.innerHTML = txtfd_eye_on.replace('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
-        } else {
-          input.type = "password";
-          obscureBtn.innerHTML = txtfd_eye_off.replace('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
-        }
+        input.type = "password";
+        obscureBtn.innerHTML = txtfd_eye_off.replace('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
         item.value.appendChild(obscureBtn);
         break;
       default:
+        item.value.parentElement.setAttribute("type", parent.JsonItem?.Type);
         // date || month || year picker
         let calendarBtn = document.createElement("div");
         calendarBtn.className = "suffix-btn-txtfd calendar-icon";
         calendarBtn.innerHTML = txtfd_calendar.replace('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
-        calendarBtn.onclick = function (e) {
-          e.stopPropagation();
-        }
         item.value.appendChild(calendarBtn);
         break;
     }
   }
 }
-
