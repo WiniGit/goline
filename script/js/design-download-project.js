@@ -104,7 +104,7 @@ async function push_dataProject() {
     {
       Sort: 0,
       Name: page.Name,
-      Type: 1,
+      Type: 2,
       Code: ProjectDA.obj.Code.toLowerCase(),
     },
     function (data) {
