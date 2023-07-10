@@ -1860,7 +1860,7 @@ function createEditTextStyle() {
       input_line_height.lastChild.onblur = function () {
         if (this.value.toLowerCase() == "auto") {
           editTextStyle({ Height: this.value });
-        } else if (!NaN(parseFloat(this.value))) {
+        } else if (!isNaN(parseFloat(this.value))) {
           editTextStyle({ Height: parseFloat(this.value) });
         }
         updateUITextStyle();
@@ -2661,7 +2661,7 @@ function createEditEffect() {
       let input_offsetX = _textField("84px", undefined, "X", "0", undefined);
       input_offsetX.id = "edit_effect_offsetX";
       input_offsetX.lastChild.onblur = function () {
-        if (!NaN(parseFloat(this.value))) {
+        if (!isNaN(parseFloat(this.value))) {
           editEffect({ OffsetX: parseFloat(this.value) });
         }
         updateUIEffectAttribute();
@@ -2669,7 +2669,7 @@ function createEditEffect() {
       let input_blur = _textField("84px", undefined, "Blur", "0", undefined);
       input_blur.id = "edit_effect_blur";
       input_blur.lastChild.onblur = function () {
-        if (!NaN(parseFloat(this.value))) {
+        if (!isNaN(parseFloat(this.value))) {
           editEffect({ BlurRadius: parseFloat(this.value) });
         }
         updateUIEffectAttribute();
@@ -2677,7 +2677,7 @@ function createEditEffect() {
       let input_offsetY = _textField("84px", undefined, "Y", "0", undefined);
       input_offsetY.id = "edit_effect_offsetY";
       input_offsetY.lastChild.onblur = function () {
-        if (!NaN(parseFloat(this.value))) {
+        if (!isNaN(parseFloat(this.value))) {
           editEffect({ OffsetY: parseFloat(this.value) });
         }
         updateUIEffectAttribute();
@@ -2685,7 +2685,7 @@ function createEditEffect() {
       let input_spread = _textField("84px", undefined, "Spread", "0", undefined);
       input_spread.id = "edit_effect_spread";
       input_spread.lastChild.onblur = function () {
-        if (!NaN(parseFloat(this.value))) {
+        if (!isNaN(parseFloat(this.value))) {
           editEffect({ SpreadRadius: parseFloat(this.value) });
         }
         updateUIEffectAttribute();
@@ -3805,7 +3805,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         if (this.value.toLowerCase() == "auto") {
           editTypoSkin({ Height: this.value }, thisSkin);
           demoText.style.lineHeight = "normal";
-        } else if (!NaN(parseFloat(this.value))) {
+        } else if (!isNaN(parseFloat(this.value))) {
           editTypoSkin({ Height: parseFloat(this.value) }, thisSkin);
           demoText.style.lineHeight = parseFloat(this.value) + "px";
         } else {
@@ -3928,7 +3928,7 @@ function popupEditSkin(enumCate, jsonSkin) {
           break;
       }
       edit_stroke_width.lastChild.onblur = function () {
-        if (!NaN(parseFloat(this.value))) {
+        if (!isNaN(parseFloat(this.value))) {
           let thisSkin = BorderDA.list.find((e) => e.GID == jsonSkin.GID);
           group_custom_border_side.style.display = "none";
           editBorderSkin({ Width: parseFloat(this.value) }, thisSkin);
@@ -4121,7 +4121,7 @@ function popupEditSkin(enumCate, jsonSkin) {
           input_offsetX.lastChild.value = thisSkin.OffsetX;
           input_offsetX.lastChild.onblur = function () {
             let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-            if (!NaN(parseFloat(this.value))) {
+            if (!isNaN(parseFloat(this.value))) {
               editEffectSkin({ OffsetX: parseFloat(this.value) }, thisSkin);
               demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
                       ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
@@ -4135,7 +4135,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         input_blur.lastChild.value = thisSkin.BlurRadius;
         input_blur.lastChild.onblur = function () {
           let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-          if (!NaN(parseFloat(this.value))) {
+          if (!isNaN(parseFloat(this.value))) {
             editEffectSkin({ BlurRadius: parseFloat(this.value) }, thisSkin);
             if (thisSkin.Type == ShadowType.layer_blur) {
               demoShadow.style.filter = `blur(${thisSkin.BlurRadius}px)`;
@@ -4154,7 +4154,7 @@ function popupEditSkin(enumCate, jsonSkin) {
           input_offsetY.lastChild.value = thisSkin.OffsetY;
           input_offsetY.lastChild.onblur = function () {
             let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-            if (!NaN(parseFloat(this.value))) {
+            if (!isNaN(parseFloat(this.value))) {
               editEffectSkin({ OffsetY: parseFloat(this.value) }, thisSkin);
               demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
                     ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
@@ -4166,7 +4166,7 @@ function popupEditSkin(enumCate, jsonSkin) {
           input_spread.lastChild.value = thisSkin.SpreadRadius;
           input_spread.lastChild.onblur = function () {
             let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-            if (!NaN(parseFloat(this.value))) {
+            if (!isNaN(parseFloat(this.value))) {
               editEffectSkin({ SpreadRadius: parseFloat(this.value) }, thisSkin);
               demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
                     ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
