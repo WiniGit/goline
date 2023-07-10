@@ -1005,7 +1005,7 @@ class WBaseDefault {
       ReadOnly: false,
       IsImportant: false,
       KeyboardType: null,
-      ObscureText: false,
+      Type: WTextFormFieldType.text,
       ObscuringCharacter: "*",
       MaxLength: null,
       HintText: "Placeholder",
@@ -1013,6 +1013,7 @@ class WBaseDefault {
       TextCapitalization: null,
       JsonVadidate: [],
       AutoValidate: false,
+      SuffixSize: 16,
     },
     JsonEventItem: [
       {

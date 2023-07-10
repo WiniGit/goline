@@ -81,19 +81,23 @@ function createTextFieldHTML(item, parent) {
       case WTextFormFieldType.text:
         break;
       case WTextFormFieldType.obscureText:
+        parent.JsonItem.SuffixSize ??= 16;
+        item.value.style.setProperty("--suffix-size", `${parent.JsonItem.SuffixSize}px`);
         input.type = "password";
         let obscureBtn = document.createElement("div");
         obscureBtn.className = "suffix-btn-txtfd eye-icon";
         input.type = "password";
-        obscureBtn.innerHTML = txtfd_eye_off.replace('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
+        obscureBtn.innerHTML = txtfd_eye_off.replaceAll('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
         item.value.appendChild(obscureBtn);
         break;
       default:
+        parent.JsonItem.SuffixSize ??= 16;
+        item.value.style.setProperty("--suffix-size", `${parent.JsonItem.SuffixSize}px`);
         item.value.setAttribute("type", parent.JsonItem?.Type);
         // date || month || year picker
         let calendarBtn = document.createElement("div");
         calendarBtn.className = "suffix-btn-txtfd calendar-icon";
-        calendarBtn.innerHTML = txtfd_calendar.replace('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
+        calendarBtn.innerHTML = txtfd_calendar.replaceAll('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
         item.value.appendChild(calendarBtn);
         break;
     }

@@ -1287,10 +1287,36 @@ function editJsonItemByCate() {
         function (option) {
           editJsonItem({ TextFormFieldType: option });
           drpBtnTxtfdType.firstChild.innerHTML = option;
+          if (option == WTextFormFieldType.text) {
+            inputFieldSuffixSize.style.display = "none";
+          } else {
+            inputFieldSuffixSize.style.display = "flex";
+          }
         },
       );
       drpBtnTxtfdType.firstChild.innerHTML = selected_list[0].JsonItem.Type;
       txtfdTypeRow.replaceChildren(txtfdTypeTitle, drpBtnTxtfdType);
+      //
+      let inputFieldSuffixSize = document.createElement("div");
+      inputFieldSuffixSize.className = "input-edit-field row";
+      let labelSuffixSize = document.createElement("label");
+      labelSuffixSize.htmlFor = "txtfd-suffixsize";
+      labelSuffixSize.className = "regular1";
+      labelSuffixSize.innerHTML = "SuffixIcon size";
+      let inputSuffixSize = document.createElement("input");
+      inputSuffixSize.id = "txtfd-suffixsize";
+      inputSuffixSize.className = "regular1";
+      inputSuffixSize.defaultValue = selected_list[0].JsonItem.SuffixSize;
+      inputSuffixSize.onblur = function (e) {
+        e.stopPropagation();
+        if (!isNaN(parseFloat(this.value))) {
+          editJsonItem({ SuffixSize: parseFloat(this.value) });
+        } else {
+          this.value = selected_list[0].JsonItem.SuffixSize;
+        }
+      };
+      inputFieldSuffixSize.replaceChildren(labelSuffixSize, inputSuffixSize);
+      if (selected_list[0].JsonItem.Type == WTextFormFieldType.text) inputFieldSuffixSize.style.display = "none";
       //
       let enableRow = document.createElement("div");
       enableRow.className = "row";
@@ -1532,7 +1558,7 @@ function editJsonItemByCate() {
       listValidateTile();
       validateContainer.replaceChildren(validateHeader, validateBody);
       //
-      jsonItemEditUI.replaceChildren(title, inputFieldInitValue, inputFieldLabel, inputFieldPlaceholder, txtfdTypeRow , enableRow, validateContainer);
+      jsonItemEditUI.replaceChildren(title, inputFieldInitValue, inputFieldLabel, inputFieldPlaceholder, txtfdTypeRow, inputFieldSuffixSize, enableRow, validateContainer);
       break;
     default:
       break;

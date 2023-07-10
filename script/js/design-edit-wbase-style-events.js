@@ -574,7 +574,7 @@ function selectResizeType(isW = true, type) {
         for (let wb of selected_list) {
           wb.StyleItem.FrameItem.Width = wb.value.offsetWidth;
           wb.value.style.width = `${wb.value.offsetWidth}px`;
-          if (parentHTML.classList.contains("w-row")) {
+          if (parentHTML && parentHTML.classList.contains("w-row")) {
             wb.value.style.flex = null;
           }
         }
@@ -644,7 +644,7 @@ function selectResizeType(isW = true, type) {
             let wbHTML = wb.value;
             wb.StyleItem.FrameItem.Width = wbHTML.offsetWidth === 0 ? -1 : -wbHTML.offsetWidth;
             wbHTML.style.width = "100%";
-            if (parentHTML.classList.contains("w-row")) wbHTML.style.flex = 1;
+            if (parentHTML && parentHTML.classList.contains("w-row")) wbHTML.style.flex = 1;
           }
         } else return;
         break;
@@ -657,7 +657,7 @@ function selectResizeType(isW = true, type) {
         for (let wb of selected_list) {
           wb.StyleItem.FrameItem.Height = wb.value.offsetHeight;
           wb.value.style.height = `${wb.value.offsetHeight}px`;
-          if (parentHTML.classList.contains("w-col")) {
+          if (parentHTML && parentHTML.classList.contains("w-col")) {
             wb.value.style.flex = null;
           }
         }
@@ -727,7 +727,7 @@ function selectResizeType(isW = true, type) {
             let wbHTML = wb.value;
             wb.StyleItem.FrameItem.Height = wbHTML.offsetHeight === 0 ? -1 : -wbHTML.offsetHeight;
             wbHTML.style.height = "100%";
-            if (parentHTML.classList.contains("w-col")) wbHTML.style.flex = 1;
+            if (parentHTML && parentHTML.classList.contains("w-col")) wbHTML.style.flex = 1;
           }
         } else return;
         break;
@@ -1831,7 +1831,6 @@ function editTextStyle(text_style_item, onSubmit = true) {
       wb.StyleItem.TextStyleItem = text_style_item;
       eHTML.style.color = `#${text_style_item.ColorValue.substring(2)}${text_style_item.ColorValue.substring(0, 2)}`;
       eHTML.style.fontFamily = text_style_item.FontFamily;
-      if(wb.CateID === EnumCate.textformfield) eHTML.style.setProperty("--suffix-size", `${text_style_item.FontSize}px`);
       eHTML.style.fontSize = `${text_style_item.FontSize}px`;
       eHTML.style.fontWeight = text_style_item.FontWeight;
       eHTML.style.lineHeight = text_style_item.Height == null ? undefined : `${text_style_item.Height}px`;
@@ -1865,7 +1864,6 @@ function editTextStyle(text_style_item, onSubmit = true) {
         if (wb.CateID === EnumCate.chart) {
           createChart(wb);
         } else {
-          if(wb.CateID === EnumCate.textformfield) wb.value.style.setProperty("--suffix-size", `${text_style_item.FontSize}px`);
           wb.value.style.fontSize = `${text_style_item.FontSize}px`;
         }
       }
@@ -2028,7 +2026,6 @@ function editTypoSkin(text_style_item, thisSkin) {
     let listRelative = wbase_list.filter((e) => e.StyleItem.TextStyleID == thisSkin.GID);
     for (let wb of listRelative) {
       wb.value.style.fontSize = thisSkin.FontSize + "px";
-      if(wb.CateID === EnumCate.textformfield) wb.value.style.setProperty("--suffix-size", `${text_style_item.FontSize}px`);
     }
   }
   if (text_style_item.FontWeight != undefined) {
@@ -2548,6 +2545,9 @@ function editJsonItem(jsonItem, onSubmit = true) {
       wbase_list.find((e) => e.CateID === EnumCate.textfield && e.ParentID === selected_list[0].GID),
       selected_list[0],
     );
+  } else if (jsonItem.SuffixSize != undefined) { 
+    selected_list[0].JsonItem.SuffixSize = jsonItem.SuffixSize;
+    selected_list[0].value.querySelector(`.wbaseItem-value:has(> .textfield)`).style.setProperty("--suffix-size", `${jsonItem.SuffixSize}px`);
   } else if (jsonItem.Enabled != undefined) {
     selected_list[0].JsonItem.Enabled = jsonItem.Enabled;
     selected_list[0].value.querySelector(".textfield > input").disabled = !jsonItem.Enabled;
