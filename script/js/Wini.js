@@ -759,7 +759,7 @@ function centerViewInitListener() {
       childList: true,
     });
   });
-  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
+  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
     resizeWbase.observe(page);
   });
   listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
