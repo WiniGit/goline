@@ -296,7 +296,7 @@ function inputFrameItem(frame_item, isRatioWH) {
     }
   } else if (frame_item.Height != undefined) {
     if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) _enumObj = EnumObj.framePosition;
-    for (let wbaseItem of selected_list) {
+    for (let wb of selected_list) {
       switch (wb.CateID) {
         case EnumCate.w_switch:
           wb.StyleItem.FrameItem.Height = frame_item.Height;
@@ -312,25 +312,25 @@ function inputFrameItem(frame_item, isRatioWH) {
           break;
         default:
           if (isRatioWH) {
-            var ratio = wbaseItem.value.offsetWidth / wbaseItem.value.offsetHeight;
+            var ratio = wb.value.offsetWidth / wb.value.offsetHeight;
             var newW = frame_item.Height * ratio;
-            wbaseItem.StyleItem.FrameItem.Width = newW;
-            if (wbaseItem.CateID === EnumCate.tree) {
-              wbaseItem.StyleItem.FrameItem.Height = frame_item.Height / ([...wbaseItem.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1);
+            wb.StyleItem.FrameItem.Width = newW;
+            if (wb.CateID === EnumCate.tree) {
+              wb.StyleItem.FrameItem.Height = frame_item.Height / ([...wb.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1);
             } else {
-              wbaseItem.StyleItem.FrameItem.Height = frame_item.Height;
+              wb.StyleItem.FrameItem.Height = frame_item.Height;
             }
           } else {
-            if (wbaseItem.CateID === EnumCate.tree) {
-              wbaseItem.StyleItem.FrameItem.Height = frame_item.Height / ([...wbaseItem.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1);
+            if (wb.CateID === EnumCate.tree) {
+              wb.StyleItem.FrameItem.Height = frame_item.Height / ([...wb.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1);
             } else {
-              wbaseItem.StyleItem.FrameItem.Height = frame_item.Height;
+              wb.StyleItem.FrameItem.Height = frame_item.Height;
             }
           }
           break;
       }
-      handleStyleSize(wbaseItem);
-      if (_enumObj === EnumObj.framePosition) updateConstraints(wbaseItem);
+      handleStyleSize(wb);
+      if (_enumObj === EnumObj.framePosition) updateConstraints(wb);
     }
   }
   if (frame_item.TopLeft != undefined && frame_item.TopRight != undefined && frame_item.BottomLeft != undefined && frame_item.BottomRight != undefined) {

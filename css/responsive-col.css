@@ -1,210 +1,51 @@
-/* min-brp size (<576px)*/
-:is(.min-brp .w-row, .min-brp.w-row) > .col0 {
+/* xxl size (>=1600px)*/
+:is(.xxl .w-row, .xxl.w-row) > .col0-xxl {
   display: none !important;
 }
 
-:is(.min-brp .w-row, .min-brp.w-row) > .col1 {
+:is(.xxl .w-row, .xxl.w-row) > .col1-xxl {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 1 / 24) - var(--gutter) * 23 / 24) !important;
 }
 
-:is(.min-brp .w-row, .min-brp.w-row) > .col2 {
+:is(.xxl .w-row, .xxl.w-row) > .col2-xxl {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 2 / 24) - var(--gutter) * 11 / 12) !important;
 }
 
-:is(.min-brp .w-row, .min-brp.w-row) > .col3 {
+:is(.xxl .w-row, .xxl.w-row) > .col3-xxl {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 3 / 24) - var(--gutter) * 7 / 8) !important;
 }
 
-:is(.min-brp .w-row, .min-brp.w-row) > .col4 {
+:is(.xxl .w-row, .xxl.w-row) > .col4-xxl {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 4 / 24) - var(--gutter) * 5 / 6) !important;
 }
 
-:is(.min-brp .w-row, .min-brp.w-row) > .col6 {
+:is(.xxl .w-row, .xxl.w-row) > .col6-xxl {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 6 / 24) - var(--gutter) * 3 / 4) !important;
 }
 
-:is(.min-brp .w-row, .min-brp.w-row) > .col8 {
+:is(.xxl .w-row, .xxl.w-row) > .col8-xxl {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
 }
 
-:is(.min-brp .w-row, .min-brp.w-row) > .col12 {
+:is(.xxl .w-row, .xxl.w-row) > .col12-xxl {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 12 / 24) - var(--gutter) / 2) !important;
 }
 
-:is(.min-brp .w-row, .min-brp.w-row) > .col24 {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 100% !important;
-}
-
-/* sm size (>=576px)*/
-:is(.sm .w-row, .sm.w-row) > .col0-sm {
-  display: none !important;
-}
-
-:is(.sm .w-row, .sm.w-row) > .col1-sm {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 1 / 24) - var(--gutter) * 23 / 24) !important;
-}
-
-:is(.sm .w-row, .sm.w-row) > .col2-sm {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 2 / 24) - var(--gutter) * 11 / 12) !important;
-}
-
-:is(.sm .w-row, .sm.w-row) > .col3-sm {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 3 / 24) - var(--gutter) * 7 / 8) !important;
-}
-
-:is(.sm .w-row, .sm.w-row) > .col4-sm {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 4 / 24) - var(--gutter) * 5 / 6) !important;
-}
-
-:is(.sm .w-row, .sm.w-row) > .col6-sm {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 6 / 24) - var(--gutter) * 3 / 4) !important;
-}
-
-:is(.sm .w-row, .sm.w-row) > .col8-sm {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
-}
-
-:is(.sm .w-row, .sm.w-row) > .col12-sm {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 12 / 24) - var(--gutter) / 2) !important;
-}
-
-:is(.sm .w-row, .sm.w-row) > .col24-sm {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 100% !important;
-}
-
-/* md size (>=768px)*/
-:is(.md .w-row, .md.w-row) > .col0-md {
-  display: none !important;
-}
-
-:is(.md .w-row, .md.w-row) > .col1-md {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 1 / 24) - var(--gutter) * 23 / 24) !important;
-}
-
-:is(.md .w-row, .md.w-row) > .col2-md {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 2 / 24) - var(--gutter) * 11 / 12) !important;
-}
-
-:is(.md .w-row, .md.w-row) > .col3-md {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 3 / 24) - var(--gutter) * 7 / 8) !important;
-}
-
-:is(.md .w-row, .md.w-row) > .col4-md {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 4 / 24) - var(--gutter) * 5 / 6) !important;
-}
-
-:is(.md .w-row, .md.w-row) > .col6-md {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 6 / 24) - var(--gutter) * 3 / 4) !important;
-}
-
-:is(.md .w-row, .md.w-row) > .col8-md {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
-}
-
-:is(.md .w-row, .md.w-row) > .col12-md {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 12 / 24) - var(--gutter) / 2) !important;
-}
-
-:is(.md .w-row, .md.w-row) > .col24-md {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 100% !important;
-}
-
-/* lg size (>=992px)*/
-:is(.lg .w-row, .lg.w-row) > .col0-lg {
-  display: none !important;
-}
-
-:is(.lg .w-row, .lg.w-row) > .col1-lg {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 1 / 24) - var(--gutter) * 23 / 24) !important;
-}
-
-:is(.lg .w-row, .lg.w-row) > .col2-lg {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 2 / 24) - var(--gutter) * 11 / 12) !important;
-}
-
-:is(.lg .w-row, .lg.w-row) > .col3-lg {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 3 / 24) - var(--gutter) * 7 / 8) !important;
-}
-
-:is(.lg .w-row, .lg.w-row) > .col4-lg {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 4 / 24) - var(--gutter) * 5 / 6) !important;
-}
-
-:is(.lg .w-row, .lg.w-row) > .col6-lg {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 6 / 24) - var(--gutter) * 3 / 4) !important;
-}
-
-:is(:is(.lg .w-row, .lg.w-row), .lg.w-row) > .col8-lg {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
-}
-
-:is(.lg .w-row, .lg.w-row) > .col12-lg {
-  width: auto !important;
-  min-width: auto !important;
-  flex: 0 calc((100% * 12 / 24) - var(--gutter) / 2) !important;
-}
-
-:is(.lg .w-row, .lg.w-row) > .col24-lg {
+:is(.xxl .w-row, .xxl.w-row) > .col24-xxl {
   width: auto !important;
   min-width: auto !important;
   flex: 0 100% !important;
@@ -269,54 +110,213 @@
   flex: 0 100% !important;
 }
 
-/* xxl size (>=1600px)*/
-:is(.xxl .w-row, .xxl.w-row) > .col0-xxl {
+/* lg size (>=992px)*/
+:is(.lg .w-row, .lg.w-row) > .col0-lg {
   display: none !important;
 }
 
-:is(.xxl .w-row, .xxl.w-row) > .col1-xxl {
+:is(.lg .w-row, .lg.w-row) > .col1-lg {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 1 / 24) - var(--gutter) * 23 / 24) !important;
 }
 
-:is(.xxl .w-row, .xxl.w-row) > .col2-xxl {
+:is(.lg .w-row, .lg.w-row) > .col2-lg {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 2 / 24) - var(--gutter) * 11 / 12) !important;
 }
 
-:is(.xxl .w-row, .xxl.w-row) > .col3-xxl {
+:is(.lg .w-row, .lg.w-row) > .col3-lg {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 3 / 24) - var(--gutter) * 7 / 8) !important;
 }
 
-:is(.xxl .w-row, .xxl.w-row) > .col4-xxl {
+:is(.lg .w-row, .lg.w-row) > .col4-lg {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 4 / 24) - var(--gutter) * 5 / 6) !important;
 }
 
-:is(.xxl .w-row, .xxl.w-row) > .col6-xxl {
+:is(.lg .w-row, .lg.w-row) > .col6-lg {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 6 / 24) - var(--gutter) * 3 / 4) !important;
 }
 
-:is(.xxl .w-row, .xxl.w-row) > .col8-xxl {
+:is(:is(.lg .w-row, .lg.w-row), .lg.w-row) > .col8-lg {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
 }
 
-:is(.xxl .w-row, .xxl.w-row) > .col12-xxl {
+:is(.lg .w-row, .lg.w-row) > .col12-lg {
   width: auto !important;
   min-width: auto !important;
   flex: 0 calc((100% * 12 / 24) - var(--gutter) / 2) !important;
 }
 
-:is(.xxl .w-row, .xxl.w-row) > .col24-xxl {
+:is(.lg .w-row, .lg.w-row) > .col24-lg {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 100% !important;
+}
+
+/* md size (>=768px)*/
+:is(.md .w-row, .md.w-row) > .col0-md {
+  display: none !important;
+}
+
+:is(.md .w-row, .md.w-row) > .col1-md {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 1 / 24) - var(--gutter) * 23 / 24) !important;
+}
+
+:is(.md .w-row, .md.w-row) > .col2-md {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 2 / 24) - var(--gutter) * 11 / 12) !important;
+}
+
+:is(.md .w-row, .md.w-row) > .col3-md {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 3 / 24) - var(--gutter) * 7 / 8) !important;
+}
+
+:is(.md .w-row, .md.w-row) > .col4-md {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 4 / 24) - var(--gutter) * 5 / 6) !important;
+}
+
+:is(.md .w-row, .md.w-row) > .col6-md {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 6 / 24) - var(--gutter) * 3 / 4) !important;
+}
+
+:is(.md .w-row, .md.w-row) > .col8-md {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+}
+
+:is(.md .w-row, .md.w-row) > .col12-md {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 12 / 24) - var(--gutter) / 2) !important;
+}
+
+:is(.md .w-row, .md.w-row) > .col24-md {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 100% !important;
+}
+
+/* sm size (>=576px)*/
+:is(.sm .w-row, .sm.w-row) > .col0-sm {
+  display: none !important;
+}
+
+:is(.sm .w-row, .sm.w-row) > .col1-sm {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 1 / 24) - var(--gutter) * 23 / 24) !important;
+}
+
+:is(.sm .w-row, .sm.w-row) > .col2-sm {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 2 / 24) - var(--gutter) * 11 / 12) !important;
+}
+
+:is(.sm .w-row, .sm.w-row) > .col3-sm {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 3 / 24) - var(--gutter) * 7 / 8) !important;
+}
+
+:is(.sm .w-row, .sm.w-row) > .col4-sm {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 4 / 24) - var(--gutter) * 5 / 6) !important;
+}
+
+:is(.sm .w-row, .sm.w-row) > .col6-sm {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 6 / 24) - var(--gutter) * 3 / 4) !important;
+}
+
+:is(.sm .w-row, .sm.w-row) > .col8-sm {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+}
+
+:is(.sm .w-row, .sm.w-row) > .col12-sm {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 12 / 24) - var(--gutter) / 2) !important;
+}
+
+:is(.sm .w-row, .sm.w-row) > .col24-sm {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 100% !important;
+}
+
+/* min-brp size (<576px)*/
+:is(.min-brp .w-row, .min-brp.w-row) > .col0 {
+  display: none !important;
+}
+
+:is(.min-brp .w-row, .min-brp.w-row) > .col1 {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 1 / 24) - var(--gutter) * 23 / 24) !important;
+}
+
+:is(.min-brp .w-row, .min-brp.w-row) > .col2 {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 2 / 24) - var(--gutter) * 11 / 12) !important;
+}
+
+:is(.min-brp .w-row, .min-brp.w-row) > .col3 {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 3 / 24) - var(--gutter) * 7 / 8) !important;
+}
+
+:is(.min-brp .w-row, .min-brp.w-row) > .col4 {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 4 / 24) - var(--gutter) * 5 / 6) !important;
+}
+
+:is(.min-brp .w-row, .min-brp.w-row) > .col6 {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 6 / 24) - var(--gutter) * 3 / 4) !important;
+}
+
+:is(.min-brp .w-row, .min-brp.w-row) > .col8 {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+}
+
+:is(.min-brp .w-row, .min-brp.w-row) > .col12 {
+  width: auto !important;
+  min-width: auto !important;
+  flex: 0 calc((100% * 12 / 24) - var(--gutter) / 2) !important;
+}
+
+:is(.min-brp .w-row, .min-brp.w-row) > .col24 {
   width: auto !important;
   min-width: auto !important;
   flex: 0 100% !important;
