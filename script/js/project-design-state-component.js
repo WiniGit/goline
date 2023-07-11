@@ -1306,13 +1306,13 @@ function editJsonItemByCate() {
       let inputSuffixSize = document.createElement("input");
       inputSuffixSize.id = "txtfd-suffixsize";
       inputSuffixSize.className = "regular1";
-      inputSuffixSize.defaultValue = selected_list[0].JsonItem.SuffixSize;
+      inputSuffixSize.defaultValue = selected_list[0].JsonItem.SuffixSize ?? 16;
       inputSuffixSize.onblur = function (e) {
         e.stopPropagation();
         if (!isNaN(parseFloat(this.value))) {
           editJsonItem({ SuffixSize: parseFloat(this.value) });
         } else {
-          this.value = selected_list[0].JsonItem.SuffixSize;
+          this.value = selected_list[0].JsonItem.SuffixSize ?? 16;
         }
       };
       inputFieldSuffixSize.replaceChildren(labelSuffixSize, inputSuffixSize);

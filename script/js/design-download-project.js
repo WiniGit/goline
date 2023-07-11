@@ -71,6 +71,14 @@ async function push_dataProject() {
         case EnumCate.textfield:
           wbValue.style.pointerEvents = null;
           break;
+        case EnumCate.w_switch:
+          let wbItem = wbase_list.find((e) => e.GID === wbValue.id);
+          if (wbItem) {
+            wbItem.build = true;
+            wbValue.replaceWith(createSwitch(wbItem.AttributesItem.Content === "true", wbItem));
+            delete wbItem.build;
+          }
+          break;
         case EnumCate.tree:
           wbValue.querySelectorAll(".w-tree").forEach((wtree) => (wtree.style.pointerEvents = null));
           break;
@@ -317,4 +325,4 @@ try {
       },
     );
   });
-} catch (error) {}
+} catch (error) { }
