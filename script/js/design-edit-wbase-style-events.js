@@ -266,36 +266,68 @@ function inputFrameItem(frame_item, isRatioWH) {
     }
   } else if (frame_item.Width != undefined) {
     if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) _enumObj = EnumObj.framePosition;
-    for (let wbaseItem of selected_list) {
-      if (isRatioWH) {
-        let ratio = wbaseItem.value.offsetHeight / wbaseItem.value.offsetWidth;
-        let newH = frame_item.Width * ratio;
-        wbaseItem.StyleItem.FrameItem.Width = frame_item.Width;
-        wbaseItem.StyleItem.FrameItem.Height = newH;
-      } else {
-        wbaseItem.StyleItem.FrameItem.Width = frame_item.Width;
+    for (let wb of selected_list) {
+      switch (wb.CateID) {
+        case EnumCate.w_switch:
+          wb.StyleItem.FrameItem.Width = frame_item.Width;
+          wb.StyleItem.FrameItem.Height = Math.round(frame_item.Width * 5 / 9);
+          break;
+        case EnumCate.radio_button:
+          wb.StyleItem.FrameItem.Width = frame_item.Width;
+          wb.StyleItem.FrameItem.Height = frame_item.Width;
+          break;
+        case EnumCate.checkbox:
+          wb.StyleItem.FrameItem.Width = frame_item.Width;
+          wb.StyleItem.FrameItem.Height = frame_item.Width;
+          break;
+        default:
+          if (isRatioWH) {
+            let ratio = wb.value.offsetHeight / wb.value.offsetWidth;
+            let newH = frame_item.Width * ratio;
+            wb.StyleItem.FrameItem.Width = frame_item.Width;
+            wb.StyleItem.FrameItem.Height = newH;
+          } else {
+            wb.StyleItem.FrameItem.Width = frame_item.Width;
+          }
+          break;
       }
-      handleStyleSize(wbaseItem);
+      handleStyleSize(wb);
       if (_enumObj === EnumObj.framePosition) updateConstraints(wbaseItem);
     }
   } else if (frame_item.Height != undefined) {
     if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) _enumObj = EnumObj.framePosition;
     for (let wbaseItem of selected_list) {
-      if (isRatioWH) {
-        var ratio = wbaseItem.value.offsetWidth / wbaseItem.value.offsetHeight;
-        var newW = frame_item.Height * ratio;
-        wbaseItem.StyleItem.FrameItem.Width = newW;
-        if (wbaseItem.CateID === EnumCate.tree) {
-          wbaseItem.StyleItem.FrameItem.Height = frame_item.Height / ([...wbaseItem.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1);
-        } else {
-          wbaseItem.StyleItem.FrameItem.Height = frame_item.Height;
-        }
-      } else {
-        if (wbaseItem.CateID === EnumCate.tree) {
-          wbaseItem.StyleItem.FrameItem.Height = frame_item.Height / ([...wbaseItem.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1);
-        } else {
-          wbaseItem.StyleItem.FrameItem.Height = frame_item.Height;
-        }
+      switch (wb.CateID) {
+        case EnumCate.w_switch:
+          wb.StyleItem.FrameItem.Height = frame_item.Height;
+          wb.StyleItem.FrameItem.Width = Math.round(frame_item.Height * 9 / 5);
+          break;
+        case EnumCate.radio_button:
+          wb.StyleItem.FrameItem.Width = frame_item.Height;
+          wb.StyleItem.FrameItem.Height = frame_item.Height;
+          break;
+        case EnumCate.checkbox:
+          wb.StyleItem.FrameItem.Width = frame_item.Height;
+          wb.StyleItem.FrameItem.Height = frame_item.Height;
+          break;
+        default:
+          if (isRatioWH) {
+            var ratio = wbaseItem.value.offsetWidth / wbaseItem.value.offsetHeight;
+            var newW = frame_item.Height * ratio;
+            wbaseItem.StyleItem.FrameItem.Width = newW;
+            if (wbaseItem.CateID === EnumCate.tree) {
+              wbaseItem.StyleItem.FrameItem.Height = frame_item.Height / ([...wbaseItem.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1);
+            } else {
+              wbaseItem.StyleItem.FrameItem.Height = frame_item.Height;
+            }
+          } else {
+            if (wbaseItem.CateID === EnumCate.tree) {
+              wbaseItem.StyleItem.FrameItem.Height = frame_item.Height / ([...wbaseItem.value.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1);
+            } else {
+              wbaseItem.StyleItem.FrameItem.Height = frame_item.Height;
+            }
+          }
+          break;
       }
       handleStyleSize(wbaseItem);
       if (_enumObj === EnumObj.framePosition) updateConstraints(wbaseItem);
@@ -2545,7 +2577,7 @@ function editJsonItem(jsonItem, onSubmit = true) {
       wbase_list.find((e) => e.CateID === EnumCate.textfield && e.ParentID === selected_list[0].GID),
       selected_list[0],
     );
-  } else if (jsonItem.SuffixSize != undefined) { 
+  } else if (jsonItem.SuffixSize != undefined) {
     selected_list[0].JsonItem.SuffixSize = jsonItem.SuffixSize;
     selected_list[0].value.querySelector(`.wbaseItem-value:has(> .textfield)`).style.setProperty("--suffix-size", `${jsonItem.SuffixSize}px`);
   } else if (jsonItem.Enabled != undefined) {
