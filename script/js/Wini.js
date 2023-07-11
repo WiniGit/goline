@@ -754,7 +754,7 @@ function centerViewInitListener() {
     } else return;
   });
   window.addEventListener("keyup", keyUpEvent, false);
-  [divSection, ...divSection.querySelectorAll(".wbaseItem-value.w-variant")].forEach((parentPage) => {
+  [divSection, ...divSection.querySelectorAll(":scope > .w-variant")].forEach((parentPage) => {
     childObserver.observe(parentPage, {
       childList: true,
     });
@@ -769,8 +769,19 @@ const childObserver = new MutationObserver((mutationList) => {
   mutationList.forEach((mutation) => {
     mutation.removedNodes.forEach((wbaseValue) => {
       let listBrpKey = ProjectDA.obj.ResponsiveJson.BreakPoint.map((brp) => brp.Key.match(brpRegex).pop().replace(/[()]/g, ""));
-      let listClass = ["min-brp", ...wbaseValue.classList].filter((wbaseClass) => listBrpKey.every((brpKey) => brpKey != wbaseClass));
+      let listClass = ["min-brp", ...wbaseValue.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
       wbaseValue.className = listClass.join(" ");
+      if (wbaseValue.getAttribute("cateid") == EnumCate.tool_variant) {
+        childObserver.disconnect(wbaseValue, {
+          childList: true,
+        });
+        wbaseValue.childNodes.forEach(childHTML => {
+          if (EnumCate.extend_frame.some(ct => childHTML.getAttribute("cateid") == ct)) {
+            let listClass = ["min-brp", ...childHTML.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
+            childHTML.className = listClass.join(" ");
+          }
+        })
+      }
     });
     mutation.addedNodes.forEach((wbaseValue) => {
       if (EnumCate.extend_frame.some((cate) => wbaseValue.getAttribute("cateid") == cate) && wbaseValue.style.width != "fit-content") {
@@ -779,7 +790,7 @@ const childObserver = new MutationObserver((mutationList) => {
         if (closestBrp.length > 0 && ProjectDA.obj.ResponsiveJson) {
           closestBrp = closestBrp.pop().Key.match(brpRegex).pop().replace(/[()]/g, "");
           let listBrpKey = ProjectDA.obj.ResponsiveJson.BreakPoint.map((brp) => brp.Key.match(brpRegex).pop().replace(/[()]/g, ""));
-          let listClass = ["min-brp", ...wbaseValue.classList].filter((wbaseClass) => listBrpKey.every((brpKey) => brpKey != wbaseClass));
+          let listClass = ["min-brp", ...wbaseValue.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
           wbaseValue.className = listClass.join(" ");
           wbaseValue.className += ` ${closestBrp}`;
         }
@@ -788,6 +799,10 @@ const childObserver = new MutationObserver((mutationList) => {
         childObserver.observe(wbaseValue, {
           childList: true,
         });
+        wbaseValue.childNodes.forEach(childHTML => {
+          if (EnumCate.extend_frame.some(ct => childHTML.getAttribute("cateid") == ct))
+            resizeWbase.observe(childHTML);
+        })
       }
     });
     if (mutation.target === divSection) {
