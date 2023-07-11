@@ -44,6 +44,12 @@ class CollectionDA {
         WiniIO.emitPort(item, url, EnumObj.collection, EnumEvent.edit);
     }
 
+    static deleteDocument(item) {
+        this.documentList = this.documentList.filter(e => e.Id !== item.ID);
+        let url = CollectionDA.urlCtr + 'Delete?pid=' + ProjectDA.obj.ID;
+        WiniIO.emitPort({ 'ID': item.ID }, url, EnumObj.collection, EnumEvent.delete);
+    }
+
     static add(item) {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);

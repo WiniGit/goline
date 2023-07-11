@@ -538,9 +538,10 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
 
 var select_component;
 async function initUIAssetView(reloadComponent = false) {
-  assets_view.style.width = "100%";
   let children = [];
-  let scrollY = assets_view.scrollTop;
+  let scrollView = assets_view.querySelector(":scope > .col > .col");
+  let scrollY = scrollView?.scrollTop ?? 0;
+  console.log("????????:", scrollY);
   if (reloadComponent) {
     assets_view.replaceChildren(...children);
     let loader = document.createElement("div");
@@ -683,17 +684,22 @@ async function initUIAssetView(reloadComponent = false) {
       }
     }
     assets_view.replaceChildren(...children);
+    scroll_div.scrollTo({
+      top: scrollY,
+      behavior: "smooth",
+    });
   }
-  assets_view.scrollTo({
-    top: scrollY,
-    behavior: "smooth",
-  });
 }
 
 // create list component depend on projectId
 function createListComponent(projectItem, isShowContent) {
   let currentListTile = document.getElementById(`component projectID:${projectItem.ID}`);
-  let isShow = isShowContent ?? (currentListTile ? currentListTile.querySelector(".list_tile > .fa-caret-down") != undefined : false);
+  let isShow = false;
+  if (isShowContent) {
+    isShow = isShowContent;
+  } else if (currentListTile) {
+    isShow = currentListTile.querySelector(".list_tile > .fa-caret-down") != undefined;
+  }
   let container = document.createElement("div");
   container.id = `component projectID:${projectItem.ID}`;
   container.className = "col";
@@ -812,6 +818,14 @@ function createComponentTile(item, space = 0) {
   title.className = "title";
   select_tile.appendChild(title);
   if (item.CateID === EnumCate.tool_variant) {
+    let currentTile = document.getElementById(`Component:${item.GID}`);
+    let isShow = false;
+    if (currentTile) {
+      isShow = currentTile.querySelector(":scope > .list_tile > .fa-caret-down") != undefined;
+    }
+    if (isShow) {
+      prefix_action.className = "fa-solid fa-caret-down fa-xs";
+    }
     let container_child = document.createElement("div");
     container_child.className = "col";
     container.appendChild(container_child);
@@ -826,11 +840,10 @@ function createComponentTile(item, space = 0) {
       container_child.appendChild(result);
     }
     select_tile.onclick = function () {
-      if (container_child.style.display == "none") {
-        container_child.style.display = "inline-flex";
+      isShow = !isShow;
+      if (isShow) {
         prefix_action.className = "fa-solid fa-caret-down fa-xs";
       } else {
-        container_child.style.display = "none";
         prefix_action.className = "fa-solid fa-caret-right fa-xs";
       }
     };
@@ -1197,7 +1210,6 @@ function linkComptAndSkinDialog() {
   libContent.id = "lib_dialog_content";
   dialog.appendChild(libContent);
   let searchContainer = document.createElement("div");
-  libContent.appendChild(searchContainer);
   let searchPrefixIcon = document.createElement("i");
   searchPrefixIcon.className = "fa-solid fa-magnifying-glass fa-sm";
   searchPrefixIcon.style.padding = "8px 0 8px 16px";
@@ -1205,10 +1217,44 @@ function linkComptAndSkinDialog() {
   searchContainer.appendChild(searchPrefixIcon);
   let searchInput = document.createElement("input");
   searchInput.placeholder = "Search...";
+  searchInput.oninput = function () {
+    if (libContentDetails.querySelector(".project_tile")) {
+      libContentDetails.querySelectorAll(":scope > .project_tile").forEach(proTile => {
+        let proName = proTile.querySelector(":scope > label + p").innerHTML;
+        if (this.value.trim() === "" || Ultis.toSlug(proName).includes(Ultis.toSlug(this.value.trim()))) {
+          proTile.style.display = "flex";
+        } else {
+          proTile.style.display = "none";
+        }
+      })
+    } else {
+      libContentDetails.querySelectorAll(":is(.link_skin_cate_form > div:first-child, .checkbox_skin_tile)").forEach(skinTile => {
+        let skinName = skinTile.querySelector(":scope > p").innerHTML;
+        if (this.value.trim() === "") {
+          skinTile.removeAttribute("style");
+          if (skinTile.parentElement.classList.contains("link_skin_cate_form")) {
+            let prefixAction = skinTile.querySelector(":scope > .fa-caret-down");
+            if (prefixAction)
+              prefixAction.className = prefixAction.className.replace("fa-caret-down", "fa-caret-right");
+          }
+        } else if (Ultis.toSlug(skinName).includes(Ultis.toSlug(this.value.trim()))) {
+          skinTile.removeAttribute("style");
+          let parentList = $(skinTile).parents(".link_skin_cate_form");
+          if (parentList) [...parentList].forEach(parentTile => {
+            let prefixAction = parentTile.firstChild.querySelector(":scope > .fa-caret-right");
+            if (prefixAction)
+              prefixAction.className = prefixAction.className.replace("fa-caret-right", "fa-caret-down");
+          })
+        } else {
+          skinTile.style.display = "none";
+        }
+      })
+    }
+  }
   searchContainer.appendChild(searchInput);
   let libContentDetails = document.createElement("div");
   libContentDetails.className = "lib_content_details";
-  libContent.appendChild(libContentDetails);
+  libContent.replaceChildren(searchContainer, libContentDetails);
 
   //
   let dialogBottom = document.createElement("div");
@@ -1385,19 +1431,13 @@ function checkboxLinkSkin(cateItem) {
   let title = document.createElement("p");
   title.innerHTML = cateItem.Name;
   let suffixAction = document.createElement("i");
-  suffixAction.className = "fa-solid fa-caret-down fa-lg";
+  suffixAction.className = "fa-solid fa-caret-right fa-lg";
   suffixAction.onclick = function (e) {
     e.stopPropagation();
     if (this.className.includes("down")) {
       this.className = this.className.replace("down", "right");
-      for (let i = 1; i < cateForm.childNodes.length; i++) {
-        cateForm.childNodes[i].style.display = "none";
-      }
     } else {
       this.className = this.className.replace("right", "down");
-      for (let i = 1; i < cateForm.childNodes.length; i++) {
-        cateForm.childNodes[i].style.display = "flex";
-      }
     }
   };
   titleBar.replaceChildren(suffixAction, title);
@@ -1420,7 +1460,6 @@ function checkboxLinkSkin(cateItem) {
         checkboxSkinTile.className = "checkbox_skin_tile";
         checkboxSkinTile.setAttribute("skinid", skinItem.GID);
         checkboxSkinTile.setAttribute("cateid", skinItem.CateID);
-        checkboxSkinTile.style.display = "flex";
         cateForm.appendChild(checkboxSkinTile);
         let checkbox = document.createElement("input");
         checkbox.onchange = function () {
@@ -1460,7 +1499,6 @@ function checkboxLinkSkin(cateItem) {
         checkboxSkinTile.className = "checkbox_skin_tile";
         checkboxSkinTile.setAttribute("skinid", skinItem.GID);
         checkboxSkinTile.setAttribute("cateid", skinItem.CateID);
-        checkboxSkinTile.style.display = "flex";
         cateForm.appendChild(checkboxSkinTile);
         let checkbox = document.createElement("input");
         checkbox.onchange = function () {
@@ -1500,7 +1538,6 @@ function checkboxLinkSkin(cateItem) {
         checkboxSkinTile.className = "checkbox_skin_tile";
         checkboxSkinTile.setAttribute("skinid", skinItem.GID);
         checkboxSkinTile.setAttribute("cateid", skinItem.CateID);
-        checkboxSkinTile.style.display = "flex";
         cateForm.appendChild(checkboxSkinTile);
         let checkbox = document.createElement("input");
         checkbox.onchange = function () {
@@ -1540,7 +1577,6 @@ function checkboxLinkSkin(cateItem) {
         checkboxSkinTile.className = "checkbox_skin_tile";
         checkboxSkinTile.setAttribute("skinid", skinItem.GID);
         checkboxSkinTile.setAttribute("cateid", skinItem.CateID);
-        checkboxSkinTile.style.display = "flex";
         cateForm.appendChild(checkboxSkinTile);
         let checkbox = document.createElement("input");
         checkbox.onchange = function () {

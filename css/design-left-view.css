@@ -227,6 +227,14 @@
   padding: 6px;
 }
 
+.assets-component-tile > .list_tile > i {
+  visibility: hidden;
+}
+
+.assets-component-tile:has(> .col) > .list_tile > i {
+  visibility: visible;
+}
+
 .col:has(> .list_tile) > div:nth-child(2) {
   display: none;
 }
@@ -412,6 +420,14 @@
 .link_skin_cate_form > div:first-child > i {
   color: #8c8c8c;
   padding: 12px 6px;
+}
+
+.link_skin_cate_form > div:not(:first-child) {
+  display: none;
+}
+
+.link_skin_cate_form:has(> div:first-child > .fa-caret-down) > div {
+  display: flex;
 }
 
 .link_skin_cate_form > div > input {

@@ -1,8 +1,8 @@
 var feature_list = [
   {
     title: "Select layer",
-    more: function () {},
-    onclick: function () {},
+    more: function () { },
+    onclick: function () { },
     isShow: function () {
       return selected_list.length > 0;
     },
@@ -462,7 +462,7 @@ function createImgDocument() {
       let optionPaste = document.createElement("div");
       optionPaste.className = "row";
       optionPaste.innerHTML = "paste here";
-      optionPaste.onclick = function (e) {};
+      optionPaste.onclick = function (e) { };
       children.push(optionPaste);
     }
     if (event.target.className?.includes("img_folder_demo")) {
@@ -550,31 +550,65 @@ function createFolderTile(collectionItem) {
     e.stopPropagation();
     selectFolder(collectionItem);
   };
+
   let prefixIcon = document.createElement("i");
   prefixIcon.className = "fa-regular fa-folder";
   prefixIcon.style.margin = "2px 6px";
   folderTile.appendChild(prefixIcon);
   let folderName = document.createElement("input");
-  folderName.readOnly = true;
-  folderName.style.pointerEvents = "none";
+  folderName.disabled = true;
   folderName.value = collectionItem.Name;
+  folderName.onfocus = function () {
+    this.select();
+  }
   if (collectionItem.ID != -1) {
+    folderTile.onauxclick = function (e) {
+      e.stopPropagation();
+      document.querySelectorAll("#body > .popup_remove").forEach(popupRemove => popupRemove.remove());
+      let editDeletePopup = document.createElement("div");
+      editDeletePopup.className = "wini_popup popup_remove col";
+      editDeletePopup.style.left = e.pageX + "px";
+      editDeletePopup.style.top = e.pageY + "px";
+      let optionEdit = document.createElement("div");
+      optionEdit.className = "row regular1";
+      optionEdit.style.color = "white";
+      optionEdit.style.padding = "4px 6px";
+      optionEdit.innerHTML = "edit";
+      optionEdit.onclick = function (e) {
+        e.stopPropagation();
+        editDeletePopup.remove();
+        folderName.disabled = false;
+        folderName.focus();
+      };
+      let optionDelete = document.createElement("div");
+      optionDelete.className = "row regular1";
+      optionDelete.style.color = "white";
+      optionDelete.style.padding = "4px 6px";
+      optionDelete.innerHTML = "delete";
+      optionDelete.onclick = function (e) {
+        e.stopPropagation();
+        editDeletePopup.remove();
+        if (CollectionDA.selectedDocument.ID === collectionItem.ID) {
+          let index = CollectionDA.documentList.indexOf(collectionItem);
+          if (index > 0) index--;
+          selectFolder(CollectionDA.documentList[index]);
+        }
+        CollectionDA.deleteDocument(collectionItem);
+        folderTile.remove();
+      };
+      editDeletePopup.replaceChildren(optionEdit, optionDelete);
+      document.getElementById("body").appendChild(editDeletePopup);
+    }
     folderTile.ondblclick = function (e) {
       e.stopPropagation();
-      folderName.style.pointerEvents = "auto";
-      folderName.style.cursor = "text";
-      folderName.readOnly = false;
-      folderName.setSelectionRange(0, folderName.value.length);
+      folderName.disabled = false;
       folderName.focus();
     };
     folderName.onblur = function () {
-      this.style.cursor = "context-menu";
-      this.style.pointerEvents = "none";
-      this.setSelectionRange(0, 1);
-      this.readOnly = true;
-      let thisFolder = CollectionDA.documentList.find((folder) => folder.ID == folderTile.id.replace("folder:", ""));
-      thisFolder.Name = this.value;
-      CollectionDA.editDocument(thisFolder);
+      this.disabled = true;
+      collectionItem.Name = this.value;
+      window.getSelection().removeAllRanges();
+      CollectionDA.editDocument(collectionItem);
     };
   }
   folderTile.appendChild(folderName);

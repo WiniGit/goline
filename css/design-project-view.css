@@ -338,6 +338,7 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
 :is(.left_tab_view, .right_tab_view) {
   height: calc(100% - 42px);
   overflow-y: scroll;
+  width: 100%;
 }
 
 /**/
