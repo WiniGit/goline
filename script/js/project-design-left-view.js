@@ -580,7 +580,7 @@ async function initUIAssetView(reloadComponent = false) {
       onSearch = true;
       setTimeout(function () {
         if (onSearch) {
-          let content = search_input.value
+          let content = this.value
             .split(" ")
             .filter((text) => text != "")
             .join(" ");
@@ -611,6 +611,9 @@ async function initUIAssetView(reloadComponent = false) {
               WBaseDA.getAssetsList(_listID, content);
             }
           } else if (content.length == 0) {
+            assets_view.querySelectorAll(".list_tile > i").forEach(prefixIcon =>
+              prefixIcon.className = prefixIcon.className.replace("fa-caret-down", "fa-caret-right")
+            )
             initUIAssetView();
             document.getElementById("search_input_assets").focus();
           }

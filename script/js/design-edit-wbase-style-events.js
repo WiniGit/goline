@@ -257,15 +257,16 @@ function frameHugChildrenSize() {
 function inputFrameItem(frame_item, isRatioWH) {
   let _enumObj = EnumObj.frame;
   if (frame_item.Width != undefined && frame_item.Height != undefined) {
-    if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) _enumObj = EnumObj.framePosition;
     for (let wbaseItem of selected_list) {
       wbaseItem.StyleItem.FrameItem.Width = frame_item.Width;
       wbaseItem.StyleItem.FrameItem.Height = frame_item.Height;
       handleStyleSize(wbaseItem);
-      if (_enumObj === EnumObj.framePosition) updateConstraints(wbaseItem);
+      if (select_box_parentID != wbase_parentID && window.getComputedStyle(wb.value).position === "absolute") {
+        _enumObj = EnumObj.framePosition;
+        updateConstraints(wb);
+      }
     }
   } else if (frame_item.Width != undefined) {
-    if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) _enumObj = EnumObj.framePosition;
     for (let wb of selected_list) {
       switch (wb.CateID) {
         case EnumCate.w_switch:
@@ -292,10 +293,12 @@ function inputFrameItem(frame_item, isRatioWH) {
           break;
       }
       handleStyleSize(wb);
-      if (_enumObj === EnumObj.framePosition) updateConstraints(wbaseItem);
+      if (select_box_parentID != wbase_parentID && window.getComputedStyle(wb.value).position === "absolute") {
+        _enumObj = EnumObj.framePosition;
+        updateConstraints(wb);
+      }
     }
   } else if (frame_item.Height != undefined) {
-    if (select_box_parentID != wbase_parentID && !window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex")) _enumObj = EnumObj.framePosition;
     for (let wb of selected_list) {
       switch (wb.CateID) {
         case EnumCate.w_switch:
@@ -330,7 +333,10 @@ function inputFrameItem(frame_item, isRatioWH) {
           break;
       }
       handleStyleSize(wb);
-      if (_enumObj === EnumObj.framePosition) updateConstraints(wb);
+      if (select_box_parentID != wbase_parentID && window.getComputedStyle(wb.value).position === "absolute") {
+        _enumObj = EnumObj.framePosition;
+        updateConstraints(wb);
+      }
     }
   }
   if (frame_item.TopLeft != undefined && frame_item.TopRight != undefined && frame_item.BottomLeft != undefined && frame_item.BottomRight != undefined) {
@@ -2882,6 +2888,14 @@ function createForm() {
   } else {
     selected_list[0].Name = "Form";
     selected_list[0].CateID = EnumCate.form;
+    let newForm = document.createElement("form");
+    for (let i = 0; i < selected_list[0].value.attributes.length; i++) {
+      let attrObj = selected_list[0].value.attributes[i];
+      newForm.setAttribute(attrObj.name, attrObj.nodeValue);
+    }
+    selected_list[0].value.replaceWith(newForm);
+    newForm.replaceChildren(...selected_list[0].value.childNodes);
+    selected_list[0].value = newForm;
     WBaseDA.edit(selected_list, EnumObj.wBase);
   }
 }
@@ -2889,7 +2903,14 @@ function createForm() {
 function removeForm() {
   selected_list[0].Name = "Frame";
   selected_list[0].CateID = EnumCate.tool_frame;
-  selected_list[0].AttributesItem.Content = "";
+  let newFrame = document.createElement("div");
+  for (let i = 0; i < selected_list[0].value.attributes.length; i++) {
+    let attrObj = selected_list[0].value.attributes[i];
+    newFrame.setAttribute(attrObj.name, attrObj.nodeValue);
+  }
+  selected_list[0].value.replaceWith(newFrame);
+  newFrame.replaceChildren(...selected_list[0].value.childNodes);
+  selected_list[0].value = newFrame;
   WBaseDA.edit(selected_list, EnumObj.wBaseAttribute);
 }
 
