@@ -816,8 +816,11 @@ function dragWbaseUpdate(xp, yp, event) {
       $(selectHTML).removeClass("drag-hide");
       selected_list[i].StyleItem.PositionItem.Left = `${parseFloat(`${drag_start_list[i].StyleItem.PositionItem.Left}`.replace("px", "")) + xp + parent_offset1.x - offsetp.x}px`;
       selected_list[i].StyleItem.PositionItem.Top = `${parseFloat(`${drag_start_list[i].StyleItem.PositionItem.Top}`.replace("px", "")) + yp + parent_offset1.y - offsetp.y}px`;
+      selectHTML.style.transform = null;
       selectHTML.style.left = selected_list[i].StyleItem.PositionItem.Left;
       selectHTML.style.top = selected_list[i].StyleItem.PositionItem.Top;
+      selectHTML.style.right = null;
+      selectHTML.style.bottom = null;
       if (selectHTML.parentElement !== parentHTML) {
         if (zIndex) {
           selectHTML.style.zIndex = zIndex + i;
@@ -828,9 +831,7 @@ function dragWbaseUpdate(xp, yp, event) {
           selectHTML.style.order = drag_start_list[i].Sort;
           selected_list[i].Sort = drag_start_list[i].Sort;
         }
-        selectHTML.style.right = null;
-        selectHTML.style.bottom = null;
-        selectHTML.style.transform = null;
+
         parentHTML.appendChild(selectHTML);
         selected_list[i].ParentID = new_parentID;
       }

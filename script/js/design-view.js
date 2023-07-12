@@ -4481,7 +4481,9 @@ function createEditVariants() {
     editContainer.appendChild(div_list_property);
     let list_property_tile = [];
     let list_base_property = selected_list.map((e) => e.BasePropertyItems);
-    if (list_base_property.length > 0) {
+    if (list_base_property.length === 0) {
+      list_base_property = list_base_property[0];
+    } else if (list_base_property.length > 1) {
       list_base_property = list_base_property.reduce((a, b) => a.concat(b));
     }
     let listProperty = PropertyDA.list.filter((e) => e.BaseID == select_box_parentID);

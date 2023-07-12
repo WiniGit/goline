@@ -6,7 +6,7 @@
   pointer-events: none !important;
 }
 
-.w-button {
+.w-button.wbaseItem-value {
   outline: none;
   border: none;
   background-color: unset;
