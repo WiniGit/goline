@@ -11,6 +11,7 @@ async function initData() {
   WiniIO.emitInit();
   console.log("init: ", Date.now());
   console.log("get server: ", Date.now());
+  listShowName = [];
   action_list = [];
   action_index = -1;
   let skinResponse = await $.get(WBaseDA.skin_url + `?pid=${ProjectDA.obj.ID}`);

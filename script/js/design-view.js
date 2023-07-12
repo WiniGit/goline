@@ -3107,11 +3107,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
               skinTile.style.display = "none";
             }
           });
-          if (numberResult) {
-            cateSkTile.style.display = "flex";
-          } else {
-            cateSkTile.style.display = "none";
-          }
+          cateSkTile.style.display = numberResult ? "flex" : "none";
         }
       })
     }
