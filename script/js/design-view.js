@@ -643,7 +643,7 @@ function updateInputTLWH() {
     let list_height = selected_list.filterAndMap((e) => (document.getElementById(e.GID) ?? e.value).offsetHeight);
     edit_height.lastChild.value = list_height.length == 1 ? list_height[0] : "mixed";
     //
-    let parentHTML = document.getElementById(select_box_parentID);
+    let parentHTML = document.getElementById(select_box_parentID) ?? divSection;
     if (parentHTML && window.getComputedStyle(parentHTML).display.match(/(flex|table)/g) && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
       edit_left.lastChild.disabled = true;
       edit_top.lastChild.disabled = true;
@@ -3003,15 +3003,13 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
   dropdown.style.top = offset.y - 56 + "px";
   dropdown.setAttribute("cate", enumCate);
   let header = document.createElement("div");
-  header.className = "header_popup_skin";
+  header.className = "col header_popup_skin";
   dropdown.appendChild(header);
+  let titleBar = document.createElement("div");
+  titleBar.className = "row";
   let title = document.createElement("span");
-  title.style.pointerEvents = "none";
-  title.style.flex = 1;
   let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/library-black.svg", null, function () { });
 
-  header.appendChild(title);
-  header.appendChild(action1);
   let action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/add2.svg", null, function () {
     setTimeout(function () {
       let create_skin_popup = document.getElementById("create_skin_popup");
@@ -3045,7 +3043,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
       }
     }, 200);
   });
-  header.appendChild(action2);
+  titleBar.replaceChildren(title, action1, action2);
   switch (enumCate) {
     case EnumCate.color:
       title.innerHTML = "Color skin";
@@ -3074,20 +3072,6 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
     default:
       return;
   }
-
-  document.getElementById("body").appendChild(dropdown);
-
-  updateTableSkinBody(enumCate, currentSkinID);
-}
-
-function updateTableSkinBody(enumCate, currentSkinID) {
-  let dropdown = document.getElementById("popup_table_skin");
-  if (!dropdown) return;
-  let body = document.createElement("div");
-  let noti_empty_skin = document.createElement("p");
-  // noti_empty_skin.style.fontWeight = "500";
-  noti_empty_skin.style.margin = "8px 16px";
-  noti_empty_skin.className = "regular0 text-subtitle";
   let searchContainer = document.createElement("div");
   searchContainer.className = "row search-skins";
   let prefixIcon = document.createElement("i");
@@ -3109,24 +3093,48 @@ function updateTableSkinBody(enumCate, currentSkinID) {
     } else {
       body.querySelectorAll(".cate-skin-tile").forEach(cateSkTile => {
         let listSkinTile = cateSkTile.querySelectorAll(".skin_tile_option");
-        let numberResult = 0;
-        listSkinTile.forEach((skinTile) => {
-          let skinName = skinTile.querySelector(".skin-name").innerHTML;
-          if (skinName.toLowerCase().includes(searchContent)) {
-            skinTile.style.display = "flex";
-            numberResult++;
-          } else {
-            skinTile.style.display = "none";
-          }
-        });
-        if (numberResult) {
+        let cateName = cateSkTile.querySelector(":scope > p")?.innerHTML;
+        if (cateName && cateName.toLowerCase().includes(searchContent)) {
           cateSkTile.style.display = "flex";
         } else {
-          cateSkTile.style.display = "none";
+          let numberResult = 0;
+          listSkinTile.forEach((skinTile) => {
+            let skinName = skinTile.querySelector(".skin-name").innerHTML;
+            if (skinName.toLowerCase().includes(searchContent)) {
+              skinTile.style.display = "flex";
+              numberResult++;
+            } else {
+              skinTile.style.display = "none";
+            }
+          });
+          if (numberResult) {
+            cateSkTile.style.display = "flex";
+          } else {
+            cateSkTile.style.display = "none";
+          }
         }
       })
     }
   }
+  header.replaceChildren(titleBar, searchContainer);
+
+  document.getElementById("body").appendChild(dropdown);
+
+  updateTableSkinBody(enumCate, currentSkinID);
+  let dropdownRect = dropdown.getBoundingClientRect();
+  if (dropdownRect.bottom > document.body.offsetHeight) {
+    dropdown.style.top = (offset.y - 56 - (dropdownRect.bottom - document.body.offsetHeight) - 2) + "px";
+  }
+}
+
+function updateTableSkinBody(enumCate, currentSkinID) {
+  let dropdown = document.getElementById("popup_table_skin");
+  if (!dropdown) return;
+  let body = document.createElement("div");
+  let noti_empty_skin = document.createElement("p");
+  noti_empty_skin.style.margin = "8px 16px";
+  noti_empty_skin.className = "regular0 text-subtitle";
+
   switch (enumCate) {
     case EnumCate.color:
       if (ColorDA.list.length == 0) {
@@ -3134,7 +3142,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
         body.replaceChildren(noti_empty_skin);
       } else {
         let list_color_cate = [{ ID: EnumCate.color }, ...CateDA.list_color_cate.sort((a, b) => a.Name - b.Name)];
-        body.replaceChildren(searchContainer, ...list_color_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
+        body.replaceChildren(...list_color_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
       }
 
       break;
@@ -3144,7 +3152,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
         body.replaceChildren(noti_empty_skin);
       } else {
         let list_typo_cate = [{ ID: EnumCate.typography }, ...CateDA.list_typo_cate.sort((a, b) => a.Name - b.Name)];
-        body.replaceChildren(searchContainer, ...list_typo_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
+        body.replaceChildren(...list_typo_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
       }
 
       break;
@@ -3154,7 +3162,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
         body.replaceChildren(noti_empty_skin);
       } else {
         let list_border_cate = [{ ID: EnumCate.border }, ...CateDA.list_border_cate.sort((a, b) => a.Name - b.Name)];
-        body.replaceChildren(searchContainer, ...list_border_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
+        body.replaceChildren(...list_border_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
       }
 
       break;
@@ -3164,7 +3172,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
         body.replaceChildren(noti_empty_skin);
       } else {
         let list_effect_cate = [{ ID: EnumCate.effect }, ...CateDA.list_effect_cate.sort((a, b) => a.Name - b.Name)];
-        body.replaceChildren(searchContainer, ...list_effect_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
+        body.replaceChildren(...list_effect_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
       }
 
       break;

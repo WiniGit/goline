@@ -640,7 +640,7 @@ function selectResizeType(isW = true, type) {
                 fillChild.sort((a, b) => b.offsetWidth - a.offsetWidth);
                 let wbChild = wbase_list.find((e) => e.GID == fillChild[0].id);
                 wbChild.StyleItem.FrameItem.Width = wbChild.value.offsetWidth;
-                wbChild.style.width = wbChild.value.offsetWidth + "px";
+                wbChild.value.style.width = wbChild.value.offsetWidth + "px";
                 list_update.push(wbChild);
               }
             }
@@ -723,7 +723,7 @@ function selectResizeType(isW = true, type) {
                 fillChild.sort((a, b) => b.offsetHeight - a.offsetHeight);
                 let wbChild = wbase_list.find((e) => e.GID == fillChild[0].id);
                 wbChild.StyleItem.FrameItem.Height = wbChild.value.offsetHeight;
-                wbChild.style.height = wbChild.value.offsetHeight + "px";
+                wbChild.value.style.height = wbChild.value.offsetHeight + "px";
                 list_update.push(wbChild);
               }
             }

@@ -541,7 +541,6 @@ async function initUIAssetView(reloadComponent = false) {
   let children = [];
   let scrollView = assets_view.querySelector(":scope > .col > .col");
   let scrollY = scrollView?.scrollTop ?? 0;
-  console.log("????????:", scrollY);
   if (reloadComponent) {
     assets_view.replaceChildren(...children);
     let loader = document.createElement("div");
