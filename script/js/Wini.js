@@ -2270,9 +2270,16 @@ function upListener(event) {
       } else {
         let url = window.getComputedStyle(instance_drag).backgroundImage.split(/"/)[1];
         let isSvgImg = url.endsWith(".svg");
-        let newRect = isSvgImg ? WBaseDefault.imgSvg : WBaseDefault.rectangle;
-        newRect.Name = isSvgImg ? url.split("/").pop().replace(".svg", "") : "new rectangle";
-        newRect.AttributesItem.Content = url.replace(urlImg, "");
+        let newRect;
+        if(isSvgImg) {
+          newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg));
+          newRect.Name = url.split("/").pop().replace(".svg", "");
+          newRect.AttributesItem.Content = url.replace(urlImg, "");
+        } else {
+          newRect = JSON.parse(JSON.stringify(WBaseDefault.rectangle));
+          newRect.Name = "new rectangle";
+          newRect.StyleItem.DecorationItem.ColorValue = url.replace(urlImg, "");
+        }
         FileDA.getImageSize(url).then((imgSize) => {
           let offset = offsetScale(event.pageX, event.pageY);
           let newObj = createWbaseHTML(

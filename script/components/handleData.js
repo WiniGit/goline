@@ -174,10 +174,7 @@ async function initComponents(item, list, initListener = true) {
 async function updateComponentContent(item) {
   switch (item.CateID) {
     case EnumCate.tool_rectangle:
-      item.value.style.backgroundImage = `url(${item.AttributesItem.Content})`;
-      item.value.style.backgroundRepeat = "no-repeat";
-      item.value.style.backgroundSize = "cover";
-      item.value.style.backgroundPosition = "center";
+      item.value.style.backgroundImage = `url(${urlImg + item.StyleItem.DecorationItem.replaceAll(" ", "%20")})`;
       break;
     case EnumCate.tool_text:
       item.value.innerText = item.AttributesItem.Content ?? "";
@@ -356,7 +353,7 @@ function initElement(wbaseHTML) {
 const setSizeObserver = new MutationObserver((mutationList) => {
   mutationList.forEach((mutation) => {
     let targetWbase = mutation.target;
-      if (mutation.attributeName === "id") {
+    if (mutation.attributeName === "id") {
       initElement(targetWbase);
     } else if (mutation.type === "childList" && window.getComputedStyle(targetWbase).display.includes("flex")) {
       targetWbase.querySelectorAll(`.col-[level="${parseInt(targetWbase.getAttribute("level")) + 1}"]`).forEach((childCol) => {
@@ -668,13 +665,12 @@ function initWbaseStyle(item) {
     handleStyleSize(item);
   }
   if (item.StyleItem.DecorationItem) {
-    if (EnumCate.noImgBg.every((cate) => item.CateID != cate) && item.AttributesItem.Content && item.AttributesItem.Content.trim() != "") {
-      item.value.style.backgroundImage = `url(${urlImg + item.AttributesItem.Content.replaceAll(" ", "%20")})`;
-    }
     if (item.StyleItem.DecorationItem.ColorValue) {
-      let color_value = item.StyleItem.DecorationItem.ColorValue;
-      if (item.CateID != EnumCate.svg && item.CateID !== EnumCate.checkbox) {
-        item.value.style.backgroundColor = `#${color_value.substring(2)}${color_value.substring(0, 2)}`;
+      let background = item.StyleItem.DecorationItem.ColorValue;
+      if (background.match(hexRegex) && item.CateID !== EnumCate.svg && item.CateID !== EnumCate.checkbox) {
+        item.value.style.backgroundColor = `#${background.substring(2)}${background.substring(0, 2)}`;
+      } else if (EnumCate.noImgBg.every((cate) => item.CateID != cate)) {
+        item.value.style.backgroundImage = `url(${urlImg + background.replaceAll(" ", "%20")})`;
       }
     }
     if (item.StyleItem.DecorationItem.BorderItem) {

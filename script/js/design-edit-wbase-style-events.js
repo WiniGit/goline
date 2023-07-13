@@ -1758,6 +1758,7 @@ async function editBackground(decorationItem, onSubmit = true) {
           wbaseItem.value.style.backgroundColor = `#${new_color_value.substring(2)}${new_color_value.substring(0, 2)}`;
           break;
       }
+      wbaseItem.value.style.backgroundImage = null;
     }
   } else {
     if (decorationItem.ColorValue) {
@@ -1791,27 +1792,24 @@ async function editBackground(decorationItem, onSubmit = true) {
 
 function editBackgroundImage(url) {
   if (!url.endsWith(".svg")) {
-    let list_change_background = selected_list.filter((e) => e.StyleItem.DecorationItem && e.CateID != EnumCate.svg);
-    for (let wbaseItem of list_change_background) {
-      let elementHTML = document.getElementById(wbaseItem.GID);
-      wbaseItem.AttributesItem.Content = url;
-      elementHTML.style.backgroundImage = `url(${urlImg + url})`;
-      elementHTML.style.backgroundRepeat = "no-repeat";
-      elementHTML.style.backgroundSize = "cover";
-      elementHTML.style.backgroundPosition = "center";
+    let list_change_background = selected_list.filter((wb) => wb.StyleItem.DecorationItem && EnumCate.noImgBg.every(ct => wb.CateID !== ct));
+    for (let wb of list_change_background) {
+      wb.StyleItem.DecorationItem.ColorID = null;
+      wb.StyleItem.DecorationItem.ColorValue = url;
+      wb.value.style.backgroundImage = `url(${urlImg + url})`;
+      wb.value.style.backgroundColor = null;
     }
-    WBaseDA.edit(list_change_background, EnumObj.attribute);
+    WBaseDA.edit(list_change_background, EnumObj.decoration);
   }
 }
 
 function removeBackgroundImg() {
-  let list_change_background = selected_list.filter((e) => e.StyleItem.DecorationItem && e.CateID != EnumCate.svg);
-  for (let wbaseItem of list_change_background) {
-    let elementHTML = document.getElementById(wbaseItem.GID);
-    wbaseItem.AttributesItem.Content = "";
-    elementHTML.style.backgroundImage = "none";
+  let list_change_background = selected_list.filter((wb) => wb.StyleItem.DecorationItem && EnumCate.noImgBg.every(ct => wb.CateID !== ct));
+  for (let wb of list_change_background) {
+    wb.StyleItem.DecorationItem.ColorValue = "";
+    wb.value.style.backgroundImage = null;
   }
-  WBaseDA.edit(list_change_background, EnumObj.attribute);
+  WBaseDA.edit(list_change_background, EnumObj.decoration);
 }
 
 function editColorSkin(color_item, thisSkin) {

@@ -32,7 +32,7 @@
       }
 
       .parent {
-        background-color: #001f3f;
+        background-color: var(--color-test);
         display: flex;
         padding: 20px;
         flex-wrap: wrap;
@@ -201,6 +201,7 @@
     <div class="parent w-row"></div>
   </body>
   <script>
+    document.documentElement.style.setProperty("--color-test", "#1890ff")
     function differentInDay(date1, date2) {
       return (date1.getTime() - date2.getTime()) / (1000 * 3600 * 24);
     }

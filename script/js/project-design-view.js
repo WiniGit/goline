@@ -57,15 +57,10 @@ async function initData() {
   } else {
     initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
   }
-  // divSection.querySelectorAll(`.wbaseItem-value[cateid="${EnumCate.tool_text}"]`).forEach((eText) => {
-  //   let newSize = calcTextNode(eText);
-  //   eText.style.minWidth = newSize.width + "px";
-  //   eText.style.minHeight = newSize.height + "px";
-  // });
   document.getElementById("body").querySelector(".loading-view").remove();
   setupRightView();
   setupLeftView();
-  [...document.getElementById("btn_select_page").childNodes].find((e) => e.localName == "p").innerHTML = PageDA.obj.Name;
+  document.getElementById("btn_select_page").querySelector(":scope > p").innerHTML = PageDA.obj.Name;
   console.log("show done: ", Date.now());
   setTimeout(function () {
     toolStateChange(ToolState.move);

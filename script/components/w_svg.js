@@ -6,7 +6,6 @@ async function createSvgImgHTML(item) {
     } else {
         getColorSvg(item);
     }
-    
 }
 
 async function getColorSvg(item) {

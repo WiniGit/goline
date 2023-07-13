@@ -168,10 +168,6 @@
   border-radius: 50%;
 }
 
-.w-switch:has(> input:checked) {
-  background-color: var(--checked-bg) !important;
-}
-
 .w-switch > input:checked + .slider {
   -webkit-transform: translateX(calc(0.8 * (100% + 4px)));
   -ms-transform: translateX(calc(0.8 * (100% + 4px)));
@@ -194,11 +190,6 @@
   cursor: pointer;
   height: 0;
   width: 0;
-}
-
-.w-check-box:has(> input:checked) {
-  background-color: var(--checked-bg) !important;
-  border: none !important;
 }
 
 .w-check-box > input:checked ~ .checkmark {
@@ -467,11 +458,6 @@ body:has(> .w-date-picker-popup) {
   cursor: pointer;
 }
 
-.w-radio-btn > input[type="radio"]:checked ~ .checkmark {
-  display: block !important;
-  background-color: var(--checked-border);
-}
-
 .w-radio-btn > .checkmark {
   display: none;
   position: absolute;
@@ -481,10 +467,6 @@ body:has(> .w-date-picker-popup) {
   width: inherit;
   border-radius: 50%;
   aspect-ratio: 1 / 1;
-}
-
-.w-radio-btn:has(> input[type="radio"]:checked) {
-  border-color: var(--checked-border) !important;
 }
 
 /* table */
@@ -720,4 +702,24 @@ body:has(> .w-date-picker-popup) {
 
 .w-carousel[effect="fade"] .slide-clone:not(.slide-clone[isactive="true"]) {
   display: none !important;
+}
+
+
+/* state||status */
+.wbaseItem-value:hover {}
+.w-button:focus {}
+.w-switch:has(> input:checked) {
+  background-color: var(--checked-bg) !important;
+}
+.w-radio-btn:has(> input[type="radio"]:checked) {
+  border-color: var(--checked-border) !important;
+}
+
+.w-radio-btn > input[type="radio"]:checked ~ .checkmark {
+  display: block !important;
+  background-color: var(--checked-border);
+}
+.w-check-box:has(> input:checked) {
+  background-color: var(--checked-bg) !important;
+  border: none !important;
 }

@@ -1458,13 +1458,13 @@ function _btnAlignType() {
   };
   return img;
 }
+
 //! background-color || img
 function createEditBackground() {
   let editContainer = document.createElement("div");
   editContainer.id = "edit-background";
   editContainer.style.rowGap = "6px";
   editContainer.className = "edit-container";
-  let isBgImg = selected_list.every((wbaseItem) => EnumCate.noImgBg.every((cate) => wbaseItem.CateID != cate) && wbaseItem.AttributesItem.Content && wbaseItem.AttributesItem.Content.trim() != "" && wbaseItem.AttributesItem.Content == selected_list[0].AttributesItem.Content);
   let header = document.createElement("div");
   header.className = "header_design_style";
   editContainer.appendChild(header);
@@ -1474,75 +1474,23 @@ function createEditBackground() {
   title.innerHTML = checkedComponent ? "Checked primary color" : "Background";
   header.appendChild(title);
 
-  if (isBgImg) {
-    let editImgTile = document.createElement("div");
-    editImgTile.id = "select_img_tile";
-    editContainer.appendChild(editImgTile);
-
-    let divSelectImg = document.createElement("div");
-    editImgTile.appendChild(divSelectImg);
-
-    let imgDemo = document.createElement("div");
-    imgDemo.style.backgroundImage = `url(${urlImg + selected_list[0].AttributesItem.Content})`;
-    imgDemo.style.backgroundSize = "cover";
-    imgDemo.style.backgroundPosition = "center";
-    imgDemo.style.backgroundRepeat = "no-repeat";
-    imgDemo.style.width = "20px";
-    imgDemo.style.height = "16px";
-    imgDemo.style.margin = "6px";
-    imgDemo.onclick = function () {
-      if (document.getElementById("popup_img_document") == undefined) {
-        FileDA.init();
-      }
-    };
-    divSelectImg.appendChild(imgDemo);
-    let imgName = document.createElement("p");
-    imgName.innerHTML = "Image";
-
-    divSelectImg.appendChild(imgName);
-    let inputOpacity = document.createElement("input");
-    inputOpacity.value = "100%";
-    inputOpacity.style.width = "38px";
-    inputOpacity.style.minWidth = "0px";
-    inputOpacity.style.minWidth = "40px";
-    inputOpacity.style.padding = "0 0 0 6px";
-    divSelectImg.appendChild(inputOpacity);
-
-    let btnEye = document.createElement("img");
-    btnEye.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg";
-    btnEye.style.width = "16px";
-    btnEye.style.height = "16px";
-    btnEye.style.padding = "6px";
-    editImgTile.appendChild(btnEye);
-
-    let btnRemoveBgImg = document.createElement("i");
-    btnRemoveBgImg.className = "fa-solid fa-minus";
-    btnRemoveBgImg.style.padding = "10px 8px";
-    editImgTile.appendChild(btnRemoveBgImg);
-    btnRemoveBgImg.onclick = function () {
-      removeBackgroundImg();
-      updateUIBackground();
-    };
-  }
-  let selectColorValue = selected_list[0].StyleItem.DecorationItem.ColorValue;
-  if (!isBgImg && selected_list.every((e) => EnumCate.noImgBg.every((cate) => e.CateID != cate))) {
-    let btnSelectImg = document.createElement("i");
-    btnSelectImg.className = "fa-regular fa-image fa-sm bg-header-action";
-    btnSelectImg.onclick = function () {
-      if (!document.getElementById("popup_img_document")) {
-        FileDA.init();
-      }
-    };
-    header.appendChild(btnSelectImg);
-  }
-
   let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.color, offset);
   });
   btnSelectSkin.className = "action-button bg-header-action";
-  if (selectColorValue) {
-    let listColorID = selected_list.filterAndMap((wbaseItem) => wbaseItem.StyleItem.DecorationItem.ColorID);
+  let btnSelectImg = document.createElement("i");
+  btnSelectImg.className = "fa-regular fa-image fa-sm bg-header-action";
+  btnSelectImg.onclick = function () {
+    if (!document.getElementById("popup_img_document")) {
+      FileDA.init();
+    }
+  };
+
+  if (selected_list.every(wb => wb.StyleItem.DecorationItem.ColorValue?.match(hexRegex))) {
+    header.appendChild(btnSelectImg);
+
+    let listColorID = selected_list.filterAndMap((wb) => wb.StyleItem.DecorationItem.ColorID);
     if (listColorID.length == 1 && listColorID[0]) {
       let colorSkin = ColorDA.list.find((colorItem) => listColorID[0] == colorItem.GID);
       let cateItem;
@@ -1565,20 +1513,12 @@ function createEditBackground() {
         editContainer.appendChild(skin_tile);
         if (checkedComponent) skin_tile.lastChild.style.display = "none";
       }
-    } else if (listColorID.length > 1) {
-      header.appendChild(btnSelectSkin);
-      let notiText = document.createElement("p");
-      notiText.className = "regular1";
-      notiText.style.margin = "4px 8px";
-      notiText.innerHTML = "choose a color skin to replace mixed content";
-      editContainer.appendChild(notiText);
-    } else {
+    } else if (selected_list.filterAndMap(wb => wb.StyleItem.DecorationItem.ColorValue.toLowerCase()).length === 1) {
+      let selectColorValue = selected_list[0].StyleItem.DecorationItem.ColorValue;
       //body
       let colorsSelectionList = document.createElement("div");
       colorsSelectionList.id = "colors_selection_list";
       colorsSelectionList.className = "col";
-      colorsSelectionList.style.width = "100%";
-      colorsSelectionList.style.marginLeft = "4px";
       editContainer.appendChild(colorsSelectionList);
       let listEditColorForm = [];
 
@@ -1610,12 +1550,8 @@ function createEditBackground() {
           });
         }
         let formEdit = createEditColorForm(
-          function () {
-            updateColor(false);
-          },
-          function () {
-            updateColor();
-          },
+          function () { updateColor(false); },
+          updateColor,
           function () {
             deleteBackgroundColor().then((_) => updateUIBackground());
           },
@@ -1641,10 +1577,76 @@ function createEditBackground() {
       if (listEditColorForm.length <= 1) {
         header.appendChild(btnSelectSkin);
       }
+    } else {
+      header.appendChild(btnSelectSkin);
+      let notiText = document.createElement("p");
+      notiText.className = "regular1";
+      notiText.style.margin = "4px 8px";
+      notiText.innerHTML = "choose a color skin to replace mixed content";
+      editContainer.appendChild(notiText);
+    }
+  } else if (selected_list.every(wb => wb.StyleItem.DecorationItem.ColorValue && !wb.StyleItem.DecorationItem.ColorValue.match(hexRegex))) {
+    header.appendChild(btnSelectSkin);
+    if (selected_list.filterAndMap(wb => wb.StyleItem.DecorationItem.ColorValue).length === 1) {
+      let editImgTile = document.createElement("div");
+      editImgTile.id = "select_img_tile";
+      editContainer.appendChild(editImgTile);
+
+      let divSelectImg = document.createElement("div");
+      editImgTile.appendChild(divSelectImg);
+
+      let imgDemo = document.createElement("div");
+      imgDemo.style.backgroundImage = `url(${urlImg + selected_list[0].StyleItem.DecorationItem.ColorValue})`;
+      imgDemo.style.backgroundSize = "cover";
+      imgDemo.style.backgroundPosition = "center";
+      imgDemo.style.backgroundRepeat = "no-repeat";
+      imgDemo.style.width = "20px";
+      imgDemo.style.height = "16px";
+      imgDemo.style.margin = "6px";
+      imgDemo.onclick = function () {
+        if (document.getElementById("popup_img_document") == undefined) {
+          FileDA.init();
+        }
+      };
+      divSelectImg.appendChild(imgDemo);
+      let imgName = document.createElement("p");
+      imgName.innerHTML = "Image";
+
+      divSelectImg.appendChild(imgName);
+      let inputOpacity = document.createElement("input");
+      inputOpacity.value = "100%";
+      inputOpacity.style.width = "38px";
+      inputOpacity.style.minWidth = "0px";
+      inputOpacity.style.minWidth = "40px";
+      inputOpacity.style.padding = "0 0 0 6px";
+      divSelectImg.appendChild(inputOpacity);
+
+      let btnEye = document.createElement("img");
+      btnEye.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg";
+      btnEye.style.width = "16px";
+      btnEye.style.height = "16px";
+      btnEye.style.padding = "6px";
+      editImgTile.appendChild(btnEye);
+
+      let btnRemoveBgImg = document.createElement("i");
+      btnRemoveBgImg.className = "fa-solid fa-minus";
+      btnRemoveBgImg.style.padding = "10px 8px";
+      editImgTile.appendChild(btnRemoveBgImg);
+      btnRemoveBgImg.onclick = function () {
+        removeBackgroundImg();
+        updateUIBackground();
+      };
+    } else {
+      header.appendChild(btnSelectSkin);
+      let notiText = document.createElement("p");
+      notiText.className = "regular1";
+      notiText.style.margin = "4px 8px";
+      notiText.innerHTML = "choose a color skin to replace mixed content";
+      editContainer.appendChild(notiText);
     }
   } else {
     header.appendChild(btnSelectSkin);
-    btnSelectSkin.style.display = "none";
+    header.appendChild(btnSelectImg);
     let btnAdd = document.createElement("i");
     btnAdd.className = "fa-solid fa-plus fa-sm bg-header-action";
     btnAdd.onclick = function () {
@@ -1652,17 +1654,6 @@ function createEditBackground() {
       updateUIBackground();
     };
     header.appendChild(btnAdd);
-    header.onmouseover = function () {
-      [...header.querySelectorAll(".bg-header-action")].forEach((actionHTML) => {
-        actionHTML.style.display = "block";
-      });
-    };
-    header.onmouseout = function () {
-      [...header.querySelectorAll(".bg-header-action")].forEach((actionHTML) => {
-        actionHTML.style.display = "none";
-      });
-      btnAdd.style.display = "block";
-    };
   }
 
   return editContainer;

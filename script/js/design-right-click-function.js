@@ -371,7 +371,7 @@ function createImgDocument() {
     }
   };
   let header = document.createElement("div");
-  header.className = "header_popup_skin";
+  header.className = "row header_popup_skin";
   header.onmousedown = function (e) {
     e.stopPropagation();
     if (e.buttons == 1) {
@@ -387,6 +387,7 @@ function createImgDocument() {
   let title = document.createElement("span");
   title.style.flex = 1;
   title.innerHTML = "Image document";
+  title.className = "semibold2"
   header.appendChild(title);
   let btn_close = document.createElement("i");
   btn_close.className = "fa-solid fa-xmark";
@@ -687,8 +688,14 @@ async function handleImportFile(event) {
     let offset = offsetScale(Math.min(minx, event.pageX), Math.min(miny, event.pageY));
     let listAdd = [];
     for (let fileItem of result) {
-      let newRect = fileItem.Name.endsWith(".svg") ? WBaseDefault.imgSvg : WBaseDefault.rectangle;
-      newRect.AttributesItem.Content = fileItem.Url;
+      let newRect;
+      if(fileItem.Name.endsWith(".svg")){
+        newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg));
+        newRect.AttributesItem.Content = fileItem.Url;
+      } else {
+        newRect = JSON.parse(JSON.stringify(WBaseDefault.rectangle));
+        newRect.StyleItem.DecorationItem.ColorValue = fileItem.Url;
+      }
       let imgSize = await FileDA.getImageSize(urlImg + fileItem.Url);
       let newObj = createWbaseHTML(
         {

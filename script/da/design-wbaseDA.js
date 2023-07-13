@@ -125,7 +125,7 @@ class EnumCate {
 
   static no_child_component = [this.tool_rectangle, this.tool_text, this.checkbox, this.progress_bar, this.progress_circle, this.radio_button, this.w_switch, this.svg];
 
-  static noImgBg = [this.svg, ...this.scale_size_component, this.table, this.tree, this.chart, this.carousel];
+  static noImgBg = [this.svg, ...this.scale_size_component, this.table, this.tree, this.chart, this.carousel, this.tool_text];
 
   static show_name = [this.tool_frame, this.form, this.tool_variant];
 
