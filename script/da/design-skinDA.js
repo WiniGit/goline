@@ -309,19 +309,38 @@ class CateDA {
                 }
                 return false;
             }));
+            [EnumCate.color, ...this.list_color_cate].forEach(cate => {
+                if (cate === EnumCate.color) {
+                    ColorDA.list.filter(e => e.CateID === cate).forEach(colorSkin => {
+                        document.documentElement.style.setProperty(`--background-color-${Ultis.toSlug(colorSkin.Name)}`, `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`);
+                    });
+                } else {
+                    ColorDA.list.filter(e => e.CateID === cate.ID).forEach(colorSkin => {
+                        document.documentElement.style.setProperty(`--background-color-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(colorSkin.Name)}`, `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`);
+                    });
+                }
+            });
             //
-            this.list_typo_cate = TypoDA.list.filter(e => {
-                e.FontWeight = e.FontWeight.toString().replace("FontWeight.w", "");
-                return e.CateID != EnumCate.typography;
-            }).filterAndMap(e => e.CateID);
+            this.list_typo_cate = TypoDA.list.filter(e => e.CateID != EnumCate.typography).filterAndMap(e => e.CateID);
             this.list_typo_cate = this.list.filter((e) => this.list_typo_cate.some((id) => {
                 if (e.ID == id) {
                     e.ParentID = EnumCate.typography;
                     return true;
                 }
-                let x = 13;
                 return false;
             }));
+            // font-style font-variant font-weight font-size/line-height font-family|caption|icon|menu|message-box|small-caption|status-bar|initial|inherit
+            [EnumCate.typography, ...this.list_typo_cate].forEach(cate => {
+                if (cate === EnumCate.typography) {
+                    TypoDA.list.filter(e => e.CateID === cate).forEach(typoSkin => {
+                        document.documentElement.style.setProperty(`--font-style-${Ultis.toSlug(typoSkin.Name)}`, `${typoSkin.FontWeight} ${typoSkin.FontSize}px/${typoSkin.Height != undefined ? (typoSkin.Height + "px") : "normal"} ${typoSkin.FontFamily}`);
+                    });
+                } else {
+                    TypoDA.list.filter(e => e.CateID === cate.ID).forEach(typoSkin => {
+                        document.documentElement.style.setProperty(`--font-style-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(typoSkin.Name)}`, `${typoSkin.FontWeight} ${typoSkin.FontSize}px/${typoSkin.Height != undefined ? (typoSkin.Height + "px") : "normal"} ${typoSkin.FontFamily}`);
+                    });
+                }
+            });
             //
             this.list_border_cate = BorderDA.list.filter(e => e.CateID != EnumCate.border).filterAndMap(e => e.CateID);
             this.list_border_cate = this.list.filter((e) => this.list_border_cate.some((id) => {
@@ -331,6 +350,23 @@ class CateDA {
                 }
                 return false;
             }));
+            [EnumCate.border, ...this.list_border_cate].forEach(cate => {
+                if (cate === EnumCate.border) {
+                    BorderDA.list.filter(e => e.CateID === cate).forEach(borderSkin => {
+                        let listWidth = borderSkin.Width.split(" ");
+                        document.documentElement.style.setProperty(`--border-width-${Ultis.toSlug(borderSkin.Name)}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
+                        document.documentElement.style.setProperty(`--border-style-${Ultis.toSlug(borderSkin.Name)}`, borderSkin.BorderStyle);
+                        document.documentElement.style.setProperty(`--border-color-${Ultis.toSlug(borderSkin.Name)}`, `#$${borderSkin.ColorValue.substring(2)}${borderSkin.ColorValue.substring(0, 2)}`);
+                    });
+                } else {
+                    BorderDA.list.filter(e => e.CateID === cate.ID).forEach(borderSkin => {
+                        let listWidth = borderSkin.Width.split(" ");
+                        document.documentElement.style.setProperty(`--border-width-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(borderSkin.Name)}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
+                        document.documentElement.style.setProperty(`--border-style-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(borderSkin.Name)}`, borderSkin.BorderStyle);
+                        document.documentElement.style.setProperty(`--border-color-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(borderSkin.Name)}`, `#$${borderSkin.ColorValue.substring(2)}${borderSkin.ColorValue.substring(0, 2)}`);
+                    });
+                }
+            });
             //
             this.list_effect_cate = EffectDA.list.filter(e => e.CateID != EnumCate.effect).filterAndMap(e => e.CateID);
             this.list_effect_cate = this.list.filter((e) => this.list_effect_cate.some((id) => {
@@ -340,6 +376,26 @@ class CateDA {
                 }
                 return false;
             }));
+        /* offset-x | offset-y | blur-radius | spread-radius | color */
+            [EnumCate.effect, ...this.list_effect_cate].forEach(cate => {
+                if (cate === EnumCate.effect) {
+                    EffectDA.list.filter(e => e.CateID === cate).forEach(effectSkin => {
+                        if(effectSkin.Type == ShadowType.layer_blur) {
+                            document.documentElement.style.setProperty(`--effect-blur-${Ultis.toSlug(effectSkin.Name)}`, `blur(${effectSkin.BlurRadius}px)`);
+                        } else {
+                            document.documentElement.style.setProperty(`--effect-shadow-${Ultis.toSlug(effectSkin.Name)}`, `${effectSkin.OffsetX}px ${effectSkin.OffsetY}px ${effectSkin.BlurRadius}px ${effectSkin.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} ${effectSkin.Type == ShadowType.inner ? "inset" : ""}`);
+                        }
+                    });
+                } else {
+                    EffectDA.list.filter(e => e.CateID === cate.ID).forEach(effectSkin => {
+                        if(effectSkin.Type == ShadowType.layer_blur) {
+                            document.documentElement.style.setProperty(`--effect-blur-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(effectSkin.Name)}`, `blur(${effectSkin.BlurRadius}px)`);
+                        } else {
+                            document.documentElement.style.setProperty(`--effect-shadow-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(effectSkin.Name)}`, `${effectSkin.OffsetX}px ${effectSkin.OffsetY}px ${effectSkin.BlurRadius}px ${effectSkin.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} ${effectSkin.Type == ShadowType.inner ? "inset" : ""}`);
+                        }
+                    });
+                }
+            });
         }
     }
 
