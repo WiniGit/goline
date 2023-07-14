@@ -668,23 +668,36 @@ function initWbaseStyle(item) {
     if (item.StyleItem.DecorationItem.ColorValue) {
       let background = item.StyleItem.DecorationItem.ColorValue;
       if (background.match(hexRegex) && item.CateID !== EnumCate.svg && item.CateID !== EnumCate.checkbox) {
-        item.value.style.backgroundColor = `#${background.substring(2)}${background.substring(0, 2)}`;
+        if (item.StyleItem.DecorationItem.ColorID) {
+          item.value.style.backgroundColor = `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`;
+        } else {
+          item.value.style.backgroundColor = `#${background.substring(2)}${background.substring(0, 2)}`;
+        }
       } else if (EnumCate.noImgBg.every((cate) => item.CateID != cate)) {
         item.value.style.backgroundImage = `url(${urlImg + background.replaceAll(" ", "%20")})`;
       }
     }
     if (item.StyleItem.DecorationItem.BorderItem) {
-      let listWidth = item.StyleItem.DecorationItem.BorderItem.Width.split(" ");
-      item.value.style.borderTop = listWidth[0] + "px";
-      item.value.style.borderRight = listWidth[1] + "px";
-      item.value.style.borderBottom = listWidth[2] + "px";
-      item.value.style.borderLeft = listWidth[3] + "px";
-      item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;
-      let border_color = item.StyleItem.DecorationItem.BorderItem.ColorValue;
-      item.value.style.borderColor = `#${border_color.substring(2)}${border_color.substring(0, 2)}`;
+      if (item.StyleItem.DecorationItem.BorderItem.IsStyle) {
+        item.value.style.borderWidth = `var(--border-width-${item.StyleItem.DecorationItem.BorderID})`;
+        item.value.style.borderStyle = `var(--border-style-${item.StyleItem.DecorationItem.BorderID})`;
+        item.value.style.borderColor = `var(--border-color-${item.StyleItem.DecorationItem.BorderID})`;
+      } else {
+        let listWidth = item.StyleItem.DecorationItem.BorderItem.Width.split(" ");
+        item.value.style.borderWidth = `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`;
+        item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;
+        let border_color = item.StyleItem.DecorationItem.BorderItem.ColorValue;
+        item.value.style.borderColor = `#${border_color.substring(2)}${border_color.substring(0, 2)}`;
+      }
     }
     if (item.StyleItem.DecorationItem.EffectItem) {
-      if (item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.layer_blur) {
+      if (item.StyleItem.DecorationItem.EffectItem.IsStyle) {
+        if (item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.layer_blur) {
+          item.value.style.filter = `var(--effect-blur-${item.StyleItem.DecorationItem.EffectID})`;
+        } else {
+          item.value.style.boxShadow = `var(--effect-shadow-${item.StyleItem.DecorationItem.EffectID})`;
+        }
+      } else if (item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.layer_blur) {
         item.value.style.filter = `blur(${item.StyleItem.DecorationItem.EffectItem.BlurRadius}px)`;
       } else {
         let effect_color = item.StyleItem.DecorationItem.EffectItem.ColorValue;
@@ -694,13 +707,21 @@ function initWbaseStyle(item) {
     }
   }
   if (item.StyleItem.TextStyleItem && item.CateID !== EnumCate.chart) {
-    item.value.style.fontFamily = item.StyleItem.TextStyleItem.FontFamily;
-    item.value.style.fontSize = `${item.StyleItem.TextStyleItem.FontSize}px`;
-    item.value.style.fontWeight = item.StyleItem.TextStyleItem.FontWeight;
-    item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing ?? 0}px`;
-    item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue?.substring(2)}${item.StyleItem.TextStyleItem.ColorValue?.substring(0, 2)}`;
-    if (item.StyleItem.TextStyleItem.Height != undefined) {
-      item.value.style.lineHeight = `${item.StyleItem.TextStyleItem.Height}px`;
+    if (item.StyleItem.TextStyleItem.IsStyle) {
+      item.value.style.font = `var(--font-style-${item.StyleItem.TextStyleID})`;
+      item.value.style.color = `var(--font-color-${item.StyleItem.TextStyleID})`;
+      if (item.StyleItem.TextStyleItem.LetterSpacing)
+        item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
+    } else {
+      item.value.style.fontFamily = item.StyleItem.TextStyleItem.FontFamily;
+      item.value.style.fontSize = `${item.StyleItem.TextStyleItem.FontSize}px`;
+      item.value.style.fontWeight = item.StyleItem.TextStyleItem.FontWeight;
+      if (item.StyleItem.TextStyleItem.LetterSpacing)
+        item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
+      item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue?.substring(2)}${item.StyleItem.TextStyleItem.ColorValue?.substring(0, 2)}`;
+      if (item.StyleItem.TextStyleItem.Height != undefined) {
+        item.value.style.lineHeight = `${item.StyleItem.TextStyleItem.Height}px`;
+      }
     }
   }
   if (item.StyleItem.TypoStyleItem && item.CateID != EnumCate.textformfield) {

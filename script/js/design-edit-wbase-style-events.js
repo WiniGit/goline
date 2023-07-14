@@ -1381,9 +1381,12 @@ function deleteBorder() {
   let list_border_wbase = selected_list.filter((e) => e.StyleItem.DecorationItem.BorderID);
   for (let i = 0; i < list_border_wbase.length; i++) {
     let elementHTML = document.getElementById(list_border_wbase[i].GID);
-    list_border_wbase[i].StyleItem.DecorationItem.BorderID = undefined;
-    list_border_wbase[i].StyleItem.DecorationItem.BorderItem = undefined;
-    elementHTML.style.border = "none";
+    list_border_wbase[i].StyleItem.DecorationItem.BorderID = null;
+    list_border_wbase[i].StyleItem.DecorationItem.BorderItem = null;
+    elementHTML.style.border = null;
+    elementHTML.style.borderWidth = null;
+    elementHTML.style.borderStyle = null;
+    elementHTML.style.borderColor = null;
   }
   WBaseDA.edit(list_border_wbase, EnumObj.decoration);
   updateUISelectBox();
@@ -1395,18 +1398,12 @@ function editBorder(border_item, onSubmit = true) {
   if (border_item.IsStyle) {
     _enumObj = EnumObj.decoration;
     list_border = selected_list.filter((e) => e.StyleItem.DecorationItem);
-    for (let i = 0; i < list_border.length; i++) {
-      let eHTML = document.getElementById(list_border[i].GID);
-      list_border[i].StyleItem.DecorationItem.BorderID = border_item.GID;
-      list_border[i].StyleItem.DecorationItem.BorderItem = border_item;
-      let listWidth = border_item.Width.split(" ");
-      eHTML.style.borderTop = listWidth[0] + "px";
-      eHTML.style.borderRight = listWidth[1] + "px";
-      eHTML.style.borderBottom = listWidth[2] + "px";
-      eHTML.style.borderLeft = listWidth[3] + "px";
-      eHTML.style.borderStyle = border_item.BorderStyle;
-      let border_color = border_item.ColorValue;
-      eHTML.style.borderColor = `#${border_color.substring(2)}${border_color.substring(0, 2)}`;
+    for (let wb of list_border) {
+      wb.StyleItem.DecorationItem.BorderID = border_item.GID;
+      wb.StyleItem.DecorationItem.BorderItem = border_item;
+      wb.value.style.borderWidth = `var(--border-width-${border_item.GID})`;
+      wb.value.style.borderStyle = `var(--border-style-${border_item.GID})`;
+      wb.value.style.borderColor = `var(--border-color-${border_item.GID})`;
     }
   } else {
     _enumObj = EnumObj.border;
@@ -1536,12 +1533,8 @@ function editBorder(border_item, onSubmit = true) {
 
 function editBorderSkin(border_item, thisSkin) {
   if (border_item.ColorValue != undefined) {
-    let new_color_value = border_item.ColorValue;
-    thisSkin.ColorValue = new_color_value;
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.BorderID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.borderColor = `#${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)}`;
-    }
+    thisSkin.ColorValue = border_item.ColorValue;
+    document.documentElement.style.setProperty(`--border-color-${thisSkin.GID}`, `#${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)}`);
   }
   if (border_item.Width != undefined) {
     let listWidth = thisSkin.Width.split(" ");
@@ -1564,49 +1557,29 @@ function editBorderSkin(border_item, thisSkin) {
         break;
     }
     thisSkin.Width = listWidth.join(" ");
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.BorderID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      let eHTML = document.getElementById(listRelative[i].GID);
-      eHTML.style.borderTopWidth = listWidth[0] + "px";
-      eHTML.style.borderRightWidth = listWidth[1] + "px";
-      eHTML.style.borderBottomWidth = listWidth[2] + "px";
-      eHTML.style.borderLeftWidth = listWidth[3] + "px";
-    }
+    document.documentElement.style.setProperty(`--border-width-${thisSkin.GID}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
   } else if (border_item.LeftWidth != undefined) {
-    let list_width = thisSkin.Width.split(" ");
-    list_width[3] = border_item.LeftWidth;
-    thisSkin.Width = list_width.join(" ");
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.BorderID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.borderLeftWidth = border_item.LeftWidth + "px";
-    }
+    let listWidth = thisSkin.Width.split(" ");
+    listWidth[3] = border_item.LeftWidth;
+    thisSkin.Width = listWidth.join(" ");
+    document.documentElement.style.setProperty(`--border-width-${thisSkin.GID}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
   } else if (border_item.TopWidth != undefined) {
-    let list_width = thisSkin.Width.split(" ");
-    list_width[0] = border_item.TopWidth;
-    thisSkin.Width = list_width.join(" ");
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.BorderID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.borderTopWidth = border_item.TopWidth + "px";
-    }
+    let listWidth = thisSkin.Width.split(" ");
+    listWidth[0] = border_item.TopWidth;
+    thisSkin.Width = listWidth.join(" ");
+    document.documentElement.style.setProperty(`--border-width-${thisSkin.GID}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
   } else if (border_item.RightWidth != undefined) {
-    let list_width = thisSkin.Width.split(" ");
-    list_width[1] = border_item.RightWidth;
-    thisSkin.Width = list_width.join(" ");
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.BorderID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.borderRightWidth = border_item.RightWidth + "px";
-    }
+    let listWidth = thisSkin.Width.split(" ");
+    listWidth[1] = border_item.RightWidth;
+    thisSkin.Width = listWidth.join(" ");
+    document.documentElement.style.setProperty(`--border-width-${thisSkin.GID}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
   } else if (border_item.BottomWidth != undefined) {
-    let list_width = thisSkin.Width.split(" ");
-    list_width[2] = border_item.BottomWidth;
-    thisSkin.Width = list_width.join(" ");
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.BorderID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.borderBottomWidth = border_item.BottomWidth + "px";
-    }
+    let listWidth = thisSkin.Width.split(" ");
+    listWidth[2] = border_item.BottomWidth;
+    thisSkin.Width = listWidth.join(" ");
+    document.documentElement.style.setProperty(`--border-width-${thisSkin.GID}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
   }
   if (border_item.BorderSide != undefined) {
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.BorderID == thisSkin.GID);
     let listWidth = thisSkin.Width.split(" ").map((e) => parseFloat(e));
     listWidth.sort((a, b) => b - a);
     switch (border_item.BorderSide) {
@@ -1632,20 +1605,11 @@ function editBorderSkin(border_item, thisSkin) {
     }
     thisSkin.Width = listWidth.join(" ");
     thisSkin.BorderSide = border_item.BorderSide;
-    for (let i = 0; i < listRelative.length; i++) {
-      let eHTML = document.getElementById(listRelative[i].GID);
-      eHTML.style.borderTopWidth = listWidth[0] + "px";
-      eHTML.style.borderRightWidth = listWidth[1] + "px";
-      eHTML.style.borderBottomWidth = listWidth[2] + "px";
-      eHTML.style.borderLeftWidth = listWidth[3] + "px";
-    }
+    document.documentElement.style.setProperty(`--border-width-${thisSkin.GID}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
   }
   if (border_item.BorderStyle) {
     thisSkin.BorderStyle = border_item.BorderStyle;
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.BorderID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.borderStyle = thisSkin.BorderStyle;
-    }
+    document.documentElement.style.setProperty(`--border-style-${thisSkin.GID}`, thisSkin.BorderStyle);
   }
   if (border_item.Name) {
     let listName = border_item.Name.replace("\\", "/").split("/");
@@ -1677,8 +1641,8 @@ function editBorderSkin(border_item, thisSkin) {
 
 function unlinkBorderSkin() {
   let listBorder = selected_list.filter((e) => e.StyleItem.DecorationItem.BorderItem);
-  for (let wbasItem of listBorder) {
-    let currentBorder = wbasItem.StyleItem.DecorationItem.BorderItem;
+  for (let wb of listBorder) {
+    let currentBorder = wb.StyleItem.DecorationItem.BorderItem;
     let newBorderItem = {
       GID: uuidv4(),
       Name: "new border",
@@ -1688,8 +1652,12 @@ function unlinkBorderSkin() {
       BorderSide: currentBorder.BorderSide,
       Width: currentBorder.Width,
     };
-    wbasItem.StyleItem.DecorationItem.BorderID = newBorderItem.GID;
-    wbasItem.StyleItem.DecorationItem.BorderItem = newBorderItem;
+    wb.StyleItem.DecorationItem.BorderID = newBorderItem.GID;
+    wb.StyleItem.DecorationItem.BorderItem = newBorderItem;
+    let listWidth = newBorderItem.Width.split(" ");
+    wb.value.style.borderWidth = `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`;
+    wb.value.style.borderStyle = newBorderItem.BorderStyle;
+    wb.value.style.borderColor = `#${newBorderItem.ColorValue.substring(2)}${newBorderItem.ColorValue.substring(0, 2)}`;
   }
   WBaseDA.addStyle(listBorder, EnumObj.border);
 }
@@ -1755,7 +1723,7 @@ async function editBackground(decorationItem, onSubmit = true) {
           wbaseItem.value.style.setProperty("--checked-bg", `#${new_color_value.substring(2) + new_color_value.substring(2, 0)}`);
           break;
         default:
-          wbaseItem.value.style.backgroundColor = `#${new_color_value.substring(2)}${new_color_value.substring(0, 2)}`;
+          wbaseItem.value.style.backgroundColor = `var(--background-color-${decorationItem.ColorID})`;
           break;
       }
       wbaseItem.value.style.backgroundImage = null;
@@ -1808,6 +1776,7 @@ function removeBackgroundImg() {
   for (let wb of list_change_background) {
     wb.StyleItem.DecorationItem.ColorValue = "";
     wb.value.style.backgroundImage = null;
+    wb.value.style.backgroundColor = null;
   }
   WBaseDA.edit(list_change_background, EnumObj.decoration);
 }
@@ -1840,18 +1809,16 @@ function editColorSkin(color_item, thisSkin) {
     }
   } else if (color_item.Value) {
     thisSkin.Value = color_item.Value;
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.ColorID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      listRelative[i].StyleItem.DecorationItem.ColorValue = thisSkin.Value;
-      document.getElementById(listRelative[i].GID).style.backgroundColor = `#${thisSkin.Value.substring(2)}${thisSkin.Value.substring(0, 2)}`;
-    }
+    document.documentElement.style.setProperty(`--background-color-${thisSkin.GID}`, `#${thisSkin.Value.substring(2)}${thisSkin.Value.substring(0, 2)}`);
   }
 }
 
 function unlinkColorSkin() {
   let list_change_background = selected_list.filter((e) => e.StyleItem.DecorationItem);
-  for (let wbaseItem of list_change_background) {
-    wbaseItem.StyleItem.DecorationItem.ColorID = null;
+  for (let wb of list_change_background) {
+    wb.StyleItem.DecorationItem.ColorID = null;
+    let backgroundColor = Ultis.rgbToHex(window.getComputedStyle(wb.value).backgroundColor).replace("#");
+    wb.StyleItem.DecorationItem.ColorValue = backgroundColor.substring(6) + backgroundColor.substring(0, 6);
   }
   WBaseDA.edit(list_change_background, EnumObj.decoration);
 }
@@ -1862,15 +1829,12 @@ function editTextStyle(text_style_item, onSubmit = true) {
   if (text_style_item.IsStyle) {
     _enumObj = EnumObj.style;
     for (let wb of list_text) {
-      let eHTML = wb.value;
       wb.StyleItem.TextStyleID = text_style_item.GID;
       wb.StyleItem.TextStyleItem = text_style_item;
-      eHTML.style.color = `#${text_style_item.ColorValue.substring(2)}${text_style_item.ColorValue.substring(0, 2)}`;
-      eHTML.style.fontFamily = text_style_item.FontFamily;
-      eHTML.style.fontSize = `${text_style_item.FontSize}px`;
-      eHTML.style.fontWeight = text_style_item.FontWeight;
-      eHTML.style.lineHeight = text_style_item.Height == null ? undefined : `${text_style_item.Height}px`;
-      eHTML.style.letterSpacing = `${text_style_item.LetterSpacing}px`;
+      wb.value.style.font = `var(--font-style-${text_style_item.GID})`;
+      wb.value.style.color = `var(--font-color-${text_style_item.GID})`;
+      if (text_style_item.LetterSpacing)
+        wb.value.style.letterSpacing = `${text_style_item.LetterSpacing}px`;
     }
   } else {
     _enumObj = EnumObj.textStyle;
@@ -2045,45 +2009,30 @@ function editTextStyle(text_style_item, onSubmit = true) {
 function editTypoSkin(text_style_item, thisSkin) {
   if (text_style_item.ColorValue) {
     thisSkin.ColorValue = text_style_item.ColorValue;
-    let listRelative = wbase_list.filter((e) => e.StyleItem.TextStyleID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.color = `#${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)}`;
-    }
+    document.documentElement.style.setProperty(`--font-color-${thisSkin.GID}`, `#${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)}`)
   }
   if (text_style_item.FontFamily) {
     thisSkin.FontFamily = text_style_item.FontFamily;
-    let listRelative = wbase_list.filter((e) => e.StyleItem.TextStyleID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.fontFamily = thisSkin.FontFamily;
-    }
+    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? (thisSkin.Height + "px") : "normal"} ${thisSkin.FontFamily}`);
   }
   if (text_style_item.FontSize != undefined) {
     thisSkin.FontSize = parseFloat(text_style_item.FontSize);
-    let listRelative = wbase_list.filter((e) => e.StyleItem.TextStyleID == thisSkin.GID);
-    for (let wb of listRelative) {
-      wb.value.style.fontSize = thisSkin.FontSize + "px";
-    }
+    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? (thisSkin.Height + "px") : "normal"} ${thisSkin.FontFamily}`);
   }
   if (text_style_item.FontWeight != undefined) {
     thisSkin.FontWeight = parseFloat(text_style_item.FontWeight);
-    let listRelative = wbase_list.filter((e) => e.StyleItem.TextStyleID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.fontWeight = thisSkin.FontWeight;
-    }
+    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? (thisSkin.Height + "px") : "normal"} ${thisSkin.FontFamily}`);
   }
   if (text_style_item.Height != undefined) {
     let lineHeightValue = text_style_item.Height.toString().toLowerCase();
-    thisSkin.Height = lineHeightValue == "auto" ? undefined : parseFloat(lineHeightValue);
-    let listRelative = wbase_list.filter((e) => e.StyleItem.TextStyleID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.lineHeight = lineHeightValue == "auto" ? "normal" : `${thisSkin.Height}px`;
-    }
+    thisSkin.Height = lineHeightValue == "auto" ? null : parseFloat(lineHeightValue);
+    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? (thisSkin.Height + "px") : "normal"} ${thisSkin.FontFamily}`);
   }
   if (text_style_item.LetterSpacing != undefined) {
     thisSkin.LetterSpacing = parseFloat(text_style_item.LetterSpacing);
     let listRelative = wbase_list.filter((e) => e.StyleItem.TextStyleID == thisSkin.GID);
     for (let i = 0; i < listRelative.length; i++) {
-      document.getElementById(listRelative[i].GID).style.letterSpacing = thisSkin.LetterSpacing + "px";
+      listRelative[i].value.style.letterSpacing = thisSkin.LetterSpacing + "px";
     }
   }
   if (text_style_item.Name) {
@@ -2116,8 +2065,8 @@ function editTypoSkin(text_style_item, thisSkin) {
 
 function unlinkTypoSkin() {
   let listTypo = selected_list.filter((e) => e.StyleItem.TextStyleItem);
-  for (let i = 0; i < listTypo.length; i++) {
-    let currentTextStyle = listTypo[i].StyleItem.TextStyleItem;
+  for (let wb of listTypo) {
+    let currentTextStyle = wb.StyleItem.TextStyleItem;
     let newTextStyleItem = {
       GID: uuidv4(),
       Name: "new text style",
@@ -2130,8 +2079,16 @@ function unlinkTypoSkin() {
       FontFamily: currentTextStyle.FontFamily,
       Height: currentTextStyle.Height,
     };
-    listTypo[i].StyleItem.TextStyleID = newTextStyleItem.GID;
-    listTypo[i].StyleItem.TextStyleItem = newTextStyleItem;
+    wb.StyleItem.TextStyleID = newTextStyleItem.GID;
+    wb.StyleItem.TextStyleItem = newTextStyleItem;
+    wb.value.style.font = null;
+    wb.value.style.fontFamily = newTextStyleItem.FontFamily;
+    wb.value.style.fontSize = `${newTextStyleItem.FontSize}px`;
+    wb.value.style.fontWeight = newTextStyleItem.FontWeight;
+    wb.value.style.color = `#${newTextStyleItem.ColorValue?.substring(2)}${newTextStyleItem.ColorValue?.substring(0, 2)}`;
+    if (newTextStyleItem.Height != undefined) {
+      wb.value.style.lineHeight = `${newTextStyleItem.Height}px`;
+    }
   }
   WBaseDA.addStyle(listTypo, EnumObj.textStyle);
 }
@@ -2168,12 +2125,11 @@ function addEffect() {
 
 function deleteEffect() {
   var list_effect_wbase = selected_list.filter((e) => e.StyleItem.DecorationItem.EffectID);
-  var i;
-  for (i = 0; i < list_effect_wbase.length; i++) {
-    var elementHTML = document.getElementById(list_effect_wbase[i].GID);
-    list_effect_wbase[i].StyleItem.DecorationItem.EffectID = undefined;
-    list_effect_wbase[i].StyleItem.DecorationItem.EffectItem = undefined;
-    elementHTML.style.boxShadow = "none";
+  for (let wb of list_effect_wbase) {
+    wb.StyleItem.DecorationItem.EffectID = null;
+    wb.StyleItem.DecorationItem.EffectItem = null;
+    wb.value.style.boxShadow = null;
+    wb.value.style.filter = null;
   }
   WBaseDA.edit(list_effect_wbase, EnumObj.decoration);
 }
@@ -2181,17 +2137,13 @@ function deleteEffect() {
 function editEffect(effect_item, onSubmit = true) {
   if (effect_item.IsStyle) {
     let list_effect = selected_list.filter((e) => e.StyleItem.DecorationItem);
-    let i;
-    for (i = 0; i < list_effect.length; i++) {
-      var elementHTML = document.getElementById(list_effect[i].GID);
-      list_effect[i].StyleItem.DecorationItem.EffectID = effect_item.GID;
-      list_effect[i].StyleItem.DecorationItem.EffectItem = effect_item;
+    for (let wb of list_effect) {
+      wb.StyleItem.DecorationItem.EffectID = effect_item.GID;
+      wb.StyleItem.DecorationItem.EffectItem = effect_item;
       if (effect_item.Type == ShadowType.layer_blur) {
-        elementHTML.style.filter = `blur(${effect_item.BlurRadius}px)`;
+        wb.value.style.filter = `var(--effect-blur-${effect_item.GID})`;
       } else {
-        let effect_color = effect_item.ColorValue;
-        /* offset-x | offset-y | blur-radius | spread-radius | color */
-        elementHTML.style.boxShadow = `${effect_item.OffsetX}px ${effect_item.OffsetY}px ${effect_item.BlurRadius}px ${effect_item.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} ${effect_item.Type == ShadowType.inner ? "inset" : ""}`;
+        wb.value.style.boxShadow = `var(--effect-shadow-${effect_item.GID})`;
       }
     }
     WBaseDA.edit(list_effect, EnumObj.decoration);
@@ -2296,30 +2248,54 @@ function editEffect(effect_item, onSubmit = true) {
 }
 
 function editEffectSkin(effect_item, thisSkin) {
-  let isUpdateWbase = false;
   if (effect_item.OffsetX != undefined) {
     thisSkin.OffsetX = effect_item.OffsetX;
-    isUpdateWbase = true;
+    document.documentElement.style.setProperty(`--effect-shadow-${thisSkin.GID}`, `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`);
   }
   if (effect_item.OffsetY != undefined) {
     thisSkin.OffsetY = effect_item.OffsetY;
-    isUpdateWbase = true;
+    document.documentElement.style.setProperty(`--effect-shadow-${thisSkin.GID}`, `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`);
   }
   if (effect_item.BlurRadius != undefined) {
     thisSkin.BlurRadius = effect_item.BlurRadius;
-    isUpdateWbase = true;
+    if (thisSkin.Type == ShadowType.layer_blur) {
+      document.documentElement.style.setProperty(`--effect-blur-${thisSkin.GID}`, `blur(${thisSkin.BlurRadius}px)`);
+    } else {
+      document.documentElement.style.setProperty(`--effect-shadow-${thisSkin.GID}`, `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`);
+    }
   }
   if (effect_item.SpreadRadius != undefined) {
     thisSkin.SpreadRadius = effect_item.SpreadRadius;
-    isUpdateWbase = true;
+    document.documentElement.style.setProperty(`--effect-shadow-${thisSkin.GID}`, `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`);
   }
   if (effect_item.ColorValue) {
     thisSkin.ColorValue = effect_item.ColorValue;
-    isUpdateWbase = true;
+    document.documentElement.style.setProperty(`--effect-shadow-${thisSkin.GID}`, `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`);
   }
   if (effect_item.Type) {
-    thisSkin.Type = effect_item.Type;
-    isUpdateWbase = true;
+    if (effect_item.Type !== thisSkin.Type) {
+      let listRelative = [];
+      if (thisSkin.Type === ShadowType.layer_blur) {
+        document.documentElement.style.removeProperty(`--effect-blur-${thisSkin.GID}`);
+        listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.EffectID == thisSkin.GID)
+      } else if (effect_item.Type == ShadowType.layer_blur) {
+        document.documentElement.style.removeProperty(`--effect-shadow-${thisSkin.GID}`);
+        listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.EffectID == thisSkin.GID)
+      }
+      thisSkin.Type = effect_item.Type;
+      if (thisSkin.Type === ShadowType.layer_blur) {
+        document.documentElement.style.setProperty(`--effect-blur-${thisSkin.GID}`, `blur(${thisSkin.BlurRadius}px)`);
+      } else {
+        document.documentElement.style.setProperty(`--effect-shadow-${thisSkin.GID}`, `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`);
+      }
+      for (let wb of listRelative) {
+        if (thisSkin.Type === ShadowType.layer_blur) {
+          wb.value.style.filter = `var(--effect-blur-${thisSkin.GID})`;
+        } else {
+          wb.value.style.boxShadow = `var(--effect-shadow-${thisSkin.GID})`;
+        }
+      }
+    }
   }
   if (effect_item.Name) {
     let listName = effect_item.Name.replace("\\", "/").split("/");
@@ -2347,29 +2323,12 @@ function editEffectSkin(effect_item, thisSkin) {
       }
     }
   }
-  if (isUpdateWbase) {
-    let listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.EffectID == thisSkin.GID);
-    for (let i = 0; i < listRelative.length; i++) {
-      let eHTML = document.getElementById(listRelative[i].GID);
-      listRelative[i].StyleItem.DecorationItem.EffectItem.ColorValue = thisSkin.Value;
-      if (thisSkin.Type == ShadowType.layer_blur) {
-        eHTML.style.filter = `blur(${thisSkin.BlurRadius}px)`;
-        eHTML.style.boxShadow = "none";
-      } else {
-        eHTML.style.filter = "none";
-        thisSkin.ColorValue ??= "40000000";
-        let effect_color = thisSkin.ColorValue;
-        eHTML.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} 
-                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-      }
-    }
-  }
 }
 
 function unlinkEffectSkin() {
   let listEffect = selected_list.filter((e) => e.StyleItem.DecorationItem.EffectItem);
-  for (let wbaseItem of listEffect) {
-    let currentEffect = wbaseItem.StyleItem.DecorationItem.EffectItem;
+  for (let wb of listEffect) {
+    let currentEffect = wb.StyleItem.DecorationItem.EffectItem;
     let newEffectItem = {
       GID: uuidv4(),
       Name: "new effect",
@@ -2381,8 +2340,13 @@ function unlinkEffectSkin() {
       BlurRadius: currentEffect.BlurRadius,
       Type: currentEffect.Type,
     };
-    wbaseItem.StyleItem.DecorationItem.EffectID = newEffectItem.GID;
-    wbaseItem.StyleItem.DecorationItem.EffectItem = newEffectItem;
+    wb.StyleItem.DecorationItem.EffectID = newEffectItem.GID;
+    wb.StyleItem.DecorationItem.EffectItem = newEffectItem;
+    if (newEffectItem.Type === ShadowType.layer_blur) {
+      wb.value.style.filter = `blur(${newEffectItem.BlurRadius}px)`;
+    } else {
+      wb.value.style.boxShadow = `${newEffectItem.OffsetX}px ${newEffectItem.OffsetY}px ${newEffectItem.BlurRadius}px ${newEffectItem.SpreadRadius}px #${newEffectItem.ColorValue.substring(2)}${newEffectItem.ColorValue.substring(0, 2)} ${newEffectItem.Type == ShadowType.inner ? "inset" : ""}`;
+    }
   }
   WBaseDA.addStyle(listEffect, EnumObj.effect);
 }

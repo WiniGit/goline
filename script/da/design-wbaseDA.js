@@ -323,9 +323,10 @@ class WCarouselEffect {
   static easeInOut = "ease-in-out";
 }
 
-var hexRegex = /(#){0,1}[0-9A-Fa-f]{6,8}$/i;
-var svgRegex = /(fill|stroke)="[^none](\w|\d|#){1,}"/g;
-var brpRegex = /\(([^)-]+)\)/g;
+const hexRegex = /(#){0,1}[0-9A-Fa-f]{6,8}$/i;
+const svgRegex = /(fill|stroke)="[^none](\w|\d|#){1,}"/g;
+const brpRegex = /\(([^)-]+)\)/g;
+const spChaRegex = /[!@#\$%\^\&*\)\(+=._-]/g;
 var wbase_list = [];
 var base_component_list = [];
 var assets_list = [];

@@ -16,13 +16,33 @@ async function initData() {
   action_index = -1;
   let skinResponse = await $.get(WBaseDA.skin_url + `?pid=${ProjectDA.obj.ID}`);
   let wbaseResponse = await WBaseDA.apiGetInitWbase();
-  console.log("get server done: ", Date.now());
   ColorDA.list = skinResponse.Data.ColorItems;
+  ColorDA.list.forEach(colorSkin => {
+    document.documentElement.style.setProperty(`--background-color-${colorSkin.GID}`, `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`);
+  });
   TypoDA.list = skinResponse.Data.TextStyleItems;
-  EffectDA.list = skinResponse.Data.EffectItems;
+  TypoDA.list.forEach(typoSkin => {
+    document.documentElement.style.setProperty(`--font-style-${typoSkin.GID}`, `${typoSkin.FontWeight} ${typoSkin.FontSize}px/${typoSkin.Height != undefined ? (typoSkin.Height + "px") : "normal"} ${typoSkin.FontFamily}`);
+    document.documentElement.style.setProperty(`--font-color-${typoSkin.GID}`, `#${typoSkin.ColorValue.substring(2)}${typoSkin.ColorValue.substring(0, 2)}`);
+  });
   BorderDA.list = skinResponse.Data.BorderItems;
+  BorderDA.list.forEach(borderSkin => {
+    let listWidth = borderSkin.Width.split(" ");
+    document.documentElement.style.setProperty(`--border-width-${borderSkin.GID}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
+    document.documentElement.style.setProperty(`--border-style-${borderSkin.GID}`, borderSkin.BorderStyle);
+    document.documentElement.style.setProperty(`--border-color-${borderSkin.GID}`, `#${borderSkin.ColorValue.substring(2)}${borderSkin.ColorValue.substring(0, 2)}`);
+  });
+  EffectDA.list = skinResponse.Data.EffectItems;
+  EffectDA.list.forEach(effectSkin => {
+    if (effectSkin.Type == ShadowType.layer_blur) {
+      document.documentElement.style.setProperty(`--effect-blur-${effectSkin.GID}`, `blur(${effectSkin.BlurRadius}px)`);
+    } else {
+      document.documentElement.style.setProperty(`--effect-shadow-${effectSkin.GID}`, `${effectSkin.OffsetX}px ${effectSkin.OffsetY}px ${effectSkin.BlurRadius}px ${effectSkin.SpreadRadius}px #${effectSkin.ColorValue.substring(2)}${effectSkin.ColorValue.substring(0, 2)} ${effectSkin.Type == ShadowType.inner ? "inset" : ""}`);
+    }
+  });
   PropertyDA.list = skinResponse.Data.WPropertyItems;
   CateDA.initCate();
+  console.log("get server done: ", Date.now());
   wbase_list = [];
   wbase_list = initDOM(wbaseResponse);
   parent = divSection;

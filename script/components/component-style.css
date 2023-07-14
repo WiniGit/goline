@@ -11,7 +11,6 @@
   border: none;
   background-color: unset;
 }
-
 .wbaseItem-value {
   position: relative;
   box-sizing: border-box;
@@ -101,6 +100,7 @@
 }
 
 .w-text {
+  display: block;
   cursor: default;
   text-overflow: ellipsis;
   overflow: hidden !important;
@@ -114,11 +114,6 @@
 
 .w-text * {
   all: unset !important;
-}
-
-.w-text:not(.w-text[contenteditable="true"]) {
-  display: block;
-  /* white-space: nowrap; */
 }
 
 .w-svg {

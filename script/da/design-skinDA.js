@@ -132,6 +132,7 @@ class ColorDA {
     }
 
     static delete(colorItem) {
+        document.documentElement.style.removeProperty(`--background-color-${colorItem.GID}`);
         WiniIO.emitColor(colorItem, EnumEvent.delete);
     }
 }
@@ -158,7 +159,7 @@ class TypoDA {
     }
 
     static delete(textStyleItem) {
-        wbase_list.filter(e => e.StyleItem.TextStyleID === textStyleItem.GID).forEach(e => {
+        wbase_list.filter(e => e.StyleItem.TextStyleID === textStyleItem.GID).forEach(wb => {
             let defaultTypo = {
                 GID: 0,
                 FontSize: 14,
@@ -169,15 +170,20 @@ class TypoDA {
                 LetterSpacing: 0,
                 FontFamily: "Roboto",
             };
-            e.StyleItem.TextStyleItem = defaultTypo
-            e.StyleItem.TextStyleID = 0;
-            e.value.style.fontFamily = defaultTypo;
-            e.value.style.fontSize = `${defaultTypo}px`;
-            e.value.style.fontWeight = defaultTypo;
-            e.value.style.letterSpacing = `${defaultTypo}px`;
-            e.value.style.color = `#${defaultTypo.substring(2)}${defaultTypo.substring(0, 2)}`;
-            e.value.style.lineHeight = null;
+            wb.StyleItem.TextStyleItem = defaultTypo;
+            wb.StyleItem.TextStyleID = 0;
+            wb.value.style.fontFamily = defaultTypo.FontFamily;
+            wb.value.style.fontSize = `${defaultTypo.FontSize}px`;
+            wb.value.style.fontWeight = defaultTypo.FontWeight;
+            if (defaultTypo.LetterSpacing)
+                wb.value.style.letterSpacing = `${defaultTypo.LetterSpacing}px`;
+            wb.value.style.color = `#${defaultTypo.ColorValue.substring(2)}${defaultTypo.ColorValue.substring(0, 2)}`;
+            if (defaultTypo.Height != undefined) {
+                wb.value.style.lineHeight = `${defaultTypo.Height}px`;
+            }
         });
+        document.documentElement.style.removeProperty(`--font-style-${textStyleItem.GID}`);
+        document.documentElement.style.removeProperty(`--font-color-${textStyleItem.GID}`);
         WiniIO.emitTypo(textStyleItem, EnumEvent.delete);
     }
 }
@@ -207,8 +213,14 @@ class EffectDA {
         wbase_list.filter(e => e.StyleItem.DecorationItem.EffectID === effectItem.GID).forEach(e => {
             e.StyleItem.DecorationItem.EffectID = null;
             e.StyleItem.DecorationItem.EffectItem = null;
-            e.value.style.boxShadow = "none";
+            e.value.style.boxShadow = null;
+            e.value.style.filter = null;
         });
+        if (effectItem.Type == ShadowType.layer_blur) {
+            document.documentElement.style.removeProperty(`--effect-blur-${effectSkin.GID}`);
+        } else {
+            document.documentElement.style.removeProperty(`--effect-shadow-${effectSkin.GID}`);
+        }
         WiniIO.emitEffect(effectItem, EnumEvent.delete);
     }
 }
@@ -238,8 +250,14 @@ class BorderDA {
         wbase_list.filter(e => e.StyleItem.DecorationItem.BorderID === borderItem.GID).forEach(e => {
             e.StyleItem.DecorationItem.BorderID = null;
             e.StyleItem.DecorationItem.BorderItem = null;
-            e.value.style.border = "none";
+            e.value.style.border = null;
+            e.value.style.borderWidth = null;
+            e.value.style.borderStyle = null;
+            e.value.style.borderColor = null;
         });
+        document.documentElement.style.removeProperty(`--border-width-${borderItem.GID}`);
+        document.documentElement.style.removeProperty(`--border-style-${borderItem.GID}`);
+        document.documentElement.style.removeProperty(`--border-color-${borderItem.GID}`);
         WiniIO.emitBorder(borderItem, EnumEvent.delete);
     }
 }
@@ -309,17 +327,6 @@ class CateDA {
                 }
                 return false;
             }));
-            [EnumCate.color, ...this.list_color_cate].forEach(cate => {
-                if (cate === EnumCate.color) {
-                    ColorDA.list.filter(e => e.CateID === cate).forEach(colorSkin => {
-                        document.documentElement.style.setProperty(`--background-color-${Ultis.toSlug(colorSkin.Name)}`, `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`);
-                    });
-                } else {
-                    ColorDA.list.filter(e => e.CateID === cate.ID).forEach(colorSkin => {
-                        document.documentElement.style.setProperty(`--background-color-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(colorSkin.Name)}`, `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`);
-                    });
-                }
-            });
             //
             this.list_typo_cate = TypoDA.list.filter(e => e.CateID != EnumCate.typography).filterAndMap(e => e.CateID);
             this.list_typo_cate = this.list.filter((e) => this.list_typo_cate.some((id) => {
@@ -329,18 +336,6 @@ class CateDA {
                 }
                 return false;
             }));
-            // font-style font-variant font-weight font-size/line-height font-family|caption|icon|menu|message-box|small-caption|status-bar|initial|inherit
-            [EnumCate.typography, ...this.list_typo_cate].forEach(cate => {
-                if (cate === EnumCate.typography) {
-                    TypoDA.list.filter(e => e.CateID === cate).forEach(typoSkin => {
-                        document.documentElement.style.setProperty(`--font-style-${Ultis.toSlug(typoSkin.Name)}`, `${typoSkin.FontWeight} ${typoSkin.FontSize}px/${typoSkin.Height != undefined ? (typoSkin.Height + "px") : "normal"} ${typoSkin.FontFamily}`);
-                    });
-                } else {
-                    TypoDA.list.filter(e => e.CateID === cate.ID).forEach(typoSkin => {
-                        document.documentElement.style.setProperty(`--font-style-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(typoSkin.Name)}`, `${typoSkin.FontWeight} ${typoSkin.FontSize}px/${typoSkin.Height != undefined ? (typoSkin.Height + "px") : "normal"} ${typoSkin.FontFamily}`);
-                    });
-                }
-            });
             //
             this.list_border_cate = BorderDA.list.filter(e => e.CateID != EnumCate.border).filterAndMap(e => e.CateID);
             this.list_border_cate = this.list.filter((e) => this.list_border_cate.some((id) => {
@@ -350,23 +345,6 @@ class CateDA {
                 }
                 return false;
             }));
-            [EnumCate.border, ...this.list_border_cate].forEach(cate => {
-                if (cate === EnumCate.border) {
-                    BorderDA.list.filter(e => e.CateID === cate).forEach(borderSkin => {
-                        let listWidth = borderSkin.Width.split(" ");
-                        document.documentElement.style.setProperty(`--border-width-${Ultis.toSlug(borderSkin.Name)}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
-                        document.documentElement.style.setProperty(`--border-style-${Ultis.toSlug(borderSkin.Name)}`, borderSkin.BorderStyle);
-                        document.documentElement.style.setProperty(`--border-color-${Ultis.toSlug(borderSkin.Name)}`, `#$${borderSkin.ColorValue.substring(2)}${borderSkin.ColorValue.substring(0, 2)}`);
-                    });
-                } else {
-                    BorderDA.list.filter(e => e.CateID === cate.ID).forEach(borderSkin => {
-                        let listWidth = borderSkin.Width.split(" ");
-                        document.documentElement.style.setProperty(`--border-width-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(borderSkin.Name)}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
-                        document.documentElement.style.setProperty(`--border-style-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(borderSkin.Name)}`, borderSkin.BorderStyle);
-                        document.documentElement.style.setProperty(`--border-color-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(borderSkin.Name)}`, `#$${borderSkin.ColorValue.substring(2)}${borderSkin.ColorValue.substring(0, 2)}`);
-                    });
-                }
-            });
             //
             this.list_effect_cate = EffectDA.list.filter(e => e.CateID != EnumCate.effect).filterAndMap(e => e.CateID);
             this.list_effect_cate = this.list.filter((e) => this.list_effect_cate.some((id) => {
@@ -376,26 +354,6 @@ class CateDA {
                 }
                 return false;
             }));
-        /* offset-x | offset-y | blur-radius | spread-radius | color */
-            [EnumCate.effect, ...this.list_effect_cate].forEach(cate => {
-                if (cate === EnumCate.effect) {
-                    EffectDA.list.filter(e => e.CateID === cate).forEach(effectSkin => {
-                        if(effectSkin.Type == ShadowType.layer_blur) {
-                            document.documentElement.style.setProperty(`--effect-blur-${Ultis.toSlug(effectSkin.Name)}`, `blur(${effectSkin.BlurRadius}px)`);
-                        } else {
-                            document.documentElement.style.setProperty(`--effect-shadow-${Ultis.toSlug(effectSkin.Name)}`, `${effectSkin.OffsetX}px ${effectSkin.OffsetY}px ${effectSkin.BlurRadius}px ${effectSkin.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} ${effectSkin.Type == ShadowType.inner ? "inset" : ""}`);
-                        }
-                    });
-                } else {
-                    EffectDA.list.filter(e => e.CateID === cate.ID).forEach(effectSkin => {
-                        if(effectSkin.Type == ShadowType.layer_blur) {
-                            document.documentElement.style.setProperty(`--effect-blur-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(effectSkin.Name)}`, `blur(${effectSkin.BlurRadius}px)`);
-                        } else {
-                            document.documentElement.style.setProperty(`--effect-shadow-${Ultis.toSlug(cate.Name)}-${Ultis.toSlug(effectSkin.Name)}`, `${effectSkin.OffsetX}px ${effectSkin.OffsetY}px ${effectSkin.BlurRadius}px ${effectSkin.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} ${effectSkin.Type == ShadowType.inner ? "inset" : ""}`);
-                        }
-                    });
-                }
-            });
         }
     }
 
