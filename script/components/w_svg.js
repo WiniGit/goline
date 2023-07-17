@@ -10,8 +10,8 @@ async function createSvgImgHTML(item) {
 
 async function getColorSvg(item) {
     let url = urlImg + item.AttributesItem.Content.replaceAll(" ", "%20");
-    let svg = await fetch(url).then(response => response.text().replaceAll(`style={{mixBlendMode: 'multiply'}}`, ""));
-    item.value.innerHTML = svg;
+    let svg = await fetch(url).then(response => response.text());
+    item.value.innerHTML = svg.replaceAll(`style={{mixBlendMode: 'multiply'}}`, "");
     if (item.StyleItem.DecorationItem.ColorValue) {
         let listColorValue = item.StyleItem.DecorationItem.ColorValue.split(",");
         if (listColorValue.length == 1) {
