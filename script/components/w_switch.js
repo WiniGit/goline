@@ -16,7 +16,7 @@ function createSwitch(initValue = false, wbaseItem) {
 		input.id = `input-${wbaseItem.GID}`;
 		if (wbaseItem.AttributesItem.NameField !== "")
 			input.name = wbaseItem.AttributesItem.NameField;
-		slider.style.backgroundColor = `#${wbaseItem.JsonItem.DotColor.substring(2) + wbaseItem.JsonItem.DotColor.substring(2, 0)}`;
+		toggle.style.setProperty("--dot-color", `#${wbaseItem.JsonItem.DotColor.substring(2) + wbaseItem.JsonItem.DotColor.substring(2, 0)}`);
 		toggle.style.setProperty("--checked-bg", `#${wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2, 0)}`);
 		toggle.style.setProperty("--unchecked-bg", `#${wbaseItem.JsonItem.InactiveColor.substring(2) + wbaseItem.JsonItem.InactiveColor.substring(2, 0)}`);
 	}

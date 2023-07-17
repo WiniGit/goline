@@ -2517,7 +2517,7 @@ function editJsonItem(jsonItem, onSubmit = true) {
     $(selected_list[0].value.querySelector(":scope > input")).trigger("change");
   } else if (jsonItem.DotColor) {
     selected_list[0].JsonItem.DotColor = jsonItem.DotColor;
-    selected_list[0].value.querySelector(".slider").style.backgroundColor = `#${jsonItem.DotColor.substring(2) + jsonItem.DotColor.substring(2, 0)}`;
+    selected_list[0].value.style.setProperty("--dot-color", `#${jsonItem.DotColor.substring(2) + jsonItem.DotColor.substring(2, 0)}`);
   } else if (jsonItem.LabelText != undefined) {
     selected_list[0].JsonItem.LabelText = jsonItem.LabelText;
     let thislabel = selected_list[0].value.querySelector(".textfield > label");

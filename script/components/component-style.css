@@ -158,7 +158,7 @@
   aspect-ratio: 1 / 1;
   left: 2px;
   bottom: 2px;
-  background-color: white;
+  background-color: var(--dot-color);
   -webkit-transition: 0.4s;
   transition: 0.4s;
   border-radius: 50%;

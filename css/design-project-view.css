@@ -275,7 +275,7 @@ body:has(#history-view) :is(.btn-tool-state:nth-child(2), .btn-history) {
   pointer-events: none !important;
 }
 
-#divSection .wbaseItem-value:has( > div.textfield) {
+#divSection .wbaseItem-value:has(> div.textfield) {
   pointer-events: none !important;
 }
 
@@ -299,6 +299,9 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   transition: 0.1s;
 }
 
+.w-switch:not(.wbaseItem-value) > .slider {
+  background-color: white;
+}
 #left_view {
   top: 86px;
   left: 0;

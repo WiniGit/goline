@@ -109,7 +109,7 @@ async function push_dataProject() {
           wbValue.style.pointerEvents = null;
           break;
         case EnumCate.w_switch:
-          let newSwitch = document.createElement("label");
+        let newSwitch = document.createElement("label");
           newSwitch.htmlFor = wbValue.querySelector(":scope > input").id;
           for (let i = 0; i < wbValue.attributes.length; i++) {
             let attrObj = wbValue.attributes[i];
