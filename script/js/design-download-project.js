@@ -45,6 +45,43 @@ async function push_dataProject() {
   // document.body.getAttribute;
 
   var list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
+  let replaceSkinRoot = [];
+  replaceSkinRoot.push(...ColorDA.list.map(skin => {
+    let cateName;
+    if (skin.CateID !== EnumCate.color)
+      cateName = CateDA.list_color_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    return {
+      GID: skin.GID,
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
+    }
+  }));
+  replaceSkinRoot.push(...TypoDA.list.map(skin => {
+    let cateName;
+    if (skin.CateID !== EnumCate.typography)
+      cateName = CateDA.list_typo_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    return {
+      GID: skin.GID,
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
+    }
+  }));
+  replaceSkinRoot.push(...BorderDA.list.map(skin => {
+    let cateName;
+    if (skin.CateID !== EnumCate.border)
+      cateName = CateDA.list_border_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    return {
+      GID: skin.GID,
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
+    }
+  }));
+  replaceSkinRoot.push(...EffectDA.list.map(skin => {
+    let cateName;
+    if (skin.CateID !== EnumCate.effect)
+      cateName = CateDA.list_effect_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    return {
+      GID: skin.GID,
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
+    }
+  }));
   list_page = list_page.map((wb) => {
     let cloneValue = wb.value.cloneNode(true);
     cloneValue.style.position = null;
@@ -96,14 +133,9 @@ async function push_dataProject() {
         wbValue.style.zIndex = null;
         wbValue.style.order = null;
       }
-      let wbCss = `.wbaseItem-value[id="${wbValue.id}"] {`;
-      for (let i = 0; i < wbValue.style.length; i++) {
-        wbCss += `
-        ${wbValue.style[i]}: ${wbValue.style[i].startsWith("--") ? wbValue.style.getPropertyValue(wbValue.style[i]) : wbValue.style[wbValue.style[i]]};
-        `;
-      }
-      wbCss += `
-    }`;
+      let thisCssText = wbValue.style.cssText;
+      thisCssText = thisCssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match);
+      let wbCss = `.wbaseItem-value[id="${wbValue.id}"] { ${thisCssText} }`;
       cssString += wbCss;
       wbValue.removeAttribute("style");
     });
@@ -120,6 +152,23 @@ async function push_dataProject() {
       Name: "",
       Type: 2,
       Code: ProjectDA.obj.Code.toLowerCase(),
+    },
+    function (data) {
+      console.log("data-start: ", data);
+    },
+  );
+
+  let skinRoot = `:root {
+    ${document.documentElement.style.cssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match)}
+  }`;
+  await $.post(
+    "/view/build",
+    {
+      // Sort: 0,
+      Name: `style_project_root`,
+      Type: 0,
+      Code: ProjectDA.obj.Code.toLowerCase(),
+      Item: skinRoot,
     },
     function (data) {
       console.log("data-start: ", data);
