@@ -13,7 +13,6 @@ function createSwitch(initValue = false, wbaseItem) {
 	slider.className = "slider";
 	toggle.replaceChildren(input, slider);
 	if (wbaseItem) {
-		toggle.htmlFor = `input-${wbaseItem.GID}`;
 		input.id = `input-${wbaseItem.GID}`;
 		if (wbaseItem.AttributesItem.NameField !== "")
 			input.name = wbaseItem.AttributesItem.NameField;

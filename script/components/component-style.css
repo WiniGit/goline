@@ -57,6 +57,7 @@
   flex-shrink: 0;
 }
 
+
 .wbaseItem-value.w-col[scroll="true"] {
   overflow: hidden scroll !important;
   justify-content: flex-start !important;
@@ -701,8 +702,8 @@ body:has(> .w-date-picker-popup) {
 
 
 /* state||status */
-.wbaseItem-value:hover {}
-.w-button:focus {}
+/* .wbaseItem-value:hover {}
+.w-button:focus {} */
 .w-switch:has(> input:checked) {
   background-color: var(--checked-bg) !important;
 }
@@ -718,3 +719,6 @@ body:has(> .w-date-picker-popup) {
   background-color: var(--checked-bg) !important;
   border: none !important;
 }
+
+/* component css name rule */
+/*  */

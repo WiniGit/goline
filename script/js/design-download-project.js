@@ -72,12 +72,15 @@ async function push_dataProject() {
           wbValue.style.pointerEvents = null;
           break;
         case EnumCate.w_switch:
-          let wbItem = wbase_list.find((e) => e.GID === wbValue.id);
-          if (wbItem) {
-            wbItem.build = true;
-            wbValue.replaceWith(createSwitch(wbItem.AttributesItem.Content === "true", wbItem));
-            delete wbItem.build;
+          let newSwitch = document.createElement("label");
+          newSwitch.htmlFor = wbValue.querySelector(":scope > input").id;
+          for (let i = 0; i < wbValue.attributes.length; i++) {
+            let attrObj = wbValue.attributes[i];
+            newSwitch.setAttribute(attrObj.name, attrObj.nodeValue);
           }
+          wbValue.replaceWith(newSwitch);
+          newSwitch.replaceChildren(...wbValue.childNodes);
+          wbValue = newSwitch;
           break;
         case EnumCate.tree:
           wbValue.querySelectorAll(".w-tree").forEach((wtree) => (wtree.style.pointerEvents = null));
@@ -89,6 +92,9 @@ async function push_dataProject() {
         cssString += `
         /*  */
         `;
+      } else {
+        wbValue.style.zIndex = null;
+        wbValue.style.order = null;
       }
       let wbCss = `.wbaseItem-value[id="${wbValue.id}"] {`;
       for (let i = 0; i < wbValue.style.length; i++) {

@@ -97,6 +97,14 @@ input[type="color"]::-webkit-color-swatch {
   align-items: center;
 }
 
+.header_design_style > .action-button {
+  display: none;
+}
+
+.header_design_style:hover > .action-button {
+  display: flex;
+}
+
 .header_design_style > *:first-child {
   font-size: 12px;
   line-height: 16px;

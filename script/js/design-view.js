@@ -2200,7 +2200,6 @@ function createEditBorder() {
   } else {
     header.appendChild(btnSelectSkin);
     if (listBorder.some((wbaseItem) => !wbaseItem.StyleItem.DecorationItem.BorderItem)) {
-      btnSelectSkin.style.display = "none";
       let btnAdd = document.createElement("i");
       btnAdd.className = "fa-solid fa-plus fa-sm";
       btnAdd.onclick = function () {
@@ -2208,12 +2207,6 @@ function createEditBorder() {
         updateUIBorder();
       };
       header.appendChild(btnAdd);
-      header.onmouseover = function () {
-        btnSelectSkin.style.display = "flex";
-      };
-      header.onmouseout = function () {
-        btnSelectSkin.style.display = "none";
-      };
     } else {
       let borderColorValues = listBorder.filterAndMap((e) => e.StyleItem.DecorationItem.BorderItem?.ColorValue?.toLowerCase());
       if (borderColorValues.length == 1) {
@@ -2522,7 +2515,6 @@ function createEditEffect() {
   } else {
     header.appendChild(btnSelectSkin);
     if (listEffect.every((wbaseItem) => !wbaseItem.StyleItem.DecorationItem.EffectItem)) {
-      btnSelectSkin.style.display = "none";
       let btnAdd = document.createElement("i");
       btnAdd.className = "fa-solid fa-plus fa-sm";
       btnAdd.onclick = function () {
@@ -2530,19 +2522,11 @@ function createEditEffect() {
         updateUIEffect();
       };
       header.appendChild(btnAdd);
-      header.onmouseover = function () {
-        btnSelectSkin.style.display = "flex";
-      };
-      header.onmouseout = function () {
-        btnSelectSkin.style.display = "none";
-      };
     } else {
       let div_select_eType = document.createElement("div");
       div_select_eType.id = "edit_effect_type_attribute";
-      div_select_eType.style.display = "inline-flex";
+      div_select_eType.className = "row";
       div_select_eType.style.width = "100%";
-      div_select_eType.style.boxSizing = "border-box";
-      div_select_eType.style.alignItems = "center";
       editContainer.appendChild(div_select_eType);
       // popup edit effect type attribute
       let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg", null, function () {
