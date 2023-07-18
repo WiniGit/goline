@@ -542,7 +542,7 @@ function selectParent(event) {
   if (selected_list.every((e) => e.CateID != EnumCate.tool_variant && e.IsWini)) {
     parent_cate.push(EnumCate.tool_variant);
   }
-  let containVariant = selected_list.some((e) => e.CateID == EnumCate.tool_variant || document.getElementById(e.GID).querySelectorAll(".variant").length > 0);
+  let containVariant = selected_list.some((e) => e.CateID == EnumCate.tool_variant || document.getElementById(e.GID).querySelectorAll(".w-variant").length > 0);
   var objp = list.filter((eHTML) => {
     if (
       parent_cate.every((cate) => cate != eHTML.getAttribute("cateid")) || // eHTML ko đc xếp loại là wbaseItem có item con
@@ -612,7 +612,7 @@ function selectParent(event) {
 
 var clearAction = false;
 function downListener(event) {
-  if (!document.getElementById("wini_features") && event.target.localName != "input" && event.target.contentEditable != "true" && ToolState.create_new_type.every((ts) => ts !== tool_state)) {
+  if (!document.getElementById("wini_features") && event.target.localName != "input" && event.target.contentEditable != "true" && ToolState.create_new_type.every((ts) => ts !== tool_state) && document.body.contains(right_view)) {
     event.activeElement = document.activeElement;
     event.path = [...event.composedPath()];
     let mouseOffset = offsetScale(event.pageX, event.pageY);
@@ -754,20 +754,13 @@ function centerViewInitListener() {
     } else return;
   });
   window.addEventListener("keyup", keyUpEvent, false);
-  [divSection, ...divSection.querySelectorAll(".wbaseItem-value.variant")].forEach((parentPage) => {
+  [divSection, ...divSection.querySelectorAll(":scope > .w-variant")].forEach((parentPage) => {
     childObserver.observe(parentPage, {
       childList: true,
     });
   });
-  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
+  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
     resizeWbase.observe(page);
-  });
-  [...divSection.querySelectorAll(`.wbaseItem-value`)].forEach((wbValue) => {
-    setSizeObserver.observe(wbValue, {
-      attributeOldValue: true,
-      attributes: true,
-      childList: EnumCate.parent_cate.some((cate) => wbValue.getAttribute("cateid") === cate),
-    });
   });
   listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
 }
@@ -776,8 +769,19 @@ const childObserver = new MutationObserver((mutationList) => {
   mutationList.forEach((mutation) => {
     mutation.removedNodes.forEach((wbaseValue) => {
       let listBrpKey = ProjectDA.obj.ResponsiveJson.BreakPoint.map((brp) => brp.Key.match(brpRegex).pop().replace(/[()]/g, ""));
-      let listClass = ["min-brp", ...wbaseValue.classList].filter((wbaseClass) => listBrpKey.every((brpKey) => brpKey != wbaseClass));
+      let listClass = ["min-brp", ...wbaseValue.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
       wbaseValue.className = listClass.join(" ");
+      if (wbaseValue.getAttribute("cateid") == EnumCate.tool_variant) {
+        childObserver.disconnect(wbaseValue, {
+          childList: true,
+        });
+        wbaseValue.childNodes.forEach(childHTML => {
+          if (EnumCate.extend_frame.some(ct => childHTML.getAttribute("cateid") == ct)) {
+            let listClass = ["min-brp", ...childHTML.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
+            childHTML.className = listClass.join(" ");
+          }
+        })
+      }
     });
     mutation.addedNodes.forEach((wbaseValue) => {
       if (EnumCate.extend_frame.some((cate) => wbaseValue.getAttribute("cateid") == cate) && wbaseValue.style.width != "fit-content") {
@@ -786,7 +790,7 @@ const childObserver = new MutationObserver((mutationList) => {
         if (closestBrp.length > 0 && ProjectDA.obj.ResponsiveJson) {
           closestBrp = closestBrp.pop().Key.match(brpRegex).pop().replace(/[()]/g, "");
           let listBrpKey = ProjectDA.obj.ResponsiveJson.BreakPoint.map((brp) => brp.Key.match(brpRegex).pop().replace(/[()]/g, ""));
-          let listClass = ["min-brp", ...wbaseValue.classList].filter((wbaseClass) => listBrpKey.every((brpKey) => brpKey != wbaseClass));
+          let listClass = ["min-brp", ...wbaseValue.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
           wbaseValue.className = listClass.join(" ");
           wbaseValue.className += ` ${closestBrp}`;
         }
@@ -795,6 +799,10 @@ const childObserver = new MutationObserver((mutationList) => {
         childObserver.observe(wbaseValue, {
           childList: true,
         });
+        wbaseValue.childNodes.forEach(childHTML => {
+          if (EnumCate.extend_frame.some(ct => childHTML.getAttribute("cateid") == ct))
+            resizeWbase.observe(childHTML);
+        })
       }
     });
     if (mutation.target === divSection) {
@@ -810,12 +818,31 @@ function moveListener(event) {
   event.preventDefault();
   let target_view;
   // check drag resize left view
-  if ((!instance_drag && left_view.offsetWidth > 0 && isInRange(event.pageX, left_view.offsetWidth - 8, left_view.offsetWidth + 8)) || left_view.resizing) {
-    document.body.style.cursor = "e-resize";
-    if (event.buttons == 1) {
-      left_view.resizing = true;
-      left_view.style.width = event.pageX + "px";
+  if ((!instance_drag && left_view.offsetWidth > 0) || left_view.resizing) {
+    let pageContainerY = document.getElementById("div_list_page").getBoundingClientRect();
+    if (left_view.resizing) {
+      if (document.body.style.cursor === "e-resize") {
+        left_view.style.width = event.pageX + "px";
+      } else {
+        layer_view.firstChild.style.height = event.pageY - (pageContainerY.bottom - pageContainerY.height) + "px";
+      }
       return;
+    } else if (isInRange(event.pageX, left_view.offsetWidth - 8, left_view.offsetWidth + 8)) {
+      document.body.style.cursor = "e-resize";
+      if (event.buttons == 1) {
+        left_view.resizing = true;
+        left_view.style.width = event.pageX + "px";
+        return;
+      }
+    } else if ((layer_view.offsetWidth > 0 && isInRange(event.pageX, 0, left_view.offsetWidth) && isInRange(event.pageY, pageContainerY.bottom - 8, pageContainerY.bottom + 4))) {
+      document.body.style.cursor = "n-resize";
+      if (event.buttons == 1) {
+        left_view.resizing = true;
+        layer_view.firstChild.style.height = event.pageY - (pageContainerY.bottom - pageContainerY.height) + "px";
+        return;
+      }
+    } else {
+      document.body.style.cursor = null;
     }
   } else {
     document.body.style.cursor = null;
@@ -945,7 +972,10 @@ function moveListener(event) {
                   removeAllRectHovers();
                 }
                 let isInFlex = false;
-                if (select_box_parentID != wbase_parentID) isInFlex = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
+                let parentHTML = document.getElementById(select_box_parentID);
+                if (select_box_parentID != wbase_parentID) {
+                  isInFlex = window.getComputedStyle(parentHTML).display.match("flex");
+                }
                 switch (tool_state) {
                   case ToolState.resize_left:
                     for (let i = 0; i < selected_list.length; i++) {
@@ -962,6 +992,8 @@ function moveListener(event) {
                             eHTML.style.bottom = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-row")) {
+                          eHTML.style.flex = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -989,6 +1021,8 @@ function moveListener(event) {
                             eHTML.style.bottom = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-row")) {
+                          eHTML.style.flex = null;
                         }
                       }
                       if (scaleComponent) scaleComponent = eHTML.offsetHeight / eHTML.offsetWidth;
@@ -1012,6 +1046,8 @@ function moveListener(event) {
                             eHTML.style.right = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-col")) {
+                          eHTML.style.flex = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                       }
@@ -1039,6 +1075,8 @@ function moveListener(event) {
                             eHTML.style.right = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-col")) {
+                          eHTML.style.flex = null;
                         }
                       }
                       if (scaleComponent) scaleComponent = eHTML.offsetWidth / eHTML.offsetHeight;
@@ -1060,6 +1098,7 @@ function moveListener(event) {
                           selected_list[i].StyleItem.PositionItem.Top = thisOffset.y + "px";
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1097,6 +1136,7 @@ function moveListener(event) {
                           selected_list[i].StyleItem.PositionItem.Top = thisOffset.y + "px";
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1131,6 +1171,7 @@ function moveListener(event) {
                           selected_list[i].StyleItem.PositionItem.Left = thisOffset.x + "px";
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1166,6 +1207,7 @@ function moveListener(event) {
                           eHTML.style.bottom = null;
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1381,9 +1423,9 @@ function moveListener(event) {
       } else {
         var xp = event.pageX - minx,
           yp = event.pageY - miny;
-        if (tool_state === ToolState.hand_tool) {
+        if (tool_state === ToolState.hand_tool && event.buttons == 1) {
           handToolDrag(event);
-        } else if (event.target.id == "canvas_view" || divSection.contains(event.target)) {
+        } else if ((event.target.id == "canvas_view" || divSection.contains(event.target)) && document.body.contains(right_view)) {
           if (event.buttons === 1) {
             scanSelectList(event);
           } else {
@@ -1482,10 +1524,10 @@ function checkHoverElement(event) {
     listLine = [];
     listText = [];
     let currentLevel = 1;
-    let currentPPage = wbase_parentID;
+    let currentListPPage = [];
     if (selected_list.length > 0) {
       currentLevel = parseInt(selected_list[0].value.getAttribute("level"));
-      if (currentLevel > 1) $(selected_list[0].value).parents(`.wbaseItem-value[level="1"]`)[0]?.id;
+      if (currentLevel > 1) currentListPPage = [...$(selected_list[0].value).parents(`.wbaseItem-value`)];
     }
     let _target = [...event.composedPath()].find((eHTML) => {
       if (!eHTML.classList?.contains("wbaseItem-value")) {
@@ -1502,15 +1544,14 @@ function checkHoverElement(event) {
           }
           break;
         default:
-          let parentPage = $(eHTML).parents(`.wbaseItem-value[level="1"]`)[0];
+          let parentPage = $(eHTML).parents(`.wbaseItem-value`)[0];
           let listid = eHTML.getAttribute("listid").split(",");
+          let eParentId = listid.pop();
           if (target_level === 2 && EnumCate.show_name.some((cate) => cate == parentPage?.getAttribute("cateid"))) {
             is_enable = true;
           } else if (event.metaKey || (!isMac && event.ctrlKey)) {
             is_enable = true;
-          } else if (target_level < currentLevel && listid.includes(currentPPage)) {
-            is_enable = true;
-          } else if (target_level === currentLevel && listid.pop() === select_box_parentID) {
+          } else if (target_level <= currentLevel && currentListPPage.some(pPage => pPage.id === eParentId)) {
             is_enable = true;
           }
           break;
@@ -1736,7 +1777,7 @@ function wdraw() {
       }
     }
   }
-  titleList = titleList.filter((e) => e != undefined && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
+  titleList = titleList.filter((e) => e && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
 
   //! draw prototype
   drawCurvePrototype();
@@ -2248,9 +2289,16 @@ function upListener(event) {
       } else {
         let url = window.getComputedStyle(instance_drag).backgroundImage.split(/"/)[1];
         let isSvgImg = url.endsWith(".svg");
-        let newRect = isSvgImg ? WBaseDefault.imgSvg : WBaseDefault.rectangle;
-        newRect.Name = isSvgImg ? url.split("/").pop().replace(".svg", "") : "new rectangle";
-        newRect.AttributesItem.Content = url.replace(urlImg, "");
+        let newRect;
+        if (isSvgImg) {
+          newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg));
+          newRect.Name = url.split("/").pop().replace(".svg", "");
+          newRect.AttributesItem.Content = url.replace(urlImg, "");
+        } else {
+          newRect = JSON.parse(JSON.stringify(WBaseDefault.rectangle));
+          newRect.Name = "new rectangle";
+          newRect.StyleItem.DecorationItem.ColorValue = url.replace(urlImg, "");
+        }
         FileDA.getImageSize(url).then((imgSize) => {
           let offset = offsetScale(event.pageX, event.pageY);
           let newObj = createWbaseHTML(

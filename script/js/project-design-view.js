@@ -11,17 +11,38 @@ async function initData() {
   WiniIO.emitInit();
   console.log("init: ", Date.now());
   console.log("get server: ", Date.now());
+  listShowName = [];
   action_list = [];
   action_index = -1;
   let skinResponse = await $.get(WBaseDA.skin_url + `?pid=${ProjectDA.obj.ID}`);
   let wbaseResponse = await WBaseDA.apiGetInitWbase();
-  console.log("get server done: ", Date.now());
   ColorDA.list = skinResponse.Data.ColorItems;
+  ColorDA.list.forEach(colorSkin => {
+    document.documentElement.style.setProperty(`--background-color-${colorSkin.GID}`, `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`);
+  });
   TypoDA.list = skinResponse.Data.TextStyleItems;
-  EffectDA.list = skinResponse.Data.EffectItems;
+  TypoDA.list.forEach(typoSkin => {
+    document.documentElement.style.setProperty(`--font-style-${typoSkin.GID}`, `${typoSkin.FontWeight} ${typoSkin.FontSize}px/${typoSkin.Height != undefined ? (typoSkin.Height + "px") : "normal"} ${typoSkin.FontFamily}`);
+    document.documentElement.style.setProperty(`--font-color-${typoSkin.GID}`, `#${typoSkin.ColorValue.substring(2)}${typoSkin.ColorValue.substring(0, 2)}`);
+  });
   BorderDA.list = skinResponse.Data.BorderItems;
+  BorderDA.list.forEach(borderSkin => {
+    let listWidth = borderSkin.Width.split(" ");
+    document.documentElement.style.setProperty(`--border-width-${borderSkin.GID}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
+    document.documentElement.style.setProperty(`--border-style-${borderSkin.GID}`, borderSkin.BorderStyle);
+    document.documentElement.style.setProperty(`--border-color-${borderSkin.GID}`, `#${borderSkin.ColorValue.substring(2)}${borderSkin.ColorValue.substring(0, 2)}`);
+  });
+  EffectDA.list = skinResponse.Data.EffectItems;
+  EffectDA.list.forEach(effectSkin => {
+    if (effectSkin.Type == ShadowType.layer_blur) {
+      document.documentElement.style.setProperty(`--effect-blur-${effectSkin.GID}`, `blur(${effectSkin.BlurRadius}px)`);
+    } else {
+      document.documentElement.style.setProperty(`--effect-shadow-${effectSkin.GID}`, `${effectSkin.OffsetX}px ${effectSkin.OffsetY}px ${effectSkin.BlurRadius}px ${effectSkin.SpreadRadius}px #${effectSkin.ColorValue.substring(2)}${effectSkin.ColorValue.substring(0, 2)} ${effectSkin.Type == ShadowType.inner ? "inset" : ""}`);
+    }
+  });
   PropertyDA.list = skinResponse.Data.WPropertyItems;
   CateDA.initCate();
+  console.log("get server done: ", Date.now());
   wbase_list = [];
   wbase_list = initDOM(wbaseResponse);
   parent = divSection;
@@ -35,12 +56,19 @@ async function initData() {
     base_component_list = initDOM(base_component_list);
   });
   console.log("in handle data: ", Date.now());
+  let fragment = document.createDocumentFragment();
   for (let item of wbase_list) {
     item.value = null;
     let children = [];
     if ([EnumCate.tool_variant, ...EnumCate.parent_cate].some((ct) => ct == item.CateID)) children = wbase_list.filter((e) => e.ParentID === item.GID);
-    await initComponents(item, children);
+    await initComponents(item, children, false);
+    item.value.id = item.GID;
+    if (item.ParentID === wbase_parentID) {
+      initPositionStyle(item);
+      fragment.appendChild(item.value);
+    }
   }
+  divSection.replaceChildren(fragment);
   console.log("out handle data: ", Date.now());
   centerViewInitListener();
   if (PageDA.obj.scale !== undefined) {
@@ -56,15 +84,10 @@ async function initData() {
   } else {
     initScroll(wbase_list.filter((m) => m.ParentID === wbase_parentID).map((m) => m.StyleItem));
   }
-  // divSection.querySelectorAll(`.wbaseItem-value[cateid="${EnumCate.tool_text}"]`).forEach((eText) => {
-  //   let newSize = calcTextNode(eText);
-  //   eText.style.minWidth = newSize.width + "px";
-  //   eText.style.minHeight = newSize.height + "px";
-  // });
   document.getElementById("body").querySelector(".loading-view").remove();
   setupRightView();
   setupLeftView();
-  [...document.getElementById("btn_select_page").childNodes].find((e) => e.localName == "p").innerHTML = PageDA.obj.Name;
+  document.getElementById("btn_select_page").querySelector(":scope > p").innerHTML = PageDA.obj.Name;
   console.log("show done: ", Date.now());
   setTimeout(function () {
     toolStateChange(ToolState.move);
@@ -77,59 +100,61 @@ function input_scale_set(value) {
 }
 
 function toolStateChange(toolState) {
-  if (tool_state != toolState) {
-    if (ToolState.resize_type.every((tool) => tool !== toolState && tool_state !== tool)) {
-      let current_tool_state = document.getElementById(`${tool_state}`);
-      $(current_tool_state).removeClass("on-select");
-      let new_tool_state = document.getElementById(`${toolState}`);
-      $(new_tool_state).addClass("on-select");
-    }
-    tool_state = toolState;
-    switch (tool_state) {
-      case ToolState.move:
-        document.getElementById("canvas_view").style.cursor = "context-menu";
-        break;
-      case ToolState.hand_tool:
-        document.getElementById("canvas_view").style.cursor = "grab";
-        break;
-      case ToolState.resize_left:
-        document.getElementById("canvas_view").style.cursor = "e-resize";
-        break;
-      case ToolState.resize_right:
-        document.getElementById("canvas_view").style.cursor = "e-resize";
-        break;
-      case ToolState.resize_top:
-        document.getElementById("canvas_view").style.cursor = "n-resize";
-        break;
-      case ToolState.resize_bot:
-        document.getElementById("canvas_view").style.cursor = "n-resize";
-        break;
-      case ToolState.resize_top_left:
-        document.getElementById("canvas_view").style.cursor = "nw-resize";
-        break;
-      case ToolState.resize_top_right:
-        document.getElementById("canvas_view").style.cursor = "ne-resize";
-        break;
-      case ToolState.resize_bot_left:
-        document.getElementById("canvas_view").style.cursor = "ne-resize";
-        break;
-      case ToolState.resize_bot_right:
-        document.getElementById("canvas_view").style.cursor = "nw-resize";
-        break;
-      default:
-        if (ToolState.create_new_type.some((tool) => tool_state === tool)) {
-          document.getElementById("canvas_view").style.cursor = "cell";
-        } else {
+  if (document.body.contains(right_view)) {
+    if (tool_state != toolState) {
+      if (ToolState.resize_type.every((tool) => tool !== toolState && tool_state !== tool)) {
+        let current_tool_state = document.getElementById(`${tool_state}`);
+        $(current_tool_state).removeClass("on-select");
+        let new_tool_state = document.getElementById(`${toolState}`);
+        $(new_tool_state).addClass("on-select");
+      }
+      tool_state = toolState;
+      switch (tool_state) {
+        case ToolState.move:
           document.getElementById("canvas_view").style.cursor = "context-menu";
-        }
-        break;
+          break;
+        case ToolState.hand_tool:
+          document.getElementById("canvas_view").style.cursor = "grab";
+          break;
+        case ToolState.resize_left:
+          document.getElementById("canvas_view").style.cursor = "e-resize";
+          break;
+        case ToolState.resize_right:
+          document.getElementById("canvas_view").style.cursor = "e-resize";
+          break;
+        case ToolState.resize_top:
+          document.getElementById("canvas_view").style.cursor = "n-resize";
+          break;
+        case ToolState.resize_bot:
+          document.getElementById("canvas_view").style.cursor = "n-resize";
+          break;
+        case ToolState.resize_top_left:
+          document.getElementById("canvas_view").style.cursor = "nw-resize";
+          break;
+        case ToolState.resize_top_right:
+          document.getElementById("canvas_view").style.cursor = "ne-resize";
+          break;
+        case ToolState.resize_bot_left:
+          document.getElementById("canvas_view").style.cursor = "ne-resize";
+          break;
+        case ToolState.resize_bot_right:
+          document.getElementById("canvas_view").style.cursor = "nw-resize";
+          break;
+        default:
+          if (ToolState.create_new_type.some((tool) => tool_state === tool)) {
+            document.getElementById("canvas_view").style.cursor = "cell";
+          } else {
+            document.getElementById("canvas_view").style.cursor = "context-menu";
+          }
+          break;
+      }
     }
-  }
-  if ([ToolState.hand_tool, ...ToolState.create_new_type].some((tool) => tool_state == tool)) {
-    addSelectList();
-    listLine = [];
-    listText = [];
-    updateHoverWbase();
+    if ([ToolState.hand_tool, ...ToolState.create_new_type].some((tool) => tool_state == tool)) {
+      addSelectList();
+      listLine = [];
+      listText = [];
+      updateHoverWbase();
+    }
   }
 }
 
@@ -621,7 +646,7 @@ function dragWbaseUpdate(xp, yp, event) {
     }
   } else if (window.getComputedStyle(parentHTML).display.match("flex") && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
-    let isGrid = window.getComputedStyle(parentHTML).flexWrap.match("wrap");
+    let isGrid = window.getComputedStyle(parentHTML).flexWrap == "wrap";
     if (parentHTML.classList.contains("w-col")) {
       let zIndex = 0;
       let distance = 0;
@@ -813,8 +838,11 @@ function dragWbaseUpdate(xp, yp, event) {
       $(selectHTML).removeClass("drag-hide");
       selected_list[i].StyleItem.PositionItem.Left = `${parseFloat(`${drag_start_list[i].StyleItem.PositionItem.Left}`.replace("px", "")) + xp + parent_offset1.x - offsetp.x}px`;
       selected_list[i].StyleItem.PositionItem.Top = `${parseFloat(`${drag_start_list[i].StyleItem.PositionItem.Top}`.replace("px", "")) + yp + parent_offset1.y - offsetp.y}px`;
+      selectHTML.style.transform = null;
       selectHTML.style.left = selected_list[i].StyleItem.PositionItem.Left;
       selectHTML.style.top = selected_list[i].StyleItem.PositionItem.Top;
+      selectHTML.style.right = null;
+      selectHTML.style.bottom = null;
       if (selectHTML.parentElement !== parentHTML) {
         if (zIndex) {
           selectHTML.style.zIndex = zIndex + i;
@@ -825,9 +853,7 @@ function dragWbaseUpdate(xp, yp, event) {
           selectHTML.style.order = drag_start_list[i].Sort;
           selected_list[i].Sort = drag_start_list[i].Sort;
         }
-        selectHTML.style.right = null;
-        selectHTML.style.bottom = null;
-        selectHTML.style.transform = null;
+
         parentHTML.appendChild(selectHTML);
         selected_list[i].ParentID = new_parentID;
       }
@@ -1098,9 +1124,9 @@ function dragAltUpdate(xp, yp, event) {
       }
     }
   } else if (window.getComputedStyle(parentHTML).display?.match("flex") && alt_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
-    console.log("flex|grid");
+    console.log("flex");
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
-    let isGrid = window.getComputedStyle(parentHTML).flexWrap.match("wrap");
+    let isGrid = window.getComputedStyle(parentHTML).flexWrap == "wrap";
     if (parentHTML.classList.contains("w-col")) {
       let zIndex = 0;
       let distance = 0;
@@ -1508,7 +1534,7 @@ function ctrlZ() {
                   if (oldValue) {
                     try {
                       oldValue?.replaceWith(wbaseItem.value);
-                    } catch (error) {}
+                    } catch (error) { }
                   } else {
                     parentHTML.appendChild(wbaseItem.value);
                   }
@@ -1576,7 +1602,7 @@ function ctrlZ() {
             if (wbaseItem.GID === oldParent?.GID || wbaseItem.GID === newParent.GID) {
               let parentHTML = divSection;
               if (wbaseItem.Level > 1) parentHTML = document.getElementById(wbaseItem.ParentID);
-              switch (parseInt(parentHTML?.getAttribute("cateid")??"0")) {
+              switch (parseInt(parentHTML?.getAttribute("cateid") ?? "0")) {
                 case EnumCate.tree:
                   createTree(
                     wbase_list.find((e) => e.GID === wbaseItem.ParentID),
@@ -1733,7 +1759,7 @@ function ctrlZ() {
                   if (oldValue) {
                     try {
                       oldValue?.replaceWith(wbaseItem.value);
-                    } catch (error) {}
+                    } catch (error) { }
                   } else {
                     parentHTML.appendChild(wbaseItem.value);
                   }

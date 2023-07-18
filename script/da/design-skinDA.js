@@ -132,6 +132,7 @@ class ColorDA {
     }
 
     static delete(colorItem) {
+        document.documentElement.style.removeProperty(`--background-color-${colorItem.GID}`);
         WiniIO.emitColor(colorItem, EnumEvent.delete);
     }
 }
@@ -158,7 +159,7 @@ class TypoDA {
     }
 
     static delete(textStyleItem) {
-        wbase_list.filter(e => e.StyleItem.TextStyleID === textStyleItem.GID).forEach(e => {
+        wbase_list.filter(e => e.StyleItem.TextStyleID === textStyleItem.GID).forEach(wb => {
             let defaultTypo = {
                 GID: 0,
                 FontSize: 14,
@@ -169,15 +170,20 @@ class TypoDA {
                 LetterSpacing: 0,
                 FontFamily: "Roboto",
             };
-            e.StyleItem.TextStyleItem = defaultTypo
-            e.StyleItem.TextStyleID = 0;
-            e.value.style.fontFamily = defaultTypo;
-            e.value.style.fontSize = `${defaultTypo}px`;
-            e.value.style.fontWeight = defaultTypo;
-            e.value.style.letterSpacing = `${defaultTypo}px`;
-            e.value.style.color = `#${defaultTypo.substring(2)}${defaultTypo.substring(0, 2)}`;
-            e.value.style.lineHeight = null;
+            wb.StyleItem.TextStyleItem = defaultTypo;
+            wb.StyleItem.TextStyleID = 0;
+            wb.value.style.fontFamily = defaultTypo.FontFamily;
+            wb.value.style.fontSize = `${defaultTypo.FontSize}px`;
+            wb.value.style.fontWeight = defaultTypo.FontWeight;
+            if (defaultTypo.LetterSpacing)
+                wb.value.style.letterSpacing = `${defaultTypo.LetterSpacing}px`;
+            wb.value.style.color = `#${defaultTypo.ColorValue.substring(2)}${defaultTypo.ColorValue.substring(0, 2)}`;
+            if (defaultTypo.Height != undefined) {
+                wb.value.style.lineHeight = `${defaultTypo.Height}px`;
+            }
         });
+        document.documentElement.style.removeProperty(`--font-style-${textStyleItem.GID}`);
+        document.documentElement.style.removeProperty(`--font-color-${textStyleItem.GID}`);
         WiniIO.emitTypo(textStyleItem, EnumEvent.delete);
     }
 }
@@ -207,8 +213,14 @@ class EffectDA {
         wbase_list.filter(e => e.StyleItem.DecorationItem.EffectID === effectItem.GID).forEach(e => {
             e.StyleItem.DecorationItem.EffectID = null;
             e.StyleItem.DecorationItem.EffectItem = null;
-            e.value.style.boxShadow = "none";
+            e.value.style.boxShadow = null;
+            e.value.style.filter = null;
         });
+        if (effectItem.Type == ShadowType.layer_blur) {
+            document.documentElement.style.removeProperty(`--effect-blur-${effectSkin.GID}`);
+        } else {
+            document.documentElement.style.removeProperty(`--effect-shadow-${effectSkin.GID}`);
+        }
         WiniIO.emitEffect(effectItem, EnumEvent.delete);
     }
 }
@@ -238,8 +250,14 @@ class BorderDA {
         wbase_list.filter(e => e.StyleItem.DecorationItem.BorderID === borderItem.GID).forEach(e => {
             e.StyleItem.DecorationItem.BorderID = null;
             e.StyleItem.DecorationItem.BorderItem = null;
-            e.value.style.border = "none";
+            e.value.style.border = null;
+            e.value.style.borderWidth = null;
+            e.value.style.borderStyle = null;
+            e.value.style.borderColor = null;
         });
+        document.documentElement.style.removeProperty(`--border-width-${borderItem.GID}`);
+        document.documentElement.style.removeProperty(`--border-style-${borderItem.GID}`);
+        document.documentElement.style.removeProperty(`--border-color-${borderItem.GID}`);
         WiniIO.emitBorder(borderItem, EnumEvent.delete);
     }
 }
@@ -310,16 +328,12 @@ class CateDA {
                 return false;
             }));
             //
-            this.list_typo_cate = TypoDA.list.filter(e => {
-                e.FontWeight = e.FontWeight.toString().replace("FontWeight.w", "");
-                return e.CateID != EnumCate.typography;
-            }).filterAndMap(e => e.CateID);
+            this.list_typo_cate = TypoDA.list.filter(e => e.CateID != EnumCate.typography).filterAndMap(e => e.CateID);
             this.list_typo_cate = this.list.filter((e) => this.list_typo_cate.some((id) => {
                 if (e.ID == id) {
                     e.ParentID = EnumCate.typography;
                     return true;
                 }
-                let x = 13;
                 return false;
             }));
             //

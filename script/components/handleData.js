@@ -80,7 +80,7 @@ async function initComponents(item, list, initListener = true) {
       break;
     case EnumCate.form:
       createFrameHTML(item, list);
-      $(item.value).addClass("wbase-form");
+      $(item.value).addClass("w-form");
       break;
     case EnumCate.tool_variant:
       createVariantHTML(item, list);
@@ -160,6 +160,11 @@ async function initComponents(item, list, initListener = true) {
     }
     item.value.setAttribute("listid", item.ListID);
     if (item.IsWini) item.value.setAttribute("iswini", item.IsWini);
+    setSizeObserver.observe(item.value, {
+      attributeOldValue: true,
+      attributes: true,
+      childList: EnumCate.parent_cate.some((cate) => item.CateID === cate),
+    });
   }
   if (initListener) {
     addListenFromSection(item);
@@ -169,10 +174,7 @@ async function initComponents(item, list, initListener = true) {
 async function updateComponentContent(item) {
   switch (item.CateID) {
     case EnumCate.tool_rectangle:
-      item.value.style.backgroundImage = `url(${item.AttributesItem.Content})`;
-      item.value.style.backgroundRepeat = "no-repeat";
-      item.value.style.backgroundSize = "cover";
-      item.value.style.backgroundPosition = "center";
+      item.value.style.backgroundImage = `url(${urlImg + item.StyleItem.DecorationItem.replaceAll(" ", "%20")})`;
       break;
     case EnumCate.tool_text:
       item.value.innerText = item.AttributesItem.Content ?? "";
@@ -331,7 +333,7 @@ function initElement(wbaseHTML) {
       } else {
         wbaseHTML.removeAttribute("tree-height");
       }
-      wbaseHTML.querySelectorAll(".children-value > .check-box").forEach((chbox) => $(chbox.querySelector("input")).trigger("change"));
+      wbaseHTML.querySelectorAll(".children-value > .w-check-box").forEach((chbox) => $(chbox.querySelector("input")).trigger("change"));
       break;
     default:
       break;
@@ -663,27 +665,39 @@ function initWbaseStyle(item) {
     handleStyleSize(item);
   }
   if (item.StyleItem.DecorationItem) {
-    if (EnumCate.noImgBg.every((cate) => item.CateID != cate) && item.AttributesItem.Content && item.AttributesItem.Content.trim() != "") {
-      item.value.style.backgroundImage = `url(${urlImg + item.AttributesItem.Content.replaceAll(" ", "%20")})`;
-    }
     if (item.StyleItem.DecorationItem.ColorValue) {
-      let color_value = item.StyleItem.DecorationItem.ColorValue;
-      if (item.CateID != EnumCate.svg && item.CateID !== EnumCate.checkbox) {
-        item.value.style.backgroundColor = `#${color_value.substring(2)}${color_value.substring(0, 2)}`;
+      let background = item.StyleItem.DecorationItem.ColorValue;
+      if (background.match(hexRegex) && item.CateID !== EnumCate.svg && item.CateID !== EnumCate.checkbox) {
+        if (item.StyleItem.DecorationItem.ColorID) {
+          item.value.style.backgroundColor = `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`;
+        } else {
+          item.value.style.backgroundColor = `#${background.substring(2)}${background.substring(0, 2)}`;
+        }
+      } else if (EnumCate.noImgBg.every((cate) => item.CateID != cate)) {
+        item.value.style.backgroundImage = `url(${urlImg + background.replaceAll(" ", "%20")})`;
       }
     }
     if (item.StyleItem.DecorationItem.BorderItem) {
-      let listWidth = item.StyleItem.DecorationItem.BorderItem.Width.split(" ");
-      item.value.style.borderTop = listWidth[0] + "px";
-      item.value.style.borderRight = listWidth[1] + "px";
-      item.value.style.borderBottom = listWidth[2] + "px";
-      item.value.style.borderLeft = listWidth[3] + "px";
-      item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;
-      let border_color = item.StyleItem.DecorationItem.BorderItem.ColorValue;
-      item.value.style.borderColor = `#${border_color.substring(2)}${border_color.substring(0, 2)}`;
+      if (item.StyleItem.DecorationItem.BorderItem.IsStyle) {
+        item.value.style.borderWidth = `var(--border-width-${item.StyleItem.DecorationItem.BorderID})`;
+        item.value.style.borderStyle = `var(--border-style-${item.StyleItem.DecorationItem.BorderID})`;
+        item.value.style.borderColor = `var(--border-color-${item.StyleItem.DecorationItem.BorderID})`;
+      } else {
+        let listWidth = item.StyleItem.DecorationItem.BorderItem.Width.split(" ");
+        item.value.style.borderWidth = `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`;
+        item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;
+        let border_color = item.StyleItem.DecorationItem.BorderItem.ColorValue;
+        item.value.style.borderColor = `#${border_color.substring(2)}${border_color.substring(0, 2)}`;
+      }
     }
     if (item.StyleItem.DecorationItem.EffectItem) {
-      if (item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.layer_blur) {
+      if (item.StyleItem.DecorationItem.EffectItem.IsStyle) {
+        if (item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.layer_blur) {
+          item.value.style.filter = `var(--effect-blur-${item.StyleItem.DecorationItem.EffectID})`;
+        } else {
+          item.value.style.boxShadow = `var(--effect-shadow-${item.StyleItem.DecorationItem.EffectID})`;
+        }
+      } else if (item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.layer_blur) {
         item.value.style.filter = `blur(${item.StyleItem.DecorationItem.EffectItem.BlurRadius}px)`;
       } else {
         let effect_color = item.StyleItem.DecorationItem.EffectItem.ColorValue;
@@ -693,13 +707,21 @@ function initWbaseStyle(item) {
     }
   }
   if (item.StyleItem.TextStyleItem && item.CateID !== EnumCate.chart) {
-    item.value.style.fontFamily = item.StyleItem.TextStyleItem.FontFamily;
-    item.value.style.fontSize = `${item.StyleItem.TextStyleItem.FontSize}px`;
-    item.value.style.fontWeight = item.StyleItem.TextStyleItem.FontWeight;
-    item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing ?? 0}px`;
-    item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue?.substring(2)}${item.StyleItem.TextStyleItem.ColorValue?.substring(0, 2)}`;
-    if (item.StyleItem.TextStyleItem.Height != undefined) {
-      item.value.style.lineHeight = `${item.StyleItem.TextStyleItem.Height}px`;
+    if (item.StyleItem.TextStyleItem.IsStyle) {
+      item.value.style.font = `var(--font-style-${item.StyleItem.TextStyleID})`;
+      item.value.style.color = `var(--font-color-${item.StyleItem.TextStyleID})`;
+      if (item.StyleItem.TextStyleItem.LetterSpacing)
+        item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
+    } else {
+      item.value.style.fontFamily = item.StyleItem.TextStyleItem.FontFamily;
+      item.value.style.fontSize = `${item.StyleItem.TextStyleItem.FontSize}px`;
+      item.value.style.fontWeight = item.StyleItem.TextStyleItem.FontWeight;
+      if (item.StyleItem.TextStyleItem.LetterSpacing)
+        item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
+      item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue?.substring(2)}${item.StyleItem.TextStyleItem.ColorValue?.substring(0, 2)}`;
+      if (item.StyleItem.TextStyleItem.Height != undefined) {
+        item.value.style.lineHeight = `${item.StyleItem.TextStyleItem.Height}px`;
+      }
     }
   }
   if (item.StyleItem.TypoStyleItem && item.CateID != EnumCate.textformfield) {
@@ -800,8 +822,8 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
 }
 
 function removeAutoLayoutProperty(eHTML) {
-  $(wbaseItem.value).removeClass("w-row");
-  $(wbaseItem.value).removeClass("w-col");
+  $(eHTML).removeClass("w-row");
+  $(eHTML).removeClass("w-col");
   eHTML.style.removeProperty("--flex-wrap");
   eHTML.style.removeProperty("--child-space");
   eHTML.style.removeProperty("--run-space");
@@ -811,7 +833,7 @@ function removeAutoLayoutProperty(eHTML) {
     childCol.style.removeProperty("--gutter");
   });
   eHTML.style.removeProperty("--padding");
-  $(wbaseItem.value).addClass("w-stack");
+  $(eHTML).addClass("w-stack");
 }
 
 function addStyleComponents(item, elements) {

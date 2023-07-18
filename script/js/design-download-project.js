@@ -45,11 +45,49 @@ async function push_dataProject() {
   // document.body.getAttribute;
 
   var list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
+  let replaceSkinRoot = [];
+  replaceSkinRoot.push(...ColorDA.list.map(skin => {
+    let cateName;
+    if (skin.CateID !== EnumCate.color)
+      cateName = CateDA.list_color_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    return {
+      GID: skin.GID,
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
+    }
+  }));
+  replaceSkinRoot.push(...TypoDA.list.map(skin => {
+    let cateName;
+    if (skin.CateID !== EnumCate.typography)
+      cateName = CateDA.list_typo_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    return {
+      GID: skin.GID,
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
+    }
+  }));
+  replaceSkinRoot.push(...BorderDA.list.map(skin => {
+    let cateName;
+    if (skin.CateID !== EnumCate.border)
+      cateName = CateDA.list_border_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    return {
+      GID: skin.GID,
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
+    }
+  }));
+  replaceSkinRoot.push(...EffectDA.list.map(skin => {
+    let cateName;
+    if (skin.CateID !== EnumCate.effect)
+      cateName = CateDA.list_effect_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    return {
+      GID: skin.GID,
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
+    }
+  }));
   list_page = list_page.map((wb) => {
     let cloneValue = wb.value.cloneNode(true);
     cloneValue.style.position = null;
     cloneValue.style.top = null;
     cloneValue.style.left = null;
+    let cssString = "";
     [cloneValue, ...cloneValue.querySelectorAll(".wbaseItem-value")].forEach((wbValue) => {
       wbValue.removeAttribute("listid");
       wbValue.removeAttribute("lock");
@@ -58,8 +96,28 @@ async function push_dataProject() {
         case EnumCate.chart:
           buildChart(wbValue);
           break;
+        case EnumCate.tool_text:
+          wbValue.removeAttribute("contenteditable");
+          break;
+        case EnumCate.textformfield:
+          if (wbValue.querySelector(".wbaseItem-value:has(> .textfield) > label")) {
+            let wbItem = wbase_list.find((e) => e.GID === wbValue.id);
+            if (wbItem) wbValue.setAttribute("placeholder", wbItem.JsonItem.HintText);
+          }
+          break;
         case EnumCate.textfield:
           wbValue.style.pointerEvents = null;
+          break;
+        case EnumCate.w_switch:
+        let newSwitch = document.createElement("label");
+          newSwitch.htmlFor = wbValue.querySelector(":scope > input").id;
+          for (let i = 0; i < wbValue.attributes.length; i++) {
+            let attrObj = wbValue.attributes[i];
+            newSwitch.setAttribute(attrObj.name, attrObj.nodeValue);
+          }
+          wbValue.replaceWith(newSwitch);
+          newSwitch.replaceChildren(...wbValue.childNodes);
+          wbValue = newSwitch;
           break;
         case EnumCate.tree:
           wbValue.querySelectorAll(".w-tree").forEach((wtree) => (wtree.style.pointerEvents = null));
@@ -67,11 +125,55 @@ async function push_dataProject() {
         default:
           break;
       }
+      if (wbValue !== cloneValue) {
+        cssString += `
+        /*  */
+        `;
+      } else {
+        wbValue.style.zIndex = null;
+        wbValue.style.order = null;
+      }
+      let thisCssText = wbValue.style.cssText;
+      thisCssText = thisCssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match);
+      let wbCss = `.wbaseItem-value[id="${wbValue.id}"] { ${thisCssText} }`;
+      cssString += wbCss;
+      wbValue.removeAttribute("style");
     });
+    cloneValue.cssString = cssString;
     $(cloneValue).addClass("w-page");
     cloneValue.Name = Ultis.toSlug(wb.Name);
     return cloneValue;
   });
+
+  await $.post(
+    "/view/build",
+    {
+      Sort: 0,
+      Name: "",
+      Type: 2,
+      Code: ProjectDA.obj.Code.toLowerCase(),
+    },
+    function (data) {
+      console.log("data-start: ", data);
+    },
+  );
+
+  let skinRoot = `:root {
+    ${document.documentElement.style.cssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match)}
+  }`;
+  await $.post(
+    "/view/build",
+    {
+      // Sort: 0,
+      Name: `style_project_root`,
+      Type: 0,
+      Code: ProjectDA.obj.Code.toLowerCase(),
+      Item: skinRoot,
+    },
+    function (data) {
+      console.log("data-start: ", data);
+    },
+  );
 
   for (let page of list_page) {
     page_script = "";
@@ -84,7 +186,7 @@ async function push_dataProject() {
           if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
 
           $(clickElement).addClass("event-click");
-          let new_url = '';
+          let new_url = "";
           // if (isDemo == true) {
           //   let new_router = RouterDA.list.find((e) => e.Id == router_item.RouterID);
           //   if (new_router != null) {
@@ -149,7 +251,7 @@ async function push_dataProject() {
           if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
 
           $(clickElement).addClass("event-click");
-          let new_url = '';
+          let new_url = "";
           new_url = `/${Ultis.toSlug(nextPagePrototype.Name)}`;
           // }
           if (new_url.length > 0) {
@@ -157,33 +259,36 @@ async function push_dataProject() {
           }
         }
       }
-      // }
     }
+    console.log(page.cssString);
+
     await $.post(
       "/view/build",
       {
-        Sort: list_page.indexOf(page),
+        Sort: list_page.indexOf(page) + 1,
         Name: page.Name,
+        Type: 1,
         Code: ProjectDA.obj.Code.toLowerCase(),
-        Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
+        Item: `<link rel="stylesheet" href="/Styles/${page.Name}.css" />${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
       },
       function (data) {
         console.log("data-start: ", data);
       },
     );
 
-    // await $.post(
-    //   "/view/build",
-    //   {
-    //     Sort: list_page.indexOf(page),
-    //     Name: Ultis.toSlug(page.Name),
-    //     Code: ProjectDA.obj.Code.toLowerCase(),
-    //     Item: `${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
-    //   },
-    //   function (data) {
-    //     console.log("data-start", data);
-    //   },
-    // );
+    await $.post(
+      "/view/build",
+      {
+        Sort: list_page.indexOf(page) + 1,
+        Name: page.Name,
+        Type: 0,
+        Code: ProjectDA.obj.Code.toLowerCase(),
+        Item: page.cssString,
+      },
+      function (data) {
+        console.log("data-start: ", data);
+      },
+    );
   }
   // await $.get(
   //   `https://server.wini.vn/buildend?name=${Ultis.toSlug(ProjectDA.obj.Name)}&code=${ProjectDA.obj.Code.toLowerCase()}&router=${JSON.stringify(router)}`,
@@ -244,16 +349,15 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
 try {
   const ipcRenderer = require("electron").ipcRenderer;
   $("body").on("click", ".btn-play", async function () {
-    $('.btn-play').html(`<i class="fa-solid fa-spinner fa-spin text-white"></i>`);
+    $(".btn-play").html(`<i class="fa-solid fa-spinner fa-spin text-white"></i>`);
 
     let list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
     await push_dataProject();
 
     var router;
-    if (selected_list.length == 1 && list_page.some(e => e.ID == selected_list[0].ID)) {
+    if (selected_list.length == 1 && list_page.some((e) => e.ID == selected_list[0].ID)) {
       router = [{ Id: 0, Name: "", Route: "", Sort: 0, PageName: Ultis.toSlug(selected_list[0].Name) }];
-    }
-    else {
+    } else {
       if (ProjectDA.obj.RouterJson != null) {
         router = JSON.parse(ProjectDA.obj.RouterJson);
       } else {
@@ -272,7 +376,7 @@ try {
         // window.open(`https://wini.vn`);
         // ${ProjectDA.obj.Code}/Views/${router[0].PageName}.html
         ipcRenderer.send("asynchronous-play", `${ProjectDA.obj.Code}`);
-        $('.btn-play').html(`<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/play.svg" class="btn-play">`);
+        $(".btn-play").html(`<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/play.svg" class="btn-play">`);
       },
     );
   });

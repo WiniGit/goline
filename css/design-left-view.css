@@ -37,7 +37,7 @@
   flex-direction: column;
   width: 100%;
   min-height: 68px;
-  max-height: 136px;
+  max-height: 200px;
   border-bottom: 1.5px solid #e5e5e5;
   font-size: 12px;
   line-height: 16px;
@@ -88,7 +88,7 @@
 
 .layer-search-result {
   width: 100%;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   border-bottom: 0.5px solid #f1f1f1;
   padding: 16px 8px 8px 8px;
@@ -119,7 +119,7 @@
 
 .layer_wbase_tile {
   width: 100%;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   height: 32px;
   border: 1px solid transparent;
@@ -160,23 +160,23 @@
 .layer_wbase_tile > img {
   width: 16px;
   height: 16px;
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component_black.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/base_component_black.svg);
 }
 
 :is(.layer_wbase_tile[cateid="140"], .layer_wbase_tile[cateid="128"]) > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_black.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame_black.svg) !important;
 }
 .layer_wbase_tile[cateid="138"] > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rectangle_black.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle_black.svg) !important;
 }
 .layer_wbase_tile[cateid="139"] > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text_black.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text_black.svg) !important;
 }
 .layer_wbase_tile[cateid="238"] > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/multiple_component.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/multiple_component.svg) !important;
 }
 .layer_wbase_tile[iswini="true"]:not(.layer_wbase_tile[cateid="238"]) > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/component.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/component.svg) !important;
 }
 
 .layer_wbase_tile:has(> .fa-caret-down) + .col {
@@ -225,6 +225,14 @@
 
 .list_tile > i {
   padding: 6px;
+}
+
+.assets-component-tile > .list_tile > i {
+  visibility: hidden;
+}
+
+.assets-component-tile:has(> .col) > .list_tile > i {
+  visibility: visible;
 }
 
 .col:has(> .list_tile) > div:nth-child(2) {
@@ -412,6 +420,14 @@
 .link_skin_cate_form > div:first-child > i {
   color: #8c8c8c;
   padding: 12px 6px;
+}
+
+.link_skin_cate_form > div:not(:first-child) {
+  display: none;
+}
+
+.link_skin_cate_form:has(> div:first-child > .fa-caret-down) > div {
+  display: flex;
 }
 
 .link_skin_cate_form > div > input {

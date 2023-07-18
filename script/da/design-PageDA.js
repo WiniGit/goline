@@ -50,6 +50,7 @@
       PageDA.enableEdit = true;
     } else {
       PageDA.enableEdit = false;
+      document.body.setAttribute("enable", "false");
     }
   }
 

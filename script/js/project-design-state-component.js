@@ -99,7 +99,7 @@ function create_UI_State() {
       '       <div class="col field-setting background-setting">' +
       '           <div class="row field-header">' +
       '               <div class="field-name regular1 text-title">Background</div>' +
-      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg"></button>' +
+      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg"></button>' +
       "           </div>" +
       '           <div class="row field-value ">' +
       '               <div class="row skin-container hover-setting">' +
@@ -111,13 +111,13 @@ function create_UI_State() {
       `${ColorDA.list.find((e) => e.GID == stateItem.ColorSkinID)?.Name ?? "Initial"}` +
       "</div>" +
       "               </div>" +
-      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/unlink-skin.svg"></button>' +
+      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg"></button>' +
       "           </div>" +
       "       </div>" +
       '       <div class="col field-setting border-setting">' +
       '           <div class="row field-header">' +
       '               <div class="field-name regular1 text-title">Border</div>' +
-      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg"></button>' +
+      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg"></button>' +
       "           </div>" +
       '           <div class="row field-value">' +
       '               <div class="row skin-container hover-setting">' +
@@ -129,22 +129,22 @@ function create_UI_State() {
       `${BorderDA.list.find((e) => e.GID == stateItem.BorderSkinID)?.Name ?? "Initial"}` +
       "</div>" +
       "               </div>" +
-      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/unlink-skin.svg"></button>' +
+      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg"></button>' +
       "           </div>" +
       "       </div>" +
       '       <div class="col field-setting effect-setting">' +
       '           <div class="row field-header">' +
       '               <div class="field-name regular1 text-title">Effect</div>' +
-      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg"></button>' +
+      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg"></button>' +
       "           </div>" +
       '           <div class="row field-value">' +
       '               <div class="row skin-container hover-setting">' +
-      '                   <div class="box16"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg"></div>' +
+      '                   <div class="box16"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg"></div>' +
       '                   <div class="skin-name regular1 text-body">' +
       `${EffectDA.list.find((e) => e.GID == stateItem.EffectSkinID)?.Name ?? "Initial"}` +
       "</div>" +
       "               </div>" +
-      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/unlink-skin.svg"></button>' +
+      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg"></button>' +
       "           </div>" +
       "       </div>" +
       "   </div>" +
@@ -1270,21 +1270,53 @@ function editJsonItemByCate() {
       };
       inputFieldPlaceholder.replaceChildren(labelPlaceholder, inputPlaceholder);
       //
-      let obscureCheckRow = document.createElement("div");
-      obscureCheckRow.className = "row";
-      let checkboxObsucre = document.createElement("input");
-      checkboxObsucre.id = "txtfd-check-obscure";
-      checkboxObsucre.type = "checkbox";
-      checkboxObsucre.defaultChecked = selected_list[0].JsonItem.ObscureText;
-      checkboxObsucre.onchange = function (e) {
+      let txtfdTypeRow = document.createElement("div");
+      txtfdTypeRow.className = "row";
+      txtfdTypeRow.style.columnGap = "48px";
+      let txtfdTypeTitle = document.createElement("div");
+      txtfdTypeTitle.className = "regular1";
+      txtfdTypeTitle.innerHTML = "Input type";
+      let drpBtnTxtfdType = _btnDropDownSelect(
+        WTextFormFieldType.list,
+        function (options) {
+          for (let option of options) {
+            let initVl = option.getAttribute("value");
+            option.firstChild.style.opacity = initVl === selected_list[0].JsonItem.Type ? 1 : 0;
+          }
+        },
+        function (option) {
+          editJsonItem({ TextFormFieldType: option });
+          drpBtnTxtfdType.firstChild.innerHTML = option;
+          if (option == WTextFormFieldType.text) {
+            inputFieldSuffixSize.style.display = "none";
+          } else {
+            inputFieldSuffixSize.style.display = "flex";
+          }
+        },
+      );
+      drpBtnTxtfdType.firstChild.innerHTML = selected_list[0].JsonItem.Type;
+      txtfdTypeRow.replaceChildren(txtfdTypeTitle, drpBtnTxtfdType);
+      //
+      let inputFieldSuffixSize = document.createElement("div");
+      inputFieldSuffixSize.className = "input-edit-field row";
+      let labelSuffixSize = document.createElement("label");
+      labelSuffixSize.htmlFor = "txtfd-suffixsize";
+      labelSuffixSize.className = "regular1";
+      labelSuffixSize.innerHTML = "SuffixIcon size";
+      let inputSuffixSize = document.createElement("input");
+      inputSuffixSize.id = "txtfd-suffixsize";
+      inputSuffixSize.className = "regular1";
+      inputSuffixSize.defaultValue = selected_list[0].JsonItem.SuffixSize ?? 16;
+      inputSuffixSize.onblur = function (e) {
         e.stopPropagation();
-        editJsonItem({ ObscureText: this.checked });
+        if (!isNaN(parseFloat(this.value))) {
+          editJsonItem({ SuffixSize: parseFloat(this.value) });
+        } else {
+          this.value = selected_list[0].JsonItem.SuffixSize ?? 16;
+        }
       };
-      let labelObscure = document.createElement("label");
-      labelObscure.className = "regular1";
-      labelObscure.htmlFor = "txtfd-check-obscure";
-      labelObscure.innerHTML = "Password type";
-      obscureCheckRow.replaceChildren(checkboxObsucre, labelObscure);
+      inputFieldSuffixSize.replaceChildren(labelSuffixSize, inputSuffixSize);
+      if (selected_list[0].JsonItem.Type == WTextFormFieldType.text) inputFieldSuffixSize.style.display = "none";
       //
       let enableRow = document.createElement("div");
       enableRow.className = "row";
@@ -1508,7 +1540,7 @@ function editJsonItemByCate() {
                     popupMessageValid.style.transform = `translate(calc(-100% - 16px), ${document.body.offsetHeight - popupMessageValid.getBoundingClientRect().bottom}px)`;
                   }
                   handlePopupDispose(popupMessageValid, function () {
-                    divSection.querySelectorAll(".textformfield.helper-text").forEach((element) => {
+                    divSection.querySelectorAll(".w-textformfield.helper-text").forEach((element) => {
                       $(element).removeClass("helper-text");
                       $(element).removeAttr("helper-text");
                       element.style.removeProperty("--state-color");
@@ -1526,7 +1558,7 @@ function editJsonItemByCate() {
       listValidateTile();
       validateContainer.replaceChildren(validateHeader, validateBody);
       //
-      jsonItemEditUI.replaceChildren(title, inputFieldInitValue, inputFieldLabel, inputFieldPlaceholder, obscureCheckRow, enableRow, validateContainer);
+      jsonItemEditUI.replaceChildren(title, inputFieldInitValue, inputFieldLabel, inputFieldPlaceholder, txtfdTypeRow, inputFieldSuffixSize, enableRow, validateContainer);
       break;
     default:
       break;
@@ -1581,7 +1613,7 @@ function editColorContainer(color, func) {
   colorContainer.replaceChildren(demoColor, hexColor, opacityColor);
   let btnSkin = document.createElement("button");
   let imgIcon = document.createElement("img");
-  imgIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg";
+  imgIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg";
   btnSkin.appendChild(imgIcon);
   btnSkin.onclick = function (event) {
     event.stopPropagation();
@@ -1713,11 +1745,11 @@ function createDataForm() {
     inputNameField.id = "name-field-vl";
     inputNameField.className = "regular1";
     let listNameFieldVl = selected_list.filterAndMap((wbaseItem) => wbaseItem.AttributesItem.NameField);
-    inputNameField.defaultValue = listNameFieldVl.length === 1 ? listNameFieldVl[0] : "Mixed";
+    inputNameField.defaultValue = listNameFieldVl.length === 1 ? listNameFieldVl[0] : "mixed";
     inputNameFieldContainer.replaceChildren(labelNameField, inputNameField);
     inputNameField.onblur = function (e) {
       e.stopPropagation();
-      if (this.value != (listNameFieldVl.length === 1 ? listNameFieldVl[0] : "Mixed")) editJsonItem({ NameField: this.value });
+      if (this.value != (listNameFieldVl.length === 1 ? listNameFieldVl[0] : "mixed")) editJsonItem({ NameField: this.value });
     };
     body.replaceChildren(inputNameFieldContainer);
   }

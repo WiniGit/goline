@@ -125,7 +125,7 @@ class EnumCate {
 
   static no_child_component = [this.tool_rectangle, this.tool_text, this.checkbox, this.progress_bar, this.progress_circle, this.radio_button, this.w_switch, this.svg];
 
-  static noImgBg = [this.svg, ...this.scale_size_component, this.table, this.tree, this.chart, this.carousel];
+  static noImgBg = [this.svg, ...this.scale_size_component, this.table, this.tree, this.chart, this.carousel, this.tool_text];
 
   static show_name = [this.tool_frame, this.form, this.tool_variant];
 
@@ -216,6 +216,16 @@ class ChartType {
 
   static axes_chart = [this.bar, this.bubble, this.line];
   static list = [...this.axes_chart, this.doughnut, this.pie, this.radar, this.polar];
+}
+
+class WTextFormFieldType {
+  static text = "text";
+  static obscureText = "obscure text";
+  static datePicker = "date";
+  static monthPicker = "month";
+  static yearPicker = "year";
+
+  static list = [this.text, this.obscureText, this.datePicker, this.monthPicker, this.yearPicker];
 }
 
 class ValidateType {
@@ -313,9 +323,11 @@ class WCarouselEffect {
   static easeInOut = "ease-in-out";
 }
 
-var hexRegex = /(#){0,1}[0-9A-Fa-f]{6,8}$/i;
-var svgRegex = /(fill|stroke)="[^none](\w|\d|#){1,}"/g;
-var brpRegex = /\(([^)-]+)\)/g;
+const uuid4Regex = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/g;
+const hexRegex = /(#){0,1}[0-9A-Fa-f]{6,8}$/i;
+const svgRegex = /(fill|stroke)="[^none](\w|\d|#){1,}"/g;
+const brpRegex = /\(([^)-]+)\)/g;
+const spChaRegex = /[!@#\$%\^\&*\)\(+=._-]/g;
 var wbase_list = [];
 var base_component_list = [];
 var assets_list = [];
@@ -995,7 +1007,7 @@ class WBaseDefault {
       ReadOnly: false,
       IsImportant: false,
       KeyboardType: null,
-      ObscureText: false,
+      Type: WTextFormFieldType.text,
       ObscuringCharacter: "*",
       MaxLength: null,
       HintText: "Placeholder",
@@ -1003,6 +1015,7 @@ class WBaseDefault {
       TextCapitalization: null,
       JsonVadidate: [],
       AutoValidate: false,
+      SuffixSize: 16,
     },
     JsonEventItem: [
       {

@@ -31,7 +31,7 @@ function createTextHTML(item) {
         select_box = selectBox(selected_list);
       }
       updateHoverWbase();
-      if (!window.getComputedStyle(item.value.parentElement).display.match(/(flex|grid|table)/g)) {
+      if (window.getComputedStyle(item.value).position == "absolute") {
         let transformX = "0";
         switch (item.StyleItem.TypoStyleItem.TextAlign) {
           case TextAlign.center:
@@ -212,12 +212,13 @@ function createTextHTML(item) {
       if (this.innerHTML == "") {
         this.style.minWidth = "1px";
         select_box = null;
-      } else {
-        let newSize = calcTextNode(this);
-        this.style.minWidth = newSize.width + "px";
-        // this.style.minHeight = newSize.height + "px";
-        select_box = selectBox(selected_list);
       }
+      //  else {
+      //   // let newSize = calcTextNode(this);
+      //   // this.style.minWidth = newSize.width + "px";
+      //   // this.style.minHeight = newSize.height + "px";
+      //   select_box = selectBox(selected_list);
+      // }
       // updateInputTLWH();
     };
     textObserver.observe(item.value, {

@@ -2,24 +2,6 @@
 function setupLeftView() {
   // layer view HTML
   left_view.style.width = `${left_view.offsetWidth}px`;
-  // setup tab change
-  let list_tab_view = document.getElementsByClassName("tab_left");
-  for (let i = 0; i < list_tab_view.length; i++) {
-    if (!PageDA.enableEdit) {
-      if (list_tab_view[i].innerHTML === "Assets") list_tab_view[i].style.display = "none";
-    }
-    list_tab_view[i].onclick = function () {
-      tabChange(this.innerHTML, "left_tab_view");
-      if (this.innerHTML === "Assets") {
-        assets_view.style.display = "inline-flex";
-        let btnIcon = [...btn_select_page.childNodes].find((e) => e.localName == "i");
-        btnIcon.className = btnIcon.className.replace("fa-chevron-up", "fa-chevron-down");
-        div_list_page.style.display = "none";
-        select_component = undefined;
-        initUIAssetView(true);
-      }
-    };
-  }
   // btn select page
   let btn_select_page = document.getElementById("btn_select_page");
   btn_select_page.firstChild.innerHTML = PageDA.obj.Name;
@@ -61,9 +43,6 @@ function setupLeftView() {
     PageDA.add(newPage);
   };
   header_page.appendChild(btn_add_page);
-  if (!PageDA.enableEdit) {
-    btn_add_page.style.display = "none";
-  }
   let bodyPage = document.createElement("div");
   bodyPage.className = "col";
   bodyPage.replaceChildren(...PageDA.list.map((pageItem) => createPageTile(pageItem)));
@@ -85,6 +64,19 @@ function setupLeftView() {
   show_list_tile.style.height = "100%";
   replaceAllLyerItemHTML();
 }
+
+$("body").on("click", ".tab_left", function () {
+  tabChange(this.innerHTML, "left_tab_view");
+  if (this.innerHTML === "Assets") {
+    assets_view.style.display = "flex";
+    let btn_select_page = document.getElementById("btn_select_page");
+    let btnIcon = btn_select_page.querySelector(":scope > i");
+    btnIcon.className = btnIcon.className.replace("fa-chevron-up", "fa-chevron-down");
+    document.getElementById("div_list_page").style.display = "none";
+    select_component = undefined;
+    initUIAssetView(true);
+  }
+})
 
 function showSearchResult() {
   tabChange("Layer", "left_tab_view");
@@ -148,23 +140,23 @@ function showSearchResult() {
         result.className = "layer-search-result row";
         let cateImg = document.createElement("img");
         if (wb.IsWini && wb.CateID != EnumCate.tool_variant) {
-          cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/component.svg";
+          cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/component.svg";
         } else {
           switch (wb.CateID) {
             case EnumCate.tool_frame:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame_black.svg";
               break;
             case EnumCate.tool_rectangle:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rectangle_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle_black.svg";
               break;
             case EnumCate.tool_text:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text_black.svg";
               break;
             case EnumCate.tool_variant:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/multiple_component.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/multiple_component.svg";
               break;
             default:
-              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component_black.svg";
+              cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/base_component_black.svg";
               break;
           }
         }
@@ -293,7 +285,8 @@ function replaceAllLyerItemHTML() {
   let show_list_tile = document.getElementById(`parentID:${wbase_parentID}`);
   let list_level1 = wbase_list.filter((e) => e.ParentID == wbase_parentID).reverse();
   let isReplace = show_list_tile.childElementCount > 0;
-  show_list_tile.replaceChildren(
+  let fragment = document.createDocumentFragment();
+  fragment.replaceChildren(
     ...list_level1.map((wbaseItem) => {
       let isShowChildren = false;
       if (isReplace) {
@@ -305,6 +298,7 @@ function replaceAllLyerItemHTML() {
       return createLayerTile(wbaseItem, isShowChildren);
     }),
   );
+  show_list_tile.replaceChildren(fragment);
 }
 
 // handle tab change
@@ -457,15 +451,17 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
     childrenLayer.id = `parentID:${wbaseItem.GID}`;
     childrenLayer.className = "col";
     wbaseChildren = wbase_list.filter((e) => e.ParentID == wbaseItem.GID).reverse();
-    childrenLayer.replaceChildren(...wbaseChildren.map((wbaseChild) => createLayerTile(wbaseChild)));
+    let fragment = document.createDocumentFragment();
+    fragment.replaceChildren(...wbaseChildren.map((wbaseChild) => createLayerTile(wbaseChild)));
+    childrenLayer.replaceChildren(fragment);
   }
   wbase_tile.onmouseover = function () {
-    if (!sortLayer) {
+    if (!sortLayer && !left_view.resizing) {
       updateHoverWbase(wbaseItem);
     }
   };
   wbase_tile.onmouseout = function () {
-    if (!sortLayer) {
+    if (!sortLayer && !left_view.resizing) {
       updateHoverWbase();
     }
   };
@@ -481,10 +477,12 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
       });
     }
     wbase_tile.onclick = function () {
-      addSelectList([wbaseItem]);
+      if (!sortLayer && !left_view.resizing) {
+        addSelectList([wbaseItem]);
+      }
     };
-    if (PageDA.enableEdit)
-      icon_lock.onclick = function () {
+    icon_lock.onclick = function () {
+      if (!sortLayer && !left_view.resizing) {
         let listUpdate = [];
         wbaseItem.IsShow = !wbaseItem.IsShow;
         if (wbaseItem.IsShow) {
@@ -518,38 +516,39 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
         }
         listUpdate.push(wbaseItem);
         WBaseDA.edit(listUpdate, EnumObj.wBase);
-      };
+      }
+    };
   }
-  if (PageDA.enableEdit) {
-    inputWBaseName.ondblclick = function () {
+  inputWBaseName.ondblclick = function () {
+    if (PageDA.enableEdit) {
       this.style.cursor = "text";
       this.style.outline = "2px solid #1890FF";
       this.readOnly = false;
       this.setSelectionRange(0, this.value.length);
       this.focus();
-    };
-    inputWBaseName.onblur = function () {
-      if (!sortLayer && !this.readOnly) {
-        this.style.cursor = "auto";
-        this.style.outline = "none";
-        this.readOnly = true;
-        window.getSelection().removeAllRanges();
-        if (wbaseItem.Name != this.value) {
-          wbaseItem.Name = this.value;
-          WBaseDA.edit([wbaseItem], EnumObj.wBase);
-        }
+    } else return;
+  };
+  inputWBaseName.onblur = function () {
+    if (!sortLayer && !this.readOnly) {
+      this.style.cursor = "auto";
+      this.style.outline = "none";
+      this.readOnly = true;
+      window.getSelection().removeAllRanges();
+      if (wbaseItem.Name != this.value) {
+        wbaseItem.Name = this.value;
+        WBaseDA.edit([wbaseItem], EnumObj.wBase);
       }
-    };
-  }
+    }
+  };
 
   return layerContainer;
 }
 
 var select_component;
 async function initUIAssetView(reloadComponent = false) {
-  assets_view.style.width = "100%";
   let children = [];
-  let scrollY = assets_view.scrollTop;
+  let scrollView = assets_view.querySelector(":scope > .col > .col");
+  let scrollY = scrollView?.scrollTop ?? 0;
   if (reloadComponent) {
     assets_view.replaceChildren(...children);
     let loader = document.createElement("div");
@@ -619,6 +618,9 @@ async function initUIAssetView(reloadComponent = false) {
               WBaseDA.getAssetsList(_listID, content);
             }
           } else if (content.length == 0) {
+            assets_view.querySelectorAll(".list_tile > i").forEach(prefixIcon =>
+              prefixIcon.className = prefixIcon.className.replace("fa-caret-down", "fa-caret-right")
+            )
             initUIAssetView();
             document.getElementById("search_input_assets").focus();
           }
@@ -649,7 +651,9 @@ async function initUIAssetView(reloadComponent = false) {
     list_component_div.style.overflowY = "scroll";
     list_component_div.style.flex = 1;
     let assetsProjects = ProjectDA.assetsList;
-    scroll_div.replaceChildren(...[{ ID: 0 }, ProjectDA.obj, ...assetsProjects].map((projectItem) => createListComponent(projectItem)));
+    let fragment = document.createDocumentFragment();
+    fragment.replaceChildren(...[{ ID: 0 }, ProjectDA.obj, ...assetsProjects].map((projectItem) => createListComponent(projectItem)));
+    scroll_div.replaceChildren(fragment);
     component_div.replaceChildren(search_container, scroll_div);
     children.push(component_div);
     // list component
@@ -692,17 +696,22 @@ async function initUIAssetView(reloadComponent = false) {
       }
     }
     assets_view.replaceChildren(...children);
+    scroll_div.scrollTo({
+      top: scrollY,
+      behavior: "smooth",
+    });
   }
-  assets_view.scrollTo({
-    top: scrollY,
-    behavior: "smooth",
-  });
 }
 
 // create list component depend on projectId
 function createListComponent(projectItem, isShowContent) {
   let currentListTile = document.getElementById(`component projectID:${projectItem.ID}`);
-  let isShow = isShowContent ?? (currentListTile ? currentListTile.querySelector(".list_tile > .fa-caret-down") != undefined : false);
+  let isShow = false;
+  if (isShowContent) {
+    isShow = isShowContent;
+  } else if (currentListTile) {
+    isShow = currentListTile.querySelector(".list_tile > .fa-caret-down") != undefined;
+  }
   let container = document.createElement("div");
   container.id = `component projectID:${projectItem.ID}`;
   container.className = "col";
@@ -821,6 +830,14 @@ function createComponentTile(item, space = 0) {
   title.className = "title";
   select_tile.appendChild(title);
   if (item.CateID === EnumCate.tool_variant) {
+    let currentTile = document.getElementById(`Component:${item.GID}`);
+    let isShow = false;
+    if (currentTile) {
+      isShow = currentTile.querySelector(":scope > .list_tile > .fa-caret-down") != undefined;
+    }
+    if (isShow) {
+      prefix_action.className = "fa-solid fa-caret-down fa-xs";
+    }
     let container_child = document.createElement("div");
     container_child.className = "col";
     container.appendChild(container_child);
@@ -835,11 +852,10 @@ function createComponentTile(item, space = 0) {
       container_child.appendChild(result);
     }
     select_tile.onclick = function () {
-      if (container_child.style.display == "none") {
-        container_child.style.display = "inline-flex";
+      isShow = !isShow;
+      if (isShow) {
         prefix_action.className = "fa-solid fa-caret-down fa-xs";
       } else {
-        container_child.style.display = "none";
         prefix_action.className = "fa-solid fa-caret-right fa-xs";
       }
     };
@@ -1206,7 +1222,6 @@ function linkComptAndSkinDialog() {
   libContent.id = "lib_dialog_content";
   dialog.appendChild(libContent);
   let searchContainer = document.createElement("div");
-  libContent.appendChild(searchContainer);
   let searchPrefixIcon = document.createElement("i");
   searchPrefixIcon.className = "fa-solid fa-magnifying-glass fa-sm";
   searchPrefixIcon.style.padding = "8px 0 8px 16px";
@@ -1214,10 +1229,44 @@ function linkComptAndSkinDialog() {
   searchContainer.appendChild(searchPrefixIcon);
   let searchInput = document.createElement("input");
   searchInput.placeholder = "Search...";
+  searchInput.oninput = function () {
+    if (libContentDetails.querySelector(".project_tile")) {
+      libContentDetails.querySelectorAll(":scope > .project_tile").forEach(proTile => {
+        let proName = proTile.querySelector(":scope > label + p").innerHTML;
+        if (this.value.trim() === "" || Ultis.toSlug(proName).includes(Ultis.toSlug(this.value.trim()))) {
+          proTile.style.display = "flex";
+        } else {
+          proTile.style.display = "none";
+        }
+      })
+    } else {
+      libContentDetails.querySelectorAll(":is(.link_skin_cate_form > div:first-child, .checkbox_skin_tile)").forEach(skinTile => {
+        let skinName = skinTile.querySelector(":scope > p").innerHTML;
+        if (this.value.trim() === "") {
+          skinTile.removeAttribute("style");
+          if (skinTile.parentElement.classList.contains("link_skin_cate_form")) {
+            let prefixAction = skinTile.querySelector(":scope > .fa-caret-down");
+            if (prefixAction)
+              prefixAction.className = prefixAction.className.replace("fa-caret-down", "fa-caret-right");
+          }
+        } else if (Ultis.toSlug(skinName).includes(Ultis.toSlug(this.value.trim()))) {
+          skinTile.removeAttribute("style");
+          let parentList = $(skinTile).parents(".link_skin_cate_form");
+          if (parentList) [...parentList].forEach(parentTile => {
+            let prefixAction = parentTile.firstChild.querySelector(":scope > .fa-caret-right");
+            if (prefixAction)
+              prefixAction.className = prefixAction.className.replace("fa-caret-right", "fa-caret-down");
+          })
+        } else {
+          skinTile.style.display = "none";
+        }
+      })
+    }
+  }
   searchContainer.appendChild(searchInput);
   let libContentDetails = document.createElement("div");
   libContentDetails.className = "lib_content_details";
-  libContent.appendChild(libContentDetails);
+  libContent.replaceChildren(searchContainer, libContentDetails);
 
   //
   let dialogBottom = document.createElement("div");
@@ -1394,19 +1443,13 @@ function checkboxLinkSkin(cateItem) {
   let title = document.createElement("p");
   title.innerHTML = cateItem.Name;
   let suffixAction = document.createElement("i");
-  suffixAction.className = "fa-solid fa-caret-down fa-lg";
+  suffixAction.className = "fa-solid fa-caret-right fa-lg";
   suffixAction.onclick = function (e) {
     e.stopPropagation();
     if (this.className.includes("down")) {
       this.className = this.className.replace("down", "right");
-      for (let i = 1; i < cateForm.childNodes.length; i++) {
-        cateForm.childNodes[i].style.display = "none";
-      }
     } else {
       this.className = this.className.replace("right", "down");
-      for (let i = 1; i < cateForm.childNodes.length; i++) {
-        cateForm.childNodes[i].style.display = "flex";
-      }
     }
   };
   titleBar.replaceChildren(suffixAction, title);
@@ -1429,7 +1472,6 @@ function checkboxLinkSkin(cateItem) {
         checkboxSkinTile.className = "checkbox_skin_tile";
         checkboxSkinTile.setAttribute("skinid", skinItem.GID);
         checkboxSkinTile.setAttribute("cateid", skinItem.CateID);
-        checkboxSkinTile.style.display = "flex";
         cateForm.appendChild(checkboxSkinTile);
         let checkbox = document.createElement("input");
         checkbox.onchange = function () {
@@ -1469,7 +1511,6 @@ function checkboxLinkSkin(cateItem) {
         checkboxSkinTile.className = "checkbox_skin_tile";
         checkboxSkinTile.setAttribute("skinid", skinItem.GID);
         checkboxSkinTile.setAttribute("cateid", skinItem.CateID);
-        checkboxSkinTile.style.display = "flex";
         cateForm.appendChild(checkboxSkinTile);
         let checkbox = document.createElement("input");
         checkbox.onchange = function () {
@@ -1509,7 +1550,6 @@ function checkboxLinkSkin(cateItem) {
         checkboxSkinTile.className = "checkbox_skin_tile";
         checkboxSkinTile.setAttribute("skinid", skinItem.GID);
         checkboxSkinTile.setAttribute("cateid", skinItem.CateID);
-        checkboxSkinTile.style.display = "flex";
         cateForm.appendChild(checkboxSkinTile);
         let checkbox = document.createElement("input");
         checkbox.onchange = function () {
@@ -1549,7 +1589,6 @@ function checkboxLinkSkin(cateItem) {
         checkboxSkinTile.className = "checkbox_skin_tile";
         checkboxSkinTile.setAttribute("skinid", skinItem.GID);
         checkboxSkinTile.setAttribute("cateid", skinItem.CateID);
-        checkboxSkinTile.style.display = "flex";
         cateForm.appendChild(checkboxSkinTile);
         let checkbox = document.createElement("input");
         checkbox.onchange = function () {
@@ -1631,10 +1670,10 @@ function dragInstanceUpdate(event) {
         availableCell.replaceChildren(...cellChildren, demo);
       }
     }
-  } else if (window.getComputedStyle(parentHTML).display?.match(/(flex|grid)/g) && !select_component.StyleItem.PositionItem.FixPosition) {
-    console.log("flex|grid");
+  } else if (window.getComputedStyle(parentHTML).display?.match("flex") && !select_component.StyleItem.PositionItem.FixPosition) {
+    console.log("flex");
     let children = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
-    let isGrid = window.getComputedStyle(parentHTML).display.match("grid");
+    let isGrid = window.getComputedStyle(parentHTML).flexWrap == "wrap";
     if (parentHTML.style.flexDirection == "column") {
       let zIndex = 0;
       let distance = 0;

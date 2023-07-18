@@ -295,6 +295,28 @@ class Ultis {
         return colors[color.toLowerCase()];
     }
 
+    static rgbToHex(rgba) {
+        let splitRgba = rgba.replace(/(rgba|\(|\)|rgb)/g, "").split("").map(vl => parseFloat(vl));
+        let r = splitRgba[0].toString(16);
+        let g = splitRgba[1].toString(16);
+        let b = splitRgba[2].toString(16);
+        let a = Math.round(255).toString(16);
+        if (splitRgba[3]) {
+            a = Math.round(splitRgba[3] * 255).toString(16);
+        }
+
+        if (r.length == 1)
+            r = "0" + r;
+        if (g.length == 1)
+            g = "0" + g;
+        if (b.length == 1)
+            b = "0" + b;
+        if (a.length == 1)
+            a = "0" + a;
+
+        return "#" + r + g + b + a;
+    }
+
     static prettyJsonToString(data, space) {
         return JSON.stringify(data, null, 6).replace(/\n( *)/g, function (match, p1) {
             return '<br>' + '&nbsp;'.repeat(p1.length);
@@ -366,21 +388,6 @@ class Ultis {
             }
             return '<br>' + '&nbsp;'.repeat(p1.length) + '<span class="' + cls + '">' + match + '</span>';
         });
-        //return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        //    var cls = 'number';
-        //    if (/^"/.test(match)) {
-        //        if (/:$/.test(match)) {
-        //            cls = 'key';
-        //        } else {
-        //            cls = 'string';
-        //        }
-        //    } else if (/true|false/.test(match)) {
-        //        cls = 'boolean';
-        //    } else if (/null/.test(match)) {
-        //        cls = 'null';
-        //    }
-        //    return '<span class="' + cls + '">' + match + '</span>';
-        //});
     }
 
     static generateRandomColor() {

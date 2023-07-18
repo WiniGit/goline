@@ -92,7 +92,7 @@ for (let i = 0; i < list_cate.length; i++) {
     case EnumCate.effect:
       demo_skin = document.createElement("img");
       demo_skin.className = "box20";
-      demo_skin.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg";
+      demo_skin.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg";
       break;
     default:
       break;
@@ -110,16 +110,47 @@ let list_tool = [
     expand: function () {
       console.log("move");
     },
-    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/move.svg",
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/move.svg",
+  },
+  {
+    message: ToolState.frame,
+    expand: function () {
+      console.log("frame");
+    },
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame.svg",
+  },
+  {
+    message: ToolState.rectangle,
+    expand: function () {
+      console.log("rectangle");
+    },
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle.svg",
+  },
+  {
+    message: ToolState.base_component,
+    expand: function () {
+      console.log("base component");
+      let component_button = create_obj_tool.querySelector("#BaseComponent");
+      let popup_offset = component_button.getBoundingClientRect();
+      // set display and position for popup
+      $("#choose-component-popup").css({ top: popup_offset.top + 52, left: popup_offset.left });
+      $("#choose-component-popup").css("display", "flex");
+      $("#choose-component-popup").removeAttr("cateid");
+    },
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/base_component.svg",
+  },
+  {
+    message: ToolState.text,
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text.svg",
   },
   {
     message: ToolState.hand_tool,
-    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/hand.svg",
+    scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/hand.svg",
   },
 ];
 
 let logo_wini = document.createElement("img");
-logo_wini.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/logo_wini.svg";
+logo_wini.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/logo_wini.svg";
 logo_wini.style.padding = "12px";
 logo_wini.style.width = "24px";
 logo_wini.style.height = "24px";
@@ -288,14 +319,14 @@ let button_play = document.createElement("div");
 button_play.className = "box48 center btn-play";
 
 let button_play_img = document.createElement("img");
-button_play_img.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/play.svg";
+button_play_img.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/play.svg";
 button_play.appendChild(button_play_img);
 
 let history = document.createElement("div");
 history.className = "box48 center btn-history";
 
 let history_img = document.createElement("img");
-history_img.src = "/lib/assets/history.svg";
+history_img.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/history.svg";
 history.appendChild(history_img);
 
 let input_scale = document.createElement("div");
@@ -374,47 +405,6 @@ let projectTitle = document.getElementById("project_name");
 projectTitle.innerHTML = ProjectDA.obj.Name;
 
 function permissionTool() {
-  if (PageDA.enableEdit) {
-    list_tool = [
-      list_tool[0],
-      ...[
-        {
-          message: ToolState.frame,
-          expand: function () {
-            console.log("frame");
-          },
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/frame.svg",
-        },
-        {
-          message: ToolState.rectangle,
-          expand: function () {
-            console.log("rectangle");
-          },
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rectangle.svg",
-        },
-        {
-          message: ToolState.base_component,
-          expand: function () {
-            console.log("base component");
-            let component_button = create_obj_tool.querySelector("#BaseComponent");
-            let popup_offset = component_button.getBoundingClientRect();
-            // set display and position for popup
-            $("#choose-component-popup").css({ top: popup_offset.top + 52, left: popup_offset.left });
-            $("#choose-component-popup").css("display", "flex");
-            $("#choose-component-popup").removeAttr("cateid");
-          },
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/base_component.svg",
-        },
-        {
-          message: ToolState.text,
-          scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text.svg",
-        },
-      ],
-      list_tool.pop(),
-    ];
-  } else {
-    $(".f12-container").css("pointer-event", "none");
-  }
   create_obj_tool.replaceChildren(
     logo_wini,
     ...list_tool.map((wTool) => {
@@ -469,3 +459,37 @@ function permissionTool() {
     };
   }
 }
+
+$("body").on("click", ".btn-history", function () {
+  let historyView = document.createElement("div");
+  historyView.id = "history-view";
+  historyView.className = "edit-container";
+  let header = document.createElement("div");
+  header.className = "header_design_style";
+  header.style.justifyContent = "space-between";
+  let title = document.createElement("p");
+  title.innerHTML = "Version history";
+  let comboAction = document.createElement("div");
+  comboAction.className = "row";
+  comboAction.style.gap = "6px";
+  let addBtn = document.createElement("i");
+  addBtn.className = "fa-solid fa-plus fa-sm";
+  let closeBtn = document.createElement("i");
+  closeBtn.className = "fa-solid fa-xmark fa-sm";
+  closeBtn.onclick = function () {
+    historyView.replaceWith(right_view);
+    PageDA.enableEdit = permission;
+    document.body.setAttribute("enable", PageDA.enableEdit);
+    toolStateChange(ToolState.move);
+  }
+  comboAction.replaceChildren(addBtn, closeBtn);
+  header.replaceChildren(title, comboAction);
+  let body = document.createElement("div");
+  body.className = "col";
+  historyView.replaceChildren(header, body);
+  toolStateChange(ToolState.hand_tool);
+  right_view.replaceWith(historyView);
+  let permission = PageDA.enableEdit;
+  PageDA.enableEdit = false;
+  document.body.setAttribute("enable", "false");
+})
