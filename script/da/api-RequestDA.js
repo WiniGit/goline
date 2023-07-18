@@ -109,25 +109,28 @@ class RequestDA {
         if (list != null) {
             for (let item of list) {
                 list_request +=
-                    '<div data-id="' + item.GID + '" data-collectionid="' + item.CollectionID + '" class="request-tile option-tile row">' +
-                    '    <div class="request-method semibold11 center ' + `${item.Type == ApiMethod.POST ? "text-secondary1" : "text-secondary2"} ` + '">' + `${item.Type == ApiMethod.POST ? "POST" : "GET"} ` + '</div>' +
-                    '    <input class="regular1 text-title" type="text" value="' + item.Name + '" disabled>' +
-                    '</div>';
+                    `<div data-id=${item.GID} data-collection=${item.CollectionID} class="btn-request-tile option-tile row">
+                        <div class="request-method semibold11 center ${item.Type == ApiMethod.POST ? "text-secondary1" : "text-secondary2"}">
+                            ${item.Type == ApiMethod.POST ? "POST" : "GET"}
+                        </div>
+                        <input class="regular1" type="text" value="${item.Name}" disabled>
+                    </div>`;
             }
         }
         return list_request;
     }
+
     static update_UI_ListRequestTab() {
         let list = RequestDA.list_opening.filter(e => e.ProjectID == pid);
         let list_request = '';
         if (list != null) {
             for (let item of list) {
                 list_request +=
-                    '<div data-id="' + item.GID + '" data-collectionid="' + item.CollectionID + '" class="request-tab row">' +
-                    '    <div class="request-method semibold11 center  ' + `${item.Type == ApiMethod.POST ? "text-secondary1" : "text-secondary2"} ` + '">' + `${item.Type == ApiMethod.POST ? "POST" : "GET"} ` + '</div>' +
-                    '    <span class="request-name regular11 text-title overflow-elipstic">' + item.Name + '</span>' +
-                    '    <button class="close-btn box24 button-transparent"><i class="fa-solid fa-close fa-xs text-body"></i></button>' +
-                    '</div>';
+                    `<div data-id=${item.GID} data-collectionid=${item.CollectionID} class="btn-request-tab row">
+                        <div class="request-method semibold11 center ${item.Type == ApiMethod.POST ? " text-secondary1" : "text-secondary2"} "> ${item.Type == ApiMethod.POST ? "POST" : "GET"} </div> 
+                        <span class="request-name regular11 text-title overflow-elipstic">${item.Name}</span> 
+                        <button class="close-btn box24 button-transparent"><i class="fa-solid fa-close fa-xs text-body"></i></button> 
+                    </div>`;
             }
         }
         $('.opening-tab-slider').html(list_request);
@@ -135,24 +138,24 @@ class RequestDA {
 
     static set_selected(item) {
         RequestDA.selected = item;
-        $('.request-tile, .request-tab, .collection-tile').removeClass('selected');
+        $('.btn-request-tile, .btn-request-tab, .collection-tile').removeClass('selected');
 
         if (item != null) {
-            $('.request-tile[data-id="' + item.GID + '"]').addClass('selected');
-            $('.request-tab[data-id="' + item.GID + '"]').addClass('selected');
+            $('.btn-request-tile[data-id="' + item.GID + '"]').addClass('selected');
+            $('.btn-request-tab[data-id="' + item.GID + '"]').addClass('selected');
 
-            $('.request-tab').removeClass('no-border-right');
-            $('.request-tab[data-id="' + item.GID + '"]').prev().addClass('no-border-right');
+            $('.btn-request-tab').removeClass('no-border-right');
+            $('.btn-request-tab[data-id="' + item.GID + '"]').prev().addClass('no-border-right');
 
             $('.no-request').css('display', 'none');
             $('.content-container').css('display', 'flex');
 
-            $('.collection-slide-bar').animate({
-                scrollTop: $('.request-tile[data-id="' + item.GID + '"]').offset().top - $('.collection-slide-bar').offset().top + $('.collection-slide-bar').scrollTop()
+            $('.collection-nav-bar-bar').animate({
+                scrollTop: $('.btn-request-tile[data-id="' + item.GID + '"]').offset().top - $('.collection-nav-bar-bar').offset().top + $('.collection-nav-bar-bar').scrollTop()
             }, 300);
 
             $('.opening-tab-slider').animate({
-                scrollLeft: $('.request-tab[data-id="' + item.GID + '"]').offset().left - $('.opening-tab-slider').offset().left + $('.opening-tab-slider').scrollLeft()
+                scrollLeft: $('.btn-request-tab[data-id="' + item.GID + '"]').offset().left - $('.opening-tab-slider').offset().left + $('.opening-tab-slider').scrollLeft()
             }, 300);
 
             update_setting(RequestDA.selected);
@@ -167,8 +170,6 @@ class RequestDA {
         $('.response-code').hide();
         $('.time-process>.time').text('');
         $('.time-process').hide();
-
-
     }
 
     static update_list_opening(new_item) {

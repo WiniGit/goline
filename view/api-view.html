@@ -27,88 +27,57 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet" />
     <link href="/js/bootstrap-toastr/toastr.css" rel="stylesheet" />
 
-    <!-- ! New -->
-    <script src="/script/da/ProjectDA.js"></script>
-
-    <script src="/script/da/api-CollectionDA.js"></script>
-    <script src="/script/da/api-RequestDA.js"></script>
-    <script src="/script/da/api-InputDA.js"></script>
-    <script src="/script/da/api-OutputDA.js"></script>
-    <script src="/script/da/api-RouterDA.js"></script>
-    <script src="/script/common/PopupDA.js"></script>
-
-    <script src="/script/utils.js"></script>
-    <script src="/script/enum-obj-event.js"></script>
-    <script src="/script/user-service.js"></script>
-    <script src="/script/js/title-bar.js"></script>
-
-    <script src="/script/socket/socket.io.js"></script>
-    <script src="/script/socket/SocketHome.js"></script>
-
-    <script>
-        function uuidv4() {
-            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) => (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16));
-        }
-        document.onkeydown = function (ev) {
-            if (ev.key == "F11") ev.preventDefault()
-        }
-        window.onload = function () {
-            document.addEventListener(
-                "contextmenu",
-                function (e) {
-                    e.preventDefault();
-                },
-                false
-            );
-        };
-        TitleBarDA.initDataStorage();
-        ProjectDA.getByIDApi();
-    </script>
 </head>
 
 <body class="api-view col">
-    <div class="appbar row"></div>
-    <div class="home-header row"></div>
+    <header>
+        <div class="appbar row"></div>
+        <div class="home-header row"></div>
+    </header>
 
-    <div class="back-container row">
+    <div class="api-header-container row">
         <a href="/View/home-screen.html" class="box40 button-transparent text-title">
             <i class="fa-solid fa-chevron-left"></i>
         </a>
         <span class="heading-8 text-title"></span>
     </div>
-    <div class="setting-option-container row">
+
+    <div class="api-body-container row">
         <div class="setting-option col">
             <button class="collection option-tile button-transparent semibold11 text-placeholder col selected">
                 <i class="fa-regular fa-folder fa-lg"></i>
                 <span>Collection</span>
             </button>
-            <button class="environments option-tile button-transparent semibold11 text-placeholder col">
+            <!-- <button class="environments option-tile button-transparent semibold11 text-placeholder col">
                 <i class="fa-regular fa-folder fa-lg"></i>
                 <span>Environments</span>
-            </button>
+            </button> -->
             <button class="router option-tile button-transparent semibold11 text-placeholder col">
                 <i class="fa-regular fa-folder fa-lg"></i>
                 <span>Router</span>
             </button>
         </div>
-        <div class="environments-container api-body-content-container">aaa</div>
+
+        <!-- <div class="environments-container api-body-content-container">aaa</div> -->
+
         <div class="router-container api-body-content-container col"></div>
+
         <div class="api-container api-body-content-container row">
-            <div class="collection-slide col">
+            <div class="collection-nav-bar col">
                 <div class="header">
                     <div class="add-collection-container row">
                         <span class="text-body heading-9">Collections</span>
-                        <button class="add-collection button-transparent text-primary button-text-5">
+                        <button class="btn-add-collection button-transparent text-primary button-text-5">
                             New collection
                             <i class="fa-solid fa-plus fa-sm"></i>
                         </button>
                     </div>
-                    <div class="search-request-container row">
+                    <div class="collection-search-container row">
                         <i class="fa-solid fa-search fa-xs text-subtitle"></i>
                         <input class="regular1" type="text" placeholder="Search request">
                     </div>
                 </div>
-                <div class="collection-slide-bar"></div>
+                <div class="collection-nav-bar-bar"></div>
                 <div class="collection-popup api-popup col">
                     <div class="add-request option-tile regular1 text-white disable-text-select">New request</div>
                     <div class="change-name option-tile regular1 text-white disable-text-select">Change name</div>
@@ -225,12 +194,51 @@
             </div>
         </div>
     </div>
+    <script src="/script/da/ProjectDA.js"></script>
+
+    <script src="/script/da/api-CollectionDA.js"></script>
+    <script src="/script/da/api-RequestDA.js"></script>
+    <script src="/script/da/api-InputDA.js"></script>
+    <script src="/script/da/api-OutputDA.js"></script>
+    <script src="/script/da/api-RouterDA.js"></script>
+    <script src="/script/common/PopupDA.js"></script>
+
+    <script src="/script/utils.js"></script>
+    <script src="/script/enum-obj-event.js"></script>
+    <script src="/script/user-service.js"></script>
+    <script src="/script/js/title-bar.js"></script>
+
+    <script src="/script/socket/socket.io.js"></script>
+    <script src="/script/socket/SocketHome.js"></script>
 
     <script src="/script/common/layout-header.js"></script>
 
     <script src="/script/js/api-view.js"></script>
     <script src="/script/js/api-router-view.js"></script>
     <script src="/script/js/api-environments-view.js"></script>
+
+    <script>
+        function uuidv4() {
+            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) => (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16));
+        }
+
+        document.onkeydown = function (ev) {
+            if (ev.key == "F11") ev.preventDefault()
+        }
+
+        window.onload = function () {
+            document.addEventListener(
+                "contextmenu",
+                function (e) {
+                    e.preventDefault();
+                },
+                false
+            );
+        };
+
+        TitleBarDA.initDataStorage();
+        ProjectDA.getByIDApi();
+    </script>
 </body>
 
 </html>

@@ -128,7 +128,7 @@ class CollectionDA {
             list_collection = '<span class="row center regular11 text-placeholder">No files yet</span>'
         }
 
-        $('.collection-slide-bar').html(list_collection);
+        $('.collection-nav-bar-bar').html(list_collection);
 
         if (CollectionDA.selected == null && CollectionDA.list.length > 0) {
             if (CollectionDA.list.length > 1) {
