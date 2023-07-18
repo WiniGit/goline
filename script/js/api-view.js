@@ -27,22 +27,22 @@ $('body').on('click', '.setting-option .option-tile', function () {
     let double_click = false;
 
     // click button add collection
-    $('.add-collection').on('click', () => add_collection());
+    $('.btn-add-collection').on('click', () => add_collection());
 
     // click collection tile
     $('body').on('mousedown', '.collection-tile', function (ev) {
         // set html element collection using
         CollectionDA.element_selected = this;
         // hide popup
-        $('.collection-slide').removeClass('show-popup-request');
-        $('.collection-slide').removeClass('show-popup-collection');
+        $('.collection-nav-bar').removeClass('show-popup-request');
+        $('.collection-nav-bar').removeClass('show-popup-collection');
         // click action
         setTimeout(function () {
             if (!double_click) {
                 CollectionDA.selected = CollectionDA.getElementByID($(CollectionDA.element_selected).data('id'));
                 CollectionDA.set_selected();
                 if (RequestDA.selected?.CollectionID != CollectionDA.selected.ID) {
-                    $('.request-tile').removeClass("selected");
+                    $('.btn-request-tile').removeClass("selected");
                 }
             }
         }, 200);
@@ -56,8 +56,8 @@ $('body').on('click', '.setting-option .option-tile', function () {
                 $('.collection-popup').css('top', ev.pageY - $('.collection-popup').height() - 6);
             }
             // show popup
-            $('.collection-slide').toggleClass('show-popup-collection').promise().done(() => {
-                if ($('.collection-slide').hasClass('show-popup-collection')) {
+            $('.collection-nav-bar').toggleClass('show-popup-collection').promise().done(() => {
+                if ($('.collection-nav-bar').hasClass('show-popup-collection')) {
                     $(document).on('mouseup', keyup_collection_popup);
                 } else {
                     $(document).off('mouseup', keyup_collection_popup);
@@ -69,12 +69,12 @@ $('body').on('click', '.setting-option .option-tile', function () {
     // click popup add request
     $('body').on('click', '.collection-popup .add-request', function () {
         add_request();
-        $('.collection-slide').removeClass('show-popup-collection');
+        $('.collection-nav-bar').removeClass('show-popup-collection');
     });
 
     // click popup change name
     $('body').on('click', '.collection-popup .change-name', function () {
-        $('.collection-slide').removeClass('show-popup-collection');
+        $('.collection-nav-bar').removeClass('show-popup-collection');
         double_click = true;
         enable_change_name(CollectionDA.element_selected);
     });
@@ -82,7 +82,7 @@ $('body').on('click', '.setting-option .option-tile', function () {
     // click popup delete collection
     $('body').on('click', '.collection-popup .delete', function () {
         CollectionDA.deleted(CollectionDA.selected.ID);
-        $('.collection-slide').removeClass('show-popup-collection');
+        $('.collection-nav-bar').removeClass('show-popup-collection');
     });
 
     // unfocus change name collection
@@ -128,8 +128,8 @@ $('body').on('click', '.setting-option .option-tile', function () {
 
     // hide collection action popup
     const keyup_collection_popup = (ev) => {
-        if (!$('.collection-popup').is(ev.target) || $('.collection-slide-bar').is(ev.target)) {
-            $('.collection-slide').removeClass('show-popup-collection');
+        if (!$('.collection-popup').is(ev.target) || $('.collection-nav-bar-bar').is(ev.target)) {
+            $('.collection-nav-bar').removeClass('show-popup-collection');
         }
     }
 }
@@ -141,7 +141,7 @@ $('body').on('click', '.setting-option .option-tile', function () {
     $('body').on('click', '.add-request-btn', () => add_request());
 
     // click request tab
-    $('body').on('click', '.request-tab', function () {
+    $('body').on('click', '.btn-request-tab', function () {
         InputDA.selected_type = EnumInputType.Param;
         if (CollectionDA.selected.ID != $(this).data('collectionid')) {
             CollectionDA.selected = CollectionDA.getElementByID($(this).data('collectionid'));
@@ -158,19 +158,19 @@ $('body').on('click', '.setting-option .option-tile', function () {
             collection.parent().find('.list-request').css('display', 'flex');
         }
     });
-    // $('body').on('mousedown', '.request-tile *', function (ev) {
+    // $('body').on('mousedown', '.btn-request-tile *', function (ev) {
     //     ev.stopPropagation();
     // });
     // click request tile
-    $('body').on('mousedown', '.request-tile', function (ev) {
+    $('body').on('mousedown', '.btn-request-tile', function (ev) {
         $('.response-container .content').text('')
         // set html element request using
         RequestDA.element_selected = this;
         // set tab input
         InputDA.selected_type = EnumInputType.Param;
         // hide popup
-        $('.collection-slide').removeClass('show-popup-request');
-        $('.collection-slide').removeClass('show-popup-collection');
+        $('.collection-nav-bar').removeClass('show-popup-request');
+        $('.collection-nav-bar').removeClass('show-popup-collection');
 
         CollectionDA.selected = CollectionDA.getElementByID($(this).data('collectionid'));
 
@@ -194,8 +194,8 @@ $('body').on('click', '.setting-option .option-tile', function () {
                 $('.request-popup').css('top', ev.pageY - $('.request-popup').height() - 6);
             }
 
-            $('.collection-slide').toggleClass('show-popup-request').promise().done(() => {
-                if ($('.collection-slide').hasClass('show-popup-request')) {
+            $('.collection-nav-bar').toggleClass('show-popup-request').promise().done(() => {
+                if ($('.collection-nav-bar').hasClass('show-popup-request')) {
                     $(document).on('mouseup', keyup_request_popup);
                 } else {
                     $(document).off('mouseup', keyup_request_popup);
@@ -205,14 +205,14 @@ $('body').on('click', '.setting-option .option-tile', function () {
 
     });
     // double click tile
-    // $('body').on('dblclick', '.request-tile', function (ev) {
+    // $('body').on('dblclick', '.btn-request-tile', function (ev) {
     //     ev.stopPropagation();
     //     double_click = true;
     //     enable_change_name(this);
     // });
 
     // unfocus tile input
-    $('body').on('blur', '.request-tile input', function () {
+    $('body').on('blur', '.btn-request-tile input', function () {
         double_click = false;
         let request_editing;
         if ($(this).parent().data('id') != RequestDA.selected.GID) {
@@ -228,7 +228,7 @@ $('body').on('click', '.setting-option .option-tile', function () {
         this.disabled = true;
     });
     // on enter
-    $('body').on('keyup', '.request-tile input', function (ev) {
+    $('body').on('keyup', '.btn-request-tile input', function (ev) {
         double_click = false;
         if (ev.key == "Enter") {
             if (this.value.length > 0 && this.value != RequestDA.selected.Name) {
@@ -240,17 +240,17 @@ $('body').on('click', '.setting-option .option-tile', function () {
     });
     // click change name
     $('body').on('click', '.request-popup .change-name', function () {
-        $('.collection-slide').removeClass('show-popup-request');
+        $('.collection-nav-bar').removeClass('show-popup-request');
         double_click = true;
         enable_change_name(RequestDA.element_selected);
     });
     // click delete
     $('body').on('click', '.request-popup .delete', function () {
         RequestDA.delete(RequestDA.selected.GID);
-        $('.collection-slide').removeClass('show-popup-request');
+        $('.collection-nav-bar').removeClass('show-popup-request');
     });
     // click close tab
-    $('body').on('click', '.request-tab .close-btn', function (ev) {
+    $('body').on('click', '.btn-request-tab .close-btn', function (ev) {
         ev.stopPropagation();
         let close_tab = RequestDA.list_opening.find((e) => e.GID == $(this).parent().data('id'));
         RequestDA.list_opening.splice(RequestDA.list_opening.indexOf(close_tab), 1);
@@ -267,8 +267,8 @@ $('body').on('click', '.setting-option .option-tile', function () {
     });
 
     const keyup_request_popup = (ev) => {
-        if (!$('.request-popup').is(ev.target) || $('.collection-slide-bar').is(ev.target)) {
-            $('.collection-slide').removeClass('show-popup-request');
+        if (!$('.request-popup').is(ev.target) || $('.collection-nav-bar-bar').is(ev.target)) {
+            $('.collection-nav-bar').removeClass('show-popup-request');
         }
     }
 }

@@ -142,7 +142,7 @@ socketH.on('server-get', (data) => {
                             case EnumEvent.getProjectByIDapi: // get API info 
                                 CollectionDA.list = data.data.CollectionItems;
                                 ProjectDA.selected = data.data;
-                                $('.back-container span').text(ProjectDA.selected.Name);
+                                $('.api-header-container span').text(ProjectDA.selected.Name);
                                 // update list collection view
                                 CollectionDA.update_UI_ListCollection();
                                 // get 

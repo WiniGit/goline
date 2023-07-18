@@ -92,6 +92,8 @@ async function push_dataProject() {
       wbValue.removeAttribute("listid");
       wbValue.removeAttribute("lock");
       wbValue.removeAttribute("iswini");
+      wbValue.className += ` ${wbValue.getAttribute("id")}`;
+      wbValue.removeAttribute("id");
       switch (parseInt(wbValue.getAttribute("cateid"))) {
         case EnumCate.chart:
           buildChart(wbValue);
@@ -109,7 +111,7 @@ async function push_dataProject() {
           wbValue.style.pointerEvents = null;
           break;
         case EnumCate.w_switch:
-        let newSwitch = document.createElement("label");
+          let newSwitch = document.createElement("label");
           newSwitch.htmlFor = wbValue.querySelector(":scope > input").id;
           for (let i = 0; i < wbValue.attributes.length; i++) {
             let attrObj = wbValue.attributes[i];
@@ -135,7 +137,7 @@ async function push_dataProject() {
       }
       let thisCssText = wbValue.style.cssText;
       thisCssText = thisCssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match);
-      let wbCss = `.wbaseItem-value[id="${wbValue.id}"] { ${thisCssText} }`;
+      let wbCss = `.wbaseItem-value[class*="${wbValue.id}"] { ${thisCssText} }`;
       cssString += wbCss;
       wbValue.removeAttribute("style");
     });
