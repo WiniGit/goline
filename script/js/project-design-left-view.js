@@ -452,12 +452,12 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
     childrenLayer.replaceChildren(...wbaseChildren.map((wbaseChild) => createLayerTile(wbaseChild)));
   }
   wbase_tile.onmouseover = function () {
-    if (!sortLayer) {
+    if (!sortLayer && !left_view.resizing) {
       updateHoverWbase(wbaseItem);
     }
   };
   wbase_tile.onmouseout = function () {
-    if (!sortLayer) {
+    if (!sortLayer && !left_view.resizing) {
       updateHoverWbase();
     }
   };
@@ -473,42 +473,46 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
       });
     }
     wbase_tile.onclick = function () {
-      addSelectList([wbaseItem]);
+      if (!sortLayer && !left_view.resizing) {
+        addSelectList([wbaseItem]);
+      }
     };
     icon_lock.onclick = function () {
-      let listUpdate = [];
-      wbaseItem.IsShow = !wbaseItem.IsShow;
-      if (wbaseItem.IsShow) {
-        wbaseItem.value.removeAttribute("lock");
-        icon_lock.className = "fa-solid fa-lock-open fa-xs is-lock";
-        layerContainer.querySelectorAll(".is-lock").forEach((lockBtn) => {
-          if (lockBtn.parentElement.getAttribute("cateid") != EnumCate.textfield) {
-            lockBtn.className = "fa-solid fa-lock-open fa-xs is-lock";
-            lockBtn.style.pointerEvents = "auto";
-            listUpdate.push(lockBtn.parentElement.id.replace("wbaseID:", ""));
-          }
-        });
-        listUpdate = wbase_list.filter((e) => {
-          if (listUpdate.some((id) => e.GID === id)) {
-            e.value.removeAttribute("lock");
-            e.IsShow = true;
-            return true;
-          } else {
-            return false;
-          }
-        });
-      } else {
-        wbaseItem.value.setAttribute("lock", "true");
-        icon_lock.className = "fa-solid fa-lock fa-xs is-lock";
-        layerContainer.querySelectorAll(".is-lock").forEach((lockBtn) => {
-          if (lockBtn !== icon_lock) {
-            lockBtn.className = "fa-solid fa-lock fa-xs is-lock";
-            lockBtn.style.pointerEvents = "none";
-          }
-        });
+      if (!sortLayer && !left_view.resizing) {
+        let listUpdate = [];
+        wbaseItem.IsShow = !wbaseItem.IsShow;
+        if (wbaseItem.IsShow) {
+          wbaseItem.value.removeAttribute("lock");
+          icon_lock.className = "fa-solid fa-lock-open fa-xs is-lock";
+          layerContainer.querySelectorAll(".is-lock").forEach((lockBtn) => {
+            if (lockBtn.parentElement.getAttribute("cateid") != EnumCate.textfield) {
+              lockBtn.className = "fa-solid fa-lock-open fa-xs is-lock";
+              lockBtn.style.pointerEvents = "auto";
+              listUpdate.push(lockBtn.parentElement.id.replace("wbaseID:", ""));
+            }
+          });
+          listUpdate = wbase_list.filter((e) => {
+            if (listUpdate.some((id) => e.GID === id)) {
+              e.value.removeAttribute("lock");
+              e.IsShow = true;
+              return true;
+            } else {
+              return false;
+            }
+          });
+        } else {
+          wbaseItem.value.setAttribute("lock", "true");
+          icon_lock.className = "fa-solid fa-lock fa-xs is-lock";
+          layerContainer.querySelectorAll(".is-lock").forEach((lockBtn) => {
+            if (lockBtn !== icon_lock) {
+              lockBtn.className = "fa-solid fa-lock fa-xs is-lock";
+              lockBtn.style.pointerEvents = "none";
+            }
+          });
+        }
+        listUpdate.push(wbaseItem);
+        WBaseDA.edit(listUpdate, EnumObj.wBase);
       }
-      listUpdate.push(wbaseItem);
-      WBaseDA.edit(listUpdate, EnumObj.wBase);
     };
   }
   inputWBaseName.ondblclick = function () {
@@ -579,7 +583,7 @@ async function initUIAssetView(reloadComponent = false) {
       onSearch = true;
       setTimeout(function () {
         if (onSearch) {
-          let content = this.value
+          let content = search_input.value
             .split(" ")
             .filter((text) => text != "")
             .join(" ");

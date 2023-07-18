@@ -37,7 +37,7 @@
   flex-direction: column;
   width: 100%;
   min-height: 68px;
-  max-height: 136px;
+  max-height: 200px;
   border-bottom: 1.5px solid #e5e5e5;
   font-size: 12px;
   line-height: 16px;
@@ -88,7 +88,7 @@
 
 .layer-search-result {
   width: 100%;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   border-bottom: 0.5px solid #f1f1f1;
   padding: 16px 8px 8px 8px;
@@ -119,7 +119,7 @@
 
 .layer_wbase_tile {
   width: 100%;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   height: 32px;
   border: 1px solid transparent;

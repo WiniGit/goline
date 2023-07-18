@@ -105,8 +105,7 @@ function updateUIDesignView() {
 function createCanvasBackground() {
   var canvas_view_background = document.createElement("div");
   canvas_view_background.id = "canvas_view_background";
-  canvas_view_background.style.display = "inline-flex";
-  canvas_view_background.style.flexDirection = "column";
+  canvas_view_background.className = "col";
   canvas_view_background.style.width = "100%";
   canvas_view_background.style.borderBottom = "1px solid #e5e5e5";
   var title = document.createElement("p");
@@ -117,10 +116,8 @@ function createCanvasBackground() {
   title.style.lineHeight = "16px";
   title.style.fontWeight = "600";
   var change_color = document.createElement("div");
-  change_color.style.display = "inline-flex";
-  change_color.style.alignItems = "center";
+  change_color.className = "row";
   change_color.style.height = "32px";
-  change_color.style.boxSizing = "border-box";
   change_color.style.width = "148px";
   change_color.style.margin = "6px 12px";
   change_color.style.padding = "0 4px";
@@ -952,14 +949,14 @@ function createAutoLayout() {
       if (isShowPadDetails) {
         input_padding_horizontal.style.display = "none";
         input_padding_vertical.style.display = "none";
-        input_padding_left.style.display = "inline-flex";
-        input_padding_top.style.display = "inline-flex";
-        input_padding_right.style.display = "inline-flex";
-        input_padding_bottom.style.display = "inline-flex";
+        input_padding_left.style.display = "flex";
+        input_padding_top.style.display = "flex";
+        input_padding_right.style.display = "flex";
+        input_padding_bottom.style.display = "flex";
         icon_padding_details.style.borderColor = "#e5e5e5";
       } else {
-        input_padding_horizontal.style.display = "inline-flex";
-        input_padding_vertical.style.display = "inline-flex";
+        input_padding_horizontal.style.display = "flex";
+        input_padding_vertical.style.display = "flex";
         input_padding_left.style.display = "none";
         input_padding_top.style.display = "none";
         input_padding_right.style.display = "none";
@@ -1901,7 +1898,7 @@ function createEditTextStyle() {
     updateUIAutoSizeWH(group_btn_auto_size);
     editContainer.appendChild(group_btn_auto_size);
     let _row = document.createElement("div");
-    _row.style.display = "inline-flex";
+    _row.className = "row";
     _row.style.padding = "0 8px 8px 8px";
     editContainer.appendChild(_row);
     // group btn select text align
@@ -2143,7 +2140,7 @@ function _btnDropDownSelect(list = [], func_on_show_popup, onclick) {
       }
       document.getElementById("body").appendChild(popup_select_option);
       func_on_show_popup([...popup_select_option.childNodes]);
-      popup_select_option.style.display = "inline-flex";
+      popup_select_option.style.display = "flex";
     }, 200);
   };
   return btnDropDownSelect;
@@ -2360,7 +2357,7 @@ function createEditBorder() {
       group_custom_border_side.className = "group_input_border_side";
       let input_border_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left-black.svg", undefined, "0", "36px");
       input_border_left.id = "input_border_left";
-      input_border_left.style.display = "inline-flex";
+      input_border_left.style.display = "flex";
       input_border_left.style.marginLeft = "8px";
       input_border_left.lastChild.onblur = function () {
         let left_width_value = parseFloat(this.value);
@@ -2372,7 +2369,7 @@ function createEditBorder() {
       group_custom_border_side.appendChild(input_border_left);
       var input_border_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top-black.svg", undefined, "0", "36px");
       input_border_top.id = "input_border_top";
-      input_border_top.style.display = "inline-flex";
+      input_border_top.style.display = "flex";
       input_border_top.style.marginRight = "35px";
       input_border_top.lastChild.onblur = function () {
         let top_width_value = parseFloat(this.value);
@@ -2384,7 +2381,7 @@ function createEditBorder() {
       group_custom_border_side.appendChild(input_border_top);
       var input_border_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right-black.svg", undefined, "0", "36px");
       input_border_right.id = "input_border_right";
-      input_border_right.style.display = "inline-flex";
+      input_border_right.style.display = "flex";
       input_border_right.style.marginLeft = "8px";
       input_border_right.lastChild.onblur = function () {
         let right_width_value = parseFloat(this.value);
@@ -2397,7 +2394,7 @@ function createEditBorder() {
       var input_border_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom-black.svg", undefined, "0", "36px");
       input_border_bottom.id = "input_border_bottom";
       input_border_bottom.style.marginRight = "35px";
-      input_border_bottom.style.display = "inline-flex";
+      input_border_bottom.style.display = "flex";
       input_border_bottom.lastChild.onblur = function () {
         let bottom_width_value = parseFloat(this.value);
         if (!isNaN(bottom_width_value)) {
@@ -3427,7 +3424,7 @@ function createSkinTileHTML(enumCate, jsonSkin) {
       let typo_name = document.createElement("div");
       typo_name.style.margin = "0 8px";
       typo_name.style.flex = 1;
-      typo_name.style.display = "inline-flex";
+      typo_name.style.display = "flex";
       typo_name.style.pointerEvents = "none";
       let title_name = document.createElement("p");
       title_name.className = "skin-name";
@@ -3715,10 +3712,8 @@ function popupEditSkin(enumCate, jsonSkin) {
       body.appendChild(btn_select_font_family);
       //
       let div_font_size_weight = document.createElement("div");
-      div_font_size_weight.style.display = "inline-flex";
+      div_font_size_weight.className = "row";
       div_font_size_weight.style.width = "100%";
-      div_font_size_weight.style.boxSizing = "border-box";
-      div_font_size_weight.style.alignItems = "center";
       body.appendChild(div_font_size_weight);
       // select font-weight
       let btn_select_font_weight = _btnDropDownSelect(
@@ -3768,11 +3763,9 @@ function popupEditSkin(enumCate, jsonSkin) {
       div_font_size_weight.appendChild(btn_select_font_size);
       // row contain edit line-height & letter spacing
       let div_height_spacing = document.createElement("div");
-      div_height_spacing.style.display = "inline-flex";
+      div_height_spacing.className = "row";
       div_height_spacing.style.width = "100%";
       div_height_spacing.style.padding = "8px 4px 0 0";
-      div_height_spacing.style.boxSizing = "border-box";
-      div_height_spacing.style.alignItems = "center";
       body.appendChild(div_height_spacing);
       // input line-height
       let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/line-height.svg", undefined, "0", "25px");
@@ -4281,7 +4274,7 @@ function wbaseSkinTile(enumCate, onclick, onRemove) {
       let typo_name = document.createElement("div");
       typo_name.style.margin = "0 8px";
       typo_name.style.flex = 1;
-      typo_name.style.display = "inline-flex";
+      typo_name.style.display = "flex";
       typo_name.style.pointerEvents = "none";
       let title_name = document.createElement("p");
       title_name.innerHTML = "lalala";
@@ -4605,17 +4598,15 @@ function _editPropertyTile(property_item) {
     this.readOnly = true;
     this.style.borderRadius = "2px";
     this.style.border = "none";
-    div_property_infor.style.display = "inline-flex";
+    div_property_infor.style.display = "flex";
     let thisProperty = PropertyDA.list.find((e) => e.GID == property_tile.id.replace("propertyID:", ""));
     thisProperty.Name = this.value;
     PropertyDA.edit(thisProperty);
   };
   property_tile.appendChild(property_name);
   let div_property_infor = document.createElement("div");
-  div_property_infor.style.boxSizing = "border-box";
-  div_property_infor.style.display = "inline-flex";
+  div_property_infor.className = "row";
   div_property_infor.style.width = "120px";
-  div_property_infor.style.alignItems = "center";
   property_tile.appendChild(div_property_infor);
   let baseProperty_name = document.createElement("p");
   let list_baseProperty_name = [];
@@ -4675,7 +4666,7 @@ function _selectPropertyVariant(property_item, title, onSelect, enableInput = tr
   select_variant.appendChild(dropdown);
   btn_dropdown.onclick = function () {
     setTimeout(function () {
-      dropdown.style.display = "inline-flex";
+      dropdown.style.display = "flex";
       dropdown.style.zIndex = 2;
       let list_baseProperty_name = [];
       if (input_baseProperty_name.value == "mixed") {

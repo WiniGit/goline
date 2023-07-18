@@ -818,12 +818,24 @@ function moveListener(event) {
   event.preventDefault();
   let target_view;
   // check drag resize left view
-  if ((!instance_drag && left_view.offsetWidth > 0 && isInRange(event.pageX, left_view.offsetWidth - 8, left_view.offsetWidth + 8)) || left_view.resizing) {
-    document.body.style.cursor = "e-resize";
-    if (event.buttons == 1) {
-      left_view.resizing = true;
-      left_view.style.width = event.pageX + "px";
-      return;
+  if ((!instance_drag && left_view.offsetWidth > 0) || left_view.resizing) {
+    let pageContainerY = document.getElementById("div_list_page").getBoundingClientRect();
+    if ((left_view.resizing && document.body.style.cursor === "e-resize") || isInRange(event.pageX, left_view.offsetWidth - 8, left_view.offsetWidth + 8)) {
+      document.body.style.cursor = "e-resize";
+      if (event.buttons == 1) {
+        left_view.resizing = true;
+        left_view.style.width = event.pageX + "px";
+        return;
+      }
+    } else if ((left_view.resizing && document.body.style.cursor === "n-resize") || (layer_view.offsetWidth > 0 && isInRange(event.pageY, pageContainerY.bottom - 8, pageContainerY.bottom + 4))) {
+      document.body.style.cursor = "n-resize";
+      if (event.buttons == 1) {
+        left_view.resizing = true;
+        layer_view.firstChild.style.height = event.pageY - (pageContainerY.bottom - pageContainerY.height) + "px";
+        return;
+      }
+    } else {
+      document.body.style.cursor = null;
     }
   } else {
     document.body.style.cursor = null;
@@ -1758,7 +1770,7 @@ function wdraw() {
       }
     }
   }
-  titleList = titleList.filter((e) => e != undefined && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
+  titleList = titleList.filter((e) => e && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
 
   //! draw prototype
   drawCurvePrototype();
@@ -2271,7 +2283,7 @@ function upListener(event) {
         let url = window.getComputedStyle(instance_drag).backgroundImage.split(/"/)[1];
         let isSvgImg = url.endsWith(".svg");
         let newRect;
-        if(isSvgImg) {
+        if (isSvgImg) {
           newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg));
           newRect.Name = url.split("/").pop().replace(".svg", "");
           newRect.AttributesItem.Content = url.replace(urlImg, "");
