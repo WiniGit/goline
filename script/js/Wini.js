@@ -779,6 +779,7 @@ const childObserver = new MutationObserver((mutationList) => {
           if (EnumCate.extend_frame.some(ct => childHTML.getAttribute("cateid") == ct)) {
             let listClass = ["min-brp", ...childHTML.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
             childHTML.className = listClass.join(" ");
+            resizeWbase.disconnect(childHTML);
           }
         })
       }
@@ -967,9 +968,6 @@ function moveListener(event) {
               if (ToolState.resize_type.some((tool) => tool_state == tool)) {
                 if (WBaseDA.enumEvent == undefined) {
                   WBaseDA.enumEvent = EnumEvent.edit;
-                }
-                if (checkpad == 0) {
-                  removeAllRectHovers();
                 }
                 let isInFlex = false;
                 let parentHTML = document.getElementById(select_box_parentID);
@@ -1275,7 +1273,7 @@ function moveListener(event) {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event);
                       }
                       if (checkpad % 2 === 0) {
-                        // updateInputTLWH();
+                        updateInputTLWH();
                         wdraw();
                       }
                     }
