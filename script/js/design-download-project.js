@@ -92,8 +92,6 @@ async function push_dataProject() {
       wbValue.removeAttribute("listid");
       wbValue.removeAttribute("lock");
       wbValue.removeAttribute("iswini");
-      wbValue.className += ` ${wbValue.getAttribute("id")}`;
-      wbValue.removeAttribute("id");
       switch (parseInt(wbValue.getAttribute("cateid"))) {
         case EnumCate.chart:
           buildChart(wbValue);
@@ -140,6 +138,9 @@ async function push_dataProject() {
       let wbCss = `.wbaseItem-value[class*="${wbValue.id}"] { ${thisCssText} }`;
       cssString += wbCss;
       wbValue.removeAttribute("style");
+      
+      wbValue.className += ` ${wbValue.getAttribute("id")}`;
+      wbValue.removeAttribute("id");
     });
     cloneValue.cssString = cssString;
     $(cloneValue).addClass("w-page");
