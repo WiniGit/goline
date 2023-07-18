@@ -649,59 +649,61 @@ function updateInputTLWH() {
       edit_left.lastChild.disabled = false;
       edit_top.lastChild.disabled = false;
     }
-    let resizeWType = "fixed";
-    if (selected_list.every((e) => e.value.style.width == "100%")) {
-      resizeWType = "fill";
-    } else if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
-      resizeWType = "hug";
-    } else if (selected_list.every((e) => e.value.style.width)) {
-      resizeWType = "fixed";
-    } else {
-      resizeWType = "mixed";
-    }
-    let resizeHType = "fixed";
-    if (selected_list.every((e) => e.value.style.height == "100%")) {
-      resizeHType = "fill";
-    } else if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
-      resizeHType = "hug";
-    } else if (selected_list.every((e) => e.value.style.height)) {
-      resizeHType = "fixed";
-    } else {
-      resizeHType = "mixed";
-    }
-    if (resizeWType == "fixed" && resizeHType == "fixed") {
-      edit_width.parentElement.lastChild.style.display = "block";
-    } else {
-      edit_width.parentElement.lastChild.style.display = "none";
-    }
-    if (resizeWType == "fixed") {
-      edit_width.lastChild.disabled = false;
-    } else {
-      edit_width.lastChild.disabled = true;
-    }
-    if (resizeHType == "fixed") {
-      edit_height.lastChild.disabled = false;
-    } else {
-      edit_height.lastChild.disabled = true;
-    }
-    // update button select resizing type
-    let btn_resize_with_height = document.getElementsByClassName("btn_resize");
-    if (btn_resize_with_height.length > 0) {
-      if (selected_list.every((e) => e.WAutolayoutItem || (!e.StyleItem.PositionItem.FixPosition && window.getComputedStyle(parentHTML).display.match(/(flex|table)/g)))) {
-        btn_resize_with_height[0].parentElement.style.display = "flex";
-        for (let option of btn_resize_with_height) {
-          if (option.className.includes("width")) {
-            option.childNodes[1].innerHTML = resizeWType;
-          } else {
-            option.childNodes[1].innerHTML = resizeHType;
-          }
-        }
+    if (checkpad <= selected_list.length) {
+      let resizeWType = "fixed";
+      if (selected_list.every((e) => e.value.style.width == "100%")) {
+        resizeWType = "fill";
+      } else if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
+        resizeWType = "hug";
+      } else if (selected_list.every((e) => e.value.style.width)) {
+        resizeWType = "fixed";
       } else {
-        btn_resize_with_height[0].parentElement.style.display = "none";
+        resizeWType = "mixed";
+      }
+      let resizeHType = "fixed";
+      if (selected_list.every((e) => e.value.style.height == "100%")) {
+        resizeHType = "fill";
+      } else if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
+        resizeHType = "hug";
+      } else if (selected_list.every((e) => e.value.style.height)) {
+        resizeHType = "fixed";
+      } else {
+        resizeHType = "mixed";
+      }
+      if (resizeWType == "fixed" && resizeHType == "fixed") {
+        edit_width.parentElement.lastChild.style.display = "block";
+      } else {
+        edit_width.parentElement.lastChild.style.display = "none";
+      }
+      if (resizeWType == "fixed") {
+        edit_width.lastChild.disabled = false;
+      } else {
+        edit_width.lastChild.disabled = true;
+      }
+      if (resizeHType == "fixed") {
+        edit_height.lastChild.disabled = false;
+      } else {
+        edit_height.lastChild.disabled = true;
+      }
+      // update button select resizing type
+      let btn_resize_with_height = document.getElementsByClassName("btn_resize");
+      if (btn_resize_with_height.length > 0) {
+        if (selected_list.every((e) => e.WAutolayoutItem || (!e.StyleItem.PositionItem.FixPosition && window.getComputedStyle(parentHTML).display.match(/(flex|table)/g)))) {
+          btn_resize_with_height[0].parentElement.style.display = "flex";
+          for (let option of btn_resize_with_height) {
+            if (option.className.includes("width")) {
+              option.childNodes[1].innerHTML = resizeWType;
+            } else {
+              option.childNodes[1].innerHTML = resizeHType;
+            }
+          }
+        } else {
+          btn_resize_with_height[0].parentElement.style.display = "none";
+        }
       }
     }
   }
-  if (document.getElementById("edit_text_style")) {
+  if (checkpad <= selected_list.length && document.getElementById("edit_text_style")) {
     updateUIAutoSizeWH();
   }
 }
