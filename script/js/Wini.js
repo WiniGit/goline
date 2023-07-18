@@ -820,14 +820,21 @@ function moveListener(event) {
   // check drag resize left view
   if ((!instance_drag && left_view.offsetWidth > 0) || left_view.resizing) {
     let pageContainerY = document.getElementById("div_list_page").getBoundingClientRect();
-    if ((left_view.resizing && document.body.style.cursor === "e-resize") || isInRange(event.pageX, left_view.offsetWidth - 8, left_view.offsetWidth + 8)) {
+    if (left_view.resizing) {
+      if (document.body.style.cursor === "e-resize") {
+        left_view.style.width = event.pageX + "px";
+      } else {
+        layer_view.firstChild.style.height = event.pageY - (pageContainerY.bottom - pageContainerY.height) + "px";
+      }
+      return;
+    } else if (isInRange(event.pageX, left_view.offsetWidth - 8, left_view.offsetWidth + 8)) {
       document.body.style.cursor = "e-resize";
       if (event.buttons == 1) {
         left_view.resizing = true;
         left_view.style.width = event.pageX + "px";
         return;
       }
-    } else if ((left_view.resizing && document.body.style.cursor === "n-resize") || (layer_view.offsetWidth > 0 && isInRange(event.pageX, 0, left_view.offsetWidth) && isInRange(event.pageY, pageContainerY.bottom - 8, pageContainerY.bottom + 4))) {
+    } else if ((layer_view.offsetWidth > 0 && isInRange(event.pageX, 0, left_view.offsetWidth) && isInRange(event.pageY, pageContainerY.bottom - 8, pageContainerY.bottom + 4))) {
       document.body.style.cursor = "n-resize";
       if (event.buttons == 1) {
         left_view.resizing = true;

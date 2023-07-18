@@ -36,7 +36,7 @@
 :is(.xxl .w-row, .xxl.w-row) > .col8-xxl {
   width: auto !important;
   min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3) !important;
 }
 
 :is(.xxl .w-row, .xxl.w-row) > .col12-xxl {
@@ -89,13 +89,13 @@
 .xl.w-row > .col8-xl {
   width: auto !important;
   min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3) !important;
 }
 
 :is(.xl .w-row, .xl.w-row) > .col8-xl {
   width: auto !important;
   min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3) !important;
 }
 
 :is(.xl .w-row, .xl.w-row) > .col12-xl {
@@ -148,7 +148,7 @@
 :is(:is(.lg .w-row, .lg.w-row), .lg.w-row) > .col8-lg {
   width: auto !important;
   min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3) !important;
 }
 
 :is(.lg .w-row, .lg.w-row) > .col12-lg {
@@ -201,7 +201,7 @@
 :is(.md .w-row, .md.w-row) > .col8-md {
   width: auto !important;
   min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3) !important;
 }
 
 :is(.md .w-row, .md.w-row) > .col12-md {
@@ -254,7 +254,7 @@
 :is(.sm .w-row, .sm.w-row) > .col8-sm {
   width: auto !important;
   min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3) !important;
 }
 
 :is(.sm .w-row, .sm.w-row) > .col12-sm {
@@ -307,7 +307,7 @@
 :is(.min-brp .w-row, .min-brp.w-row) > .col8 {
   width: auto !important;
   min-width: auto !important;
-  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3);
+  flex: 0 calc((100% * 8 / 24) - var(--gutter) * 2 / 3) !important;
 }
 
 :is(.min-brp .w-row, .min-brp.w-row) > .col12 {
