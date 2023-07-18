@@ -82,6 +82,7 @@ function alignPosition(align_value) {
           let newOffX = maxX - Math.round(wb.value.getBoundingClientRect().width / scale);
           updatePosition({ Left: newOffX }, wb);
         }
+        listUpdate.push(...selected_list);
       }
       break;
     case "align top":
@@ -164,12 +165,13 @@ function alignPosition(align_value) {
           let newOffY = maxY - Math.round(wb.value.getBoundingClientRect().height / scale);
           updatePosition({ Top: newOffY }, wb);
         }
+        listUpdate.push(...selected_list);
       }
       break;
     default:
       break;
   }
-  WBaseDA.edit(listUpdate ?? selected_list, EnumObj.position);
+  WBaseDA.edit(listUpdate, EnumObj.position);
   updateUISelectBox();
 }
 
