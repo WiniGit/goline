@@ -3,7 +3,8 @@ function wbutton(item, data) {
   item.value.type = "button";
   $(item.value).addClass("w-button");
   if (item.WAutolayoutItem) {
-    item.value.replaceChildren(...data.map((child) => {
+    let fragment = document.createDocumentFragment();
+    fragment.replaceChildren(...data.map((child) => {
       if (child.StyleItem.PositionItem.FixPosition) {
         initPositionStyle(child);
       } else if (item.WAutolayoutItem.Direction === "Vertical" && child.value.style.height == "100%")
@@ -12,11 +13,15 @@ function wbutton(item, data) {
         child.value.style.flex = 1;
       return child.value;
     }));
+    item.value.replaceChildren(fragment);
   } else {
-    item.value.replaceChildren(...data.map((child) => {
+    $(item.value).addClass("w-stack");
+    let fragment = document.createDocumentFragment();
+    fragment.replaceChildren(...data.map((child) => {
       initPositionStyle(child)
       return child.value;
     }));
+    item.value.replaceChildren(fragment);
   }
 }
   //TODO: add event state

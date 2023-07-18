@@ -56,12 +56,19 @@ async function initData() {
     base_component_list = initDOM(base_component_list);
   });
   console.log("in handle data: ", Date.now());
+  let fragment = document.createDocumentFragment();
   for (let item of wbase_list) {
     item.value = null;
     let children = [];
     if ([EnumCate.tool_variant, ...EnumCate.parent_cate].some((ct) => ct == item.CateID)) children = wbase_list.filter((e) => e.ParentID === item.GID);
-    await initComponents(item, children);
+    await initComponents(item, children, false);
+    item.value.id = item.GID;
+    if (item.ParentID === wbase_parentID) {
+      initPositionStyle(item);
+      fragment.appendChild(item.value);
+    }
   }
+  divSection.replaceChildren(fragment);
   console.log("out handle data: ", Date.now());
   centerViewInitListener();
   if (PageDA.obj.scale !== undefined) {

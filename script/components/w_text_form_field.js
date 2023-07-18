@@ -5,7 +5,8 @@ const txtfd_calendar = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" hei
 function createTextFormFieldHTML(item, data) {
   item.value = document.createElement("div");
   $(item.value).addClass("w-textformfield");
-  item.value.replaceChildren(
+  let fragment = document.createDocumentFragment();
+  fragment.replaceChildren(
     ...data.map((child) => {
       if (child.CateID === EnumCate.textfield) createTextFieldHTML(child, item);
       child.value.style.position = null;
@@ -13,6 +14,7 @@ function createTextFormFieldHTML(item, data) {
       return child.value;
     }),
   );
+  item.value.replaceChildren(fragment);
 }
 
 function createTextFieldHTML(item, parent) {

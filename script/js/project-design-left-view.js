@@ -285,7 +285,8 @@ function replaceAllLyerItemHTML() {
   let show_list_tile = document.getElementById(`parentID:${wbase_parentID}`);
   let list_level1 = wbase_list.filter((e) => e.ParentID == wbase_parentID).reverse();
   let isReplace = show_list_tile.childElementCount > 0;
-  show_list_tile.replaceChildren(
+  let fragment = document.createDocumentFragment();
+  fragment.replaceChildren(
     ...list_level1.map((wbaseItem) => {
       let isShowChildren = false;
       if (isReplace) {
@@ -297,6 +298,7 @@ function replaceAllLyerItemHTML() {
       return createLayerTile(wbaseItem, isShowChildren);
     }),
   );
+  show_list_tile.replaceChildren(fragment);
 }
 
 // handle tab change
@@ -449,7 +451,9 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
     childrenLayer.id = `parentID:${wbaseItem.GID}`;
     childrenLayer.className = "col";
     wbaseChildren = wbase_list.filter((e) => e.ParentID == wbaseItem.GID).reverse();
-    childrenLayer.replaceChildren(...wbaseChildren.map((wbaseChild) => createLayerTile(wbaseChild)));
+    let fragment = document.createDocumentFragment();
+    fragment.replaceChildren(...wbaseChildren.map((wbaseChild) => createLayerTile(wbaseChild)));
+    childrenLayer.replaceChildren(fragment);
   }
   wbase_tile.onmouseover = function () {
     if (!sortLayer && !left_view.resizing) {
@@ -647,7 +651,9 @@ async function initUIAssetView(reloadComponent = false) {
     list_component_div.style.overflowY = "scroll";
     list_component_div.style.flex = 1;
     let assetsProjects = ProjectDA.assetsList;
-    scroll_div.replaceChildren(...[{ ID: 0 }, ProjectDA.obj, ...assetsProjects].map((projectItem) => createListComponent(projectItem)));
+    let fragment = document.createDocumentFragment();
+    fragment.replaceChildren(...[{ ID: 0 }, ProjectDA.obj, ...assetsProjects].map((projectItem) => createListComponent(projectItem)));
+    scroll_div.replaceChildren(fragment);
     component_div.replaceChildren(search_container, scroll_div);
     children.push(component_div);
     // list component

@@ -38,24 +38,25 @@ $("body").on("click", ".tab_right", function () {
 // update UI design view when selected change
 function updateUIDesignView() {
   let scrollY = design_view.scrollTop;
-  let listEditContainer = [];
+  let listEditContainer = document.createDocumentFragment();
   if (selected_list.length == 0) {
     let editCanvasBground = createCanvasBackground();
-    listEditContainer.push(editCanvasBground);
+    listEditContainer.appendChild(editCanvasBground);
     let winiRes = winiResponsive();
-    listEditContainer.push(winiRes);
+    listEditContainer.appendChild(winiRes);
     let breakpoint = createBreakpoint();
-    listEditContainer.push(breakpoint);
+    listEditContainer.appendChild(breakpoint);
     let localSkins = createSelectionSkins();
-    listEditContainer.push(localSkins);
+    listEditContainer.appendChild(localSkins);
   } else {
     let editAlign = createEditAlign();
     let editSizePosition = createEditSizePosition();
     // let selectClass = selectionClass();
-    listEditContainer.push(editAlign, editSizePosition);
+    listEditContainer.appendChild(editAlign);
+    listEditContainer.appendChild(editSizePosition);
     if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
       let editConstraints = createConstraints();
-      listEditContainer.push(editConstraints);
+      listEditContainer.appendChild(editConstraints);
     }
     if (select_box_parentID != wbase_parentID && selected_list.every(e => window.getComputedStyle(e.value).position != "absolute")) {
       let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
@@ -65,35 +66,35 @@ function updateUIDesignView() {
         let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
         if (isPage) {
           let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
-          listEditContainer.push(selectColByBrp);
+          listEditContainer.appendChild(selectColByBrp);
         }
       }
     }
     if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
       let editAutoLayout = createAutoLayout();
-      listEditContainer.push(editAutoLayout);
+      listEditContainer.appendChild(editAutoLayout);
     }
     //
     if (selected_list.length > 0 && selected_list.every((wb) => wb.StyleItem.DecorationItem && wb.StyleItem.DecorationItem.ColorValue == selected_list[0].StyleItem.DecorationItem.ColorValue)) {
       let editBackground = createEditBackground();
-      listEditContainer.push(editBackground);
+      listEditContainer.appendChild(editBackground);
     }
     if (selected_list.some((e) => e.StyleItem.TextStyleItem)) {
       let editTextStyle = createEditTextStyle();
-      listEditContainer.push(editTextStyle);
+      listEditContainer.appendChild(editTextStyle);
     }
     if (selected_list.some((e) => e.StyleItem.DecorationItem)) {
       if (selected_list.length > 1 || selected_list[0].CateID !== EnumCate.w_switch) {
         let editBorder = createEditBorder();
-        listEditContainer.push(editBorder);
+        listEditContainer.appendChild(editBorder);
       }
       let editEffect = createEditEffect();
-      listEditContainer.push(editEffect);
+      listEditContainer.appendChild(editEffect);
     }
     let editVariants = createEditVariants();
-    listEditContainer.push(editVariants);
+    listEditContainer.appendChild(editVariants);
   }
-  design_view.replaceChildren(...listEditContainer);
+  design_view.replaceChildren(listEditContainer);
   design_view.scrollTo({
     top: scrollY,
     behavior: "smooth",
