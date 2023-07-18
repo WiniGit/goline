@@ -827,7 +827,7 @@ function moveListener(event) {
         left_view.style.width = event.pageX + "px";
         return;
       }
-    } else if ((left_view.resizing && document.body.style.cursor === "n-resize") || (layer_view.offsetWidth > 0 && isInRange(event.pageY, pageContainerY.bottom - 8, pageContainerY.bottom + 4))) {
+    } else if ((left_view.resizing && document.body.style.cursor === "n-resize") || (layer_view.offsetWidth > 0 && isInRange(event.pageX, 0, left_view.offsetWidth) && isInRange(event.pageY, pageContainerY.bottom - 8, pageContainerY.bottom + 4))) {
       document.body.style.cursor = "n-resize";
       if (event.buttons == 1) {
         left_view.resizing = true;
