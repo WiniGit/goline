@@ -688,6 +688,9 @@ function initWbaseStyle(item) {
         item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;
         let border_color = item.StyleItem.DecorationItem.BorderItem.ColorValue;
         item.value.style.borderColor = `#${border_color.substring(2)}${border_color.substring(0, 2)}`;
+      } else {
+        item.StyleItem.DecorationItem.BorderID = null;
+        item.StyleItem.DecorationItem.BorderItem = null;
       }
     }
     if (item.StyleItem.DecorationItem.EffectItem) {
