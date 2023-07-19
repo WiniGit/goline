@@ -1657,7 +1657,7 @@ function createDataForm() {
       for (const [key, cntValue] of formData) {
         let elementTags = [...listForm[0].value.querySelectorAll(`input[name="${key}"]`)];
         let eTag = elementTags.find((tag) => tag.value === cntValue);
-        switch (eTag.type) {
+        switch (eTag?.type) {
           case "checkbox":
             var keyValueRow = document.createElement("div");
             keyValueRow.className = "row";

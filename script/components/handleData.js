@@ -682,7 +682,7 @@ function initWbaseStyle(item) {
         item.value.style.borderWidth = `var(--border-width-${item.StyleItem.DecorationItem.BorderID})`;
         item.value.style.borderStyle = `var(--border-style-${item.StyleItem.DecorationItem.BorderID})`;
         item.value.style.borderColor = `var(--border-color-${item.StyleItem.DecorationItem.BorderID})`;
-      } else {
+      } else if(item.StyleItem.DecorationItem.BorderItem.BorderStyle) {
         let listWidth = item.StyleItem.DecorationItem.BorderItem.Width.split(" ");
         item.value.style.borderWidth = `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`;
         item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;

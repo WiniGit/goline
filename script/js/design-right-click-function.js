@@ -22,9 +22,7 @@ var feature_list = [
   {
     title: "Bring to front",
     shortKey: "Ctrl+Alt+]",
-    onclick: function () {
-      bringToFront();
-    },
+    onclick: bringToFront,
     isShow: function () {
       return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
     },
@@ -32,9 +30,7 @@ var feature_list = [
   {
     title: "Bring frontward",
     shortKey: "Ctrl+]",
-    onclick: function () {
-      bringFrontward();
-    },
+    onclick: bringFrontward,
     isShow: function () {
       return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
     },
@@ -42,9 +38,7 @@ var feature_list = [
   {
     title: "Send to back",
     shortKey: "Ctrl+Alt+[",
-    onclick: function () {
-      sendToBack();
-    },
+    onclick: sendToBack,
     isShow: function () {
       return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
     },
@@ -52,9 +46,7 @@ var feature_list = [
   {
     title: "Send backward",
     shortKey: "Ctrl+[",
-    onclick: function () {
-      sendBackward();
-    },
+    onclick: sendBackward,
     isShow: function () {
       return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
     },
@@ -317,10 +309,27 @@ function pasteWbase() {
 
 function createComponent() {
   let un_component_list = selected_list.filter((e) => !e.IsWini);
-  for (let i = 0; i < un_component_list.length; i++) {
-    un_component_list[i].IsWini = true;
-    un_component_list[i].value.setAttribute("iswini", "true");
-    document.getElementById(`wbaseID:${un_component_list[i].GID}`).setAttribute("iswini", "true");
+  for (let wb of un_component_list) {
+    wb.IsWini = true;
+    wb.value.setAttribute("iswini", "true");
+    document.getElementById(`wbaseID:${wb.GID}`).setAttribute("iswini", "true");
+    // let className = `${Ultis.toSlug(wb.Name.replace(spChaRegex, "-"))}-${PageDA.obj.ID}`;
+    // let newBaseProperty = {
+    //   GID: uuidv4(),
+    //   Name: wb.Name,
+    //   BaseID: wb.GID,
+    //   CssText: `.${className} {
+    //     ${wb.value.style.cssText}
+    //   }`
+    // };
+    // let children = wbase_list.filter(e => e.ListID.includes(wb.GID));
+    // // for (let i = 0; i < children.length; i++) {
+    // //   children[i].
+    // // }
+    // wb.value.querySelectorAll(".wbaseItem-value").forEach(childHTML => {
+    //   newBaseProperty.CssText += `
+    //   .${className} .${child}`
+    // })
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);
@@ -689,7 +698,7 @@ async function handleImportFile(event) {
     let listAdd = [];
     for (let fileItem of result) {
       let newRect;
-      if(fileItem.Name.endsWith(".svg")){
+      if (fileItem.Name.endsWith(".svg")) {
         newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg));
         newRect.AttributesItem.Content = fileItem.Url;
       } else {
@@ -718,7 +727,7 @@ function bringToFront() {
   selected_list.sort((a, b) => a.Sort - b.Sort);
   let parentWbase;
   if (select_box_parentID == wbase_parentID) {
-    let listChild = wbase_list.filter((e) => selected_list.every((selectItem) => selectItem.GID != e.GID));
+    let listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID && selected_list.every((selectItem) => selectItem.GID != e.GID));
     if (listChild.length == 0) return;
     listChild.push(...selected_list);
     for (let i = 0; i < listChild.length; i++) {
@@ -765,7 +774,7 @@ function bringFrontward() {
       e.value.style.zIndex = e.Sort;
       e.value.style.order = e.Sort;
     });
-    listChild = wbase_list.filter((e) => selected_list.every((selectItem) => selectItem.GID != e.GID));
+    listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID && selected_list.every((selectItem) => selectItem.GID != e.GID));
     for (let child of listChild) {
       if (selected_list.some((e) => e.Sort == child.Sort)) child.Sort -= 1;
       child.value.style.zIndex = child.Sort;
@@ -774,7 +783,7 @@ function bringFrontward() {
     arrange();
     parentWbase = {
       GID: wbase_parentID,
-      ListChildID: wbase_list.filter((e) => e.ParentID == wbase_parentID).map((e) => e.GID),
+      ListChildID: wbase_list.map((e) => e.GID),
     };
   } else {
     parentWbase = wbase_list.find((e) => e.GID == select_box_parentID);
@@ -810,7 +819,7 @@ function sendToBack() {
   selected_list.sort((a, b) => a.Sort - b.Sort);
   let parentWbase;
   if (select_box_parentID == wbase_parentID) {
-    let listChild = wbase_list.filter((e) => selected_list.every((selectItem) => selectItem.GID != e.GID));
+    let listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID && selected_list.every((selectItem) => selectItem.GID != e.GID));
     if (listChild.length == 0) return;
     listChild.unshift(...selected_list);
     for (let i = 0; i < listChild.length; i++) {
@@ -845,7 +854,7 @@ function sendToBack() {
 function sendBackward() {
   let parentWbase;
   if (select_box_parentID == wbase_parentID) {
-    let listChild = wbase_list.filter((e) => e.ParentID == wbase_parentID);
+    let listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID);
     if (listChild.length == selected_list.length) return;
     for (let i = 0; i < listChild.length; i++) {
       listChild[i].Sort = i;
@@ -857,7 +866,7 @@ function sendBackward() {
       e.value.style.zIndex = e.Sort;
       e.value.style.order = e.Sort;
     });
-    listChild = wbase_list.filter((e) => selected_list.every((selectItem) => selectItem.GID != e.GID));
+    listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID && selected_list.every((selectItem) => selectItem.GID != e.GID));
     for (let child of listChild) {
       if (selected_list.some((e) => e.Sort == child.Sort)) child.Sort += 1;
       child.value.style.zIndex = child.Sort;
@@ -866,7 +875,7 @@ function sendBackward() {
     arrange();
     parentWbase = {
       GID: wbase_parentID,
-      ListChildID: wbase_list.filter((e) => e.ParentID == wbase_parentID).map((e) => e.GID),
+      ListChildID: wbase_list.map((e) => e.GID),
     };
   } else {
     parentWbase = wbase_list.find((e) => e.GID == select_box_parentID);

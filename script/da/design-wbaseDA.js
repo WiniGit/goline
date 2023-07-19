@@ -624,7 +624,6 @@ class WBaseDefault {
         ConstraintsY: "top",
         FixPosition: false,
       },
-      Name: "Text",
     },
     BasePropertyItems: [],
     AttributesItem: {
