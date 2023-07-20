@@ -504,8 +504,8 @@ function updateHoverWbase(wbase_item, onAlt) {
   }
   if (isOnchange) {
     [...document.getElementsByClassName("layer_wbase_tile")].forEach((layerHTML) => {
-      if (layerHTML.id.replace("wbaseID:", "") == wbase_item?.GID) {
-        layerHTML.style.borderColor = wbase_item.IsWini ? "#7B61FF" : "#1890FF";
+      if (layerHTML.id.includes(`${wbase_item?.GID}`)) {
+        layerHTML.style.borderColor = wbase_item.IsWini || $(layerHTML).parents(`.col:has(> .layer_wbase_tile[iswini="true"])`).length ? "#7B61FF" : "#1890FF";
       } else {
         layerHTML.style.borderColor = "transparent";
       }
@@ -1712,11 +1712,11 @@ function wdraw() {
   if (hover_wbase && selected_list.every((e) => e.GID !== hover_wbase.GID) && checkpad == 0) {
     var objset = offsetScale(hover_box.x, hover_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
-    ctxr.strokeStyle = hover_wbase.IsWini ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = $(hover_wbase.value).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(objse.x, objse.y, hover_box.w, hover_box.h);
   } else if (parent?.id?.length == 36 && checkpad > 0) {
     let parentRect = parent.getBoundingClientRect();
-    ctxr.strokeStyle = parent.getAttribute("iswini") == "true" ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = $(parent).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(parentRect.x, parentRect.y, parentRect.width, parentRect.height);
   }
 
@@ -1724,7 +1724,7 @@ function wdraw() {
   if (select_box && document.activeElement.contentEditable != "true" && ((checkpad == 0 && tool_state == ToolState.move) || ToolState.resize_type.some((tool) => tool == tool_state))) {
     var objset = offsetScale(select_box.x, select_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
-    ctxr.strokeStyle = selected_list.every((e) => e.IsWini) ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = selected_list.every((e) => e.IsWini) || $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(objse.x, objse.y, select_box.w, select_box.h);
     if (prototypePoint) {
       ctxr.strokeStyle = "#E14337";

@@ -65,7 +65,7 @@ var feature_list = [
     shortKey: "Ctrl+Alt+K",
     onclick: createComponent,
     isShow: function () {
-      return selected_list.some((e) => !e.IsWini);
+      return selected_list.some((e) => !e.IsWini) && !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length;
     },
   },
   {
@@ -311,6 +311,7 @@ function createComponent() {
   let un_component_list = selected_list.filter((e) => !e.IsWini);
   for (let wb of un_component_list) {
     wb.IsWini = true;
+    wb.ChildID = null;
     wb.value.setAttribute("iswini", "true");
     document.getElementById(`wbaseID:${wb.GID}`).setAttribute("iswini", "true");
     // let newStyle = document.createElement("style");
@@ -737,7 +738,7 @@ function bringToFront() {
       ListChildID: listChild.map((e) => e.GID),
     };
   } else {
-    parentWbase = wbase_list.find((e) => e.GID == select_box_parentID);
+    parentWbase = wbase_list.find((e) => e.GID === select_box_parentID);
     if (parentWbase.CountChild == selected_list.length) return;
     parentWbase.ListChildID = parentWbase.ListChildID.filter((id) => selected_list.every((selectItem) => selectItem.GID != id));
     parentWbase.ListChildID.push(...selected_list.map((e) => e.GID));
@@ -757,8 +758,8 @@ function bringToFront() {
 
 function bringFrontward() {
   let parentWbase;
-  if (select_box_parentID == wbase_parentID) {
-    let listChild = wbase_list.filter((e) => e.ParentID == wbase_parentID);
+  if (select_box_parentID === wbase_parentID) {
+    let listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID);
     for (let i = 0; i < listChild.length; i++) {
       listChild[i].Sort = i;
       listChild[i].value.style.zIndex = i;
@@ -779,7 +780,7 @@ function bringFrontward() {
     arrange();
     parentWbase = {
       GID: wbase_parentID,
-      ListChildID: wbase_list.map((e) => e.GID),
+      ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
     };
   } else {
     parentWbase = wbase_list.find((e) => e.GID == select_box_parentID);
@@ -871,7 +872,7 @@ function sendBackward() {
     arrange();
     parentWbase = {
       GID: wbase_parentID,
-      ListChildID: wbase_list.map((e) => e.GID),
+      ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
     };
   } else {
     parentWbase = wbase_list.find((e) => e.GID == select_box_parentID);

@@ -510,9 +510,9 @@ function addSelectList(new_selected_list = []) {
     if (selected_list.length > 10) {
       selected_list = selected_list.slice(selected_list.length - 10);
     }
-    for (let e of selected_list) {
-      let layerHTML = document.getElementById(`wbaseID:${e.GID}`);
-      if (layerHTML) layerHTML.style.backgroundColor = e.IsWini ? "#ebe6ff" : "#E6F7FF";
+    for (let wb of selected_list) {
+      let layerHTML = document.getElementById(`wbaseID:${wb.GID}`);
+      if (layerHTML) layerHTML.style.backgroundColor = wb.IsWini || $(layerHTML).parents(`.col:has(> .layer_wbase_tile[iswini="true"])`).length ? "#ebe6ff" : "#e6f7ff";
     }
     let list_parentID = selected_list[0].ListID.split(",");
     for (let id of list_parentID) {
