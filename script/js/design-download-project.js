@@ -46,7 +46,7 @@ async function push_dataProject() {
 
   var list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
   let replaceSkinRoot = [];
-  replaceSkinRoot.push(...ColorDA.list.map(skin => {
+  let colorReplace = ColorDA.list.map(skin => {
     let cateName;
     if (skin.CateID !== EnumCate.color)
       cateName = CateDA.list_color_cate.find(ct => ct.ID === skin.CateID)?.Name;
@@ -54,8 +54,14 @@ async function push_dataProject() {
       GID: skin.GID,
       Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
     }
-  }));
-  replaceSkinRoot.push(...TypoDA.list.map(skin => {
+  });
+  colorReplace.forEach(skin => {
+    let sameName = colorReplace.filter(e => e.Name === skin.Name);
+    if (sameName.length > 1 && sameName.indexOf(skin) > 0) {
+      skin.Name += `-${sameName.indexOf(skin)}`;
+    }
+  });
+  let typoReplace = TypoDA.list.map(skin => {
     let cateName;
     if (skin.CateID !== EnumCate.typography)
       cateName = CateDA.list_typo_cate.find(ct => ct.ID === skin.CateID)?.Name;
@@ -63,8 +69,14 @@ async function push_dataProject() {
       GID: skin.GID,
       Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
     }
-  }));
-  replaceSkinRoot.push(...BorderDA.list.map(skin => {
+  });
+  typoReplace.forEach(skin => {
+    let sameName = typoReplace.filter(e => e.Name === skin.Name);
+    if (sameName.length > 1 && sameName.indexOf(skin) > 0) {
+      skin.Name += `-${sameName.indexOf(skin)}`;
+    }
+  });
+  let borderReplace = BorderDA.list.map(skin => {
     let cateName;
     if (skin.CateID !== EnumCate.border)
       cateName = CateDA.list_border_cate.find(ct => ct.ID === skin.CateID)?.Name;
@@ -72,8 +84,14 @@ async function push_dataProject() {
       GID: skin.GID,
       Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
     }
-  }));
-  replaceSkinRoot.push(...EffectDA.list.map(skin => {
+  });
+  borderReplace.forEach(skin => {
+    let sameName = borderReplace.filter(e => e.Name === skin.Name);
+    if (sameName.length > 1 && sameName.indexOf(skin) > 0) {
+      skin.Name += `-${sameName.indexOf(skin)}`;
+    }
+  });
+  let effectReplace = EffectDA.list.map(skin => {
     let cateName;
     if (skin.CateID !== EnumCate.effect)
       cateName = CateDA.list_effect_cate.find(ct => ct.ID === skin.CateID)?.Name;
@@ -81,7 +99,14 @@ async function push_dataProject() {
       GID: skin.GID,
       Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
     }
-  }));
+  });
+  effectReplace.forEach(skin => {
+    let sameName = effectReplace.filter(e => e.Name === skin.Name);
+    if (sameName.length > 1 && sameName.indexOf(skin) > 0) {
+      skin.Name += `-${sameName.indexOf(skin)}`;
+    }
+  });
+  replaceSkinRoot.push(...colorReplace, ...typoReplace, ...borderReplace, ...effectReplace);
   list_page = list_page.map((wb) => {
     let cloneValue = wb.value.cloneNode(true);
     cloneValue.style.position = null;
@@ -138,7 +163,7 @@ async function push_dataProject() {
       let wbCss = `.wbaseItem-value[class*="${wbValue.id}"] { ${thisCssText} }`;
       cssString += wbCss;
       wbValue.removeAttribute("style");
-      
+
       wbValue.className += ` ${wbValue.getAttribute("id")}`;
       wbValue.removeAttribute("id");
     });

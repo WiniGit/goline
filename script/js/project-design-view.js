@@ -14,6 +14,7 @@ async function initData() {
   listShowName = [];
   action_list = [];
   action_index = -1;
+  divSection.replaceChildren();
   let skinResponse = await $.get(WBaseDA.skin_url + `?pid=${ProjectDA.obj.ID}`);
   let wbaseResponse = await WBaseDA.apiGetInitWbase();
   ColorDA.list = skinResponse.Data.ColorItems;

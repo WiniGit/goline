@@ -1725,7 +1725,7 @@ async function editBackground(decorationItem, onSubmit = true) {
           wbaseItem.value.style.setProperty("--checked-bg", `#${new_color_value.substring(2) + new_color_value.substring(2, 0)}`);
           break;
         default:
-          wbaseItem.value.style.backgroundColor = `var(--background-color-${decorationItem.ColorID})`;
+          wbaseItem.value.style.backgroundColor = `var(--background-color-${decorationItem.ColorItem.GID})`;
           break;
       }
       wbaseItem.value.style.backgroundImage = null;
@@ -1819,7 +1819,7 @@ function unlinkColorSkin() {
   let list_change_background = selected_list.filter((e) => e.StyleItem.DecorationItem);
   for (let wb of list_change_background) {
     wb.StyleItem.DecorationItem.ColorID = null;
-    let backgroundColor = Ultis.rgbToHex(window.getComputedStyle(wb.value).backgroundColor).replace("#");
+    let backgroundColor = Ultis.rgbToHex(window.getComputedStyle(wb.value).backgroundColor).replace("#", "");
     wb.StyleItem.DecorationItem.ColorValue = backgroundColor.substring(6) + backgroundColor.substring(0, 6);
   }
   WBaseDA.edit(list_change_background, EnumObj.decoration);

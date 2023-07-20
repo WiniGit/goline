@@ -296,7 +296,7 @@ class Ultis {
     }
 
     static rgbToHex(rgba) {
-        let splitRgba = rgba.replace(/(rgba|\(|\)|rgb)/g, "").split("").map(vl => parseFloat(vl));
+        let splitRgba = rgba.replace(/(rgba|\(|\)|rgb)/g, "").split(",").map(vl => parseFloat(vl));
         let r = splitRgba[0].toString(16);
         let g = splitRgba[1].toString(16);
         let b = splitRgba[2].toString(16);
