@@ -26,6 +26,7 @@ function createTextFieldHTML(item, parent) {
   let children = [];
   let input = document.createElement("input");
   input.id = `textfield-${item.GID}`;
+  input.autocomplete = "off";
   children.push(input);
   if (parent) {
     if (parent.AttributesItem.NameField !== "") input.name = parent.AttributesItem.NameField;

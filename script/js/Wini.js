@@ -1231,7 +1231,7 @@ function moveListener(event) {
                 updateUISelectBox();
                 updateInputTLWH();
               } else {
-                if (!select_box) {
+                if (!selected_list.length) {
                   addSelectList([hover_wbase]);
                 }
                 if (select_box && !objr) {

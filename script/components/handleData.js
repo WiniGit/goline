@@ -357,7 +357,7 @@ const setSizeObserver = new MutationObserver((mutationList) => {
       initElement(targetWbase);
     } else if (mutation.type === "childList" && window.getComputedStyle(targetWbase).display.includes("flex")) {
       targetWbase.querySelectorAll(`.col-[level="${parseInt(targetWbase.getAttribute("level")) + 1}"]`).forEach((childCol) => {
-        childCol.style.setProperty("--gutter", targetWbase.style.flexDirection == "column" ? targetWbase.style.rowGap : targetWbase.style.columnGap);
+        childCol.style.setProperty("--gutter", targetWbase.style.getPropertyValue("--child-space"));
       });
     }
     if (mutation.attributeName === "style") {
@@ -682,7 +682,7 @@ function initWbaseStyle(item) {
         item.value.style.borderWidth = `var(--border-width-${item.StyleItem.DecorationItem.BorderID})`;
         item.value.style.borderStyle = `var(--border-style-${item.StyleItem.DecorationItem.BorderID})`;
         item.value.style.borderColor = `var(--border-color-${item.StyleItem.DecorationItem.BorderID})`;
-      } else if(item.StyleItem.DecorationItem.BorderItem.BorderStyle) {
+      } else if (item.StyleItem.DecorationItem.BorderItem.BorderStyle) {
         let listWidth = item.StyleItem.DecorationItem.BorderItem.Width.split(" ");
         item.value.style.borderWidth = `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`;
         item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;

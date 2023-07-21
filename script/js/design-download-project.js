@@ -132,6 +132,7 @@ async function push_dataProject() {
           break;
         case EnumCate.textfield:
           wbValue.style.pointerEvents = null;
+          wbValue.querySelector("input").removeAttribute("autocomplete");
           break;
         case EnumCate.w_switch:
           let newSwitch = document.createElement("label");

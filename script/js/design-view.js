@@ -1347,21 +1347,21 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
   if (activeFill)
     activeFill = selected_list.every(e => {
       if (isW) {
-        if (e.CateID !== EnumCate.tree) {
-          if (parentHTML.classList.contains("w-row")) {
-            if (parentHTML.style.width && parentHTML.style.width != "fit-content") {
-              return parentHTML.getAttribute("wrap") == "wrap" || parentHTML.getAttribute("scroll") != "true";
-            }
-          } else {
-            return parentHTML.getAttribute("wrap") != "wrap";
+        if (parentHTML.classList.contains("w-row")) {
+          if (parentHTML.style.width && parentHTML.style.width != "fit-content") {
+            return parentHTML.getAttribute("wrap") == "wrap" || parentHTML.getAttribute("scroll") != "true";
           }
+        } else {
+          return parentHTML.getAttribute("wrap") != "wrap";
         }
       } else {
-        if (parentHTML.classList.contains("w-row")) {
-          return parentHTML.getAttribute("wrap") != "wrap";
-        } else {
-          if (parentHTML.style.height && parentHTML.style.height != "fit-content") {
-            return parentHTML.getAttribute("wrap") == "wrap" || parentHTML.getAttribute("scroll") != "true";
+        if (e.CateID !== EnumCate.tree) {
+          if (parentHTML.classList.contains("w-row")) {
+            return parentHTML.getAttribute("wrap") != "wrap";
+          } else {
+            if (parentHTML.style.height && parentHTML.style.height != "fit-content") {
+              return parentHTML.getAttribute("wrap") == "wrap" || parentHTML.getAttribute("scroll") != "true";
+            }
           }
         }
       }
@@ -5929,7 +5929,7 @@ function colNumberByBrp(enable = true) {
                 for (let wbaseItem of selected_list) {
                   wbaseItem.ListClassName = copyBrpColSettings;
                   wbaseItem.value.className = `wbaseItem-value ${copyBrpColSettings}`;
-                  wbaseItem.value.style.setProperty("--gutter", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
+                  wbaseItem.value.style.setProperty("--gutter", parentHTML.style.getPropertyValue("--child-space"));
                 }
                 WBaseDA.edit(selected_list);
                 updateUIEditPosition();
