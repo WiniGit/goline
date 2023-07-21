@@ -314,6 +314,7 @@ function createComponent() {
     wb.ChildID = null;
     wb.value.setAttribute("iswini", "true");
     document.getElementById(`wbaseID:${wb.GID}`).setAttribute("iswini", "true");
+
     // let newStyle = document.createElement("style");
     // newStyle.id = `st-comp${wb.GID}`;
     // let newBaseProperty = {
@@ -327,6 +328,7 @@ function createComponent() {
     // });
     // newStyle.innerHTML = newBaseProperty.CssText;
     // document.head.appendChild(newStyle);
+    
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);

@@ -1712,11 +1712,11 @@ function wdraw() {
   if (hover_wbase && selected_list.every((e) => e.GID !== hover_wbase.GID) && checkpad == 0) {
     var objset = offsetScale(hover_box.x, hover_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
-    ctxr.strokeStyle = $(hover_wbase.value).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = hover_wbase.IsWini || $(hover_wbase.value).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(objse.x, objse.y, hover_box.w, hover_box.h);
   } else if (parent?.id?.length == 36 && checkpad > 0) {
     let parentRect = parent.getBoundingClientRect();
-    ctxr.strokeStyle = $(parent).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = parent.getAttribute("iswini") === "true" || $(parent).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(parentRect.x, parentRect.y, parentRect.width, parentRect.height);
   }
 
@@ -1735,47 +1735,49 @@ function wdraw() {
     }
   }
 
-  for (let i = 0; i < listShowName.length; i++) {
-    let wbaseHTML = listShowName[i];
-    let wbaseRect = wbaseHTML.getBoundingClientRect();
-    let scaleOffset = offsetScale(wbaseRect.x, wbaseRect.y);
-    let canvasOff = offsetConvertScale(Math.round(scaleOffset.x), Math.round(scaleOffset.y));
-    let isActive = selected_list.some((wbaseItem) => wbaseItem.GID === wbaseHTML.id) || hover_wbase?.GID === wbaseHTML.id || parent.id === wbaseHTML.id;
-    let isWini = wbaseHTML.getAttribute("iswini") === "true";
-    ctxr.fillStyle = isWini ? "#7B61FF" : isActive ? "#1890FF" : "grey";
-    ctxr.font = "12px Inter";
-    let txtoffX = 0;
-    let t = titleList.find((e) => e.id === wbaseHTML.id);
-    if (isWini) {
-      ctxr.drawImage(imgCom, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
-      txtoffX = 16;
-    }
-    let txt = document.getElementById("inputName:" + wbaseHTML.id)?.value ?? wbase_list.find((e) => e.GID == wbaseHTML.id)?.name;
-    ctxr.fillText(txt, canvasOff.x + txtoffX, canvasOff.y - Math.min(8 * scale, 12));
-    if (wbaseHTML.getAttribute("lock") !== "true") {
-      if (t) {
-        t.value = {
-          x: canvasOff.x,
-          y: canvasOff.y - Math.min(8 * scale, 12) - 16,
-          xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
-          yMax: canvasOff.y,
-        };
-        t.sort = i;
-      } else {
-        titleList.push({
-          id: wbaseHTML.id,
-          value: {
+  if (tool_state !== ToolState.hand_tool) {
+    for (let i = 0; i < listShowName.length; i++) {
+      let wbaseHTML = listShowName[i];
+      let wbaseRect = wbaseHTML.getBoundingClientRect();
+      let scaleOffset = offsetScale(wbaseRect.x, wbaseRect.y);
+      let canvasOff = offsetConvertScale(Math.round(scaleOffset.x), Math.round(scaleOffset.y));
+      let isActive = selected_list.some((wbaseItem) => wbaseItem.GID === wbaseHTML.id) || hover_wbase?.GID === wbaseHTML.id || parent.id === wbaseHTML.id;
+      let isWini = wbaseHTML.getAttribute("iswini") === "true";
+      ctxr.fillStyle = isWini ? "#7B61FF" : isActive ? "#1890FF" : "grey";
+      ctxr.font = "12px Inter";
+      let txtoffX = 0;
+      let t = titleList.find((e) => e.id === wbaseHTML.id);
+      if (isWini) {
+        ctxr.drawImage(imgCom, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
+        txtoffX = 16;
+      }
+      let txt = document.getElementById("inputName:" + wbaseHTML.id)?.value ?? wbase_list.find((e) => e.GID == wbaseHTML.id)?.name;
+      ctxr.fillText(txt, canvasOff.x + txtoffX, canvasOff.y - Math.min(8 * scale, 12));
+      if (wbaseHTML.getAttribute("lock") !== "true") {
+        if (t) {
+          t.value = {
             x: canvasOff.x,
             y: canvasOff.y - Math.min(8 * scale, 12) - 16,
             xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
             yMax: canvasOff.y,
-          },
-          sort: i,
-        });
+          };
+          t.sort = i;
+        } else {
+          titleList.push({
+            id: wbaseHTML.id,
+            value: {
+              x: canvasOff.x,
+              y: canvasOff.y - Math.min(8 * scale, 12) - 16,
+              xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
+              yMax: canvasOff.y,
+            },
+            sort: i,
+          });
+        }
       }
     }
+    titleList = titleList.filter((e) => e && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
   }
-  titleList = titleList.filter((e) => e && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
 
   //! draw prototype
   drawCurvePrototype();
