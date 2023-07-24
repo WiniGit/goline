@@ -12,15 +12,19 @@ async function getColorSvg(item) {
     let url = urlImg + item.AttributesItem.Content.replaceAll(" ", "%20");
     let svg = await fetch(url).then(response => response.text());
     item.value.innerHTML = svg.replaceAll(`style="mix-blend-mode:multiply"`, "");
+    let styleTag = item.value.querySelector("svg style");
+    if (styleTag) {
+        styleTag.innerHTML = styleTag.innerHTML.replace(/\.([^\s{}]+)/g, match => `.w-svg[id="${item.GID}"] ${match}`);
+    }
     if (item.StyleItem.DecorationItem.ColorValue) {
         let listColorValue = item.StyleItem.DecorationItem.ColorValue.split(",");
         if (listColorValue.length == 1) {
-            item.value.innerHTML = item.value.innerHTML.replace(svgRegex, match => `${match.includes("fill") ? "fill" : "stroke"}="#${listColorValue[0].substring(2)}${listColorValue[0].substring(0, 2)}"`)
+            item.value.innerHTML = item.value.innerHTML.replace(svgRegex, match => match.replace(/(#){0,1}[0-9A-Fa-f]{6,8}/i, `#${listColorValue[0].substring(2)}${listColorValue[0].substring(0, 2)}`));
         } else {
             for (let i = 1; i <= listColorValue.length; i++) {
                 let j = 0;
                 let color_value = listColorValue[i - 1];
-                item.value.innerHTML = item.value.innerHTML.replace(svgRegex, match => ++j === i ? `${match.includes("fill") ? "fill" : "stroke"}="#${color_value.substring(2)}${color_value.substring(0, 2)}"` : match);
+                item.value.innerHTML = item.value.innerHTML.replace(svgRegex, match => ++j === i ? match.replace(/(#){0,1}[0-9A-Fa-f]{6,8}/i, `#${color_value.substring(2)}${color_value.substring(0, 2)}`) : match);
             }
         }
     } else {

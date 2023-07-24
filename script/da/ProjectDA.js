@@ -249,7 +249,20 @@ class ProjectDA {
     }
 
     static changeProject(projectId) {
-        window.location.href = "/View/project-design-view.html?id=" + projectId;
         ProjectDA.update_titlebar(projectId);
+        if (copy_item?.length) {
+            Ultis.setStorage("copy-item", JSON.stringify({
+                time: Date.now(),
+                list: wbase_list.filter(e => {
+                    let check = copy_item.some(id => e.GID === id);
+                    if(check) {
+                        if(e.value.style.width == "100%") e.StyleItem.FrameItem.Width = e.value.offsetWidth;
+                        if(e.value.style.height == "100%") e.StyleItem.FrameItem.Height = e.value.offsetHeight;
+                    }
+                    return check;
+                })
+            }));
+        }
+        window.location.href = "/View/project-design-view.html?id=" + projectId;
     }
 }

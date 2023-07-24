@@ -180,6 +180,9 @@ class Ultis {
     static getStorage(key) {
         return localStorage.getItem(key);
     }
+    static removeFromStorage(key) {
+        return localStorage.removeItem(key);
+    }
     //1: năm, 2: quý,3: tháng, 4: tuần,5: ngày, 6: giờ, 7: phút, 8: giây
     static dateAdd(date, type, units) {
         if (!(date instanceof Date))

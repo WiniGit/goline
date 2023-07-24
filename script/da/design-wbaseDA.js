@@ -325,15 +325,16 @@ class WCarouselEffect {
 
 const uuid4Regex = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/g;
 const hexRegex = /(#){0,1}[0-9A-Fa-f]{6,8}$/i;
-const svgRegex = /(fill|stroke)="[^none](\w|\d|#){1,}"/g;
+const svgRegex = /(fill|stroke)(="[^none](\w|\d|#){1,}"|:[^none](\w|\d|#){1,})/g;
 const brpRegex = /\(([^)-]+)\)/g;
 const spChaRegex = /[!@#\$%\^\&*\)\(+=._-]/g;
+const classRegex = /\.([^\s{}]+)/g;
 var wbase_list = [];
 var base_component_list = [];
 var assets_list = [];
 var selected_list = [];
 var alt_list = [];
-var copy_item;
+var copy_item = [];
 var drag_start_list = [];
 var action_list = [];
 var action_index = -1;
