@@ -1,8 +1,8 @@
 var feature_list = [
   {
     title: "Select layer",
-    more: function () { },
-    onclick: function () { },
+    more: function () {},
+    onclick: function () {},
     isShow: function () {
       return selected_list.length > 0;
     },
@@ -190,12 +190,12 @@ function pasteWbase() {
   let listWb = [];
   let list_new_wbase = [];
   if (!otherP) {
-    wbase_list.filter((e) => copy_item.some((id) => id === e.GID));
+    list_new_wbase = wbase_list.filter((e) => copy_item.some((id) => id === e.GID));
   }
   if (list_new_wbase.length === copy_item.length || otherP) {
     if (otherP) {
       let offset = offsetScale(Math.min(minx, divMain.offsetWidth / 2), Math.min(miny, divMain.offsetHeight / 2));
-      list_new_wbase = copy_item.map(e => {
+      list_new_wbase = copy_item.map((e) => {
         let newWb = JSON.parse(JSON.stringify(e));
         newWb.GID = uuidv4();
         newWb.value = document.createElement("div");
@@ -207,6 +207,7 @@ function pasteWbase() {
         newWb.value.style.width = newWb.StyleItem.FrameItem.Width + "px";
         newWb.value.style.height = newWb.StyleItem.FrameItem.Height + "px";
         newWb.ParentID = wbase_parentID;
+        newWb.Level = 1;
         newWb.StyleItem.PositionItem.Left = `${offset.x - newWb.StyleItem.FrameItem.Width / 2}px`;
         newWb.StyleItem.PositionItem.Top = `${offset.y - newWb.StyleItem.FrameItem.Height / 2}px`;
         newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left;
@@ -214,7 +215,7 @@ function pasteWbase() {
         tmpAltHTML.push(newWb.value);
         newWb.value.setAttribute("loading", "true");
         return newWb;
-      })
+      });
     } else {
       list_new_wbase = list_new_wbase.map((e) => {
         let newWb = JSON.parse(JSON.stringify(e));
@@ -251,8 +252,7 @@ function pasteWbase() {
         wbase_list.push(...list_new_wbase);
         listWb.push(...list_new_wbase);
       } else if (window.getComputedStyle(newParent).display.match("flex") && list_new_wbase.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
-        let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)].map(e => parseInt(e.style.zIndex))) + 1;
-        console.log("????????: ", zIndex, [...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)].map(e => parseInt(e.style.zIndex)))
+        let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)].map((e) => parseInt(e.style.zIndex))) + 1;
         for (let i = 0; i < list_new_wbase.length; i++) {
           list_new_wbase[i].value.style.left = null;
           list_new_wbase[i].value.style.top = null;
@@ -283,7 +283,7 @@ function pasteWbase() {
           wbase_list.push(list_new_wbase[i]);
         }
       } else {
-        let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)].map(e => parseInt(e.style.zIndex))) + 1;
+        let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)].map((e) => parseInt(e.style.zIndex))) + 1;
         let parentRect = newParent.getBoundingClientRect();
         parentRect = offsetScale(parentRect.x, parentRect.y);
         for (let i = 0; i < list_new_wbase.length; i++) {
@@ -305,9 +305,6 @@ function pasteWbase() {
           listWb.push(list_new_wbase[i]);
           newParent.appendChild(list_new_wbase[i].value);
         }
-      }
-      for (let i = 0; i < list_new_wbase.length; i++) {
-        list_new_wbase[i].ParentID = selected_list[0].GID;
       }
     } else {
       if (list_new_wbase[0].ParentID === wbase_parentID) {
@@ -344,6 +341,11 @@ function pasteWbase() {
       }
     }
     if (parent_wbase) {
+      for (let i = 0; i < list_new_wbase.length; i++) {
+        list_new_wbase[i].ParentID = parent_wbase.GID;
+        list_new_wbase[i].Level = parent_wbase.Level + 1;
+        list_new_wbase[i].value.setAttribute("level", parent_wbase.Level + 1);
+      }
       let children = [...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
       children.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
       for (let i = 0; i < children.length; i++) {
@@ -386,7 +388,6 @@ function createComponent() {
     // });
     // newStyle.innerHTML = newBaseProperty.CssText;
     // document.head.appendChild(newStyle);
-
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);
@@ -453,7 +454,7 @@ function createImgDocument() {
   let title = document.createElement("span");
   title.style.flex = 1;
   title.innerHTML = "Image document";
-  title.className = "semibold2"
+  title.className = "semibold2";
   header.appendChild(title);
   let btn_close = document.createElement("i");
   btn_close.className = "fa-solid fa-xmark";
@@ -529,7 +530,7 @@ function createImgDocument() {
       let optionPaste = document.createElement("div");
       optionPaste.className = "row";
       optionPaste.innerHTML = "paste here";
-      optionPaste.onclick = function (e) { };
+      optionPaste.onclick = function (e) {};
       children.push(optionPaste);
     }
     if (event.target.className?.includes("img_folder_demo")) {
@@ -627,11 +628,11 @@ function createFolderTile(collectionItem) {
   folderName.value = collectionItem.Name;
   folderName.onfocus = function () {
     this.select();
-  }
+  };
   if (collectionItem.ID != -1) {
     folderTile.onauxclick = function (e) {
       e.stopPropagation();
-      document.querySelectorAll("#body > .popup_remove").forEach(popupRemove => popupRemove.remove());
+      document.querySelectorAll("#body > .popup_remove").forEach((popupRemove) => popupRemove.remove());
       let editDeletePopup = document.createElement("div");
       editDeletePopup.className = "wini_popup popup_remove col";
       editDeletePopup.style.left = e.pageX + "px";
@@ -665,7 +666,7 @@ function createFolderTile(collectionItem) {
       };
       editDeletePopup.replaceChildren(optionEdit, optionDelete);
       document.getElementById("body").appendChild(editDeletePopup);
-    }
+    };
     folderTile.ondblclick = function (e) {
       e.stopPropagation();
       folderName.disabled = false;
