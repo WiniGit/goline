@@ -1,11 +1,9 @@
-var feature_list = [
+let feature_list = [
   {
     title: "Select layer",
     more: function () {},
     onclick: function () {},
-    isShow: function () {
-      return selected_list.length > 0;
-    },
+    isShow: () => selected_list.length > 0,
   },
   {
     title: "Image document",
@@ -14,92 +12,72 @@ var feature_list = [
         FileDA.init();
       }
     },
-    isShow: function () {
-      return true;
-    },
+    isShow: () => true,
     spaceLine: true,
   },
   {
     title: "Bring to front",
     shortKey: "Ctrl+Alt+]",
     onclick: bringToFront,
-    isShow: function () {
-      return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
-    },
+    isShow: () => selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table,
   },
   {
     title: "Bring frontward",
     shortKey: "Ctrl+]",
     onclick: bringFrontward,
-    isShow: function () {
-      return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
-    },
+    isShow: () => selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table,
   },
   {
     title: "Send to back",
     shortKey: "Ctrl+Alt+[",
     onclick: sendToBack,
-    isShow: function () {
-      return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
-    },
+    isShow: () => selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table,
   },
   {
     title: "Send backward",
     shortKey: "Ctrl+[",
     onclick: sendBackward,
-    isShow: function () {
-      return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
-    },
+    isShow: () => selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table,
     spaceLine: true,
   },
   {
     title: "Add auto layout",
     shortKey: "Shift+A",
     onclick: addAutoLayout,
-    isShow: function () {
-      return selected_list.length > 0;
-    },
+    isShow: () => selected_list.length > 0,
   },
   {
     title: "Create component",
     shortKey: "Ctrl+Alt+K",
     onclick: createComponent,
-    isShow: function () {
-      return selected_list.some((e) => !e.IsWini) && !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length;
-    },
+    isShow: () => selected_list.some((e) => !e.IsWini) && !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length,
   },
-  {
-    title: "Uncomponent",
-    shortKey: "Alt+K",
-    onclick: unComponent,
-    isShow: function () {
-      return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant;
-    },
-  },
+  // {
+  //   title: "Uncomponent",
+  //   shortKey: "Alt+K",
+  //   onclick: unComponent,
+  //   isShow: function () {
+  //     return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant;
+  //   },
+  // },
   {
     title: "Show/Hide UI",
     shortKey: "Ctrl+\\",
     onclick: showOnOffUI,
-    isShow: function () {
-      return true;
-    },
+    isShow: () => true,
     spaceLine: true,
   },
   {
     title: "Copy",
     shortKey: "Ctrl+C",
     onclick: saveWbaseCopy,
-    isShow: function () {
-      return selected_list.length > 0;
-    },
+    isShow: () => selected_list.length > 0,
   },
   {
     title: "Paste",
     shortKey: "Ctrl+V",
     onclick: pasteWbase,
-    isShow: function () {
-      return copy_item != undefined;
-    },
+    isShow: () => copy_item != undefined,
   },
   {
     title: "Delete",
@@ -107,9 +85,7 @@ var feature_list = [
     onclick: function () {
       WBaseDA.delete(selected_list);
     },
-    isShow: function () {
-      return selected_list.length > 0;
-    },
+    isShow: () => selected_list.length > 0,
   },
 ];
 

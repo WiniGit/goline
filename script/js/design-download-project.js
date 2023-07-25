@@ -186,6 +186,7 @@ async function push_dataProject() {
       console.log("data-start: ", data);
     },
   );
+  debugger;
 
   let skinRoot = `:root {
     ${document.documentElement.style.cssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match)}
@@ -193,7 +194,7 @@ async function push_dataProject() {
   await $.post(
     "/view/build",
     {
-      // Sort: 0,
+      Sort: 1,
       Name: `style_project_root`,
       Type: 0,
       Code: ProjectDA.obj.Code.toLowerCase(),
@@ -294,7 +295,7 @@ async function push_dataProject() {
     await $.post(
       "/view/build",
       {
-        Sort: list_page.indexOf(page) + 1,
+        Sort: list_page.indexOf(page) + 2,
         Name: page.Name,
         Type: 1,
         Code: ProjectDA.obj.Code.toLowerCase(),
@@ -308,7 +309,7 @@ async function push_dataProject() {
     await $.post(
       "/view/build",
       {
-        Sort: list_page.indexOf(page) + 1,
+        Sort: list_page.indexOf(page) + 2,
         Name: page.Name,
         Type: 0,
         Code: ProjectDA.obj.Code.toLowerCase(),
