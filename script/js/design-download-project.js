@@ -353,7 +353,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       },
       function (data) {
         console.log("build-end: ", data);
-        window.open(downloadUrl + `/${data.Message}.zip`);
+        window.open(downloadUrl + `/${data.data.Message}`);
       },
     );
 
