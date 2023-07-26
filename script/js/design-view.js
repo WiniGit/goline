@@ -51,10 +51,10 @@ function updateUIDesignView() {
   } else {
     let editAlign = createEditAlign();
     let editSizePosition = createEditSizePosition();
-    let selectClass = selectionClass();
+    // let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign);
     listEditContainer.appendChild(editSizePosition);
-    listEditContainer.appendChild(selectClass);
+    // listEditContainer.appendChild(selectClass);
     if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
       let editConstraints = createConstraints();
       listEditContainer.appendChild(editConstraints);
