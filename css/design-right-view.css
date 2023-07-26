@@ -1376,7 +1376,7 @@ input[type="color"]::-webkit-color-swatch {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  max-width: 220px;
   height: fit-content;
   background-color: #000000;
   border-radius: 2px;
@@ -1390,12 +1390,10 @@ input[type="color"]::-webkit-color-swatch {
   line-height: 16px;
   font-weight: 500;
   color: #ffffff;
-  display: flex;
   padding: 6px 10px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  align-items: center;
 }
 
 .dropdown_select_baseProperty div:hover {

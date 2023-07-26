@@ -186,8 +186,7 @@ async function push_dataProject() {
       console.log("data-start: ", data);
     },
   );
-
-  let skinRoot = `:root {
+ let skinRoot = `:root {
     ${document.documentElement.style.cssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match)}
   }`;
   await $.post(
@@ -354,7 +353,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       },
       function (data) {
         console.log("build-end: ", data);
-        window.open(downloadUrl + `/${ProjectDA.obj.Code.toLowerCase()}.zip?v=${Date.now()}}`);
+        window.open(downloadUrl + `/${data.Message}.zip`);
       },
     );
 

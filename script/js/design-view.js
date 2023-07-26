@@ -51,14 +51,15 @@ function updateUIDesignView() {
   } else {
     let editAlign = createEditAlign();
     let editSizePosition = createEditSizePosition();
-    // let selectClass = selectionClass();
+    let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign);
     listEditContainer.appendChild(editSizePosition);
+    listEditContainer.appendChild(selectClass);
     if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
       let editConstraints = createConstraints();
       listEditContainer.appendChild(editConstraints);
     }
-    if (select_box_parentID != wbase_parentID && selected_list.every(e => window.getComputedStyle(e.value).position != "absolute")) {
+    if (select_box_parentID != wbase_parentID && selected_list.every((e) => window.getComputedStyle(e.value).position != "absolute")) {
       let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
       let framePage = pageParent[pageParent.length - 1];
       if (framePage?.classList?.contains("w-variant")) framePage = pageParent[pageParent.length - 2];
@@ -774,7 +775,7 @@ function createAutoLayout() {
     _row1.appendChild(btn_extension);
     btn_extension.className = "fa-solid fa-ellipsis icon_btn_default_style";
     btn_extension.onclick = function () {
-      setTimeout(function () { }, 200);
+      setTimeout(function () {}, 200);
     };
     // input edit child space
     let childSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.ChildSpace);
@@ -1330,7 +1331,7 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
         if (e.CateID !== EnumCate.textformfield) {
           if (e.WAutolayoutItem.Direction === "Horizontal") {
             return !e.WAutolayoutItem.IsWrap && !e.WAutolayoutItem.IsScroll;
-          } else if ([...e.value.querySelectorAll(`.wbaseItem-value[level="${e.Level + 1}"]`)].every(childHTML => !childHTML.classList.contains("col-"))) {
+          } else if ([...e.value.querySelectorAll(`.wbaseItem-value[level="${e.Level + 1}"]`)].every((childHTML) => !childHTML.classList.contains("col-"))) {
             return !e.WAutolayoutItem.IsScroll;
           }
         }
@@ -1345,7 +1346,7 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
     return false;
   });
   if (activeFill)
-    activeFill = selected_list.every(e => {
+    activeFill = selected_list.every((e) => {
       if (isW) {
         if (parentHTML.classList.contains("w-row")) {
           if (parentHTML.style.width && parentHTML.style.width != "fit-content") {
@@ -1366,7 +1367,7 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
         }
       }
       return false;
-    })
+    });
   if (activeFill) {
     popup_list_resize_type.childNodes[3].style.display = "flex";
   } else {
@@ -1470,7 +1471,7 @@ function createEditBackground() {
   editContainer.appendChild(header);
 
   let title = document.createElement("p");
-  let checkedComponent = selected_list.every(wb => EnumCate.scale_size_component.some(ct => wb.CateID === ct));
+  let checkedComponent = selected_list.every((wb) => EnumCate.scale_size_component.some((ct) => wb.CateID === ct));
   title.innerHTML = checkedComponent ? "Checked primary color" : "Background";
   header.appendChild(title);
 
@@ -1487,7 +1488,7 @@ function createEditBackground() {
     }
   };
 
-  if (selected_list.every(wb => wb.StyleItem.DecorationItem.ColorValue?.match(hexRegex))) {
+  if (selected_list.every((wb) => wb.StyleItem.DecorationItem.ColorValue?.match(hexRegex))) {
     header.appendChild(btnSelectImg);
 
     let listColorID = selected_list.filterAndMap((wb) => wb.StyleItem.DecorationItem.ColorID);
@@ -1513,7 +1514,7 @@ function createEditBackground() {
         editContainer.appendChild(skin_tile);
         if (checkedComponent) skin_tile.lastChild.style.display = "none";
       }
-    } else if (selected_list.filterAndMap(wb => wb.StyleItem.DecorationItem.ColorValue.toLowerCase()).length === 1) {
+    } else if (selected_list.filterAndMap((wb) => wb.StyleItem.DecorationItem.ColorValue.toLowerCase()).length === 1) {
       let selectColorValue = selected_list[0].StyleItem.DecorationItem.ColorValue;
       //body
       let colorsSelectionList = document.createElement("div");
@@ -1550,7 +1551,9 @@ function createEditBackground() {
           });
         }
         let formEdit = createEditColorForm(
-          function () { updateColor(false); },
+          function () {
+            updateColor(false);
+          },
           updateColor,
           function () {
             deleteBackgroundColor().then((_) => updateUIBackground());
@@ -1572,7 +1575,7 @@ function createEditBackground() {
         }
         listEditColorForm.push(formEdit);
       }
-      if (checkedComponent) listEditColorForm.forEach(colorForm => colorForm.querySelector(".action-button:last-child").style.display = "none");
+      if (checkedComponent) listEditColorForm.forEach((colorForm) => (colorForm.querySelector(".action-button:last-child").style.display = "none"));
       colorsSelectionList.replaceChildren(...listEditColorForm);
       if (listEditColorForm.length <= 1) {
         header.appendChild(btnSelectSkin);
@@ -1585,9 +1588,9 @@ function createEditBackground() {
       notiText.innerHTML = "choose a color skin to replace mixed content";
       editContainer.appendChild(notiText);
     }
-  } else if (selected_list.every(wb => wb.StyleItem.DecorationItem.ColorValue && !wb.StyleItem.DecorationItem.ColorValue.match(hexRegex))) {
+  } else if (selected_list.every((wb) => wb.StyleItem.DecorationItem.ColorValue && !wb.StyleItem.DecorationItem.ColorValue.match(hexRegex))) {
     header.appendChild(btnSelectSkin);
-    if (selected_list.filterAndMap(wb => wb.StyleItem.DecorationItem.ColorValue).length === 1) {
+    if (selected_list.filterAndMap((wb) => wb.StyleItem.DecorationItem.ColorValue).length === 1) {
       let editImgTile = document.createElement("div");
       editImgTile.id = "select_img_tile";
       editContainer.appendChild(editImgTile);
@@ -2350,7 +2353,7 @@ function createEditBorder() {
       });
       btnSelectBorderSide.appendChild(dropdown_type);
 
-      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg", null, function () { });
+      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg", null, function () {});
       edit_line_action2.className = "action-button";
       action_edit_line_container.appendChild(edit_line_action2);
 
@@ -2713,7 +2716,7 @@ function createEditEffect() {
       btn_select_eType.firstChild.innerHTML = eTypeValues.length == 1 ? eTypeValues[0] : "mixed";
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () { });
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () {});
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
 
@@ -2983,7 +2986,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
   let titleBar = document.createElement("div");
   titleBar.className = "row";
   let title = document.createElement("span");
-  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/library-black.svg", null, function () { });
+  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/library-black.svg", null, function () {});
 
   let action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/add2.svg", null, function () {
     setTimeout(function () {
@@ -3066,7 +3069,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
         tile.style.display = "flex";
       });
     } else {
-      body.querySelectorAll(".cate-skin-tile").forEach(cateSkTile => {
+      body.querySelectorAll(".cate-skin-tile").forEach((cateSkTile) => {
         let listSkinTile = cateSkTile.querySelectorAll(".skin_tile_option");
         let cateName = cateSkTile.querySelector(":scope > p")?.innerHTML;
         if (cateName && cateName.toLowerCase().includes(searchContent)) {
@@ -3084,7 +3087,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
           });
           cateSkTile.style.display = numberResult ? "flex" : "none";
         }
-      })
+      });
     }
   }
   header.replaceChildren(titleBar, searchContainer);
@@ -3094,7 +3097,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
   updateTableSkinBody(enumCate, currentSkinID);
   let dropdownRect = dropdown.getBoundingClientRect();
   if (dropdownRect.bottom > document.body.offsetHeight) {
-    dropdown.style.top = (offset.y - 56 - (dropdownRect.bottom - document.body.offsetHeight) - 2) + "px";
+    dropdown.style.top = offset.y - 56 - (dropdownRect.bottom - document.body.offsetHeight) - 2 + "px";
   }
 }
 
@@ -4225,7 +4228,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       btn_select_eType.firstChild.innerHTML = jsonSkin.Type;
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () { });
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () {});
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
       //
@@ -4679,6 +4682,7 @@ function _selectPropertyVariant(property_item, title, onSelect, enableInput = tr
       let list_option = [];
       for (let i = 0; i < list_baseProperty_name.length; i++) {
         let option = document.createElement("div");
+        option.className = "row";
         option.setAttribute("value", list_baseProperty_name[i]);
         if (list_baseProperty_name[i] == "mixed") {
           option.style.borderBottom = "1px solid #c4c4c4";
@@ -4701,11 +4705,10 @@ function _selectPropertyVariant(property_item, title, onSelect, enableInput = tr
         if (list_baseProperty_name[i] != input_baseProperty_name.value) {
           icon_check.style.opacity = 0;
         }
-        option.appendChild(icon_check);
         let title = document.createElement("span");
         title.innerHTML = list_baseProperty_name[i];
         title.style.pointerEvents = "none";
-        option.appendChild(title);
+        option.replaceChildren(icon_check, title);
         list_option.push(option);
       }
       dropdown.replaceChildren(...list_option);
@@ -5885,7 +5888,7 @@ function colNumberByBrp(enable = true) {
           wbaseItem.value.style.setProperty("--gutter", parentHTML.style.getPropertyValue("--child-space"));
         }
         if (parentHTML.classList.contains("w-row") && (!parentHTML.style.width || parentHTML.style.width == "fit-content")) {
-          let wbParent = wbase_list.find(e => e.GID === select_box_parentID);
+          let wbParent = wbase_list.find((e) => e.GID === select_box_parentID);
           parentHTML.style.width = parentHTML.offsetWidth + "px";
           wbParent.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
           eObj = EnumObj.baseFrame;
@@ -5954,9 +5957,9 @@ function updateUIColNumber() {
 
 function selectionClass() {
   let listStyleClass = selected_list
-    .map((wbaseItem) => wbaseItem.ListClassName?.split(" ") ?? [])
+    .map((wb) => wb.ListClassName?.split(" ") ?? [])
     .reduce((a, b) => a.concat(b))
-    .filter((clName) => !clName.match(/col[0-9]{1,2}/g));
+    .filter((clName) => clName.startsWith("w-style-cls"));
   let editContainer = document.createElement("div");
   editContainer.id = "edit-create-class";
   editContainer.className = "edit-container";
