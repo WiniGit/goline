@@ -421,6 +421,7 @@ class Ultis {
             .replace(/[ó|ò|ỏ|õ|ọ|ô|ơ|ố|ồ|ổ|ỗ|ộ|ớ|ờ|ở|ỡ|ợ]/g, 'o')
             .replace(/\s+/g, ' ')
             .replace(/({|}|\(|\)|<|>)/g, "")
+            .replaceAll(/(\\|\/)/g, "-")
             .replaceAll(" ", "-");
     }
 }
