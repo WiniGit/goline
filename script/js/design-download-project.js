@@ -46,62 +46,58 @@ async function push_dataProject() {
 
   var list_page = wbase_list.filter((e) => e.ParentID === wbase_parentID && EnumCate.extend_frame.some((ct) => ct === e.CateID));
   let replaceSkinRoot = [];
-  let colorReplace = ColorDA.list.map(skin => {
+  let colorReplace = ColorDA.list.map((skin) => {
     let cateName;
-    if (skin.CateID !== EnumCate.color)
-      cateName = CateDA.list_color_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    if (skin.CateID !== EnumCate.color) cateName = CateDA.list_color_cate.find((ct) => ct.ID === skin.CateID)?.Name;
     return {
       GID: skin.GID,
-      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
-    }
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-")),
+    };
   });
-  colorReplace.forEach(skin => {
-    let sameName = colorReplace.filter(e => e.Name === skin.Name);
+  colorReplace.forEach((skin) => {
+    let sameName = colorReplace.filter((e) => e.Name === skin.Name);
     if (sameName.length > 1 && sameName.indexOf(skin) > 0) {
       skin.Name += `-${sameName.indexOf(skin)}`;
     }
   });
-  let typoReplace = TypoDA.list.map(skin => {
+  let typoReplace = TypoDA.list.map((skin) => {
     let cateName;
-    if (skin.CateID !== EnumCate.typography)
-      cateName = CateDA.list_typo_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    if (skin.CateID !== EnumCate.typography) cateName = CateDA.list_typo_cate.find((ct) => ct.ID === skin.CateID)?.Name;
     return {
       GID: skin.GID,
-      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
-    }
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-")),
+    };
   });
-  typoReplace.forEach(skin => {
-    let sameName = typoReplace.filter(e => e.Name === skin.Name);
+  typoReplace.forEach((skin) => {
+    let sameName = typoReplace.filter((e) => e.Name === skin.Name);
     if (sameName.length > 1 && sameName.indexOf(skin) > 0) {
       skin.Name += `-${sameName.indexOf(skin)}`;
     }
   });
-  let borderReplace = BorderDA.list.map(skin => {
+  let borderReplace = BorderDA.list.map((skin) => {
     let cateName;
-    if (skin.CateID !== EnumCate.border)
-      cateName = CateDA.list_border_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    if (skin.CateID !== EnumCate.border) cateName = CateDA.list_border_cate.find((ct) => ct.ID === skin.CateID)?.Name;
     return {
       GID: skin.GID,
-      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
-    }
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-")),
+    };
   });
-  borderReplace.forEach(skin => {
-    let sameName = borderReplace.filter(e => e.Name === skin.Name);
+  borderReplace.forEach((skin) => {
+    let sameName = borderReplace.filter((e) => e.Name === skin.Name);
     if (sameName.length > 1 && sameName.indexOf(skin) > 0) {
       skin.Name += `-${sameName.indexOf(skin)}`;
     }
   });
-  let effectReplace = EffectDA.list.map(skin => {
+  let effectReplace = EffectDA.list.map((skin) => {
     let cateName;
-    if (skin.CateID !== EnumCate.effect)
-      cateName = CateDA.list_effect_cate.find(ct => ct.ID === skin.CateID)?.Name;
+    if (skin.CateID !== EnumCate.effect) cateName = CateDA.list_effect_cate.find((ct) => ct.ID === skin.CateID)?.Name;
     return {
       GID: skin.GID,
-      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-"))
-    }
+      Name: (cateName ? `${Ultis.toSlug(cateName.replace(spChaRegex, "-"))}-` : "") + Ultis.toSlug(skin.Name.replace(spChaRegex, "-")),
+    };
   });
-  effectReplace.forEach(skin => {
-    let sameName = effectReplace.filter(e => e.Name === skin.Name);
+  effectReplace.forEach((skin) => {
+    let sameName = effectReplace.filter((e) => e.Name === skin.Name);
     if (sameName.length > 1 && sameName.indexOf(skin) > 0) {
       skin.Name += `-${sameName.indexOf(skin)}`;
     }
@@ -125,10 +121,8 @@ async function push_dataProject() {
           wbValue.removeAttribute("contenteditable");
           break;
         case EnumCate.textformfield:
-          if (wbValue.querySelector(".wbaseItem-value:has(> .textfield) > label")) {
-            let wbItem = wbase_list.find((e) => e.GID === wbValue.id);
-            if (wbItem) wbValue.setAttribute("placeholder", wbItem.JsonItem.HintText);
-          }
+          let wbItem = wbase_list.find((e) => e.GID === wbValue.id);
+          if (wbItem) wbValue.setAttribute("placeholder", wbItem.JsonItem.HintText);
           break;
         case EnumCate.textfield:
           wbValue.style.pointerEvents = null;
@@ -160,7 +154,7 @@ async function push_dataProject() {
         wbValue.style.order = null;
       }
       let thisCssText = wbValue.style.cssText;
-      thisCssText = thisCssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match);
+      thisCssText = thisCssText.replace(uuid4Regex, (match) => replaceSkinRoot.find((skin) => skin.GID === match)?.Name ?? match);
       let wbCss = `.wbaseItem-value[class*="${wbValue.id}"] { ${thisCssText} }`;
       cssString += wbCss;
       wbValue.removeAttribute("style");
@@ -186,8 +180,8 @@ async function push_dataProject() {
       console.log("data-start: ", data);
     },
   );
- let skinRoot = `:root {
-    ${document.documentElement.style.cssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match)}
+  let skinRoot = `:root {
+    ${document.documentElement.style.cssText.replace(uuid4Regex, (match) => replaceSkinRoot.find((skin) => skin.GID === match)?.Name ?? match)}
   }`;
   await $.post(
     "/view/build",
@@ -408,4 +402,4 @@ try {
       },
     );
   });
-} catch (error) { }
+} catch (error) {}

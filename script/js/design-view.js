@@ -51,10 +51,10 @@ function updateUIDesignView() {
   } else {
     let editAlign = createEditAlign();
     let editSizePosition = createEditSizePosition();
-    // let selectClass = selectionClass();
+    let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign);
     listEditContainer.appendChild(editSizePosition);
-    // listEditContainer.appendChild(selectClass);
+    listEditContainer.appendChild(selectClass);
     if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
       let editConstraints = createConstraints();
       listEditContainer.appendChild(editConstraints);
@@ -5972,8 +5972,8 @@ function selectionClass() {
   title.innerHTML = "Style class";
 
   let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg", null, function () {
-    let offset = header.getBoundingClientRect();
-    createDropdownTableSkin(EnumCate.typography, offset);
+    // let offset = header.getBoundingClientRect();
+    // createDropdownTableSkin(EnumCate.typography, offset);
   });
   btnSelectSkin.className = "action-button";
 

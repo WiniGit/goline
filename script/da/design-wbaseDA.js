@@ -56,6 +56,7 @@ class EnumCate {
   static typography = 17;
   static border = 361;
   static effect = 360;
+  static style_class = 69;
   //
   // component
   static datePicker = 24;
