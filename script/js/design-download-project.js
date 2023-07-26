@@ -288,7 +288,7 @@ async function push_dataProject() {
       "/view/build",
       {
         Sort: list_page.indexOf(page) + 2,
-        Name: Ultis.toSlug(page.Name),
+        Name: Ultis.toSlug(page.Name).replace(/(\\|\/)g/, "-"),
         Type: 1,
         Code: ProjectDA.obj.Code.toLowerCase(),
         Item: `<link rel="stylesheet" href="/Styles/${Ultis.toSlug(page.Name)}.css" />${page.outerHTML + page_script}`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
@@ -302,7 +302,7 @@ async function push_dataProject() {
       "/view/build",
       {
         Sort: list_page.indexOf(page) + 2,
-        Name: Ultis.toSlug(page.Name),
+        Name: Ultis.toSlug(page.Name).replace(/(\\|\/)g/, "-"),
         Type: 0,
         Code: ProjectDA.obj.Code.toLowerCase(),
         Item: page.cssString,
