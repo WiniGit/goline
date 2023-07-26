@@ -5959,7 +5959,7 @@ function selectionClass() {
   let listStyleClass = selected_list
     .map((wb) => wb.ListClassName?.split(" ") ?? [])
     .reduce((a, b) => a.concat(b))
-    .filter((clName) => clName.startsWith("w-style-cls"));
+    .filter((clName) => clName.startsWith("w-st-cls"));
   let editContainer = document.createElement("div");
   editContainer.id = "edit-create-class";
   editContainer.className = "edit-container";
@@ -5971,13 +5971,16 @@ function selectionClass() {
   let title = document.createElement("p");
   title.innerHTML = "Style class";
 
+  let iconAdd = document.createElement("i");
+  iconAdd.className = "fa-solid fa-plus fa-sm";
+
   let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg", null, function () {
     // let offset = header.getBoundingClientRect();
     // createDropdownTableSkin(EnumCate.typography, offset);
   });
   btnSelectSkin.className = "action-button";
 
-  header.replaceChildren(title, btnSelectSkin);
+  header.replaceChildren(title, iconAdd, btnSelectSkin);
 
   let body = document.createElement("div");
   body.className = "col";

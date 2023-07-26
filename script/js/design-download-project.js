@@ -139,6 +139,17 @@ async function push_dataProject() {
           newSwitch.replaceChildren(...wbValue.childNodes);
           wbValue = newSwitch;
           break;
+        case EnumCate.checkbox:
+          let newCheckbox = document.createElement("label");
+          newCheckbox.htmlFor = wbValue.querySelector(":scope > input").id;
+          for (let i = 0; i < wbValue.attributes.length; i++) {
+            let attrObj = wbValue.attributes[i];
+            newCheckbox.setAttribute(attrObj.name, attrObj.nodeValue);
+          }
+          wbValue.replaceWith(newCheckbox);
+          newCheckbox.replaceChildren(...wbValue.childNodes);
+          wbValue = newCheckbox;
+          break;
         case EnumCate.tree:
           wbValue.querySelectorAll(".w-tree").forEach((wtree) => (wtree.style.pointerEvents = null));
           break;
