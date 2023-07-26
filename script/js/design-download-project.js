@@ -186,7 +186,6 @@ async function push_dataProject() {
       console.log("data-start: ", data);
     },
   );
-  debugger;
 
   let skinRoot = `:root {
     ${document.documentElement.style.cssText.replace(uuid4Regex, match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match)}
@@ -355,7 +354,7 @@ $("body").on("click", '.download-project:not(".downloading")', async function ()
       },
       function (data) {
         console.log("build-end: ", data);
-        window.open(downloadUrl + `/${ProjectDA.obj.Code.toLowerCase()}.zip`);
+        window.open(downloadUrl + `/${ProjectDA.obj.Code.toLowerCase()}.zip?v=${Date.now()}}`);
       },
     );
 
