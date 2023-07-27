@@ -273,7 +273,7 @@ function inputFrameItem(frame_item, isRatioWH) {
       switch (wb.CateID) {
         case EnumCate.w_switch:
           wb.StyleItem.FrameItem.Width = frame_item.Width;
-          wb.StyleItem.FrameItem.Height = Math.round(frame_item.Width * 5 / 9);
+          wb.StyleItem.FrameItem.Height = Math.round((frame_item.Width * 5) / 9);
           break;
         case EnumCate.radio_button:
           wb.StyleItem.FrameItem.Width = frame_item.Width;
@@ -305,7 +305,7 @@ function inputFrameItem(frame_item, isRatioWH) {
       switch (wb.CateID) {
         case EnumCate.w_switch:
           wb.StyleItem.FrameItem.Height = frame_item.Height;
-          wb.StyleItem.FrameItem.Width = Math.round(frame_item.Height * 9 / 5);
+          wb.StyleItem.FrameItem.Width = Math.round((frame_item.Height * 9) / 5);
           break;
         case EnumCate.radio_button:
           wb.StyleItem.FrameItem.Width = frame_item.Height;
@@ -481,7 +481,7 @@ function inputPositionItem(position_item) {
     let isInLayout = window.getComputedStyle(parentHTML).display.match("flex");
     let eObj;
     if (parentHTML.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level}"]`).length === selected_list.length) {
-      parentWb = wbase_list.find(e => e.GID === select_box_parentID);
+      parentWb = wbase_list.find((e) => e.GID === select_box_parentID);
       if (parentWb.StyleItem.FrameItem.Width == null) {
         parentWb.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
         parentHTML.style.width = parentHTML.offsetWidth + "px";
@@ -637,7 +637,7 @@ function selectResizeType(isW = true, type) {
               }
             } else {
               let childrenHTML = [...wbHTML.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)];
-              let fillChild = childrenHTML.filter(e => e.style.width == "100%");
+              let fillChild = childrenHTML.filter((e) => e.style.width == "100%");
               if (childrenHTML.length === fillChild.length) {
                 fillChild.sort((a, b) => b.offsetWidth - a.offsetWidth);
                 let wbChild = wbase_list.find((e) => e.GID == fillChild[0].id);
@@ -672,8 +672,8 @@ function selectResizeType(isW = true, type) {
               list_update.push(parent_wbase);
             } else {
               let childrenHTML = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
-              let fillChild = childrenHTML.filter(e => e.style.width != "100%");
-              if (fillChild.every(e => selected_list.some(wb => e.id === wb.GID))) {
+              let fillChild = childrenHTML.filter((e) => e.style.width != "100%");
+              if (fillChild.every((e) => selected_list.some((wb) => e.id === wb.GID))) {
                 parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
                 parentHTML.style.width = `${parentHTML.offsetWidth}px`;
                 list_update.push(parent_wbase);
@@ -720,7 +720,7 @@ function selectResizeType(isW = true, type) {
               }
             } else {
               let childrenHTML = [...wbHTML.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)];
-              let fillChild = childrenHTML.filter(e => e.style.height == "100%");
+              let fillChild = childrenHTML.filter((e) => e.style.height == "100%");
               if (childrenHTML.length === fillChild.length) {
                 fillChild.sort((a, b) => b.offsetHeight - a.offsetHeight);
                 let wbChild = wbase_list.find((e) => e.GID == fillChild[0].id);
@@ -755,8 +755,8 @@ function selectResizeType(isW = true, type) {
               list_update.push(parent_wbase);
             } else {
               let childrenHTML = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
-              let fillChild = childrenHTML.filter(e => e.style.height != "100%");
-              if (fillChild.every(e => selected_list.some(wb => e.id === wb.GID))) {
+              let fillChild = childrenHTML.filter((e) => e.style.height != "100%");
+              if (fillChild.every((e) => selected_list.some((wb) => e.id === wb.GID))) {
                 parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
                 parentHTML.style.height = `${parentHTML.offsetHeight}px`;
                 list_update.push(parent_wbase);
@@ -1762,7 +1762,7 @@ async function editBackground(decorationItem, onSubmit = true) {
 
 function editBackgroundImage(url) {
   if (!url.endsWith(".svg")) {
-    let list_change_background = selected_list.filter((wb) => wb.StyleItem.DecorationItem && EnumCate.noImgBg.every(ct => wb.CateID !== ct));
+    let list_change_background = selected_list.filter((wb) => wb.StyleItem.DecorationItem && EnumCate.noImgBg.every((ct) => wb.CateID !== ct));
     for (let wb of list_change_background) {
       wb.StyleItem.DecorationItem.ColorID = null;
       wb.StyleItem.DecorationItem.ColorValue = url;
@@ -1774,7 +1774,7 @@ function editBackgroundImage(url) {
 }
 
 function removeBackgroundImg() {
-  let list_change_background = selected_list.filter((wb) => wb.StyleItem.DecorationItem && EnumCate.noImgBg.every(ct => wb.CateID !== ct));
+  let list_change_background = selected_list.filter((wb) => wb.StyleItem.DecorationItem && EnumCate.noImgBg.every((ct) => wb.CateID !== ct));
   for (let wb of list_change_background) {
     wb.StyleItem.DecorationItem.ColorValue = "";
     wb.value.style.backgroundImage = null;
@@ -1835,8 +1835,7 @@ function editTextStyle(text_style_item, onSubmit = true) {
       wb.StyleItem.TextStyleItem = text_style_item;
       wb.value.style.font = `var(--font-style-${text_style_item.GID})`;
       wb.value.style.color = `var(--font-color-${text_style_item.GID})`;
-      if (text_style_item.LetterSpacing)
-        wb.value.style.letterSpacing = `${text_style_item.LetterSpacing}px`;
+      if (text_style_item.LetterSpacing) wb.value.style.letterSpacing = `${text_style_item.LetterSpacing}px`;
     }
   } else {
     _enumObj = EnumObj.textStyle;
@@ -2011,24 +2010,24 @@ function editTextStyle(text_style_item, onSubmit = true) {
 function editTypoSkin(text_style_item, thisSkin) {
   if (text_style_item.ColorValue) {
     thisSkin.ColorValue = text_style_item.ColorValue;
-    document.documentElement.style.setProperty(`--font-color-${thisSkin.GID}`, `#${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)}`)
+    document.documentElement.style.setProperty(`--font-color-${thisSkin.GID}`, `#${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)}`);
   }
   if (text_style_item.FontFamily) {
     thisSkin.FontFamily = text_style_item.FontFamily;
-    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? (thisSkin.Height + "px") : "normal"} ${thisSkin.FontFamily}`);
+    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? thisSkin.Height + "px" : "normal"} ${thisSkin.FontFamily}`);
   }
   if (text_style_item.FontSize != undefined) {
     thisSkin.FontSize = parseFloat(text_style_item.FontSize);
-    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? (thisSkin.Height + "px") : "normal"} ${thisSkin.FontFamily}`);
+    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? thisSkin.Height + "px" : "normal"} ${thisSkin.FontFamily}`);
   }
   if (text_style_item.FontWeight != undefined) {
     thisSkin.FontWeight = parseFloat(text_style_item.FontWeight);
-    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? (thisSkin.Height + "px") : "normal"} ${thisSkin.FontFamily}`);
+    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? thisSkin.Height + "px" : "normal"} ${thisSkin.FontFamily}`);
   }
   if (text_style_item.Height != undefined) {
     let lineHeightValue = text_style_item.Height.toString().toLowerCase();
     thisSkin.Height = lineHeightValue == "auto" ? null : parseFloat(lineHeightValue);
-    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? (thisSkin.Height + "px") : "normal"} ${thisSkin.FontFamily}`);
+    document.documentElement.style.setProperty(`--font-style-${thisSkin.GID}`, `${thisSkin.FontWeight} ${thisSkin.FontSize}px/${thisSkin.Height != undefined ? thisSkin.Height + "px" : "normal"} ${thisSkin.FontFamily}`);
   }
   if (text_style_item.LetterSpacing != undefined) {
     thisSkin.LetterSpacing = parseFloat(text_style_item.LetterSpacing);
@@ -2279,10 +2278,10 @@ function editEffectSkin(effect_item, thisSkin) {
       let listRelative = [];
       if (thisSkin.Type === ShadowType.layer_blur) {
         document.documentElement.style.removeProperty(`--effect-blur-${thisSkin.GID}`);
-        listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.EffectID == thisSkin.GID)
+        listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.EffectID == thisSkin.GID);
       } else if (effect_item.Type == ShadowType.layer_blur) {
         document.documentElement.style.removeProperty(`--effect-shadow-${thisSkin.GID}`);
-        listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.EffectID == thisSkin.GID)
+        listRelative = wbase_list.filter((e) => e.StyleItem.DecorationItem?.EffectID == thisSkin.GID);
       }
       thisSkin.Type = effect_item.Type;
       if (thisSkin.Type === ShadowType.layer_blur) {
@@ -2358,24 +2357,26 @@ function combineAsVariant() {
   let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.variant));
   new_wbase_item = createNewWbase(new_wbase_item).pop();
   new_wbase_item.IsWini = true;
-  new_wbase_item.StyleItem.PositionItem.Left = `${Math.min(
-    ...selected_list.map((e) => {
-      let leftValue = getWBaseOffset(e).x;
-      e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
-      e.StyleItem.PositionItem.Left = `${leftValue}px`;
-      return leftValue;
-    }),
-  ).toFixed(2) - 8
-    }px`;
-  new_wbase_item.StyleItem.PositionItem.Top = `${Math.min(
-    ...selected_list.map((e) => {
-      let topValue = getWBaseOffset(e).y;
-      e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
-      e.StyleItem.PositionItem.Top = `${topValue}px`;
-      return topValue;
-    }),
-  ).toFixed(2) - 8
-    }px`;
+  new_wbase_item.StyleItem.PositionItem.Left = `${
+    Math.min(
+      ...selected_list.map((e) => {
+        let leftValue = getWBaseOffset(e).x;
+        e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+        e.StyleItem.PositionItem.Left = `${leftValue}px`;
+        return leftValue;
+      }),
+    ).toFixed(2) - 8
+  }px`;
+  new_wbase_item.StyleItem.PositionItem.Top = `${
+    Math.min(
+      ...selected_list.map((e) => {
+        let topValue = getWBaseOffset(e).y;
+        e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+        e.StyleItem.PositionItem.Top = `${topValue}px`;
+        return topValue;
+      }),
+    ).toFixed(2) - 8
+  }px`;
   new_wbase_item.CountChild = selected_list.length;
   new_wbase_item.ListChildID = selected_list.map((e) => e.GID);
   new_wbase_item.StyleItem.FrameItem.Width = select_box.w / scale + 16;
