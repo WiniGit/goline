@@ -14,12 +14,14 @@
       if (parent) {
         sortItems.push(e);
         parent.value.appendChild(e.value);
+        e.Sort = parent.ListChildID.indexOf(e.GID);
       } else {
         if (wbase_list.length > 0) {
           parent = document.getElementById(e.ParentID);
           if (parent) {
             e.ListID = parent.getAttribute("listid") + `,${e.ParentID}`;
             e.Level = e.ListID.split(",").length;
+            e.Sort = parent.ListChildID.indexOf(e.GID);
             let m = e.value;
             e.ListID.split(",")
               .filter((id) => id !== wbase_parentID)
@@ -713,14 +715,12 @@ function initWbaseStyle(item) {
     if (item.StyleItem.TextStyleItem.IsStyle) {
       item.value.style.font = `var(--font-style-${item.StyleItem.TextStyleID})`;
       item.value.style.color = `var(--font-color-${item.StyleItem.TextStyleID})`;
-      if (item.StyleItem.TextStyleItem.LetterSpacing)
-        item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
+      if (item.StyleItem.TextStyleItem.LetterSpacing) item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
     } else {
       item.value.style.fontFamily = item.StyleItem.TextStyleItem.FontFamily;
       item.value.style.fontSize = `${item.StyleItem.TextStyleItem.FontSize}px`;
       item.value.style.fontWeight = item.StyleItem.TextStyleItem.FontWeight;
-      if (item.StyleItem.TextStyleItem.LetterSpacing)
-        item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
+      if (item.StyleItem.TextStyleItem.LetterSpacing) item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
       item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue?.substring(2)}${item.StyleItem.TextStyleItem.ColorValue?.substring(0, 2)}`;
       if (item.StyleItem.TextStyleItem.Height != undefined) {
         item.value.style.lineHeight = `${item.StyleItem.TextStyleItem.Height}px`;
@@ -745,11 +745,9 @@ function handleStyleSize(item) {
     } else {
       item.value.style.width = "fit-content";
     }
-    // if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
   } else if (item.StyleItem.FrameItem.Width < 0) {
     item.value.style.width = "100%";
   } else {
-    // if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
     if ([Constraints.left, Constraints.right, Constraints.center].some((constX) => item.StyleItem.PositionItem.ConstraintsX === constX)) {
       item.value.style.width = `${item.StyleItem.FrameItem.Width}px`;
     }

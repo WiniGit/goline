@@ -350,20 +350,20 @@ function createComponent() {
     wb.ChildID = null;
     wb.value.setAttribute("iswini", "true");
     document.getElementById(`wbaseID:${wb.GID}`).setAttribute("iswini", "true");
-
     // let newStyle = document.createElement("style");
     // newStyle.id = `st-comp${wb.GID}`;
-    // let newBaseProperty = {
-    //   GID: uuidv4(),
-    //   Name: wb.Name,
-    //   BaseID: wb.GID,
-    //   CssText: `.st-comp${wb.GID} { ${wb.value.style.cssText.split(";").filter(e => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`
-    // };
-    // wb.value.querySelectorAll(`.wbaseItem-value:not(.wbaseItem-value[inst="true"] *)`).forEach(childHTML => {
-    //   newBaseProperty.CssText += `/**/ .st-comp${wb.GID} .st-${childHTML.id} { ${childHTML.style.cssText} }`;
+    // let wbCssText = wb.value.style.cssText.split(";");
+    // let newCssText = `.st-comp${wb.GID} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`;
+    // wb.value.querySelectorAll(`.wbaseItem-value:not(.wbaseItem-value[inst="true"] *)`).forEach((childHTML) => {
+    //   newCssText += `/**/ .st-comp${wb.GID} .st-${childHTML.id} { ${childHTML.style.cssText} }`;
+    //   childHTML.removeAttribute("style");
+    //   $(childHTML).addClass(`st-${childHTML.id}`);
     // });
-    // newStyle.innerHTML = newBaseProperty.CssText;
-    // document.head.appendChild(newStyle);
+    // newStyle.innerHTML = newCssText;
+    // document.head.appendChild(newStyle); 
+    // wb.value.removeAttribute("style");
+    // wb.value.style.cssText = wbCssText.filter((e) => e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";");
+    // $(wb.value).addClass(`st-comp${wb.GID}`);
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);

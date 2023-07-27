@@ -1494,7 +1494,7 @@ function editJsonItemByCate() {
                     let labelMaxLength = document.createElement("label");
                     labelMaxLength.htmlFor = "validate-message";
                     labelMaxLength.className = "regular1";
-                    labelMaxLength.innerHTML = "Min length";
+                    labelMaxLength.innerHTML = "Max length";
                     let inputMaxLength = document.createElement("input");
                     inputMaxLength.id = "validate-message";
                     inputMaxLength.className = "regular1";
@@ -1517,7 +1517,7 @@ function editJsonItemByCate() {
                     let labelMinLength = document.createElement("label");
                     labelMinLength.htmlFor = "validate-message";
                     labelMinLength.className = "regular1";
-                    labelMinLength.innerHTML = "Max length";
+                    labelMinLength.innerHTML = "Min length";
                     let inputMinLength = document.createElement("input");
                     inputMinLength.id = "validate-message";
                     inputMinLength.className = "regular1";
