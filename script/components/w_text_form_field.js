@@ -25,7 +25,6 @@ function createTextFieldHTML(item, parent) {
   $(textField).addClass("textfield");
   let children = [];
   let input = document.createElement("input");
-  input.id = `textfield-${item.GID}`;
   input.autocomplete = "off";
   children.push(input);
   if (parent) {
@@ -36,7 +35,6 @@ function createTextFieldHTML(item, parent) {
     if (parent.JsonItem?.LabelText && parent.JsonItem?.LabelText != "") {
       let label = document.createElement("label");
       label.innerHTML = parent.JsonItem.LabelText;
-      label.htmlFor = `textfield-${item.GID}`;
       children.push(label);
       if (input.value.trim() !== "") {
         $(textField).addClass("content");

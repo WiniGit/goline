@@ -36,12 +36,10 @@
   }
 
   static selectPage(pageItem) {
-    if (pageItem) {
-      if (pageItem.ID !== PageDA.obj.ID) {
-        PageDA.obj = pageItem;
-        Ultis.setStorage("opening-page", JSON.stringify(pageItem));
-        PageDA.pageLoadingView(initData);
-      }
+    if (pageItem && pageItem.ID !== PageDA.obj.ID) {
+      PageDA.obj = pageItem;
+      Ultis.setStorage("opening-page", JSON.stringify(pageItem));
+      PageDA.pageLoadingView(initData);
     }
   }
 

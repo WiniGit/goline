@@ -21,7 +21,6 @@
           if (parent) {
             e.ListID = parent.getAttribute("listid") + `,${e.ParentID}`;
             e.Level = e.ListID.split(",").length;
-            e.Sort = parent.ListChildID.indexOf(e.GID);
             let m = e.value;
             e.ListID.split(",")
               .filter((id) => id !== wbase_parentID)
@@ -377,21 +376,10 @@ const setSizeObserver = new MutationObserver((mutationList) => {
           ?.replace("height:", "")
           ?.trim();
       }
-      if (widthValue != targetWbase.style.width) {
-        changeSelectBox = true;
-        if (targetWbase.style.width == "100%") {
-          if (targetWbase.parentElement?.style?.flexDirection == "row") {
-            targetWbase.style.flex = 1;
-          }
-        }
-      }
+      changeSelectBox = widthValue != targetWbase.style.width;
       if (heightValue != targetWbase.style.height) {
         changeSelectBox = true;
-        if (targetWbase.style.height == "100%") {
-          if (targetWbase.parentElement?.style?.flexDirection == "column") {
-            targetWbase.style.flex = 1;
-          }
-        } else if (targetWbase.getAttribute("cateid") == EnumCate.tree) {
+        if (targetWbase.style.height !== "100%" && targetWbase.getAttribute("cateid") == EnumCate.tree) {
           targetWbase.style.setProperty("--height", `${parseFloat(targetWbase.style.height.replace("px", "")) / ([...targetWbase.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1)}px`);
         }
       }
@@ -590,9 +578,7 @@ function initPositionStyle(item) {
   let valueT = item.StyleItem.PositionItem.Top;
   if (item.ParentID === wbase_parentID) {
     item.value.style.left = valueL;
-
     item.value.style.top = valueT;
-
     item.value.style.transform = null;
   } else {
     let valueR = item.StyleItem.PositionItem.Right;
@@ -746,6 +732,9 @@ function handleStyleSize(item) {
       item.value.style.width = "fit-content";
     }
   } else if (item.StyleItem.FrameItem.Width < 0) {
+    if ($(item.value).parents(`.wbaseItem-value[level="${item.Level - 1}"]`)?.classList?.contains("w-row")) {
+      item.value.style.flex = 1;
+    } 
     item.value.style.width = "100%";
   } else {
     if ([Constraints.left, Constraints.right, Constraints.center].some((constX) => item.StyleItem.PositionItem.ConstraintsX === constX)) {
@@ -756,6 +745,9 @@ function handleStyleSize(item) {
     item.value.style.height = "fit-content";
     if (item.value.parentElement?.style?.flexDirection == "column") item.value.style.flex = null;
   } else if (item.StyleItem.FrameItem.Height < 0) {
+    if ($(item.value).parents(`.wbaseItem-value[level="${item.Level - 1}"]`)?.classList?.contains("w-col")) {
+      item.value.style.flex = 1;
+    }
     item.value.style.height = "100%";
   } else {
     if ([Constraints.top, Constraints.bottom, Constraints.center].some((constY) => item.StyleItem.PositionItem.ConstraintsY === constY)) {

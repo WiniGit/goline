@@ -145,13 +145,29 @@ function showOnOffUI() {
 function saveWbaseCopy() {
   Ultis.removeFromStorage("copy-item");
   if (select_box) {
-    copy_item = selected_list.map((e) => e.GID);
+    copy_item = selected_list.map((e) => {
+      let jsonWb = JSON.parse(JSON.stringify(e));
+      if (e.value.style.width == "100%") {
+        jsonWb.StyleItem.FrameItem.Width = -e.value.offsetWidth;
+      } else if (!e.StyleItem.FrameItem.Width) {
+        jsonWb.offsetWidth = e.value.offsetWidth;
+      }
+      if (e.value.style.height == "100%") {
+        jsonWb.StyleItem.FrameItem.Height = -e.value.offsetHeight;
+      } else if (!e.StyleItem.FrameItem.Height) {
+        jsonWb.offsetHeight = e.value.offsetHeight;
+      }
+      jsonWb.PageID = PageDA.obj.ID;
+      return jsonWb;
+    });
   }
 }
 
 function pasteWbase() {
   let otherP = false;
-  if (!copy_item?.length) {
+  if (copy_item?.length) {
+    otherP = copy_item.every((e) => e.PageID && e.PageID !== PageDA.obj.ID);
+  } else {
     let storeCopy = Ultis.getStorage("copy-item");
     if (storeCopy) {
       storeCopy = JSON.parse(storeCopy);
@@ -166,7 +182,7 @@ function pasteWbase() {
   let listWb = [];
   let list_new_wbase = [];
   if (!otherP) {
-    list_new_wbase = wbase_list.filter((e) => copy_item.some((id) => id === e.GID));
+    list_new_wbase = wbase_list.filter((e) => copy_item.some((copyWb) => copyWb.GID === e.GID));
   }
   if (list_new_wbase.length === copy_item.length || otherP) {
     if (otherP) {
@@ -180,12 +196,12 @@ function pasteWbase() {
         newWb.ChildID = e.GID;
         newWb.IsCopy = true;
         newWb.IsWini = false;
-        newWb.value.style.width = newWb.StyleItem.FrameItem.Width + "px";
-        newWb.value.style.height = newWb.StyleItem.FrameItem.Height + "px";
+        newWb.value.style.width = Math.abs(newWb.StyleItem.FrameItem.Width ?? newWb.offsetWidth) + "px";
+        newWb.value.style.height = Math.abs(newWb.StyleItem.FrameItem.Height ?? newWb.offsetHeight) + "px";
         newWb.ParentID = wbase_parentID;
         newWb.Level = 1;
-        newWb.StyleItem.PositionItem.Left = `${offset.x - newWb.StyleItem.FrameItem.Width / 2}px`;
-        newWb.StyleItem.PositionItem.Top = `${offset.y - newWb.StyleItem.FrameItem.Height / 2}px`;
+        newWb.StyleItem.PositionItem.Left = `${offset.x - Math.abs(newWb.StyleItem.FrameItem.Width ?? newWb.offsetWidth) / 2}px`;
+        newWb.StyleItem.PositionItem.Top = `${offset.y - Math.abs(newWb.StyleItem.FrameItem.Height ?? newWb.offsetHeight) / 2}px`;
         newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left;
         newWb.StyleItem.PositionItem.ConstraintsY = Constraints.top;
         tmpAltHTML.push(newWb.value);
@@ -202,7 +218,6 @@ function pasteWbase() {
         newWb.ChildID = e.GID;
         newWb.IsCopy = true;
         newWb.IsWini = false;
-        newWb.ParentID = wbase_parentID;
         newWb.value.style.width = currentHTML.offsetWidth + "px";
         newWb.value.style.height = currentHTML.offsetHeight + "px";
         newWb.value.style.transform = null;
@@ -214,74 +229,9 @@ function pasteWbase() {
     }
     let newParent;
     let parent_wbase;
-    if (selected_list.length === 1 && copy_item.every((id) => selected_list[0].GID !== id && !selected_list[0].ListID.includes(id))) {
+    if (selected_list.length === 1 && copy_item.every((copyWb) => selected_list[0].GID !== copyWb.GID && !selected_list[0].ListID.includes(copyWb.GID))) {
       newParent = selected_list[0].value;
       parent_wbase = selected_list[0];
-      if (parent_wbase.CateID === EnumCate.table) {
-        let availableCell = findCell(newParent, { pageX: minx, pageY: miny });
-        list_new_wbase.forEach((newWb) => availableCell.appendChild(newWb.value));
-        let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
-        [...newParent.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
-          listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
-        });
-        parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
-        wbase_list.push(...list_new_wbase);
-        listWb.push(...list_new_wbase);
-      } else if (window.getComputedStyle(newParent).display.match("flex") && list_new_wbase.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
-        let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)].map((e) => parseInt(e.style.zIndex))) + 1;
-        for (let i = 0; i < list_new_wbase.length; i++) {
-          list_new_wbase[i].value.style.left = null;
-          list_new_wbase[i].value.style.top = null;
-          list_new_wbase[i].value.style.right = null;
-          list_new_wbase[i].value.style.bottom = null;
-          list_new_wbase[i].value.style.transform = null;
-          list_new_wbase[i].value.style.zIndex = zIndex + i;
-          list_new_wbase[i].value.style.order = zIndex + i;
-          list_new_wbase[i].Sort = zIndex + i;
-          if (list_new_wbase[i].StyleItem.FrameItem.Width < 0 && parent_wbase.StyleItem.FrameItem.Width == null) {
-            list_new_wbase[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
-          }
-          if (list_new_wbase[i].StyleItem.FrameItem.Height < 0 && parent_wbase.StyleItem.FrameItem.Height == null) {
-            list_new_wbase[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
-          }
-          switch (parseInt(newParent.getAttribute("cateid"))) {
-            case EnumCate.tree:
-              newParent.querySelector(".children-value").appendChild(list_new_wbase[i].value);
-              break;
-            case EnumCate.carousel:
-              newParent.querySelector(".children-value").appendChild(list_new_wbase[i].value);
-              break;
-            default:
-              newParent.appendChild(list_new_wbase[i].value);
-              break;
-          }
-          listWb.push(list_new_wbase[i]);
-          wbase_list.push(list_new_wbase[i]);
-        }
-      } else {
-        let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)].map((e) => parseInt(e.style.zIndex))) + 1;
-        let parentRect = newParent.getBoundingClientRect();
-        parentRect = offsetScale(parentRect.x, parentRect.y);
-        for (let i = 0; i < list_new_wbase.length; i++) {
-          list_new_wbase[i].Sort = zIndex + i;
-          if (list_new_wbase[i].StyleItem.FrameItem.Width < 0) {
-            list_new_wbase[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
-          }
-          if (list_new_wbase[i].StyleItem.FrameItem.Height < 0) {
-            list_new_wbase[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
-          }
-          let offset = offsetScale(minx, miny);
-          list_new_wbase[i].StyleItem.PositionItem.Top = `${offset.y - list_new_wbase[i].value.offsetHeight - parentRect.y}px`;
-          list_new_wbase[i].StyleItem.PositionItem.Left = `${offset.x - list_new_wbase[i].value.offsetWidth - parentRect.x}px`;
-          list_new_wbase[i].value.style.left = list_new_wbase[i].StyleItem.PositionItem.Left;
-          list_new_wbase[i].value.style.top = list_new_wbase[i].StyleItem.PositionItem.Top;
-          list_new_wbase[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
-          list_new_wbase[i].StyleItem.PositionItem.ConstraintsY = Constraints.top;
-          wbase_list.push(list_new_wbase[i]);
-          listWb.push(list_new_wbase[i]);
-          newParent.appendChild(list_new_wbase[i].value);
-        }
-      }
     } else {
       if (list_new_wbase[0].ParentID === wbase_parentID) {
         newParent = divSection;
@@ -289,9 +239,34 @@ function pasteWbase() {
         parent_wbase = wbase_list.find((wb) => wb.GID === list_new_wbase[0].ParentID);
         newParent = document.getElementById(list_new_wbase[0].ParentID);
       }
+    }
+    if (parent_wbase?.CateID === EnumCate.table) {
+      let availableCell = findCell(newParent, { pageX: minx, pageY: miny });
+      list_new_wbase.forEach((newWb) => availableCell.appendChild(newWb.value));
+      let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
+      [...newParent.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
+        listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
+      });
+      parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
+      wbase_list.push(...list_new_wbase);
+      listWb.push(...list_new_wbase);
+    } else if (window.getComputedStyle(newParent).display.match("flex") && list_new_wbase.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
+      let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)].map((e) => parseInt(e.style.zIndex))) + 1;
       for (let i = 0; i < list_new_wbase.length; i++) {
-        let selectHTML = list_new_wbase[i].value;
-        list_new_wbase[i].Sort++;
+        list_new_wbase[i].value.style.left = null;
+        list_new_wbase[i].value.style.top = null;
+        list_new_wbase[i].value.style.right = null;
+        list_new_wbase[i].value.style.bottom = null;
+        list_new_wbase[i].value.style.transform = null;
+        list_new_wbase[i].value.style.zIndex = zIndex + i;
+        list_new_wbase[i].value.style.order = zIndex + i;
+        list_new_wbase[i].Sort = zIndex + i;
+        if (list_new_wbase[i].StyleItem.FrameItem.Width < 0 && parent_wbase.StyleItem.FrameItem.Width == null) {
+          list_new_wbase[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
+        }
+        if (list_new_wbase[i].StyleItem.FrameItem.Height < 0 && parent_wbase.StyleItem.FrameItem.Height == null) {
+          list_new_wbase[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
+        }
         switch (parseInt(newParent.getAttribute("cateid"))) {
           case EnumCate.tree:
             newParent.querySelector(".children-value").appendChild(list_new_wbase[i].value);
@@ -303,17 +278,37 @@ function pasteWbase() {
             newParent.appendChild(list_new_wbase[i].value);
             break;
         }
-        selectHTML.style.zIndex = list_new_wbase[i].Sort;
-        selectHTML.style.order = list_new_wbase[i].Sort;
-        if (parent_wbase?.CateID === EnumCate.table) {
-          let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
-          [...newParent.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
-            listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
-          });
-          parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
-        }
         listWb.push(list_new_wbase[i]);
         wbase_list.push(list_new_wbase[i]);
+      }
+    } else {
+      let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${(parent_wbase?.Level ?? 0) + 1}"]`)].map((e) => parseInt(e.style.zIndex))) + 1;
+      let parentRect = {
+        x: 0,
+        y: 0,
+      };
+      if (newParent !== divSection) {
+        newParent.getBoundingClientRect();
+        parentRect = offsetScale(parentRect.x, parentRect.y);
+      }
+      for (let i = 0; i < list_new_wbase.length; i++) {
+        list_new_wbase[i].Sort = zIndex + i;
+        if (list_new_wbase[i].StyleItem.FrameItem.Width < 0) {
+          list_new_wbase[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
+        }
+        if (list_new_wbase[i].StyleItem.FrameItem.Height < 0) {
+          list_new_wbase[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
+        }
+        let offset = offsetScale(minx, miny);
+        list_new_wbase[i].StyleItem.PositionItem.Top = `${offset.y - list_new_wbase[i].value.offsetHeight - parentRect.y}px`;
+        list_new_wbase[i].StyleItem.PositionItem.Left = `${offset.x - list_new_wbase[i].value.offsetWidth - parentRect.x}px`;
+        list_new_wbase[i].value.style.left = list_new_wbase[i].StyleItem.PositionItem.Left;
+        list_new_wbase[i].value.style.top = list_new_wbase[i].StyleItem.PositionItem.Top;
+        list_new_wbase[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
+        list_new_wbase[i].StyleItem.PositionItem.ConstraintsY = Constraints.top;
+        wbase_list.push(list_new_wbase[i]);
+        listWb.push(list_new_wbase[i]);
+        newParent.appendChild(list_new_wbase[i].value);
       }
     }
     if (parent_wbase) {
@@ -360,7 +355,7 @@ function createComponent() {
     //   $(childHTML).addClass(`st-${childHTML.id}`);
     // });
     // newStyle.innerHTML = newCssText;
-    // document.head.appendChild(newStyle); 
+    // document.head.appendChild(newStyle);
     // wb.value.removeAttribute("style");
     // wb.value.style.cssText = wbCssText.filter((e) => e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";");
     // $(wb.value).addClass(`st-comp${wb.GID}`);

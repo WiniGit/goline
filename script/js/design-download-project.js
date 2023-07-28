@@ -130,7 +130,6 @@ async function push_dataProject() {
           break;
         case EnumCate.w_switch:
           let newSwitch = document.createElement("label");
-          newSwitch.htmlFor = wbValue.querySelector(":scope > input").id;
           for (let i = 0; i < wbValue.attributes.length; i++) {
             let attrObj = wbValue.attributes[i];
             newSwitch.setAttribute(attrObj.name, attrObj.nodeValue);
@@ -141,7 +140,6 @@ async function push_dataProject() {
           break;
         case EnumCate.checkbox:
           let newCheckbox = document.createElement("label");
-          newCheckbox.htmlFor = wbValue.querySelector(":scope > input").id;
           for (let i = 0; i < wbValue.attributes.length; i++) {
             let attrObj = wbValue.attributes[i];
             newCheckbox.setAttribute(attrObj.name, attrObj.nodeValue);
@@ -149,6 +147,16 @@ async function push_dataProject() {
           wbValue.replaceWith(newCheckbox);
           newCheckbox.replaceChildren(...wbValue.childNodes);
           wbValue = newCheckbox;
+          break;
+        case EnumCate.radio_button:
+          let newRadioBtn = document.createElement("label");
+          for (let i = 0; i < wbValue.attributes.length; i++) {
+            let attrObj = wbValue.attributes[i];
+            newRadioBtn.setAttribute(attrObj.name, attrObj.nodeValue);
+          }
+          wbValue.replaceWith(newRadioBtn);
+          newRadioBtn.replaceChildren(...wbValue.childNodes);
+          wbValue = newRadioBtn;
           break;
         case EnumCate.tree:
           wbValue.querySelectorAll(".w-tree").forEach((wtree) => (wtree.style.pointerEvents = null));

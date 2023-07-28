@@ -13,7 +13,6 @@ function createSwitch(initValue = false, wbaseItem) {
 	slider.className = "slider";
 	toggle.replaceChildren(input, slider);
 	if (wbaseItem) {
-		input.id = `input-${wbaseItem.GID}`;
 		if (wbaseItem.AttributesItem.NameField !== "")
 			input.name = wbaseItem.AttributesItem.NameField;
 		toggle.style.setProperty("--dot-color", `#${wbaseItem.JsonItem.DotColor.substring(2) + wbaseItem.JsonItem.DotColor.substring(2, 0)}`);

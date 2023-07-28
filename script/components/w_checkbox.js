@@ -30,8 +30,6 @@ function createCheckbox(initValue = false, wbaseItem) {
   checkmark.className = "checkmark";
   toggle.replaceChildren(input, checkmark);
   if (wbaseItem) {
-    toggle.htmlFor = `input-${wbaseItem.GID}`;
-    input.id = `input-${wbaseItem.GID}`;
     if (wbaseItem.AttributesItem.NameField !== "")
       input.name = wbaseItem.AttributesItem.NameField;
     checkmark.setAttribute("checkcolor", wbaseItem.JsonItem.CheckColor);
