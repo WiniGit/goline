@@ -2884,15 +2884,15 @@ function editFormDataContent(elementTag, form) {
   if (elementTag.type === "radio") {
     elementTag.checked = true;
     $(elementTag).trigger("change");
-    let radioList = [...form.querySelectorAll(`input[name="${elementTag.name}"]`)].filter((radio) => radio.type === "radio").map((radio) => radio.id.replace("input-", ""));
+    let radioList = [...form.querySelectorAll(`input[name="${elementTag.name}"]`)].filter((radio) => radio.type === "radio").map((radio) => radio.parentElement.id);
     list_update.push(...wbase_list.filter((wbasItem) => radioList.some((id) => wbasItem.GID === id)));
   } else if (elementTag.type === "checkbox") {
     elementTag.checked = !elementTag.checked;
     $(elementTag).trigger("change");
-    list_update.push(wbase_list.find((wbaseItem) => wbaseItem.GID === elementTag.id.replace("input-", "")));
+    list_update.push(wbase_list.find((wbaseItem) => wbaseItem.GID === radio.parentElement.id));
   } else {
     $(elementTag).trigger("blur");
-    list_update.push(wbase_list.find((wbaseItem) => wbaseItem.GID === elementTag.id.replace("input-", "")));
+    list_update.push(wbase_list.find((wbaseItem) => wbaseItem.GID === radio.parentElement.id));
   }
   WBaseDA.edit(list_update, EnumObj.attribute);
 }
