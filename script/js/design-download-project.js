@@ -122,7 +122,12 @@ async function push_dataProject() {
           break;
         case EnumCate.textformfield:
           let wbItem = wbase_list.find((e) => e.GID === wbValue.id);
-          if (wbItem) wbValue.setAttribute("placeholder", wbItem.JsonItem.HintText);
+          if (wbItem) {
+            wbValue.setAttribute("placeholder", wbItem.JsonItem.HintText);
+            if (wbItem.JsonItem.JsonVadidate?.length) {
+              wbValue.setAttribute("validate", JSON.stringify(wbItem.JsonItem.JsonVadidate));
+            }
+          }
           break;
         case EnumCate.textfield:
           wbValue.style.pointerEvents = null;

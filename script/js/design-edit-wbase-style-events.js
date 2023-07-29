@@ -2542,6 +2542,8 @@ function editJsonItem(jsonItem, onSubmit = true) {
     selected_list[0].JsonItem.HintText = jsonItem.HintText;
     let thislabel = selected_list[0].value.querySelector(".textfield > label");
     if (!thislabel) selected_list[0].value.querySelector(".textfield > input").placeholder = jsonItem.HintText;
+  } else if (jsonItem.AutoValidate != undefined) {
+    selected_list[0].JsonItem.AutoValidate = jsonItem.AutoValidate;
   } else if (jsonItem.TextFormFieldType) {
     selected_list[0].JsonItem.Type = jsonItem.TextFormFieldType;
     createTextFieldHTML(
