@@ -342,23 +342,25 @@ function createComponent() {
   let un_component_list = selected_list.filter((e) => !e.IsWini);
   for (let wb of un_component_list) {
     wb.IsWini = true;
-    wb.ChildID = null;
+    wb.CopyID = null;
     wb.value.setAttribute("iswini", "true");
     document.getElementById(`wbaseID:${wb.GID}`).setAttribute("iswini", "true");
-    // let newStyle = document.createElement("style");
-    // newStyle.id = `st-comp${wb.GID}`;
-    // let wbCssText = wb.value.style.cssText.split(";");
-    // let newCssText = `.st-comp${wb.GID} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`;
-    // wb.value.querySelectorAll(`.wbaseItem-value:not(.wbaseItem-value[inst="true"] *)`).forEach((childHTML) => {
-    //   newCssText += `/**/ .st-comp${wb.GID} .st-${childHTML.id} { ${childHTML.style.cssText} }`;
-    //   childHTML.removeAttribute("style");
-    //   $(childHTML).addClass(`st-${childHTML.id}`);
-    // });
-    // newStyle.innerHTML = newCssText;
-    // document.head.appendChild(newStyle);
-    // wb.value.removeAttribute("style");
-    // wb.value.style.cssText = wbCssText.filter((e) => e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";");
-    // $(wb.value).addClass(`st-comp${wb.GID}`);
+    let newStyle = document.createElement("style");
+    newStyle.id = `st-comp${wb.GID}`;
+    let wbCssText = wb.value.style.cssText.split(";");
+    let cssItem = {
+      GID: wb.GID,
+      Name: Ultis.toSlug(wb.Name),
+      PageID: PageDA.obj.ID,
+      Css: `.w-st-comp${wb.GID} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
+    };
+    wb.value.querySelectorAll(`.wbaseItem-value`).forEach((childHTML) => {
+      cssItem.Css += `/**/ .w-st-comp${wb.GID} .w-st-${childHTML.id} { ${childHTML.style.cssText} }`;
+    });
+    newStyle.innerHTML = cssItem.Css;
+    document.head.appendChild(newStyle);
+    WiniIO.emitCss(cssItem, EnumEvent.add);
+    StyleDA.cssStyleSheets.push(cssItem);
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);
@@ -589,7 +591,6 @@ function createFolderTile(collectionItem) {
     e.stopPropagation();
     selectFolder(collectionItem);
   };
-
   let prefixIcon = document.createElement("i");
   prefixIcon.className = "fa-regular fa-folder";
   prefixIcon.style.margin = "2px 6px";

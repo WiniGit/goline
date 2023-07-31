@@ -963,6 +963,14 @@ class WiniIO {
     }
   }
 
+  static emitCss(cssItem, enumEvent) {
+    socket.emit("client-css", {
+      pid: PageDA.obj.ProjectID,
+      data: cssItem,
+      enumEvent: enumEvent
+    });
+  }
+
   static emitGet(json, url, enumObj, enumEvent) {
     var header = UserService.headerProject();
     socket.emit("client-get", {

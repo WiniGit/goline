@@ -332,6 +332,7 @@ const spChaRegex = /[!@#\$%\^\&*\)\(+=._-]/g;
 const classRegex = /\.([^\s{}]+)/g;
 var wbase_list = [];
 var base_component_list = [];
+var cssStyleSheets = [];
 var assets_list = [];
 var selected_list = [];
 var alt_list = [];
@@ -1381,6 +1382,8 @@ class WBaseDA {
     let styleData = await $.get(this.style_url + `?pageid=${PageDA.obj.ID}`);
     styleData = styleData.Data;
     let WbData = await $.get(this.wbase_url + `?pageid=${PageDA.obj.ID}`);
+    let cssData = await StyleDA.initStyleSheets();
+    StyleDA.cssStyleSheets = cssData.Data;
     WbData = WbData.Data;
     WbData.forEach((wb) => {
       wb.AttributesItem = attributeData.find((e) => e.GID == wb.AttributeID);
@@ -1627,6 +1630,7 @@ class WBaseDA {
       .map((e) => {
         let jsonE = JSON.parse(JSON.stringify(e));
         jsonE.ProjectID = ProjectDA.obj.ID;
+        jsonE.PageID = PageDA.obj.ID;
         return jsonE;
       });
     assets_list.push(...localAssets);

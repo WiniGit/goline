@@ -76,7 +76,7 @@ $("body").on("click", ".tab_left", function () {
     select_component = undefined;
     initUIAssetView(true);
   }
-})
+});
 
 function showSearchResult() {
   tabChange("Layer", "left_tab_view");
@@ -618,9 +618,7 @@ async function initUIAssetView(reloadComponent = false) {
               WBaseDA.getAssetsList(_listID, content);
             }
           } else if (content.length == 0) {
-            assets_view.querySelectorAll(".list_tile > i").forEach(prefixIcon =>
-              prefixIcon.className = prefixIcon.className.replace("fa-caret-down", "fa-caret-right")
-            )
+            assets_view.querySelectorAll(".list_tile > i").forEach((prefixIcon) => (prefixIcon.className = prefixIcon.className.replace("fa-caret-down", "fa-caret-right")));
             initUIAssetView();
             document.getElementById("search_input_assets").focus();
           }
@@ -1231,38 +1229,37 @@ function linkComptAndSkinDialog() {
   searchInput.placeholder = "Search...";
   searchInput.oninput = function () {
     if (libContentDetails.querySelector(".project_tile")) {
-      libContentDetails.querySelectorAll(":scope > .project_tile").forEach(proTile => {
+      libContentDetails.querySelectorAll(":scope > .project_tile").forEach((proTile) => {
         let proName = proTile.querySelector(":scope > label + p").innerHTML;
         if (this.value.trim() === "" || Ultis.toSlug(proName).includes(Ultis.toSlug(this.value.trim()))) {
           proTile.style.display = "flex";
         } else {
           proTile.style.display = "none";
         }
-      })
+      });
     } else {
-      libContentDetails.querySelectorAll(":is(.link_skin_cate_form > div:first-child, .checkbox_skin_tile)").forEach(skinTile => {
+      libContentDetails.querySelectorAll(":is(.link_skin_cate_form > div:first-child, .checkbox_skin_tile)").forEach((skinTile) => {
         let skinName = skinTile.querySelector(":scope > p").innerHTML;
         if (this.value.trim() === "") {
           skinTile.removeAttribute("style");
           if (skinTile.parentElement.classList.contains("link_skin_cate_form")) {
             let prefixAction = skinTile.querySelector(":scope > .fa-caret-down");
-            if (prefixAction)
-              prefixAction.className = prefixAction.className.replace("fa-caret-down", "fa-caret-right");
+            if (prefixAction) prefixAction.className = prefixAction.className.replace("fa-caret-down", "fa-caret-right");
           }
         } else if (Ultis.toSlug(skinName).includes(Ultis.toSlug(this.value.trim()))) {
           skinTile.removeAttribute("style");
           let parentList = $(skinTile).parents(".link_skin_cate_form");
-          if (parentList) [...parentList].forEach(parentTile => {
-            let prefixAction = parentTile.firstChild.querySelector(":scope > .fa-caret-right");
-            if (prefixAction)
-              prefixAction.className = prefixAction.className.replace("fa-caret-right", "fa-caret-down");
-          })
+          if (parentList)
+            [...parentList].forEach((parentTile) => {
+              let prefixAction = parentTile.firstChild.querySelector(":scope > .fa-caret-right");
+              if (prefixAction) prefixAction.className = prefixAction.className.replace("fa-caret-right", "fa-caret-down");
+            });
         } else {
           skinTile.style.display = "none";
         }
-      })
+      });
     }
-  }
+  };
   searchContainer.appendChild(searchInput);
   let libContentDetails = document.createElement("div");
   libContentDetails.className = "lib_content_details";

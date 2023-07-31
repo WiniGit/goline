@@ -3310,7 +3310,7 @@ function createSkinTileHTML(enumCate, jsonSkin) {
   let action_edit = document.createElement("i");
   if (jsonSkin.ProjectID != ProjectDA.obj.ID) {
     action_edit.className = "fa-regular fa-circle-question fa-lg";
-    action_edit.style.display = "block";
+    action_edit.style.display = "flex";
     action_edit.style.color = "#1890ff";
     skin_tile.style.pointerEvents = "none";
   } else {

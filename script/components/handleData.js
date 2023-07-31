@@ -2,6 +2,7 @@
   list.forEach((e) => {
     e.value = document.createElement("div");
     e.value.id = e.GID;
+    if (e.IsWini && !e.CopyID) e.value.setAttribute("iswini", "true");
   });
   let sortItems = [];
   let newList = [];
@@ -43,7 +44,15 @@
     newList.push(e);
   });
   sortItems.forEach((e) => {
-    e.ListID = [...$(e.value).parents("div")].map((eP) => eP.id).reverse();
+    e.ListID = [...$(e.value).parents("div")]
+      .map((eP) => {
+        if (eP.getAttribute("iswini") && !e.IsWini) {
+          delete e.CopyID;
+          delete e.ChildID;
+        }
+        return eP.id;
+      })
+      .reverse();
     e.ListID.unshift(wbase_parentID);
     e.Level = e.ListID.length;
     e.ListID = e.ListID.join(",");
@@ -732,9 +741,13 @@ function handleStyleSize(item) {
       item.value.style.width = "fit-content";
     }
   } else if (item.StyleItem.FrameItem.Width < 0) {
-    if ($(item.value).parents(`.wbaseItem-value[level="${item.Level - 1}"]`)?.classList?.contains("w-row")) {
+    if (
+      $(item.value)
+        .parents(`.wbaseItem-value[level="${item.Level - 1}"]`)
+        ?.classList?.contains("w-row")
+    ) {
       item.value.style.flex = 1;
-    } 
+    }
     item.value.style.width = "100%";
   } else {
     if ([Constraints.left, Constraints.right, Constraints.center].some((constX) => item.StyleItem.PositionItem.ConstraintsX === constX)) {
@@ -745,7 +758,11 @@ function handleStyleSize(item) {
     item.value.style.height = "fit-content";
     if (item.value.parentElement?.style?.flexDirection == "column") item.value.style.flex = null;
   } else if (item.StyleItem.FrameItem.Height < 0) {
-    if ($(item.value).parents(`.wbaseItem-value[level="${item.Level - 1}"]`)?.classList?.contains("w-col")) {
+    if (
+      $(item.value)
+        .parents(`.wbaseItem-value[level="${item.Level - 1}"]`)
+        ?.classList?.contains("w-col")
+    ) {
       item.value.style.flex = 1;
     }
     item.value.style.height = "100%";

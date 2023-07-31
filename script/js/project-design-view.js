@@ -51,6 +51,7 @@ async function initData() {
   updateHoverWbase();
   arrange();
   assets_list = wbase_list.filter((wbaseItem) => wbaseItem.IsWini);
+  assets_list.push(...wbase_list.filter(wb => assets_list.some(wbComp => wb.ListID.includes(wbComp.GID))));
   $.get(WBaseDA.base_item_url, function (baseComponentResponse) {
     base_component_list = baseComponentResponse.Data;
     console.log("base component:", base_component_list);
