@@ -359,7 +359,7 @@ function createComponent() {
     });
     newStyle.innerHTML = cssItem.Css;
     document.head.appendChild(newStyle);
-    WiniIO.emitCss(cssItem, EnumEvent.add);
+    StyleDA.addStyleSheet(cssItem);
     StyleDA.cssStyleSheets.push(cssItem);
   }
   assets_list.push(...un_component_list);

@@ -32,7 +32,8 @@ class StyleDA {
   }
 
   static async addStyleSheet(cssItem) {
-    let result = await $.post("view/add-stylesheet", {
+    debugger;
+    let result = await $.post("/view/add-stylesheet", {
       headers: UserService.headerProject(),
       body: cssItem,
     });
@@ -40,14 +41,14 @@ class StyleDA {
   }
 
   static async editStyleSheet(cssItem) {
-    let result = await $.post("view/edit-stylesheet", {
+    let result = await $.post("/view/edit-stylesheet", {
       headers: UserService.headerProject(),
       body: cssItem,
     });
     return result;
   }
   static async deleteStyleSheet(cssItem) {
-    let result = await $.post("view/delete-stylesheet", {
+    let result = await $.post("/view/delete-stylesheet", {
       headers: UserService.headerProject(),
       body: cssItem,
     });
