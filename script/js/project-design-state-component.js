@@ -4,6 +4,7 @@ function create_stateContainer() {
   $(".state_setting_view").html(state_container);
   if (selected_list.length > 0) {
     state_container = state_view.querySelector(".state_setting_view .state-container");
+    state_container.appendChild(specifyClass());
     state_container.appendChild(createDataForm());
     if (selected_list.length === 1) {
       state_container.appendChild(createAttributeComponent());
@@ -98,7 +99,7 @@ function create_UI_State() {
       '       <div class="col field-setting background-setting">' +
       '           <div class="row field-header">' +
       '               <div class="field-name regular1 text-title">Background</div>' +
-      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg"></button>' +
+      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg"></button>' +
       "           </div>" +
       '           <div class="row field-value ">' +
       '               <div class="row skin-container hover-setting">' +
@@ -110,13 +111,13 @@ function create_UI_State() {
       `${ColorDA.list.find((e) => e.GID == stateItem.ColorSkinID)?.Name ?? "Initial"}` +
       "</div>" +
       "               </div>" +
-      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/unlink-skin.svg"></button>' +
+      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg"></button>' +
       "           </div>" +
       "       </div>" +
       '       <div class="col field-setting border-setting">' +
       '           <div class="row field-header">' +
       '               <div class="field-name regular1 text-title">Border</div>' +
-      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg"></button>' +
+      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg"></button>' +
       "           </div>" +
       '           <div class="row field-value">' +
       '               <div class="row skin-container hover-setting">' +
@@ -128,22 +129,22 @@ function create_UI_State() {
       `${BorderDA.list.find((e) => e.GID == stateItem.BorderSkinID)?.Name ?? "Initial"}` +
       "</div>" +
       "               </div>" +
-      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/unlink-skin.svg"></button>' +
+      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg"></button>' +
       "           </div>" +
       "       </div>" +
       '       <div class="col field-setting effect-setting">' +
       '           <div class="row field-header">' +
       '               <div class="field-name regular1 text-title">Effect</div>' +
-      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg"></button>' +
+      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg"></button>' +
       "           </div>" +
       '           <div class="row field-value">' +
       '               <div class="row skin-container hover-setting">' +
-      '                   <div class="box16"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg"></div>' +
+      '                   <div class="box16"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg"></div>' +
       '                   <div class="skin-name regular1 text-body">' +
       `${EffectDA.list.find((e) => e.GID == stateItem.EffectSkinID)?.Name ?? "Initial"}` +
       "</div>" +
       "               </div>" +
-      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/unlink-skin.svg"></button>' +
+      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg"></button>' +
       "           </div>" +
       "       </div>" +
       "   </div>" +
@@ -261,6 +262,116 @@ $("body").on("click", ".effect-setting .abort-skin-button", function (e) {
   $("#popup_table_skin").remove();
   $("#state-setting_UI").html(create_UI_State());
 });
+
+function specifyClass() {
+  let specifyClass = document.createElement("div");
+  specifyClass.className = "state-container-body-UI col";
+  let header = document.createElement("div");
+  header.className = "header semibold1 row";
+  header.innerHTML = "Specify class";
+  let iconAdd = document.createElement("i");
+  iconAdd.className = "fa-solid fa-plus";
+  header.appendChild(iconAdd);
+  let body = document.createElement("div");
+  body.className = "body col";
+  let responsiveClss = ["col-", "min-brp", "sm", "md", "lg", "xl", "xxl"];
+  let classList = selected_list
+    .map((e) => {
+      if (!e.ListClassName || e.ListClassName.trim() === "") return [];
+      return e.ListClassName.split(" ");
+    })
+    .reduce((a, b) => a.concat(b))
+    .filter((clName) => responsiveClss.every((resClss) => resClss !== clName) && !clName.match(/col[0-9]{1,2}/g));
+  body.replaceChildren(
+    ...classList.map((clsName) => {
+      let clsNameContainer = document.createElement("div");
+      clsNameContainer.className = "row input-class-container";
+      let inputCls = document.createElement("input");
+      inputCls.value = clsName;
+      inputCls.className = "regular1";
+      let iconRemove = document.createElement("i");
+      iconRemove.className = "fa-solid fa-minus fa-sm";
+      clsNameContainer.replaceChildren(inputCls, iconRemove);
+      let oldValue = clsName;
+      inputCls.onblur = function () {
+        this.value = Ultis.toSlug(this.value);
+        if (responsiveClss.every((resCls) => resCls !== this.value) && !this.value.startsWith("w-") && this.value !== "wbaseItem-value") {
+          for (let wb of selected_list) {
+            if (!wb.value.classList.contains(this.value)) {
+              $(wb.value).removeClass(oldValue);
+              $(wb.value).addClass(this.value);
+              wb.ListClassName = wb.ListClassName.trim() + ` ${this.value}`;
+            }
+          }
+          oldValue = this.value;
+          WBaseDA.edit(selected_list);
+        }
+      };
+      iconRemove.onclick = function () {
+        for (let wb of selected_list) {
+          if (wb.value.classList.contains(oldValue)) {
+            $(wb.value).removeClass(oldValue);
+            if (wb.ListClassName) {
+              wb.ListClassName = wb.ListClassName.split(" ")
+                .filter((clsName) => clsName != oldValue)
+                .join(" ");
+            }
+          }
+        }
+        WBaseDA.edit(selected_list);
+        clsNameContainer.remove();
+      };
+      return clsNameContainer;
+    }),
+  );
+  iconAdd.onclick = function () {
+    let clsNameContainer = document.createElement("div");
+    clsNameContainer.className = "row input-class-container";
+    let inputCls = document.createElement("input");
+    inputCls.placeholder = "new class name";
+    inputCls.className = "regular1";
+    let iconRemove = document.createElement("i");
+    iconRemove.className = "fa-solid fa-minus fa-sm";
+    clsNameContainer.replaceChildren(inputCls, iconRemove);
+    body.appendChild(clsNameContainer);
+    let oldValue = "";
+    inputCls.onblur = function () {
+      this.value = Ultis.toSlug(this.value);
+      if (responsiveClss.every((resCls) => resCls !== this.value) && !this.value.startsWith("w-") && this.value !== "wbaseItem-value") {
+        for (let wb of selected_list) {
+          if (!wb.value.classList.contains(this.value)) {
+            $(wb.value).removeClass(oldValue);
+            $(wb.value).addClass(this.value);
+            if (!wb.ListClassName || wb.ListClassName.trim() === "") {
+              wb.ListClassName = this.value;
+            } else {
+              wb.ListClassName = wb.ListClassName.trim() + ` ${this.value}`;
+            }
+          }
+        }
+        oldValue = this.value;
+        WBaseDA.edit(selected_list);
+      }
+    };
+    iconRemove.onclick = function () {
+      for (let wb of selected_list) {
+        if (wb.value.classList.contains(oldValue)) {
+          $(wb.value).removeClass(oldValue);
+          if (wb.ListClassName) {
+            wb.ListClassName = wb.ListClassName.split(" ")
+              .filter((clsName) => clsName != oldValue)
+              .join(" ");
+          }
+        }
+      }
+      WBaseDA.edit(selected_list);
+      clsNameContainer.remove();
+    };
+    inputCls.focus();
+  };
+  specifyClass.replaceChildren(header, body);
+  return specifyClass;
+}
 
 function update_StyleState(componentState) {
   if (selected_list[0].JsonEventItem == null) selected_list[0].JsonEventItem = [];
@@ -1159,21 +1270,53 @@ function editJsonItemByCate() {
       };
       inputFieldPlaceholder.replaceChildren(labelPlaceholder, inputPlaceholder);
       //
-      let obscureCheckRow = document.createElement("div");
-      obscureCheckRow.className = "row";
-      let checkboxObsucre = document.createElement("input");
-      checkboxObsucre.id = "txtfd-check-obscure";
-      checkboxObsucre.type = "checkbox";
-      checkboxObsucre.defaultChecked = selected_list[0].JsonItem.ObscureText;
-      checkboxObsucre.onchange = function (e) {
+      let txtfdTypeRow = document.createElement("div");
+      txtfdTypeRow.className = "row";
+      txtfdTypeRow.style.columnGap = "48px";
+      let txtfdTypeTitle = document.createElement("div");
+      txtfdTypeTitle.className = "regular1";
+      txtfdTypeTitle.innerHTML = "Input type";
+      let drpBtnTxtfdType = _btnDropDownSelect(
+        WTextFormFieldType.list,
+        function (options) {
+          for (let option of options) {
+            let initVl = option.getAttribute("value");
+            option.firstChild.style.opacity = initVl === selected_list[0].JsonItem.Type ? 1 : 0;
+          }
+        },
+        function (option) {
+          editJsonItem({ TextFormFieldType: option });
+          drpBtnTxtfdType.firstChild.innerHTML = option;
+          if (option == WTextFormFieldType.text) {
+            inputFieldSuffixSize.style.display = "none";
+          } else {
+            inputFieldSuffixSize.style.display = "flex";
+          }
+        },
+      );
+      drpBtnTxtfdType.firstChild.innerHTML = selected_list[0].JsonItem.Type;
+      txtfdTypeRow.replaceChildren(txtfdTypeTitle, drpBtnTxtfdType);
+      //
+      let inputFieldSuffixSize = document.createElement("div");
+      inputFieldSuffixSize.className = "input-edit-field row";
+      let labelSuffixSize = document.createElement("label");
+      labelSuffixSize.htmlFor = "txtfd-suffixsize";
+      labelSuffixSize.className = "regular1";
+      labelSuffixSize.innerHTML = "SuffixIcon size";
+      let inputSuffixSize = document.createElement("input");
+      inputSuffixSize.id = "txtfd-suffixsize";
+      inputSuffixSize.className = "regular1";
+      inputSuffixSize.defaultValue = selected_list[0].JsonItem.SuffixSize ?? 16;
+      inputSuffixSize.onblur = function (e) {
         e.stopPropagation();
-        editJsonItem({ ObscureText: this.checked });
+        if (!isNaN(parseFloat(this.value))) {
+          editJsonItem({ SuffixSize: parseFloat(this.value) });
+        } else {
+          this.value = selected_list[0].JsonItem.SuffixSize ?? 16;
+        }
       };
-      let labelObscure = document.createElement("label");
-      labelObscure.className = "regular1";
-      labelObscure.htmlFor = "txtfd-check-obscure";
-      labelObscure.innerHTML = "Password type";
-      obscureCheckRow.replaceChildren(checkboxObsucre, labelObscure);
+      inputFieldSuffixSize.replaceChildren(labelSuffixSize, inputSuffixSize);
+      if (selected_list[0].JsonItem.Type == WTextFormFieldType.text) inputFieldSuffixSize.style.display = "none";
       //
       let enableRow = document.createElement("div");
       enableRow.className = "row";
@@ -1351,7 +1494,7 @@ function editJsonItemByCate() {
                     let labelMaxLength = document.createElement("label");
                     labelMaxLength.htmlFor = "validate-message";
                     labelMaxLength.className = "regular1";
-                    labelMaxLength.innerHTML = "Min length";
+                    labelMaxLength.innerHTML = "Max length";
                     let inputMaxLength = document.createElement("input");
                     inputMaxLength.id = "validate-message";
                     inputMaxLength.className = "regular1";
@@ -1374,7 +1517,7 @@ function editJsonItemByCate() {
                     let labelMinLength = document.createElement("label");
                     labelMinLength.htmlFor = "validate-message";
                     labelMinLength.className = "regular1";
-                    labelMinLength.innerHTML = "Max length";
+                    labelMinLength.innerHTML = "Min length";
                     let inputMinLength = document.createElement("input");
                     inputMinLength.id = "validate-message";
                     inputMinLength.className = "regular1";
@@ -1397,7 +1540,7 @@ function editJsonItemByCate() {
                     popupMessageValid.style.transform = `translate(calc(-100% - 16px), ${document.body.offsetHeight - popupMessageValid.getBoundingClientRect().bottom}px)`;
                   }
                   handlePopupDispose(popupMessageValid, function () {
-                    divSection.querySelectorAll(".textformfield.helper-text").forEach((element) => {
+                    divSection.querySelectorAll(".w-textformfield.helper-text").forEach((element) => {
                       $(element).removeClass("helper-text");
                       $(element).removeAttr("helper-text");
                       element.style.removeProperty("--state-color");
@@ -1415,7 +1558,7 @@ function editJsonItemByCate() {
       listValidateTile();
       validateContainer.replaceChildren(validateHeader, validateBody);
       //
-      jsonItemEditUI.replaceChildren(title, inputFieldInitValue, inputFieldLabel, inputFieldPlaceholder, obscureCheckRow, enableRow, validateContainer);
+      jsonItemEditUI.replaceChildren(title, inputFieldInitValue, inputFieldLabel, inputFieldPlaceholder, txtfdTypeRow, inputFieldSuffixSize, enableRow, validateContainer);
       break;
     default:
       break;
@@ -1446,7 +1589,13 @@ function editColorContainer(color, func) {
   let hexColor = document.createElement("input");
   hexColor.defaultValue = `${color.substring(2)}`;
   hexColor.className = "hex-color-value regular1";
-  hexColor.maxLength = 7;
+  hexColor.oninput = function () {
+    if (this.value.startsWith("#")) {
+      hexColor.maxLength = 7;
+    } else {
+      hexColor.maxLength = 6;
+    }
+  };
   hexColor.onblur = function (e) {
     e.stopPropagation();
     func(Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))) + this.value.replace("#", ""));
@@ -1464,7 +1613,7 @@ function editColorContainer(color, func) {
   colorContainer.replaceChildren(demoColor, hexColor, opacityColor);
   let btnSkin = document.createElement("button");
   let imgIcon = document.createElement("img");
-  imgIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg";
+  imgIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg";
   btnSkin.appendChild(imgIcon);
   btnSkin.onclick = function (event) {
     event.stopPropagation();
@@ -1508,7 +1657,7 @@ function createDataForm() {
       for (const [key, cntValue] of formData) {
         let elementTags = [...listForm[0].value.querySelectorAll(`input[name="${key}"]`)];
         let eTag = elementTags.find((tag) => tag.value === cntValue);
-        switch (eTag.type) {
+        switch (eTag?.type) {
           case "checkbox":
             var keyValueRow = document.createElement("div");
             keyValueRow.className = "row";
@@ -1596,11 +1745,11 @@ function createDataForm() {
     inputNameField.id = "name-field-vl";
     inputNameField.className = "regular1";
     let listNameFieldVl = selected_list.filterAndMap((wbaseItem) => wbaseItem.AttributesItem.NameField);
-    inputNameField.defaultValue = listNameFieldVl.length === 1 ? listNameFieldVl[0] : "Mixed";
+    inputNameField.defaultValue = listNameFieldVl.length === 1 ? listNameFieldVl[0] : "mixed";
     inputNameFieldContainer.replaceChildren(labelNameField, inputNameField);
     inputNameField.onblur = function (e) {
       e.stopPropagation();
-      if (this.value != (listNameFieldVl.length === 1 ? listNameFieldVl[0] : "Mixed")) editJsonItem({ NameField: this.value });
+      if (this.value != (listNameFieldVl.length === 1 ? listNameFieldVl[0] : "mixed")) editJsonItem({ NameField: this.value });
     };
     body.replaceChildren(inputNameFieldContainer);
   }

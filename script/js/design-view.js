@@ -1,36 +1,5 @@
 function setupRightView() {
   // setup tab change
-  let list_tab_view = document.getElementsByClassName("tab_right");
-  for (let i = 0; i < list_tab_view.length; i++) {
-    list_tab_view[i].onclick = function () {
-      design_view_index = $(this).data("index");
-      tabChange(this.innerHTML, "right_tab_view");
-      wdraw();
-      let list_tab_view = document.getElementsByClassName("tab_right");
-      for (let j = 0; j < list_tab_view.length; j++) {
-        list_tab_view[j].style.opacity = 0.7;
-      }
-      this.style.opacity = 1;
-      switch (design_view_index) {
-        case 0:
-          updateUIDesignView();
-          break;
-        case 1:
-          update_UI_prototypeView();
-          break;
-        case 2:
-          create_stateContainer();
-          break;
-        default:
-          break;
-      }
-    };
-  }
-  if (!PageDA.enableEdit) {
-    [...document.getElementsByClassName("right_tab_view")].forEach((rightView) => {
-      rightView.style.pointerEvents = "none";
-    });
-  }
   // create elements in design view
   right_view.onkeydown = function (e) {
     if (e.key === "Enter" && document.activeElement.localName === "input") {
@@ -40,12 +9,105 @@ function setupRightView() {
   updateUIDesignView();
 }
 
+$("body").on("click", ".tab_right", function () {
+  if (design_view_index != $(this).data("index")) {
+    design_view_index = $(this).data("index");
+    tabChange(this.innerHTML, "right_tab_view");
+    wdraw();
+    let list_tab_view = document.getElementsByClassName("tab_right");
+    for (let i = 0; i < list_tab_view.length; i++) {
+      list_tab_view[i].style.opacity = 0.7;
+    }
+    this.style.opacity = 1;
+    switch (design_view_index) {
+      case 0:
+        updateUIDesignView();
+        break;
+      case 1:
+        update_UI_prototypeView();
+        break;
+      case 2:
+        create_stateContainer();
+        break;
+      default:
+        break;
+    }
+  }
+});
+
+// update UI design view when selected change
+function updateUIDesignView() {
+  let scrollY = design_view.scrollTop;
+  let listEditContainer = document.createDocumentFragment();
+  if (selected_list.length == 0) {
+    let editCanvasBground = createCanvasBackground();
+    listEditContainer.appendChild(editCanvasBground);
+    let winiRes = winiResponsive();
+    listEditContainer.appendChild(winiRes);
+    let breakpoint = createBreakpoint();
+    listEditContainer.appendChild(breakpoint);
+    let localSkins = createSelectionSkins();
+    listEditContainer.appendChild(localSkins);
+  } else {
+    let editAlign = createEditAlign();
+    let editSizePosition = createEditSizePosition();
+    // let selectClass = selectionClass();
+    listEditContainer.appendChild(editAlign);
+    listEditContainer.appendChild(editSizePosition);
+    // listEditContainer.appendChild(selectClass);
+    if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
+      let editConstraints = createConstraints();
+      listEditContainer.appendChild(editConstraints);
+    }
+    if (select_box_parentID != wbase_parentID && selected_list.every((e) => window.getComputedStyle(e.value).position != "absolute")) {
+      let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
+      let framePage = pageParent[pageParent.length - 1];
+      if (framePage?.classList?.contains("w-variant")) framePage = pageParent[pageParent.length - 2];
+      if (framePage) {
+        let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
+        if (isPage) {
+          let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
+          listEditContainer.appendChild(selectColByBrp);
+        }
+      }
+    }
+    if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
+      let editAutoLayout = createAutoLayout();
+      listEditContainer.appendChild(editAutoLayout);
+    }
+    //
+    if (selected_list.length > 0 && selected_list.every((wb) => wb.StyleItem.DecorationItem && wb.StyleItem.DecorationItem.ColorValue == selected_list[0].StyleItem.DecorationItem.ColorValue)) {
+      let editBackground = createEditBackground();
+      listEditContainer.appendChild(editBackground);
+    }
+    if (selected_list.some((e) => e.StyleItem.TextStyleItem)) {
+      let editTextStyle = createEditTextStyle();
+      listEditContainer.appendChild(editTextStyle);
+    }
+    if (selected_list.some((e) => e.StyleItem.DecorationItem)) {
+      if (selected_list.length > 1 || selected_list[0].CateID !== EnumCate.w_switch) {
+        let editBorder = createEditBorder();
+        listEditContainer.appendChild(editBorder);
+      }
+      let editEffect = createEditEffect();
+      listEditContainer.appendChild(editEffect);
+    }
+    let editVariants = createEditVariants();
+    listEditContainer.appendChild(editVariants);
+  }
+  design_view.replaceChildren(listEditContainer);
+  design_view.scrollTo({
+    top: scrollY,
+    behavior: "smooth",
+  });
+}
+
+//
 // edit canvas background color
 function createCanvasBackground() {
   var canvas_view_background = document.createElement("div");
   canvas_view_background.id = "canvas_view_background";
-  canvas_view_background.style.display = "inline-flex";
-  canvas_view_background.style.flexDirection = "column";
+  canvas_view_background.className = "col";
   canvas_view_background.style.width = "100%";
   canvas_view_background.style.borderBottom = "1px solid #e5e5e5";
   var title = document.createElement("p");
@@ -56,10 +118,8 @@ function createCanvasBackground() {
   title.style.lineHeight = "16px";
   title.style.fontWeight = "600";
   var change_color = document.createElement("div");
-  change_color.style.display = "inline-flex";
-  change_color.style.alignItems = "center";
+  change_color.className = "row";
   change_color.style.height = "32px";
-  change_color.style.boxSizing = "border-box";
   change_color.style.width = "148px";
   change_color.style.margin = "6px 12px";
   change_color.style.padding = "0 4px";
@@ -136,70 +196,27 @@ function createCanvasBackground() {
 function createEditAlign() {
   let editAlignContainer = document.createElement("div");
   editAlignContainer.id = "edit_align_div";
-  let listAlignItem = [
-    {
-      onclick: function () {
-        alignPosition("align left");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align horizontal center");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align right");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align top");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align vertical center");
-        updateUIEditPosition();
-      },
-    },
-    {
-      onclick: function () {
-        alignPosition("align bottom");
-        updateUIEditPosition();
-      },
-    },
-  ];
-  let targetHTML = selected_list[0].value;
-  let isEnable = false;
-  if (selected_list.length > 1) {
-    isEnable = !window.getComputedStyle(targetHTML.parentElement).display.match("flex") || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
-  } else {
-    isEnable = (!window.getComputedStyle(targetHTML).display.match(/(flex|table)/g) && selected_list[0].CountChild > 0) || !window.getComputedStyle(targetHTML.parentElement).display.match(/(flex|table)/g) || selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
-    if (selected_list[0].ParentID === wbase_parentID && (selected_list[0].CountChild === 0 || selected_list[0].WAutolayoutItem)) {
-      isEnable = false;
-    }
-  }
-  for (let alignItem of listAlignItem) {
-    let btnAlign = document.createElement("img");
-    btnAlign.className = "img-button size-32";
-    btnAlign.style.opacity = isEnable ? 1 : 0.4;
-    if (isEnable) btnAlign.onclick = alignItem.onclick;
-    editAlignContainer.appendChild(btnAlign);
-  }
-  let btn_extend = document.createElement("div");
-  btn_extend.className = "img-button";
-  let icon_extend = document.createElement("img");
-  icon_extend.className = "img-button size-32";
-  let icon_down = document.createElement("i");
-  icon_down.className = "fa-solid fa-chevron-down fa-2xs";
-  btn_extend.replaceChildren(icon_extend, icon_down);
-  editAlignContainer.appendChild(btn_extend);
+  let isEnable = selected_list.every((wb) => (window.getComputedStyle(wb.value).position == "absolute" && (selected_list.length > 1 || wb.Level > 1)) || [...wb.value.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)].some((childWb) => window.getComputedStyle(childWb).position == "absolute"));
+  editAlignContainer.setAttribute("enable", isEnable);
+  editAlignContainer.replaceChildren(
+    ...["align left", "align horizontal center", "align right", "align top", "align vertical center", "align bottom"].map((alignType) => {
+      let btnAlign = document.createElement("img");
+      btnAlign.className = "img-button size-32";
+      if (isEnable)
+        btnAlign.onclick = function () {
+          alignPosition(alignType);
+          updateUIEditPosition();
+          updateUIConstraints();
+        };
+      return btnAlign;
+    }),
+  );
   return editAlignContainer;
+}
+
+function updateUIEditAlign() {
+  let newEditAlign = createEditAlign();
+  document.getElementById("edit_align_div").replaceWith(newEditAlign);
 }
 
 // edit position UI
@@ -208,15 +225,14 @@ function createEditSizePosition() {
   edit_size_position_div.id = "edit_size_position_div";
   edit_size_position_div.className = "edit-container";
   if (selected_list.every((e) => EnumCate.extend_frame.some((cate) => e.CateID === cate))) {
-    let div_frame_size_direction = document.createElement("div");
-    div_frame_size_direction.id = "div_frame_size_direction";
+    let pageDeviceContainer = document.createElement("div");
+    pageDeviceContainer.className = "page-device-container row";
     let btn_select_frame_size = document.createElement("button");
-    div_frame_size_direction.appendChild(btn_select_frame_size);
+    pageDeviceContainer.appendChild(btn_select_frame_size);
     btn_select_frame_size.onclick = function (e) {
       e.stopPropagation();
       let popup = document.createElement("div");
       popup.className = "popup_select_device col wini_popup popup_remove";
-      popup.style.left = edit_size_position_div.getBoundingClientRect().x + "px";
       for (let i = 0; i < listDevice.length; i++) {
         let col = document.createElement("nav");
         col.className = "col";
@@ -252,62 +268,57 @@ function createEditSizePosition() {
       document.getElementById("body").appendChild(popup);
       if (popup.getBoundingClientRect().bottom > document.body.getBoundingClientRect().bottom) {
         popup.style.height = `${document.body.getBoundingClientRect().bottom - popup.getBoundingClientRect().y}px`;
-        popup.style.overflowY = "scroll";
       }
     };
     let btn_title = document.createElement("p");
     btn_title.className = "semibold1";
     let listSize = selected_list.filter((e) => EnumCate.extend_frame.some((cate) => e.CateID == cate)).filterAndMap((e) => `${parseInt(e.StyleItem.FrameItem.Width)}x${parseInt(e.StyleItem.FrameItem.Height)}`);
     btn_title.innerHTML = listSize.length === 1 ? listDevice.reduce((a, b) => a.concat(b)).find((device) => `${device.Width}x${device.Height}` === listSize[0])?.Name ?? "Device size" : "Device size";
-    btn_title.style.margin = "0";
-    btn_title.style.marginRight = "4px";
     let btn_icon_down = document.createElement("i");
     btn_icon_down.className = "fa-solid fa-chevron-down fa-2xs";
     btn_select_frame_size.replaceChildren(btn_title, btn_icon_down);
-    if (selected_list.every((e) => !e.WAutolayoutItem)) {
-      let group_btn_frame_direction = document.createElement("div");
-      div_frame_size_direction.appendChild(group_btn_frame_direction);
-      group_btn_frame_direction.id = "group_btn_frame_direction";
-      group_btn_frame_direction.className = "group_btn_direction";
-      let btn_vertical = document.createElement("img");
-      let btn_horizontal = document.createElement("img");
-      group_btn_frame_direction.replaceChildren(btn_vertical,btn_horizontal);
-      btn_vertical.onclick = function () {
-        if (this.style.backgroundColor == "transparent") {
-          this.style.backgroundColor = "#e5e5e5";
-          btn_horizontal.style.backgroundColor = "transparent";
-        }
-      };
-      btn_horizontal.onclick = function () {
-        if (this.style.backgroundColor == "transparent") {
-          this.style.backgroundColor = "#e5e5e5";
-          btn_vertical.style.backgroundColor = "transparent";
-        }
-      };
-    }
-    if (selected_list.every((e) => !e.WAutolayoutItem)) {
-      let icon_resize_to_fit = document.createElement("img");
-      div_frame_size_direction.appendChild(icon_resize_to_fit);
-      icon_resize_to_fit.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/resize_to_fit.svg";
-      icon_resize_to_fit.className = "img-button size-32";
-      icon_resize_to_fit.style.borderRadius = "2px";
-      icon_resize_to_fit.style.padding = "6px 8px";
-      icon_resize_to_fit.onclick = function () {
-        frameHugChildrenSize();
-      };
-    }
-    edit_size_position_div.appendChild(div_frame_size_direction);
+    // if (selected_list.every((e) => !e.WAutolayoutItem)) {
+    //   let group_btn_frame_direction = document.createElement("div");
+    //   pageDeviceContainer.appendChild(group_btn_frame_direction);
+    //   group_btn_frame_direction.id = "group_btn_frame_direction";
+    //   group_btn_frame_direction.className = "group_btn_direction";
+    //   let btn_vertical = document.createElement("img");
+    //   let btn_horizontal = document.createElement("img");
+    //   group_btn_frame_direction.replaceChildren(btn_vertical, btn_horizontal);
+    //   btn_vertical.onclick = function () {
+    //     if (this.style.backgroundColor == "transparent") {
+    //       this.style.backgroundColor = "#e5e5e5";
+    //       btn_horizontal.style.backgroundColor = "transparent";
+    //     }
+    //   };
+    //   btn_horizontal.onclick = function () {
+    //     if (this.style.backgroundColor == "transparent") {
+    //       this.style.backgroundColor = "#e5e5e5";
+    //       btn_vertical.style.backgroundColor = "transparent";
+    //     }
+    //   };
+    // }
+    // if (selected_list.every((e) => !e.WAutolayoutItem)) {
+    //   let icon_resize_to_fit = document.createElement("img");
+    //   pageDeviceContainer.appendChild(icon_resize_to_fit);
+    //   icon_resize_to_fit.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/resize_to_fit.svg";
+    //   icon_resize_to_fit.className = "img-button size-32";
+    //   icon_resize_to_fit.style.borderRadius = "2px";
+    //   icon_resize_to_fit.style.padding = "6px 8px";
+    //   icon_resize_to_fit.onclick = function () {
+    //     frameHugChildrenSize();
+    //   };
+    // }
+    edit_size_position_div.appendChild(pageDeviceContainer);
   }
 
   //
-  let editXYRow = document.createElement("div");
-  editXYRow.className = "row";
-  editXYRow.style.width = "100%";
+  let editXYContainer = document.createElement("div");
+  editXYContainer.className = "row";
   // input edit left position
   let list_offsetX = selected_list.filterAndMap((wbaseItem) => `${getWBaseOffset(wbaseItem).x}`.replace(".00", ""));
-  let edit_left = _textField("82px", undefined, "X", list_offsetX.length == 1 ? list_offsetX[0] : "Mixed");
+  let edit_left = _textField("82px", undefined, "X", list_offsetX.length == 1 ? list_offsetX[0] : "mixed");
   edit_left.id = "edit_position_item_left";
-  edit_left.style.marginRight = "8px";
   edit_left.lastChild.onblur = function () {
     let newValue = parseFloat(this.value);
     if (!isNaN(newValue)) {
@@ -317,7 +328,7 @@ function createEditSizePosition() {
   };
   // input edit right position
   let list_offsetY = selected_list.filterAndMap((wbaseItem) => `${getWBaseOffset(wbaseItem).y}`.replace(".00", ""));
-  let edit_top = _textField("82px", undefined, "Y", list_offsetY.length == 1 ? list_offsetY[0] : "Mixed");
+  let edit_top = _textField("82px", undefined, "Y", list_offsetY.length == 1 ? list_offsetY[0] : "mixed");
   edit_top.id = "edit_position_item_top";
   edit_top.lastChild.onblur = function () {
     let newValue = parseFloat(this.value);
@@ -326,34 +337,41 @@ function createEditSizePosition() {
     }
     updateInputTLWH();
   };
-  editXYRow.replaceChildren(edit_left, edit_top);
+  editXYContainer.replaceChildren(edit_left, edit_top);
   let parentHTML = document.getElementById(select_box_parentID);
   if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("cateid") == cate) && window.getComputedStyle(parentHTML).display.match("flex")) {
     let isFixPos = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
     let iconFixPos = document.createElement("img");
     iconFixPos.className = "img-button size-28 tlwh-option";
-    iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/fix_position.svg";
+    iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/fix_position.svg";
     if (isFixPos) {
       iconFixPos.style.border = "1px solid #e5e5e5";
+    } else {
+      edit_top.lastChild.disabled = true;
+      edit_left.lastChild.disabled = true;
     }
     iconFixPos.onclick = function () {
       isFixPos = !isFixPos;
       inputPositionItem({ FixPosition: isFixPos });
-      updateUIEditPosition();
+      if (isFixPos) {
+        iconFixPos.style.border = "1px solid #e5e5e5";
+      } else {
+        edit_top.lastChild.disabled = true;
+        edit_left.lastChild.disabled = true;
+      }
+      updateUIEditAlign();
     };
-    editXYRow.appendChild(iconFixPos);
+    editXYContainer.appendChild(iconFixPos);
   }
-  edit_size_position_div.appendChild(editXYRow);
+  edit_size_position_div.appendChild(editXYContainer);
   //
   //
-  let editWHRow = document.createElement("div");
-  editWHRow.className = "row";
-  editWHRow.style.width = "100%";
+  let editWHContainer = document.createElement("div");
+  editWHContainer.className = "row";
   // input edit width
   let list_width = selected_list.filterAndMap((e) => e.value.offsetWidth);
-  let edit_width = _textField("82px", undefined, "W", list_width.length == 1 ? list_width[0] : "Mixed");
+  let edit_width = _textField("82px", undefined, "W", list_width.length == 1 ? list_width[0] : "mixed");
   edit_width.id = "edit_frame_item_w";
-  edit_width.style.marginRight = "8px";
   edit_width.lastChild.onblur = function () {
     let newValue = parseFloat(this.value);
     if (!isNaN(newValue)) {
@@ -363,7 +381,7 @@ function createEditSizePosition() {
   };
   // input edit height
   let list_height = selected_list.filterAndMap((e) => e.value.offsetHeight);
-  let edit_height = _textField("82px", undefined, "H", list_height.length == 1 ? list_height[0] : "Mixed");
+  let edit_height = _textField("82px", undefined, "H", list_height.length == 1 ? list_height[0] : "mixed");
   edit_height.id = "edit_frame_item_h";
   edit_height.lastChild.onblur = function () {
     let newValue = parseFloat(this.value);
@@ -374,35 +392,33 @@ function createEditSizePosition() {
   };
   let isRatio = selected_list.some((wbaseItem) => EnumCate.scale_size_component.some((cate) => wbaseItem.CateID === cate));
   let icon_ratioWH = document.createElement("img");
-  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isRatio ? "ratioWH" : "un_ratioWH"}.svg`;
+  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${isRatio ? "ratioWH" : "un_ratioWH"}.svg`;
   icon_ratioWH.className = "img-button size-28 tlwh-option";
   if (!isRatio) {
     icon_ratioWH.onclick = function () {
       isRatio = !isRatio;
       if (isRatio) {
-        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/ratioWH.svg";
+        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/ratioWH.svg";
         this.style.borderColor = "transparent";
       } else {
-        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/un_ratioWH.svg";
+        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/un_ratioWH.svg";
         this.style.borderColor = "#f1f1f1";
       }
     };
   }
-  editWHRow.replaceChildren(edit_width, edit_height, icon_ratioWH);
-  edit_size_position_div.appendChild(editWHRow);
+  editWHContainer.replaceChildren(edit_width, edit_height, icon_ratioWH);
+  edit_size_position_div.appendChild(editWHContainer);
 
   if (
     selected_list.every((e) => {
       // các scale component luôn cần có size cố định
       if (EnumCate.scale_size_component.some((cate) => e.CateID === cate)) return false;
-      return e.WAutolayoutItem || (e.value.parentElement && window.getComputedStyle(e.value.parentElement).display.match("flex"));
+      return e.WAutolayoutItem || (e.value.parentElement && window.getComputedStyle(e.value.parentElement).display.match(/(flex|table)/g));
     })
   ) {
-    // third line contain btn select resizing type width height (fixed width height, fit content, fill container)
-    let _row_resizing = document.createElement("div");
-    _row_resizing.style.className = "row";
-    _row_resizing.style.width = "100%";
-    _row_resizing.style.height = "32px";
+    let resizeContainer = document.createElement("div");
+    resizeContainer.className = "row";
+    resizeContainer.style.height = "32px";
     let initResizeW = "fixed";
     if (selected_list.every((e) => e.value.style.width == "100%")) {
       initResizeW = "fill";
@@ -414,7 +430,6 @@ function createEditSizePosition() {
       initResizeW = "mixed";
     }
     let icon_resize_w = _btnSelectResizeType(true, initResizeW);
-    icon_resize_w.style.marginRight = "8px";
     let initResizeH = "fixed";
     if (selected_list.every((e) => e.value.style.height == "100%")) {
       initResizeH = "fill";
@@ -426,52 +441,42 @@ function createEditSizePosition() {
       initResizeH = "mixed";
     }
     let icon_resize_h = _btnSelectResizeType(false, initResizeH);
-    _row_resizing.replaceChildren(icon_resize_w, icon_resize_h);
-    edit_size_position_div.appendChild(_row_resizing);
-    var isFixedW = selected_list.every((e) => e.StyleItem.FrameItem?.Width >= 0);
-    var isFixedH = selected_list.every((e) => e.StyleItem.FrameItem?.Height >= 0);
-    if (isFixedW && isFixedH) {
+    resizeContainer.replaceChildren(icon_resize_w, icon_resize_h);
+    edit_size_position_div.appendChild(resizeContainer);
+    if (initResizeW == "fixed" && initResizeH == "fixed") {
       icon_ratioWH.style.display = "block";
     } else {
       icon_ratioWH.style.display = "none";
     }
-    if (isFixedW) {
-      edit_width.style.pointerEvents = "auto";
+    if (initResizeW == "fixed") {
       edit_width.lastChild.disabled = false;
     } else {
-      edit_width.style.pointerEvents = "none";
       edit_width.lastChild.disabled = true;
     }
-    if (isFixedH) {
-      edit_height.style.pointerEvents = "auto";
+    if (initResizeH == "fixed") {
       edit_height.lastChild.disabled = false;
     } else {
-      edit_height.style.pointerEvents = "none";
       edit_height.lastChild.disabled = true;
     }
   }
   if (selected_list.every((e) => e.CateID !== EnumCate.table)) {
-    // fourth line contain input edit rotate and radius and button radius detail
-    let _row4 = document.createElement("div");
-    _row4.style.className = "row";
-    _row4.style.width = "100%";
-    _row4.style.alignItems = "center";
+    let radiusContainer = document.createElement("div");
+    radiusContainer.className = "row";
     // input edit rotate
-    let edit_rotate = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/rotate_rect.svg", undefined, "0");
-    edit_rotate.style.marginRight = "8px";
+    let edit_rotate = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rotate_rect.svg", undefined, "0");
 
     // input edit radius
     let list_seleted_radius = selected_list.filter((e) => e.StyleItem.FrameItem?.TopLeft != undefined);
     if (list_seleted_radius.length > 0) {
       let list_radius_value = list_seleted_radius.map((e) => [e.StyleItem.FrameItem.TopLeft, e.StyleItem.FrameItem.TopRight, e.StyleItem.FrameItem.BottomLeft, e.StyleItem.FrameItem.BottomRight]);
       list_radius_value = [].concat(...list_radius_value).filterAndMap();
-      let edit_radius = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/radius_rect.svg", undefined, list_radius_value.length == 1 ? list_radius_value[0] : "Mixed");
+      let edit_radius = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg", undefined, list_radius_value.length == 1 ? list_radius_value[0] : "mixed");
       edit_radius.lastChild.onblur = function () {
         let newValue = parseFloat(this.value);
         if (isNaN(newValue)) {
           let list_radius_value = list_seleted_radius.map((e) => [e.StyleItem.FrameItem.TopLeft, e.StyleItem.FrameItem.TopRight, e.StyleItem.FrameItem.BottomLeft, e.StyleItem.FrameItem.BottomRight]);
           list_radius_value = [].concat(...list_radius_value).filterAndMap();
-          this.value = list_radius_value.length == q ? list_radius_value[0] : "Mixed";
+          this.value = list_radius_value.length == q ? list_radius_value[0] : "mixed";
         } else {
           inputFrameItem({
             TopLeft: newValue,
@@ -486,45 +491,37 @@ function createEditSizePosition() {
         }
       };
       let icon_radius_detail = document.createElement("img");
-      icon_radius_detail.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/radius_detail.svg";
-      icon_radius_detail.className = "img-button size-24";
-      icon_radius_detail.style.marginLeft = "24px";
-      icon_radius_detail.style.border = "1px solid transparent";
-      icon_radius_detail.style.borderRadius = "2px";
+      icon_radius_detail.setAttribute("show-details", false);
+      icon_radius_detail.className = "radius-details img-button size-24";
       icon_radius_detail.onclick = function () {
-        if (this.style.borderColor == "transparent") {
-          _row_radius_detail.style.display = "inline-flex";
-          this.style.borderColor = "#e5e5e5";
-          edit_radius.lastChild.disabled = true;
+        icon_radius_detail.setAttribute("show-details", icon_radius_detail.getAttribute("show-details") != "true");
+        if (icon_radius_detail.getAttribute("show-details") == "true") {
           edit_radius.style.pointerEvents = "none";
         } else {
-          _row_radius_detail.style.display = "none";
-          this.style.borderColor = "transparent";
-          edit_radius.lastChild.disabled = false;
           edit_radius.style.pointerEvents = "auto";
         }
       };
-      _row4.replaceChildren(edit_rotate, edit_radius, icon_radius_detail);
-      edit_size_position_div.appendChild(_row4);
+      radiusContainer.replaceChildren(edit_rotate, edit_radius, icon_radius_detail);
+      edit_size_position_div.appendChild(radiusContainer);
       // fifth line contain 4 rect radius topleft, topright, botleft, botright
       let _row_radius_detail = document.createElement("div");
       _row_radius_detail.id = "row_radius_detail";
       let icon_HTML = document.createElement("img");
-      icon_HTML.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/radius_rect.svg";
-      icon_HTML.className = "img-button size-24"
+      icon_HTML.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg";
+      icon_HTML.className = "img-button size-24";
       _row_radius_detail.appendChild(icon_HTML);
       let input_top_left = document.createElement("input");
       let list_radius_top_left = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.TopLeft);
-      input_top_left.value = list_radius_top_left.length == 1 ? list_radius_top_left[0] : "Mixed";
+      input_top_left.value = list_radius_top_left.length == 1 ? list_radius_top_left[0] : "mixed";
       let input_top_right = document.createElement("input");
       let list_radius_top_right = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.TopRight);
-      input_top_right.value = list_radius_top_right.length == 1 ? list_radius_top_right[0] : "Mixed";
+      input_top_right.value = list_radius_top_right.length == 1 ? list_radius_top_right[0] : "mixed";
       let input_bot_left = document.createElement("input");
       let list_radius_bot_left = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.BottomLeft);
-      input_bot_left.value = list_radius_bot_left.length == 1 ? list_radius_bot_left[0] : "Mixed";
+      input_bot_left.value = list_radius_bot_left.length == 1 ? list_radius_bot_left[0] : "mixed";
       let input_bot_right = document.createElement("input");
       let list_radius_bot_right = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.BottomRight);
-      input_bot_right.value = list_radius_bot_right.length == 1 ? list_radius_bot_right[0] : "Mixed";
+      input_bot_right.value = list_radius_bot_right.length == 1 ? list_radius_bot_right[0] : "mixed";
       [input_top_left, input_top_right, input_bot_right, input_bot_left].forEach((element_input) => {
         element_input.onfocus = function () {
           this.setSelectionRange(0, this.value.length);
@@ -537,13 +534,13 @@ function createEditSizePosition() {
           let list_top_left_value = selected_list.filter((e) => e.StyleItem.FrameItem?.TopLeft != undefined).map((e) => e.StyleItem.FrameItem.TopLeft);
           let top_left_value = list_top_left_value[0];
           list_top_left_value = list_top_left_value.filter((e) => e != top_left_value);
-          this.value = list_top_left_value.length == 0 ? top_left_value : "Mixed";
+          this.value = list_top_left_value.length == 0 ? top_left_value : "mixed";
         } else {
           inputFrameItem({ TopLeft: newValue });
           if (this.value == input_top_right.value && this.value == input_bot_left.value && this.value == input_bot_right.value) {
             edit_radius.lastChild.value = this.value;
           } else {
-            edit_radius.lastChild.value = "Mixed";
+            edit_radius.lastChild.value = "mixed";
           }
         }
       };
@@ -553,13 +550,13 @@ function createEditSizePosition() {
           let list_top_right_value = selected_list.filter((e) => e.StyleItem.FrameItem?.Topright != undefined).map((e) => e.StyleItem.FrameItem.TopRight);
           let top_right_value = list_top_right_value[0];
           list_top_right_value = list_top_right_value.filter((e) => e != top_right_value);
-          this.value = list_top_right_value.length == 0 ? top_right_value : "Mixed";
+          this.value = list_top_right_value.length == 0 ? top_right_value : "mixed";
         } else {
           inputFrameItem({ TopRight: newValue });
           if (this.value == input_top_left.value && this.value == input_bot_left.value && this.value == input_bot_right.value) {
             edit_radius.lastChild.value = this.value;
           } else {
-            edit_radius.lastChild.value = "Mixed";
+            edit_radius.lastChild.value = "mixed";
           }
         }
       };
@@ -569,13 +566,13 @@ function createEditSizePosition() {
           let list_bot_left_value = selected_list.filter((e) => e.StyleItem.FrameItem?.BottomLeft != undefined).map((e) => e.StyleItem.FrameItem.BottomLeft);
           let bot_left_value = list_bot_left_value[0];
           list_bot_left_value = list_bot_left_value.filter((e) => e != bot_left_value);
-          this.value = list_bot_left_value.length == 0 ? bot_left_value : "Mixed";
+          this.value = list_bot_left_value.length == 0 ? bot_left_value : "mixed";
         } else {
           inputFrameItem({ BottomLeft: newValue });
           if (this.value == input_top_right.value && this.value == input_top_left.value && this.value == input_bot_right.value) {
             edit_radius.lastChild.value = this.value;
           } else {
-            edit_radius.lastChild.value = "Mixed";
+            edit_radius.lastChild.value = "mixed";
           }
         }
       };
@@ -585,13 +582,13 @@ function createEditSizePosition() {
           let list_bot_right_value = selected_list.filter((e) => e.StyleItem.FrameItem?.BottomRight != undefined).map((e) => e.StyleItem.FrameItem.BottomRight);
           let bot_right_value = list_bot_right_value[0];
           list_bot_right_value = list_bot_right_value.filter((e) => e != bot_right_value);
-          this.value = list_bot_right_value.length == 0 ? bot_right_value : "Mixed";
+          this.value = list_bot_right_value.length == 0 ? bot_right_value : "mixed";
         } else {
           inputFrameItem({ BottomRight: newValue });
           if (this.value == input_top_right.value && this.value == input_top_left.value && this.value == input_bot_left.value) {
             edit_radius.lastChild.value = this.value;
           } else {
-            edit_radius.lastChild.value = "Mixed";
+            edit_radius.lastChild.value = "mixed";
           }
         }
       };
@@ -631,87 +628,83 @@ function updateInputTLWH() {
   if (document.getElementById("edit_size_position_div")) {
     let edit_left = document.getElementById("edit_position_item_left");
     let list_offsetX = selected_list.filterAndMap((wbaseItem) => `${getWBaseOffset(wbaseItem).x}`.replace(".00", ""));
-    edit_left.lastChild.value = list_offsetX.length == 1 ? list_offsetX[0] : "Mixed";
+    edit_left.lastChild.value = list_offsetX.length == 1 ? list_offsetX[0] : "mixed";
     // Y
     let edit_top = document.getElementById("edit_position_item_top");
     let list_offsetY = selected_list.filterAndMap((wbaseItem) => `${getWBaseOffset(wbaseItem).y}`.replace(".00", ""));
-    edit_top.lastChild.value = list_offsetY.length == 1 ? list_offsetY[0] : "Mixed";
+    edit_top.lastChild.value = list_offsetY.length == 1 ? list_offsetY[0] : "mixed";
     // W
     let edit_width = document.getElementById("edit_frame_item_w");
     let list_width = selected_list.filterAndMap((e) => (document.getElementById(e.GID) ?? e.value).offsetWidth);
-    edit_width.lastChild.value = list_width.length == 1 ? list_width[0] : "Mixed";
+    edit_width.lastChild.value = list_width.length == 1 ? list_width[0] : "mixed";
     // H
     let edit_height = document.getElementById("edit_frame_item_h");
     let list_height = selected_list.filterAndMap((e) => (document.getElementById(e.GID) ?? e.value).offsetHeight);
-    edit_height.lastChild.value = list_height.length == 1 ? list_height[0] : "Mixed";
+    edit_height.lastChild.value = list_height.length == 1 ? list_height[0] : "mixed";
     //
-    let parentHTML = document.getElementById(select_box_parentID);
-    if (parentHTML && window.getComputedStyle(parentHTML).display.match("flex") && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
-      edit_left.style.pointerEvents = "none";
-      edit_top.style.pointerEvents = "none";
+    let parentHTML = document.getElementById(select_box_parentID) ?? divSection;
+    if (parentHTML && window.getComputedStyle(parentHTML).display.match(/(flex|table)/g) && selected_list.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
       edit_left.lastChild.disabled = true;
       edit_top.lastChild.disabled = true;
     } else {
-      edit_left.style.pointerEvents = "auto";
-      edit_top.style.pointerEvents = "auto";
       edit_left.lastChild.disabled = false;
       edit_top.lastChild.disabled = false;
     }
-    var isFixedW = selected_list.every((e) => e.StyleItem.FrameItem?.Width >= 0);
-    var isFixedH = selected_list.every((e) => e.StyleItem.FrameItem?.Height >= 0);
-    if (isFixedW && isFixedH) {
-      edit_width.parentElement.lastChild.style.display = "block";
-    } else {
-      edit_width.parentElement.lastChild.style.display = "none";
-    }
-    if (isFixedW) {
-      edit_width.style.pointerEvents = "auto";
-      edit_width.lastChild.disabled = false;
-    } else {
-      edit_width.style.pointerEvents = "none";
-      edit_width.lastChild.disabled = true;
-    }
-    if (isFixedH) {
-      edit_height.style.pointerEvents = "auto";
-      edit_height.lastChild.disabled = false;
-    } else {
-      edit_height.style.pointerEvents = "none";
-      edit_height.lastChild.disabled = true;
-    }
-    // update button select resizing type
-    let btn_resize_with_height = document.getElementsByClassName("btn_resize");
-    if (btn_resize_with_height.length > 0) {
-      if (selected_list.every((e) => e.WAutolayoutItem || (!e.StyleItem.PositionItem.FixPosition && window.getComputedStyle(e.value.parentElement).display.match("flex")))) {
-        btn_resize_with_height[0].parentElement.style.display = "flex";
-        for (let option of btn_resize_with_height) {
-          if (option.className.includes("width")) {
-            if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
-              option.childNodes[1].innerHTML = "hug";
-            } else if (selected_list.every((e) => e.value.style.width == "100%")) {
-              option.childNodes[1].innerHTML = "fill";
-            } else if (selected_list.every((e) => e.value.style.width)) {
-              option.childNodes[1].innerHTML = "fixed";
+    if (checkpad <= selected_list.length) {
+      let resizeWType = "fixed";
+      if (selected_list.every((e) => e.value.style.width == "100%")) {
+        resizeWType = "fill";
+      } else if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
+        resizeWType = "hug";
+      } else if (selected_list.every((e) => e.value.style.width)) {
+        resizeWType = "fixed";
+      } else {
+        resizeWType = "mixed";
+      }
+      let resizeHType = "fixed";
+      if (selected_list.every((e) => e.value.style.height == "100%")) {
+        resizeHType = "fill";
+      } else if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
+        resizeHType = "hug";
+      } else if (selected_list.every((e) => e.value.style.height)) {
+        resizeHType = "fixed";
+      } else {
+        resizeHType = "mixed";
+      }
+      if (resizeWType == "fixed" && resizeHType == "fixed") {
+        edit_width.parentElement.lastChild.style.display = "block";
+      } else {
+        edit_width.parentElement.lastChild.style.display = "none";
+      }
+      if (resizeWType == "fixed") {
+        edit_width.lastChild.disabled = false;
+      } else {
+        edit_width.lastChild.disabled = true;
+      }
+      if (resizeHType == "fixed") {
+        edit_height.lastChild.disabled = false;
+      } else {
+        edit_height.lastChild.disabled = true;
+      }
+      // update button select resizing type
+      let btn_resize_with_height = document.getElementsByClassName("btn_resize");
+      if (btn_resize_with_height.length > 0) {
+        if (selected_list.every((e) => e.WAutolayoutItem || (!e.StyleItem.PositionItem.FixPosition && window.getComputedStyle(parentHTML).display.match(/(flex|table)/g)))) {
+          btn_resize_with_height[0].parentElement.style.display = "flex";
+          for (let option of btn_resize_with_height) {
+            if (option.className.includes("width")) {
+              option.childNodes[1].innerHTML = resizeWType;
             } else {
-              option.childNodes[1].innerHTML = "mixed";
-            }
-          } else {
-            if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
-              option.childNodes[1].innerHTML = "hug";
-            } else if (selected_list.every((e) => e.value.style.height == "100%")) {
-              option.childNodes[1].innerHTML = "fill";
-            } else if (selected_list.every((e) => e.value.style.height)) {
-              option.childNodes[1].innerHTML = "fixed";
-            } else {
-              option.childNodes[1].innerHTML = "mixed";
+              option.childNodes[1].innerHTML = resizeHType;
             }
           }
+        } else {
+          btn_resize_with_height[0].parentElement.style.display = "none";
         }
-      } else {
-        btn_resize_with_height[0].parentElement.style.display = "none";
       }
     }
   }
-  if (document.getElementById("edit_text_style")) {
+  if (checkpad <= selected_list.length && document.getElementById("edit_text_style")) {
     updateUIAutoSizeWH();
   }
 }
@@ -724,7 +717,6 @@ function createAutoLayout() {
   editContainer.id = "edit_auto_layout_div";
   editContainer.className = "edit-container";
   let header = document.createElement("div");
-  header.id = "edit-layout-header";
   header.className = "header_design_style";
   editContainer.appendChild(header);
   let title = document.createElement("p");
@@ -755,7 +747,6 @@ function createAutoLayout() {
     // group btn edit auto layout direction
     let group_btn_direction = document.createElement("div");
     group_btn_direction.className = "group_btn_direction";
-    if (autoLayoutList.some((wbaseItem) => wbaseItem.CateID === EnumCate.tool_text)) group_btn_direction.style.pointerEvents = "none";
     _row1.appendChild(group_btn_direction);
     let btn_vertical = document.createElement("i");
     btn_vertical.className = "fa-solid fa-arrow-down fa-xs";
@@ -789,7 +780,7 @@ function createAutoLayout() {
     // input edit child space
     let childSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.ChildSpace);
     if (!isEditTable) {
-      let input_child_space = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "vertical" : "horizontal"} child spacing.svg`, undefined, childSpaceValues.length == 1 ? childSpaceValues[0] : "Mixed");
+      let input_child_space = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${isVertical ? "vertical" : "horizontal"} child spacing.svg`, undefined, childSpaceValues.length == 1 ? childSpaceValues[0] : "mixed");
       input_child_space.style.position = "absolute";
       input_child_space.style.left = "0";
       input_child_space.style.bottom = "0";
@@ -799,7 +790,7 @@ function createAutoLayout() {
           editLayoutStyle({ ChildSpace: newValue });
           updateUIAutoLayout();
         } else {
-          this.value = childSpaceValues.length == 1 ? childSpaceValues[0] : "Mixed";
+          this.value = childSpaceValues.length == 1 ? childSpaceValues[0] : "mixed";
         }
       };
       _row1.appendChild(input_child_space);
@@ -809,63 +800,66 @@ function createAutoLayout() {
         isGridRow.className = "row";
         isGridRow.style.width = "100%";
         let btnIsGrid = document.createElement("div");
-        btnIsGrid.className = "row regular1";
-        btnIsGrid.style.height = "36px";
-        btnIsGrid.style.padding = "4px 8px";
-        btnIsGrid.style.boxSizing = "border-box";
+        btnIsGrid.className = "row regular1 check-box-label";
         let checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.defaultChecked = isGridValues.every((checkVl) => checkVl);
         btnIsGrid.appendChild(checkbox);
-        checkbox.style.marginRight = "8px";
-        checkbox.style.pointerEvents = "none";
-        checkbox.style.width = "fit-content";
-        btnIsGrid.innerHTML += "Grid content";
-        btnIsGrid.onclick = function (e) {
-          e.stopPropagation();
+        btnIsGrid.innerHTML += "Wrap content";
+        btnIsGrid.onclick = function () {
           this.firstChild.checked = !this.firstChild.checked;
           editLayoutStyle({ IsWrap: this.firstChild.checked });
-          if (this.firstChild.checked) {
-            inputRunSpace.style.display = "flex";
-          } else {
-            inputRunSpace.style.display = "none";
-          }
         };
         let runSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.RunSpace);
-        let inputRunSpace = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/${isVertical ? "horizontal" : "vertical"} child spacing.svg`, undefined, runSpaceValues.length == 1 ? runSpaceValues[0] : "Mixed");
+        let inputRunSpace = _textField("88px", `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${isVertical ? "horizontal" : "vertical"} child spacing.svg`, undefined, runSpaceValues.length == 1 ? runSpaceValues[0] : "mixed");
         inputRunSpace.lastChild.onblur = function () {
           let newValue = parseFloat(this.value);
           if (newValue != undefined) {
             editLayoutStyle({ RunSpace: newValue });
             updateUIAutoLayout();
           } else {
-            this.value = runSpaceValues.length == 1 ? runSpaceValues[0] : "Mixed";
+            this.value = runSpaceValues.length == 1 ? runSpaceValues[0] : "mixed";
           }
         };
         isGridRow.replaceChildren(btnIsGrid, inputRunSpace);
-        if (!checkbox.checked) {
-          inputRunSpace.style.display = "none";
+        let isScrollValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.IsScroll);
+        let btnIsScroll = document.createElement("div");
+        btnIsScroll.className = "row regular1 check-box-label";
+        let checkIsScroll = document.createElement("input");
+        checkIsScroll.type = "checkbox";
+        checkIsScroll.defaultChecked = isScrollValues.every((checkVl) => checkVl);
+        btnIsScroll.appendChild(checkIsScroll);
+        btnIsScroll.innerHTML += "Overflow scroll";
+        if (autoLayoutList.some((e) => (e.value.classList.contains("w-col") && e.value.style.height == "fit-content") || (e.value.classList.contains("w-row") && e.value.style.width == "fit-content"))) {
+          btnIsScroll.setAttribute("disabled", "true");
+        } else {
+          btnIsScroll.onclick = function () {
+            this.firstChild.checked = !this.firstChild.checked;
+            editLayoutStyle({ IsScroll: this.firstChild.checked });
+          };
         }
         editContainer.appendChild(isGridRow);
+        editContainer.appendChild(btnIsScroll);
       }
     }
+
     // input padding
     let isShowPadDetails = false;
     let paddingLefts = autoLayoutList.filterAndMap((e) => e.StyleItem.PaddingItem.Left);
-    let padLeftValue = paddingLefts.length == 1 ? paddingLefts[0] : "Mixed";
+    let padLeftValue = paddingLefts.length == 1 ? paddingLefts[0] : "mixed";
     let paddingTops = autoLayoutList.filterAndMap((e) => e.StyleItem.PaddingItem.Top);
-    let padTopValue = paddingTops.length == 1 ? paddingTops[0] : "Mixed";
+    let padTopValue = paddingTops.length == 1 ? paddingTops[0] : "mixed";
     let paddingRights = autoLayoutList.filterAndMap((e) => e.StyleItem.PaddingItem.Right);
-    let padRightValue = paddingRights.length == 1 ? paddingRights[0] : "Mixed";
+    let padRightValue = paddingRights.length == 1 ? paddingRights[0] : "mixed";
     let paddingBots = autoLayoutList.filterAndMap((e) => e.StyleItem.PaddingItem.Bottom);
-    let padBotValue = paddingBots.length == 1 ? paddingBots[0] : "Mixed";
+    let padBotValue = paddingBots.length == 1 ? paddingBots[0] : "mixed";
     let paddingContainer = document.createElement("div");
     paddingContainer.className = "row";
     paddingContainer.style.flexWrap = "wrap";
     paddingContainer.style.gap = "4px";
     paddingContainer.style.marginTop = "6px";
     editContainer.appendChild(paddingContainer);
-    let input_padding_horizontal = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding horizontal.svg", undefined, padLeftValue == padRightValue ? padLeftValue : "Mixed");
+    let input_padding_horizontal = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding horizontal.svg", undefined, padLeftValue == padRightValue ? padLeftValue : "mixed");
     input_padding_horizontal.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
       if (newValue != undefined) {
@@ -875,11 +869,11 @@ function createAutoLayout() {
         input_padding_right.lastChild.value = this.value;
         padRightValue = this.value;
       } else {
-        this.value = padLeftValue == padRightValue ? padLeftValue : "Mixed";
+        this.value = padLeftValue == padRightValue ? padLeftValue : "mixed";
       }
     };
     paddingContainer.appendChild(input_padding_horizontal);
-    let input_padding_vertical = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding vertical.svg", undefined, padTopValue == padBotValue ? padTopValue : "Mixed");
+    let input_padding_vertical = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding vertical.svg", undefined, padTopValue == padBotValue ? padTopValue : "mixed");
     input_padding_vertical.style.marginLeft = "6px";
     input_padding_vertical.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
@@ -890,30 +884,30 @@ function createAutoLayout() {
         input_padding_bottom.lastChild.value = this.value;
         padBotValue = this.value;
       } else {
-        this.value = padTopValue == padBotValue ? padTopValue : "Mixed";
+        this.value = padTopValue == padBotValue ? padTopValue : "mixed";
       }
     };
     paddingContainer.appendChild(input_padding_vertical);
-    let input_padding_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding left.svg", undefined, padLeftValue);
+    let input_padding_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding left.svg", undefined, padLeftValue);
     input_padding_left.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
       if (newValue != undefined) {
         inputPadding({ Left: newValue });
         padLeftValue = this.value;
-        input_padding_horizontal.lastChild.value = padLeftValue == padRightValue ? padLeftValue : "Mixed";
+        input_padding_horizontal.lastChild.value = padLeftValue == padRightValue ? padLeftValue : "mixed";
       } else {
         this.value = padLeftValue;
       }
     };
     paddingContainer.appendChild(input_padding_left);
-    let input_padding_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding top.svg", undefined, padTopValue);
+    let input_padding_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding top.svg", undefined, padTopValue);
     input_padding_top.style.marginLeft = "6px";
     input_padding_top.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
       if (newValue != undefined) {
         inputPadding({ Top: newValue });
         padTopValue = this.value;
-        input_padding_vertical.lastChild.value = padTopValue == padBotValue ? padTopValue : "Mixed";
+        input_padding_vertical.lastChild.value = padTopValue == padBotValue ? padTopValue : "mixed";
       } else {
         this.value = padTopValue;
       }
@@ -924,27 +918,27 @@ function createAutoLayout() {
     icon_padding_details.style.borderRadius = "2px";
     icon_padding_details.style.margin = "4px 0 0 6px";
     paddingContainer.appendChild(icon_padding_details);
-    icon_padding_details.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding details.svg";
-    let input_padding_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding right.svg", undefined, padRightValue);
+    icon_padding_details.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding details.svg";
+    let input_padding_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding right.svg", undefined, padRightValue);
     input_padding_right.lastChild.onblur = function () {
       var newValue = parseFloat(this.value);
       if (newValue != undefined) {
         inputPadding({ Right: newValue });
         padRightValue = this.value;
-        input_padding_horizontal.lastChild.value = padLeftValue == padRightValue ? padLeftValue : "Mixed";
+        input_padding_horizontal.lastChild.value = padLeftValue == padRightValue ? padLeftValue : "mixed";
       } else {
         this.value = padRightValue;
       }
     };
     paddingContainer.appendChild(input_padding_right);
-    let input_padding_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/padding bottom.svg", undefined, padBotValue);
+    let input_padding_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding bottom.svg", undefined, padBotValue);
     input_padding_bottom.style.marginLeft = "6px";
     input_padding_bottom.lastChild.onblur = function () {
       let newValue = parseFloat(this.value);
       if (newValue != undefined) {
         inputPadding({ Bottom: newValue });
         padBotValue = this.value;
-        input_padding_vertical.lastChild.value = padTopValue == padBotValue ? padTopValue : "Mixed";
+        input_padding_vertical.lastChild.value = padTopValue == padBotValue ? padTopValue : "mixed";
       } else {
         this.value = padBotValue;
       }
@@ -959,14 +953,14 @@ function createAutoLayout() {
       if (isShowPadDetails) {
         input_padding_horizontal.style.display = "none";
         input_padding_vertical.style.display = "none";
-        input_padding_left.style.display = "inline-flex";
-        input_padding_top.style.display = "inline-flex";
-        input_padding_right.style.display = "inline-flex";
-        input_padding_bottom.style.display = "inline-flex";
+        input_padding_left.style.display = "flex";
+        input_padding_top.style.display = "flex";
+        input_padding_right.style.display = "flex";
+        input_padding_bottom.style.display = "flex";
         icon_padding_details.style.borderColor = "#e5e5e5";
       } else {
-        input_padding_horizontal.style.display = "inline-flex";
-        input_padding_vertical.style.display = "inline-flex";
+        input_padding_horizontal.style.display = "flex";
+        input_padding_vertical.style.display = "flex";
         input_padding_left.style.display = "none";
         input_padding_top.style.display = "none";
         input_padding_right.style.display = "none";
@@ -975,6 +969,7 @@ function createAutoLayout() {
       }
     }
   } else {
+    header.id = "edit-layout-header";
     let icon_add = document.createElement("i");
     icon_add.id = "btn_add_auto_layout";
     header.appendChild(icon_add);
@@ -1051,9 +1046,9 @@ function createConstraints() {
   editConstContainer.className = "row";
   bodyContainer.appendChild(editConstContainer);
   let constraintsXValues = selected_list.filterAndMap((e) => e.StyleItem.PositionItem.ConstraintsX);
-  let constraintsX = constraintsXValues.length == 1 ? constraintsXValues[0] : "Mixed";
+  let constraintsX = constraintsXValues.length == 1 ? constraintsXValues[0] : "mixed";
   let constraintsYValues = selected_list.filterAndMap((e) => e.StyleItem.PositionItem.ConstraintsY);
-  let constraintsY = constraintsYValues.length == 1 ? constraintsYValues[0] : "Mixed";
+  let constraintsY = constraintsYValues.length == 1 ? constraintsYValues[0] : "mixed";
 
   let constraintsRect = document.createElement("div");
   constraintsRect.className = "connstraints-rect";
@@ -1066,11 +1061,11 @@ function createConstraints() {
 
   let listContraintsX = [Constraints.left, Constraints.right, Constraints.center];
   let listContraintsY = [Constraints.top, Constraints.bottom, Constraints.center];
-  if (selected_list.every((wbaseItem) => EnumCate.scale_size_component.every((cate) => wbaseItem.CateID != cate))) {
-    if (selected_list.every((wbaseItem) => wbaseItem.StyleItem.FrameItem.Width != null)) {
+  if (selected_list.every((wb) => EnumCate.scale_size_component.every((cate) => wb.CateID != cate))) {
+    if (selected_list.every((wb) => wb.value.style.width && wb.value.style.width != "fit-content" && wb.value.style.width != "max-content")) {
       listContraintsX.push(Constraints.left_right, Constraints.scale);
     }
-    if (selected_list.every((wbaseItem) => wbaseItem.StyleItem.FrameItem.Height != null)) {
+    if (selected_list.every((wb) => wb.value.style.height && wb.value.style.height != "fit-content")) {
       listContraintsY.push(Constraints.top_bottom, Constraints.scale);
     }
   }
@@ -1147,7 +1142,7 @@ function createConstraints() {
   }
 
   let dropdownConstX = _btnDropDownSelect(
-    constraintsX !== "Mixed" ? listContraintsX : ["Mixed", ...listContraintsX],
+    constraintsX !== "mixed" ? listContraintsX : ["mixed", ...listContraintsX],
     function (options) {
       for (let option of options) {
         if (option.getAttribute("value") == constraintsX) {
@@ -1165,7 +1160,7 @@ function createConstraints() {
   dropdownConstX.firstChild.innerHTML = constraintsX;
 
   let dropdownConstY = _btnDropDownSelect(
-    constraintsY !== "Mixed" ? listContraintsY : ["Mixed", ...listContraintsY],
+    constraintsY !== "mixed" ? listContraintsY : ["mixed", ...listContraintsY],
     function (options) {
       for (let option of options) {
         if (option.getAttribute("value") == constraintsY) {
@@ -1186,7 +1181,7 @@ function createConstraints() {
 
   if (select_box_parentID !== wbase_parentID) {
     let parentHTML = document.getElementById(select_box_parentID);
-    if (parentHTML.getAttribute("Level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match("flex")) {
+    if (parentHTML.getAttribute("level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match("flex")) {
       let fixPosRow = document.createElement("div");
       fixPosRow.className = "row";
       fixPosRow.style.margin = "8px 0 0 8px";
@@ -1257,63 +1252,50 @@ function _btnSelectResizeType(isW = true, type) {
       let resize_type_option = document.createElement("div");
       resize_type_option.className = "resize_type_option";
       let icon_check = document.createElement("span");
-      icon_check.style.transform = "scale(0.6)";
-      icon_check.style.margin = "0";
       icon_check.innerHTML = SVGIcon.check_mark.replace("#000", "#fff");
-      resize_type_option.appendChild(icon_check);
       let icon_option_type = document.createElement("span");
-      icon_option_type.style.margin = "4px 4px 4px 0";
       if (!isW) {
         icon_option_type.style.transform = "rotate(90deg)";
       }
-      resize_type_option.appendChild(icon_option_type);
+      resize_type_option.replaceChildren(icon_check, icon_option_type);
       switch (i) {
         case 0:
-          resize_type_option.innerHTML += "Mixed";
-          resize_type_option.style.color = "#e5e5e5";
-          resize_type_option.style.borderBottom = "1px solid #e5e5e5";
-          resize_type_option.style.pointerEvents = "none";
+          resize_type_option.innerHTML += "mixed";
           break;
         case 1:
           if (type != "fixed") icon_check.style.visibility = "hidden";
           icon_option_type.innerHTML = SVGIcon.fixed_size.replace("#000", "#fff");
-          resize_type_option.innerHTML += `Fixed ${isW ? "width" : "height"}`;
+          resize_type_option.innerHTML += `fixed ${isW ? "width" : "height"}`;
           resize_type_option.onclick = function (e) {
             e.stopPropagation();
             selectResizeType(isW, "fixed");
-            btn_resize.blur();
-            updateUIAutoSizeWH();
+            popup_list_resize_type.remove();
             updateInputTLWH();
             updateUIConstraints();
-            popup_list_resize_type.remove();
           };
           break;
         case 2:
           if (type != "hug") icon_check.style.visibility = "hidden";
           icon_option_type.innerHTML = SVGIcon.hug_content.replace("#000", "#fff");
-          resize_type_option.innerHTML += "Hug contents";
+          resize_type_option.innerHTML += "hug contents";
           resize_type_option.onclick = function (e) {
             e.stopPropagation();
             selectResizeType(isW, "hug");
-            btn_resize.blur();
-            updateUIAutoSizeWH();
+            popup_list_resize_type.remove();
             updateInputTLWH();
             updateUIConstraints();
-            popup_list_resize_type.remove();
           };
           break;
         case 3:
           if (type != "fill") icon_check.style.visibility = "hidden";
           icon_option_type.innerHTML = SVGIcon.fill_container.replace("#000", "#fff");
-          resize_type_option.innerHTML += "Fill container";
+          resize_type_option.innerHTML += "fill container";
           resize_type_option.onclick = function (e) {
             e.stopPropagation();
             selectResizeType(isW, "fill");
-            btn_resize.blur();
-            updateUIAutoSizeWH();
+            popup_list_resize_type.remove();
             updateInputTLWH();
             updateUIConstraints();
-            popup_list_resize_type.remove();
           };
           break;
         default:
@@ -1335,56 +1317,64 @@ function _btnSelectResizeType(isW = true, type) {
 
 //
 function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
+  var parentHTML;
   var activeFill = false;
+  if (select_box_parentID !== wbase_parentID) {
+    parentHTML = document.getElementById(select_box_parentID);
+    activeFill = window.getComputedStyle(parentHTML).display.match(/(flex|table)/g);
+  }
   var activeHug = false;
-  var parent_wbase;
-  activeHug = selected_list.every((e) => (e.WAutolayoutItem && !e.WAutolayoutItem.IsScroll && !(isW && (e.CateID === EnumCate.textformfield || e.CateID === EnumCate.tree))) || e.CateID === EnumCate.tool_text || e.CateID === EnumCate.table);
-  if (activeHug) {
-    if (isW && selected_list.some((selectItem) => selectItem.WAutolayoutItem && selectItem.WAutolayoutItem.Direction === "Horizontal" && selectItem.WAutolayoutItem.IsWrap)) {
-      activeHug = false;
-    } else if (!isW && selected_list.some((selectItem) => selectItem.WAutolayoutItem && selectItem.WAutolayoutItem.Direction === "Vertical" && selectItem.WAutolayoutItem.IsWrap)) {
-      activeHug = false;
-    }
-  }
-  if (select_box_parentID != wbase_parentID) {
-    parent_wbase = wbase_list.find((e) => e.GID == select_box_parentID);
-    if (isW && activeHug) {
-      let framePage = selected_list[0].ListID.split(",")[1];
-      framePage = document.getElementById(framePage);
-      activeHug = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") != cate) || framePage.querySelectorAll(".col-").length == 0;
-    }
-  } else if (isW && activeHug) {
-    let listFramePage = selected_list.filter((wbaseItem) => EnumCate.extend_frame.some((cate) => wbaseItem.CateID == cate));
-    for (let framePage of listFramePage) {
-      activeHug = document.getElementById(framePage.GID).querySelectorAll(".col-").length == 0;
-    }
-  }
-  if (parent_wbase?.WAutolayoutItem != undefined) {
-    if (selected_list.some((e) => e.CateID === EnumCate.tree) && !isW) {
-      activeFill = false;
-    } else if (parent_wbase.WAutolayoutItem.IsWrap) {
-      if (isW && parent_wbase.WAutolayoutItem.Direction == "Horizontal") {
-        activeFill = true;
-      } else if (!isW && parent_wbase.WAutolayoutItem.Direction == "Vertical") activeFill = true;
-    } else {
-      if (parent_wbase.WAutolayoutItem.IsScroll) {
-        if (isW && parent_wbase.WAutolayoutItem.Direction == "Vertical") {
-          activeFill = true;
-        } else if (!isW && parent_wbase.WAutolayoutItem.Direction == "Horizontal") {
-          activeFill = true;
+  activeHug = selected_list.every((e) => {
+    if (e.CateID === EnumCate.tool_text || e.CateID === EnumCate.table) return true;
+    if (e.WAutolayoutItem && !(e.WAutolayoutItem.IsScroll && e.WAutolayoutItem.IsWrap)) {
+      if (isW) {
+        if (e.CateID !== EnumCate.textformfield) {
+          if (e.WAutolayoutItem.Direction === "Horizontal") {
+            return !e.WAutolayoutItem.IsWrap && !e.WAutolayoutItem.IsScroll;
+          } else if ([...e.value.querySelectorAll(`.wbaseItem-value[level="${e.Level + 1}"]`)].every((childHTML) => !childHTML.classList.contains("col-"))) {
+            return !e.WAutolayoutItem.IsScroll;
+          }
         }
       } else {
-        activeFill = true;
+        if (e.WAutolayoutItem.Direction === "Vertical") {
+          return !e.WAutolayoutItem.IsWrap && !e.WAutolayoutItem.IsScroll;
+        } else {
+          return !e.WAutolayoutItem.IsScroll;
+        }
       }
     }
-  }
+    return false;
+  });
+  if (activeFill)
+    activeFill = selected_list.every((e) => {
+      if (isW) {
+        if (parentHTML.classList.contains("w-row")) {
+          if (parentHTML.style.width && parentHTML.style.width != "fit-content") {
+            return parentHTML.getAttribute("wrap") == "wrap" || parentHTML.getAttribute("scroll") != "true";
+          }
+        } else {
+          return parentHTML.getAttribute("wrap") != "wrap";
+        }
+      } else {
+        if (e.CateID !== EnumCate.tree) {
+          if (parentHTML.classList.contains("w-row")) {
+            return parentHTML.getAttribute("wrap") != "wrap";
+          } else {
+            if (parentHTML.style.height && parentHTML.style.height != "fit-content") {
+              return parentHTML.getAttribute("wrap") == "wrap" || parentHTML.getAttribute("scroll") != "true";
+            }
+          }
+        }
+      }
+      return false;
+    });
   if (activeFill) {
-    popup_list_resize_type.childNodes[3].style.display = "inline-flex";
+    popup_list_resize_type.childNodes[3].style.display = "flex";
   } else {
     popup_list_resize_type.childNodes[3].style.display = "none";
   }
   if (activeHug) {
-    popup_list_resize_type.childNodes[2].style.display = "inline-flex";
+    popup_list_resize_type.childNodes[2].style.display = "flex";
   } else {
     popup_list_resize_type.childNodes[2].style.display = "none";
   }
@@ -1408,7 +1398,7 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
       popup_list_resize_type.childNodes[3].firstChild.style.visibility = "visible";
       break;
     default:
-      popup_list_resize_type.firstChild.style.display = "inline-flex";
+      popup_list_resize_type.firstChild.style.display = "flex";
       for (var i = 1; i < popup_list_resize_type.childNodes.length; i++) {
         popup_list_resize_type.childNodes[i].firstChild.style.visibility = "hidden";
       }
@@ -1470,155 +1460,38 @@ function _btnAlignType() {
   return img;
 }
 
-// update UI design view when selected change
-function updateUIDesignView() {
-  let scrollY = design_view.scrollTop;
-  let listEditContainer = [];
-  if (selected_list.length == 0) {
-    let editCanvasBground = createCanvasBackground();
-    listEditContainer.push(editCanvasBground);
-    let winiRes = winiResponsive();
-    listEditContainer.push(winiRes);
-    let breakpoint = createBreakpoint();
-    listEditContainer.push(breakpoint);
-    let localSkins = createSelectionSkins();
-    listEditContainer.push(localSkins);
-  } else {
-    let editAlign = createEditAlign();
-    let editSizePosition = createEditSizePosition();
-    let selectClass = selectionClass();
-    listEditContainer.push(editAlign, editSizePosition, selectClass);
-    if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|grid|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
-      let editConstraints = createConstraints();
-      listEditContainer.push(editConstraints);
-    }
-    if (select_box_parentID != wbase_parentID) {
-      let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
-      let framePage = pageParent[pageParent.length - 1];
-      if (framePage?.classList?.contains("variant")) framePage = pageParent[pageParent.length - 2];
-      if (framePage) {
-        let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
-        if (isPage) {
-          let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
-          listEditContainer.push(selectColByBrp);
-        }
-      } 
-    }
-    if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
-      let editAutoLayout = createAutoLayout();
-      listEditContainer.push(editAutoLayout);
-    }
-    //
-    if (selected_list.length > 0 && selected_list.every((wbaseItem) => wbaseItem.StyleItem.DecorationItem && wbaseItem.StyleItem.DecorationItem.ColorValue == selected_list[0].StyleItem.DecorationItem.ColorValue)) {
-      let editBackground = createEditBackground();
-      listEditContainer.push(editBackground);
-    }
-    if (selected_list.some((e) => e.StyleItem.TextStyleItem)) {
-      let editTextStyle = createEditTextStyle();
-      listEditContainer.push(editTextStyle);
-    }
-    if (selected_list.some((e) => e.StyleItem.DecorationItem)) {
-      if (selected_list.length > 1 || selected_list[0].CateID !== EnumCate.w_switch) {
-        let editBorder = createEditBorder();
-        listEditContainer.push(editBorder);
-      }
-      let editEffect = createEditEffect();
-      listEditContainer.push(editEffect);
-    }
-    let editVariants = createEditVariants();
-    listEditContainer.push(editVariants);
-  }
-  design_view.replaceChildren(...listEditContainer);
-  design_view.scrollTo({
-    top: scrollY,
-    behavior: "smooth",
-  });
-}
-
 //! background-color || img
 function createEditBackground() {
   let editContainer = document.createElement("div");
   editContainer.id = "edit-background";
   editContainer.style.rowGap = "6px";
   editContainer.className = "edit-container";
-  let isBgImg = selected_list.every((wbaseItem) => EnumCate.noImgBg.every((cate) => wbaseItem.CateID != cate) && wbaseItem.AttributesItem.Content && wbaseItem.AttributesItem.Content.trim() != "" && wbaseItem.AttributesItem.Content == selected_list[0].AttributesItem.Content);
   let header = document.createElement("div");
   header.className = "header_design_style";
   editContainer.appendChild(header);
 
   let title = document.createElement("p");
-  title.innerHTML = "Background";
+  let checkedComponent = selected_list.every((wb) => EnumCate.scale_size_component.some((ct) => wb.CateID === ct));
+  title.innerHTML = checkedComponent ? "Checked primary color" : "Background";
   header.appendChild(title);
 
-  if (isBgImg) {
-    let editImgTile = document.createElement("div");
-    editImgTile.id = "select_img_tile";
-    editContainer.appendChild(editImgTile);
-
-    let divSelectImg = document.createElement("div");
-    editImgTile.appendChild(divSelectImg);
-
-    let imgDemo = document.createElement("div");
-    imgDemo.style.backgroundImage = `url(${urlImg + selected_list[0].AttributesItem.Content})`;
-    imgDemo.style.backgroundSize = "cover";
-    imgDemo.style.backgroundPosition = "center";
-    imgDemo.style.backgroundRepeat = "no-repeat";
-    imgDemo.style.width = "20px";
-    imgDemo.style.height = "16px";
-    imgDemo.style.margin = "6px";
-    imgDemo.onclick = function () {
-      if (document.getElementById("popup_img_document") == undefined) {
-        FileDA.init();
-      }
-    };
-    divSelectImg.appendChild(imgDemo);
-    let imgName = document.createElement("p");
-    imgName.innerHTML = "Image";
-
-    divSelectImg.appendChild(imgName);
-    let inputOpacity = document.createElement("input");
-    inputOpacity.value = "100%";
-    inputOpacity.style.width = "38px";
-    inputOpacity.style.minWidth = "0px";
-    inputOpacity.style.minWidth = "40px";
-    inputOpacity.style.padding = "0 0 0 6px";
-    divSelectImg.appendChild(inputOpacity);
-
-    let btnEye = document.createElement("img");
-    btnEye.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg";
-    btnEye.style.width = "16px";
-    btnEye.style.height = "16px";
-    btnEye.style.padding = "6px";
-    editImgTile.appendChild(btnEye);
-
-    let btnRemoveBgImg = document.createElement("i");
-    btnRemoveBgImg.className = "fa-solid fa-minus";
-    btnRemoveBgImg.style.padding = "10px 8px";
-    editImgTile.appendChild(btnRemoveBgImg);
-    btnRemoveBgImg.onclick = function () {
-      removeBackgroundImg();
-      updateUIBackground();
-    };
-  }
-  let selectColorValue = selected_list[0].StyleItem.DecorationItem.ColorValue;
-  if (!isBgImg && selected_list.every((e) => EnumCate.noImgBg.every((cate) => e.CateID != cate))) {
-    let btnSelectImg = document.createElement("i");
-    btnSelectImg.className = "fa-regular fa-image fa-sm bg-header-action";
-    btnSelectImg.onclick = function () {
-      if (!document.getElementById("popup_img_document")) {
-        FileDA.init();
-      }
-    };
-    header.appendChild(btnSelectImg);
-  }
-
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.color, offset);
   });
   btnSelectSkin.className = "action-button bg-header-action";
-  if (selectColorValue) {
-    let listColorID = selected_list.filterAndMap((wbaseItem) => wbaseItem.StyleItem.DecorationItem.ColorID);
+  let btnSelectImg = document.createElement("i");
+  btnSelectImg.className = "fa-regular fa-image fa-sm bg-header-action";
+  btnSelectImg.onclick = function () {
+    if (!document.getElementById("popup_img_document")) {
+      FileDA.init();
+    }
+  };
+
+  if (selected_list.every((wb) => wb.StyleItem.DecorationItem.ColorValue?.match(hexRegex))) {
+    header.appendChild(btnSelectImg);
+
+    let listColorID = selected_list.filterAndMap((wb) => wb.StyleItem.DecorationItem.ColorID);
     if (listColorID.length == 1 && listColorID[0]) {
       let colorSkin = ColorDA.list.find((colorItem) => listColorID[0] == colorItem.GID);
       let cateItem;
@@ -1639,21 +1512,14 @@ function createEditBackground() {
         skin_tile.firstChild.firstChild.style.backgroundColor = `#${colorSkin.Value.substring(2)}${colorSkin.Value.substring(0, 2)}`;
         skin_tile.firstChild.lastChild.innerHTML = (cateItem ? `${cateItem.Name}/` : "") + colorSkin.Name;
         editContainer.appendChild(skin_tile);
+        if (checkedComponent) skin_tile.lastChild.style.display = "none";
       }
-    } else if (listColorID.length > 1) {
-      header.appendChild(btnSelectSkin);
-      let notiText = document.createElement("p");
-      notiText.className = "regular1";
-      notiText.style.margin = "4px 8px";
-      notiText.innerHTML = "choose a color skin to replace mixed content";
-      editContainer.appendChild(notiText);
-    } else {
+    } else if (selected_list.filterAndMap((wb) => wb.StyleItem.DecorationItem.ColorValue.toLowerCase()).length === 1) {
+      let selectColorValue = selected_list[0].StyleItem.DecorationItem.ColorValue;
       //body
       let colorsSelectionList = document.createElement("div");
       colorsSelectionList.id = "colors_selection_list";
       colorsSelectionList.className = "col";
-      colorsSelectionList.style.width = "100%";
-      colorsSelectionList.style.marginLeft = "4px";
       editContainer.appendChild(colorsSelectionList);
       let listEditColorForm = [];
 
@@ -1688,9 +1554,7 @@ function createEditBackground() {
           function () {
             updateColor(false);
           },
-          function () {
-            updateColor();
-          },
+          updateColor,
           function () {
             deleteBackgroundColor().then((_) => updateUIBackground());
           },
@@ -1711,14 +1575,81 @@ function createEditBackground() {
         }
         listEditColorForm.push(formEdit);
       }
+      if (checkedComponent) listEditColorForm.forEach((colorForm) => (colorForm.querySelector(".action-button:last-child").style.display = "none"));
       colorsSelectionList.replaceChildren(...listEditColorForm);
       if (listEditColorForm.length <= 1) {
         header.appendChild(btnSelectSkin);
       }
+    } else {
+      header.appendChild(btnSelectSkin);
+      let notiText = document.createElement("p");
+      notiText.className = "regular1";
+      notiText.style.margin = "4px 8px";
+      notiText.innerHTML = "choose a color skin to replace mixed content";
+      editContainer.appendChild(notiText);
+    }
+  } else if (selected_list.every((wb) => wb.StyleItem.DecorationItem.ColorValue && !wb.StyleItem.DecorationItem.ColorValue.match(hexRegex))) {
+    header.appendChild(btnSelectSkin);
+    if (selected_list.filterAndMap((wb) => wb.StyleItem.DecorationItem.ColorValue).length === 1) {
+      let editImgTile = document.createElement("div");
+      editImgTile.id = "select_img_tile";
+      editContainer.appendChild(editImgTile);
+
+      let divSelectImg = document.createElement("div");
+      editImgTile.appendChild(divSelectImg);
+
+      let imgDemo = document.createElement("div");
+      imgDemo.style.backgroundImage = `url(${urlImg + selected_list[0].StyleItem.DecorationItem.ColorValue})`;
+      imgDemo.style.backgroundSize = "cover";
+      imgDemo.style.backgroundPosition = "center";
+      imgDemo.style.backgroundRepeat = "no-repeat";
+      imgDemo.style.width = "20px";
+      imgDemo.style.height = "16px";
+      imgDemo.style.margin = "6px";
+      imgDemo.onclick = function () {
+        if (document.getElementById("popup_img_document") == undefined) {
+          FileDA.init();
+        }
+      };
+      divSelectImg.appendChild(imgDemo);
+      let imgName = document.createElement("p");
+      imgName.innerHTML = "Image";
+
+      divSelectImg.appendChild(imgName);
+      let inputOpacity = document.createElement("input");
+      inputOpacity.value = "100%";
+      inputOpacity.style.width = "38px";
+      inputOpacity.style.minWidth = "0px";
+      inputOpacity.style.minWidth = "40px";
+      inputOpacity.style.padding = "0 0 0 6px";
+      divSelectImg.appendChild(inputOpacity);
+
+      let btnEye = document.createElement("img");
+      btnEye.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg";
+      btnEye.style.width = "16px";
+      btnEye.style.height = "16px";
+      btnEye.style.padding = "6px";
+      editImgTile.appendChild(btnEye);
+
+      let btnRemoveBgImg = document.createElement("i");
+      btnRemoveBgImg.className = "fa-solid fa-minus";
+      btnRemoveBgImg.style.padding = "10px 8px";
+      editImgTile.appendChild(btnRemoveBgImg);
+      btnRemoveBgImg.onclick = function () {
+        removeBackgroundImg();
+        updateUIBackground();
+      };
+    } else {
+      header.appendChild(btnSelectSkin);
+      let notiText = document.createElement("p");
+      notiText.className = "regular1";
+      notiText.style.margin = "4px 8px";
+      notiText.innerHTML = "choose a color skin to replace mixed content";
+      editContainer.appendChild(notiText);
     }
   } else {
     header.appendChild(btnSelectSkin);
-    btnSelectSkin.style.display = "none";
+    header.appendChild(btnSelectImg);
     let btnAdd = document.createElement("i");
     btnAdd.className = "fa-solid fa-plus fa-sm bg-header-action";
     btnAdd.onclick = function () {
@@ -1726,17 +1657,6 @@ function createEditBackground() {
       updateUIBackground();
     };
     header.appendChild(btnAdd);
-    header.onmouseover = function () {
-      [...header.querySelectorAll(".bg-header-action")].forEach((actionHTML) => {
-        actionHTML.style.display = "block";
-      });
-    };
-    header.onmouseout = function () {
-      [...header.querySelectorAll(".bg-header-action")].forEach((actionHTML) => {
-        actionHTML.style.display = "none";
-      });
-      btnAdd.style.display = "block";
-    };
   }
 
   return editContainer;
@@ -1767,7 +1687,7 @@ function createEditTextStyle() {
   title.innerHTML = listTextStyle.every((e) => e.CateID === EnumCate.chart) ? "Chart label" : "Text";
   header.appendChild(title);
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.typography, offset);
   });
@@ -1834,11 +1754,11 @@ function createEditTextStyle() {
     // select font-family
     let fontFamilyValues = listTextStyle.filterAndMap((e) => e.StyleItem.TextStyleItem.FontFamily);
     let btn_select_font_family = _btnInputSelect(
-      fontFamilyValues.length == 1 ? list_font_family : ["Mixed", ...list_font_family],
+      fontFamilyValues.length == 1 ? list_font_family : ["mixed", ...list_font_family],
       function (options) {
         let firstValue = fontFamilyValues[0];
         if (fontFamilyValues.length > 1) {
-          firstValue = "Mixed";
+          firstValue = "mixed";
         }
         for (let option of options) {
           if (firstValue == option.getAttribute("value")) {
@@ -1856,7 +1776,7 @@ function createEditTextStyle() {
         updateUITextStyle();
       },
     );
-    btn_select_font_family.firstChild.value = fontFamilyValues.length == 1 ? fontFamilyValues[0] : "Mixed";
+    btn_select_font_family.firstChild.value = fontFamilyValues.length == 1 ? fontFamilyValues[0] : "mixed";
     btn_select_font_family.style.marginTop = "8px";
     btn_select_font_family.style.marginBottom = "8px";
     text_style_attribute.appendChild(btn_select_font_family);
@@ -1869,11 +1789,11 @@ function createEditTextStyle() {
     // select font-weight
     let fWeightValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.FontWeight);
     let btn_select_font_weight = _btnDropDownSelect(
-      fWeightValues.length == 1 ? list_font_weight : ["Mixed", ...list_font_weight],
+      fWeightValues.length == 1 ? list_font_weight : ["mixed", ...list_font_weight],
       function (options) {
         let firstFWeight = fWeightValues[0];
         if (fWeightValues.length > 1) {
-          firstFWeight = "Mixed";
+          firstFWeight = "mixed";
         }
         for (let option of options) {
           if (option.getAttribute("value") == firstFWeight) {
@@ -1888,16 +1808,16 @@ function createEditTextStyle() {
         updateUITextStyle();
       },
     );
-    btn_select_font_weight.firstChild.innerHTML = fWeightValues.length == 1 ? fWeightValues[0] : "Mixed";
+    btn_select_font_weight.firstChild.innerHTML = fWeightValues.length == 1 ? fWeightValues[0] : "mixed";
     div_font_size_weight.appendChild(btn_select_font_weight);
     // select font-size
     let fSizeValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.FontSize);
     let btn_select_font_size = _btnInputSelect(
-      fSizeValues.length == 1 ? list_font_size : ["Mixed", ...list_font_size],
+      fSizeValues.length == 1 ? list_font_size : ["mixed", ...list_font_size],
       function (options) {
         let firstValue = fSizeValues[0];
         if (fSizeValues.length > 1) {
-          firstValue = "Mixed";
+          firstValue = "mixed";
         }
         for (let option of options) {
           if (firstValue == option.getAttribute("value")) {
@@ -1908,14 +1828,14 @@ function createEditTextStyle() {
         }
       },
       function (option) {
-        if (parseFloat(option)) {
+        if (!isNaN(parseFloat(option))) {
           editTextStyle({ FontSize: parseFloat(option) });
           updateUITextStyle();
         }
       },
       true,
     );
-    btn_select_font_size.firstChild.value = fSizeValues.length == 1 ? fSizeValues[0] : "Mixed";
+    btn_select_font_size.firstChild.value = fSizeValues.length == 1 ? fSizeValues[0] : "mixed";
     btn_select_font_size.style.flex = 1;
     div_font_size_weight.appendChild(btn_select_font_size);
     if (listTextStyle.some((e) => e.CateID !== EnumCate.chart)) {
@@ -1928,13 +1848,13 @@ function createEditTextStyle() {
       text_style_attribute.appendChild(div_height_spacing);
       // input line-height
       let lineHeightValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.Height);
-      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/line-height.svg", undefined, lineHeightValues.length == 1 ? (lineHeightValues[0] == null ? "Auto" : lineHeightValues[0]) : "Mixed", "25px");
+      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/line-height.svg", undefined, lineHeightValues.length == 1 ? (lineHeightValues[0] == null ? "Auto" : lineHeightValues[0]) : "mixed", "25px");
       input_line_height.style.flex = 1;
       input_line_height.style.marginRight = "8px";
       input_line_height.lastChild.onblur = function () {
         if (this.value.toLowerCase() == "auto") {
           editTextStyle({ Height: this.value });
-        } else if (parseFloat(this.value)) {
+        } else if (!isNaN(parseFloat(this.value))) {
           editTextStyle({ Height: parseFloat(this.value) });
         }
         updateUITextStyle();
@@ -1943,7 +1863,7 @@ function createEditTextStyle() {
       div_height_spacing.appendChild(input_line_height);
       // input letter spacing
       let lSpacingValues = listTextStyle.filterAndMap((wbaseItem) => wbaseItem.StyleItem.TextStyleItem.LetterSpacing);
-      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/letter-spacing.svg", undefined, lSpacingValues.length == 1 ? lSpacingValues[0] : "Mixed", "28px");
+      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/letter-spacing.svg", undefined, lSpacingValues.length == 1 ? lSpacingValues[0] : "mixed", "28px");
       input_letter_spacing.style.flex = 1;
       input_letter_spacing.lastChild.onblur = function () {
         if (!isNaN(parseFloat(this.value))) {
@@ -1960,15 +1880,15 @@ function createEditTextStyle() {
       [
         {
           attribute: TextAutoSize.autoWidth,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/auto-width.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/auto-width.svg",
         },
         {
           attribute: TextAutoSize.autoHeight,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/auto-height.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/auto-height.svg",
         },
         {
           attribute: TextAutoSize.fixedSize,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/fixed-size.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/fixed-size.svg",
         },
       ],
       function (value) {
@@ -1984,7 +1904,7 @@ function createEditTextStyle() {
     updateUIAutoSizeWH(group_btn_auto_size);
     editContainer.appendChild(group_btn_auto_size);
     let _row = document.createElement("div");
-    _row.style.display = "inline-flex";
+    _row.className = "row";
     _row.style.padding = "0 8px 8px 8px";
     editContainer.appendChild(_row);
     // group btn select text align
@@ -1993,15 +1913,15 @@ function createEditTextStyle() {
       [
         {
           attribute: TextAlign.left,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text-align-left.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-left.svg",
         },
         {
           attribute: TextAlign.center,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text-align-center.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-center.svg",
         },
         {
           attribute: TextAlign.right,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text-align-right.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-right.svg",
         },
       ],
       function (value) {
@@ -2009,7 +1929,7 @@ function createEditTextStyle() {
         updateUITextStyle();
       },
     );
-    let firstTextAlign = textAlignValues.length == 1 ? textAlignValues[0] : "Mixed";
+    let firstTextAlign = textAlignValues.length == 1 ? textAlignValues[0] : "mixed";
     for (let alignOption of group_btn_text_align.childNodes) {
       if (alignOption.getAttribute("value") == firstTextAlign) {
         alignOption.style.backgroundColor = "#e5e5e5";
@@ -2024,15 +1944,15 @@ function createEditTextStyle() {
       [
         {
           attribute: TextAlignVertical.top,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text-align-vertical-top.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-top.svg",
         },
         {
           attribute: TextAlignVertical.middle,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text-align-vertical-center.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-center.svg",
         },
         {
           attribute: TextAlignVertical.bottom,
-          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/text-align-vertical-bottom.svg",
+          src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-bottom.svg",
         },
       ],
       function (value) {
@@ -2041,7 +1961,7 @@ function createEditTextStyle() {
       },
     );
     group_btn_text_align_vertical.style.marginLeft = "42px";
-    let firstTextAlignVertical = alignVerticalValues.length == 1 ? alignVerticalValues[0] : "Mixed";
+    let firstTextAlignVertical = alignVerticalValues.length == 1 ? alignVerticalValues[0] : "mixed";
     for (let alginVerticalOption of group_btn_text_align_vertical.childNodes) {
       if (alginVerticalOption.getAttribute("value") == firstTextAlignVertical) {
         alginVerticalOption.style.backgroundColor = "#e5e5e5";
@@ -2092,7 +2012,7 @@ function updateUIAutoSizeWH(groupBtn) {
     });
   let firstAutoSize = select_list_auto_size[0];
   if (select_list_auto_size.some((e) => e != firstAutoSize)) {
-    firstAutoSize = "Mixed";
+    firstAutoSize = "mixed";
   }
   if (group_btn_auto_size) {
     for (let autoSizeOption of group_btn_auto_size.childNodes) {
@@ -2121,7 +2041,7 @@ function _btnInputSelect(list = [], func_on_show_popup, onclick, acceptAll = fal
     if (acceptAll) {
       onclick(this.value);
     } else {
-      if (list.filter((vl) => vl != "Mixed").some((vl) => vl.toString().toLowerCase() === input.value.toLowerCase())) {
+      if (list.filter((vl) => vl != "mixed").some((vl) => vl.toString().toLowerCase() === input.value.toLowerCase())) {
         onclick(list.find((vl) => vl.toLowerCase() === input.value.toLowerCase()));
       } else {
         this.value = inputValue;
@@ -2145,7 +2065,7 @@ function _btnInputSelect(list = [], func_on_show_popup, onclick, acceptAll = fal
       popup_select.style.width = btn_select.offsetWidth + "px";
       for (let i = 0; i < list.length; i++) {
         let option = document.createElement("div");
-        if (list[i] != "Mixed")
+        if (list[i] != "mixed")
           option.onclick = function (e) {
             e.stopPropagation();
             onclick(this.getAttribute("value"));
@@ -2186,7 +2106,7 @@ function _btnDropDownSelect(list = [], func_on_show_popup, onclick) {
   title.innerHTML = "bold";
   btnDropDownSelect.appendChild(title);
   let icon_down = document.createElement("img");
-  icon_down.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/down_black.svg";
+  icon_down.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/down_black.svg";
   btnDropDownSelect.appendChild(icon_down);
 
   btnDropDownSelect.onclick = function () {
@@ -2203,7 +2123,7 @@ function _btnDropDownSelect(list = [], func_on_show_popup, onclick) {
       popup_select_option.style.width = btnDropDownSelect.offsetWidth + "px";
       for (let i = 0; i < list.length; i++) {
         let option = document.createElement("div");
-        if (isString ? list[i] != "Mixed" : list[i].value != "Mixed")
+        if (isString ? list[i] != "mixed" : list[i].value != "mixed")
           option.onclick = function (e) {
             e.stopPropagation();
             popup_select_option.style.display = "none";
@@ -2226,7 +2146,7 @@ function _btnDropDownSelect(list = [], func_on_show_popup, onclick) {
       }
       document.getElementById("body").appendChild(popup_select_option);
       func_on_show_popup([...popup_select_option.childNodes]);
-      popup_select_option.style.display = "inline-flex";
+      popup_select_option.style.display = "flex";
     }, 200);
   };
   return btnDropDownSelect;
@@ -2249,7 +2169,7 @@ function createEditBorder() {
   title.innerHTML = "Border";
   header.appendChild(title);
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.border, offset);
   });
@@ -2283,7 +2203,6 @@ function createEditBorder() {
   } else {
     header.appendChild(btnSelectSkin);
     if (listBorder.some((wbaseItem) => !wbaseItem.StyleItem.DecorationItem.BorderItem)) {
-      btnSelectSkin.style.display = "none";
       let btnAdd = document.createElement("i");
       btnAdd.className = "fa-solid fa-plus fa-sm";
       btnAdd.onclick = function () {
@@ -2291,12 +2210,6 @@ function createEditBorder() {
         updateUIBorder();
       };
       header.appendChild(btnAdd);
-      header.onmouseover = function () {
-        btnSelectSkin.style.display = "flex";
-      };
-      header.onmouseout = function () {
-        btnSelectSkin.style.display = "none";
-      };
     } else {
       let borderColorValues = listBorder.filterAndMap((e) => e.StyleItem.DecorationItem.BorderItem?.ColorValue?.toLowerCase());
       if (borderColorValues.length == 1) {
@@ -2341,7 +2254,7 @@ function createEditBorder() {
       editContainer.appendChild(formEditLine);
       let borderStyles = listBorder.filterAndMap((e) => e.StyleItem.DecorationItem.BorderItem?.BorderStyle);
       let btnSelectStyle = _btnDropDownSelect(
-        borderStyles.length == 1 ? list_border_style : ["Mixed", ...list_border_style],
+        borderStyles.length == 1 ? list_border_style : ["mixed", ...list_border_style],
         function (options) {
           let firstStyle = borderStyles[0];
           for (let option of options) {
@@ -2354,7 +2267,7 @@ function createEditBorder() {
           updateUIBorder();
         },
       );
-      btnSelectStyle.firstChild.innerHTML = borderStyles.length == 1 ? borderStyles[0] : "Mixed";
+      btnSelectStyle.firstChild.innerHTML = borderStyles.length == 1 ? borderStyles[0] : "mixed";
       formEditLine.appendChild(btnSelectStyle);
       //
       let widthValues = listBorder.filterAndMap((e) => {
@@ -2372,11 +2285,11 @@ function createEditBorder() {
             if (eListWidth.every((value) => value == eListWidth[0])) {
               return eListWidth[0];
             } else {
-              return "Mixed";
+              return "mixed";
             }
         }
       });
-      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/stroke-width.svg", undefined, widthValues.length == 1 ? widthValues[0] : "Mixed", "28px");
+      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/stroke-width.svg", undefined, widthValues.length == 1 ? widthValues[0] : "mixed", "28px");
       edit_stroke_width.lastChild.onblur = function () {
         let newValue = parseFloat(this.value);
         if (newValue != undefined) {
@@ -2404,7 +2317,7 @@ function createEditBorder() {
           }
         } else {
           let thisWidthValues = [input_border_left, input_border_top, input_border_right, input_border_bottom].filterAndMap((_input) => _input.value);
-          this.value = thisWidthValues.length == 1 ? thisWidthValues[0] : "Mixed";
+          this.value = thisWidthValues.length == 1 ? thisWidthValues[0] : "mixed";
         }
       };
       formEditLine.appendChild(edit_stroke_width);
@@ -2414,7 +2327,7 @@ function createEditBorder() {
       formEditLine.appendChild(action_edit_line_container);
 
       let sideValues = listBorder.filterAndMap((e) => e.StyleItem.DecorationItem.BorderItem.BorderSide);
-      let btnSelectBorderSide = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-all-black.svg", null, function () {
+      let btnSelectBorderSide = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg", null, function () {
         dropdown_type.style.display = "flex";
         dropdown_type.childNodes[0].style.display = "none";
         let list_border_side = selected_list.filter((e) => e.StyleItem.DecorationItem?.BorderItem).map((e) => e.StyleItem.DecorationItem.BorderItem.BorderSide);
@@ -2427,7 +2340,7 @@ function createEditBorder() {
           dropdown_type.childNodes[0].style.display = "flex";
           for (let i = 0; i < dropdown_type.childNodes.length; i++) {
             let type = dropdown_type.childNodes[i].getAttribute("type");
-            dropdown_type.childNodes[i].firstChild.style.opacity = type == "Mixed" ? 1 : 0;
+            dropdown_type.childNodes[i].firstChild.style.opacity = type == "mixed" ? 1 : 0;
           }
         }
       });
@@ -2440,7 +2353,7 @@ function createEditBorder() {
       });
       btnSelectBorderSide.appendChild(dropdown_type);
 
-      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/more-horizontal.svg", null, function () {});
+      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg", null, function () {});
       edit_line_action2.className = "action-button";
       action_edit_line_container.appendChild(edit_line_action2);
 
@@ -2448,9 +2361,9 @@ function createEditBorder() {
       editContainer.appendChild(group_custom_border_side);
       group_custom_border_side.id = "group_input_edit_border_side";
       group_custom_border_side.className = "group_input_border_side";
-      let input_border_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-left-black.svg", undefined, "0", "36px");
+      let input_border_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left-black.svg", undefined, "0", "36px");
       input_border_left.id = "input_border_left";
-      input_border_left.style.display = "inline-flex";
+      input_border_left.style.display = "flex";
       input_border_left.style.marginLeft = "8px";
       input_border_left.lastChild.onblur = function () {
         let left_width_value = parseFloat(this.value);
@@ -2460,9 +2373,9 @@ function createEditBorder() {
         updateUIBorder();
       };
       group_custom_border_side.appendChild(input_border_left);
-      var input_border_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-top-black.svg", undefined, "0", "36px");
+      var input_border_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top-black.svg", undefined, "0", "36px");
       input_border_top.id = "input_border_top";
-      input_border_top.style.display = "inline-flex";
+      input_border_top.style.display = "flex";
       input_border_top.style.marginRight = "35px";
       input_border_top.lastChild.onblur = function () {
         let top_width_value = parseFloat(this.value);
@@ -2472,9 +2385,9 @@ function createEditBorder() {
         updateUIBorder();
       };
       group_custom_border_side.appendChild(input_border_top);
-      var input_border_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-right-black.svg", undefined, "0", "36px");
+      var input_border_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right-black.svg", undefined, "0", "36px");
       input_border_right.id = "input_border_right";
-      input_border_right.style.display = "inline-flex";
+      input_border_right.style.display = "flex";
       input_border_right.style.marginLeft = "8px";
       input_border_right.lastChild.onblur = function () {
         let right_width_value = parseFloat(this.value);
@@ -2484,10 +2397,10 @@ function createEditBorder() {
         updateUIBorder();
       };
       group_custom_border_side.appendChild(input_border_right);
-      var input_border_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-bottom-black.svg", undefined, "0", "36px");
+      var input_border_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom-black.svg", undefined, "0", "36px");
       input_border_bottom.id = "input_border_bottom";
       input_border_bottom.style.marginRight = "35px";
-      input_border_bottom.style.display = "inline-flex";
+      input_border_bottom.style.display = "flex";
       input_border_bottom.lastChild.onblur = function () {
         let bottom_width_value = parseFloat(this.value);
         if (!isNaN(bottom_width_value)) {
@@ -2496,10 +2409,10 @@ function createEditBorder() {
         updateUIBorder();
       };
       group_custom_border_side.appendChild(input_border_bottom);
-      let firstSideValue = sideValues.length == 1 ? sideValues[0] : "Mixed";
+      let firstSideValue = sideValues.length == 1 ? sideValues[0] : "mixed";
       if (firstSideValue == BorderSide.custom) {
         group_custom_border_side.style.display = "flex";
-        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-all-black.svg`;
+        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg`;
         for (let j = 0; j < group_custom_border_side.childNodes.length; j++) {
           let list_width = [];
           let inputValue;
@@ -2509,7 +2422,7 @@ function createEditBorder() {
               list_width = listBorder.map((e) => e.StyleItem.DecorationItem.BorderItem.Width.split(" ").pop());
               inputValue = list_width[0];
               if (list_width.some((e) => e != inputValue)) {
-                inputValue = "Mixed";
+                inputValue = "mixed";
               }
               break;
             case 1:
@@ -2517,7 +2430,7 @@ function createEditBorder() {
               list_width = listBorder.map((e) => e.StyleItem.DecorationItem.BorderItem.Width.split(" ").shift());
               inputValue = list_width[0];
               if (list_width.some((e) => e != inputValue)) {
-                inputValue = "Mixed";
+                inputValue = "mixed";
               }
               break;
             case 2:
@@ -2525,7 +2438,7 @@ function createEditBorder() {
               list_width = listBorder.map((e) => e.StyleItem.DecorationItem.BorderItem.Width.split(" ")[1]);
               inputValue = list_width[0];
               if (list_width.some((e) => e != inputValue)) {
-                inputValue = "Mixed";
+                inputValue = "mixed";
               }
               break;
             case 3:
@@ -2533,7 +2446,7 @@ function createEditBorder() {
               list_width = listBorder.map((e) => e.StyleItem.DecorationItem.BorderItem.Width.split(" ")[2]);
               inputValue = list_width[0];
               if (list_width.some((e) => e != inputValue)) {
-                inputValue = "Mixed";
+                inputValue = "mixed";
               }
               break;
             default:
@@ -2544,7 +2457,7 @@ function createEditBorder() {
         }
       } else {
         group_custom_border_side.style.display = "none";
-        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-${firstSideValue.toLowerCase()}-black.svg`;
+        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-${firstSideValue.toLowerCase()}-black.svg`;
       }
     }
   }
@@ -2572,7 +2485,7 @@ function createEditEffect() {
   title.innerHTML = "Effect";
   header.appendChild(title);
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg", null, function () {
     let offset = header.getBoundingClientRect();
     createDropdownTableSkin(EnumCate.effect, offset);
   });
@@ -2605,7 +2518,6 @@ function createEditEffect() {
   } else {
     header.appendChild(btnSelectSkin);
     if (listEffect.every((wbaseItem) => !wbaseItem.StyleItem.DecorationItem.EffectItem)) {
-      btnSelectSkin.style.display = "none";
       let btnAdd = document.createElement("i");
       btnAdd.className = "fa-solid fa-plus fa-sm";
       btnAdd.onclick = function () {
@@ -2613,22 +2525,14 @@ function createEditEffect() {
         updateUIEffect();
       };
       header.appendChild(btnAdd);
-      header.onmouseover = function () {
-        btnSelectSkin.style.display = "flex";
-      };
-      header.onmouseout = function () {
-        btnSelectSkin.style.display = "none";
-      };
     } else {
       let div_select_eType = document.createElement("div");
       div_select_eType.id = "edit_effect_type_attribute";
-      div_select_eType.style.display = "inline-flex";
+      div_select_eType.className = "row";
       div_select_eType.style.width = "100%";
-      div_select_eType.style.boxSizing = "border-box";
-      div_select_eType.style.alignItems = "center";
       editContainer.appendChild(div_select_eType);
       // popup edit effect type attribute
-      let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg", null, function () {
+      let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg", null, function () {
         setTimeout(function () {
           updateUIEffectAttribute();
         }, 200);
@@ -2651,7 +2555,7 @@ function createEditEffect() {
                   let list_offsetX = list_effect.map((e) => e.OffsetX);
                   let firstValue = list_offsetX[0];
                   if (list_offsetX.some((e) => e != firstValue)) {
-                    firstValue = "Mixed";
+                    firstValue = "mixed";
                   }
                   eHTML.lastChild.value = firstValue;
                 }
@@ -2662,7 +2566,7 @@ function createEditEffect() {
                 let list_blur = list_effect.map((e) => e.BlurRadius);
                 let firstBlurValue = list_blur[0];
                 if (list_blur.some((e) => e != firstBlurValue)) {
-                  firstBlurValue = "Mixed";
+                  firstBlurValue = "mixed";
                 }
                 eHTML.lastChild.value = firstBlurValue;
                 break;
@@ -2675,7 +2579,7 @@ function createEditEffect() {
                   let list_offsetY = list_effect.map((e) => e.OffsetY);
                   let firstValue = list_offsetY[0];
                   if (list_offsetY.some((e) => e != firstValue)) {
-                    firstValue = "Mixed";
+                    firstValue = "mixed";
                   }
                   eHTML.lastChild.value = firstValue;
                 }
@@ -2689,7 +2593,7 @@ function createEditEffect() {
                   let list_spread = list_effect.map((e) => e.SpreadRadius);
                   let firstValue = list_spread[0];
                   if (list_spread.some((e) => e != firstValue)) {
-                    firstValue = "Mixed";
+                    firstValue = "mixed";
                   }
                   eHTML.lastChild.value = firstValue;
                 }
@@ -2720,7 +2624,6 @@ function createEditEffect() {
         }
       }
       effect_setting.className = "action-button";
-      effect_setting.style.marginLeft = "0px";
       effect_setting.style.overflow = "visible";
       effect_setting.style.position = "relative";
       div_select_eType.appendChild(effect_setting);
@@ -2736,7 +2639,7 @@ function createEditEffect() {
       let input_offsetX = _textField("84px", undefined, "X", "0", undefined);
       input_offsetX.id = "edit_effect_offsetX";
       input_offsetX.lastChild.onblur = function () {
-        if (parseFloat(this.value)) {
+        if (!isNaN(parseFloat(this.value))) {
           editEffect({ OffsetX: parseFloat(this.value) });
         }
         updateUIEffectAttribute();
@@ -2744,7 +2647,7 @@ function createEditEffect() {
       let input_blur = _textField("84px", undefined, "Blur", "0", undefined);
       input_blur.id = "edit_effect_blur";
       input_blur.lastChild.onblur = function () {
-        if (parseFloat(this.value)) {
+        if (!isNaN(parseFloat(this.value))) {
           editEffect({ BlurRadius: parseFloat(this.value) });
         }
         updateUIEffectAttribute();
@@ -2752,7 +2655,7 @@ function createEditEffect() {
       let input_offsetY = _textField("84px", undefined, "Y", "0", undefined);
       input_offsetY.id = "edit_effect_offsetY";
       input_offsetY.lastChild.onblur = function () {
-        if (parseFloat(this.value)) {
+        if (!isNaN(parseFloat(this.value))) {
           editEffect({ OffsetY: parseFloat(this.value) });
         }
         updateUIEffectAttribute();
@@ -2760,7 +2663,7 @@ function createEditEffect() {
       let input_spread = _textField("84px", undefined, "Spread", "0", undefined);
       input_spread.id = "edit_effect_spread";
       input_spread.lastChild.onblur = function () {
-        if (parseFloat(this.value)) {
+        if (!isNaN(parseFloat(this.value))) {
           editEffect({ SpreadRadius: parseFloat(this.value) });
         }
         updateUIEffectAttribute();
@@ -2790,11 +2693,11 @@ function createEditEffect() {
       // select effect type
       let eTypeValues = listEffect.filterAndMap((e) => e.StyleItem.DecorationItem.EffectItem.Type);
       let btn_select_eType = _btnDropDownSelect(
-        eTypeValues.length == 1 ? list_effect_type : ["Mixed", ...list_effect_type],
+        eTypeValues.length == 1 ? list_effect_type : ["mixed", ...list_effect_type],
         function (options) {
           let firstEType = eTypeValues[0];
           if (eTypeValues.length > 1) {
-            firstEType = "Mixed";
+            firstEType = "mixed";
           }
           for (let option of options) {
             if (option.getAttribute("value") == firstEType) {
@@ -2810,14 +2713,14 @@ function createEditEffect() {
         },
       );
       btn_select_eType.id = "btn_select_effect_type";
-      btn_select_eType.firstChild.innerHTML = eTypeValues.length == 1 ? eTypeValues[0] : "Mixed";
+      btn_select_eType.firstChild.innerHTML = eTypeValues.length == 1 ? eTypeValues[0] : "mixed";
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () {});
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
 
-      let btn_delete = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/minus.svg", null, function () {
+      let btn_delete = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg", null, function () {
         deleteEffect();
         updateUIEffect();
       });
@@ -2841,8 +2744,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
 
   let editColorTile = document.createElement("div");
   editColorTile.className = "container-edit-tile";
-  editColorTile.style.width = "auto";
-  editColorTile.style.paddingLeft = "4px";
+  editColorTile.style.padding = "0 4px";
 
   let containerInput = document.createElement("div");
   containerInput.className = "parameter-form";
@@ -2863,7 +2765,6 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
 
   let editColorForm = document.createElement("input");
   editColorForm.className = "edit-color-form";
-  editColorForm.maxLength = 7;
   editColorForm.value = "000000";
 
   containerInput.appendChild(editColorForm);
@@ -2889,7 +2790,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
   containerAction.appendChild(buttonVisible);
 
   let buttonVisibleIcon = document.createElement("img");
-  buttonVisibleIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg";
+  buttonVisibleIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg";
   buttonVisibleIcon.style.padding = "0px";
 
   buttonVisible.appendChild(buttonVisibleIcon);
@@ -2899,7 +2800,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
   if (funcDelete) {
     buttonMinus.className = "action-button";
     let buttonMinusIcon = document.createElement("img");
-    buttonMinusIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/minus.svg";
+    buttonMinusIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg";
     buttonMinus.appendChild(buttonMinusIcon);
     buttonMinus.onclick = funcDelete;
     containerAction.appendChild(buttonMinus);
@@ -2909,7 +2810,7 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
   //change icon
   buttonVisible.onclick = function () {
     visible = visible ? false : true;
-    buttonVisibleIcon.src = !visible ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg";
+    buttonVisibleIcon.src = !visible ? "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg" : "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg";
   };
   // UI action
   containerInput.onmouseover = function () {
@@ -2931,6 +2832,13 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
     this.parentElement.style.border = "0.5px solid #1890FF";
     divider.style.backgroundColor = "#1890FF";
     startHexColor = this.value;
+  };
+  editColorForm.oninput = function () {
+    if (this.value.startsWith("#")) {
+      editColorForm.maxLength = 7;
+    } else {
+      editColorForm.maxLength = 6;
+    }
   };
   editColorForm.onblur = function () {
     isFocus = false;
@@ -2969,31 +2877,31 @@ function createEditColorForm(funcEdit, funcSubmit, funcDelete) {
 function selectBorderSide(params, onclick) {
   let list = [
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-all-white.svg",
-      name: "Mixed",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-white.svg",
+      name: "mixed",
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-all-white.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-white.svg",
       name: BorderSide.all,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-top.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top.svg",
       name: BorderSide.top,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-left.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left.svg",
       name: BorderSide.left,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-bottom.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom.svg",
       name: BorderSide.bottom,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-right.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right.svg",
       name: BorderSide.right,
     },
     {
-      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/settings-gear.svg",
+      src: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/settings-gear.svg",
       name: BorderSide.custom,
     },
   ];
@@ -3019,7 +2927,7 @@ function selectBorderSide(params, onclick) {
     }
     let checkIcon = document.createElement("img");
     checkIcon.className = "option-icon";
-    checkIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/check.svg";
+    checkIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/check.svg";
     checkIcon.style.opacity = params == list[i].name ? 1 : 0;
     option.appendChild(checkIcon);
 
@@ -3073,16 +2981,14 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
   dropdown.style.top = offset.y - 56 + "px";
   dropdown.setAttribute("cate", enumCate);
   let header = document.createElement("div");
-  header.className = "header_popup_skin";
+  header.className = "col header_popup_skin";
   dropdown.appendChild(header);
+  let titleBar = document.createElement("div");
+  titleBar.className = "row";
   let title = document.createElement("span");
-  title.style.pointerEvents = "none";
-  title.style.flex = 1;
-  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/library-black.svg", null, function () {});
+  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/library-black.svg", null, function () {});
 
-  header.appendChild(title);
-  header.appendChild(action1);
-  let action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/add2.svg", null, function () {
+  let action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/add2.svg", null, function () {
     setTimeout(function () {
       let create_skin_popup = document.getElementById("create_skin_popup");
       create_skin_popup.style.display = "flex";
@@ -3115,7 +3021,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
       }
     }, 200);
   });
-  header.appendChild(action2);
+  titleBar.replaceChildren(title, action1, action2);
   switch (enumCate) {
     case EnumCate.color:
       title.innerHTML = "Color skin";
@@ -3144,19 +3050,6 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
     default:
       return;
   }
-
-  document.getElementById("body").appendChild(dropdown);
-
-  updateTableSkinBody(enumCate, currentSkinID);
-}
-
-function updateTableSkinBody(enumCate, currentSkinID) {
-  let dropdown = document.getElementById("popup_table_skin");
-  if (!dropdown) return;
-  let body = document.createElement("div");
-  let noti_empty_skin = document.createElement("p");
-  noti_empty_skin.style.fontWeight = "500";
-  noti_empty_skin.style.margin = "0 16px";
   let searchContainer = document.createElement("div");
   searchContainer.className = "row search-skins";
   let prefixIcon = document.createElement("i");
@@ -3170,22 +3063,52 @@ function updateTableSkinBody(enumCate, currentSkinID) {
   searchContainer.replaceChildren(prefixIcon, inputSearch);
   function searchSkins() {
     let searchContent = inputSearch.value.toLowerCase();
-    let listSkinTile = body.querySelectorAll(".skin_tile_option");
     if (searchContent.trim() == "") {
-      listSkinTile.forEach((skinTile) => {
-        skinTile.style.display = "flex";
+      let listTile = body.querySelectorAll(":is(.cate-skin-tile, .skin_tile_option)");
+      listTile.forEach((tile) => {
+        tile.style.display = "flex";
       });
     } else {
-      listSkinTile.forEach((skinTile) => {
-        let skinName = skinTile.querySelector(".skin-name").innerHTML;
-        if (skinName.toLowerCase().includes(searchContent)) {
-          skinTile.style.display = "flex";
+      body.querySelectorAll(".cate-skin-tile").forEach((cateSkTile) => {
+        let listSkinTile = cateSkTile.querySelectorAll(".skin_tile_option");
+        let cateName = cateSkTile.querySelector(":scope > p")?.innerHTML;
+        if (cateName && cateName.toLowerCase().includes(searchContent)) {
+          cateSkTile.style.display = "flex";
         } else {
-          skinTile.style.display = "none";
+          let numberResult = 0;
+          listSkinTile.forEach((skinTile) => {
+            let skinName = skinTile.querySelector(".skin-name").innerHTML;
+            if (skinName.toLowerCase().includes(searchContent)) {
+              skinTile.style.display = "flex";
+              numberResult++;
+            } else {
+              skinTile.style.display = "none";
+            }
+          });
+          cateSkTile.style.display = numberResult ? "flex" : "none";
         }
       });
     }
   }
+  header.replaceChildren(titleBar, searchContainer);
+
+  document.getElementById("body").appendChild(dropdown);
+
+  updateTableSkinBody(enumCate, currentSkinID);
+  let dropdownRect = dropdown.getBoundingClientRect();
+  if (dropdownRect.bottom > document.body.offsetHeight) {
+    dropdown.style.top = offset.y - 56 - (dropdownRect.bottom - document.body.offsetHeight) - 2 + "px";
+  }
+}
+
+function updateTableSkinBody(enumCate, currentSkinID) {
+  let dropdown = document.getElementById("popup_table_skin");
+  if (!dropdown) return;
+  let body = document.createElement("div");
+  let noti_empty_skin = document.createElement("p");
+  noti_empty_skin.style.margin = "8px 16px";
+  noti_empty_skin.className = "regular0 text-subtitle";
+
   switch (enumCate) {
     case EnumCate.color:
       if (ColorDA.list.length == 0) {
@@ -3193,7 +3116,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
         body.replaceChildren(noti_empty_skin);
       } else {
         let list_color_cate = [{ ID: EnumCate.color }, ...CateDA.list_color_cate.sort((a, b) => a.Name - b.Name)];
-        body.replaceChildren(searchContainer, ...list_color_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
+        body.replaceChildren(...list_color_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
       }
 
       break;
@@ -3203,7 +3126,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
         body.replaceChildren(noti_empty_skin);
       } else {
         let list_typo_cate = [{ ID: EnumCate.typography }, ...CateDA.list_typo_cate.sort((a, b) => a.Name - b.Name)];
-        body.replaceChildren(searchContainer, ...list_typo_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
+        body.replaceChildren(...list_typo_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
       }
 
       break;
@@ -3213,7 +3136,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
         body.replaceChildren(noti_empty_skin);
       } else {
         let list_border_cate = [{ ID: EnumCate.border }, ...CateDA.list_border_cate.sort((a, b) => a.Name - b.Name)];
-        body.replaceChildren(searchContainer, ...list_border_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
+        body.replaceChildren(...list_border_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
       }
 
       break;
@@ -3223,7 +3146,7 @@ function updateTableSkinBody(enumCate, currentSkinID) {
         body.replaceChildren(noti_empty_skin);
       } else {
         let list_effect_cate = [{ ID: EnumCate.effect }, ...CateDA.list_effect_cate.sort((a, b) => a.Name - b.Name)];
-        body.replaceChildren(searchContainer, ...list_effect_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
+        body.replaceChildren(...list_effect_cate.map((cateItem) => createCateSkinHTML(cateItem, currentSkinID)));
       }
 
       break;
@@ -3387,7 +3310,7 @@ function createSkinTileHTML(enumCate, jsonSkin) {
   let action_edit = document.createElement("i");
   if (jsonSkin.ProjectID != ProjectDA.obj.ID) {
     action_edit.className = "fa-regular fa-circle-question fa-lg";
-    action_edit.style.display = "block";
+    action_edit.style.display = "flex";
     action_edit.style.color = "#1890ff";
     skin_tile.style.pointerEvents = "none";
   } else {
@@ -3400,6 +3323,9 @@ function createSkinTileHTML(enumCate, jsonSkin) {
     popupEdit.style.top = e.pageY + "px";
     popupEdit.style.left = e.pageX + "px";
     document.getElementById("body").appendChild(popupEdit);
+    if (popupEdit.getBoundingClientRect().bottom >= document.body.offsetHeight) {
+      popupEdit.style.top = `${document.body.offsetHeight - popupEdit.offsetHeight}px`;
+    }
   }
   skin_tile.onauxclick = function (e) {
     e.stopPropagation();
@@ -3504,7 +3430,7 @@ function createSkinTileHTML(enumCate, jsonSkin) {
       let typo_name = document.createElement("div");
       typo_name.style.margin = "0 8px";
       typo_name.style.flex = 1;
-      typo_name.style.display = "inline-flex";
+      typo_name.style.display = "flex";
       typo_name.style.pointerEvents = "none";
       let title_name = document.createElement("p");
       title_name.className = "skin-name";
@@ -3555,7 +3481,7 @@ function createSkinTileHTML(enumCate, jsonSkin) {
         }
       };
       let demo_effect = document.createElement("img");
-      demo_effect.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg";
+      demo_effect.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg";
       demo_effect.style.width = "16px";
       demo_effect.style.height = "16px";
       demo_effect.style.pointerEvents = "none";
@@ -3792,10 +3718,8 @@ function popupEditSkin(enumCate, jsonSkin) {
       body.appendChild(btn_select_font_family);
       //
       let div_font_size_weight = document.createElement("div");
-      div_font_size_weight.style.display = "inline-flex";
+      div_font_size_weight.className = "row";
       div_font_size_weight.style.width = "100%";
-      div_font_size_weight.style.boxSizing = "border-box";
-      div_font_size_weight.style.alignItems = "center";
       body.appendChild(div_font_size_weight);
       // select font-weight
       let btn_select_font_weight = _btnDropDownSelect(
@@ -3845,14 +3769,12 @@ function popupEditSkin(enumCate, jsonSkin) {
       div_font_size_weight.appendChild(btn_select_font_size);
       // row contain edit line-height & letter spacing
       let div_height_spacing = document.createElement("div");
-      div_height_spacing.style.display = "inline-flex";
+      div_height_spacing.className = "row";
       div_height_spacing.style.width = "100%";
       div_height_spacing.style.padding = "8px 4px 0 0";
-      div_height_spacing.style.boxSizing = "border-box";
-      div_height_spacing.style.alignItems = "center";
       body.appendChild(div_height_spacing);
       // input line-height
-      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/line-height.svg", undefined, "0", "25px");
+      let input_line_height = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/line-height.svg", undefined, "0", "25px");
       input_line_height.style.flex = 1;
       input_line_height.style.marginRight = "8px";
       input_line_height.lastChild.value = jsonSkin.Height ? jsonSkin.Height : "Auto";
@@ -3861,7 +3783,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         if (this.value.toLowerCase() == "auto") {
           editTypoSkin({ Height: this.value }, thisSkin);
           demoText.style.lineHeight = "normal";
-        } else if (parseFloat(this.value)) {
+        } else if (!isNaN(parseFloat(this.value))) {
           editTypoSkin({ Height: parseFloat(this.value) }, thisSkin);
           demoText.style.lineHeight = parseFloat(this.value) + "px";
         } else {
@@ -3870,7 +3792,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       };
       div_height_spacing.appendChild(input_line_height);
       // input letter spacing
-      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/letter-spacing.svg", undefined, "0", "28px");
+      let input_letter_spacing = _textField("100%", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/letter-spacing.svg", undefined, "0", "28px");
       input_letter_spacing.id = "input_letter_spacing";
       input_letter_spacing.style.flex = 1;
       input_letter_spacing.lastChild.value = jsonSkin.LetterSpacing;
@@ -3960,7 +3882,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       btnSelectStyle.firstChild.innerHTML = jsonSkin.BorderStyle;
       formEditLine.appendChild(btnSelectStyle);
 
-      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/stroke-width.svg", undefined, "0", "28px");
+      let edit_stroke_width = _textField("60px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/stroke-width.svg", undefined, "0", "28px");
       let listWidth = jsonSkin.Width.split(" ");
       switch (jsonSkin.BorderSide) {
         case BorderSide.top:
@@ -3979,12 +3901,12 @@ function popupEditSkin(enumCate, jsonSkin) {
           if (listWidth.every((value) => value == listWidth[0])) {
             edit_stroke_width.lastChild.value = listWidth[0];
           } else {
-            edit_stroke_width.lastChild.value = "Mixed";
+            edit_stroke_width.lastChild.value = "mixed";
           }
           break;
       }
       edit_stroke_width.lastChild.onblur = function () {
-        if (parseFloat(this.value)) {
+        if (!isNaN(parseFloat(this.value))) {
           let thisSkin = BorderDA.list.find((e) => e.GID == jsonSkin.GID);
           group_custom_border_side.style.display = "none";
           editBorderSkin({ Width: parseFloat(this.value) }, thisSkin);
@@ -4011,7 +3933,7 @@ function popupEditSkin(enumCate, jsonSkin) {
               if (listWidth.every((value) => value == listWidth[0])) {
                 this.value = listWidth[0];
               } else {
-                this.value = "Mixed";
+                this.value = "mixed";
               }
               break;
           }
@@ -4019,7 +3941,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       };
       formEditLine.appendChild(edit_stroke_width);
 
-      let btnSelectBorderSide = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-all-black.svg", null, function () {
+      let btnSelectBorderSide = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg", null, function () {
         dropdown_type.style.display = "flex";
         dropdown_type.childNodes[0].style.display = "none";
         for (let i = 1; i < dropdown_type.childNodes.length; i++) {
@@ -4034,7 +3956,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         let thisSkin = BorderDA.list.find((e) => e.GID == jsonSkin.GID);
         if (value == BorderSide.custom) {
           group_custom_border_side.style.display = "flex";
-          edit_stroke_width.lastChild.value = thisSkin.BorderSide == BorderSide.all ? thisSkin.Width.split(" ")[0] : "Mixed";
+          edit_stroke_width.lastChild.value = thisSkin.BorderSide == BorderSide.all ? thisSkin.Width.split(" ")[0] : "mixed";
           editBorderSkin({ BorderSide: BorderSide.custom }, thisSkin);
           input_border_top.lastChild.value = thisSkin.Width.split(" ")[0];
           input_border_right.lastChild.value = thisSkin.Width.split(" ")[1];
@@ -4055,7 +3977,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       body.appendChild(group_custom_border_side);
       group_custom_border_side.className = "group_input_border_side";
       group_custom_border_side.style.display = jsonSkin.BorderSide == BorderSide.custom ? "flex" : "none";
-      let input_border_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-left-black.svg", undefined, "0", "36px");
+      let input_border_left = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left-black.svg", undefined, "0", "36px");
       input_border_left.style.marginLeft = "8px";
       input_border_left.lastChild.value = jsonSkin.Width.split(" ")[3];
       input_border_left.lastChild.onblur = function () {
@@ -4069,7 +3991,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         }
       };
       group_custom_border_side.appendChild(input_border_left);
-      let input_border_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-top-black.svg", undefined, "0", "36px");
+      let input_border_top = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top-black.svg", undefined, "0", "36px");
       input_border_top.style.marginRight = "8px";
       input_border_top.lastChild.value = jsonSkin.Width.split(" ")[0];
       input_border_top.lastChild.onblur = function () {
@@ -4082,7 +4004,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         }
       };
       group_custom_border_side.appendChild(input_border_top);
-      let input_border_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-right-black.svg", undefined, "0", "36px");
+      let input_border_right = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right-black.svg", undefined, "0", "36px");
       input_border_right.style.marginLeft = "8px";
       input_border_right.lastChild.value = jsonSkin.Width.split(" ")[1];
       input_border_right.lastChild.onblur = function () {
@@ -4095,7 +4017,7 @@ function popupEditSkin(enumCate, jsonSkin) {
         }
       };
       group_custom_border_side.appendChild(input_border_right);
-      let input_border_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/border-bottom-black.svg", undefined, "0", "36px");
+      let input_border_bottom = _textField("88px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom-black.svg", undefined, "0", "36px");
       input_border_bottom.style.marginRight = "8px";
       input_border_bottom.lastChild.value = jsonSkin.Width.split(" ")[2];
       input_border_bottom.lastChild.onblur = function () {
@@ -4146,132 +4068,131 @@ function popupEditSkin(enumCate, jsonSkin) {
       //
       let div_select_eType = document.createElement("div");
       div_select_eType.style.width = "calc(100% - 16px)";
-      div_select_eType.style.display = "inline-flex";
+      div_select_eType.style.display = "flex";
       div_select_eType.style.marginLeft = "8px";
       div_select_eType.style.alignItems = "center";
       body.appendChild(div_select_eType);
       // popup edit effect type attribute
-      let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg", null, function () {
-        setTimeout(function () {
-          let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-          let popupEditEffect = document.createElement("div");
-          let offset = effect_setting.getBoundingClientRect();
-          popupEditEffect.style.display = "flex";
-          popupEditEffect.style.left = offset.x - 8 + "px";
-          popupEditEffect.style.top = offset.y + "px";
-          popupEditEffect.style.transform = "translate(-100%,-80%)";
-          popupEditEffect.className = "popup_edit_effect_attribute wini_popup";
-          let popup_title = document.createElement("span");
-          popup_title.innerHTML = thisSkin.Type;
-          popupEditEffect.appendChild(popup_title);
-          let btn_close = document.createElement("i");
-          btn_close.className = "fa-solid fa-xmark";
-          btn_close.style.padding = "6px";
-          btn_close.style.float = "right";
-          btn_close.onclick = function () {
-            popupEditEffect.remove();
-          };
-          popup_title.appendChild(btn_close);
-          let div_attribute = document.createElement("div");
-          popupEditEffect.appendChild(div_attribute);
-          if (thisSkin.Type != ShadowType.layer_blur) {
-            let input_offsetX = _textField("84px", undefined, "X", "0", undefined);
-            input_offsetX.lastChild.value = thisSkin.OffsetX;
-            input_offsetX.lastChild.onblur = function () {
-              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-              if (parseFloat(this.value)) {
-                editEffectSkin({ OffsetX: parseFloat(this.value) }, thisSkin);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
-                      ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              } else {
-                this.value = thisSkin.OffsetX;
-              }
-            };
-            div_attribute.appendChild(input_offsetX);
-          }
-          let input_blur = _textField("84px", undefined, "Blur", "0", undefined);
-          input_blur.lastChild.value = thisSkin.BlurRadius;
-          input_blur.lastChild.onblur = function () {
+      let effect_setting = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg", null, function () {
+        let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+        let popupEditEffect = document.createElement("div");
+        let offset = effect_setting.getBoundingClientRect();
+        popupEditEffect.style.left = offset.x - 8 + "px";
+        popupEditEffect.style.top = offset.y + "px";
+        popupEditEffect.style.transform = "translate(-100%,-80%)";
+        popupEditEffect.className = "popup_edit_effect_attribute wini_popup col";
+        let popup_title = document.createElement("span");
+        popup_title.innerHTML = thisSkin.Type;
+        popupEditEffect.appendChild(popup_title);
+        let btn_close = document.createElement("i");
+        btn_close.className = "fa-solid fa-xmark";
+        btn_close.style.padding = "6px";
+        btn_close.style.float = "right";
+        btn_close.onclick = function () {
+          popupEditEffect.remove();
+        };
+        popup_title.appendChild(btn_close);
+        let div_attribute = document.createElement("div");
+        popupEditEffect.appendChild(div_attribute);
+        if (thisSkin.Type != ShadowType.layer_blur) {
+          let input_offsetX = _textField("84px", undefined, "X", "0", undefined);
+          input_offsetX.lastChild.value = thisSkin.OffsetX;
+          input_offsetX.lastChild.onblur = function () {
             let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-            if (parseFloat(this.value)) {
-              editEffectSkin({ BlurRadius: parseFloat(this.value) }, thisSkin);
-              if (thisSkin.Type == ShadowType.layer_blur) {
-                demoShadow.style.filter = `blur(${thisSkin.BlurRadius}px)`;
-              } else {
-                let effect_color = thisSkin.ColorValue;
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} 
+            if (!isNaN(parseFloat(this.value))) {
+              editEffectSkin({ OffsetX: parseFloat(this.value) }, thisSkin);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
                       ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              }
             } else {
-              this.value = thisSkin.BlurRadius;
+              this.value = thisSkin.OffsetX;
             }
           };
-          div_attribute.appendChild(input_blur);
-          if (thisSkin.Type != ShadowType.layer_blur) {
-            let input_offsetY = _textField("84px", undefined, "Y", "0", undefined);
-            input_offsetY.lastChild.value = thisSkin.OffsetY;
-            input_offsetY.lastChild.onblur = function () {
-              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-              if (parseFloat(this.value)) {
-                editEffectSkin({ OffsetY: parseFloat(this.value) }, thisSkin);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
-                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              } else {
-                this.value = thisSkin.OffsetY;
-              }
-            };
-            let input_spread = _textField("84px", undefined, "Spread", "0", undefined);
-            input_spread.lastChild.value = thisSkin.SpreadRadius;
-            input_spread.lastChild.onblur = function () {
-              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-              if (parseFloat(this.value)) {
-                editEffectSkin({ SpreadRadius: parseFloat(this.value) }, thisSkin);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
-                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              } else {
-                this.value = thisSkin.OffsetY;
-              }
-            };
-            div_attribute.appendChild(input_offsetY);
-            div_attribute.appendChild(input_spread);
-            let inputEffectColor = createEditColorForm(
-              function (newColor) {
-                let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-                editEffectSkin({ ColorValue: newColor }, thisSkin, false);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${newColor.substring(2)}${newColor.substring(0, 2)} 
-                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              },
-              function (newColor) {
-                let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
-                editEffectSkin({ ColorValue: newColor }, thisSkin);
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${newColor.substring(2)}${newColor.substring(0, 2)} 
-                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
-              },
-            );
-            inputEffectColor.style.margin = "4px";
-            var formEditColor = [...inputEffectColor.childNodes].find((e) => e.className == "parameter-form");
-            formEditColor.childNodes.forEach((e) => {
-              switch (e.className) {
-                case "show-color-container":
-                  e.value = `#${thisSkin.ColorValue.substring(2)}`;
-                  break;
-                case "edit-color-form":
-                  e.value = thisSkin.ColorValue.substring(2).toUpperCase();
-                  break;
-                case "edit-opacity-form":
-                  e.value = Ultis.hexToPercent(thisSkin.ColorValue.substring(0, 2)) + "%";
-                  break;
-                default:
-                  break;
-              }
-            });
-            div_attribute.appendChild(inputEffectColor);
+          div_attribute.appendChild(input_offsetX);
+        }
+        let input_blur = _textField("84px", undefined, "Blur", "0", undefined);
+        input_blur.lastChild.value = thisSkin.BlurRadius;
+        input_blur.lastChild.onblur = function () {
+          let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+          if (!isNaN(parseFloat(this.value))) {
+            editEffectSkin({ BlurRadius: parseFloat(this.value) }, thisSkin);
+            if (thisSkin.Type == ShadowType.layer_blur) {
+              demoShadow.style.filter = `blur(${thisSkin.BlurRadius}px)`;
+            } else {
+              let effect_color = thisSkin.ColorValue;
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} 
+                      ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            }
+          } else {
+            this.value = thisSkin.BlurRadius;
           }
-          document.getElementById("body").appendChild(popupEditEffect);
-        }, 200);
+        };
+        div_attribute.appendChild(input_blur);
+        if (thisSkin.Type != ShadowType.layer_blur) {
+          let input_offsetY = _textField("84px", undefined, "Y", "0", undefined);
+          input_offsetY.lastChild.value = thisSkin.OffsetY;
+          input_offsetY.lastChild.onblur = function () {
+            let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+            if (!isNaN(parseFloat(this.value))) {
+              editEffectSkin({ OffsetY: parseFloat(this.value) }, thisSkin);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
+                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            } else {
+              this.value = thisSkin.OffsetY;
+            }
+          };
+          let input_spread = _textField("84px", undefined, "Spread", "0", undefined);
+          input_spread.lastChild.value = thisSkin.SpreadRadius;
+          input_spread.lastChild.onblur = function () {
+            let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+            if (!isNaN(parseFloat(this.value))) {
+              editEffectSkin({ SpreadRadius: parseFloat(this.value) }, thisSkin);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue.substring(2)}${thisSkin.ColorValue.substring(0, 2)} 
+                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            } else {
+              this.value = thisSkin.OffsetY;
+            }
+          };
+          div_attribute.appendChild(input_offsetY);
+          div_attribute.appendChild(input_spread);
+          let inputEffectColor = createEditColorForm(
+            function (newColor) {
+              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+              editEffectSkin({ ColorValue: newColor }, thisSkin, false);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${newColor.substring(2)}${newColor.substring(0, 2)} 
+                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            },
+            function (newColor) {
+              let thisSkin = EffectDA.list.find((e) => e.GID == jsonSkin.GID);
+              editEffectSkin({ ColorValue: newColor }, thisSkin);
+              demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY}px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${newColor.substring(2)}${newColor.substring(0, 2)} 
+                    ${thisSkin.Type == ShadowType.inner ? "inset" : ""}`;
+            },
+          );
+          inputEffectColor.style.margin = "4px";
+          var formEditColor = [...inputEffectColor.childNodes].find((e) => e.className == "parameter-form");
+          formEditColor.childNodes.forEach((e) => {
+            switch (e.className) {
+              case "show-color-container":
+                e.value = `#${thisSkin.ColorValue.substring(2)}`;
+                break;
+              case "edit-color-form":
+                e.value = thisSkin.ColorValue.substring(2).toUpperCase();
+                break;
+              case "edit-opacity-form":
+                e.value = Ultis.hexToPercent(thisSkin.ColorValue.substring(0, 2)) + "%";
+                break;
+              default:
+                break;
+            }
+          });
+          div_attribute.appendChild(inputEffectColor);
+        }
+        document.getElementById("body").appendChild(popupEditEffect);
+        if (popupEditEffect.getBoundingClientRect().bottom >= document.body.offsetHeight) {
+          popupEditEffect.style.top = `${document.body.offsetHeight - popupEditEffect.offsetHeight}px`;
+        }
       });
       effect_setting.className = "action-button";
-      effect_setting.style.marginLeft = "0px";
       div_select_eType.appendChild(effect_setting);
       // select effect type
       let btn_select_eType = _btnDropDownSelect(
@@ -4307,7 +4228,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       btn_select_eType.firstChild.innerHTML = jsonSkin.Type;
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () {});
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
       //
@@ -4328,7 +4249,7 @@ function wbaseSkinTile(enumCate, onclick, onRemove) {
   };
   wbase_skin_tile.appendChild(btn_table_skin);
   let btn_unLink = document.createElement("img");
-  btn_unLink.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/unlink-skin.svg";
+  btn_unLink.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg";
   switch (enumCate) {
     case EnumCate.color:
       let demo_color = document.createElement("div");
@@ -4359,7 +4280,7 @@ function wbaseSkinTile(enumCate, onclick, onRemove) {
       let typo_name = document.createElement("div");
       typo_name.style.margin = "0 8px";
       typo_name.style.flex = 1;
-      typo_name.style.display = "inline-flex";
+      typo_name.style.display = "flex";
       typo_name.style.pointerEvents = "none";
       let title_name = document.createElement("p");
       title_name.innerHTML = "lalala";
@@ -4397,7 +4318,7 @@ function wbaseSkinTile(enumCate, onclick, onRemove) {
       break;
     case EnumCate.effect:
       let demo_effect = document.createElement("img");
-      demo_effect.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg";
+      demo_effect.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg";
       demo_effect.style.width = "16px";
       demo_effect.style.height = "16px";
       demo_effect.style.pointerEvents = "none";
@@ -4420,7 +4341,7 @@ function wbaseSkinTile(enumCate, onclick, onRemove) {
   wbase_skin_tile.appendChild(btn_unLink);
   if (onRemove) {
     let btn_remove_color = document.createElement("img");
-    btn_remove_color.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/minus.svg";
+    btn_remove_color.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg";
     wbase_skin_tile.appendChild(btn_remove_color);
     btn_remove_color.onclick = onRemove;
   }
@@ -4534,7 +4455,9 @@ function createEditVariants() {
     editContainer.appendChild(div_list_property);
     let list_property_tile = [];
     let list_base_property = selected_list.map((e) => e.BasePropertyItems);
-    if (list_base_property.length > 0) {
+    if (list_base_property.length === 0) {
+      list_base_property = list_base_property[0];
+    } else if (list_base_property.length > 1) {
       list_base_property = list_base_property.reduce((a, b) => a.concat(b));
     }
     let listProperty = PropertyDA.list.filter((e) => e.BaseID == select_box_parentID);
@@ -4546,7 +4469,7 @@ function createEditVariants() {
       } else if (list_baseProperty_name.length == 1) {
         firstValue = list_baseProperty_name[0];
       } else {
-        firstValue = "Mixed";
+        firstValue = "mixed";
       }
       let property_tile = _selectPropertyVariant(property_item, firstValue, function (option, property) {
         let deleteBaseProperty = option.trim().replace("-", "") == "" || option.trim() == "none";
@@ -4631,7 +4554,7 @@ function createEditVariants() {
         let list_baseProperty_name = list_base_property.filter((e) => e.PropertyID == property_item.GID).map((e) => e.Name);
         let firstValue = list_baseProperty_name[0];
         if (list_baseProperty_name.some((e) => e != firstValue)) {
-          firstValue = "Mixed";
+          firstValue = "mixed";
         }
         let property_tile = _selectPropertyVariant(
           property_item,
@@ -4681,17 +4604,15 @@ function _editPropertyTile(property_item) {
     this.readOnly = true;
     this.style.borderRadius = "2px";
     this.style.border = "none";
-    div_property_infor.style.display = "inline-flex";
+    div_property_infor.style.display = "flex";
     let thisProperty = PropertyDA.list.find((e) => e.GID == property_tile.id.replace("propertyID:", ""));
     thisProperty.Name = this.value;
     PropertyDA.edit(thisProperty);
   };
   property_tile.appendChild(property_name);
   let div_property_infor = document.createElement("div");
-  div_property_infor.style.boxSizing = "border-box";
-  div_property_infor.style.display = "inline-flex";
+  div_property_infor.className = "row";
   div_property_infor.style.width = "120px";
-  div_property_infor.style.alignItems = "center";
   property_tile.appendChild(div_property_infor);
   let baseProperty_name = document.createElement("p");
   let list_baseProperty_name = [];
@@ -4751,18 +4672,19 @@ function _selectPropertyVariant(property_item, title, onSelect, enableInput = tr
   select_variant.appendChild(dropdown);
   btn_dropdown.onclick = function () {
     setTimeout(function () {
-      dropdown.style.display = "inline-flex";
+      dropdown.style.display = "flex";
       dropdown.style.zIndex = 2;
       let list_baseProperty_name = [];
-      if (input_baseProperty_name.value == "Mixed") {
-        list_baseProperty_name.push("Mixed");
+      if (input_baseProperty_name.value == "mixed") {
+        list_baseProperty_name.push("mixed");
       }
       list_baseProperty_name.push(...property_item.BasePropertyItems.filterAndMap((e) => e.Name));
       let list_option = [];
       for (let i = 0; i < list_baseProperty_name.length; i++) {
         let option = document.createElement("div");
+        option.className = "row";
         option.setAttribute("value", list_baseProperty_name[i]);
-        if (list_baseProperty_name[i] == "Mixed") {
+        if (list_baseProperty_name[i] == "mixed") {
           option.style.borderBottom = "1px solid #c4c4c4";
           option.style.pointerEvents = "none";
           option.style.opacity = 0.7;
@@ -4783,11 +4705,10 @@ function _selectPropertyVariant(property_item, title, onSelect, enableInput = tr
         if (list_baseProperty_name[i] != input_baseProperty_name.value) {
           icon_check.style.opacity = 0;
         }
-        option.appendChild(icon_check);
         let title = document.createElement("span");
         title.innerHTML = list_baseProperty_name[i];
         title.style.pointerEvents = "none";
-        option.appendChild(title);
+        option.replaceChildren(icon_check, title);
         list_option.push(option);
       }
       dropdown.replaceChildren(...list_option);
@@ -4812,7 +4733,7 @@ function createSelectionSkins() {
   title.innerHTML = "Local Skins";
   header.appendChild(title);
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/read.svg", null, StyleDA.getListMergeSkin);
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/read.svg", null, StyleDA.getListMergeSkin);
   header.appendChild(btnSelectSkin);
 
   let body = document.createElement("div");
@@ -5305,7 +5226,7 @@ function mergeSkinTile(enumCate, jsonSkin) {
     case EnumCate.effect:
       var demoDiv1 = document.createElement("div");
       demoDiv1.className = "demo-div";
-      demoDiv1.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg"})`;
+      demoDiv1.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg"})`;
       demoDiv1.style.backgroundSize = `contain`;
       var skinTitle = document.createElement("p");
       skinTitle.className = "regular1";
@@ -5317,7 +5238,7 @@ function mergeSkinTile(enumCate, jsonSkin) {
       var iconSearch = document.createElement("i");
       iconSearch.className = "fa-solid fa-magnifying-glass";
       inputLocalSkin = suggestInput(
-        TypoDA.list.filter((skin) => (skin.ProjectID ?? ProjectDA.obj.ID) == ProjectDA.obj.ID),
+        EffectDA.list.filter((skin) => (skin.ProjectID ?? ProjectDA.obj.ID) == ProjectDA.obj.ID),
         "effect skins name",
         iconSearch,
         function (option) {
@@ -5329,7 +5250,7 @@ function mergeSkinTile(enumCate, jsonSkin) {
           demoDiv.style.height = "20px";
           demoDiv.style.borderRadius = "50%";
           demoDiv.style.backgroundColor = "#ffffff";
-          demoDiv.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg"})`;
+          demoDiv.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg"})`;
           demoDiv.style.backgroundSize = `contain`;
           let cateItem;
           if (option.CateID !== EnumCate.effect) cateItem = CateDA.list_effect_cate.find((e) => e.ID === option.CateID);
@@ -5345,7 +5266,7 @@ function mergeSkinTile(enumCate, jsonSkin) {
           onSelectLocalSkin(option);
           var demoDiv = document.createElement("div");
           demoDiv.className = "demo-div";
-          demoDiv.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/effect-settings.svg"})`;
+          demoDiv.style.backgroundImage = `url(${"https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg"})`;
           demoDiv.style.backgroundSize = `contain`;
           iconSearch.replaceWith(demoDiv);
         },
@@ -5519,7 +5440,7 @@ function createBreakpoint() {
   let title = document.createElement("p");
   title.innerHTML = "Breakpoint";
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/filter.svg", null, function () {
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/filter.svg", null, function () {
     let brpPopup = document.createElement("div");
     let offsetPopup = editContainer.getBoundingClientRect();
     brpPopup.className = "breakpoint-popup col wini_popup popup_remove";
@@ -5759,7 +5680,7 @@ function winiResponsive() {
   body.className = "row regular1";
   editContainer.appendChild(body);
   let prefixIcon = document.createElement("img");
-  prefixIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/column.svg";
+  prefixIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/column.svg";
   prefixIcon.style.width = "16px";
   prefixIcon.style.height = "16px";
   let text = document.createElement("p");
@@ -5797,17 +5718,26 @@ function colNumberByBrp(enable = true) {
       let eObj;
       for (let wbaseItem of selected_list) {
         wbaseItem.ListClassName = wbaseItem.ListClassName.split(" ")
-          .filter((colClass) => !colClass.includes("col-") && !colClass.match(/col[0-9]{1,2}/g))
+          .filter((cls) => !cls.includes("col-") && !cls.match(/col[0-9]{1,2}/g))
           .join(" ")
           .trim();
-        if (wbaseItem.ListClassName === "") wbaseItem.ListClassName = null;
+        if (wbaseItem.ListClassName === "") {
+          wbaseItem.ListClassName = null;
+        } else {
+          wbaseItem.ListClassName.split(" ").forEach((cls) => $(wbaseItem.value).addClass(cls));
+        }
+        let oldClassList = [...wbaseItem.value.classList];
+        oldClassList.forEach((cls) => {
+          if (cls.includes("col-") || cls.match(/col[0-9]{1,2}/g)) {
+            $(wbaseItem.value).removeClass(cls);
+          }
+        });
         if (wbaseItem.StyleItem.FrameItem.Width != null && wbaseItem.StyleItem.FrameItem.Width < 0) {
           wbaseItem.value.style.width = wbaseItem.value.offsetWidth + "px";
           wbaseItem.value.style.minWidth = wbaseItem.value.offsetWidth + "px";
           wbaseItem.StyleItem.FrameItem.Width = wbaseItem.value.offsetWidth;
           eObj = EnumObj.baseFrame;
         }
-        wbaseItem.value.className = `wbaseItem-value ${wbaseItem.ListClassName}`;
       }
       WBaseDA.edit(selected_list, eObj);
       updateUIEditPosition();
@@ -5821,8 +5751,9 @@ function colNumberByBrp(enable = true) {
 
     let localBrpoint = ProjectDA.obj.ResponsiveJson;
     let totalCol = ["none"];
-    let framePage = selected_list[0].ListID.split(",")[1];
-    framePage = document.getElementById(framePage);
+    let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
+    let framePage = pageParent[pageParent.length - 1];
+    if (framePage?.classList?.contains("w-variant")) framePage = pageParent[pageParent.length - 2];
     let currentBrp = localBrpoint.BreakPoint.filter((brp) => framePage.offsetWidth >= brp.Width);
     let currentBrpKey = currentBrp.length > 0 ? currentBrp.pop().Key : "Auto";
     for (let i = 0; i <= localBrpoint.Column; i++) {
@@ -5879,13 +5810,13 @@ function colNumberByBrp(enable = true) {
           });
         }
         let selectNumberInput = _btnInputSelect(
-          brpColValues.length == 1 ? totalCol : ["Mixed", ...totalCol],
+          brpColValues.length == 1 ? totalCol : ["mixed", ...totalCol],
           function (options) {
             let firstValue = brpColValues[0];
             if (brpColValues.length > 1) {
-              firstValue = "Mixed";
+              firstValue = "mixed";
             }
-            let normalCol = [2, 3, 4, 6, 8, 12, 24];
+            let normalCol = [0, 1, 2, 3, 4, 6, 8, 12, 24];
             for (let option of options) {
               if (normalCol.every((num) => num != option.getAttribute("value"))) option.style.display = "none";
               if (firstValue == option.getAttribute("value")) option.firstChild.style.opacity = 1;
@@ -5908,10 +5839,7 @@ function colNumberByBrp(enable = true) {
                   }
                 });
                 wbaseItem.ListClassName = listColClass.join(" ");
-                wbaseItem.value.className = `wbaseItem-value ${listColClass.join(" ")}`;
-                if (wbaseItem.WAutolayoutItem.IsWrap && wbaseItem.WAutolayoutItem.Direction === "Horizontal") {
-                  $(wbaseItem.value).addClass("grid-layout");
-                }
+                listColClass.forEach((clName) => $(wbaseItem.value).addClass(clName));
               }
             } else {
               for (let wbaseItem of selected_list) {
@@ -5925,10 +5853,13 @@ function colNumberByBrp(enable = true) {
                 });
                 listColClass.push(`col${option}${shortName}`);
                 wbaseItem.ListClassName = listColClass.join(" ");
-                wbaseItem.value.className = `wbaseItem-value ${listColClass.join(" ")}`;
-                if (wbaseItem.WAutolayoutItem?.IsWrap && wbaseItem.WAutolayoutItem?.Direction === "Horizontal") {
-                  $(wbaseItem.value).addClass("grid-layout");
-                }
+                let oldClassList = [...wbaseItem.value.classList];
+                oldClassList.forEach((clName) => {
+                  if (clName.match(/col[0-9]{1,2}/g) || clName.includes("col-")) {
+                    $(wbaseItem.value).removeClass(clName);
+                  }
+                });
+                listColClass.forEach((clName) => $(wbaseItem.value).addClass(clName));
               }
             }
             WBaseDA.edit(selected_list);
@@ -5937,7 +5868,7 @@ function colNumberByBrp(enable = true) {
             updateUISelectBox();
           },
         );
-        selectNumberInput.firstChild.value = brpColValues.length == 1 ? brpColValues[0] : "Mixed";
+        selectNumberInput.firstChild.value = brpColValues.length == 1 ? brpColValues[0] : "mixed";
         brpTile.replaceChildren(brpTitle, selectNumberInput);
         return brpTile;
       }),
@@ -5949,12 +5880,22 @@ function colNumberByBrp(enable = true) {
     if (enable) {
       icon_add.onclick = function () {
         let parentHTML = document.getElementById(select_box_parentID);
+        let eObj;
+        let listUpdate = [];
         for (let wbaseItem of selected_list) {
           wbaseItem.ListClassName = "col-";
-          wbaseItem.value.className = `wbaseItem-value ${wbaseItem.ListClassName}`;
-          wbaseItem.value.style.setProperty("--gutter", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
+          wbaseItem.ListClassName.split(" ").forEach((clName) => $(wbaseItem.value).addClass(clName));
+          wbaseItem.value.style.setProperty("--gutter", parentHTML.style.getPropertyValue("--child-space"));
         }
-        WBaseDA.edit(selected_list);
+        if (parentHTML.classList.contains("w-row") && (!parentHTML.style.width || parentHTML.style.width == "fit-content")) {
+          let wbParent = wbase_list.find((e) => e.GID === select_box_parentID);
+          parentHTML.style.width = parentHTML.offsetWidth + "px";
+          wbParent.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
+          eObj = EnumObj.baseFrame;
+          listUpdate.push(wbParent);
+        }
+        listUpdate.push(...selected_list);
+        WBaseDA.edit(listUpdate, eObj);
         updateUIEditPosition();
         updateUIColNumber();
         updateUISelectBox();
@@ -5991,7 +5932,7 @@ function colNumberByBrp(enable = true) {
                 for (let wbaseItem of selected_list) {
                   wbaseItem.ListClassName = copyBrpColSettings;
                   wbaseItem.value.className = `wbaseItem-value ${copyBrpColSettings}`;
-                  wbaseItem.value.style.setProperty("--gutter", parentHTML.style.flexDirection == "column" ? parentHTML.style.rowGap : parentHTML.style.columnGap);
+                  wbaseItem.value.style.setProperty("--gutter", parentHTML.style.getPropertyValue("--child-space"));
                 }
                 WBaseDA.edit(selected_list);
                 updateUIEditPosition();
@@ -6016,9 +5957,9 @@ function updateUIColNumber() {
 
 function selectionClass() {
   let listStyleClass = selected_list
-    .map((wbaseItem) => wbaseItem.ListClassName?.split(" ") ?? [])
+    .map((wb) => wb.ListClassName?.split(" ") ?? [])
     .reduce((a, b) => a.concat(b))
-    .filter((clName) => !clName.match(/col[0-9]{1,2}/g));
+    .filter((clName) => clName.startsWith("w-st-cls"));
   let editContainer = document.createElement("div");
   editContainer.id = "edit-create-class";
   editContainer.className = "edit-container";
@@ -6030,13 +5971,16 @@ function selectionClass() {
   let title = document.createElement("p");
   title.innerHTML = "Style class";
 
-  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/buttonStyle.svg", null, function () {
-    let offset = header.getBoundingClientRect();
-    createDropdownTableSkin(EnumCate.typography, offset);
+  let iconAdd = document.createElement("i");
+  iconAdd.className = "fa-solid fa-plus fa-sm";
+
+  let btnSelectSkin = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg", null, function () {
+    // let offset = header.getBoundingClientRect();
+    // createDropdownTableSkin(EnumCate.typography, offset);
   });
   btnSelectSkin.className = "action-button";
 
-  header.replaceChildren(title, btnSelectSkin);
+  header.replaceChildren(title, iconAdd, btnSelectSkin);
 
   let body = document.createElement("div");
   body.className = "col";
@@ -6050,9 +5994,9 @@ function selectionClass() {
       titleClass.innerHTML = clName;
       titleClass.className = "regular1";
       let btn_unLink = document.createElement("img");
-      btn_unLink.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/unlink-skin.svg";
+      btn_unLink.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg";
       let targetImg = document.createElement("img");
-      targetImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/target.svg";
+      targetImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/target.svg";
       classTile.replaceChildren(titleClass, btn_unLink, targetImg);
       return classTile;
     }),

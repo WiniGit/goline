@@ -1,11 +1,9 @@
-var feature_list = [
+let feature_list = [
   {
     title: "Select layer",
     more: function () {},
     onclick: function () {},
-    isShow: function () {
-      return selected_list.length > 0;
-    },
+    isShow: () => selected_list.length > 0,
   },
   {
     title: "Image document",
@@ -14,67 +12,45 @@ var feature_list = [
         FileDA.init();
       }
     },
-    isShow: function () {
-      return true;
-    },
+    isShow: () => true,
     spaceLine: true,
   },
   {
     title: "Bring to front",
     shortKey: "Ctrl+Alt+]",
-    onclick: function () {
-      bringToFront();
-    },
-    isShow: function () {
-      return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
-    },
+    onclick: bringToFront,
+    isShow: () => selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table,
   },
   {
     title: "Bring frontward",
     shortKey: "Ctrl+]",
-    onclick: function () {
-      bringFrontward();
-    },
-    isShow: function () {
-      return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
-    },
+    onclick: bringFrontward,
+    isShow: () => selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table,
   },
   {
     title: "Send to back",
     shortKey: "Ctrl+Alt+[",
-    onclick: function () {
-      sendToBack();
-    },
-    isShow: function () {
-      return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
-    },
+    onclick: sendToBack,
+    isShow: () => selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table,
   },
   {
     title: "Send backward",
     shortKey: "Ctrl+[",
-    onclick: function () {
-      sendBackward();
-    },
-    isShow: function () {
-      return selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table;
-    },
+    onclick: sendBackward,
+    isShow: () => selected_list.length > 0 && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.table,
     spaceLine: true,
   },
   {
     title: "Add auto layout",
     shortKey: "Shift+A",
     onclick: addAutoLayout,
-    isShow: function () {
-      return selected_list.length > 0;
-    },
+    isShow: () => selected_list.length > 0,
   },
   {
     title: "Create component",
     shortKey: "Ctrl+Alt+K",
     onclick: createComponent,
-    isShow: function () {
-      return selected_list.some((e) => !e.IsWini);
-    },
+    isShow: () => selected_list.some((e) => !e.IsWini) && !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length,
   },
   {
     title: "Uncomponent",
@@ -84,30 +60,32 @@ var feature_list = [
       return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant;
     },
   },
+  // {
+  //   title: "Create stylesheet",
+  //   shortKey: "Alt+S",
+  //   onclick: createStyleSheet,
+  //   isShow: function () {
+  //     return selected_list.length === 1 && [...selected_list[0].value.classList].every((cls) => !cls.startsWith("w-st"));
+  //   },
+  // },
   {
     title: "Show/Hide UI",
     shortKey: "Ctrl+\\",
     onclick: showOnOffUI,
-    isShow: function () {
-      return true;
-    },
+    isShow: () => true,
     spaceLine: true,
   },
   {
     title: "Copy",
     shortKey: "Ctrl+C",
     onclick: saveWbaseCopy,
-    isShow: function () {
-      return selected_list.length > 0;
-    },
+    isShow: () => selected_list.length > 0,
   },
   {
     title: "Paste",
     shortKey: "Ctrl+V",
     onclick: pasteWbase,
-    isShow: function () {
-      return copy_item != undefined;
-    },
+    isShow: () => copy_item != undefined,
   },
   {
     title: "Delete",
@@ -115,9 +93,7 @@ var feature_list = [
     onclick: function () {
       WBaseDA.delete(selected_list);
     },
-    isShow: function () {
-      return selected_list.length > 0;
-    },
+    isShow: () => selected_list.length > 0,
   },
 ];
 
@@ -175,100 +151,95 @@ function showOnOffUI() {
 }
 
 function saveWbaseCopy() {
+  Ultis.removeFromStorage("copy-item");
   if (select_box) {
-    copy_item = selected_list.map((e) => e.GID);
+    copy_item = selected_list.map((e) => {
+      let jsonWb = JSON.parse(JSON.stringify(e));
+      if (e.value.style.width == "100%") {
+        jsonWb.StyleItem.FrameItem.Width = -e.value.offsetWidth;
+      } else if (!e.StyleItem.FrameItem.Width) {
+        jsonWb.offsetWidth = e.value.offsetWidth;
+      }
+      if (e.value.style.height == "100%") {
+        jsonWb.StyleItem.FrameItem.Height = -e.value.offsetHeight;
+      } else if (!e.StyleItem.FrameItem.Height) {
+        jsonWb.offsetHeight = e.value.offsetHeight;
+      }
+      jsonWb.PageID = PageDA.obj.ID;
+      return jsonWb;
+    });
   }
 }
 
 function pasteWbase() {
+  let otherP = false;
+  if (copy_item?.length) {
+    otherP = copy_item.every((e) => e.PageID && e.PageID !== PageDA.obj.ID);
+  } else {
+    let storeCopy = Ultis.getStorage("copy-item");
+    if (storeCopy) {
+      storeCopy = JSON.parse(storeCopy);
+      if (Math.floor((Date.now() - storeCopy.time) / 60000) <= 5) {
+        copy_item = storeCopy.list;
+        otherP = true;
+      }
+    } else {
+      Ultis.removeFromStorage("copy-item");
+    }
+  }
   let listWb = [];
-  let list_new_wbase = wbase_list.filter((e) => copy_item.some((id) => id === e.GID));
-  if (list_new_wbase.length === copy_item.length) {
-    list_new_wbase = list_new_wbase.map((e) => {
-      let newWb = JSON.parse(JSON.stringify(e));
-      let currentHTML = document.getElementById(e.GID);
-      newWb.GID = uuidv4();
-      newWb.value = currentHTML.cloneNode(true);
-      newWb.value.id = newWb.GID;
-      newWb.ChildID = e.GID;
-      newWb.IsCopy = true;
-      newWb.IsWini = false;
-      newWb.value.style.width = currentHTML.offsetWidth + "px";
-      newWb.value.style.height = currentHTML.offsetHeight + "px";
-      newWb.value.style.transform = null;
-      newWb.value.removeAttribute("iswini");
-      tmpAltHTML.push(newWb.value);
-      newWb.value.setAttribute("loading", "true");
-      return newWb;
-    });
+  let list_new_wbase = [];
+  if (!otherP) {
+    list_new_wbase = wbase_list.filter((e) => copy_item.some((copyWb) => copyWb.GID === e.GID));
+  }
+  if (list_new_wbase.length === copy_item.length || otherP) {
+    if (otherP) {
+      let offset = offsetScale(Math.min(minx, divMain.offsetWidth / 2), Math.min(miny, divMain.offsetHeight / 2));
+      list_new_wbase = copy_item.map((e) => {
+        let newWb = JSON.parse(JSON.stringify(e));
+        newWb.GID = uuidv4();
+        newWb.value = document.createElement("div");
+        newWb.value.id = newWb.GID;
+        newWb.value.className = "wbaseItem-value";
+        newWb.ChildID = e.GID;
+        newWb.IsCopy = true;
+        newWb.IsWini = false;
+        newWb.value.style.width = Math.abs(newWb.StyleItem.FrameItem.Width ?? newWb.offsetWidth) + "px";
+        newWb.value.style.height = Math.abs(newWb.StyleItem.FrameItem.Height ?? newWb.offsetHeight) + "px";
+        newWb.ParentID = wbase_parentID;
+        newWb.Level = 1;
+        newWb.StyleItem.PositionItem.Left = `${offset.x - Math.abs(newWb.StyleItem.FrameItem.Width ?? newWb.offsetWidth) / 2}px`;
+        newWb.StyleItem.PositionItem.Top = `${offset.y - Math.abs(newWb.StyleItem.FrameItem.Height ?? newWb.offsetHeight) / 2}px`;
+        newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+        newWb.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+        tmpAltHTML.push(newWb.value);
+        newWb.value.setAttribute("loading", "true");
+        return newWb;
+      });
+    } else {
+      list_new_wbase = list_new_wbase.map((e) => {
+        let newWb = JSON.parse(JSON.stringify(e));
+        let currentHTML = document.getElementById(e.GID);
+        newWb.GID = uuidv4();
+        newWb.value = currentHTML.cloneNode(true);
+        newWb.value.id = newWb.GID;
+        newWb.ChildID = e.GID;
+        newWb.IsCopy = true;
+        newWb.IsWini = false;
+        newWb.value.style.width = currentHTML.offsetWidth + "px";
+        newWb.value.style.height = currentHTML.offsetHeight + "px";
+        newWb.value.style.transform = null;
+        newWb.value.removeAttribute("iswini");
+        tmpAltHTML.push(newWb.value);
+        newWb.value.setAttribute("loading", "true");
+        return newWb;
+      });
+    }
     let newParent;
     let parent_wbase;
-    if (selected_list.length === 1 && copy_item.every((id) => selected_list[0].GID !== id && !selected_list[0].ListID.includes(id))) {
+    if (selected_list.length === 1 && copy_item.every((copyWb) => selected_list[0].GID !== copyWb.GID && !selected_list[0].ListID.includes(copyWb.GID))) {
       newParent = selected_list[0].value;
       parent_wbase = selected_list[0];
-      if (parent_wbase.CateID === EnumCate.table) {
-        let availableCell = findCell(newParent, { pageX: minx, pageY: miny });
-        list_new_wbase.forEach((newWb) => availableCell.appendChild(newWb.value));
-        let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
-        [...newParent.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
-          listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
-        });
-        parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
-        wbase_list.push(...list_new_wbase);
-        listWb.push(...list_new_wbase);
-      } else if (window.getComputedStyle(newParent).display.match("flex") && list_new_wbase.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
-        let zIndex = Math.max(0, ...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)) + 1;
-        for (let i = 0; i < list_new_wbase.length; i++) {
-          list_new_wbase[i].value.style.left = null;
-          list_new_wbase[i].value.style.top = null;
-          list_new_wbase[i].value.style.right = null;
-          list_new_wbase[i].value.style.bottom = null;
-          list_new_wbase[i].value.style.transform = null;
-          list_new_wbase[i].Sort = zIndex + i;
-          if (list_new_wbase[i].StyleItem.FrameItem.Width < 0 && parent_wbase.StyleItem.FrameItem.Width == null) {
-            selected_list[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
-          }
-          if (list_new_wbase[i].StyleItem.FrameItem.Height < 0 && parent_wbase.StyleItem.FrameItem.Height == null) {
-            selected_list[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
-          }
-          switch (parseInt(newParent.getAttribute("cateid"))) {
-            case EnumCate.tree:
-              newParent.querySelector(".children-value").appendChild(list_new_wbase[i].value);
-              break;
-            case EnumCate.carousel:
-              newParent.querySelector(".children-value").appendChild(list_new_wbase[i].value);
-              break;
-            default:
-              newParent.appendChild(list_new_wbase[i].value);
-              break;
-          }
-          listWb.push(list_new_wbase[i]);
-          wbase_list.push(list_new_wbase[i]);
-        }
-      } else {
-        let zIndex = Math.max(0, ...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)) + 1;
-        let parentRect = newParent.getBoundingClientRect();
-        parentRect = offsetScale(parentRect.x, parentRect.y);
-        for (let i = 0; i < list_new_wbase.length; i++) {
-          list_new_wbase[i].Sort = zIndex + i;
-          if (list_new_wbase[i].StyleItem.FrameItem.Width < 0) {
-            selected_list[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
-          }
-          if (list_new_wbase[i].StyleItem.FrameItem.Height < 0) {
-            selected_list[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
-          }
-          let offset = offsetScale(minx, miny);
-          list_new_wbase[i].StyleItem.PositionItem.Top = `${offset.y - list_new_wbase[i].value.offsetHeight - parentRect.y}px`;
-          list_new_wbase[i].StyleItem.PositionItem.Left = `${offset.x - list_new_wbase[i].value.offsetWidth - parentRect.x}px`;
-          list_new_wbase[i].value.style.left = list_new_wbase[i].StyleItem.PositionItem.Left;
-          list_new_wbase[i].value.style.top = list_new_wbase[i].StyleItem.PositionItem.Top;
-          list_new_wbase[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
-          list_new_wbase[i].StyleItem.PositionItem.ConstraintsY = Constraints.top;
-          wbase_list.push(list_new_wbase[i]);
-          listWb.push(list_new_wbase[i]);
-          newParent.appendChild(list_new_wbase[i].value);
-        }
-      }
     } else {
       if (list_new_wbase[0].ParentID === wbase_parentID) {
         newParent = divSection;
@@ -276,24 +247,84 @@ function pasteWbase() {
         parent_wbase = wbase_list.find((wb) => wb.GID === list_new_wbase[0].ParentID);
         newParent = document.getElementById(list_new_wbase[0].ParentID);
       }
+    }
+    if (parent_wbase?.CateID === EnumCate.table) {
+      let availableCell = findCell(newParent, { pageX: minx, pageY: miny });
+      list_new_wbase.forEach((newWb) => availableCell.appendChild(newWb.value));
+      let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
+      [...newParent.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
+        listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
+      });
+      parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
+      wbase_list.push(...list_new_wbase);
+      listWb.push(...list_new_wbase);
+    } else if (window.getComputedStyle(newParent).display.match("flex") && list_new_wbase.some((e) => !e.StyleItem.PositionItem.FixPosition)) {
+      let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)].map((e) => parseInt(e.style.zIndex))) + 1;
       for (let i = 0; i < list_new_wbase.length; i++) {
-        let selectHTML = list_new_wbase[i].value;
-        list_new_wbase[i].Sort++;
-        document.getElementById(list_new_wbase[i].ChildID).parentElement.appendChild(selectHTML);
-        selectHTML.style.zIndex = list_new_wbase[i].Sort;
-        selectHTML.style.order = list_new_wbase[i].Sort;
-        if (parent_wbase?.CateID === EnumCate.table) {
-          let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
-          [...newParent.querySelectorAll(":scope > .table-row > .table-cell")].forEach((cell) => {
-            listCell.find((e) => e.id === cell.id).contentid = [...cell.childNodes].map((e) => e.id).join(",");
-          });
-          parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows);
+        list_new_wbase[i].value.style.left = null;
+        list_new_wbase[i].value.style.top = null;
+        list_new_wbase[i].value.style.right = null;
+        list_new_wbase[i].value.style.bottom = null;
+        list_new_wbase[i].value.style.transform = null;
+        list_new_wbase[i].value.style.zIndex = zIndex + i;
+        list_new_wbase[i].value.style.order = zIndex + i;
+        list_new_wbase[i].Sort = zIndex + i;
+        if (list_new_wbase[i].StyleItem.FrameItem.Width < 0 && parent_wbase.StyleItem.FrameItem.Width == null) {
+          list_new_wbase[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
+        }
+        if (list_new_wbase[i].StyleItem.FrameItem.Height < 0 && parent_wbase.StyleItem.FrameItem.Height == null) {
+          list_new_wbase[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
+        }
+        switch (parseInt(newParent.getAttribute("cateid"))) {
+          case EnumCate.tree:
+            newParent.querySelector(".children-value").appendChild(list_new_wbase[i].value);
+            break;
+          case EnumCate.carousel:
+            newParent.querySelector(".children-value").appendChild(list_new_wbase[i].value);
+            break;
+          default:
+            newParent.appendChild(list_new_wbase[i].value);
+            break;
         }
         listWb.push(list_new_wbase[i]);
         wbase_list.push(list_new_wbase[i]);
       }
+    } else {
+      let zIndex = Math.max(0, ...[...newParent.querySelectorAll(`.wbaseItem-value[level="${(parent_wbase?.Level ?? 0) + 1}"]`)].map((e) => parseInt(e.style.zIndex))) + 1;
+      let parentRect = {
+        x: 0,
+        y: 0,
+      };
+      if (newParent !== divSection) {
+        newParent.getBoundingClientRect();
+        parentRect = offsetScale(parentRect.x, parentRect.y);
+      }
+      for (let i = 0; i < list_new_wbase.length; i++) {
+        list_new_wbase[i].Sort = zIndex + i;
+        if (list_new_wbase[i].StyleItem.FrameItem.Width < 0) {
+          list_new_wbase[i].StyleItem.FrameItem.Width = list_new_wbase[i].value.offsetWidth;
+        }
+        if (list_new_wbase[i].StyleItem.FrameItem.Height < 0) {
+          list_new_wbase[i].StyleItem.FrameItem.Height = list_new_wbase[i].value.offsetHeight;
+        }
+        let offset = offsetScale(minx, miny);
+        list_new_wbase[i].StyleItem.PositionItem.Top = `${offset.y - list_new_wbase[i].value.offsetHeight - parentRect.y}px`;
+        list_new_wbase[i].StyleItem.PositionItem.Left = `${offset.x - list_new_wbase[i].value.offsetWidth - parentRect.x}px`;
+        list_new_wbase[i].value.style.left = list_new_wbase[i].StyleItem.PositionItem.Left;
+        list_new_wbase[i].value.style.top = list_new_wbase[i].StyleItem.PositionItem.Top;
+        list_new_wbase[i].StyleItem.PositionItem.ConstraintsX = Constraints.left;
+        list_new_wbase[i].StyleItem.PositionItem.ConstraintsY = Constraints.top;
+        wbase_list.push(list_new_wbase[i]);
+        listWb.push(list_new_wbase[i]);
+        newParent.appendChild(list_new_wbase[i].value);
+      }
     }
     if (parent_wbase) {
+      for (let i = 0; i < list_new_wbase.length; i++) {
+        list_new_wbase[i].ParentID = parent_wbase.GID;
+        list_new_wbase[i].Level = parent_wbase.Level + 1;
+        list_new_wbase[i].value.setAttribute("level", parent_wbase.Level + 1);
+      }
       let children = [...newParent.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
       children.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
       for (let i = 0; i < children.length; i++) {
@@ -311,16 +342,17 @@ function pasteWbase() {
     tmpAltHTML = [];
     WBaseDA.copy(listWb);
   } else {
-    copy_item = null;
+    copy_item = [];
   }
 }
 
 function createComponent() {
   let un_component_list = selected_list.filter((e) => !e.IsWini);
-  for (let i = 0; i < un_component_list.length; i++) {
-    un_component_list[i].IsWini = true;
-    un_component_list[i].value.setAttribute("iswini", "true");
-    document.getElementById(`wbaseID:${un_component_list[i]}`).setAttribute("iswini", "true");
+  for (let wb of un_component_list) {
+    wb.IsWini = true;
+    wb.CopyID = null;
+    wb.value.setAttribute("iswini", "true");
+    document.getElementById(`wbaseID:${wb.GID}`).setAttribute("iswini", "true");
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);
@@ -333,12 +365,57 @@ function unComponent() {
   for (let i = 0; i < component_list.length; i++) {
     component_list[i].IsWini = false;
     component_list[i].value.removeAttribute("iswini");
-    document.getElementById(`wbaseID:${component_list[i]}`).removeAttribute("iswini");
+    document.getElementById(`wbaseID:${component_list[i].GID}`).removeAttribute("iswini");
   }
   assets_list = assets_list.filter((e) => component_list.every((wbaseItem) => wbaseItem.GID != e.GID));
   WBaseDA.edit(component_list, EnumObj.wBase);
   wdraw();
   updateUIDesignView();
+}
+
+function createStyleSheet() {
+  let wb = selected_list[0];
+  let wbClassName = "w-st0-" + Ultis.toSlug(wb.Name.trim());
+  if (wb.ListClassName) {
+    wb.ListClassName = [...wb.ListClassName.split(" "), wbClassName].join(" ");
+  } else {
+    wb.ListClassName = wbClassName;
+  }
+  let newStyle = document.createElement("style");
+  newStyle.id = `st-comp${wb.GID}`;
+  let wbCssText = wb.value.style.cssText.split(";");
+  let cssItem = {
+    GID: wb.GID,
+    Name: wbClassName,
+    PageID: PageDA.obj.ID,
+    Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
+  };
+  let childrenSt0 = [];
+  let children = wbase_list.filter((e) => {
+    let check = e.ListID.includes(wb.GID);
+    if (check && e.ListClassName) {
+      let eCls = e.ListClassName.split(" ");
+      if (eCls.some((cls) => cls.startsWith("w-st0"))) {
+        childrenSt0.push(e);
+        return true;
+      } else return eCls.every((cls) => !cls.startsWith("w-st-"));
+    } else return check;
+  });
+  let existNameList = wb.value. 
+  children = children.filter(e => childrenSt0.every(wbSt0 => !e.ListID.includes(wbSt0.GID)));
+  for (let childWb of children) {
+    let childWbClassName = "w-st-" + Ultis.toSlug(childWb.Name.trim());
+    cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;
+    if (childWb.ListClassName) {
+      childWb.ListClassName = [...childWb.ListClassName.split(" "), childWbClassName].join(" ");
+    } else {
+      childWb.ListClassName = childWbClassName;
+    }
+  }
+  newStyle.innerHTML = cssItem.Css;
+  document.head.appendChild(newStyle);
+  StyleDA.addStyleSheet(cssItem);
+  StyleDA.cssStyleSheets.push(cssItem);
 }
 
 function showImgDocument() {
@@ -371,7 +448,7 @@ function createImgDocument() {
     }
   };
   let header = document.createElement("div");
-  header.className = "header_popup_skin";
+  header.className = "row header_popup_skin";
   header.onmousedown = function (e) {
     e.stopPropagation();
     if (e.buttons == 1) {
@@ -387,6 +464,7 @@ function createImgDocument() {
   let title = document.createElement("span");
   title.style.flex = 1;
   title.innerHTML = "Image document";
+  title.className = "semibold2";
   header.appendChild(title);
   let btn_close = document.createElement("i");
   btn_close.className = "fa-solid fa-xmark";
@@ -555,26 +633,59 @@ function createFolderTile(collectionItem) {
   prefixIcon.style.margin = "2px 6px";
   folderTile.appendChild(prefixIcon);
   let folderName = document.createElement("input");
-  folderName.readOnly = true;
-  folderName.style.pointerEvents = "none";
+  folderName.disabled = true;
   folderName.value = collectionItem.Name;
+  folderName.onfocus = function () {
+    this.select();
+  };
   if (collectionItem.ID != -1) {
+    folderTile.onauxclick = function (e) {
+      e.stopPropagation();
+      document.querySelectorAll("#body > .popup_remove").forEach((popupRemove) => popupRemove.remove());
+      let editDeletePopup = document.createElement("div");
+      editDeletePopup.className = "wini_popup popup_remove col";
+      editDeletePopup.style.left = e.pageX + "px";
+      editDeletePopup.style.top = e.pageY + "px";
+      let optionEdit = document.createElement("div");
+      optionEdit.className = "row regular1";
+      optionEdit.style.color = "white";
+      optionEdit.style.padding = "4px 6px";
+      optionEdit.innerHTML = "edit";
+      optionEdit.onclick = function (e) {
+        e.stopPropagation();
+        editDeletePopup.remove();
+        folderName.disabled = false;
+        folderName.focus();
+      };
+      let optionDelete = document.createElement("div");
+      optionDelete.className = "row regular1";
+      optionDelete.style.color = "white";
+      optionDelete.style.padding = "4px 6px";
+      optionDelete.innerHTML = "delete";
+      optionDelete.onclick = function (e) {
+        e.stopPropagation();
+        editDeletePopup.remove();
+        if (CollectionDA.selectedDocument.ID === collectionItem.ID) {
+          let index = CollectionDA.documentList.indexOf(collectionItem);
+          if (index > 0) index--;
+          selectFolder(CollectionDA.documentList[index]);
+        }
+        CollectionDA.deleteDocument(collectionItem);
+        folderTile.remove();
+      };
+      editDeletePopup.replaceChildren(optionEdit, optionDelete);
+      document.getElementById("body").appendChild(editDeletePopup);
+    };
     folderTile.ondblclick = function (e) {
       e.stopPropagation();
-      folderName.style.pointerEvents = "auto";
-      folderName.style.cursor = "text";
-      folderName.readOnly = false;
-      folderName.setSelectionRange(0, folderName.value.length);
+      folderName.disabled = false;
       folderName.focus();
     };
     folderName.onblur = function () {
-      this.style.cursor = "context-menu";
-      this.style.pointerEvents = "none";
-      this.setSelectionRange(0, 1);
-      this.readOnly = true;
-      let thisFolder = CollectionDA.documentList.find((folder) => folder.ID == folderTile.id.replace("folder:", ""));
-      thisFolder.Name = this.value;
-      CollectionDA.editDocument(thisFolder);
+      this.disabled = true;
+      collectionItem.Name = this.value;
+      window.getSelection().removeAllRanges();
+      CollectionDA.editDocument(collectionItem);
     };
   }
   folderTile.appendChild(folderName);
@@ -589,7 +700,7 @@ function selectFolder(collectionItem, search = "") {
       let prefixIcon = [...eHTML.childNodes].find((e) => e.localName == "i");
       prefixIcon.className = "fa-regular fa-folder-open";
     } else {
-      eHTML.style.backgroundColor = "transparent";
+      eHTML.style.backgroundColor = null;
       let prefixIcon = [...eHTML.childNodes].find((e) => e.localName == "i");
       prefixIcon.className = "fa-regular fa-folder";
     }
@@ -653,8 +764,14 @@ async function handleImportFile(event) {
     let offset = offsetScale(Math.min(minx, event.pageX), Math.min(miny, event.pageY));
     let listAdd = [];
     for (let fileItem of result) {
-      let newRect = fileItem.Name.endsWith(".svg") ? WBaseDefault.imgSvg : WBaseDefault.rectangle;
-      newRect.AttributesItem.Content = fileItem.Url;
+      let newRect;
+      if (fileItem.Name.endsWith(".svg")) {
+        newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg));
+        newRect.AttributesItem.Content = fileItem.Url;
+      } else {
+        newRect = JSON.parse(JSON.stringify(WBaseDefault.rectangle));
+        newRect.StyleItem.DecorationItem.ColorValue = fileItem.Url;
+      }
       let imgSize = await FileDA.getImageSize(urlImg + fileItem.Url);
       let newObj = createWbaseHTML(
         {
@@ -677,7 +794,7 @@ function bringToFront() {
   selected_list.sort((a, b) => a.Sort - b.Sort);
   let parentWbase;
   if (select_box_parentID == wbase_parentID) {
-    let listChild = wbase_list.filter((e) => selected_list.every((selectItem) => selectItem.GID != e.GID));
+    let listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID && selected_list.every((selectItem) => selectItem.GID != e.GID));
     if (listChild.length == 0) return;
     listChild.push(...selected_list);
     for (let i = 0; i < listChild.length; i++) {
@@ -691,7 +808,7 @@ function bringToFront() {
       ListChildID: listChild.map((e) => e.GID),
     };
   } else {
-    parentWbase = wbase_list.find((e) => e.GID == select_box_parentID);
+    parentWbase = wbase_list.find((e) => e.GID === select_box_parentID);
     if (parentWbase.CountChild == selected_list.length) return;
     parentWbase.ListChildID = parentWbase.ListChildID.filter((id) => selected_list.every((selectItem) => selectItem.GID != id));
     parentWbase.ListChildID.push(...selected_list.map((e) => e.GID));
@@ -711,8 +828,8 @@ function bringToFront() {
 
 function bringFrontward() {
   let parentWbase;
-  if (select_box_parentID == wbase_parentID) {
-    let listChild = wbase_list.filter((e) => e.ParentID == wbase_parentID);
+  if (select_box_parentID === wbase_parentID) {
+    let listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID);
     for (let i = 0; i < listChild.length; i++) {
       listChild[i].Sort = i;
       listChild[i].value.style.zIndex = i;
@@ -724,7 +841,7 @@ function bringFrontward() {
       e.value.style.zIndex = e.Sort;
       e.value.style.order = e.Sort;
     });
-    listChild = wbase_list.filter((e) => selected_list.every((selectItem) => selectItem.GID != e.GID));
+    listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID && selected_list.every((selectItem) => selectItem.GID != e.GID));
     for (let child of listChild) {
       if (selected_list.some((e) => e.Sort == child.Sort)) child.Sort -= 1;
       child.value.style.zIndex = child.Sort;
@@ -733,7 +850,7 @@ function bringFrontward() {
     arrange();
     parentWbase = {
       GID: wbase_parentID,
-      ListChildID: wbase_list.filter((e) => e.ParentID == wbase_parentID).map((e) => e.GID),
+      ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
     };
   } else {
     parentWbase = wbase_list.find((e) => e.GID == select_box_parentID);
@@ -769,7 +886,7 @@ function sendToBack() {
   selected_list.sort((a, b) => a.Sort - b.Sort);
   let parentWbase;
   if (select_box_parentID == wbase_parentID) {
-    let listChild = wbase_list.filter((e) => selected_list.every((selectItem) => selectItem.GID != e.GID));
+    let listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID && selected_list.every((selectItem) => selectItem.GID != e.GID));
     if (listChild.length == 0) return;
     listChild.unshift(...selected_list);
     for (let i = 0; i < listChild.length; i++) {
@@ -804,7 +921,7 @@ function sendToBack() {
 function sendBackward() {
   let parentWbase;
   if (select_box_parentID == wbase_parentID) {
-    let listChild = wbase_list.filter((e) => e.ParentID == wbase_parentID);
+    let listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID);
     if (listChild.length == selected_list.length) return;
     for (let i = 0; i < listChild.length; i++) {
       listChild[i].Sort = i;
@@ -816,7 +933,7 @@ function sendBackward() {
       e.value.style.zIndex = e.Sort;
       e.value.style.order = e.Sort;
     });
-    listChild = wbase_list.filter((e) => selected_list.every((selectItem) => selectItem.GID != e.GID));
+    listChild = wbase_list.filter((e) => e.ParentID === wbase_parentID && selected_list.every((selectItem) => selectItem.GID != e.GID));
     for (let child of listChild) {
       if (selected_list.some((e) => e.Sort == child.Sort)) child.Sort += 1;
       child.value.style.zIndex = child.Sort;
@@ -825,7 +942,7 @@ function sendBackward() {
     arrange();
     parentWbase = {
       GID: wbase_parentID,
-      ListChildID: wbase_list.filter((e) => e.ParentID == wbase_parentID).map((e) => e.GID),
+      ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
     };
   } else {
     parentWbase = wbase_list.find((e) => e.GID == select_box_parentID);

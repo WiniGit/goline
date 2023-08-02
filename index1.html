@@ -4,60 +4,150 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="css/responsive-col.css" />
+    <link rel="stylesheet" href="/script/components/component-style.css" />
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/1cf830eab3.js" crossorigin="anonymous"></script>
+    <script src="script/utils.js"></script>
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
       * {
         box-sizing: border-box;
+        font-family: "Inter";
       }
 
+      html,
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+            Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+            "Segoe UI Symbol"; */
+        margin: 0;
+        height: 100%;
       }
 
-      .parent {
-        background-color: #001f3f;
-        display: flex;
-        padding: 20px;
-        flex-wrap: wrap;
-        gap: 8px;
+      .header {
+        width: 100%;
+        height: 56px;
+        background-color: rgb(165, 235, 180);
+        --child-space: 24px;
+        --run-space: 0px;
+        --main-axis-align: flex-start;
+        --cross-axis-align: center;
+        --padding: 0px 32px 0px 32px;
       }
 
-      .child {
-        background-color: #0074d9;
-        padding: 20px;
-        /* flex-grow: 1; */
-        color: white;
+      .combo-act {
+        width: 100%;
+        --child-space: 24px;
+        --run-space: 0px;
+        --main-axis-align: flex-start;
+        --cross-axis-align: center;
+        --padding: 0px 0px 0px 0px;
+        flex: 1;
       }
 
-      .child-test {
-              padding: 20px;
-              width: 300px;
-              background-color: azure;
+      .combo-act .w-svg {
+        width: 24px;
+        height: 24px;
       }
 
-      .child-one {
-        flex: 0 calc(30% - 8px);
-        background-color: red;
+      .combo-act:last-child {
+        --main-axis-align: flex-end;
       }
-      .child-two {
-        flex: 0 calc(20% - 8px);
-      }
-      .child-three {
-        flex: 0 calc(10% - 8px);
-        background-color: #3d9970;
-      }
-      .child-four {
-        flex: 0 calc(50% - 8px);
-        background-color: #c5c5c5;
+
+      .combo .w-svg {
+        width: 20px;
+        height: 20px;
       }
     </style>
   </head>
   <body>
-    <div class="parent">
-      <div class="child child-one">child</div>
-      <div class="child child-two">child</div>
-      <div class="child child-three">child</div>
-      <div class="child-test">child</div>
-      <div class="child child-four">child</div>
+    <div class="w-frame wbaseItem-value w-row header combo" wrap="nowrap" level="3" cateid="140" id="ef310cf2-3b32-4e8f-8198-e207aa6ed299">
+      <!-- icon1 -->
+      <div class="w-svg wbaseItem-value" level="4" cateid="115" id="1e634b9f-3267-4787-8808-f515d072874c">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.6388 8.88905H2.36107C1.9444 8.88905 1.66663 9.16683 1.66663 9.5835V10.9724C1.66663 11.3891 1.9444 11.6668 2.36107 11.6668H17.6388C18.0555 11.6668 18.3333 11.3891 18.3333 10.9724V9.5835C18.3333 9.16683 18.0555 8.88905 17.6388 8.88905Z" fill="#282829CC"></path>
+          <path d="M17.6388 3.3335H2.36107C1.9444 3.3335 1.66663 3.61127 1.66663 4.02794V5.41683C1.66663 5.8335 1.9444 6.11127 2.36107 6.11127H17.6388C18.0555 6.11127 18.3333 5.8335 18.3333 5.41683V4.02794C18.3333 3.61127 18.0555 3.3335 17.6388 3.3335Z" fill="#282829CC"></path>
+          <path d="M17.6388 14.4446H2.36107C1.9444 14.4446 1.66663 14.7224 1.66663 15.1391V16.5279C1.66663 16.9446 1.9444 17.2224 2.36107 17.2224H17.6388C18.0555 17.2224 18.3333 16.9446 18.3333 16.5279V15.1391C18.3333 14.7224 18.0555 14.4446 17.6388 14.4446Z" fill="#282829CC"></path>
+        </svg>
+      </div>
+      <!-- combo action1 -->
+      <div class="w-frame wbaseItem-value w-row combo-act" wrap="nowrap" level="4" cateid="140" id="ce738a47-8ce2-4a40-80c4-e6482f3aa81f">
+        <div class="w-textformfield wbaseItem-value w-row" wrap="nowrap" name-field="Textformfield" level="5" cateid="85" id="9f7d96ad-1ee5-448e-859e-0100dde8c322" style="width: 240px; height: fit-content; border-radius: 4px; overflow: hidden; background-color: rgb(245, 245, 245); font: var(--font-style-a14ab447-3af5-4e52-937b-fe047be2fb50); color: var(--font-color-a14ab447-3af5-4e52-937b-fe047be2fb50); --child-space: 12px; --run-space: 0px; --main-axis-align: center; --cross-axis-align: center; --padding: 10px 16px 10px 16px; z-index: 0; order: 0">
+          <div class="w-svg wbaseItem-value" level="6" cateid="115" id="86a2ea3b-2fc6-4e22-bb6c-3d4d847c38da" style="width: 16px; height: 16px; border-radius: 0px; z-index: 0; order: 0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_502_135406)">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.0432 16.3052C13.6693 17.4041 11.9267 18.0612 10.0306 18.0612C5.59543 18.0612 2 14.4658 2 10.0306C2 5.59543 5.59543 2 10.0306 2C14.4658 2 18.0612 5.59543 18.0612 10.0306C18.0612 11.9268 17.4041 13.6694 16.3051 15.0433L21.9999 20.7381L20.738 22L15.0432 16.3052ZM3.78458 10.0306C3.78458 6.58103 6.58103 3.78458 10.0306 3.78458C13.4802 3.78458 16.2767 6.58103 16.2767 10.0306C16.2767 11.7129 15.6116 13.2399 14.53 14.3629L14.3629 14.53C13.2399 15.6116 11.7129 16.2767 10.0306 16.2767C6.58103 16.2767 3.78458 13.4802 3.78458 10.0306Z" fill="#28282999" fill-opacity="0.8"></path>
+              </g>
+              <defs>
+                <clipPath id="clip0_502_135406">
+                  <rect width="24" height="24" rx="4" fill="#28282999"></rect>
+                </clipPath>
+              </defs>
+            </svg>
+          </div>
+          <div class="wbaseItem-value" name-field="Textfield" level="6" cateid="86" lock="true" id="03593c9a-a53f-42c0-8850-7ab1424a720d" style="z-index: 1; order: 1; --focus-color: #1890ff; height: fit-content">
+            <div class="textfield"><input autocomplete="off" name="Textformfield" placeholder="Tìm kiếm chức năng" /></div>
+          </div>
+        </div>
+        <div class="w-frame wbaseItem-value w-row" wrap="nowrap" level="5" cateid="140" id="2ef37d10-3da6-4202-bfd1-bed8be041933" style="height: 22px; border-radius: 0px; overflow: hidden; --child-space: 8px; --run-space: 0px; --main-axis-align: center; --cross-axis-align: center; --padding: 0px 0px 0px 0px; z-index: 1; order: 1">
+          <div class="w-text wbaseItem-value" contenteditable="false" level="6" cateid="139" id="0051f8ae-8616-4399-ab5d-257e7a70a5bf" style="width: max-content; height: fit-content; font: var(--font-style-736f32bb-28a3-4bb3-9223-3204577a937e); color: var(--font-color-736f32bb-28a3-4bb3-9223-3204577a937e); align-items: start; text-align: start; justify-content: center; text-overflow: ellipsis; z-index: 0; order: 0">Mega Menu</div>
+          <div class="w-svg wbaseItem-value" level="6" cateid="115" id="ae348275-3fc1-436c-adb0-d1feb81d55ad" style="width: 16px; height: 16px; border-radius: 0px; z-index: 1; order: 1">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.41046 8.01097C5.03087 7.66301 4.42368 7.66301 4.04408 8.01097C3.65197 8.37041 3.65197 8.96293 4.04408 9.32236L11.3168 15.989C11.6964 16.337 12.3036 16.337 12.6832 15.989L19.9559 9.32236C20.348 8.96293 20.348 8.37041 19.9559 8.01097C19.5763 7.66301 18.9691 7.66301 18.5895 8.01097L12 14.0514L5.41046 8.01097Z" fill="#28282999"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <!-- combo action2 -->
+      <div class="w-frame wbaseItem-value w-row combo-act" wrap="nowrap" level="4" cateid="140" id="5681b8bb-d13e-4839-82be-e4739e570a54">
+        <div class="w-svg wbaseItem-value" level="5" cateid="115" id="94d755bd-67f9-483a-ad9d-f8619612eeb3" style="width: 32px; height: 32px">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M29.3327 20.6666C29.3327 23.2439 27.9273 25.3333 25.166 25.3333H6.83268C4.07143 25.3333 2.66602 23.2439 2.66602 20.6666V11.3333C2.66602 8.75602 4.07143 6.66663 6.83268 6.66663H25.166C27.9273 6.66663 29.3327 8.75602 29.3327 11.3333V20.6666Z" fill="#E14337ff"></path>
+            <path d="M21.5794 14.8748L17.414 14.881L16.1211 10.6668L14.8377 14.881L10.6669 14.8748L14.0444 17.4402L12.736 21.6277L16.1235 19.0273L19.5181 21.6277L18.2069 17.4402L21.5794 14.8748Z" fill="#F9CB38ff"></path>
+          </svg>
+        </div>
+        <div class="w-svg wbaseItem-value" level="5" cateid="115" id="68e12dc4-8347-4561-aade-559a8e12724c" style="width: 24px; height: 24px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.16667 11.1667C5.70643 11.1667 5.33333 11.5398 5.33333 12V12.8333C5.33333 13.2936 5.70643 13.6667 6.16667 13.6667H7.83333C8.29357 13.6667 8.66667 13.2936 8.66667 12.8333V12C8.66667 11.5398 8.29357 11.1667 7.83333 11.1667H6.16667Z" fill="#282829CC"></path>
+            <path d="M11.1667 11.1667C10.7064 11.1667 10.3333 11.5398 10.3333 12V12.8333C10.3333 13.2936 10.7064 13.6667 11.1667 13.6667H12.8333C13.2936 13.6667 13.6667 13.2936 13.6667 12.8333V12C13.6667 11.5398 13.2936 11.1667 12.8333 11.1667H11.1667Z" fill="#282829CC"></path>
+            <path d="M5.33333 16.1667C5.33333 15.7064 5.70643 15.3333 6.16667 15.3333H7.83333C8.29357 15.3333 8.66667 15.7064 8.66667 16.1667V17C8.66667 17.4602 8.29357 17.8333 7.83333 17.8333H6.16667C5.70643 17.8333 5.33333 17.4602 5.33333 17V16.1667Z" fill="#282829CC"></path>
+            <path d="M11.1667 15.3333C10.7064 15.3333 10.3333 15.7064 10.3333 16.1667V17C10.3333 17.4602 10.7064 17.8333 11.1667 17.8333H12.8333C13.2936 17.8333 13.6667 17.4602 13.6667 17V16.1667C13.6667 15.7064 13.2936 15.3333 12.8333 15.3333H11.1667Z" fill="#282829CC"></path>
+            <path d="M15.3333 12C15.3333 11.5398 15.7064 11.1667 16.1667 11.1667H17.8333C18.2936 11.1667 18.6667 11.5398 18.6667 12V12.8333C18.6667 13.2936 18.2936 13.6667 17.8333 13.6667H16.1667C15.7064 13.6667 15.3333 13.2936 15.3333 12.8333V12Z" fill="#282829CC"></path>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.83333 2.83333C7.83333 2.3731 7.46024 2 7 2C6.53976 2 6.16667 2.3731 6.16667 2.83333V3.66667H4.5C3.11929 3.66667 2 4.78595 2 6.16667V18.6667C2 20.0474 3.11929 21.1667 4.5 21.1667H19.5C20.8807 21.1667 22 20.0474 22 18.6667V6.16667C22 4.78595 20.8807 3.66667 19.5 3.66667H17.8333V2.83333C17.8333 2.3731 17.4602 2 17 2C16.5398 2 16.1667 2.3731 16.1667 2.83333V3.66667H7.83333V2.83333ZM4.5 5.33333C4.03976 5.33333 3.66667 5.70643 3.66667 6.16667V7.83333H20.3333V6.16667C20.3333 5.70643 19.9602 5.33333 19.5 5.33333H17.8333C17.8333 5.79357 17.4602 6.16667 17 6.16667C16.5398 6.16667 16.1667 5.79357 16.1667 5.33333H7.83333C7.83333 5.79357 7.46024 6.16667 7 6.16667C6.53976 6.16667 6.16667 5.79357 6.16667 5.33333H4.5ZM4.5 19.5C4.03976 19.5 3.66667 19.1269 3.66667 18.6667V9.5H20.3333V18.6667C20.3333 19.1269 19.9602 19.5 19.5 19.5H4.5Z" fill="#282829CC"></path>
+          </svg>
+        </div>
+        <div class="w-frame wbaseItem-value w-row" wrap="nowrap" level="5" cateid="140" id="6bb123b4-5338-4f6e-855f-5f9e550183c5" style="width: 35px; height: 30px; --child-space: 8px; --run-space: 0px; --main-axis-align: flex-start; --cross-axis-align: center; --padding: 4px 0px 4px 0px">
+          <div class="w-svg wbaseItem-value" level="6" cateid="115" id="dd8f5e7b-b833-4105-9d29-72088aabcea6" style="width: 24px; height: 24px; border-radius: 0px; z-index: 0; order: 0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M7.45318 3.95287C8.70358 2.70247 10.3995 2 12.1678 2C13.9361 2 15.6321 2.70247 16.8825 3.95287C18.1328 5.20327 18.8353 6.89917 18.8353 8.6675V11.1678C18.8353 12.239 19.2996 12.8999 19.877 13.5543C19.9437 13.6299 20.0171 13.7107 20.0938 13.7951C20.326 14.0508 20.5886 14.3399 20.7897 14.6214C21.079 15.0263 21.3356 15.5335 21.3356 16.1684C21.3356 16.8754 20.9239 17.4252 20.4287 17.813C19.9333 18.201 19.2617 18.5067 18.4878 18.7461C16.9316 19.2276 14.7572 19.5022 12.1678 19.5022C9.5784 19.5022 7.40408 19.2276 5.84783 18.7461C5.07395 18.5067 4.40231 18.201 3.90692 17.813C3.41168 17.4252 3 16.8754 3 16.1684C3 15.5335 3.25665 15.0263 3.54592 14.6214C3.74701 14.3399 4.00959 14.0508 4.2418 13.7951C4.3185 13.7107 4.39189 13.6299 4.45865 13.5543C5.03601 12.8999 5.50031 12.239 5.50031 11.1678V8.6675C5.50031 6.89917 6.20278 5.20327 7.45318 3.95287ZM12.1678 3.66688C10.8416 3.66688 9.56964 4.19373 8.63184 5.13153C7.69404 6.06932 7.16719 7.34125 7.16719 8.6675V11.1678C7.16719 12.847 6.38133 13.8946 5.70854 14.6571C5.60029 14.7798 5.50196 14.8881 5.41187 14.9873C5.20553 15.2145 5.04243 15.3941 4.90231 15.5902C4.72276 15.8416 4.66688 16.0116 4.66688 16.1684C4.6668 16.1723 4.66434 16.289 4.93459 16.5007C5.20752 16.7144 5.66623 16.9451 6.34045 17.1537C7.68039 17.5682 9.67326 17.8353 12.1678 17.8353C14.6624 17.8353 16.6552 17.5682 17.9952 17.1537C18.6694 16.9451 19.1281 16.7144 19.401 16.5007C19.6713 16.289 19.6688 16.1723 19.6688 16.1685C19.6688 16.0117 19.6129 15.8416 19.4333 15.5902C19.2932 15.3941 19.1301 15.2145 18.9238 14.9873C18.8337 14.8881 18.7353 14.7798 18.6271 14.6571C17.9543 13.8946 17.1684 12.847 17.1684 11.1678V8.6675C17.1684 7.34125 16.6416 6.06932 15.7038 5.13153C14.766 4.19373 13.4941 3.66688 12.1678 3.66688Z" fill="#282829CC"></path>
+              <path d="M12.1678 20.3357C11.3252 20.3357 10.5335 20.3073 9.78837 20.2523C9.94722 20.759 10.2637 21.2018 10.6917 21.5161C11.1196 21.8305 11.6368 22 12.1678 22C12.6989 22 13.216 21.8305 13.644 21.5161C14.072 21.2018 14.3884 20.759 14.5473 20.2523C13.8022 20.3073 13.0104 20.3357 12.1678 20.3357Z" fill="#282829CC"></path>
+            </svg>
+          </div>
+          <button type="button" class="w-button wbaseItem-value w-row fixed-position" wrap="nowrap" name-field="Button" level="6" cateid="29" id="43fdd38f-8896-44ce-b159-96b08001ad5a" style="width: fit-content; height: fit-content; border-radius: 20px; overflow: hidden; background-color: rgb(230, 0, 18); border-width: 2px; border-style: solid; border-color: rgb(255, 255, 255); --child-space: 4px; --run-space: 0px; --main-axis-align: center; --cross-axis-align: center; --padding: 0px 8px 0px 8px; z-index: 1; order: 1; left: 12px; top: 0px"><div class="w-text wbaseItem-value" contenteditable="false" name-field="Text" level="7" cateid="139" id="0e5364df-09df-450a-9f57-8d75d6fd6c72" style="width: max-content; height: 14px; font-family: Inter; font-size: 8px; font-weight: 400; color: rgb(255, 255, 255); line-height: 14px; align-items: start; text-align: start; justify-content: center; text-overflow: ellipsis; z-index: 0; order: 0">34</div></button>
+        </div>
+        <div class="w-frame wbaseItem-value w-row" wrap="nowrap" level="5" cateid="140" id="aff9cfad-a804-4d38-99fc-34e64f4d7055" style="width: fit-content; height: fit-content; --child-space: 8px; --run-space: 0px; --main-axis-align: center; --cross-axis-align: center; --padding: 0px 0px 0px 0px">
+          <div class="w-rect wbaseItem-value" level="6" cateid="138" id="c96f53b2-b985-4772-81d0-bea4057fce75" style="width: 32px; height: 32px; border-radius: 20px; z-index: 0; order: 0"></div>
+          <div class="w-frame wbaseItem-value w-row" wrap="nowrap" level="6" cateid="140" id="919ef75c-e7b1-45d5-92df-63b55d594bd7" style="width: fit-content; height: fit-content; border-radius: 0px; overflow: hidden; --child-space: 8px; --run-space: 0px; --main-axis-align: center; --cross-axis-align: center; --padding: 0px 0px 0px 0px; z-index: 1; order: 1">
+            <div class="w-text wbaseItem-value" contenteditable="false" level="7" cateid="139" id="eb14d63f-6455-43f6-93cf-d1af07584a79" style="width: max-content; height: fit-content; font: var(--font-style-736f32bb-28a3-4bb3-9223-3204577a937e); color: var(--font-color-736f32bb-28a3-4bb3-9223-3204577a937e); align-items: start; text-align: start; justify-content: center; text-overflow: ellipsis; z-index: 0; order: 0">Admin</div>
+            <div class="w-svg wbaseItem-value" level="7" cateid="115" id="463a3530-46c4-4e2c-a98c-fa79f2667307" style="width: 16px; height: 16px; border-radius: 0px; z-index: 1; order: 1">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.41046 8.01097C5.03087 7.66301 4.42368 7.66301 4.04408 8.01097C3.65197 8.37041 3.65197 8.96293 4.04408 9.32236L11.3168 15.989C11.6964 16.337 12.3036 16.337 12.6832 15.989L19.9559 9.32236C20.348 8.96293 20.348 8.37041 19.9559 8.01097C19.5763 7.66301 18.9691 7.66301 18.5895 8.01097L12 14.0514L5.41046 8.01097Z" fill="#28282999"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="w-svg wbaseItem-value" level="5" cateid="115" id="7ebc70f7-0892-4305-b43d-a00782627cce">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.6051 8.66667C9.76411 8.66667 8.27173 10.1591 8.27173 12C8.27173 13.8409 9.76411 15.3333 11.6051 15.3333C13.446 15.3333 14.9384 13.8409 14.9384 12C14.9384 10.1591 13.446 8.66667 11.6051 8.66667ZM9.9384 12C9.9384 11.0795 10.6846 10.3333 11.6051 10.3333C12.5255 10.3333 13.2717 11.0795 13.2717 12C13.2717 12.9205 12.5255 13.6667 11.6051 13.6667C10.6846 13.6667 9.9384 12.9205 9.9384 12Z" fill="#282829CC"></path>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.9384 2C9.51814 2 9.16364 2.31293 9.1115 2.72994L8.82317 5.03592C8.15725 5.30367 7.53326 5.66577 6.97039 6.11108L4.82399 5.20553C4.43678 5.04217 3.98852 5.1927 3.77838 5.55666L2.11171 8.44332C1.90159 8.80725 1.99532 9.27069 2.33035 9.52437L4.18309 10.9272C4.0791 11.6386 4.0791 12.3614 4.18309 13.0728L2.33035 14.4756C1.99532 14.7293 1.90159 15.1927 2.11171 15.5567L3.77838 18.4433C3.98852 18.8073 4.43678 18.9578 4.82399 18.7945L6.97039 17.8889C7.53326 18.3342 8.15726 18.6963 8.82317 18.9641L9.1115 21.2701C9.16364 21.6871 9.51814 22 9.9384 22H13.2717C13.692 22 14.0465 21.6871 14.0986 21.2701L14.387 18.9641C15.0529 18.6963 15.6769 18.3342 16.2397 17.8889L18.3861 18.7945C18.7733 18.9578 19.2216 18.8073 19.4317 18.4433L21.0984 15.5567C21.3085 15.1927 21.2148 14.7293 20.8798 14.4756L19.0265 13.0723C19.078 12.718 19.1043 12.3602 19.1051 12.0017V11.9983C19.1043 11.6398 19.078 11.282 19.0265 10.9277L20.8798 9.52437C21.2148 9.27069 21.3085 8.80725 21.0984 8.44332L19.4317 5.55666C19.2216 5.1927 18.7733 5.04217 18.3861 5.20553L16.2397 6.11108C15.6769 5.66577 15.0529 5.30367 14.387 5.03592L14.0986 2.72994C14.0465 2.31293 13.692 2 13.2717 2H9.9384ZM10.4136 5.74923L10.674 3.66667H12.5361L12.7965 5.74923C12.8368 6.07117 13.0602 6.34048 13.3692 6.43945C14.1708 6.69622 14.9073 7.12376 15.5278 7.6926C15.768 7.91283 16.1145 7.97281 16.4148 7.84613L18.3562 7.02708L19.2873 8.63966L17.612 9.90813C17.3527 10.1045 17.2313 10.4339 17.3012 10.7516C17.3914 11.1616 17.4374 11.5801 17.4384 12C17.4374 12.4199 17.3914 12.8384 17.3012 13.2484C17.2313 13.5661 17.3527 13.8955 17.612 14.0919L19.2873 15.3603L18.3562 16.9729L16.4148 16.1539C16.1146 16.0272 15.768 16.0872 15.5278 16.3074C14.9073 16.8762 14.1708 17.3038 13.3692 17.5606C13.0602 17.6595 12.8368 17.9288 12.7965 18.2508L12.5361 20.3333H10.674L10.4136 18.2508C10.3734 17.9288 10.1499 17.6595 9.84093 17.5606C9.03928 17.3038 8.30285 16.8762 7.68237 16.3074C7.44214 16.0872 7.09558 16.0272 6.7953 16.1539L4.85392 16.9729L3.92287 15.3603L5.59811 14.0919C5.85795 13.8951 5.97924 13.565 5.90857 13.2468C5.72617 12.4256 5.72617 11.5744 5.90857 10.7532C5.97924 10.435 5.85795 10.1049 5.59811 9.90813L3.92287 8.63966L4.85392 7.02708L6.7953 7.84613C7.09558 7.97281 7.44214 7.91283 7.68237 7.6926C8.30285 7.12376 9.03928 6.69622 9.84093 6.43945C10.1499 6.34048 10.3734 6.07117 10.4136 5.74923Z" fill="#282829CC"></path>
+          </svg>
+        </div>
+      </div>
     </div>
   </body>
+  <script>
+    let styleTag1 = document.createElement("div");
+
+  </script>
 </html>

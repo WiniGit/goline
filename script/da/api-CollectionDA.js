@@ -44,6 +44,12 @@ class CollectionDA {
         WiniIO.emitPort(item, url, EnumObj.collection, EnumEvent.edit);
     }
 
+    static deleteDocument(item) {
+        this.documentList = this.documentList.filter(e => e.ID !== item.ID);
+        let url = CollectionDA.urlCtr + 'Delete?pid=' + ProjectDA.obj.ID;
+        WiniIO.emitPort({ 'ID': item.ID }, url, EnumObj.collection, EnumEvent.delete);
+    }
+
     static add(item) {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -118,7 +124,7 @@ class CollectionDA {
                     '<div class="collection-container col">' +
                     '    <div data-id="' + item.ID + '" class="collection-tile option-tile row">' +
                     '        <button class="box24 button-transparent"><i class="fa-solid fa-chevron-down fa-xs"></i></button>' +
-                    '        <img class="box24" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/lib/assets/logo.svg">' +
+                    '        <img class="box24" src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/logo.svg">' +
                     '        <input class="button-text-5 text-title" type="text" value="' + item.Name + '" disabled>' +
                     '    </div>' +
                     '    <div class="list-request col">' + RequestDA.update_UI_ListRequestTile(item.listApi) + '</div>' +
@@ -128,7 +134,7 @@ class CollectionDA {
             list_collection = '<span class="row center regular11 text-placeholder">No files yet</span>'
         }
 
-        $('.collection-slide-bar').html(list_collection);
+        $('.collection-nav-bar-bar').html(list_collection);
 
         if (CollectionDA.selected == null && CollectionDA.list.length > 0) {
             if (CollectionDA.list.length > 1) {

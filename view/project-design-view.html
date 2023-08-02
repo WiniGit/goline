@@ -10,7 +10,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- <style id="class-res"></style> -->
-  <style id="skin-class"></style>
   <link rel="stylesheet" href="/css/responsive-col.css" />
 
   <link rel="icon" sizes="any" type="image/svg+xml" href="/lib/assets/logo.svg" />
@@ -81,9 +80,9 @@
     <div class="col" style="z-index: 2; position: absolute; width: 100%; top: 0">
       <div class="title-bar" id="title-bar" style="height: 38px; width: 100%"></div>
       <div id="header" class="row">
-        <div id="create_tool" style="display: inline-flex; align-items: center"></div>
+        <div id="create_tool" class="row"></div>
         <p id="project_name" class="semibold2"></p>
-        <div id="share_tool" style="display: inline-flex; align-items: center"></div>
+        <div id="share_tool" class="row"></div>
       </div>
     </div>
     <div id="canvas_view" style="z-index: 0; position: absolute; top: 0">
@@ -109,7 +108,7 @@
                 style="display: none"
             ></div> -->
     </div>
-    <div id="right_view" class="elevation7" style="top: 86px">
+    <div id="right_view" class="elevation7">
       <div id="tab_bar_right">
         <button data-index="0" class="design tab_right text-label">
           Design
@@ -138,7 +137,7 @@
   <!-- <div id="f12_view"></div> -->
   <div id="f12-container" class="f12-container col"></div>
 
-  <div class="popup-background wini_popup" id="create_skin_popup" style="z-index: 3">
+  <div class="popup-background wini_popup" id="create_skin_popup" style="z-index: 5">
     <div class="popup-content">
       <div class="popup-header row">
         <span class="semibold1 title_create_skin">Create new</span>
@@ -183,7 +182,7 @@
   <script type="text/javascript" src="/script/components/w_switch.js"></script>
   <script type="text/javascript" src="/script/components/w_text.js"></script>
   <script type="text/javascript" src="/script/components/w_text_form_field.js"></script>
-  <script type="text/javascript" src="/script/components/w_date_picker.js"></script>
+  <!-- <script type="text/javascript" src="/script/components/w_date_picker.js"></script> -->
   <script type="text/javascript" src="/script/components/w_table.js"></script>
   <script type="text/javascript" src="/script/components/w_tree.js"></script>
   <script type="text/javascript" src="/script/components/w_chart.js"></script>

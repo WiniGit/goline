@@ -2,6 +2,7 @@
   list.forEach((e) => {
     e.value = document.createElement("div");
     e.value.id = e.GID;
+    if (e.IsWini && !e.CopyID) e.value.setAttribute("iswini", "true");
   });
   let sortItems = [];
   let newList = [];
@@ -14,6 +15,7 @@
       if (parent) {
         sortItems.push(e);
         parent.value.appendChild(e.value);
+        e.Sort = parent.ListChildID.indexOf(e.GID);
       } else {
         if (wbase_list.length > 0) {
           parent = document.getElementById(e.ParentID);
@@ -42,7 +44,15 @@
     newList.push(e);
   });
   sortItems.forEach((e) => {
-    e.ListID = [...$(e.value).parents("div")].map((eP) => eP.id).reverse();
+    e.ListID = [...$(e.value).parents("div")]
+      .map((eP) => {
+        if (eP.getAttribute("iswini") && !e.IsWini) {
+          delete e.CopyID;
+          delete e.ChildID;
+        }
+        return eP.id;
+      })
+      .reverse();
     e.ListID.unshift(wbase_parentID);
     e.Level = e.ListID.length;
     e.ListID = e.ListID.join(",");
@@ -80,7 +90,7 @@ async function initComponents(item, list, initListener = true) {
       break;
     case EnumCate.form:
       createFrameHTML(item, list);
-      $(item.value).addClass("wbase-form");
+      $(item.value).addClass("w-form");
       break;
     case EnumCate.tool_variant:
       createVariantHTML(item, list);
@@ -160,6 +170,11 @@ async function initComponents(item, list, initListener = true) {
     }
     item.value.setAttribute("listid", item.ListID);
     if (item.IsWini) item.value.setAttribute("iswini", item.IsWini);
+    setSizeObserver.observe(item.value, {
+      attributeOldValue: true,
+      attributes: true,
+      childList: EnumCate.parent_cate.some((cate) => item.CateID === cate),
+    });
   }
   if (initListener) {
     addListenFromSection(item);
@@ -169,10 +184,7 @@ async function initComponents(item, list, initListener = true) {
 async function updateComponentContent(item) {
   switch (item.CateID) {
     case EnumCate.tool_rectangle:
-      item.value.style.backgroundImage = `url(${item.AttributesItem.Content})`;
-      item.value.style.backgroundRepeat = "no-repeat";
-      item.value.style.backgroundSize = "cover";
-      item.value.style.backgroundPosition = "center";
+      item.value.style.backgroundImage = `url(${urlImg + item.StyleItem.DecorationItem.replaceAll(" ", "%20")})`;
       break;
     case EnumCate.tool_text:
       item.value.innerText = item.AttributesItem.Content ?? "";
@@ -331,7 +343,7 @@ function initElement(wbaseHTML) {
       } else {
         wbaseHTML.removeAttribute("tree-height");
       }
-      wbaseHTML.querySelectorAll(".children-value > .check-box").forEach((chbox) => $(chbox.querySelector("input")).trigger("change"));
+      wbaseHTML.querySelectorAll(".children-value > .w-check-box").forEach((chbox) => $(chbox.querySelector("input")).trigger("change"));
       break;
     default:
       break;
@@ -355,7 +367,7 @@ const setSizeObserver = new MutationObserver((mutationList) => {
       initElement(targetWbase);
     } else if (mutation.type === "childList" && window.getComputedStyle(targetWbase).display.includes("flex")) {
       targetWbase.querySelectorAll(`.col-[level="${parseInt(targetWbase.getAttribute("level")) + 1}"]`).forEach((childCol) => {
-        childCol.style.setProperty("--gutter", targetWbase.style.flexDirection == "column" ? targetWbase.style.rowGap : targetWbase.style.columnGap);
+        childCol.style.setProperty("--gutter", targetWbase.style.getPropertyValue("--child-space"));
       });
     }
     if (mutation.attributeName === "style") {
@@ -373,21 +385,10 @@ const setSizeObserver = new MutationObserver((mutationList) => {
           ?.replace("height:", "")
           ?.trim();
       }
-      if (widthValue != targetWbase.style.width) {
-        changeSelectBox = true;
-        if (targetWbase.style.width == "100%") {
-          if (targetWbase.parentElement?.style?.flexDirection == "row") {
-            targetWbase.style.flex = 1;
-          }
-        }
-      }
+      changeSelectBox = widthValue != targetWbase.style.width;
       if (heightValue != targetWbase.style.height) {
         changeSelectBox = true;
-        if (targetWbase.style.height == "100%") {
-          if (targetWbase.parentElement?.style?.flexDirection == "column") {
-            targetWbase.style.flex = 1;
-          }
-        } else if (targetWbase.getAttribute("cateid") == EnumCate.tree) {
+        if (targetWbase.style.height !== "100%" && targetWbase.getAttribute("cateid") == EnumCate.tree) {
           targetWbase.style.setProperty("--height", `${parseFloat(targetWbase.style.height.replace("px", "")) / ([...targetWbase.querySelectorAll(".w-tree")].filter((wtree) => wtree.offsetHeight > 0).length + 1)}px`);
         }
       }
@@ -585,9 +586,7 @@ function initPositionStyle(item) {
   let valueT = item.StyleItem.PositionItem.Top;
   if (item.ParentID === wbase_parentID) {
     item.value.style.left = valueL;
-
     item.value.style.top = valueT;
-
     item.value.style.transform = null;
   } else {
     let valueR = item.StyleItem.PositionItem.Right;
@@ -662,27 +661,42 @@ function initWbaseStyle(item) {
     handleStyleSize(item);
   }
   if (item.StyleItem.DecorationItem) {
-    if (EnumCate.noImgBg.every((cate) => item.CateID != cate) && item.AttributesItem.Content && item.AttributesItem.Content.trim() != "") {
-      item.value.style.backgroundImage = `url(${urlImg + item.AttributesItem.Content.replaceAll(" ", "%20")})`;
-    }
     if (item.StyleItem.DecorationItem.ColorValue) {
-      let color_value = item.StyleItem.DecorationItem.ColorValue;
-      if (item.CateID != EnumCate.svg && item.CateID !== EnumCate.checkbox) {
-        item.value.style.backgroundColor = `#${color_value.substring(2)}${color_value.substring(0, 2)}`;
+      let background = item.StyleItem.DecorationItem.ColorValue;
+      if (background.match(hexRegex) && item.CateID !== EnumCate.svg && item.CateID !== EnumCate.checkbox) {
+        if (item.StyleItem.DecorationItem.ColorID) {
+          item.value.style.backgroundColor = `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`;
+        } else {
+          item.value.style.backgroundColor = `#${background.substring(2)}${background.substring(0, 2)}`;
+        }
+      } else if (EnumCate.noImgBg.every((cate) => item.CateID != cate)) {
+        item.value.style.backgroundImage = `url(${urlImg + background.replaceAll(" ", "%20")})`;
       }
     }
     if (item.StyleItem.DecorationItem.BorderItem) {
-      let listWidth = item.StyleItem.DecorationItem.BorderItem.Width.split(" ");
-      item.value.style.borderTop = listWidth[0] + "px";
-      item.value.style.borderRight = listWidth[1] + "px";
-      item.value.style.borderBottom = listWidth[2] + "px";
-      item.value.style.borderLeft = listWidth[3] + "px";
-      item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;
-      let border_color = item.StyleItem.DecorationItem.BorderItem.ColorValue;
-      item.value.style.borderColor = `#${border_color.substring(2)}${border_color.substring(0, 2)}`;
+      if (item.StyleItem.DecorationItem.BorderItem.IsStyle) {
+        item.value.style.borderWidth = `var(--border-width-${item.StyleItem.DecorationItem.BorderID})`;
+        item.value.style.borderStyle = `var(--border-style-${item.StyleItem.DecorationItem.BorderID})`;
+        item.value.style.borderColor = `var(--border-color-${item.StyleItem.DecorationItem.BorderID})`;
+      } else if (item.StyleItem.DecorationItem.BorderItem.BorderStyle) {
+        let listWidth = item.StyleItem.DecorationItem.BorderItem.Width.split(" ");
+        item.value.style.borderWidth = `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`;
+        item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;
+        let border_color = item.StyleItem.DecorationItem.BorderItem.ColorValue;
+        item.value.style.borderColor = `#${border_color.substring(2)}${border_color.substring(0, 2)}`;
+      } else {
+        item.StyleItem.DecorationItem.BorderID = null;
+        item.StyleItem.DecorationItem.BorderItem = null;
+      }
     }
     if (item.StyleItem.DecorationItem.EffectItem) {
-      if (item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.layer_blur) {
+      if (item.StyleItem.DecorationItem.EffectItem.IsStyle) {
+        if (item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.layer_blur) {
+          item.value.style.filter = `var(--effect-blur-${item.StyleItem.DecorationItem.EffectID})`;
+        } else {
+          item.value.style.boxShadow = `var(--effect-shadow-${item.StyleItem.DecorationItem.EffectID})`;
+        }
+      } else if (item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.layer_blur) {
         item.value.style.filter = `blur(${item.StyleItem.DecorationItem.EffectItem.BlurRadius}px)`;
       } else {
         let effect_color = item.StyleItem.DecorationItem.EffectItem.ColorValue;
@@ -692,13 +706,19 @@ function initWbaseStyle(item) {
     }
   }
   if (item.StyleItem.TextStyleItem && item.CateID !== EnumCate.chart) {
-    item.value.style.fontFamily = item.StyleItem.TextStyleItem.FontFamily;
-    item.value.style.fontSize = `${item.StyleItem.TextStyleItem.FontSize}px`;
-    item.value.style.fontWeight = item.StyleItem.TextStyleItem.FontWeight;
-    item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing ?? 0}px`;
-    item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue?.substring(2)}${item.StyleItem.TextStyleItem.ColorValue?.substring(0, 2)}`;
-    if (item.StyleItem.TextStyleItem.Height != undefined) {
-      item.value.style.lineHeight = `${item.StyleItem.TextStyleItem.Height}px`;
+    if (item.StyleItem.TextStyleItem.IsStyle) {
+      item.value.style.font = `var(--font-style-${item.StyleItem.TextStyleID})`;
+      item.value.style.color = `var(--font-color-${item.StyleItem.TextStyleID})`;
+      if (item.StyleItem.TextStyleItem.LetterSpacing) item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
+    } else {
+      item.value.style.fontFamily = item.StyleItem.TextStyleItem.FontFamily;
+      item.value.style.fontSize = `${item.StyleItem.TextStyleItem.FontSize}px`;
+      item.value.style.fontWeight = item.StyleItem.TextStyleItem.FontWeight;
+      if (item.StyleItem.TextStyleItem.LetterSpacing) item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
+      item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue?.substring(2)}${item.StyleItem.TextStyleItem.ColorValue?.substring(0, 2)}`;
+      if (item.StyleItem.TextStyleItem.Height != undefined) {
+        item.value.style.lineHeight = `${item.StyleItem.TextStyleItem.Height}px`;
+      }
     }
   }
   if (item.StyleItem.TypoStyleItem && item.CateID != EnumCate.textformfield) {
@@ -719,11 +739,16 @@ function handleStyleSize(item) {
     } else {
       item.value.style.width = "fit-content";
     }
-    // if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
   } else if (item.StyleItem.FrameItem.Width < 0) {
+    if (
+      $(item.value)
+        .parents(`.wbaseItem-value[level="${item.Level - 1}"]`)
+        ?.classList?.contains("w-row")
+    ) {
+      item.value.style.flex = 1;
+    }
     item.value.style.width = "100%";
   } else {
-    // if (item.value.parentElement?.style?.flexDirection == "row") item.value.style.flex = null;
     if ([Constraints.left, Constraints.right, Constraints.center].some((constX) => item.StyleItem.PositionItem.ConstraintsX === constX)) {
       item.value.style.width = `${item.StyleItem.FrameItem.Width}px`;
     }
@@ -732,6 +757,13 @@ function handleStyleSize(item) {
     item.value.style.height = "fit-content";
     if (item.value.parentElement?.style?.flexDirection == "column") item.value.style.flex = null;
   } else if (item.StyleItem.FrameItem.Height < 0) {
+    if (
+      $(item.value)
+        .parents(`.wbaseItem-value[level="${item.Level - 1}"]`)
+        ?.classList?.contains("w-col")
+    ) {
+      item.value.style.flex = 1;
+    }
     item.value.style.height = "100%";
   } else {
     if ([Constraints.top, Constraints.bottom, Constraints.center].some((constY) => item.StyleItem.PositionItem.ConstraintsY === constY)) {
@@ -777,6 +809,7 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     wbaseItem.value.style.setProperty("--gap", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
   } else {
     let isRow = wbaseItem.WAutolayoutItem.Direction === "Horizontal";
+    $(wbaseItem.value).removeClass("w-stack");
     if (isRow) {
       $(wbaseItem.value).removeClass("w-col");
       $(wbaseItem.value).addClass("w-row");
@@ -784,7 +817,7 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
       $(wbaseItem.value).removeClass("w-row");
       $(wbaseItem.value).addClass("w-col");
     }
-    wbaseItem.value.style.setProperty("--flex-wrap", wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap");
+    wbaseItem.value.setAttribute("wrap", wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap");
     wbaseItem.value.style.setProperty("--child-space", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
     wbaseItem.value.style.setProperty("--run-space", `${wbaseItem.WAutolayoutItem.RunSpace}px`);
     wbaseItem.value.style.setProperty("--main-axis-align", wMainAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
@@ -792,14 +825,14 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     wbaseItem.value.querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`).forEach((childCol) => {
       childCol.style.setProperty("--gutter", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
     });
+    if (wbaseItem.WAutolayoutItem.IsScroll) wbaseItem.value.setAttribute("scroll", "true");
   }
-  if (wbaseItem.StyleItem.PaddingItem) wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
-  else console.log(wbaseItem.GID);
+  wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
 }
 
 function removeAutoLayoutProperty(eHTML) {
-  $(wbaseItem.value).removeClass("w-row");
-  $(wbaseItem.value).removeClass("w-col");
+  $(eHTML).removeClass("w-row");
+  $(eHTML).removeClass("w-col");
   eHTML.style.removeProperty("--flex-wrap");
   eHTML.style.removeProperty("--child-space");
   eHTML.style.removeProperty("--run-space");
@@ -809,7 +842,7 @@ function removeAutoLayoutProperty(eHTML) {
     childCol.style.removeProperty("--gutter");
   });
   eHTML.style.removeProperty("--padding");
-  $(wbaseItem.value).addClass("w-stack");
+  $(eHTML).addClass("w-stack");
 }
 
 function addStyleComponents(item, elements) {

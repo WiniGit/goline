@@ -714,15 +714,15 @@ socket.on("server-main", async (data) => {
     let importEffect = [];
     let listData = initskin
       ? data.data.filter((e) => {
-        if (e.GID !== wbase_parentID) {
-          if (e.StyleItem?.DecorationItem?.ColorID) importColor.push(e.StyleItem.DecorationItem.ColorID);
-          if (e.StyleItem?.DecorationItem?.BorderID) importBorder.push(e.StyleItem.DecorationItem.BorderID);
-          if (e.StyleItem?.DecorationItem?.EffectID) importEffect.push(e.StyleItem.DecorationItem.EffectID);
-          if (e.StyleItem?.TextStyleID) importTypo.push(e.StyleItem.TextStyleID);
-          return true;
-        }
-        return false;
-      })
+          if (e.GID !== wbase_parentID) {
+            if (e.StyleItem?.DecorationItem?.ColorID) importColor.push(e.StyleItem.DecorationItem.ColorID);
+            if (e.StyleItem?.DecorationItem?.BorderID) importBorder.push(e.StyleItem.DecorationItem.BorderID);
+            if (e.StyleItem?.DecorationItem?.EffectID) importEffect.push(e.StyleItem.DecorationItem.EffectID);
+            if (e.StyleItem?.TextStyleID) importTypo.push(e.StyleItem.TextStyleID);
+            return true;
+          }
+          return false;
+        })
       : data.data.filter((e) => e.GID !== wbase_parentID);
     listData = initDOM(listData);
     arrange(listData);
@@ -858,6 +858,9 @@ class WiniIO {
       }
       return;
     }
+    if (obj.data.some((e) => e.GID === wbase_parentID)) {
+      toastr["warning"]("Nhớ thao tác này để báo Thuno nếu load lại có mất hết sorry ace!!!!!!!");
+    }
     socket.emit("client-main", obj);
   }
 
@@ -958,6 +961,14 @@ class WiniIO {
         });
       }
     }
+  }
+
+  static emitCss(cssItem, enumEvent) {
+    socket.emit("client-css", {
+      pid: PageDA.obj.ProjectID,
+      data: cssItem,
+      enumEvent: enumEvent
+    });
   }
 
   static emitGet(json, url, enumObj, enumEvent) {

@@ -47,18 +47,42 @@ html {
 }
 */
 
+body[enable="false"] .right_tab_view {
+  pointer-events: none !important;
+}
+
+body[enable="false"] .assets.tab_left {
+  display: none !important;
+}
+
+body[enable="false"] #div_list_page > .header > .fa-plus {
+  display: none !important;
+}
+
+body[enable="false"] .layer_wbase_tile > .is-lock {
+  display: none !important;
+}
+
+body[enable="false"] .f12-container {
+  pointer-events: none !important;
+}
+
+body[enable="false"] .btn-tool-state:nth-child(n + 3):nth-child(-n + 6) {
+  display: none !important;
+}
+
+body:has(#history-view) :is(.btn-tool-state:nth-child(2), .btn-history) {
+  display: none !important;
+}
+
 #header {
   width: 100%;
   height: 48px;
   background-color: #2c2c2c;
-  display: inline-flex;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
-  /* position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 2; */
 }
 
 .btn-tool-state {
@@ -149,22 +173,21 @@ html {
   margin: 0 12px 0 24px;
 }
 
-.btn-play {
+:is(.btn-play, .btn-history) {
   width: 48px;
   height: 48px;
   padding: 12px;
   box-sizing: border-box;
-  background-color: transparent;
 }
 
-.btn-play:hover {
+:is(.btn-play, .btn-history):hover {
   background-color: black;
 }
 
 .input-scale {
   width: 74px;
   height: 48px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   color: white !important;
@@ -201,6 +224,7 @@ html {
   height: 100%;
   z-index: 2;
   position: relative;
+  overflow: hidden;
 }
 
 #body > .loading-view {
@@ -226,6 +250,10 @@ html {
   position: absolute !important;
 }
 
+#divSection * {
+  cursor: inherit;
+}
+
 #divSection > .wbaseItem-value {
   position: absolute !important;
   right: unset !important;
@@ -236,7 +264,18 @@ html {
   display: none !important;
 }
 
-#divSection *:not(.wbaseItem-value, tr:has(.wbaseItem-value), td:has(> .wbaseItem-value), .tile-item:has(.wbaseItem-value), .children-value:has(> .wbaseItem-value)) {
+#divSection
+  *:not(
+    .wbaseItem-value,
+    tr:has(.wbaseItem-value),
+    td:has(> .wbaseItem-value),
+    .tile-item:has(.wbaseItem-value),
+    .children-value:has(> .wbaseItem-value)
+  ) {
+  pointer-events: none !important;
+}
+
+#divSection .wbaseItem-value:has(> div.textfield) {
   pointer-events: none !important;
 }
 
@@ -260,6 +299,9 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   transition: 0.1s;
 }
 
+.w-switch:not(.wbaseItem-value) > .slider {
+  background-color: white;
+}
 #left_view {
   top: 86px;
   left: 0;
@@ -282,8 +324,8 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   margin-top: 2px;
 }
 
-#right_view {
-  top: 0;
+:is(#right_view, #history-view) {
+  top: 86px;
   right: 0;
   height: calc(100% - 86px);
   width: 260px;
@@ -292,16 +334,19 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   overflow-x: visible;
 }
 
-.right_tab_view {
-  height: calc(100% - 42px);
-  overflow-y: scroll;
-  overflow-x: hidden;
+#history-view {
+  padding: 0 !important;
 }
 
-.left_tab_view {
+#history-view > .header_design_style {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 2px 8px;
+}
+
+:is(.left_tab_view, .right_tab_view) {
   height: calc(100% - 42px);
-  overflow-x: visible;
-  overflow-y: hidden;
+  overflow-y: scroll;
+  width: 100%;
 }
 
 /**/
@@ -368,7 +413,7 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   border-bottom: 1px solid #e5e5e5;
 }
 
-.tab_left {
+:is(.tab_left, .tab_right) {
   padding: 4px;
   margin-right: 8px;
   background-color: transparent;
@@ -380,32 +425,8 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   float: left;
 }
 
-.tab_right {
-  padding: 4px;
-  margin-right: 8px;
-  background-color: transparent;
-  border: none;
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 700;
-  color: #262626;
-}
-
 .tab_left:hover {
   opacity: 0.7;
-}
-
-.space_line {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: #e5e5e5;
-}
-
-#unevent_element {
-  pointer-events: none;
 }
 
 #wini_features {
@@ -426,7 +447,7 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
 }
 
 .popup_function_option {
-  display: inline-flex;
+  display: flex;
   width: 100%;
   padding: 0 8px;
   font-size: 12px;
@@ -559,7 +580,7 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   border: none;
   cursor: pointer;
   align-items: center;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   background-color: transparent;
 }
@@ -597,64 +618,6 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   width: 100%;
   box-sizing: border-box;
 }
-
-/* 
-.setting-header {
-  width: 100%;
-  height: 32px;
-  padding: 0 8px 0 16px;
-  box-sizing: border-box;
-  justify-content: space-between;
-}
-
-.setting-header>* {
-  color: rgb(0, 32, 77, 0.25);
-}
-
-.setting-header>button {
-  border: none;
-  outline: none;
-  background-color: transparent;
-}
-
-.setting-header.active>*,
-.setting-header:hover>* {
-  color: #00204D;
-}
-
-.setting-field-container {
-  width: 100%;
-}
-
-.setting-field-container .setting-field-row {
-  width: 100%;
-  padding: 0 8px 0 16px;
-  box-sizing: border-box;
-}
-
-.setting-field-container .setting-field-row>.state-field-label-container {
-  height: 32px;
-  justify-content: space-between;
-}
-
-.setting-field-container .setting-field-row>.state-field-value-container {
-  height: 32px;
-  display: none;
-  box-sizing: border-box;
-  justify-content: space-between;
-}
-
-.setting-field-container .setting-field-row>.state-field-value-container.active {
-  display: flex;
-}
-
-.setting-field-container .setting-field-row>.state-field-label-container>button {
-  display: none;
-}
-
-.setting-field-container .setting-field-row>.state-field-label-container>button.active {
-  display: flex;
-} */
 
 .setting-state-container {
   width: 100%;
@@ -703,7 +666,11 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   box-sizing: border-box;
 }
 
-.setting-state-container .list-field-setting .field-setting .field-header .field-name {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-header
+  .field-name {
   flex: 1;
 }
 
@@ -712,7 +679,11 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   height: 32px;
 }
 
-.setting-state-container .list-field-setting .field-setting .field-value .skin-container {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-value
+  .skin-container {
   flex: 1;
   height: 32px;
   padding-left: 16px;
@@ -720,11 +691,20 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   box-sizing: border-box;
 }
 
-.setting-state-container .list-field-setting .field-setting .field-value .skin-container:hover {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-value
+  .skin-container:hover {
   background-color: rgba(0, 53, 128, 0.04);
 }
 
-.setting-state-container .list-field-setting .field-setting .field-value .skin-container .skin-color {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-value
+  .skin-container
+  .skin-color {
   padding: 0;
   overflow: hidden;
   border-radius: 50%;
@@ -732,7 +712,12 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   border: 1px solid rgba(0, 53, 128, 0.18);
 }
 
-.setting-state-container .list-field-setting .field-setting .field-value .skin-container .skin-name {
+.setting-state-container
+  .list-field-setting
+  .field-setting
+  .field-value
+  .skin-container
+  .skin-name {
   flex: 1;
   margin-left: 8px;
 }

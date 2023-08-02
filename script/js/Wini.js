@@ -535,8 +535,8 @@ function updateHoverWbase(wbase_item, onAlt) {
   }
   if (isOnchange) {
     [...document.getElementsByClassName("layer_wbase_tile")].forEach((layerHTML) => {
-      if (layerHTML.id.replace("wbaseID:", "") == wbase_item?.GID) {
-        layerHTML.style.borderColor = wbase_item.IsWini ? "#7B61FF" : "#1890FF";
+      if (layerHTML.id.includes(`${wbase_item?.GID}`)) {
+        layerHTML.style.borderColor = wbase_item.IsWini || $(layerHTML).parents(`.col:has(> .layer_wbase_tile[iswini="true"])`).length ? "#7B61FF" : "#1890FF";
       } else {
         layerHTML.style.borderColor = "transparent";
       }
@@ -573,7 +573,7 @@ function selectParent(event) {
   if (selected_list.every((e) => e.CateID != EnumCate.tool_variant && e.IsWini)) {
     parent_cate.push(EnumCate.tool_variant);
   }
-  let containVariant = selected_list.some((e) => e.CateID == EnumCate.tool_variant || document.getElementById(e.GID).querySelectorAll(".variant").length > 0);
+  let containVariant = selected_list.some((e) => e.CateID == EnumCate.tool_variant || document.getElementById(e.GID).querySelectorAll(".w-variant").length > 0);
   var objp = list.filter((eHTML) => {
     if (
       parent_cate.every((cate) => cate != eHTML.getAttribute("cateid")) || // eHTML ko đc xếp loại là wbaseItem có item con
@@ -643,7 +643,7 @@ function selectParent(event) {
 
 var clearAction = false;
 function downListener(event) {
-  if (!document.getElementById("wini_features") && event.target.localName != "input" && event.target.contentEditable != "true" && ToolState.create_new_type.every((ts) => ts !== tool_state)) {
+  if (!document.getElementById("wini_features") && event.target.localName != "input" && event.target.contentEditable != "true" && ToolState.create_new_type.every((ts) => ts !== tool_state) && document.body.contains(right_view)) {
     event.activeElement = document.activeElement;
     event.path = [...event.composedPath()];
     let mouseOffset = offsetScale(event.pageX, event.pageY);
@@ -792,20 +792,13 @@ function centerViewInitListener() {
     } else return;
   });
   window.addEventListener("keyup", keyUpEvent, false);
-  [divSection, ...divSection.querySelectorAll(".wbaseItem-value.variant")].forEach((parentPage) => {
+  [divSection, ...divSection.querySelectorAll(":scope > .w-variant")].forEach((parentPage) => {
     childObserver.observe(parentPage, {
       childList: true,
     });
   });
-  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`.wbaseItem-value.variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
+  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
     resizeWbase.observe(page);
-  });
-  [...divSection.querySelectorAll(`.wbaseItem-value`)].forEach((wbValue) => {
-    setSizeObserver.observe(wbValue, {
-      attributeOldValue: true,
-      attributes: true,
-      childList: EnumCate.parent_cate.some((cate) => wbValue.getAttribute("cateid") === cate),
-    });
   });
   listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
 }
@@ -814,8 +807,20 @@ const childObserver = new MutationObserver((mutationList) => {
   mutationList.forEach((mutation) => {
     mutation.removedNodes.forEach((wbaseValue) => {
       let listBrpKey = ProjectDA.obj.ResponsiveJson.BreakPoint.map((brp) => brp.Key.match(brpRegex).pop().replace(/[()]/g, ""));
-      let listClass = ["min-brp", ...wbaseValue.classList].filter((wbaseClass) => listBrpKey.every((brpKey) => brpKey != wbaseClass));
+      let listClass = ["min-brp", ...wbaseValue.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
       wbaseValue.className = listClass.join(" ");
+      if (wbaseValue.getAttribute("cateid") == EnumCate.tool_variant) {
+        childObserver.disconnect(wbaseValue, {
+          childList: true,
+        });
+        wbaseValue.childNodes.forEach(childHTML => {
+          if (EnumCate.extend_frame.some(ct => childHTML.getAttribute("cateid") == ct)) {
+            let listClass = ["min-brp", ...childHTML.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
+            childHTML.className = listClass.join(" ");
+            resizeWbase.disconnect(childHTML);
+          }
+        })
+      }
     });
     mutation.addedNodes.forEach((wbaseValue) => {
       if (EnumCate.extend_frame.some((cate) => wbaseValue.getAttribute("cateid") == cate) && wbaseValue.style.width != "fit-content") {
@@ -824,7 +829,7 @@ const childObserver = new MutationObserver((mutationList) => {
         if (closestBrp.length > 0 && ProjectDA.obj.ResponsiveJson) {
           closestBrp = closestBrp.pop().Key.match(brpRegex).pop().replace(/[()]/g, "");
           let listBrpKey = ProjectDA.obj.ResponsiveJson.BreakPoint.map((brp) => brp.Key.match(brpRegex).pop().replace(/[()]/g, ""));
-          let listClass = ["min-brp", ...wbaseValue.classList].filter((wbaseClass) => listBrpKey.every((brpKey) => brpKey != wbaseClass));
+          let listClass = ["min-brp", ...wbaseValue.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
           wbaseValue.className = listClass.join(" ");
           wbaseValue.className += ` ${closestBrp}`;
         }
@@ -833,6 +838,10 @@ const childObserver = new MutationObserver((mutationList) => {
         childObserver.observe(wbaseValue, {
           childList: true,
         });
+        wbaseValue.childNodes.forEach(childHTML => {
+          if (EnumCate.extend_frame.some(ct => childHTML.getAttribute("cateid") == ct))
+            resizeWbase.observe(childHTML);
+        })
       }
     });
     if (mutation.target === divSection) {
@@ -842,23 +851,45 @@ const childObserver = new MutationObserver((mutationList) => {
 });
 
 var lstc = [];
+var dragTime = 0;
 function moveListener(event) {
   if (event.target.contentEditable == "true" || (event.target.localName === "input" && !event.target.readOnly)) return;
   event.preventDefault();
   let target_view;
   // check drag resize left view
-  if (!instance_drag && left_view.offsetWidth > 0 && (isInRange(event.pageX, left_view.offsetWidth - 4, left_view.offsetWidth + 4) || left_view.resizing)) {
-    document.body.style.cursor = "e-resize";
-    if (event.buttons == 1) {
-      left_view.resizing = true;
-      left_view.style.width = event.pageX + "px";
+  if ((!instance_drag && left_view.offsetWidth > 0) || left_view.resizing) {
+    let pageContainerY = document.getElementById("div_list_page").getBoundingClientRect();
+    if (left_view.resizing) {
+      if (document.body.style.cursor === "e-resize") {
+        left_view.style.width = event.pageX + "px";
+      } else {
+        layer_view.firstChild.style.height = event.pageY - (pageContainerY.bottom - pageContainerY.height) + "px";
+      }
       return;
+    } else if (isInRange(event.pageX, left_view.offsetWidth - 8, left_view.offsetWidth + 8)) {
+      document.body.style.cursor = "e-resize";
+      if (event.buttons == 1) {
+        left_view.resizing = true;
+        left_view.style.width = event.pageX + "px";
+        return;
+      }
+    } else if ((layer_view.offsetWidth > 0 && isInRange(event.pageX, 0, left_view.offsetWidth) && isInRange(event.pageY, pageContainerY.bottom - 8, pageContainerY.bottom + 4))) {
+      document.body.style.cursor = "n-resize";
+      if (event.buttons == 1) {
+        left_view.resizing = true;
+        layer_view.firstChild.style.height = event.pageY - (pageContainerY.bottom - pageContainerY.height) + "px";
+        return;
+      }
+    } else {
+      document.body.style.cursor = null;
     }
   } else {
     document.body.style.cursor = null;
   }
   // check edit data
   if (event.buttons == 1 && PageDA.enableEdit) {
+    dragTime++;
+    if (dragTime < 4 && design_view_index !== 1) return;
     if (instance_drag) {
       target_view = "left_view";
     } else if (document.getElementById("popup_img_document")?.getAttribute("offset")) {
@@ -903,11 +934,6 @@ function moveListener(event) {
           }
         });
         sortLayer = document.createElement("div");
-        sortLayer.style.position = "absolute";
-        sortLayer.style.height = "1px";
-        sortLayer.style.right = "0px";
-        sortLayer.style.backgroundColor = "black";
-        sortLayer.style.display = "block";
         document.getElementById("Layer").appendChild(sortLayer);
       }
     } else if (sortSkin || event.target.className == "skin_tile_option") {
@@ -981,11 +1007,11 @@ function moveListener(event) {
                 if (WBaseDA.enumEvent == undefined) {
                   WBaseDA.enumEvent = EnumEvent.edit;
                 }
-                if (checkpad == 0) {
-                  removeAllRectHovers();
-                }
                 let isInFlex = false;
-                if (select_box_parentID != wbase_parentID) isInFlex = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
+                let parentHTML = document.getElementById(select_box_parentID);
+                if (select_box_parentID != wbase_parentID) {
+                  isInFlex = window.getComputedStyle(parentHTML).display.match("flex");
+                }
                 switch (tool_state) {
                   case ToolState.resize_left:
                     for (let i = 0; i < selected_list.length; i++) {
@@ -1002,6 +1028,8 @@ function moveListener(event) {
                             eHTML.style.bottom = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-row")) {
+                          eHTML.style.flex = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1029,6 +1057,8 @@ function moveListener(event) {
                             eHTML.style.bottom = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-row")) {
+                          eHTML.style.flex = null;
                         }
                       }
                       if (scaleComponent) scaleComponent = eHTML.offsetHeight / eHTML.offsetWidth;
@@ -1052,6 +1082,8 @@ function moveListener(event) {
                             eHTML.style.right = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-col")) {
+                          eHTML.style.flex = null;
                         }
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                       }
@@ -1079,6 +1111,8 @@ function moveListener(event) {
                             eHTML.style.right = null;
                             eHTML.style.transform = null;
                           }
+                        } else if (parentHTML.classList.contains("w-col")) {
+                          eHTML.style.flex = null;
                         }
                       }
                       if (scaleComponent) scaleComponent = eHTML.offsetWidth / eHTML.offsetHeight;
@@ -1100,6 +1134,7 @@ function moveListener(event) {
                           selected_list[i].StyleItem.PositionItem.Top = thisOffset.y + "px";
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1137,6 +1172,7 @@ function moveListener(event) {
                           selected_list[i].StyleItem.PositionItem.Top = thisOffset.y + "px";
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1171,6 +1207,7 @@ function moveListener(event) {
                           selected_list[i].StyleItem.PositionItem.Left = thisOffset.x + "px";
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1206,6 +1243,7 @@ function moveListener(event) {
                           eHTML.style.bottom = null;
                           eHTML.style.transform = null;
                         }
+                        eHTML.style.flex = null;
                         selected_list[i].StyleItem.FrameItem.Height = eHTML.offsetHeight;
                         selected_list[i].StyleItem.FrameItem.Width = eHTML.offsetWidth;
                       }
@@ -1231,203 +1269,19 @@ function moveListener(event) {
                 updateUISelectBox();
                 updateInputTLWH();
               } else {
-                if (!select_box) {
+                if (!selected_list.length) {
                   addSelectList([hover_wbase]);
                 }
                 if (select_box && !objr) {
                   if (checkpad == 0) lstc = [...parent.querySelectorAll(":scope > .wbaseItem-value")].filter((eHTML) => !isHidden(eHTML));
                   selectParent(event);
-                  // // top left
+                  // top left
                   let select_box_o1 = select_box.o1;
-                  // // bottom right
+                  // bottom right
                   let select_box_o9 = select_box.o9;
                   if ((isInRange(event.pageX, select_box_o1.x, select_box_o9.x) && isInRange(event.pageY, select_box_o1.y, select_box_o9.y) && checkpad == 0) || checkpad != 0 || (selected_list.length === 1 && hover_wbase === selected_list[0])) {
-                    // if (checkpad == 0) {
-                    //   listLine = [];
-                    //   // listRectHover = [];
-                    //   listText = [];
-                    //   objsc = JSON.parse(JSON.stringify(select_box)); // get position before drag of select box
-                    // }
-                    // select_box.x = objsc.x + xp;
-                    // select_box.o1.x = objsc.o1.x + xp;
-                    // select_box.o2.x = objsc.o2.x + xp;
-                    // select_box.o3.x = objsc.o3.x + xp;
-                    // select_box.o4.x = objsc.o4.x + xp;
-                    // select_box.o5.x = objsc.o5.x + xp;
-                    // select_box.o6.x = objsc.o6.x + xp;
-                    // select_box.o7.x = objsc.o7.x + xp;
-                    // select_box.o8.x = objsc.o8.x + xp;
-                    // select_box.o9.x = objsc.o9.x + xp;
-                    // select_box.y = objsc.y + yp;
-                    // select_box.o1.y = objsc.o1.y + yp;
-                    // select_box.o2.y = objsc.o2.y + yp;
-                    // select_box.o3.y = objsc.o3.y + yp;
-                    // select_box.o4.y = objsc.o4.y + yp;
-                    // select_box.o5.y = objsc.o5.y + yp;
-                    // select_box.o6.y = objsc.o6.y + yp;
-                    // select_box.o7.y = objsc.o7.y + yp;
-                    // select_box.o8.y = objsc.o8.y + yp;
-                    // select_box.o9.y = objsc.o9.y + yp;
-                    // const b = (scale < 1 ? Math.floor(3 / scale) : 5) / scale;
-                    // // const b = 5;
-                    // var listt = lstc.filter((m) => {
-                    //   if (selected_list.some((e) => e.GID == m.id)) return false;
-                    //   let mRect = m.getBoundingClientRect();
-                    //   return Math.abs(mRect.x - select_box.x) <= b || Math.abs(mRect.x - select_box.o5.x) <= b || Math.abs(mRect.x - select_box.o9.x) <= b || Math.abs(mRect.x + mRect.width / 2 - select_box.x) <= b || Math.abs(mRect.x + mRect.width / 2 - select_box.o5.x) <= b || Math.abs(mRect.x + mRect.width / 2 - select_box.o9.x) <= b || Math.abs(mRect.x + mRect.width - select_box.x) <= b || Math.abs(mRect.x + mRect.width - select_box.o5.x) <= b || Math.abs(mRect.x + mRect.width - select_box.o9.x) <= b || Math.abs(mRect.y - select_box.y) <= b || Math.abs(mRect.y - select_box.o5.y) <= b || Math.abs(mRect.y - select_box.o9.y) <= b || Math.abs(mRect.y + mRect.height / 2 - select_box.y) <= b || Math.abs(mRect.y + mRect.height / 2 - select_box.o5.y) <= b || Math.abs(mRect.y + mRect.height / 2 - select_box.o9.y) <= b || Math.abs(mRect.y + mRect.height - select_box.y) <= b || Math.abs(mRect.y + mRect.height - select_box.o5.y) <= b || Math.abs(mRect.y + mRect.height - select_box.o9.y) <= b;
-                    // });
-                    // listLine = [];
-                    // listText = [];
                     var xb = 0,
                       yb = 0;
-                    //   tx = -2;
-                    // for (var i = 0; i < listt.length; i++) {
-                    //   let eHTMLRect = listt[i].getBoundingClientRect();
-                    //   var o1 = {
-                    //     x: eHTMLRect.x,
-                    //     y: eHTMLRect.y,
-                    //   };
-                    //   var o2 = {
-                    //     x: eHTMLRect.x + eHTMLRect.width / 2,
-                    //     y: eHTMLRect.y + eHTMLRect.height / 2,
-                    //   };
-                    //   var o3 = {
-                    //     x: eHTMLRect.x + eHTMLRect.width,
-                    //     y: eHTMLRect.y + eHTMLRect.height,
-                    //   };
-                    //   var xt1 = o1.x - select_box.x,
-                    //     xt2 = o1.x - select_box.o5.x,
-                    //     xt3 = o1.x - select_box.o9.x,
-                    //     xt4 = o2.x - select_box.x,
-                    //     xt5 = o2.x - select_box.o5.x,
-                    //     xt6 = o2.x - select_box.o9.x,
-                    //     xt7 = o3.x - select_box.x,
-                    //     xt8 = o3.x - select_box.o5.x,
-                    //     xt9 = o3.x - select_box.o9.x,
-                    //     yt1 = o1.y - select_box.y,
-                    //     yt2 = o1.y - select_box.o5.y,
-                    //     yt3 = o1.y - select_box.o9.y,
-                    //     yt4 = o2.y - select_box.y,
-                    //     yt5 = o2.y - select_box.o5.y,
-                    //     yt6 = o2.y - select_box.o9.y,
-                    //     yt7 = o3.y - select_box.y,
-                    //     yt8 = o3.y - select_box.o5.y,
-                    //     yt9 = o3.y - select_box.o9.y;
-                    //   if (Math.abs(xt1) <= b || Math.abs(xt2) <= b || Math.abs(xt3) <= b) {
-                    //     var checktt = Math.abs(xt2) <= b;
-                    //     xb = Math.abs(xt1) <= b ? xt1 : checktt ? xt2 : Math.abs(xt3) <= b ? xt3 : bx;
-                    //     var listl = checktt ? [o1.y, o3.y, select_box.o5.y] : [o1.y, select_box.y, o3.y, checktt ? select_box.o5.y : select_box.o9.y];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: o1.x + tx, y: m - tx };
-                    //       }),
-                    //     );
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: o1.x,
-                    //       y: Math.min(...listl),
-                    //       x1: o1.x,
-                    //       y1: Math.max(...listl),
-                    //       l: true,
-                    //       s: 1,
-                    //     });
-                    //   } else if (Math.abs(xt4) <= b || Math.abs(xt5) <= b || Math.abs(xt6) <= b) {
-                    //     var checktt = Math.abs(xt5) <= b;
-                    //     xb = Math.abs(xt4) <= b ? xt4 : checktt ? xt5 : Math.abs(xt6) <= b ? xt6 : bx;
-                    //     var listl = checktt ? [o1.y, o3.y, select_box.o5.y] : [o1.y, select_box.y, o3.y, checktt ? select_box.o5.y : select_box.o9.y];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: o2.x + tx, y: m - tx };
-                    //       }),
-                    //     );
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: o2.x,
-                    //       y: Math.min(...listl),
-                    //       x1: o2.x,
-                    //       y1: Math.max(...listl),
-                    //       l: true,
-                    //       s: 2,
-                    //     });
-                    //   } else if (Math.abs(xt7) <= b || Math.abs(xt8) <= b || Math.abs(xt9) <= b) {
-                    //     var checktt = Math.abs(xt8) <= b;
-                    //     var listl = checktt ? [o1.y, o3.y, select_box.o5.y] : [o1.y, select_box.y, o3.y, checktt ? select_box.o5.y : select_box.o9.y];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: o3.x + tx, y: m - tx };
-                    //       }),
-                    //     );
-                    //     xb = Math.abs(xt7) <= b ? xt7 : Math.abs(xt8) <= b ? xt8 : Math.abs(xt9) <= b ? xt9 : bx;
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: o3.x,
-                    //       y: Math.min(...listl),
-                    //       x1: o3.x,
-                    //       y1: Math.max(...listl),
-                    //       l: true,
-                    //       s: 3,
-                    //     });
-                    //   } else if (Math.abs(yt1) <= b || Math.abs(yt2) <= b || Math.abs(yt3) <= b) {
-                    //     var checktt = Math.abs(yt2) <= b;
-                    //     var listl = [o1.x, select_box.x, o3.x, checktt ? select_box.o5.x : select_box.o9.x];
-                    //     var listl = checktt ? [o1.x, o3.x, select_box.o5.x] : [o1.x, select_box.x, o3.x, select_box.o9.x];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: m + tx, y: o1.y - tx };
-                    //       }),
-                    //     );
-                    //     yb = Math.abs(yt1) <= b ? yt1 : checktt ? yt2 : Math.abs(yt3) <= b ? yt3 : by;
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: Math.min(...listl),
-                    //       y: o1.y,
-                    //       x1: Math.max(...listl),
-                    //       y1: o1.y,
-                    //       l: true,
-                    //       s: 4,
-                    //     });
-                    //   } else if (Math.abs(yt4) <= b || Math.abs(yt5) <= b || Math.abs(yt6) <= b) {
-                    //     var checktt = Math.abs(yt5) <= b;
-                    //     var listl = checktt ? [o1.x, o3.x, select_box.o5.x] : [o1.x, select_box.x, o3.x, select_box.o9.x];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: m + tx, y: o2.y - tx };
-                    //       }),
-                    //     );
-                    //     yb = Math.abs(yt4) <= b ? yt4 : checktt ? yt5 : Math.abs(yt6) <= b ? yt6 : by;
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: Math.min(...listl),
-                    //       y: o2.y,
-                    //       x1: Math.max(...listl),
-                    //       y1: o2.y,
-                    //       l: true,
-                    //       s: 5,
-                    //     });
-                    //   } else if (Math.abs(yt7) <= b || Math.abs(yt8) <= b || Math.abs(yt9) <= b) {
-                    //     var checktt = Math.abs(yt8) <= b;
-                    //     var listl = checktt ? [o1.x, o3.x, select_box.o5.x] : [o1.x, select_box.x, o3.x, select_box.o9.x];
-                    //     listText.push(
-                    //       ...listl.map((m) => {
-                    //         return { gid: "", t: "x", x: m + tx, y: o3.y - tx };
-                    //       }),
-                    //     );
-                    //     yb = Math.abs(yt7) <= b ? yt7 : checktt ? yt8 : Math.abs(yt9) <= b ? yt9 : by;
-                    //     listLine.push({
-                    //       gid: uuidv4(),
-                    //       x: Math.min(...listl),
-                    //       y: o3.y,
-                    //       x1: Math.max(...listl),
-                    //       y1: o3.y,
-                    //       l: true,
-                    //       s: 6,
-                    //     });
-                    //   }
-                    //   if (listLine.length > 4) {
-                    //     listLine = listLine.splice(0, 5);
-                    //     listText = listText.splice(0, 5);
-                    //     break;
-                    //   }
-                    // }
                     if (checkpad === 0) {
                       drag_start_list = [];
                       let isFixedWhenScroll = false;
@@ -1457,7 +1311,7 @@ function moveListener(event) {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event);
                       }
                       if (checkpad % 2 === 0) {
-                        // updateInputTLWH();
+                        updateInputTLWH();
                         wdraw();
                       }
                     }
@@ -1605,9 +1459,9 @@ function moveListener(event) {
       } else {
         var xp = event.pageX - minx,
           yp = event.pageY - miny;
-        if (tool_state === ToolState.hand_tool) {
+        if (tool_state === ToolState.hand_tool && event.buttons == 1) {
           handToolDrag(event);
-        } else if (event.target.id == "canvas_view" || divSection.contains(event.target)) {
+        } else if ((event.target.id == "canvas_view" || divSection.contains(event.target)) && document.body.contains(right_view)) {
           if (event.buttons === 1) {
             scanSelectList(event);
           } else {
@@ -1706,10 +1560,10 @@ function checkHoverElement(event) {
     listLine = [];
     listText = [];
     let currentLevel = 1;
-    let currentPPage = wbase_parentID;
+    let currentListPPage = [];
     if (selected_list.length > 0) {
       currentLevel = parseInt(selected_list[0].value.getAttribute("level"));
-      if (currentLevel > 1) $(selected_list[0].value).parents(`.wbaseItem-value[level="1"]`)[0]?.id;
+      if (currentLevel > 1) currentListPPage = [...$(selected_list[0].value).parents(`.wbaseItem-value`)];
     }
     let _target = [...event.composedPath()].find((eHTML) => {
       if (!eHTML.classList?.contains("wbaseItem-value")) {
@@ -1726,15 +1580,14 @@ function checkHoverElement(event) {
           }
           break;
         default:
-          let parentPage = $(eHTML).parents(`.wbaseItem-value[level="1"]`)[0];
+          let parentPage = $(eHTML).parents(`.wbaseItem-value`)[0];
           let listid = eHTML.getAttribute("listid").split(",");
+          let eParentId = listid.pop();
           if (target_level === 2 && EnumCate.show_name.some((cate) => cate == parentPage?.getAttribute("cateid"))) {
             is_enable = true;
           } else if (event.metaKey || (!isMac && event.ctrlKey)) {
             is_enable = true;
-          } else if (target_level < currentLevel && listid.includes(currentPPage)) {
-            is_enable = true;
-          } else if (target_level === currentLevel && listid.pop() === select_box_parentID) {
+          } else if (target_level <= currentLevel && currentListPPage.some(pPage => pPage.id === eParentId)) {
             is_enable = true;
           }
           break;
@@ -1897,11 +1750,11 @@ function wdraw() {
   if (hover_wbase && selected_list.every((e) => e.GID !== hover_wbase.GID) && checkpad == 0) {
     var objset = offsetScale(hover_box.x, hover_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
-    ctxr.strokeStyle = hover_wbase.IsWini ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = hover_wbase.IsWini || $(hover_wbase.value).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(objse.x, objse.y, hover_box.w, hover_box.h);
   } else if (parent?.id?.length == 36 && checkpad > 0) {
     let parentRect = parent.getBoundingClientRect();
-    ctxr.strokeStyle = parent.getAttribute("iswini") == "true" ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = parent.getAttribute("iswini") === "true" || $(parent).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(parentRect.x, parentRect.y, parentRect.width, parentRect.height);
   }
 
@@ -1909,7 +1762,7 @@ function wdraw() {
   if (select_box && document.activeElement.contentEditable != "true" && ((checkpad == 0 && tool_state == ToolState.move) || ToolState.resize_type.some((tool) => tool == tool_state))) {
     var objset = offsetScale(select_box.x, select_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
-    ctxr.strokeStyle = selected_list.every((e) => e.IsWini) ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = selected_list.every((e) => e.IsWini) || $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(objse.x, objse.y, select_box.w, select_box.h);
     if (prototypePoint) {
       ctxr.strokeStyle = "#E14337";
@@ -1920,47 +1773,49 @@ function wdraw() {
     }
   }
 
-  for (let i = 0; i < listShowName.length; i++) {
-    let wbaseHTML = listShowName[i];
-    let wbaseRect = wbaseHTML.getBoundingClientRect();
-    let scaleOffset = offsetScale(wbaseRect.x, wbaseRect.y);
-    let canvasOff = offsetConvertScale(Math.round(scaleOffset.x), Math.round(scaleOffset.y));
-    let isActive = selected_list.some((wbaseItem) => wbaseItem.GID === wbaseHTML.id) || hover_wbase?.GID === wbaseHTML.id || parent.id === wbaseHTML.id;
-    let isWini = wbaseHTML.getAttribute("iswini") === "true";
-    ctxr.fillStyle = isWini ? "#7B61FF" : isActive ? "#1890FF" : "grey";
-    ctxr.font = "12px Inter";
-    let txtoffX = 0;
-    let t = titleList.find((e) => e.id === wbaseHTML.id);
-    if (isWini) {
-      ctxr.drawImage(imgCom, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
-      txtoffX = 16;
-    }
-    let txt = document.getElementById("inputName:" + wbaseHTML.id)?.value ?? wbase_list.find((e) => e.GID == wbaseHTML.id)?.name;
-    ctxr.fillText(txt, canvasOff.x + txtoffX, canvasOff.y - Math.min(8 * scale, 12));
-    if (wbaseHTML.getAttribute("lock") !== "true") {
-      if (t) {
-        t.value = {
-          x: canvasOff.x,
-          y: canvasOff.y - Math.min(8 * scale, 12) - 16,
-          xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
-          yMax: canvasOff.y,
-        };
-        t.sort = i;
-      } else {
-        titleList.push({
-          id: wbaseHTML.id,
-          value: {
+  if (tool_state !== ToolState.hand_tool) {
+    for (let i = 0; i < listShowName.length; i++) {
+      let wbaseHTML = listShowName[i];
+      let wbaseRect = wbaseHTML.getBoundingClientRect();
+      let scaleOffset = offsetScale(wbaseRect.x, wbaseRect.y);
+      let canvasOff = offsetConvertScale(Math.round(scaleOffset.x), Math.round(scaleOffset.y));
+      let isActive = selected_list.some((wbaseItem) => wbaseItem.GID === wbaseHTML.id) || hover_wbase?.GID === wbaseHTML.id || parent.id === wbaseHTML.id;
+      let isWini = wbaseHTML.getAttribute("iswini") === "true";
+      ctxr.fillStyle = isWini ? "#7B61FF" : isActive ? "#1890FF" : "grey";
+      ctxr.font = "12px Inter";
+      let txtoffX = 0;
+      let t = titleList.find((e) => e.id === wbaseHTML.id);
+      if (isWini) {
+        ctxr.drawImage(imgCom, canvasOff.x, canvasOff.y - Math.min(8 * scale, 12) - 10, 12, 12);
+        txtoffX = 16;
+      }
+      let txt = document.getElementById("inputName:" + wbaseHTML.id)?.value ?? wbase_list.find((e) => e.GID == wbaseHTML.id)?.name;
+      ctxr.fillText(txt, canvasOff.x + txtoffX, canvasOff.y - Math.min(8 * scale, 12));
+      if (wbaseHTML.getAttribute("lock") !== "true") {
+        if (t) {
+          t.value = {
             x: canvasOff.x,
             y: canvasOff.y - Math.min(8 * scale, 12) - 16,
             xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
             yMax: canvasOff.y,
-          },
-          sort: i,
-        });
+          };
+          t.sort = i;
+        } else {
+          titleList.push({
+            id: wbaseHTML.id,
+            value: {
+              x: canvasOff.x,
+              y: canvasOff.y - Math.min(8 * scale, 12) - 16,
+              xMax: canvasOff.x + txtoffX + ctxr.measureText(txt).width,
+              yMax: canvasOff.y,
+            },
+            sort: i,
+          });
+        }
       }
     }
+    titleList = titleList.filter((e) => e && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
   }
-  titleList = titleList.filter((e) => e != undefined && listShowName.some((wb) => wb.id === e.id)).sort((a, b) => a.sort - b.sort);
 
   //! draw prototype
   drawCurvePrototype();
@@ -2470,9 +2325,16 @@ function upListener(event) {
       } else {
         let url = window.getComputedStyle(instance_drag).backgroundImage.split(/"/)[1];
         let isSvgImg = url.endsWith(".svg");
-        let newRect = isSvgImg ? WBaseDefault.imgSvg : WBaseDefault.rectangle;
-        newRect.Name = isSvgImg ? url.split("/").pop().replace(".svg", "") : "new rectangle";
-        newRect.AttributesItem.Content = url.replace(urlImg, "");
+        let newRect;
+        if (isSvgImg) {
+          newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg));
+          newRect.Name = url.split("/").pop().replace(".svg", "");
+          newRect.AttributesItem.Content = url.replace(urlImg, "");
+        } else {
+          newRect = JSON.parse(JSON.stringify(WBaseDefault.rectangle));
+          newRect.Name = "new rectangle";
+          newRect.StyleItem.DecorationItem.ColorValue = url.replace(urlImg, "");
+        }
         FileDA.getImageSize(url).then((imgSize) => {
           let offset = offsetScale(event.pageX, event.pageY);
           let newObj = createWbaseHTML(
@@ -2671,6 +2533,7 @@ function upListener(event) {
   WBaseDA.listData = [];
   drag_start_list = [];
   checkpad = 0;
+  dragTime = 0;
   objr = null;
   if (target_view === divMain) {
     let mouseOffset = offsetScale(event.pageX, event.pageY);

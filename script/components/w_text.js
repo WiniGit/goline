@@ -31,7 +31,7 @@ function createTextHTML(item) {
         select_box = selectBox(selected_list);
       }
       updateHoverWbase();
-      if (!window.getComputedStyle(item.value.parentElement).display.match(/(flex|grid|table)/g)) {
+      if (window.getComputedStyle(item.value).position == "absolute") {
         let transformX = "0";
         switch (item.StyleItem.TypoStyleItem.TextAlign) {
           case TextAlign.center:
@@ -88,7 +88,7 @@ function createTextHTML(item) {
         e.preventDefault();
         ctrlZText();
         select_box = selectBox(selected_list);
-                wdraw();
+        wdraw();
       }
     }
     function addInputAction() {
@@ -208,41 +208,14 @@ function createTextHTML(item) {
       item.value.removeEventListener("keydown", inputKeyDown);
       item.value.removeEventListener("keyup", inputKeyUp);
     };
-    item.value.oninput = function (e) {
+    item.value.oninput = function () {
       if (this.innerHTML == "") {
         this.style.minWidth = "1px";
         select_box = null;
-      } else {
-        let newSize = calcTextNode(this);
-        this.style.minWidth = newSize.width + "px";
-        // this.style.minHeight = newSize.height + "px";
-        select_box = selectBox(selected_list);
       }
-      // updateInputTLWH();
     };
-    textObserver.observe(item.value, {
-      childList: true,
-      // attributes: true,
-    });
   }
 }
-
-const textObserver = new MutationObserver((mutationList) => {
-  mutationList.forEach((mutation) => {
-    switch (mutation.type) {
-      case "childList":
-        let targetText = mutation.target;
-        let fontFamily = window.getComputedStyle(targetText).fontFamily;
-        targetText.querySelectorAll("div").forEach((child) => {
-          child.style.pointerEvents = "none";
-          child.style.fontFamily = fontFamily;
-        });
-        break;
-      default:
-        break;
-    }
-  });
-});
 
 function calcTextNode(node) {
   let width;

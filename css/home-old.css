@@ -1,5 +1,5 @@
 /* Appbar */
-/* @import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/css/appbar.css'; */
+/* @import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/appbar.css'; */
 
 
 /* Slide bar */
@@ -9,7 +9,7 @@
 /* @import 'popup.css'; */
 
 /* skin */
-/* @import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@859a1cc/css/skin.css'; */
+/* @import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/skin.css'; */
 
 ::-webkit-scrollbar {
     display: none;
@@ -22,7 +22,7 @@
     min-height: 48px;
     padding-right: 16px;
     box-sizing: border-box;
-    background-color: #262626;
+    background-color: rgb(25, 25, 25);
 }
 
 .home-view {
