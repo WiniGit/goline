@@ -59,6 +59,7 @@ class EnumObj {
     static router = 57;
     static apilist = 58;
     static padddingWbaseFrame = 59;
+    static css = 60;
 }
 class EnumEvent {
     static edit_delete = -1;

@@ -5238,7 +5238,7 @@ function mergeSkinTile(enumCate, jsonSkin) {
       var iconSearch = document.createElement("i");
       iconSearch.className = "fa-solid fa-magnifying-glass";
       inputLocalSkin = suggestInput(
-        TypoDA.list.filter((skin) => (skin.ProjectID ?? ProjectDA.obj.ID) == ProjectDA.obj.ID),
+        EffectDA.list.filter((skin) => (skin.ProjectID ?? ProjectDA.obj.ID) == ProjectDA.obj.ID),
         "effect skins name",
         iconSearch,
         function (option) {

@@ -52,12 +52,20 @@ let feature_list = [
     onclick: createComponent,
     isShow: () => selected_list.some((e) => !e.IsWini) && !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length,
   },
+  {
+    title: "Uncomponent",
+    shortKey: "Alt+K",
+    onclick: unComponent,
+    isShow: function () {
+      return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant;
+    },
+  },
   // {
-  //   title: "Uncomponent",
-  //   shortKey: "Alt+K",
-  //   onclick: unComponent,
+  //   title: "Create stylesheet",
+  //   shortKey: "Alt+S",
+  //   onclick: createStyleSheet,
   //   isShow: function () {
-  //     return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant;
+  //     return selected_list.length === 1 && [...selected_list[0].value.classList].every((cls) => !cls.startsWith("w-st"));
   //   },
   // },
   {
@@ -345,22 +353,6 @@ function createComponent() {
     wb.CopyID = null;
     wb.value.setAttribute("iswini", "true");
     document.getElementById(`wbaseID:${wb.GID}`).setAttribute("iswini", "true");
-    let newStyle = document.createElement("style");
-    newStyle.id = `st-comp${wb.GID}`;
-    let wbCssText = wb.value.style.cssText.split(";");
-    let cssItem = {
-      GID: wb.GID,
-      Name: Ultis.toSlug(wb.Name),
-      PageID: PageDA.obj.ID,
-      Css: `.w-st-comp${wb.GID} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
-    };
-    wb.value.querySelectorAll(`.wbaseItem-value`).forEach((childHTML) => {
-      cssItem.Css += `/**/ .w-st-comp${wb.GID} .w-st-${childHTML.id} { ${childHTML.style.cssText} }`;
-    });
-    newStyle.innerHTML = cssItem.Css;
-    document.head.appendChild(newStyle);
-    StyleDA.addStyleSheet(cssItem);
-    StyleDA.cssStyleSheets.push(cssItem);
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);
@@ -379,6 +371,51 @@ function unComponent() {
   WBaseDA.edit(component_list, EnumObj.wBase);
   wdraw();
   updateUIDesignView();
+}
+
+function createStyleSheet() {
+  let wb = selected_list[0];
+  let wbClassName = "w-st0-" + Ultis.toSlug(wb.Name.trim());
+  if (wb.ListClassName) {
+    wb.ListClassName = [...wb.ListClassName.split(" "), wbClassName].join(" ");
+  } else {
+    wb.ListClassName = wbClassName;
+  }
+  let newStyle = document.createElement("style");
+  newStyle.id = `st-comp${wb.GID}`;
+  let wbCssText = wb.value.style.cssText.split(";");
+  let cssItem = {
+    GID: wb.GID,
+    Name: wbClassName,
+    PageID: PageDA.obj.ID,
+    Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
+  };
+  let childrenSt0 = [];
+  let children = wbase_list.filter((e) => {
+    let check = e.ListID.includes(wb.GID);
+    if (check && e.ListClassName) {
+      let eCls = e.ListClassName.split(" ");
+      if (eCls.some((cls) => cls.startsWith("w-st0"))) {
+        childrenSt0.push(e);
+        return true;
+      } else return eCls.every((cls) => !cls.startsWith("w-st-"));
+    } else return check;
+  });
+  let existNameList = wb.value. 
+  children = children.filter(e => childrenSt0.every(wbSt0 => !e.ListID.includes(wbSt0.GID)));
+  for (let childWb of children) {
+    let childWbClassName = "w-st-" + Ultis.toSlug(childWb.Name.trim());
+    cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;
+    if (childWb.ListClassName) {
+      childWb.ListClassName = [...childWb.ListClassName.split(" "), childWbClassName].join(" ");
+    } else {
+      childWb.ListClassName = childWbClassName;
+    }
+  }
+  newStyle.innerHTML = cssItem.Css;
+  document.head.appendChild(newStyle);
+  StyleDA.addStyleSheet(cssItem);
+  StyleDA.cssStyleSheets.push(cssItem);
 }
 
 function showImgDocument() {

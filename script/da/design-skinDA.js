@@ -32,7 +32,6 @@ class StyleDA {
   }
 
   static async addStyleSheet(cssItem) {
-    debugger;
     let result = await $.post("/view/add-stylesheet", {
       headers: UserService.headerProject(),
       body: cssItem,
