@@ -51,9 +51,11 @@ function updateUIDesignView() {
   } else {
     let editAlign = createEditAlign();
     let editSizePosition = createEditSizePosition();
+    let editVariables = createVariables();
     // let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign);
     listEditContainer.appendChild(editSizePosition);
+    listEditContainer.appendChild(editVariables);
     // listEditContainer.appendChild(selectClass);
     if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
       let editConstraints = createConstraints();
@@ -6002,5 +6004,69 @@ function selectionClass() {
     }),
   );
 
+  return editContainer;
+}
+
+function createVariables() {
+  let editContainer = document.createElement("div");
+  editContainer.id = "edit-variables";
+  editContainer.className = "edit-container";
+  let header = document.createElement("div");
+  header.className = "header_design_style";
+  header.innerHTML = "Variables";
+  let addBtn = document.createElement("i");
+  addBtn.className = "fa-solid fa-plus fa-sm";
+  header.appendChild(addBtn);
+  let body = document.createElement("div");
+  body.className = "col";
+  if (selected_list[0].VariablesData) {
+    for (const prop in selected_list[0].VariablesData) {
+      body.appendChild(createVariableTile(prop));
+    }
+  }
+  function createVariableTile(propN) {
+    let tile = document.createElement("div");
+    tile.className = "row";
+    let propEditName = document.createElement("input");
+    propEditName.defaultValue = propN ?? "";
+    propEditName.placeholder = "variable name";
+    propEditName.onblur = function () {
+      if (propEditName.value.trim() === "") {
+        delete selected_list[0].VariablesData[prop];
+        if (JSON.stringify(selected_list[0].VariablesData) === "{}") {
+          selected_list[0].VariablesData = null;
+          selected_list[0].AttributesItem.Content = "";
+        }
+      } else {
+        let varName = Ultis.toSlug(propEditName.value.trim()).split("-");
+        varName.forEach((elName) => elName.substring(0, 1).toUpperCase() + elName.substring(1));
+        varName = varName.join("");
+        selected_list[0].VariablesData[varName] = "";
+      }
+      if (propN) WBaseDA.edit(selected_list, EnumObj.attribute);
+    };
+    let propEditValue = document.createElement("input");
+    propEditValue.defaultValue = selected_list[0].VariablesData[propN] ?? "";
+    propEditValue.placeholder = "variable value";
+    let removeBtn = document.createElement("i");
+    addBtn.className = "fa-solid fa-minus fa-sm";
+    removeBtn.onclick = function () {
+      delete selected_list[0].VariablesData[prop];
+      if (JSON.stringify(selected_list[0].VariablesData) === "{}") {
+        selected_list[0].VariablesData = null;
+        selected_list[0].AttributesItem.Content = "";
+      }
+      if (propN) WBaseDA.edit(selected_list, EnumObj.attribute);
+    };
+    tile.replaceChildren(propEditName, propEditValue, removeBtn);
+    return tile;
+  }
+  addBtn.onclick = function () {
+    selected_list[0].VariablesData ??= {};
+    let newVar = createVariableTile();
+    body.appendChild(newVar);
+    newVar.firstChild.focus();
+  };
+  editContainer.replaceChildren(header, body);
   return editContainer;
 }

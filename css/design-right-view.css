@@ -2922,3 +2922,32 @@ div:has(> .edit-color-container) {
 #edit-background > .header_design_style:hover > .bg-header-action {
   display: block !important;
 }
+
+#edit-variables > .col {
+  gap: 4px;
+}
+
+#edit-variables > .col > .row {
+  gap: 12px;
+}
+
+#edit-variables > .col input {
+  flex: 1;
+  width: 100%;
+  font-size: 12px;
+  padding: 6px 4px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+#edit-variables > .col input:nth-child(2) {
+  border: 1px solid #262626;
+  border-radius: 2px;
+}
+
+#edit-variables > .col i {
+  display: flex;
+  align-items: center;
+  padding: 8px 6px;
+  border-radius: 2px;
+}
