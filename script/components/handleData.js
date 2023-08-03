@@ -64,7 +64,7 @@
 async function initComponents(item, list, initListener = true) {
   if (item.AttributesItem.Json) {
     item.JsonItem = JSON.parse(item.AttributesItem.Json);
-  }
+  } 
   if (item.AttributesItem.JsonEvent) {
     item.JsonEventItem = JSON.parse(item.AttributesItem.JsonEvent);
   }
