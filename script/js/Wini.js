@@ -190,7 +190,7 @@ function keyUpEvent(event) {
         }
         break;
       default:
-        if (event.key.toLowerCase() != "alt" && event.key.toLowerCase() != "shift" && event.key.toLowerCase() != "control" && event.key.toLowerCase() != "meta") keyid = "escape";
+        if (event.key?.toLowerCase() != "alt" && event.key?.toLowerCase() != "shift" && event.key?.toLowerCase() != "control" && event.key?.toLowerCase() != "meta") keyid = "escape";
         $("#choose-component-popup").css("display", "none");
         toolStateChange(ToolState.move);
         break;
@@ -725,7 +725,7 @@ function centerViewInitListener() {
       return;
     } else if (document.activeElement.getAttribute("cateid") == EnumCate.tool_text) {
       return;
-    } else if (event.key.toLowerCase() === "tab") {
+    } else if (event.key?.toLowerCase() === "tab") {
       event.preventDefault();
     }
     let currentKey = keyid;
@@ -745,11 +745,11 @@ function centerViewInitListener() {
         }
       }, 120);
     }
-    keyid = event.key.toLowerCase();
+    keyid = event.key?.toLowerCase();
     if (event.key.trim() === "") {
       event.preventDefault();
       toolStateChange(ToolState.hand_tool);
-    } else if (event.key.toLowerCase() === "z" || event.key.toLowerCase() === "=" || event.key.toLowerCase() === "-" || event.key.toLowerCase() === "0") {
+    } else if (event.key?.toLowerCase() === "z" || event.key?.toLowerCase() === "=" || event.key?.toLowerCase() === "-" || event.key?.toLowerCase() === "0") {
       event.preventDefault();
     } else return;
   });
