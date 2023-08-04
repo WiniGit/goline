@@ -33,7 +33,6 @@ function createCheckbox(initValue = false, wbaseItem) {
     if (wbaseItem.AttributesItem.NameField !== "")
       input.name = wbaseItem.AttributesItem.NameField;
     checkmark.setAttribute("checkcolor", wbaseItem.JsonItem.CheckColor);
-    toggle.style.setProperty("--checked-bg", `#${wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2, 0)}`);
     toggle.style.setProperty("--unchecked-bg", `#${wbaseItem.JsonItem.InactiveColor.substring(2) + wbaseItem.JsonItem.InactiveColor.substring(2, 0)}`);
   } else {
     checkmark.setAttribute("checkcolor", "ffffffff");
@@ -44,7 +43,6 @@ function createCheckbox(initValue = false, wbaseItem) {
     e.stopPropagation();
     if (wbaseItem) {
       wbaseItem.AttributesItem.Content = `${this.checked}`;
-      toggle.style.setProperty("--checked-bg", `#${wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2) + wbaseItem.StyleItem.DecorationItem.ColorValue?.substring(2, 0)}`);
       toggle.style.setProperty("--unchecked-bg", `#${wbaseItem.JsonItem.InactiveColor.substring(2) + wbaseItem.JsonItem.InactiveColor.substring(2, 0)}`);
     }
     drawCheckMark(toggle);

@@ -250,7 +250,7 @@ async function push_dataProject() {
       }
 
       if (witem.PrototypeID != null) {
-        let nextPagePrototype = list_page.find((e) => e.id == witem.PrototypeID);
+        let nextPagePrototype = list_page.find((e) => e.classList.contains(witem.PrototypeID));
         if (nextPagePrototype) {
           // let animation = witem.JsonEventItem?.find((e) => e.Name === "Animation");
           // let animation_class = "";
