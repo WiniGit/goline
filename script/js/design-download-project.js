@@ -294,14 +294,14 @@ async function push_dataProject() {
           // }
           // $(nextPagePrototype).addClass(animation_class); //TODO: animation
           let clickElement = page;
-          if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[id="${witem.GID}"]`);
+          if (page.id !== witem.GID) clickElement = page.querySelector(`.wbaseItem-value[class*="${witem.GID}"]`);
 
           $(clickElement).addClass("event-click");
           let new_url = "";
           new_url = `/${Ultis.toSlug(nextPagePrototype.Name)}`;
           // }
           if (new_url.length > 0) {
-            page_script += "<script>" + '    document.getElementById("' + witem.GID + '").onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
+            page_script += "<script>" + '    document.body.querySelector(`.wbaseItem-value[class*="' + witem.GID + '"]`).onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
           }
         }
       }
