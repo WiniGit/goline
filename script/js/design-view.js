@@ -51,11 +51,13 @@ function updateUIDesignView() {
   } else {
     let editAlign = createEditAlign();
     let editSizePosition = createEditSizePosition();
-    let editVariables = createVariables();
     // let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign);
     listEditContainer.appendChild(editSizePosition);
-    listEditContainer.appendChild(editVariables);
+    if (selected_list.length === 1 && selected_list[0].IsWini) {
+      let editVariables = createVariables();
+      listEditContainer.appendChild(editVariables);
+    }
     // listEditContainer.appendChild(selectClass);
     if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
       let editConstraints = createConstraints();
@@ -6013,10 +6015,11 @@ function createVariables() {
   editContainer.className = "edit-container";
   let header = document.createElement("div");
   header.className = "header_design_style";
-  header.innerHTML = "Variables";
+  let title = document.createElement("p");
+  title.innerHTML = "Variables";
   let addBtn = document.createElement("i");
   addBtn.className = "fa-solid fa-plus fa-sm";
-  header.appendChild(addBtn);
+  header.replaceChildren(title, addBtn);
   let body = document.createElement("div");
   body.className = "col";
   if (selected_list[0].VariablesData) {
@@ -6033,6 +6036,7 @@ function createVariables() {
     propEditName.onblur = function () {
       if (propEditName.value.trim() === "") {
         delete selected_list[0].VariablesData[prop];
+        if (propN) selected_list[0].value.removeAttribute(propN);
         if (JSON.stringify(selected_list[0].VariablesData) === "{}") {
           selected_list[0].VariablesData = null;
           selected_list[0].AttributesItem.Content = "";
@@ -6042,6 +6046,8 @@ function createVariables() {
         varName.forEach((elName) => elName.substring(0, 1).toUpperCase() + elName.substring(1));
         varName = varName.join("");
         selected_list[0].VariablesData[varName] = "";
+        selected_list[0].value.setAttribute("varName", "");
+        propN = varName;
       }
       if (propN) WBaseDA.edit(selected_list, EnumObj.attribute);
     };
@@ -6056,7 +6062,10 @@ function createVariables() {
         selected_list[0].VariablesData = null;
         selected_list[0].AttributesItem.Content = "";
       }
-      if (propN) WBaseDA.edit(selected_list, EnumObj.attribute);
+      if (propN) {
+        selected_list[0].value.removeAttribute(propN);
+        WBaseDA.edit(selected_list, EnumObj.attribute);
+      }
     };
     tile.replaceChildren(propEditName, propEditValue, removeBtn);
     return tile;

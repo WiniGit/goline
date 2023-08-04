@@ -353,6 +353,60 @@ function createComponent() {
     wb.CopyID = null;
     wb.value.setAttribute("iswini", "true");
     document.getElementById(`wbaseID:${wb.GID}`).setAttribute("iswini", "true");
+    let wbClassName = "w-st0-" + Ultis.toSlug(wb.Name.toLowerCase().trim());
+    let existStyleName = StyleDA.cssStyleSheets.filter((cssItem) => cssItem.Name.includes(wbClassName)).map((cssItem) => (isNaN(parseInt(cssItem.Name.replace(wbClassName, ""))) ? 0 : parseInt(cssItem.Name.replace(wbClassName, ""))));
+    for (let i = 1; i < 100; i++) {
+      if (existStyleName.every((num) => i !== num)) {
+        wbClassName = wbClassName + `${i}`;
+        break;
+      }
+    }
+    if (wb.ListClassName) {
+      wb.ListClassName = [...wb.ListClassName.split(" "), wbClassName].join(" ");
+    } else {
+      wb.ListClassName = wbClassName;
+    }
+    let newStyle = document.createElement("style");
+    newStyle.id = `st-comp${wb.GID}`;
+    let wbCssText = wb.value.style.cssText.split(";");
+    let cssItem = {
+      GID: wb.GID,
+      Name: wbClassName,
+      PageID: PageDA.obj.ID,
+      Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
+    };
+    let existNameList = [...wb.value.querySelectorAll(`.wbaseItem-value[class*="w-st"]`)].map((e) => [...e.classList].find((cls) => cls.startsWith("w-st")));
+    let children = wbase_list.filter((e) => {
+      let check = e.ListID.includes(wb.GID);
+      if (check && e.ListClassName) {
+        let eCls = e.ListClassName.split(" ");
+        if (eCls.some((cls) => cls.startsWith("w-st0-"))) {
+          return !$(e.value).parents(`.wbaseItem-value[class*="w-st0-"]`)?.length;
+        } else return eCls.every((cls) => !cls.startsWith("w-st"));
+      } else return check;
+    });
+    for (let childWb of children) {
+      let childWbClassName = `w-st${childWb.Level - wb.Level}-` + Ultis.toSlug(childWb.Name.toLowerCase().trim());
+      childWb.ListClassName ??= "";
+      let childClsList = childWb.ListClassName.split(" ");
+      if (childClsList.some((cCls) => cCls.startsWith("w-st0"))) {
+        childWbClassName = childClsList.find((cCls) => cCls.startsWith("w-st0"));
+      } else {
+        let existSameName = existNameList.filter((cssItem) => cssItem.Name.includes(childWbClassName)).map((cssItem) => (isNaN(parseInt(cssItem.Name.replace(childWbClassName, ""))) ? 0 : parseInt(cssItem.Name.replace(childWbClassName, ""))));
+        for (let i = 1; i < 100; i++) {
+          if (existSameName.every((num) => i !== num)) {
+            childWbClassName = childWbClassName + `${i}`;
+            break;
+          }
+        }
+        childWb.ListClassName = [...childClsList, childWbClassName].join(" ");
+      }
+      cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;
+    }
+    newStyle.innerHTML = cssItem.Css;
+    document.head.appendChild(newStyle);
+    StyleDA.addStyleSheet(cssItem);
+    StyleDA.cssStyleSheets.push(cssItem);
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);
@@ -401,8 +455,7 @@ function createStyleSheet() {
       } else return eCls.every((cls) => !cls.startsWith("w-st-"));
     } else return check;
   });
-  let existNameList = wb.value. 
-  children = children.filter(e => childrenSt0.every(wbSt0 => !e.ListID.includes(wbSt0.GID)));
+  let existNameList = (wb.value.children = children.filter((e) => childrenSt0.every((wbSt0) => !e.ListID.includes(wbSt0.GID))));
   for (let childWb of children) {
     let childWbClassName = "w-st-" + Ultis.toSlug(childWb.Name.trim());
     cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;

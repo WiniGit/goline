@@ -664,11 +664,31 @@ function initWbaseStyle(item) {
   if (item.StyleItem.DecorationItem) {
     if (item.StyleItem.DecorationItem.ColorValue) {
       let background = item.StyleItem.DecorationItem.ColorValue;
-      if (background.match(hexRegex) && item.CateID !== EnumCate.svg && item.CateID !== EnumCate.checkbox) {
+      if (background.match(hexRegex) && item.CateID !== EnumCate.svg) {
         if (item.StyleItem.DecorationItem.ColorID) {
-          item.value.style.backgroundColor = `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`;
+          switch (item.CateID) {
+            case EnumCate.w_switch:
+              item.value.style.setProperty("--checked-bg", `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`);
+              break;
+            case EnumCate.checkbox:
+              item.value.style.setProperty("--checked-bg", `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`);
+              break;
+            default:
+              item.value.style.backgroundColor = `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`;
+              break;
+          }
         } else {
-          item.value.style.backgroundColor = `#${background.substring(2)}${background.substring(0, 2)}`;
+          switch (item.CateID) {
+            case EnumCate.w_switch:
+              item.value.style.setProperty("--checked-bg", `#${background.substring(2)}${background.substring(0, 2)}`);
+              break;
+            case EnumCate.checkbox:
+              item.value.style.setProperty("--checked-bg", `#${background.substring(2)}${background.substring(0, 2)}`);
+              break;
+            default:
+              item.value.style.backgroundColor = `#${background.substring(2)}${background.substring(0, 2)}`;
+              break;
+          }
         }
       } else if (EnumCate.noImgBg.every((cate) => item.CateID != cate)) {
         item.value.style.backgroundImage = `url(${urlImg + background.replaceAll(" ", "%20")})`;
