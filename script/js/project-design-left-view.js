@@ -798,7 +798,13 @@ function createListComponent(projectItem, isShowContent) {
           WBaseDA.getAssetsList(projectItem.ID);
         }
       } else {
-        prefix_action.className = "fa-solid fa-caret-right fa-xs";
+        if (list_tile.querySelector(":scope > .data-loader")) {
+          list_tile.querySelector(":scope > .data-loader").replaceWith(prefix_action);
+          isShow = true;
+          prefix_action.className = "fa-solid fa-caret-down fa-xs";
+        } else {
+          prefix_action.className = "fa-solid fa-caret-right fa-xs";
+        }
       }
     }
   };

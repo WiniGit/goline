@@ -63,7 +63,7 @@
 }
 
 .wbaseItem-value.w-row[scroll="true"] {
-  overflow: scroll hidden !important;
+  overflow: auto hidden !important;
   justify-content: flex-start !important;
 }
 

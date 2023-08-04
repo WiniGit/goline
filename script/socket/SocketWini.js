@@ -377,6 +377,9 @@ socket.on("server-get", (data) => {
             assets_list.push(...listAssets);
             let listProjectID = listAssets.filterAndMap((e) => e.ProjectID);
             [...ProjectDA.assetsList, ProjectDA.obj].filter((pro) => listProjectID.some((id) => pro.ID == id)).forEach((projectItem) => updateListComponentByProject(projectItem));
+          } else {
+            WBaseDA.assetsLoading = false;
+            $(assets_view.querySelector(".list_tile:has(> .data-loader)")).trigger("click");
           }
           break;
         default:

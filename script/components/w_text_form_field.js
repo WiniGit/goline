@@ -98,7 +98,7 @@ function createTextFieldHTML(item, parent) {
         // date || month || year picker
         let calendarBtn = document.createElement("div");
         calendarBtn.className = "suffix-btn-txtfd calendar-icon";
-        calendarBtn.innerHTML = txtfd_calendar.replaceAll('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
+        calendarBtn.innerHTML = txtfd_calendar.replaceAll('fill="#00204D"', `fill="#${parent.StyleItem.TextStyleItem?.ColorValue?.substring(2)}"`);
         item.value.appendChild(calendarBtn);
         break;
     }
