@@ -1427,11 +1427,12 @@ class WBaseDA {
       addAction();
     }
     let data = {
-      enumObj: EnumObj.wBase,
+      enumObj: EnumObj.css,
       data: list_wbase_item.map(e => {
         return {
           GID: e.GID,
-          ListClassName: e.ListClassName
+          ListClassName: e.ListClassName,
+          IsWini: e.IsWini,
         }
       }),
       enumEvent: EnumEvent.edit,
