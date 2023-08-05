@@ -1,8 +1,8 @@
 let feature_list = [
   {
     title: "Select layer",
-    more: function () {},
-    onclick: function () {},
+    more: function () { },
+    onclick: function () { },
     isShow: () => selected_list.length > 0,
   },
   {
@@ -405,8 +405,14 @@ function createComponent() {
     }
     newStyle.innerHTML = cssItem.Css;
     document.head.appendChild(newStyle);
-    StyleDA.addStyleSheet(cssItem);
-    StyleDA.cssStyleSheets.push(cssItem);
+    let index = StyleDA.cssStyleSheets.findIndex(e => e.GID === cssItem.GID);
+    if (index >= 0) {
+      StyleDA.cssStyleSheets[index] = cssItem;
+      StyleDA.editStyleSheet(cssItem);
+    } else {
+      StyleDA.cssStyleSheets.push(cssItem);
+      StyleDA.addStyleSheet(cssItem);
+    }
   }
   assets_list.push(...un_component_list);
   WBaseDA.edit(un_component_list, EnumObj.wBase);
@@ -550,7 +556,7 @@ function createImgDocument() {
       let optionPaste = document.createElement("div");
       optionPaste.className = "row";
       optionPaste.innerHTML = "paste here";
-      optionPaste.onclick = function (e) {};
+      optionPaste.onclick = function (e) { };
       children.push(optionPaste);
     }
     if (event.target.className?.includes("img_folder_demo")) {
