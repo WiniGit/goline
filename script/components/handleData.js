@@ -178,7 +178,7 @@ async function initComponents(item, list, initListener = true) {
       item.value.setAttribute("iswini", item.IsWini);
     } else if ([...item.value.classList].some(cls => cls.startsWith("w-st"))) {
       if(item.CopyID) {
-        
+        // [...document.styleSheets].reduce((a,b) => [...a.cssRules].concat([...b.cssRules]));
       } else {
         item.value.setAttribute("isinstance", true);
       }
