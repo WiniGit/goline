@@ -151,6 +151,7 @@ async function push_dataProject() {
           }
           wbValue.replaceWith(newCheckbox);
           newCheckbox.replaceChildren(...wbValue.childNodes);
+          newCheckbox.removeAttribute("checkcolor");
           wbValue = newCheckbox;
           break;
         case EnumCate.radio_button:
@@ -301,7 +302,7 @@ async function push_dataProject() {
           new_url = `/${Ultis.toSlug(nextPagePrototype.Name)}`;
           // }
           if (new_url.length > 0) {
-            page_script += "<script>" + '    document.body.querySelector(`.wbaseItem-value[class*="' + witem.GID + '"]`).onclick = function (ev) {' + '        location.href = "' + new_url + '"' + "    }" + "</script>";
+            page_script += "<script>" + '    $("body").on("click", `.wbaseItem-value[class*="' + witem.GID + '"]`, function (ev) {' + '        location.href = "' + new_url + '"' + "    });" + "</script>";
           }
         }
       }
@@ -426,4 +427,4 @@ try {
       },
     );
   });
-} catch (error) {}
+} catch (error) { }

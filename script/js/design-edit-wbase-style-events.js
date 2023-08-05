@@ -836,29 +836,32 @@ async function addAutoLayout() {
     addSelectList(selected_list);
   } else {
     let list_update = [...selected_list];
-    let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.frame));
-    new_wbase_item.WAutolayoutItem = new_auto_layout;
-    new_wbase_item.StyleItem.PaddingItem = new_padding_item;
-    new_wbase_item = createNewWbase(new_wbase_item)[0];
-    new_wbase_item.StyleItem.PositionItem.Left = `${Math.min(...selected_list.map((e) => getWBaseOffset(e).x)).toFixed(2)}px`;
-    new_wbase_item.StyleItem.PositionItem.Top = `${Math.min(...selected_list.map((e) => getWBaseOffset(e).y)).toFixed(2)}px`;
-    new_wbase_item.CountChild = selected_list.length;
-    new_wbase_item.ListChildID = selected_list.map((e) => e.GID);
-    if (!(select_box_parentID == wbase_parentID && selected_list.every((wbaseItem) => wbaseItem.value.querySelectorAll(".col-").length > 0))) {
-      new_wbase_item.StyleItem.FrameItem.Width = null;
-      new_wbase_item.StyleItem.FrameItem.Height = null;
-    } else {
-      new_wbase_item.StyleItem.FrameItem.Width = select_box.w / scale;
-      new_wbase_item.StyleItem.FrameItem.Height = select_box.h / scale;
+    let newWb = JSON.parse(JSON.stringify(WBaseDefault.frame));
+    newWb.WAutolayoutItem = new_auto_layout;
+    newWb.StyleItem.PaddingItem = new_padding_item;
+    newWb = createNewWbase(newWb)[0];
+    newWb.StyleItem.PositionItem.Left = `${Math.min(...selected_list.map((e) => getWBaseOffset(e).x)).toFixed(2)}px`;
+    newWb.StyleItem.PositionItem.Top = `${Math.min(...selected_list.map((e) => getWBaseOffset(e).y)).toFixed(2)}px`;
+    newWb.CountChild = selected_list.length;
+    newWb.ListChildID = selected_list.map((e) => e.GID);
+    if (selected_list.some) {
+      document.styleSheets
     }
-    new_wbase_item.ParentID = selected_list[0].ParentID;
-    new_wbase_item.ListID = selected_list[0].ListID;
-    new_wbase_item.Sort = selected_list[0].Sort;
-    new_wbase_item.Level = selected_list[0].Level;
+    if (!(select_box_parentID === wbase_parentID && selected_list.every((wb) => wb.value.querySelectorAll(".col-").length > 0))) {
+      newWb.StyleItem.FrameItem.Width = null;
+      newWb.StyleItem.FrameItem.Height = null;
+    } else {
+      newWb.StyleItem.FrameItem.Width = select_box.w / scale;
+      newWb.StyleItem.FrameItem.Height = select_box.h / scale;
+    }
+    newWb.ParentID = selected_list[0].ParentID;
+    newWb.ListID = selected_list[0].ListID;
+    newWb.Sort = selected_list[0].Sort;
+    newWb.Level = selected_list[0].Level;
     for (let i = 0; i < selected_list.length; i++) {
       let eHTML = selected_list[i].value;
-      selected_list[i].ParentID = new_wbase_item.GID;
-      selected_list[i].ListID += `,${new_wbase_item.GID}`;
+      selected_list[i].ParentID = newWb.GID;
+      selected_list[i].ListID += `,${newWb.GID}`;
       selected_list[i].Sort = i;
       selected_list[i].Level = selected_list[i].ListID.split(",").length;
       eHTML.setAttribute("level", selected_list[i].Level);
@@ -877,30 +880,30 @@ async function addAutoLayout() {
         }
       }
     }
-    await initComponents(new_wbase_item, selected_list);
-    wbase_list.push(new_wbase_item);
-    list_update.push(new_wbase_item);
-    if (new_wbase_item.ParentID != wbase_parentID) {
-      let parent_wbase = wbase_list.find((e) => e.GID === new_wbase_item.ParentID);
+    await initComponents(newWb, selected_list);
+    wbase_list.push(newWb);
+    list_update.push(newWb);
+    if (newWb.ParentID != wbase_parentID) {
+      let parent_wbase = wbase_list.find((e) => e.GID === newWb.ParentID);
       list_update.push(parent_wbase);
       parent_wbase.CountChild += 1 - selected_list.length;
-      let parentHTML = document.getElementById(new_wbase_item.ParentID);
+      let parentHTML = document.getElementById(newWb.ParentID);
       if (parentHTML.getAttribute("cateid") == EnumCate.table) {
         let cellList = parent_wbase.TableRows.reduce((a, b) => a.concat(b));
         let availableCell = cellList.find((cd) => cd.contentid.includes(selected_list[0].GID));
-        parentHTML.querySelector(`:scope > .table-row > .table-cell[id="${availableCell.id}"]`).appendChild(new_wbase_item.value);
+        parentHTML.querySelector(`:scope > .table-row > .table-cell[id="${availableCell.id}"]`).appendChild(newWb.value);
         cellList.forEach((cd) => {
           cd.contentid = cd.contentid
             .split(",")
             .filter((id) => selected_list.every((e) => e.GID !== id))
             .join(",");
-          if (cd.id === availableCell.id) cd.contentid = new_wbase_item.GID;
+          if (cd.id === availableCell.id) cd.contentid = newWb.GID;
         });
       } else if (!window.getComputedStyle(parentHTML).display.match("flex")) {
-        initPositionStyle(new_wbase_item);
-        parentHTML.appendChild(new_wbase_item.value);
+        initPositionStyle(newWb);
+        parentHTML.appendChild(newWb.value);
       } else {
-        parentHTML.appendChild(new_wbase_item.value);
+        parentHTML.appendChild(newWb.value);
       }
       let childrenHTML = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(parentHTML.getAttribute("level") ?? "0") + 1}"]`)];
       childrenHTML.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex));
@@ -908,7 +911,7 @@ async function addAutoLayout() {
     }
     arrange();
     replaceAllLyerItemHTML();
-    addSelectList([new_wbase_item]);
+    addSelectList([newWb]);
     WBaseDA.add(list_update, null, EnumEvent.parent, EnumObj.wBase);
   }
 }
@@ -2357,26 +2360,24 @@ function combineAsVariant() {
   let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.variant));
   new_wbase_item = createNewWbase(new_wbase_item).pop();
   new_wbase_item.IsWini = true;
-  new_wbase_item.StyleItem.PositionItem.Left = `${
-    Math.min(
-      ...selected_list.map((e) => {
-        let leftValue = getWBaseOffset(e).x;
-        e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
-        e.StyleItem.PositionItem.Left = `${leftValue}px`;
-        return leftValue;
-      }),
-    ).toFixed(2) - 8
-  }px`;
-  new_wbase_item.StyleItem.PositionItem.Top = `${
-    Math.min(
-      ...selected_list.map((e) => {
-        let topValue = getWBaseOffset(e).y;
-        e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
-        e.StyleItem.PositionItem.Top = `${topValue}px`;
-        return topValue;
-      }),
-    ).toFixed(2) - 8
-  }px`;
+  new_wbase_item.StyleItem.PositionItem.Left = `${Math.min(
+    ...selected_list.map((e) => {
+      let leftValue = getWBaseOffset(e).x;
+      e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+      e.StyleItem.PositionItem.Left = `${leftValue}px`;
+      return leftValue;
+    }),
+  ).toFixed(2) - 8
+    }px`;
+  new_wbase_item.StyleItem.PositionItem.Top = `${Math.min(
+    ...selected_list.map((e) => {
+      let topValue = getWBaseOffset(e).y;
+      e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+      e.StyleItem.PositionItem.Top = `${topValue}px`;
+      return topValue;
+    }),
+  ).toFixed(2) - 8
+    }px`;
   new_wbase_item.CountChild = selected_list.length;
   new_wbase_item.ListChildID = selected_list.map((e) => e.GID);
   new_wbase_item.StyleItem.FrameItem.Width = select_box.w / scale + 16;
@@ -2504,8 +2505,15 @@ function changeProperty(variantID) {
 function editJsonItem(jsonItem, onSubmit = true) {
   if (jsonItem.CheckColor) {
     selected_list[0].JsonItem.CheckColor = jsonItem.CheckColor;
-    selected_list[0].value.querySelector(".checkmark").setAttribute("checkcolor", jsonItem.CheckColor);
-    drawCheckMark(selected_list[0].value);
+    switch (selected_list[0].CateID) {
+      case EnumCate.checkbox:
+        selected_list[0].value.querySelector("svg").setAttribute("checkcolor", jsonItem.CheckColor);
+        drawCheckMark(selected_list[0].value);
+        break;
+      default:
+        selected_list[0].value.querySelector(".checkmark").setAttribute("checkcolor", jsonItem.CheckColor);
+        break;
+    }
   } else if (jsonItem.InactiveColor) {
     selected_list[0].JsonItem.InactiveColor = jsonItem.InactiveColor;
     if (selected_list[0].JsonItem.Content !== "true") {

@@ -367,7 +367,7 @@ function createComponent() {
       wb.ListClassName = wbClassName;
     }
     let newStyle = document.createElement("style");
-    newStyle.id = `st-comp${wb.GID}`;
+    newStyle.id = `w-st-comp${wb.GID}`;
     let wbCssText = wb.value.style.cssText.split(";");
     let cssItem = {
       GID: wb.GID,

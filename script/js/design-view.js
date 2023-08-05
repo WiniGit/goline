@@ -54,7 +54,7 @@ function updateUIDesignView() {
     // let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign);
     listEditContainer.appendChild(editSizePosition);
-    if (selected_list.length === 1 && selected_list[0].IsWini) {
+    if (selected_list.length === 1 && selected_list[0].IsWini && selected_list[0].CateID !== EnumCate.tool_variant) {
       let editVariables = createVariables();
       listEditContainer.appendChild(editVariables);
     }
@@ -200,7 +200,7 @@ function createCanvasBackground() {
 function createEditAlign() {
   let editAlignContainer = document.createElement("div");
   editAlignContainer.id = "edit_align_div";
-  let isEnable = selected_list.every((wb) => (window.getComputedStyle(wb.value).position == "absolute" && (selected_list.length > 1 || wb.Level > 1)) || [...wb.value.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)].some((childWb) => window.getComputedStyle(childWb).position == "absolute"));
+  let isEnable = !$(selected_list[0].value).parents(`.wbaseItem-value[isinstance="true"]`)?.length && selected_list.every((wb) => (window.getComputedStyle(wb.value).position == "absolute" && (selected_list.length > 1 || wb.Level > 1)) || [...wb.value.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)].some((childWb) => window.getComputedStyle(childWb).position == "absolute"));
   editAlignContainer.setAttribute("enable", isEnable);
   editAlignContainer.replaceChildren(
     ...["align left", "align horizontal center", "align right", "align top", "align vertical center", "align bottom"].map((alignType) => {
@@ -6042,7 +6042,7 @@ function createVariables() {
           selected_list[0].AttributesItem.Content = "";
         }
       } else {
-        let varName = Ultis.toSlug(propEditName.value.trim()).split("-");
+        let varName = Ultis.toSlug(propEditName.value.toLowerCase().trim()).split("-");
         varName.forEach((elName) => elName.substring(0, 1).toUpperCase() + elName.substring(1));
         varName = varName.join("");
         selected_list[0].VariablesData[varName] = "";

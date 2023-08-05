@@ -4,19 +4,13 @@ function createCheckBoxHTML(item) {
 
 function drawCheckMark(checkboxHTML) {
   let checkboxSize = checkboxHTML.offsetWidth > 0 ? checkboxHTML.offsetWidth : parseFloat(checkboxHTML.style.width.replace("px", ""));
-  checkboxHTML.querySelector(".checkmark").width = checkboxSize;
-  checkboxHTML.querySelector(".checkmark").height = checkboxSize;
-  let checkboxCtx = checkboxHTML.querySelector(".checkmark").getContext("2d");
-  checkboxCtx.clearRect(0, 0, checkboxSize, checkboxSize);
-  checkboxCtx.save();
-  checkboxCtx.beginPath();
-  checkboxCtx.lineWidth = checkboxSize / 16;
-  checkboxCtx.strokeStyle = `#${checkboxHTML.querySelector(".checkmark").getAttribute("checkcolor").substring(2)}${checkboxHTML.querySelector(".checkmark").getAttribute("checkcolor").substring(0, 2)}`;
-  checkboxCtx.moveTo(checkboxSize * 0.28, checkboxSize * 0.48);
-  checkboxCtx.lineTo(checkboxSize * 0.45, checkboxSize * 0.65);
-  checkboxCtx.lineTo(checkboxSize * 0.75, checkboxSize * 0.3);
-  checkboxCtx.lineCap = "round";
-  checkboxCtx.stroke();
+  if (!isNaN(checkboxSize)) {
+    let svgTag = checkboxHTML.querySelector("svg");
+    svgTag.setAttribute("width", checkboxSize);
+    svgTag.setAttribute("height", checkboxSize);
+    let path = `<path d="M${(checkboxSize * 0.28).toFixed(1)} ${(checkboxSize * 0.48).toFixed(1)} L${(checkboxSize * 0.45).toFixed(1)} ${(checkboxSize * 0.65).toFixed(1)} L${(checkboxSize * 0.75).toFixed(1)} ${(checkboxSize * 0.3).toFixed(1)}" fill="none" stroke-linecap="round" stroke="#${svgTag.getAttribute("checkcolor").substring(2)}${svgTag.getAttribute("checkcolor").substring(0, 2)}"/>`
+    svgTag.innerHTML = path;
+  }
 }
 
 function createCheckbox(initValue = false, wbaseItem) {
@@ -26,8 +20,7 @@ function createCheckbox(initValue = false, wbaseItem) {
   let input = document.createElement("input");
   input.type = "checkbox";
   input.defaultChecked = initValue;
-  let checkmark = document.createElement("canvas");
-  checkmark.className = "checkmark";
+  let checkmark = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   toggle.replaceChildren(input, checkmark);
   if (wbaseItem) {
     if (wbaseItem.AttributesItem.NameField !== "")

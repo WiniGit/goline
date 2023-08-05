@@ -828,13 +828,16 @@ class WiniIO {
       action_list[action_index].enumObj = obj.enumObj;
       action_list[action_index].enumEvent = obj.enumEvent;
     }
-    if (obj.data.some((wbaseItem) => wbaseItem.JsonItem || wbaseItem.JsonEventItem || wbaseItem.TableRows || wbaseItem.TreeData)) {
+    if (obj.data.some((wbaseItem) => wbaseItem.VariablesData || wbaseItem.JsonItem || wbaseItem.JsonEventItem || wbaseItem.TableRows || wbaseItem.TreeData)) {
       for (let wbaseItem of obj.data) {
         if (wbaseItem.JsonItem) {
           wbaseItem.AttributesItem.Json = JSON.stringify(wbaseItem.JsonItem);
         }
         if (wbaseItem.JsonEventItem) {
           wbaseItem.AttributesItem.JsonEvent = JSON.stringify(wbaseItem.JsonEventItem);
+        }
+        if (wbaseItem.VariablesData) {
+          wbaseItem.AttributesItem.Variables = JSON.stringify(wbaseItem.VariablesData);
         }
         if (wbaseItem.TableRows) {
           wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.TableRows);

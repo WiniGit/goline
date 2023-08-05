@@ -186,11 +186,11 @@
   width: 0;
 }
 
-.w-check-box > input:checked ~ .checkmark {
+.w-check-box > input:checked ~ svg {
   display: block;
 }
 
-.w-check-box > .checkmark {
+.w-check-box > svg {
   left: 0;
   top: 0;
   display: none;

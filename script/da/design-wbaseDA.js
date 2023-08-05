@@ -1384,6 +1384,12 @@ class WBaseDA {
     let WbData = await $.get(this.wbase_url + `?pageid=${PageDA.obj.ID}`);
     let cssData = await StyleDA.initStyleSheets();
     StyleDA.cssStyleSheets = cssData.Data;
+    StyleDA.cssStyleSheets.forEach(cssItem => {
+      let styleTag = document.createElement("style");
+      styleTag.id = `w-st-comp${cssItem.GID}`;
+      styleTag.innerHTML = cssItem.Css;
+      document.head.appendChild(styleTag);
+    })
     WbData = WbData.Data;
     WbData.forEach((wb) => {
       wb.AttributesItem = attributeData.find((e) => e.GID == wb.AttributeID);

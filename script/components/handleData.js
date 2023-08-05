@@ -68,6 +68,9 @@ async function initComponents(item, list, initListener = true) {
   if (item.AttributesItem.JsonEvent) {
     item.JsonEventItem = JSON.parse(item.AttributesItem.JsonEvent);
   }
+  if (item.AttributesItem.Variables) {
+    item.VariablesData = JSON.parse(item.AttributesItem.Variables);
+  }
   if (item.IsWini) {
     if (item.CateID == EnumCate.tool_variant) {
       item.PropertyItems = PropertyDA.list.filter((e) => e.BaseID == item.GID);
@@ -83,7 +86,8 @@ async function initComponents(item, list, initListener = true) {
       }
     }
   }
-  initSkinWbase(item);
+  if (item.StyleItem)
+    initSkinWbase(item);
   switch (item.CateID) {
     case EnumCate.tool_frame:
       createFrameHTML(item, list);
@@ -153,7 +157,8 @@ async function initComponents(item, list, initListener = true) {
       break;
   }
   $(item.value).addClass("wbaseItem-value");
-  initWbaseStyle(item);
+  if (item.StyleItem)
+    initWbaseStyle(item);
   if (item.AttributesItem.NameField && item.AttributesItem.NameField.trim() != "") $(item.value).attr("name-field", item.AttributesItem.NameField);
   item.value.setAttribute("Level", item.Level);
   item.value.setAttribute("cateid", item.CateID);
@@ -169,7 +174,15 @@ async function initComponents(item, list, initListener = true) {
       item.value.setAttribute("lock", "true");
     }
     item.value.setAttribute("listid", item.ListID);
-    if (item.IsWini) item.value.setAttribute("iswini", item.IsWini);
+    if (item.IsWini) {
+      item.value.setAttribute("iswini", item.IsWini);
+    } else if ([...item.value.classList].some(cls => cls.startsWith("w-st"))) {
+      if(item.CopyID) {
+        
+      } else {
+        item.value.setAttribute("isinstance", true);
+      }
+    }
     setSizeObserver.observe(item.value, {
       attributeOldValue: true,
       attributes: true,
