@@ -347,6 +347,7 @@ function pasteWbase() {
 }
 
 function createComponent() {
+  let listUpdate = [];
   let un_component_list = selected_list.filter((e) => !e.IsWini);
   for (let wb of un_component_list) {
     wb.IsWini = true;
@@ -413,9 +414,10 @@ function createComponent() {
       StyleDA.cssStyleSheets.push(cssItem);
       StyleDA.addStyleSheet(cssItem);
     }
+    listUpdate.push(wb, ...children);
   }
-  assets_list.push(...un_component_list);
-  WBaseDA.editListClassName(un_component_list, EnumObj.wBase);
+  assets_list.push(...listUpdate);
+  WBaseDA.editListClassName(listUpdate, EnumObj.wBase);
   wdraw();
   updateUIDesignView();
 }
