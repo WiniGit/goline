@@ -427,49 +427,6 @@ function unComponent() {
   updateUIDesignView();
 }
 
-function createStyleSheet() {
-  let wb = selected_list[0];
-  let wbClassName = "w-st0-" + Ultis.toSlug(wb.Name.trim());
-  if (wb.ListClassName) {
-    wb.ListClassName = [...wb.ListClassName.split(" "), wbClassName].join(" ");
-  } else {
-    wb.ListClassName = wbClassName;
-  }
-  let newStyle = document.createElement("style");
-  newStyle.id = `st-comp${wb.GID}`;
-  let wbCssText = wb.value.style.cssText.split(";");
-  let cssItem = {
-    GID: wb.GID,
-    Name: wbClassName,
-    PageID: PageDA.obj.ID,
-    Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
-  };
-  let childrenSt0 = [];
-  let children = wbase_list.filter((e) => {
-    let check = e.ListID.includes(wb.GID);
-    if (check && e.ListClassName) {
-      let eCls = e.ListClassName.split(" ");
-      if (eCls.some((cls) => cls.startsWith("w-st0"))) {
-        childrenSt0.push(e);
-        return true;
-      } else return eCls.every((cls) => !cls.startsWith("w-st-"));
-    } else return check;
-  });
-  let existNameList = (wb.value.children = children.filter((e) => childrenSt0.every((wbSt0) => !e.ListID.includes(wbSt0.GID))));
-  for (let childWb of children) {
-    let childWbClassName = "w-st-" + Ultis.toSlug(childWb.Name.trim());
-    cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;
-    if (childWb.ListClassName) {
-      childWb.ListClassName = [...childWb.ListClassName.split(" "), childWbClassName].join(" ");
-    } else {
-      childWb.ListClassName = childWbClassName;
-    }
-  }
-  newStyle.innerHTML = cssItem.Css;
-  document.head.appendChild(newStyle);
-  StyleDA.addStyleSheet(cssItem);
-  StyleDA.cssStyleSheets.push(cssItem);
-}
 
 function showImgDocument() {
   let imgDocument = createImgDocument();
