@@ -415,7 +415,7 @@ function createComponent() {
     }
   }
   assets_list.push(...un_component_list);
-  WBaseDA.edit(un_component_list, EnumObj.wBase);
+  WBaseDA.editListClassName(un_component_list, EnumObj.wBase);
   wdraw();
   updateUIDesignView();
 }
