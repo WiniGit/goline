@@ -658,7 +658,7 @@ class WBaseDefault {
         TopRight: 0.0,
         BottomLeft: 0.0,
         BottomRight: 0.0,
-        IsClip: true,
+        IsClip: false,
       },
       PositionItem: {
         Top: 0,

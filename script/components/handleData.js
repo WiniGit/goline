@@ -177,7 +177,7 @@ async function initComponents(item, list, initListener = true) {
     if (item.IsWini) {
       item.value.setAttribute("iswini", item.IsWini);
     } else if ([...item.value.classList].some(cls => cls.startsWith("w-st"))) {
-      if(item.CopyID) {
+      if (item.CopyID) {
         // [...document.styleSheets].reduce((a,b) => [...a.cssRules].concat([...b.cssRules]));
       } else {
         item.value.setAttribute("isinstance", true);
@@ -819,10 +819,10 @@ function handleStyleSize(item) {
         break;
     }
   } else {
-    item.value.style.borderTopLeftRadius = `${item.StyleItem.FrameItem.TopLeft}px`;
-    item.value.style.borderTopRightRadius = `${item.StyleItem.FrameItem.TopRight}px`;
-    item.value.style.borderBottomLeftRadius = `${item.StyleItem.FrameItem.BottomLeft}px`;
-    item.value.style.borderBottomRightRadius = `${item.StyleItem.FrameItem.BottomRight}px`;
+    if (item.value.style.borderTopLeftRadius) item.value.style.borderTopLeftRadius = `${item.StyleItem.FrameItem.TopLeft}px`;
+    if (item.value.style.borderTopRightRadius) item.value.style.borderTopRightRadius = `${item.StyleItem.FrameItem.TopRight}px`;
+    if (item.value.style.borderBottomLeftRadius) item.value.style.borderBottomLeftRadius = `${item.StyleItem.FrameItem.BottomLeft}px`;
+    if (item.value.style.borderBottomRightRadius) item.value.style.borderBottomRightRadius = `${item.StyleItem.FrameItem.BottomRight}px`;
   }
   if (EnumCate.no_child_component.every((cate) => item.CateID != cate)) {
     item.value.style.overflow = item.StyleItem.FrameItem.IsClip === true ? "hidden" : "visible";
