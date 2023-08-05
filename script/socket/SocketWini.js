@@ -818,8 +818,8 @@ class WiniIO {
     obj.data = [
       ...obj.data.map((e) => {
         let dtItem = JSON.parse(JSON.stringify(e));
-        dtItem.ListID = null;
-        dtItem.Level = null;
+        delete dtItem.ListID;
+        delete dtItem.Level;
         return dtItem;
       }),
     ];
