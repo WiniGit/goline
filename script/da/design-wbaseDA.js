@@ -1384,18 +1384,23 @@ class WBaseDA {
     let WbData = await $.get(this.wbase_url + `?pageid=${PageDA.obj.ID}`);
     let cssData = await StyleDA.initStyleSheets();
     StyleDA.cssStyleSheets = cssData.Data;
-    StyleDA.cssStyleSheets.forEach(cssItem => {
+    StyleDA.cssStyleSheets.forEach((cssItem) => {
       let styleTag = document.createElement("style");
       styleTag.id = `w-st-comp${cssItem.GID}`;
       styleTag.innerHTML = cssItem.Css;
       document.head.appendChild(styleTag);
-    })
+    });
     WbData = WbData.Data;
     WbData.forEach((wb) => {
       wb.AttributesItem = attributeData.find((e) => e.GID == wb.AttributeID);
       wb.StyleItem = styleData.find((e) => e.GID == wb.StyleID);
       wb.WAutolayoutItem = autoLayoutData.find((e) => e.GID == wb.AutoLayoutID);
     });
+    StyleDA.docStyleSheets = [...document.styleSheets]
+      .map((e) => [e.cssRules])
+      .reduce((a, b) => a.concat(b))
+      .filter((e) => e[0].selectorText && e[0].selectorText.startsWith(".w-st0-"))
+      .reduce((a, b) => [...a].concat([...b]));
     return WbData;
   }
 
@@ -1428,12 +1433,12 @@ class WBaseDA {
     }
     let data = {
       enumObj: EnumObj.css,
-      data: list_wbase_item.map(e => {
+      data: list_wbase_item.map((e) => {
         return {
           GID: e.GID,
           ListClassName: e.ListClassName,
           IsWini: e.IsWini,
-        }
+        };
       }),
       enumEvent: EnumEvent.edit,
     };

@@ -1,5 +1,6 @@
 class StyleDA {
   static cssStyleSheets = [];
+  static docStyleSheets = [];
   static urlCtr = "Style/";
   static skinProjectID;
   static mergeSkins = [];

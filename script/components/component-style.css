@@ -310,12 +310,16 @@ label {
   aspect-ratio: 1 / 1;
 }
 
-.w-textformfield .textfield + .suffix-btn-txtfd > * {
+.w-textformfield .textfield + .suffix-btn-txtfd > svg {
   position: absolute;
   box-sizing: border-box;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.w-textformfield .textfield + .suffix-btn-txtfd > svg > path {
+  fill: var(--suffix-icon-color);
 }
 
 body:has(> .w-date-picker-popup) {

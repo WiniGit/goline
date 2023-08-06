@@ -86,8 +86,7 @@ async function initComponents(item, list, initListener = true) {
       }
     }
   }
-  if (item.StyleItem)
-    initSkinWbase(item);
+  if (item.StyleItem) initSkinWbase(item);
   switch (item.CateID) {
     case EnumCate.tool_frame:
       createFrameHTML(item, list);
@@ -157,8 +156,7 @@ async function initComponents(item, list, initListener = true) {
       break;
   }
   $(item.value).addClass("wbaseItem-value");
-  if (item.StyleItem)
-    initWbaseStyle(item);
+  if (item.StyleItem) initWbaseStyle(item);
   if (item.AttributesItem.NameField && item.AttributesItem.NameField.trim() != "") $(item.value).attr("name-field", item.AttributesItem.NameField);
   item.value.setAttribute("Level", item.Level);
   item.value.setAttribute("cateid", item.CateID);
@@ -176,12 +174,10 @@ async function initComponents(item, list, initListener = true) {
     item.value.setAttribute("listid", item.ListID);
     if (item.IsWini) {
       item.value.setAttribute("iswini", item.IsWini);
-    } else if ([...item.value.classList].some(cls => cls.startsWith("w-st"))) {
+    } else if ([...item.value.classList].some((cls) => cls.startsWith("w-st"))) {
       if (item.CopyID) {
-        // [...document.styleSheets].reduce((a,b) => [...a.cssRules].concat([...b.cssRules]));
-      } else {
         item.value.setAttribute("isinstance", true);
-      }
+      } 
     }
     setSizeObserver.observe(item.value, {
       attributeOldValue: true,
@@ -594,78 +590,80 @@ async function callAPI(request) {
 }
 
 function initPositionStyle(item) {
-  if (item.ParentID === wbase_parentID) item.StyleItem.PositionItem.FixPosition = false;
-  if (item.StyleItem.PositionItem.FixPosition) $(item.value).addClass("fixed-position");
-  let valueL = item.StyleItem.PositionItem.Left;
-  let valueT = item.StyleItem.PositionItem.Top;
-  if (item.ParentID === wbase_parentID) {
-    item.value.style.left = valueL;
-    item.value.style.top = valueT;
-    item.value.style.transform = null;
-  } else {
-    let valueR = item.StyleItem.PositionItem.Right;
-    let valueB = item.StyleItem.PositionItem.Bottom;
-    switch (item.StyleItem.PositionItem.ConstraintsX) {
-      case Constraints.left:
-        item.value.style.left = valueL;
-        handleStyleSize(item);
-        item.value.style.right = null;
-        item.value.style.transform = null;
-        break;
-      case Constraints.right:
-        item.value.style.right = valueR;
-        handleStyleSize(item);
-        item.value.style.left = null;
-        item.value.style.transform = null;
-        break;
-      case Constraints.left_right:
-        item.value.style.left = valueL;
-        item.value.style.right = valueR;
-        item.value.style.width = null;
-        item.value.style.transform = null;
-        break;
-      case Constraints.center:
-        item.value.style.left = `calc(50% + ${valueR})`;
-        item.value.style.transform = "translateX(-50%)";
-        break;
-      case Constraints.scale:
-        item.value.style.left = valueL;
-        item.value.style.right = valueR;
-        item.value.style.width = null;
-        item.value.style.transform = null;
-        break;
-      default:
-        break;
-    }
-    switch (item.StyleItem.PositionItem.ConstraintsY) {
-      case Constraints.top:
-        item.value.style.top = valueT;
-        handleStyleSize(item);
-        item.value.style.bottom = null;
-        break;
-      case Constraints.bottom:
-        item.value.style.bottom = valueB;
-        handleStyleSize(item);
-        item.value.style.top = null;
-        break;
-      case Constraints.top_bottom:
-        item.value.style.top = valueT;
-        item.value.style.bottom = valueB;
-        item.value.style.height = null;
-        break;
-      case Constraints.center:
-        item.value.style.top = `calc(50% + ${valueB})`;
-        if (item.StyleItem.PositionItem.ConstraintsX === Constraints.center) item.value.style.transform = "translateX(-50%) translateY(-50%)";
-        else item.value.style.transform = "translateY(-50%)";
-        handleStyleSize(item);
-        break;
-      case Constraints.scale:
-        item.value.style.top = valueT;
-        item.value.style.bottom = valueB;
-        item.value.style.height = null;
-        break;
-      default:
-        break;
+  if (item.StyleItem) {
+    if (item.ParentID === wbase_parentID) item.StyleItem.PositionItem.FixPosition = false;
+    if (item.StyleItem.PositionItem.FixPosition) $(item.value).addClass("fixed-position");
+    let valueL = item.StyleItem.PositionItem.Left;
+    let valueT = item.StyleItem.PositionItem.Top;
+    if (item.ParentID === wbase_parentID) {
+      item.value.style.left = valueL;
+      item.value.style.top = valueT;
+      item.value.style.transform = null;
+    } else {
+      let valueR = item.StyleItem.PositionItem.Right;
+      let valueB = item.StyleItem.PositionItem.Bottom;
+      switch (item.StyleItem.PositionItem.ConstraintsX) {
+        case Constraints.left:
+          item.value.style.left = valueL;
+          handleStyleSize(item);
+          item.value.style.right = null;
+          item.value.style.transform = null;
+          break;
+        case Constraints.right:
+          item.value.style.right = valueR;
+          handleStyleSize(item);
+          item.value.style.left = null;
+          item.value.style.transform = null;
+          break;
+        case Constraints.left_right:
+          item.value.style.left = valueL;
+          item.value.style.right = valueR;
+          item.value.style.width = null;
+          item.value.style.transform = null;
+          break;
+        case Constraints.center:
+          item.value.style.left = `calc(50% + ${valueR})`;
+          item.value.style.transform = "translateX(-50%)";
+          break;
+        case Constraints.scale:
+          item.value.style.left = valueL;
+          item.value.style.right = valueR;
+          item.value.style.width = null;
+          item.value.style.transform = null;
+          break;
+        default:
+          break;
+      }
+      switch (item.StyleItem.PositionItem.ConstraintsY) {
+        case Constraints.top:
+          item.value.style.top = valueT;
+          handleStyleSize(item);
+          item.value.style.bottom = null;
+          break;
+        case Constraints.bottom:
+          item.value.style.bottom = valueB;
+          handleStyleSize(item);
+          item.value.style.top = null;
+          break;
+        case Constraints.top_bottom:
+          item.value.style.top = valueT;
+          item.value.style.bottom = valueB;
+          item.value.style.height = null;
+          break;
+        case Constraints.center:
+          item.value.style.top = `calc(50% + ${valueB})`;
+          if (item.StyleItem.PositionItem.ConstraintsX === Constraints.center) item.value.style.transform = "translateX(-50%) translateY(-50%)";
+          else item.value.style.transform = "translateY(-50%)";
+          handleStyleSize(item);
+          break;
+        case Constraints.scale:
+          item.value.style.top = valueT;
+          item.value.style.bottom = valueB;
+          item.value.style.height = null;
+          break;
+        default:
+          break;
+      }
     }
   }
 }

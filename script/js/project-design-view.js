@@ -71,6 +71,10 @@ async function initData() {
     }
   }
   divSection.replaceChildren(fragment);
+  // StyleDA.docStyleSheets.forEach(cssRuleItem => {
+  //   let 
+  //   if(cssRuleItem.selectorText.split(" "))
+  // })
   console.log("out handle data: ", Date.now());
   centerViewInitListener();
   if (PageDA.obj.scale !== undefined) {
