@@ -382,8 +382,8 @@ function createComponent() {
       [...wb.value.querySelector("svg").children].forEach((eHTML) => {
         let styleCss = "";
         for (let prop of eHTML.attributes) {
-          if (prop === "fill" || prop === "stroke") {
-            styleCss += `${prop}: ${eHTML.attributes[prop].nodeValue};`;
+          if (prop.localName === "fill" || prop.localName === "stroke") {
+            styleCss += `${prop.localName}: ${prop.nodeValue};`;
           }
         }
         cssItem.Css += `/**/ .${wbClassName} ${eHTML.localName} { ${styleCss} }`;
@@ -421,8 +421,8 @@ function createComponent() {
           [...childWb.value.querySelector("svg").children].forEach((eHTML) => {
             let styleCss = "";
             for (let prop of eHTML.attributes) {
-              if (prop === "fill" || prop === "stroke") {
-                styleCss += `${prop}: ${eHTML.attributes[prop].nodeValue};`;
+              if (prop.localName === "fill" || prop.localName === "stroke") {
+                styleCss += `${prop.localName}: ${prop.nodeValue};`;
               }
             }
             cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} ${eHTML.localName} { ${styleCss} }`;
