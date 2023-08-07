@@ -2145,8 +2145,8 @@ function doubleClickEvent(event) {
       let target_element = element_path.slice(0, parent_index).find((eHTML) => eHTML.classList?.contains("wbaseItem-value") && eHTML.getAttribute("Level") == currentLevel + 1) ?? element_path[parent_index];
       if (selected_list.length == 1 && target_element?.id == selected_list[0].GID) {
         if (target_element.getAttribute("cateid") == EnumCate.tool_text) {
-          target_element.contentEditable = true;
-          target_element.focus();
+          target_element.querySelector("span").contentEditable = true;
+          target_element.querySelector("span").focus();
         } else if (event.target.localName == "path") {
           selectPath?.remove();
           selectPath = document.createElementNS("http://www.w3.org/2000/svg", "path");

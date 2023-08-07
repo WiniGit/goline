@@ -156,7 +156,6 @@ async function initComponents(item, list, initListener = true) {
       break;
   }
   $(item.value).addClass("wbaseItem-value");
-  if (item.StyleItem) initWbaseStyle(item);
   if (item.AttributesItem.NameField && item.AttributesItem.NameField.trim() != "") $(item.value).attr("name-field", item.AttributesItem.NameField);
   item.value.setAttribute("Level", item.Level);
   item.value.setAttribute("cateid", item.CateID);
@@ -174,10 +173,15 @@ async function initComponents(item, list, initListener = true) {
     item.value.setAttribute("listid", item.ListID);
     if (item.IsWini) {
       item.value.setAttribute("iswini", item.IsWini);
+      if (item.StyleItem) initWbaseStyle(item);
     } else if ([...item.value.classList].some((cls) => cls.startsWith("w-st"))) {
       if (item.CopyID) {
         item.value.setAttribute("isinstance", true);
-      } 
+      } else if (item.StyleItem) {
+        initWbaseStyle(item);
+      }
+    } else if (item.StyleItem) {
+      initWbaseStyle(item);
     }
     setSizeObserver.observe(item.value, {
       attributeOldValue: true,
@@ -754,9 +758,8 @@ function initWbaseStyle(item) {
     }
   }
   if (item.StyleItem.TypoStyleItem && item.CateID != EnumCate.textformfield) {
-    item.value.style.alignItems = item.StyleItem.TypoStyleItem.TextAlign.replace("TextAlign.", "");
-    item.value.style.textAlign = item.StyleItem.TypoStyleItem.TextAlign.replace("TextAlign.", "");
-    item.value.style.justifyContent = item.StyleItem.TypoStyleItem.TextAlignVertical;
+    item.value.style.textAlign = item.StyleItem.TypoStyleItem.TextAlign;
+    item.value.style.alignItems = item.StyleItem.TypoStyleItem.TextAlignVertical;
     item.value.style.textOverflow = item.StyleItem.TypoStyleItem.TextOverflow?.replace("TextOverflow.", "") ?? "ellipsis";
   }
   if (item.WAutolayoutItem) {

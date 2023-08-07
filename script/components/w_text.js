@@ -1,13 +1,15 @@
 function createTextHTML(item) {
   item.value = document.createElement("div");
-  item.value.innerText = item.AttributesItem.Content ?? "";
+  let contentSpan = document.createElement("span");
+  contentSpan.innerText = item.AttributesItem.Content ?? "";
+  item.value.replaceChildren(contentSpan);
   $(item.value).addClass("w-text");
   if (!item.build) {
-    item.value.contentEditable = false;
-    item.value.onfocus = function () {
+    contentSpan.contentEditable = false;
+    contentSpan.onfocus = function () {
       item.isEditting = !item.isNew;
-      item.value.addEventListener("keydown", inputKeyDown);
-      item.value.addEventListener("keyup", inputKeyUp);
+      contentSpan.addEventListener("keydown", inputKeyDown);
+      contentSpan.addEventListener("keyup", inputKeyUp);
       if (item.inputActions) {
         inputActions = item.inputActions;
         inputActionIndex = item.inputActionIndex;
@@ -24,10 +26,10 @@ function createTextHTML(item) {
         inputActions[inputActionIndex].type = "focus";
       }
       if (this.innerHTML == "") {
-        this.style.minWidth = "1px";
+        item.value.style.minWidth = "1px";
         select_box = null;
       } else {
-        this.style.minWidth = "0";
+        item.value.style.minWidth = "0";
         select_box = selectBox(selected_list);
       }
       updateHoverWbase();
@@ -36,15 +38,15 @@ function createTextHTML(item) {
         switch (item.StyleItem.TypoStyleItem.TextAlign) {
           case TextAlign.center:
             transformX = "-50%";
-            var thisComputeStyle = window.getComputedStyle(this);
-            this.style.left = parseFloat(thisComputeStyle.left.replace("px")) + this.offsetWidth / 2 + "px";
-            this.style.right = null;
+            var thisComputeStyle = window.getComputedStyle(item.value);
+            item.value.style.left = parseFloat(thisComputeStyle.left.replace("px")) + item.value.offsetWidth / 2 + "px";
+            item.value.style.right = null;
             break;
           case TextAlign.right:
             transformX = "-100%";
-            var thisComputeStyle = window.getComputedStyle(this);
-            this.style.left = parseFloat(thisComputeStyle.left.replace("px")) + this.offsetWidth + "px";
-            this.style.right = null;
+            var thisComputeStyle = window.getComputedStyle(item.value);
+            item.value.style.left = parseFloat(thisComputeStyle.left.replace("px")) + item.value.offsetWidth + "px";
+            item.value.style.right = null;
             break;
           default:
             break;
@@ -53,20 +55,20 @@ function createTextHTML(item) {
         switch (item.StyleItem.TypoStyleItem.TextAlignVertical) {
           case TextAlignVertical.center:
             transformY = "-50%";
-            var thisComputeStyle = window.getComputedStyle(this);
-            this.style.top = parseFloat(thisComputeStyle.top.replace("px")) + this.offsetHeight / 2 + "px";
-            this.style.bottom = null;
+            var thisComputeStyle = window.getComputedStyle(item.value);
+            item.value.style.top = parseFloat(thisComputeStyle.top.replace("px")) + item.value.offsetHeight / 2 + "px";
+            item.value.style.bottom = null;
             break;
           case TextAlignVertical.bottom:
             transformY = "-100%";
-            var thisComputeStyle = window.getComputedStyle(this);
-            this.style.top = parseFloat(thisComputeStyle.top.replace("px")) + this.offsetHeight + "px";
-            this.style.bottom = null;
+            var thisComputeStyle = window.getComputedStyle(item.value);
+            item.value.style.top = parseFloat(thisComputeStyle.top.replace("px")) + item.value.offsetHeight + "px";
+            item.value.style.bottom = null;
             break;
           default:
             break;
         }
-        this.style.transform = `translate(${transformX},${transformY})`;
+        item.value.style.transform = `translate(${transformX},${transformY})`;
       }
     };
     let inputActions = [];
@@ -96,10 +98,10 @@ function createTextHTML(item) {
       inputActionIndex++;
       inputActions = inputActions.slice(0, inputActionIndex);
       inputActions.push({
-        value: item.value.innerHTML,
+        value: contentSpan.innerHTML,
         startOffset: selection.anchorOffset,
         endOffset: selection.focusOffset,
-        focusNode: selection.focusNode?.textContent ?? item.value,
+        focusNode: selection.focusNode?.textContent ?? contentSpan,
         type: selection.type,
       });
       if (inputActions.length > 30) {
@@ -114,34 +116,34 @@ function createTextHTML(item) {
         ctrlZ();
         WBaseDA.isCtrlZ = true;
         window.getSelection().removeAllRanges();
-        item.value.blur();
+        contentSpan.blur();
       } else if (inputActionIndex >= 0) {
         let inputAction = inputActions[inputActionIndex];
         console.log("Ctrlz Text", inputAction);
-        item.value.innerHTML = inputAction.value;
+        contentSpan.innerHTML = inputAction.value;
         let selection = window.getSelection();
         let range = document.createRange();
         if (inputAction.type === "focus" || inputActionIndex == 0) {
-          range.selectNodeContents(item.value);
+          range.selectNodeContents(contentSpan);
         } else {
           try {
-            let textChild = [...item.value.childNodes].find((text) => text.nodeValue == inputAction.focusNode);
+            let textChild = [...contentSpan.childNodes].find((text) => text.nodeValue == inputAction.focusNode);
             if (textChild) {
               range.setStart(textChild, inputAction.startOffset);
               if (inputAction.type === "Range") range.setEnd(textChild, inputAction.endOffset);
             } else if (inputAction.type === "Range") {
-              range.setEnd(item.value, inputAction.startOffset);
-              range.setEnd(item.value, inputAction.endOffset);
+              range.setEnd(contentSpan, inputAction.startOffset);
+              range.setEnd(contentSpan, inputAction.endOffset);
             }
           } catch (error) {
             console.log(error);
           }
         }
-        if (item.value.innerHTML == "") {
-          item.value.style.minWidth = "1px";
+        if (contentSpan.innerHTML == "") {
+          contentSpan.style.minWidth = "1px";
           select_box = null;
         } else {
-          item.value.style.minWidth = "0";
+          contentSpan.style.minWidth = "0";
           select_box = selectBox(selected_list);
         }
         updateHoverWbase();
@@ -150,24 +152,24 @@ function createTextHTML(item) {
         inputActionIndex--;
       }
     }
-    item.value.onblur = function () {
+    contentSpan.onblur = function () {
       addInputAction();
       this.removeAttribute("isCtrlZ");
       this.contentEditable = false;
       let selection = window.getSelection();
       selection.removeAllRanges();
-      let thisRect = this.getBoundingClientRect();
+      let thisRect = item.value.getBoundingClientRect();
       thisRect = offsetScale(thisRect.x, thisRect.y);
       let parentRect = { x: 0, y: 0 };
       if (item.ParentID != wbase_parentID) {
-        parentRect = this.parentElement.getBoundingClientRect();
+        parentRect = item.value.parentElement.getBoundingClientRect();
         parentRect = offsetScale(parentRect.x, parentRect.y);
       }
-      if (!window.getComputedStyle(item.value.parentElement).display.match(/(flex|grid|table)/g)) {
+      if (!window.getComputedStyle(item.value.parentElement).display.match(/(flex|table)/g)) {
         _enumObj = EnumObj.attributePosition;
-        this.style.left = thisRect.x - parentRect.x + "px";
-        this.style.top = thisRect.y - parentRect.y + "px";
-        this.style.transform = null;
+        item.value.style.left = thisRect.x - parentRect.x + "px";
+        item.value.style.top = thisRect.y - parentRect.y + "px";
+        item.value.style.transform = null;
         updateConstraints(item);
       }
       let this_text = wbase_list.find((e) => e.GID === this.id);
@@ -182,21 +184,21 @@ function createTextHTML(item) {
         WBaseDA.delete([this_text]);
       } else {
         if (item.isNew && this_text.StyleItem.FrameItem.Width != undefined) {
-          this_text.StyleItem.FrameItem.Width = this.offsetWidth;
-          this_text.StyleItem.FrameItem.Height = this.offsetHeight;
+          this_text.StyleItem.FrameItem.Width = item.value.offsetWidth;
+          this_text.StyleItem.FrameItem.Height = item.value.offsetHeight;
           this_text.StyleItem.TypoStyleItem.AutoWidth = TextAutoSize.fixedSize;
         }
         let listUpdate = [this_text];
         WBaseDA.edit(listUpdate, EnumObj.attribute, true);
         if (item.ParentID !== wbase_parentID) {
           let parent = wbase_list.find((e) => e.GID === item.ParentID);
-          if (this.parentElement.localName === "td") {
+          if (item.value.parentElement.localName === "td") {
             listUpdate.push(parent);
           } else if (parent.TreeData) {
             for (const property in parent.TreeData) {
               if (item.AttributesItem.NameField === `${property}`) {
                 item.AttributesItem.Content = `${parent.TreeData[property]}`;
-                item.value.innerText = item.AttributesItem.Content ?? "";
+                contentSpan.innerText = item.AttributesItem.Content ?? "";
               }
             }
           }
@@ -205,12 +207,12 @@ function createTextHTML(item) {
       item.isNew = false;
       item.isEditting = false;
       WBaseDA.isCtrlZ = false;
-      item.value.removeEventListener("keydown", inputKeyDown);
-      item.value.removeEventListener("keyup", inputKeyUp);
+      contentSpan.removeEventListener("keydown", inputKeyDown);
+      contentSpan.removeEventListener("keyup", inputKeyUp);
     };
-    item.value.oninput = function () {
+    contentSpan.oninput = function () {
       if (this.innerHTML == "") {
-        this.style.minWidth = "1px";
+        item.value.style.minWidth = "1px";
         select_box = null;
       }
     };

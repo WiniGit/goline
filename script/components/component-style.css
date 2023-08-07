@@ -99,6 +99,20 @@
 }
 
 .w-text {
+  display: flex;
+}
+
+.w-text > span {
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  width: inherit;
+  text-align: inherit;
+  height: fit-content;
+  padding: 0;
   display: block;
   cursor: default;
   text-overflow: ellipsis;
@@ -107,11 +121,12 @@
   overflow-wrap: break-word;
 }
 
-.w-text[contentEditable="true"] {
+.w-text > span[contentEditable="true"] {
   cursor: text !important;
+  pointer-events: all !important;
 }
 
-.w-text * {
+.w-text > span * {
   all: unset !important;
 }
 
