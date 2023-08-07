@@ -817,10 +817,10 @@ function handleStyleSize(item) {
         break;
     }
   } else {
-    if (item.value.style.borderTopLeftRadius) item.value.style.borderTopLeftRadius = `${item.StyleItem.FrameItem.TopLeft}px`;
-    if (item.value.style.borderTopRightRadius) item.value.style.borderTopRightRadius = `${item.StyleItem.FrameItem.TopRight}px`;
-    if (item.value.style.borderBottomLeftRadius) item.value.style.borderBottomLeftRadius = `${item.StyleItem.FrameItem.BottomLeft}px`;
-    if (item.value.style.borderBottomRightRadius) item.value.style.borderBottomRightRadius = `${item.StyleItem.FrameItem.BottomRight}px`;
+    if (item.StyleItem.FrameItem.TopLeft) item.value.style.borderTopLeftRadius = `${item.StyleItem.FrameItem.TopLeft}px`;
+    if (item.StyleItem.FrameItem.TopRight) item.value.style.borderTopRightRadius = `${item.StyleItem.FrameItem.TopRight}px`;
+    if (item.StyleItem.FrameItem.BottomLeft) item.value.style.borderBottomLeftRadius = `${item.StyleItem.FrameItem.BottomLeft}px`;
+    if (item.StyleItem.FrameItem.BottomRight) item.value.style.borderBottomRightRadius = `${item.StyleItem.FrameItem.BottomRight}px`;
   }
   if (EnumCate.no_child_component.every((cate) => item.CateID != cate)) {
     item.value.style.overflow = item.StyleItem.FrameItem.IsClip === true ? "hidden" : "visible";

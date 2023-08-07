@@ -1435,6 +1435,7 @@ class WBaseDA {
           GID: e.GID,
           ListClassName: e.ListClassName,
           IsWini: e.IsWini,
+          CopyID: null,
         };
       }),
       enumEvent: EnumEvent.edit,
