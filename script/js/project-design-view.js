@@ -51,7 +51,7 @@ async function initData() {
   updateHoverWbase();
   arrange();
   assets_list = wbase_list.filter((wbaseItem) => wbaseItem.IsWini);
-  assets_list.push(...wbase_list.filter(wb => assets_list.some(wbComp => wb.ListID.includes(wbComp.GID))));
+  assets_list.push(...wbase_list.filter((wb) => assets_list.some((wbComp) => wb.ListID.includes(wbComp.GID))));
   $.get(WBaseDA.base_item_url, function (baseComponentResponse) {
     base_component_list = baseComponentResponse.Data;
     console.log("base component:", base_component_list);
@@ -71,10 +71,13 @@ async function initData() {
     }
   }
   divSection.replaceChildren(fragment);
-  // StyleDA.docStyleSheets.forEach(cssRuleItem => {
-  //   let 
-  //   if(cssRuleItem.selectorText.split(" "))
-  // })
+  StyleDA.docStyleSheets.forEach((cssRuleItem) => {
+    let selectorElement = cssRuleItem.selectorText.split(" ");
+    if (selectorElement.length > 1) {
+      let wbHTML = divSection.querySelector(`.wbaseItem-value[iswini="true"]${cssRuleItem.selectorText}`);
+      if (wbHTML) wbHTML.style.cssText = cssRuleItem.cssText.replace(cssRuleItem.selectorText + " { ", "").replace(" }", "");
+    }
+  });
   console.log("out handle data: ", Date.now());
   centerViewInitListener();
   if (PageDA.obj.scale !== undefined) {
