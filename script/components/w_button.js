@@ -5,7 +5,7 @@ function wbutton(item, data) {
   if (item.WAutolayoutItem) {
     let fragment = document.createDocumentFragment();
     fragment.replaceChildren(...data.map((child) => {
-      if (child.StyleItem.PositionItem.FixPosition) {
+      if (child.StyleItem && child.StyleItem.PositionItem.FixPosition) {
         initPositionStyle(child);
       } 
       return child.value;

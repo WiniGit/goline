@@ -1,8 +1,8 @@
 let feature_list = [
   {
     title: "Select layer",
-    more: function () { },
-    onclick: function () { },
+    more: function () {},
+    onclick: function () {},
     isShow: () => selected_list.length > 0,
   },
   {
@@ -363,7 +363,7 @@ function createComponent() {
       }
     }
     if (wb.ListClassName) {
-      wb.ListClassName = [...wb.ListClassName.split(" ").filter(cls => !cls.startsWith("w-st")), wbClassName].join(" ");
+      wb.ListClassName = [...wb.ListClassName.split(" ").filter((cls) => !cls.startsWith("w-st")), wbClassName].join(" ");
     } else {
       wb.ListClassName = wbClassName;
     }
@@ -376,39 +376,62 @@ function createComponent() {
       PageID: PageDA.obj.ID,
       Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
     };
-    let existNameList = [...wb.value.querySelectorAll(`.wbaseItem-value[class*="w-st"]`)].map((e) => [...e.classList].find((cls) => cls.startsWith("w-st")));
-    let children = wbase_list.filter((e) => {
-      let check = e.ListID.includes(wb.GID);
-      if (check && e.ListClassName) {
-        let eCls = e.ListClassName.split(" ");
-        if (eCls.some((cls) => cls.startsWith("w-st0-"))) {
-          return !$(e.value).parents(`.wbaseItem-value[class*="w-st0-"]`)?.length;
-        } else return eCls.every((cls) => !cls.startsWith("w-st"));
-      } else return check;
-    });
-    console.log("??????????????");
-    for (let childWb of children) {
-      let childWbClassName = `w-st${childWb.Level - wb.Level}-` + Ultis.toSlug(childWb.Name.toLowerCase().trim());
-      childWb.ListClassName ??= "";
-      let childClsList = childWb.ListClassName.split(" ");
-      if (childClsList.some((cCls) => cCls.startsWith("w-st0"))) {
-        childWbClassName = childClsList.find((cCls) => cCls.startsWith("w-st0"));
-      } else {
-        let existSameName = existNameList.filter((name) => name.includes(childWbClassName)).map((name) => (isNaN(parseInt(name.replace(childWbClassName, ""))) ? 0 : parseInt(name.replace(childWbClassName, ""))));
-        for (let i = 1; i < 100; i++) {
-          if (existSameName.every((num) => i !== num)) {
-            childWbClassName = childWbClassName + `${i}`;
-            break;
+    let children = [];
+    if (wb.CateID === EnumCate.svg) {
+      [...wb.value.querySelector("svg").children].forEach((eHTML) => {
+        let styleCss = "";
+        for (let prop in eHTML.attributes) {
+          if (prop === "fill" || prop === "stroke") {
+            styleCss += `${prop}: ${eHTML.attributes[prop].nodeValue};`;
           }
         }
-        childWb.ListClassName = [...childClsList.filter(cls => !cls.startsWith("w-st")), childWbClassName].join(" ");
-        existNameList.push(childWbClassName);
+        cssItem.Css += `/**/ .${wbClassName} ${eHTML.localName} { ${styleCss} }`;
+      });
+    } else if (EnumCate.no_child_component.every((ct) => wb.CateID !== ct)) {
+      let existNameList = [...wb.value.querySelectorAll(`.wbaseItem-value[class*="w-st"]`)].map((e) => [...e.classList].find((cls) => cls.startsWith("w-st")));
+      children = wbase_list.filter((e) => {
+        let check = e.ListID.includes(wb.GID);
+        if (check && e.ListClassName) {
+          let eCls = e.ListClassName.split(" ");
+          if (eCls.some((cls) => cls.startsWith("w-st0-"))) {
+            return !$(e.value).parents(`.wbaseItem-value[class*="w-st0-"]`)?.length;
+          } else return eCls.every((cls) => !cls.startsWith("w-st"));
+        } else return check;
+      });
+      for (let childWb of children) {
+        let childWbClassName = `w-st${childWb.Level - wb.Level}-` + Ultis.toSlug(childWb.Name.toLowerCase().trim());
+        childWb.ListClassName ??= "";
+        let childClsList = childWb.ListClassName.split(" ");
+        if (childClsList.some((cCls) => cCls.startsWith("w-st0"))) {
+          childWbClassName = childClsList.find((cCls) => cCls.startsWith("w-st0"));
+        } else {
+          let existSameName = existNameList.filter((name) => name.includes(childWbClassName)).map((name) => (isNaN(parseInt(name.replace(childWbClassName, ""))) ? 0 : parseInt(name.replace(childWbClassName, ""))));
+          for (let i = 1; i < 100; i++) {
+            if (existSameName.every((num) => i !== num)) {
+              childWbClassName = childWbClassName + `${i}`;
+              break;
+            }
+          }
+          childWb.ListClassName = [...childClsList.filter((cls) => !cls.startsWith("w-st")), childWbClassName].join(" ");
+          existNameList.push(childWbClassName);
+        }
+        cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;
+        if (childWb.CateID === EnumCate.svg) {
+          [...childWb.value.querySelector("svg").children].forEach((eHTML) => {
+            let styleCss = "";
+            for (let prop in eHTML.attributes) {
+              if (prop === "fill" || prop === "stroke") {
+                styleCss += `${prop}: ${eHTML.attributes[prop].nodeValue};`;
+              }
+            }
+            cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} ${eHTML.localName} { ${styleCss} }`;
+          });
+        }
       }
-      cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;
     }
     newStyle.innerHTML = cssItem.Css;
     document.head.appendChild(newStyle);
-    let index = StyleDA.cssStyleSheets.findIndex(e => e.GID === cssItem.GID);
+    let index = StyleDA.cssStyleSheets.findIndex((e) => e.GID === cssItem.GID);
     if (index >= 0) {
       StyleDA.cssStyleSheets[index] = cssItem;
       StyleDA.editStyleSheet(cssItem);
@@ -436,7 +459,6 @@ function unComponent() {
   wdraw();
   updateUIDesignView();
 }
-
 
 function showImgDocument() {
   let imgDocument = createImgDocument();
@@ -560,7 +582,7 @@ function createImgDocument() {
       let optionPaste = document.createElement("div");
       optionPaste.className = "row";
       optionPaste.innerHTML = "paste here";
-      optionPaste.onclick = function (e) { };
+      optionPaste.onclick = function (e) {};
       children.push(optionPaste);
     }
     if (event.target.className?.includes("img_folder_demo")) {
