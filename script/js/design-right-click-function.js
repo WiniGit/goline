@@ -363,7 +363,7 @@ function createComponent() {
       }
     }
     if (wb.ListClassName) {
-      wb.ListClassName = [...wb.ListClassName.split(" "), wbClassName].join(" ");
+      wb.ListClassName = [...wb.ListClassName.split(" ").filter(cls => !cls.startsWith("w-st")), wbClassName].join(" ");
     } else {
       wb.ListClassName = wbClassName;
     }
@@ -401,7 +401,7 @@ function createComponent() {
             break;
           }
         }
-        childWb.ListClassName = [...childClsList, childWbClassName].join(" ");
+        childWb.ListClassName = [...childClsList.filter(cls => !cls.startsWith("w-st")), childWbClassName].join(" ");
       }
       cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;
     }
