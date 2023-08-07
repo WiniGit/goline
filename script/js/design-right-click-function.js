@@ -394,7 +394,7 @@ function createComponent() {
       if (childClsList.some((cCls) => cCls.startsWith("w-st0"))) {
         childWbClassName = childClsList.find((cCls) => cCls.startsWith("w-st0"));
       } else {
-        let existSameName = existNameList.filter((cssItem) => cssItem.Name.includes(childWbClassName)).map((cssItem) => (isNaN(parseInt(cssItem.Name.replace(childWbClassName, ""))) ? 0 : parseInt(cssItem.Name.replace(childWbClassName, ""))));
+        let existSameName = existNameList.filter((name) => name.includes(childWbClassName)).map((name) => (isNaN(parseInt(name.replace(childWbClassName, ""))) ? 0 : parseInt(name.replace(childWbClassName, ""))));
         for (let i = 1; i < 100; i++) {
           if (existSameName.every((num) => i !== num)) {
             childWbClassName = childWbClassName + `${i}`;
