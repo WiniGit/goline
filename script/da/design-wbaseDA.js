@@ -1397,7 +1397,7 @@ class WBaseDA {
       wb.WAutolayoutItem = autoLayoutData.find((e) => e.GID == wb.AutoLayoutID);
     });
     StyleDA.docStyleSheets = [...document.styleSheets]
-      .map((e) => [...e.cssRules])
+      .map((e) => (e.href ? [] : [...e.cssRules]))
       .filter((e) => e[0].selectorText && e[0].selectorText.startsWith(".w-st0-"))
       .reduce((a, b) => a.concat(b));
     return WbData;
