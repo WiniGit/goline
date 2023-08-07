@@ -381,7 +381,7 @@ function createComponent() {
     if (wb.CateID === EnumCate.svg) {
       [...wb.value.querySelector("svg").children].forEach((eHTML) => {
         let styleCss = "";
-        for (let prop in eHTML.attributes) {
+        for (let prop of eHTML.attributes) {
           if (prop === "fill" || prop === "stroke") {
             styleCss += `${prop}: ${eHTML.attributes[prop].nodeValue};`;
           }
@@ -420,7 +420,7 @@ function createComponent() {
         if (childWb.CateID === EnumCate.svg) {
           [...childWb.value.querySelector("svg").children].forEach((eHTML) => {
             let styleCss = "";
-            for (let prop in eHTML.attributes) {
+            for (let prop of eHTML.attributes) {
               if (prop === "fill" || prop === "stroke") {
                 styleCss += `${prop}: ${eHTML.attributes[prop].nodeValue};`;
               }
