@@ -402,6 +402,7 @@ function createComponent() {
           }
         }
         childWb.ListClassName = [...childClsList.filter(cls => !cls.startsWith("w-st")), childWbClassName].join(" ");
+        existNameList.push(childWbClassName);
       }
       cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;
     }

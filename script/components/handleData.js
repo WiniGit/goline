@@ -856,7 +856,7 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     });
     if (wbaseItem.WAutolayoutItem.IsScroll) wbaseItem.value.setAttribute("scroll", "true");
   }
-  wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
+  if (wbaseItem.StyleItem) wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
 }
 
 function removeAutoLayoutProperty(eHTML) {
