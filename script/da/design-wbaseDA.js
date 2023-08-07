@@ -1398,7 +1398,7 @@ class WBaseDA {
     });
     StyleDA.docStyleSheets = [...document.styleSheets]
       .map((e) => (e.href ? [] : [...e.cssRules]))
-      .filter((e) => e[0].selectorText && e[0].selectorText.startsWith(".w-st0-"))
+      .filter((e) => e[0]?.selectorText && e[0].selectorText.startsWith(".w-st0-"))
       .reduce((a, b) => a.concat(b));
     return WbData;
   }
