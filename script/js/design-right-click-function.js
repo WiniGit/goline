@@ -377,6 +377,7 @@ function createComponent() {
       Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
     };
     let children = [];
+    console.log("????????????????");
     if (wb.CateID === EnumCate.svg) {
       [...wb.value.querySelector("svg").children].forEach((eHTML) => {
         let styleCss = "";
