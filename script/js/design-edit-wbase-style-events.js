@@ -614,9 +614,7 @@ function selectResizeType(isW = true, type) {
         for (let wb of selected_list) {
           wb.StyleItem.FrameItem.Width = wb.value.offsetWidth;
           wb.value.style.width = `${wb.value.offsetWidth}px`;
-          if (parentHTML && parentHTML.classList.contains("w-row")) {
-            wb.value.style.flex = null;
-          }
+          wbHTML.removeAttribute("fill-w");
         }
         break;
       case "hug":
@@ -628,21 +626,20 @@ function selectResizeType(isW = true, type) {
           let wbHTML = wb.value;
           if (window.getComputedStyle(wbHTML).display.match("flex")) {
             if (wbHTML.classList.contains("w-row")) {
-              let list_child = wbase_list.filter((e) => e.ParentID == wb.GID && e.value.style.width == "100%");
+              let list_child = wbase_list.filter((e) => e.ParentID == wb.GID && e.value.getAttribute("fill-w") === "true");
               list_update.push(...list_child);
               for (let childWb of list_child) {
                 childWb.StyleItem.FrameItem.Width = childWb.value.offsetWidth;
                 childWb.value.style.width = `${childWb.value.offsetWidth}px`;
-                childWb.value.style.flex = null;
               }
             } else {
-              let childrenHTML = [...wbHTML.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)];
-              let fillChild = childrenHTML.filter((e) => e.style.width == "100%");
+              let fillChild = [...wbHTML.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"][fill-w="true"]`)];
               if (childrenHTML.length === fillChild.length) {
                 fillChild.sort((a, b) => b.offsetWidth - a.offsetWidth);
                 let wbChild = wbase_list.find((e) => e.GID == fillChild[0].id);
                 wbChild.StyleItem.FrameItem.Width = wbChild.value.offsetWidth;
                 wbChild.value.style.width = wbChild.value.offsetWidth + "px";
+                wbChild.value.removeAttribute("fill-w");
                 list_update.push(wbChild);
               }
             }
@@ -655,12 +652,10 @@ function selectResizeType(isW = true, type) {
               initPositionStyle(wb);
             }
           }
-          if (wbHTML.style.width == "100%") {
-            wbHTML.style.flex = null;
-          }
           wb.StyleItem.FrameItem.Width = null;
           wbHTML.style.width = "fit-content";
           wbHTML.style.minWidth = null;
+          wbHTML.removeAttribute("fill-w");
         }
         break;
       case "fill":
@@ -671,8 +666,7 @@ function selectResizeType(isW = true, type) {
               parentHTML.style.width = `${parentHTML.offsetWidth}px`;
               list_update.push(parent_wbase);
             } else {
-              let childrenHTML = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
-              let fillChild = childrenHTML.filter((e) => e.style.width != "100%");
+              let fillChild = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]:not(*[fill-w="true"])`)];
               if (fillChild.every((e) => selected_list.some((wb) => e.id === wb.GID))) {
                 parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
                 parentHTML.style.width = `${parentHTML.offsetWidth}px`;
@@ -684,7 +678,7 @@ function selectResizeType(isW = true, type) {
             let wbHTML = wb.value;
             wb.StyleItem.FrameItem.Width = wbHTML.offsetWidth === 0 ? -1 : -wbHTML.offsetWidth;
             wbHTML.style.width = "100%";
-            if (parentHTML && parentHTML.classList.contains("w-row")) wbHTML.style.flex = 1;
+            wbHTML.setAttribute("fill-w", true);
           }
         } else return;
         break;
@@ -697,9 +691,7 @@ function selectResizeType(isW = true, type) {
         for (let wb of selected_list) {
           wb.StyleItem.FrameItem.Height = wb.value.offsetHeight;
           wb.value.style.height = `${wb.value.offsetHeight}px`;
-          if (parentHTML && parentHTML.classList.contains("w-col")) {
-            wb.value.style.flex = null;
-          }
+          wbHTML.removeAttribute("fill-h");
         }
         break;
       case "hug":
@@ -711,21 +703,20 @@ function selectResizeType(isW = true, type) {
           let wbHTML = wb.value;
           if (window.getComputedStyle(wbHTML).display.match("flex")) {
             if (wbHTML.classList.contains("w-col")) {
-              let list_child = wbase_list.filter((e) => e.ParentID == wb.GID && e.value.style.height == "100%");
+              let list_child = wbase_list.filter((e) => e.ParentID == wb.GID && e.value.getAttribute("fill-h") === "true");
               list_update.push(...list_child);
               for (let childWb of list_child) {
                 childWb.StyleItem.FrameItem.Height = childWb.value.offsetHeight;
                 childWb.value.style.height = `${childWb.value.offsetHeight}px`;
-                childWb.value.style.flex = null;
               }
             } else {
-              let childrenHTML = [...wbHTML.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)];
-              let fillChild = childrenHTML.filter((e) => e.style.height == "100%");
+              let fillChild = [...wbHTML.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"][fill-h="true"]`)];
               if (childrenHTML.length === fillChild.length) {
                 fillChild.sort((a, b) => b.offsetHeight - a.offsetHeight);
                 let wbChild = wbase_list.find((e) => e.GID == fillChild[0].id);
                 wbChild.StyleItem.FrameItem.Height = wbChild.value.offsetHeight;
                 wbChild.value.style.height = wbChild.value.offsetHeight + "px";
+                wbChild.value.removeAttribute("fill-h");
                 list_update.push(wbChild);
               }
             }
@@ -738,12 +729,10 @@ function selectResizeType(isW = true, type) {
               initPositionStyle(wb);
             }
           }
-          if (wbHTML.style.height == "100%") {
-            wbHTML.style.flex = null;
-          }
           wb.StyleItem.FrameItem.Height = null;
           wbHTML.style.height = "fit-content";
           wbHTML.style.minHeight = null;
+          wbHTML.removeAttribute("fill-h");
         }
         break;
       case "fill":
@@ -754,8 +743,7 @@ function selectResizeType(isW = true, type) {
               parentHTML.style.height = `${parentHTML.offsetHeight}px`;
               list_update.push(parent_wbase);
             } else {
-              let childrenHTML = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]`)];
-              let fillChild = childrenHTML.filter((e) => e.style.height != "100%");
+              let fillChild = [...parentHTML.querySelectorAll(`.wbaseItem-value[level="${parent_wbase.Level + 1}"]:not(*[fill-h="true"])`)];
               if (fillChild.every((e) => selected_list.some((wb) => e.id === wb.GID))) {
                 parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
                 parentHTML.style.height = `${parentHTML.offsetHeight}px`;
@@ -767,7 +755,7 @@ function selectResizeType(isW = true, type) {
             let wbHTML = wb.value;
             wb.StyleItem.FrameItem.Height = wbHTML.offsetHeight === 0 ? -1 : -wbHTML.offsetHeight;
             wbHTML.style.height = "100%";
-            if (parentHTML && parentHTML.classList.contains("w-col")) wbHTML.style.flex = 1;
+            wbHTML.setAttribute("fill-h", true);
           }
         } else return;
         break;
@@ -845,7 +833,7 @@ async function addAutoLayout() {
     newWb.CountChild = selected_list.length;
     newWb.ListChildID = selected_list.map((e) => e.GID);
     if (selected_list.some) {
-      document.styleSheets
+      document.styleSheets;
     }
     if (!(select_box_parentID === wbase_parentID && selected_list.every((wb) => wb.value.querySelectorAll(".col-").length > 0))) {
       newWb.StyleItem.FrameItem.Width = null;
@@ -2360,24 +2348,26 @@ function combineAsVariant() {
   let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.variant));
   new_wbase_item = createNewWbase(new_wbase_item).pop();
   new_wbase_item.IsWini = true;
-  new_wbase_item.StyleItem.PositionItem.Left = `${Math.min(
-    ...selected_list.map((e) => {
-      let leftValue = getWBaseOffset(e).x;
-      e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
-      e.StyleItem.PositionItem.Left = `${leftValue}px`;
-      return leftValue;
-    }),
-  ).toFixed(2) - 8
-    }px`;
-  new_wbase_item.StyleItem.PositionItem.Top = `${Math.min(
-    ...selected_list.map((e) => {
-      let topValue = getWBaseOffset(e).y;
-      e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
-      e.StyleItem.PositionItem.Top = `${topValue}px`;
-      return topValue;
-    }),
-  ).toFixed(2) - 8
-    }px`;
+  new_wbase_item.StyleItem.PositionItem.Left = `${
+    Math.min(
+      ...selected_list.map((e) => {
+        let leftValue = getWBaseOffset(e).x;
+        e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+        e.StyleItem.PositionItem.Left = `${leftValue}px`;
+        return leftValue;
+      }),
+    ).toFixed(2) - 8
+  }px`;
+  new_wbase_item.StyleItem.PositionItem.Top = `${
+    Math.min(
+      ...selected_list.map((e) => {
+        let topValue = getWBaseOffset(e).y;
+        e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+        e.StyleItem.PositionItem.Top = `${topValue}px`;
+        return topValue;
+      }),
+    ).toFixed(2) - 8
+  }px`;
   new_wbase_item.CountChild = selected_list.length;
   new_wbase_item.ListChildID = selected_list.map((e) => e.GID);
   new_wbase_item.StyleItem.FrameItem.Width = select_box.w / scale + 16;

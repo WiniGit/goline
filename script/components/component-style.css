@@ -48,6 +48,14 @@
   row-gap: var(--run-space);
 }
 
+.wbaseItem-value.w-row > .wbaseItem-value[fill-w="true"] {
+  flex: 1;
+}
+
+.wbaseItem-value.w-col > .wbaseItem-value[fill-h="true"] {
+  flex: 1;
+}
+
 .wbaseItem-value:is(.w-row, .w-col) {
   align-items: var(--cross-axis-align);
   justify-content: var(--main-axis-align);

@@ -358,16 +358,6 @@ function initElement(wbaseHTML) {
     default:
       break;
   }
-  if (wbaseHTML.style.width == "100%") {
-    if (wbaseHTML.parentElement?.style?.flexDirection == "row") {
-      wbaseHTML.style.flex = 1;
-    }
-  }
-  if (wbaseHTML.style.height == "100%") {
-    if (wbaseHTML.parentElement?.style?.flexDirection == "column") {
-      wbaseHTML.style.flex = 1;
-    }
-  }
 }
 
 const setSizeObserver = new MutationObserver((mutationList) => {
@@ -768,31 +758,21 @@ function handleStyleSize(item) {
     } else {
       item.value.style.width = "fit-content";
     }
+    item.value.removeAttribute("fill-w");
   } else if (item.StyleItem.FrameItem.Width < 0) {
-    if (
-      $(item.value)
-        .parents(`.wbaseItem-value[level="${item.Level - 1}"]`)
-        ?.classList?.contains("w-row")
-    ) {
-      item.value.style.flex = 1;
-    }
+    item.value.setAttribute("fill-w", "true");
     item.value.style.width = "100%";
   } else {
     if ([Constraints.left, Constraints.right, Constraints.center].some((constX) => item.StyleItem.PositionItem.ConstraintsX === constX)) {
       item.value.style.width = `${item.StyleItem.FrameItem.Width}px`;
+      item.value.removeAttribute("fill-w");
     }
   }
   if (item.StyleItem.FrameItem.Height == undefined) {
     item.value.style.height = "fit-content";
-    if (item.value.parentElement?.style?.flexDirection == "column") item.value.style.flex = null;
+    item.value.removeAttribute("fill-h");
   } else if (item.StyleItem.FrameItem.Height < 0) {
-    if (
-      $(item.value)
-        .parents(`.wbaseItem-value[level="${item.Level - 1}"]`)
-        ?.classList?.contains("w-col")
-    ) {
-      item.value.style.flex = 1;
-    }
+    item.value.setAttribute("fill-h", "true");
     item.value.style.height = "100%";
   } else {
     if ([Constraints.top, Constraints.bottom, Constraints.center].some((constY) => item.StyleItem.PositionItem.ConstraintsY === constY)) {
@@ -803,6 +783,7 @@ function handleStyleSize(item) {
         item.value.style.height = `${item.StyleItem.FrameItem.Height}px`;
       }
     }
+    item.value.removeAttribute("fill-h");
   }
   // }
   if (item.StyleItem.FrameItem.TopLeft == undefined) {

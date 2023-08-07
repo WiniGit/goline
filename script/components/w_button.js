@@ -7,10 +7,7 @@ function wbutton(item, data) {
     fragment.replaceChildren(...data.map((child) => {
       if (child.StyleItem.PositionItem.FixPosition) {
         initPositionStyle(child);
-      } else if (item.WAutolayoutItem.Direction === "Vertical" && child.value.style.height == "100%")
-        child.value.style.flex = 1;
-      else if (item.WAutolayoutItem.Direction === "Horizontal" && child.value.style.width == "100%")
-        child.value.style.flex = 1;
+      } 
       return child.value;
     }));
     item.value.replaceChildren(fragment);
