@@ -403,7 +403,11 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   wbase_tile.id = `wbaseID:${wbaseItem.GID}`;
   wbase_tile.className = "layer_wbase_tile";
   wbase_tile.setAttribute("cateid", wbaseItem.CateID);
-  wbase_tile.setAttribute("iswini", wbaseItem.IsWini);
+  if (wbaseItem.IsWini) {
+    wbase_tile.setAttribute("iswini", wbaseItem.IsWini);
+  } else if (wbaseItem.IsInstance) {
+    wbase_tile.setAttribute("isinstance", wbaseItem.IsInstance);
+  }
   layerContainer.appendChild(wbase_tile);
 
   let isShowListChid = isShowChildren;
@@ -522,7 +526,7 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   inputWBaseName.ondblclick = function () {
     if (PageDA.enableEdit) {
       this.style.cursor = "text";
-      this.style.outline = "2px solid #1890FF";
+      this.style.outline = `1.5px solid ${wbaseItem.IsWini || wbaseItem.IsInstance || $(wbase_tile).parents(`.col:has(> .layer_wbase_tile[iswini="true"], layer_wbase_tile[isinstance="true"])`).length ? "#7B61FF" : "#1890FF"}`;
       this.readOnly = false;
       this.setSelectionRange(0, this.value.length);
       this.focus();

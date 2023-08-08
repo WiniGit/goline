@@ -520,13 +520,13 @@ function addSelectList(new_selected_list = []) {
     }
     for (let wb of selected_list) {
       let layerHTML = document.getElementById(`wbaseID:${wb.GID}`);
-      if (layerHTML) layerHTML.style.backgroundColor = wb.IsWini || $(layerHTML).parents(`.col:has(> .layer_wbase_tile[iswini="true"])`).length ? "#ebe6ff" : "#e6f7ff";
+      if (layerHTML) layerHTML.style.backgroundColor = wb.IsWini || wb.IsInstance || $(layerHTML).parents(`.col:has(> .layer_wbase_tile[iswini="true"], .layer_wbase_tile[isinstance="true"])`).length ? "#ebe6ff" : "#e6f7ff";
     }
     let list_parentID = selected_list[0].ListID.split(",");
     for (let id of list_parentID) {
-      let icon_show_children = document.getElementById(`pefixAction:${id}`);
-      if (icon_show_children) {
-        icon_show_children.className = icon_show_children.className.replace("caret-right", "caret-down");
+      let prefixIcon = document.getElementById(`pefixAction:${id}`);
+      if (prefixIcon) {
+        prefixIcon.className = prefixIcon.className.replace("caret-right", "caret-down");
       }
     }
     selected_list.sort((a, b) => a.Sort - b.Sort);

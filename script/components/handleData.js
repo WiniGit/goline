@@ -156,14 +156,16 @@ async function initComponents(item, list, initListener = true) {
       break;
   }
   $(item.value).addClass("wbaseItem-value");
-  if (item.StyleItem) initWbaseStyle(item);
   if (item.WAutolayoutItem) handleStyleLayout(item);
+  if (item.StyleItem) {
+    initWbaseStyle(item);
+    item.value.style.zIndex = item.Sort;
+    item.value.style.order = item.Sort;
+  }
   if (item.AttributesItem.NameField && item.AttributesItem.NameField.trim() != "") $(item.value).attr("name-field", item.AttributesItem.NameField);
   item.value.setAttribute("Level", item.Level);
   item.value.setAttribute("cateid", item.CateID);
   //
-  item.value.style.zIndex = item.Sort;
-  item.value.style.order = item.Sort;
   if (item.ListClassName) {
     item.ListClassName.split(" ").forEach((clssName) => $(item.value).addClass(clssName));
   }
@@ -178,6 +180,7 @@ async function initComponents(item, list, initListener = true) {
     } else if ([...item.value.classList].some((cls) => cls.startsWith("w-st"))) {
       if (item.CopyID) {
         item.value.setAttribute("isinstance", true);
+        item.IsInstance = true;
       }
     }
     setSizeObserver.observe(item.value, {
@@ -810,14 +813,36 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
     wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
     return;
   }
-  if (wbaseItem.CateID === EnumCate.table) {
-    wbaseItem.value.style.setProperty("--text-align", wMainAxis(wbaseItem.WAutolayoutItem.Alignment));
-    wbaseItem.value.style.setProperty("--vertical-align", wCrossAxis(wbaseItem.WAutolayoutItem.Alignment));
-  } else if (wbaseItem.CateID === EnumCate.carousel) {
-    wbaseItem.value.style.alignItems = wCrossAxis(wbaseItem.WAutolayoutItem.Alignment, true);
-    wbaseItem.value.style.setProperty("--justify-content", wMainAxis(wbaseItem.WAutolayoutItem.Alignment, true));
-    wbaseItem.value.style.setProperty("--gap", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
-  } else {
+  if (wbaseItem.StyleItem) {
+    if (wbaseItem.CateID === EnumCate.table) {
+      wbaseItem.value.style.setProperty("--text-align", wMainAxis(wbaseItem.WAutolayoutItem.Alignment));
+      wbaseItem.value.style.setProperty("--vertical-align", wCrossAxis(wbaseItem.WAutolayoutItem.Alignment));
+    } else if (wbaseItem.CateID === EnumCate.carousel) {
+      wbaseItem.value.style.alignItems = wCrossAxis(wbaseItem.WAutolayoutItem.Alignment, true);
+      wbaseItem.value.style.setProperty("--justify-content", wMainAxis(wbaseItem.WAutolayoutItem.Alignment, true));
+      wbaseItem.value.style.setProperty("--gap", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
+    } else {
+      let isRow = wbaseItem.WAutolayoutItem.Direction === "Horizontal";
+      $(wbaseItem.value).removeClass("w-stack");
+      if (isRow) {
+        $(wbaseItem.value).removeClass("w-col");
+        $(wbaseItem.value).addClass("w-row");
+      } else {
+        $(wbaseItem.value).removeClass("w-row");
+        $(wbaseItem.value).addClass("w-col");
+      }
+      wbaseItem.value.setAttribute("wrap", wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap");
+      wbaseItem.value.style.setProperty("--child-space", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
+      wbaseItem.value.style.setProperty("--run-space", `${wbaseItem.WAutolayoutItem.RunSpace}px`);
+      wbaseItem.value.style.setProperty("--main-axis-align", wMainAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
+      wbaseItem.value.style.setProperty("--cross-axis-align", wCrossAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
+      wbaseItem.value.querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`).forEach((childCol) => {
+        childCol.style.setProperty("--gutter", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
+      });
+      if (wbaseItem.WAutolayoutItem.IsScroll) wbaseItem.value.setAttribute("scroll", "true");
+    }
+    wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
+  } else if (wbaseItem.CateID !== EnumCate.table && wbaseItem.CateID !== EnumCate.carousel) {
     let isRow = wbaseItem.WAutolayoutItem.Direction === "Horizontal";
     $(wbaseItem.value).removeClass("w-stack");
     if (isRow) {
@@ -827,17 +852,7 @@ function handleStyleLayout(wbaseItem, onlyPadding = false) {
       $(wbaseItem.value).removeClass("w-row");
       $(wbaseItem.value).addClass("w-col");
     }
-    wbaseItem.value.setAttribute("wrap", wbaseItem.WAutolayoutItem.IsWrap ? "wrap" : "nowrap");
-    wbaseItem.value.style.setProperty("--child-space", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
-    wbaseItem.value.style.setProperty("--run-space", `${wbaseItem.WAutolayoutItem.RunSpace}px`);
-    wbaseItem.value.style.setProperty("--main-axis-align", wMainAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
-    wbaseItem.value.style.setProperty("--cross-axis-align", wCrossAxis(wbaseItem.WAutolayoutItem.Alignment, isRow));
-    wbaseItem.value.querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`).forEach((childCol) => {
-      childCol.style.setProperty("--gutter", `${wbaseItem.WAutolayoutItem.ChildSpace}px`);
-    });
-    if (wbaseItem.WAutolayoutItem.IsScroll) wbaseItem.value.setAttribute("scroll", "true");
   }
-  if (wbaseItem.StyleItem) wbaseItem.value.style.setProperty("--padding", `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`);
 }
 
 function removeAutoLayoutProperty(eHTML) {

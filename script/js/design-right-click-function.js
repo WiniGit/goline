@@ -444,6 +444,7 @@ function createComponent() {
   }
   assets_list.push(...listUpdate);
   WBaseDA.editListClassName(listUpdate, EnumObj.wBase);
+  listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]:not(*[isinstance="true"])`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
   wdraw();
   updateUIDesignView();
 }

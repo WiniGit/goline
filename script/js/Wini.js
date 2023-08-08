@@ -505,7 +505,7 @@ function updateHoverWbase(wbase_item, onAlt) {
   if (isOnchange) {
     [...document.getElementsByClassName("layer_wbase_tile")].forEach((layerHTML) => {
       if (layerHTML.id.includes(`${wbase_item?.GID}`)) {
-        layerHTML.style.borderColor = wbase_item.IsWini || $(layerHTML).parents(`.col:has(> .layer_wbase_tile[iswini="true"])`).length ? "#7B61FF" : "#1890FF";
+        layerHTML.style.borderColor = wbase_item.IsWini || wbase_item.IsInstance || $(layerHTML).parents(`.col:has(> .layer_wbase_tile[iswini="true"], layer_wbase_tile[isinstance="true"])`).length ? "#7B61FF" : "#1890FF";
       } else {
         layerHTML.style.borderColor = "transparent";
       }
@@ -762,7 +762,7 @@ function centerViewInitListener() {
   [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
     resizeWbase.observe(page);
   });
-  listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
+  listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]:not(*[isinstance="true"])`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
 }
 
 const childObserver = new MutationObserver((mutationList) => {
@@ -807,7 +807,7 @@ const childObserver = new MutationObserver((mutationList) => {
       }
     });
     if (mutation.target === divSection) {
-      listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
+      listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]:not(*[isinstance="true"])`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
     }
   });
 });
@@ -1712,11 +1712,11 @@ function wdraw() {
   if (hover_wbase && selected_list.every((e) => e.GID !== hover_wbase.GID) && checkpad == 0) {
     var objset = offsetScale(hover_box.x, hover_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
-    ctxr.strokeStyle = hover_wbase.IsWini || $(hover_wbase.value).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = hover_wbase.IsWini || hover_wbase.IsInstance || $(hover_wbase.value).parents(`.wbaseItem-value[iswini="true"],.wbaseItem-value[isinstance="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(objse.x, objse.y, hover_box.w, hover_box.h);
   } else if (parent?.id?.length == 36 && checkpad > 0) {
     let parentRect = parent.getBoundingClientRect();
-    ctxr.strokeStyle = parent.getAttribute("iswini") === "true" || $(parent).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = parent.getAttribute("iswini") === "true" || parent.getAttribute("isinstance") === "true" || $(parent).parents(`.wbaseItem-value[iswini="true"],.wbaseItem-value[isinstance="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(parentRect.x, parentRect.y, parentRect.width, parentRect.height);
   }
 
@@ -1724,7 +1724,7 @@ function wdraw() {
   if (select_box && document.activeElement.contentEditable != "true" && ((checkpad == 0 && tool_state == ToolState.move) || ToolState.resize_type.some((tool) => tool == tool_state))) {
     var objset = offsetScale(select_box.x, select_box.y);
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y));
-    ctxr.strokeStyle = selected_list.every((e) => e.IsWini) || $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length ? "#7B61FF" : "#1890FF";
+    ctxr.strokeStyle = selected_list.every((e) => e.IsWini || e.IsInstance) || $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"],.wbaseItem-value[isinstance="true"]`).length ? "#7B61FF" : "#1890FF";
     ctxr.strokeRect(objse.x, objse.y, select_box.w, select_box.h);
     if (prototypePoint) {
       ctxr.strokeStyle = "#E14337";
