@@ -52,20 +52,12 @@ let feature_list = [
     onclick: createComponent,
     isShow: () => selected_list.some((e) => !e.IsWini) && !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length,
   },
-  {
-    title: "Uncomponent",
-    shortKey: "Alt+K",
-    onclick: unComponent,
-    isShow: function () {
-      return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant;
-    },
-  },
   // {
-  //   title: "Create stylesheet",
-  //   shortKey: "Alt+S",
-  //   onclick: createStyleSheet,
+  //   title: "Uncomponent",
+  //   shortKey: "Alt+K",
+  //   onclick: unComponent,
   //   isShow: function () {
-  //     return selected_list.length === 1 && [...selected_list[0].value.classList].every((cls) => !cls.startsWith("w-st"));
+  //     return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant;
   //   },
   // },
   {
@@ -377,7 +369,6 @@ function createComponent() {
       Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
     };
     let children = [];
-    console.log("????????????????");
     if (wb.CateID === EnumCate.svg) {
       [...wb.value.querySelector("svg").children].forEach((eHTML) => {
         let styleCss = "";
@@ -390,21 +381,20 @@ function createComponent() {
       });
     } else if (EnumCate.no_child_component.every((ct) => wb.CateID !== ct)) {
       let existNameList = [...wb.value.querySelectorAll(`.wbaseItem-value[class*="w-st"]`)].map((e) => [...e.classList].find((cls) => cls.startsWith("w-st")));
-      children = wbase_list.filter((e) => {
-        let check = e.ListID.includes(wb.GID);
-        if (check && e.ListClassName) {
-          let eCls = e.ListClassName.split(" ");
-          if (eCls.some((cls) => cls.startsWith("w-st0-"))) {
-            return !$(e.value).parents(`.wbaseItem-value[class*="w-st0-"]`)?.length;
-          } else return eCls.every((cls) => !cls.startsWith("w-st"));
-        } else return check;
-      });
+      children = wbase_list.filter((e) => e.ListID.includes(wb.GID) && e.StyleItem);
       for (let childWb of children) {
         let childWbClassName = `w-st${childWb.Level - wb.Level}-` + Ultis.toSlug(childWb.Name.toLowerCase().trim());
         childWb.ListClassName ??= "";
         let childClsList = childWb.ListClassName.split(" ");
+        let childWbCssText = childWb.value.style.cssText.split(";");
+        if(childWb.value.style.width == "100%" && childWb.value.parentElement.classList.contains("w-row")) {
+          childWbCssText.push(" flex: 1");
+        } else if(childWb.value.style.height == "100%" && childWb.value.parentElement.classList.contains("w-col")) {
+          childWbCssText.push(" flex: 1");
+        }
         if (childClsList.some((cCls) => cCls.startsWith("w-st0"))) {
           childWbClassName = childClsList.find((cCls) => cCls.startsWith("w-st0"));
+          cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWbCssText.filter((e) => e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`;
         } else {
           let existSameName = existNameList.filter((name) => name.includes(childWbClassName)).map((name) => (isNaN(parseInt(name.replace(childWbClassName, ""))) ? 0 : parseInt(name.replace(childWbClassName, ""))));
           for (let i = 1; i < 100; i++) {
@@ -415,8 +405,8 @@ function createComponent() {
           }
           childWb.ListClassName = [...childClsList.filter((cls) => !cls.startsWith("w-st")), childWbClassName].join(" ");
           existNameList.push(childWbClassName);
+          cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWbCssText.join(";")} }`;
         }
-        cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWb.value.style.cssText} }`;
         if (childWb.CateID === EnumCate.svg) {
           [...childWb.value.querySelector("svg").children].forEach((eHTML) => {
             let styleCss = "";
@@ -449,18 +439,18 @@ function createComponent() {
   updateUIDesignView();
 }
 
-function unComponent() {
-  let component_list = selected_list.filter((e) => e.IsWini);
-  for (let i = 0; i < component_list.length; i++) {
-    component_list[i].IsWini = false;
-    component_list[i].value.removeAttribute("iswini");
-    document.getElementById(`wbaseID:${component_list[i].GID}`).removeAttribute("iswini");
-  }
-  assets_list = assets_list.filter((e) => component_list.every((wbaseItem) => wbaseItem.GID != e.GID));
-  WBaseDA.edit(component_list, EnumObj.wBase);
-  wdraw();
-  updateUIDesignView();
-}
+// function unComponent() {
+//   let component_list = selected_list.filter((e) => e.IsWini);
+//   for (let i = 0; i < component_list.length; i++) {
+//     component_list[i].IsWini = false;
+//     component_list[i].value.removeAttribute("iswini");
+//     document.getElementById(`wbaseID:${component_list[i].GID}`).removeAttribute("iswini");
+//   }
+//   assets_list = assets_list.filter((e) => component_list.every((wbaseItem) => wbaseItem.GID != e.GID));
+//   WBaseDA.edit(component_list, EnumObj.wBase);
+//   wdraw();
+//   updateUIDesignView();
+// }
 
 function showImgDocument() {
   let imgDocument = createImgDocument();

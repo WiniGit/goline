@@ -485,15 +485,15 @@ function addListenFromSection(item) {
   }
 }
 
-function getWBaseOffset(wbaseItem) {
+function getWBaseOffset(wb) {
   let leftValue;
   let topValue;
-  if (wbaseItem.ParentID == wbase_parentID) {
-    leftValue = Math.round(parseFloat(`${wbaseItem.StyleItem.PositionItem.Left}`.replace("px", "")).toFixed(2));
-    topValue = Math.round(parseFloat(`${wbaseItem.StyleItem.PositionItem.Top}`.replace("px", "")).toFixed(2));
+  if (wb.ParentID === wbase_parentID) {
+    leftValue = Math.round(parseFloat(`${wb.value.style?.left ?? wb.StyleItem.PositionItem.Left}`.replace("px", "")).toFixed(2));
+    topValue = Math.round(parseFloat(`${wb.value.style?.top ?? wb.StyleItem.PositionItem.Top}`.replace("px", "")).toFixed(2));
   } else {
-    leftValue = Math.round((wbaseItem.value.getBoundingClientRect().x - document.getElementById(wbaseItem.ParentID).getBoundingClientRect().x) / scale).toFixed(2);
-    topValue = Math.round((wbaseItem.value.getBoundingClientRect().y - document.getElementById(wbaseItem.ParentID).getBoundingClientRect().y) / scale).toFixed(2);
+    leftValue = Math.round((wb.value.getBoundingClientRect().x - document.getElementById(wb.ParentID).getBoundingClientRect().x) / scale).toFixed(2);
+    topValue = Math.round((wb.value.getBoundingClientRect().y - document.getElementById(wb.ParentID).getBoundingClientRect().y) / scale).toFixed(2);
   }
   return { x: leftValue, y: topValue };
 }
@@ -761,21 +761,21 @@ function handleStyleSize(item) {
     } else {
       item.value.style.width = "fit-content";
     }
-    item.value.removeAttribute("fill-w");
+    item.value.setAttribute("width-type", "fit");
   } else if (item.StyleItem.FrameItem.Width < 0) {
-    item.value.setAttribute("fill-w", "true");
+    item.value.setAttribute("width-type", "fill");
     item.value.style.width = "100%";
   } else {
     if ([Constraints.left, Constraints.right, Constraints.center].some((constX) => item.StyleItem.PositionItem.ConstraintsX === constX)) {
       item.value.style.width = `${item.StyleItem.FrameItem.Width}px`;
-      item.value.removeAttribute("fill-w");
+      item.value.removeAttribute("width-type");
     }
   }
   if (item.StyleItem.FrameItem.Height == undefined) {
     item.value.style.height = "fit-content";
-    item.value.removeAttribute("fill-h");
+    item.value.setAttribute("height-type", "fit");
   } else if (item.StyleItem.FrameItem.Height < 0) {
-    item.value.setAttribute("fill-h", "true");
+    item.value.setAttribute("height-type", "fill");
     item.value.style.height = "100%";
   } else {
     if ([Constraints.top, Constraints.bottom, Constraints.center].some((constY) => item.StyleItem.PositionItem.ConstraintsY === constY)) {
@@ -786,7 +786,7 @@ function handleStyleSize(item) {
         item.value.style.height = `${item.StyleItem.FrameItem.Height}px`;
       }
     }
-    item.value.removeAttribute("fill-h");
+    item.value.removeAttribute("height-type");
   }
   // }
   if (item.StyleItem.FrameItem.TopLeft == undefined) {

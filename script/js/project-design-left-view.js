@@ -927,7 +927,7 @@ const observer_listPage = new ResizeObserver((entries) => {
 function ondragSortLayer(event) {
   console.log("drag sort layer update");
   let fromY = document.getElementById("div_list_page").offsetHeight;
-  let listLayer = [...document.getElementsByClassName("layer_wbase_tile")].filter((e) => e.offsetHeight > 0);
+  let listLayer = [...document.getElementsByClassName("layer_wbase_tile")].filter((e) => e.offsetHeight > 0 && $(e).parents(`#parentID:${select_box_parentID}`));
   if (listLayer.length > 1) {
     listLayer.sort((a, b) => {
       let rectA = a.getBoundingClientRect();

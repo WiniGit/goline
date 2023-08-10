@@ -107,6 +107,13 @@ body:has(#history-view) :is(.btn-tool-state:nth-child(2), .btn-history) {
   border: none;
 }
 
+.btn-tool-state > i {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 8px 4px;
+}
+
 .btn-tool-state > span {
   position: absolute;
   white-space: nowrap;
@@ -128,6 +135,18 @@ body:has(#history-view) :is(.btn-tool-state:nth-child(2), .btn-history) {
 
 .btn-tool-state:hover > :last-child {
   visibility: visible;
+}
+
+.select-rect-type {
+  z-index: 10;
+  border-radius: 2px;
+  min-width: 100px;
+}
+
+.select-rect-type > .row {
+  color: #ffffff;
+  gap: 8px;
+  padding: 4px;
 }
 
 .customer-circle-list {

@@ -113,6 +113,13 @@ async function push_dataProject() {
       wbValue.removeAttribute("listid");
       wbValue.removeAttribute("lock");
       wbValue.removeAttribute("iswini");
+      wbValue.removeAttribute("constX");
+      wbValue.removeAttribute("constY");
+      let children = [...wbValue.querySelectorAll(`.wbaseItem-value[level${parseInt(wbValue.getAttribute("level")) + 1}]`)];
+      if (children.length > 0) {
+        children = children.sort((a, b) => window.getComputedStyle(a).zIndex - window.getComputedStyle(b).zIndex);
+        wbValue.replaceChildren(...children);
+      }
       switch (parseInt(wbValue.getAttribute("cateid"))) {
         case EnumCate.chart:
           buildChart(wbValue);
@@ -174,16 +181,14 @@ async function push_dataProject() {
         cssString += `
         /*  */
         `;
-      } else {
-        wbValue.style.zIndex = null;
-        wbValue.style.order = null;
       }
+      wbValue.style.zIndex = null;
+      wbValue.style.order = null;
       let thisCssText = wbValue.style.cssText;
       thisCssText = thisCssText.replace(uuid4Regex, (match) => replaceSkinRoot.find((skin) => skin.GID === match)?.Name ?? match);
       let wbCss = `.wbaseItem-value[class*="${wbValue.id}"] { ${thisCssText} }`;
       cssString += wbCss;
       wbValue.removeAttribute("style");
-
       wbValue.className += ` ${wbValue.getAttribute("id")}`;
       wbValue.removeAttribute("id");
     });
@@ -427,4 +432,4 @@ try {
       },
     );
   });
-} catch (error) { }
+} catch (error) {}

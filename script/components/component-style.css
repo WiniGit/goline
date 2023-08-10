@@ -48,11 +48,11 @@
   row-gap: var(--run-space);
 }
 
-.wbaseItem-value.w-row > .wbaseItem-value[fill-w="true"] {
+.wbaseItem-value.w-row > .wbaseItem-value[width-type="fill"] {
   flex: 1;
 }
 
-.wbaseItem-value.w-col > .wbaseItem-value[fill-h="true"] {
+.wbaseItem-value.w-col > .wbaseItem-value[height-type="fill"] {
   flex: 1;
 }
 

@@ -172,7 +172,7 @@ function createTextHTML(item) {
         item.value.style.transform = null;
         updateConstraints(item);
       }
-      let this_text = wbase_list.find((e) => e.GID === this.id);
+      let this_text = wbase_list.find((e) => e.GID === this.parentElement.id);
       this_text.AttributesItem.Content = this.innerText;
       if (!WBaseDA.isCtrlZ) {
         action_list[action_index].selected[0] = JSON.parse(JSON.stringify(item));

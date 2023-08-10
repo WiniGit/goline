@@ -503,6 +503,7 @@ input[type="color"]::-webkit-color-swatch {
 
 .header_popup_skin {
   width: 100%;
+  background-color: unset !important;
 }
 
 .header_popup_skin > .row:first-child {

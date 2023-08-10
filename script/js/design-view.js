@@ -50,54 +50,54 @@ function updateUIDesignView() {
     listEditContainer.appendChild(localSkins);
   } else {
     let editAlign = createEditAlign();
-    let editSizePosition = createEditSizePosition();
-    // let selectClass = selectionClass();
+    // let editSizePosition = createEditSizePosition();
+    // // let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign);
-    listEditContainer.appendChild(editSizePosition);
-    if (selected_list.length === 1 && selected_list[0].IsWini && selected_list[0].CateID !== EnumCate.tool_variant) {
-      let editVariables = createVariables();
-      listEditContainer.appendChild(editVariables);
-    }
-    // listEditContainer.appendChild(selectClass);
-    if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
-      let editConstraints = createConstraints();
-      listEditContainer.appendChild(editConstraints);
-    }
-    if (select_box_parentID != wbase_parentID && selected_list.every((e) => window.getComputedStyle(e.value).position != "absolute")) {
-      let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
-      let framePage = pageParent[pageParent.length - 1];
-      if (framePage?.classList?.contains("w-variant")) framePage = pageParent[pageParent.length - 2];
-      if (framePage) {
-        let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
-        if (isPage) {
-          let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
-          listEditContainer.appendChild(selectColByBrp);
-        }
-      }
-    }
-    if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
-      let editAutoLayout = createAutoLayout();
-      listEditContainer.appendChild(editAutoLayout);
-    }
-    //
-    if (selected_list.length > 0 && selected_list.every((wb) => wb.StyleItem.DecorationItem && wb.StyleItem.DecorationItem.ColorValue == selected_list[0].StyleItem.DecorationItem.ColorValue)) {
-      let editBackground = createEditBackground();
-      listEditContainer.appendChild(editBackground);
-    }
-    if (selected_list.some((e) => e.StyleItem.TextStyleItem)) {
-      let editTextStyle = createEditTextStyle();
-      listEditContainer.appendChild(editTextStyle);
-    }
-    if (selected_list.some((e) => e.StyleItem.DecorationItem)) {
-      if (selected_list.length > 1 || selected_list[0].CateID !== EnumCate.w_switch) {
-        let editBorder = createEditBorder();
-        listEditContainer.appendChild(editBorder);
-      }
-      let editEffect = createEditEffect();
-      listEditContainer.appendChild(editEffect);
-    }
-    let editVariants = createEditVariants();
-    listEditContainer.appendChild(editVariants);
+    // listEditContainer.appendChild(editSizePosition);
+    // if (selected_list.length === 1 && selected_list[0].IsWini && selected_list[0].CateID !== EnumCate.tool_variant) {
+    //   let editVariables = createVariables();
+    //   listEditContainer.appendChild(editVariables);
+    // }
+    // // listEditContainer.appendChild(selectClass);
+    // if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
+    //   let editConstraints = createConstraints();
+    //   listEditContainer.appendChild(editConstraints);
+    // }
+    // if (select_box_parentID != wbase_parentID && selected_list.every((e) => window.getComputedStyle(e.value).position != "absolute")) {
+    //   let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
+    //   let framePage = pageParent[pageParent.length - 1];
+    //   if (framePage?.classList?.contains("w-variant")) framePage = pageParent[pageParent.length - 2];
+    //   if (framePage) {
+    //     let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
+    //     if (isPage) {
+    //       let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
+    //       listEditContainer.appendChild(selectColByBrp);
+    //     }
+    //   }
+    // }
+    // if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
+    //   let editAutoLayout = createAutoLayout();
+    //   listEditContainer.appendChild(editAutoLayout);
+    // }
+    // //
+    // if (selected_list.length > 0 && selected_list.every((wb) => wb.StyleItem.DecorationItem && wb.StyleItem.DecorationItem.ColorValue == selected_list[0].StyleItem.DecorationItem.ColorValue)) {
+    //   let editBackground = createEditBackground();
+    //   listEditContainer.appendChild(editBackground);
+    // }
+    // if (selected_list.some((e) => e.StyleItem.TextStyleItem)) {
+    //   let editTextStyle = createEditTextStyle();
+    //   listEditContainer.appendChild(editTextStyle);
+    // }
+    // if (selected_list.some((e) => e.StyleItem.DecorationItem)) {
+    //   if (selected_list.length > 1 || selected_list[0].CateID !== EnumCate.w_switch) {
+    //     let editBorder = createEditBorder();
+    //     listEditContainer.appendChild(editBorder);
+    //   }
+    //   let editEffect = createEditEffect();
+    //   listEditContainer.appendChild(editEffect);
+    // }
+    // let editVariants = createEditVariants();
+    // listEditContainer.appendChild(editVariants);
   }
   design_view.replaceChildren(listEditContainer);
   design_view.scrollTo({
@@ -201,6 +201,9 @@ function createEditAlign() {
   let editAlignContainer = document.createElement("div");
   editAlignContainer.id = "edit_align_div";
   let isEnable = !$(selected_list[0].value).parents(`.wbaseItem-value[isinstance="true"]`)?.length && selected_list.every((wb) => (window.getComputedStyle(wb.value).position == "absolute" && (selected_list.length > 1 || wb.Level > 1)) || [...wb.value.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)].some((childWb) => window.getComputedStyle(childWb).position == "absolute"));
+  if(isEnable) {
+    isEnable = !selected_list.some(wb => wb.IsInstance && (window.getComputedStyle(wb.value).position !== "absolute" || wb.Level === 1));
+  }
   editAlignContainer.setAttribute("enable", isEnable);
   editAlignContainer.replaceChildren(
     ...["align left", "align horizontal center", "align right", "align top", "align vertical center", "align bottom"].map((alignType) => {
@@ -228,7 +231,7 @@ function createEditSizePosition() {
   let edit_size_position_div = document.createElement("div");
   edit_size_position_div.id = "edit_size_position_div";
   edit_size_position_div.className = "edit-container";
-  if (selected_list.every((e) => EnumCate.extend_frame.some((cate) => e.CateID === cate))) {
+  if (selected_list.every((e) => !e.IsInstance && EnumCate.extend_frame.some((cate) => e.CateID === cate))) {
     let pageDeviceContainer = document.createElement("div");
     pageDeviceContainer.className = "page-device-container row";
     let btn_select_frame_size = document.createElement("button");
@@ -3542,7 +3545,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       .forEach((popupSelect) => (popupSelect.style.display = "none"));
   };
   let header = document.createElement("div");
-  header.className = "header_popup_skin";
+  header.className = "row header_popup_skin";
   divEditSkin.appendChild(header);
   let title = document.createElement("span");
   title.style.pointerEvents = "none";

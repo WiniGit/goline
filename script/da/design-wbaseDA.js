@@ -2,6 +2,7 @@ class ToolState {
   static move = "Move";
   static frame = "Frame";
   static rectangle = "Rectangle";
+  static circle = "Circle";
   static base_component = "BaseComponent";
   static text = "Text";
   static hand_tool = "HandTool";
@@ -14,7 +15,7 @@ class ToolState {
   static resize_top = "ResizeTop";
   static resize_bot = "ResizeBottom";
 
-  static create_new_type = [this.frame, this.rectangle, this.base_component, this.text];
+  static create_new_type = [this.frame, this.rectangle, this.circle, this.base_component, this.text];
 
   static resize_type = [this.resize_top, this.resize_left, this.resize_right, this.resize_bot, this.resize_top_left, this.resize_top_right, this.resize_bot_left, this.resize_bot_right];
 }
@@ -563,7 +564,7 @@ class WBaseDefault {
     CateID: EnumCate.tool_rectangle,
     CountChild: 0,
     IsWini: false,
-    PageID: current_page.ID,
+    PageID: current_page,
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
@@ -577,7 +578,7 @@ class WBaseDefault {
       PositionItem: {
         Top: 222.0,
         Left: 110.0,
-        ConstraintsX: "left",
+        Constraints: "left",
         ConstraintsY: "top",
         FixPosition: false,
       },
@@ -585,9 +586,9 @@ class WBaseDefault {
     BasePropertyItems: [],
     AttributesItem: {
       NameField: "",
-      Name: "circle",
+      Name: "Circle",
     },
-    Name: "circle",
+    Name: "Circle",
   };
 
   static text = {

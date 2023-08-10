@@ -72,10 +72,76 @@ async function initData() {
   }
   divSection.replaceChildren(fragment);
   StyleDA.docStyleSheets.forEach((cssRuleItem) => {
-    let selectorElement = cssRuleItem.selectorText.split(" ");
-    if (selectorElement.length > 1) {
-      let wbHTML = divSection.querySelector(`.wbaseItem-value[iswini="true"]${cssRuleItem.selectorText}`);
-      if (wbHTML) wbHTML.style.cssText = cssRuleItem.cssText.replace(cssRuleItem.selectorText + " { ", "").replace(" }", "");
+    if (cssRuleItem.style.length > 0) {
+      divSection.querySelectorAll(cssRuleItem.selectorText).forEach((wbHTML) => {
+        for (let stProp of cssRuleItem.style) {
+          switch (stProp) {
+            case "width":
+              switch (cssRuleItem.style[stProp]) {
+                case "100%":
+                  wbHTML.setAttribute("width-type", "fill");
+                  break;
+                case "fit-content":
+                  wbHTML.setAttribute("width-type", "fit");
+                  break;
+                case "max-content":
+                  wbHTML.setAttribute("width-type", "fit");
+                  break;
+                default:
+                  wbHTML.removeAttribute("width-type");
+                  break;
+              }
+              break;
+            case "height":
+              switch (cssRuleItem.style[stProp]) {
+                case "100%":
+                  wbHTML.setAttribute("height-type", "fill");
+                  break;
+                case "fit-content":
+                  wbHTML.setAttribute("height-type", "fit");
+                  break;
+                default:
+                  wbHTML.removeAttribute("height-type");
+                  break;
+              }
+              break;
+            case "left":
+              if (cssRuleItem.style[stProp].includes("calc")) {
+                wbHTML.setAttribute("constX", Constraints.center);
+              } else if (cssRuleItem.style[stProp].includes("%")) {
+                wbHTML.setAttribute("constX", Constraints.scale);
+              } else if (cssRuleItem.style["right"]) {
+                wbHTML.setAttribute("constX", Constraints.left_right);
+              } else {
+                wbHTML.setAttribute("constX", Constraints.left);
+              }
+              break;
+            case "right":
+              if (!cssRuleItem.style["left"]) {
+                wbHTML.setAttribute("constX", Constraints.right);
+              }
+              break;
+            case "top":
+              if (cssRuleItem.style[stProp].includes("calc")) {
+                wbHTML.setAttribute("constY", Constraints.center);
+              } else if (cssRuleItem.style[stProp].includes("%")) {
+                wbHTML.setAttribute("constY", Constraints.scale);
+              } else if (cssRuleItem.style["bottom"]) {
+                wbHTML.setAttribute("constY", Constraints.top_bottom);
+              } else {
+                wbHTML.setAttribute("constY", Constraints.top);
+              }
+              break;
+            case "bottom":
+              if (!cssRuleItem.style["top"]) {
+                wbHTML.setAttribute("constY", Constraints.bottom);
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      });
     }
   });
   console.log("out handle data: ", Date.now());
@@ -309,6 +375,10 @@ function createWbaseHTML(rect_box, newObj) {
         new_obj = WBaseDefault.rectangle;
         new_obj.AttributesItem.Content = "";
         break;
+      case ToolState.circle:
+        new_obj = WBaseDefault.circle;
+        new_obj.AttributesItem.Content = "";
+        break;
       case ToolState.frame:
         new_obj = WBaseDefault.frame;
         break;
@@ -463,8 +533,8 @@ function createWbaseHTML(rect_box, newObj) {
     addSelectList([new_obj]);
     if (new_obj.CateID === EnumCate.tool_text) {
       new_obj.isNew = true;
-      new_obj.value.contentEditable = true;
-      new_obj.value.focus();
+      new_obj.value.querySelector("span").contentEditable = true;
+      new_obj.value.querySelector("span").focus();
     } else {
       WBaseDA.enumEvent = EnumEvent.add;
     }

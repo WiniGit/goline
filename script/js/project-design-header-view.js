@@ -122,7 +122,31 @@ let list_tool = [
   {
     message: ToolState.rectangle,
     expand: function () {
-      console.log("rectangle");
+      setTimeout(function () {
+        let popup = document.createElement("div");
+        popup.className = "wini_popup popup_remove col select-rect-type";
+        for (let i = 0; i < 2; i++) {
+          let rectTile = document.createElement("div");
+          rectTile.className = "row regular1";
+          let preIcon = document.createElement("i");
+          preIcon.className = `fa-regular fa-${i === 0 ? "square" : "circle"} fa-sm`;
+          let t = document.createElement("p");
+          t = i === 0 ? "Rectangle" : "Ellipse";
+          rectTile.replaceChildren(preIcon, t);
+          popup.appendChild(rectTile);
+          rectTile.onclick = function (e) {
+            e.stopPropagation();
+            popup.remove();
+            toolStateChange(i === 0 ? ToolState.rectangle : ToolState.circle);
+          };
+        }
+        let rectBtn = create_obj_tool.querySelector("#Rectangle");
+        let popup_offset = rectBtn.getBoundingClientRect();
+        popup.style.top = popup_offset.top + 52 + "px";
+        popup.style.left = popup_offset.left + "px";
+        popup.style.zIndex = 10;
+        $("body").append(popup);
+      }, 200);
     },
     scr: "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle.svg",
   },
@@ -422,7 +446,6 @@ function permissionTool() {
       if (wTool.expand != null) {
         let icon_down = document.createElement("i");
         icon_down.className = "fa-solid fa-chevron-down fa-2xs";
-        icon_down.style.color = "#ffffff";
         icon_down.onclick = function (e) {
           e.stopPropagation();
           wTool.expand();
@@ -481,7 +504,7 @@ $("body").on("click", ".btn-history", function () {
     PageDA.enableEdit = permission;
     document.body.setAttribute("enable", PageDA.enableEdit);
     toolStateChange(ToolState.move);
-  }
+  };
   comboAction.replaceChildren(addBtn, closeBtn);
   header.replaceChildren(title, comboAction);
   let body = document.createElement("div");
@@ -492,4 +515,4 @@ $("body").on("click", ".btn-history", function () {
   let permission = PageDA.enableEdit;
   PageDA.enableEdit = false;
   document.body.setAttribute("enable", "false");
-})
+});
