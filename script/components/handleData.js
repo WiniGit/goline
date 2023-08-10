@@ -665,6 +665,23 @@ function initPositionStyle(item) {
 function initWbaseStyle(item) {
   if (item.StyleItem.FrameItem) {
     handleStyleSize(item);
+    if (isNaN(item.StyleItem.FrameItem.TopLeft)) {
+      switch (item.CateID) {
+        case EnumCate.tool_rectangle:
+          item.value.style.borderRadius = "50%";
+          break;
+        default:
+          break;
+      }
+    } else {
+      if (item.StyleItem.FrameItem.TopLeft) item.value.style.borderTopLeftRadius = `${item.StyleItem.FrameItem.TopLeft}px`;
+      if (item.StyleItem.FrameItem.TopRight) item.value.style.borderTopRightRadius = `${item.StyleItem.FrameItem.TopRight}px`;
+      if (item.StyleItem.FrameItem.BottomLeft) item.value.style.borderBottomLeftRadius = `${item.StyleItem.FrameItem.BottomLeft}px`;
+      if (item.StyleItem.FrameItem.BottomRight) item.value.style.borderBottomRightRadius = `${item.StyleItem.FrameItem.BottomRight}px`;
+    }
+    if (EnumCate.no_child_component.every((cate) => item.CateID != cate)) {
+      item.value.style.overflow = item.StyleItem.FrameItem.IsClip === true ? "hidden" : "visible";
+    }
   }
   if (item.StyleItem.DecorationItem) {
     if (item.StyleItem.DecorationItem.ColorValue) {
@@ -755,7 +772,7 @@ function initWbaseStyle(item) {
 }
 
 function handleStyleSize(item) {
-  if (item.StyleItem.FrameItem.Width == undefined) {
+  if (isNaN(item.StyleItem.FrameItem.Width)) {
     if (item.CateID === EnumCate.tool_text) {
       item.value.style.width = "max-content";
     } else {
@@ -771,7 +788,7 @@ function handleStyleSize(item) {
       item.value.removeAttribute("width-type");
     }
   }
-  if (item.StyleItem.FrameItem.Height == undefined) {
+  if (isNaN(item.StyleItem.FrameItem.Height)) {
     item.value.style.height = "fit-content";
     item.value.setAttribute("height-type", "fit");
   } else if (item.StyleItem.FrameItem.Height < 0) {
@@ -787,24 +804,6 @@ function handleStyleSize(item) {
       }
     }
     item.value.removeAttribute("height-type");
-  }
-  // }
-  if (item.StyleItem.FrameItem.TopLeft == undefined) {
-    switch (item.CateID) {
-      case EnumCate.tool_rectangle:
-        item.value.style.borderRadius = "50%";
-        break;
-      default:
-        break;
-    }
-  } else {
-    if (item.StyleItem.FrameItem.TopLeft) item.value.style.borderTopLeftRadius = `${item.StyleItem.FrameItem.TopLeft}px`;
-    if (item.StyleItem.FrameItem.TopRight) item.value.style.borderTopRightRadius = `${item.StyleItem.FrameItem.TopRight}px`;
-    if (item.StyleItem.FrameItem.BottomLeft) item.value.style.borderBottomLeftRadius = `${item.StyleItem.FrameItem.BottomLeft}px`;
-    if (item.StyleItem.FrameItem.BottomRight) item.value.style.borderBottomRightRadius = `${item.StyleItem.FrameItem.BottomRight}px`;
-  }
-  if (EnumCate.no_child_component.every((cate) => item.CateID != cate)) {
-    item.value.style.overflow = item.StyleItem.FrameItem.IsClip === true ? "hidden" : "visible";
   }
 }
 

@@ -626,8 +626,8 @@ function createEditSizePosition() {
 
 // update style HTML edit position UI
 function updateUIEditPosition() {
-  let newEditSizePositionForm = createEditSizePosition();
-  document.getElementById("edit_size_position_div").replaceWith(newEditSizePositionForm);
+  // let newEditSizePositionForm = createEditSizePosition();
+  // document.getElementById("edit_size_position_div").replaceWith(newEditSizePositionForm);
 }
 
 // update input top,left,width,height

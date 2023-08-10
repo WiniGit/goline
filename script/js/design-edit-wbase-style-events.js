@@ -11,34 +11,102 @@ function alignPosition(align_value) {
             let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
             let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             for (let child of children) {
-              child.StyleItem ??= { PositionItem: {} };
+              child.StyleItem ??= {
+                PositionItem: {},
+                FrameItem: {
+                  Width: child.value.getAttribute("width-type") ? (child.value.getAttribute("width-type") === "fill" ? -100 : null) : child.value.offsetWidth,
+                  Height: child.value.getAttribute("height-type") ? (child.value.getAttribute("height-type") === "fill" ? -100 : null) : child.value.offsetHeight,
+                }
+              };
               child.StyleItem.PositionItem.ConstraintsX = Constraints.left;
-              child.value.setAttribute("constX", Constraints.left);
               updatePosition({ Left: "0px" }, child);
-              if(editComp) {
+              if (editComp) {
                 delete child.StyleItem;
+                delete child.FrameItem;
                 let stCssSelector = cssItem.Css.split("/**/");
                 let index = stCssSelector.findIndex(stCss => stCss.includes([...child.value.classList].find(cls => cls.startsWith("w-st"))));
-                let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g).split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
-                newCssText.push(child.value)
+                let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+                newCssText.push(...child.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+                stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+                cssItem.Css = stCssSelector.join("/**/");
+                document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+                  applyRule.removeAttribute("style");
+                  applyRule.setAttribute("constX", Constraints.left);
+                });
               }
             }
             if (editComp) {
               let stTag = document.getElementById(`w-st-comp${wb.GID}`);
+              stTag.innerHTML = cssItem.Css;
+              // StyleDA.editStyleSheet(cssItem);
+            } else {
+              listUpdate.push(...children);
             }
-            listUpdate.push(...children);
           }
         }
       } else if (selected_list.length === 1) {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        selected_list[0].StyleItem ??= {
+          PositionItem: {},
+          FrameItem: {
+            Width: selected_list[0].value.getAttribute("width-type") ? (selected_list[0].value.getAttribute("width-type") === "fill" ? -100 : null) : selected_list[0].value.offsetWidth,
+            Height: selected_list[0].value.getAttribute("height-type") ? (selected_list[0].value.getAttribute("height-type") === "fill" ? -100 : null) : selected_list[0].value.offsetHeight,
+          }
+        };
         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.left;
         updatePosition({ Left: "0px" }, selected_list[0]);
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
+          delete selected_list[0].StyleItem;
+          delete selected_list[0].FrameItem;
+          let stCssSelector = cssItem.Css.split("/**/");
+          let index = stCssSelector.findIndex(stCss => stCss.includes([...selected_list[0].value.classList].find(cls => cls.startsWith("w-st"))));
+          let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+          newCssText.push(...selected_list[0].value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+          stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+          cssItem.Css = stCssSelector.join("/**/");
+          document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+            applyRule.removeAttribute("style");
+            applyRule.setAttribute("constX", Constraints.left);
+          });
+          let stTag = document.getElementById(`w-st-comp${comParent.id}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       } else {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        let cssItem = comParent ? StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id) : null;
         let minX = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px"))));
         for (let wb of selected_list) {
+          wb.StyleItem ??= {
+            PositionItem: {},
+            FrameItem: {
+              Width: wb.value.getAttribute("width-type") ? (wb.value.getAttribute("width-type") === "fill" ? -100 : null) : wb.value.offsetWidth,
+              Height: wb.value.getAttribute("height-type") ? (wb.value.getAttribute("height-type") === "fill" ? -100 : null) : wb.value.offsetHeight,
+            }
+          };
           updatePosition({ Left: minX }, wb);
+          if (comParent) {
+            delete wb.StyleItem;
+            delete wb.FrameItem;
+            let stCssSelector = cssItem.Css.split("/**/");
+            let index = stCssSelector.findIndex(stCss => stCss.includes([...wb.value.classList].find(cls => cls.startsWith("w-st"))));
+            let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+            newCssText.push(...wb.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+            stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+            cssItem.Css = stCssSelector.join("/**/");
+            wb.value.removeAttribute("style");
+          }
         }
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       }
       break;
     case "align horizontal center":
@@ -47,30 +115,112 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             let parentW = Math.round(wb.value.getBoundingClientRect().width / scale);
             for (let child of children) {
+              child.StyleItem ??= {
+                PositionItem: {},
+                FrameItem: {
+                  Width: child.value.getAttribute("width-type") ? (child.value.getAttribute("width-type") === "fill" ? -100 : null) : child.value.offsetWidth,
+                  Height: child.value.getAttribute("height-type") ? (child.value.getAttribute("height-type") === "fill" ? -100 : null) : child.value.offsetHeight,
+                }
+              };
               child.StyleItem.PositionItem.ConstraintsX = Constraints.center;
               let newOffX = `${(parentW - Math.round(child.value.getBoundingClientRect().width / scale)) / 2}px`;
               updatePosition({ Left: newOffX }, child);
+              if (editComp) {
+                delete child.StyleItem;
+                delete child.FrameItem;
+                let stCssSelector = cssItem.Css.split("/**/");
+                let index = stCssSelector.findIndex(stCss => stCss.includes([...child.value.classList].find(cls => cls.startsWith("w-st"))));
+                let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+                newCssText.push(...child.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+                stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+                cssItem.Css = stCssSelector.join("/**/");
+                document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+                  applyRule.removeAttribute("style");
+                  applyRule.setAttribute("constX", Constraints.center);
+                });
+              }
             }
-            listUpdate.push(...children);
+            if (editComp) {
+              let stTag = document.getElementById(`w-st-comp${wb.GID}`);
+              stTag.innerHTML = cssItem.Css;
+              // StyleDA.editStyleSheet(cssItem);
+            } else {
+              listUpdate.push(...children);
+            }
           }
         }
       } else if (selected_list.length === 1) {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        selected_list[0].StyleItem ??= {
+          PositionItem: {},
+          FrameItem: {
+            Width: selected_list[0].value.getAttribute("width-type") ? (selected_list[0].value.getAttribute("width-type") === "fill" ? -100 : null) : selected_list[0].value.offsetWidth,
+            Height: selected_list[0].value.getAttribute("height-type") ? (selected_list[0].value.getAttribute("height-type") === "fill" ? -100 : null) : selected_list[0].value.offsetHeight,
+          }
+        };
         let parentW = Math.round(selected_list[0].value.parentElement.getBoundingClientRect().width / scale);
         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.center;
         let newOffX = `${(parentW - Math.round(selected_list[0].value.getBoundingClientRect().width / scale)) / 2}px`;
         updatePosition({ Left: newOffX }, selected_list[0]);
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
+          delete selected_list[0].StyleItem;
+          delete selected_list[0].FrameItem;
+          let stCssSelector = cssItem.Css.split("/**/");
+          let index = stCssSelector.findIndex(stCss => stCss.includes([...selected_list[0].value.classList].find(cls => cls.startsWith("w-st"))));
+          let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+          newCssText.push(...selected_list[0].value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+          stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+          cssItem.Css = stCssSelector.join("/**/");
+          document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+            applyRule.removeAttribute("style");
+            applyRule.setAttribute("constX", Constraints.center);
+          });
+          let stTag = document.getElementById(`w-st-comp${comParent.id}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       } else {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        let cssItem = comParent ? StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id) : null;
         let minX = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px"))));
         let maxX = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px")) + Math.round(e.value.getBoundingClientRect().width / scale)));
         let newOffX = minX + (maxX - minX) / 2;
         for (let wb of selected_list) {
+          wb.StyleItem ??= {
+            PositionItem: {},
+            FrameItem: {
+              Width: wb.value.getAttribute("width-type") ? (wb.value.getAttribute("width-type") === "fill" ? -100 : null) : wb.value.offsetWidth,
+              Height: wb.value.getAttribute("height-type") ? (wb.value.getAttribute("height-type") === "fill" ? -100 : null) : wb.value.offsetHeight,
+            }
+          };
           let new_offsetX = newOffX - Math.round(wb.value.getBoundingClientRect().width / scale) / 2;
           updatePosition({ Left: new_offsetX }, wb);
+          if (comParent) {
+            delete wb.StyleItem;
+            delete wb.FrameItem;
+            let stCssSelector = cssItem.Css.split("/**/");
+            let index = stCssSelector.findIndex(stCss => stCss.includes([...wb.value.classList].find(cls => cls.startsWith("w-st"))));
+            let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+            newCssText.push(...wb.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+            stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+            cssItem.Css = stCssSelector.join("/**/");
+            wb.value.removeAttribute("style");
+          }
         }
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       }
       break;
     case "align right":
@@ -79,24 +229,106 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             for (let child of children) {
+              child.StyleItem ??= {
+                PositionItem: {},
+                FrameItem: {
+                  Width: child.value.getAttribute("width-type") ? (child.value.getAttribute("width-type") === "fill" ? -100 : null) : child.value.offsetWidth,
+                  Height: child.value.getAttribute("height-type") ? (child.value.getAttribute("height-type") === "fill" ? -100 : null) : child.value.offsetHeight,
+                }
+              };
               child.StyleItem.PositionItem.ConstraintsX = Constraints.right;
               updatePosition({ Right: "0px" }, child);
+              if (editComp) {
+                delete child.StyleItem;
+                delete child.FrameItem;
+                let stCssSelector = cssItem.Css.split("/**/");
+                let index = stCssSelector.findIndex(stCss => stCss.includes([...child.value.classList].find(cls => cls.startsWith("w-st"))));
+                let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+                newCssText.push(...child.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+                stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+                cssItem.Css = stCssSelector.join("/**/");
+                document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+                  applyRule.removeAttribute("style");
+                  applyRule.setAttribute("constX", Constraints.right);
+                });
+              }
             }
-            listUpdate.push(...children);
+            if (editComp) {
+              let stTag = document.getElementById(`w-st-comp${wb.GID}`);
+              stTag.innerHTML = cssItem.Css;
+              // StyleDA.editStyleSheet(cssItem);
+            } else {
+              listUpdate.push(...children);
+            }
           }
         }
       } else if (selected_list.length === 1) {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        selected_list[0].StyleItem ??= {
+          PositionItem: {},
+          FrameItem: {
+            Width: selected_list[0].value.getAttribute("width-type") ? (selected_list[0].value.getAttribute("width-type") === "fill" ? -100 : null) : selected_list[0].value.offsetWidth,
+            Height: selected_list[0].value.getAttribute("height-type") ? (selected_list[0].value.getAttribute("height-type") === "fill" ? -100 : null) : selected_list[0].value.offsetHeight,
+          }
+        };
         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.right;
         updatePosition({ Right: "0px" }, selected_list[0]);
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
+          delete selected_list[0].StyleItem;
+          delete selected_list[0].FrameItem;
+          let stCssSelector = cssItem.Css.split("/**/");
+          let index = stCssSelector.findIndex(stCss => stCss.includes([...selected_list[0].value.classList].find(cls => cls.startsWith("w-st"))));
+          let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+          newCssText.push(...selected_list[0].value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+          stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+          cssItem.Css = stCssSelector.join("/**/");
+          document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+            applyRule.removeAttribute("style");
+            applyRule.setAttribute("constX", Constraints.right);
+          });
+          let stTag = document.getElementById(`w-st-comp${comParent.id}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       } else {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        let cssItem = comParent ? StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id) : null;
         let maxX = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).left.replace("px")) + Math.round(e.value.getBoundingClientRect().width / scale)));
         for (let wb of selected_list) {
+          wb.StyleItem ??= {
+            PositionItem: {},
+            FrameItem: {
+              Width: wb.value.getAttribute("width-type") ? (wb.value.getAttribute("width-type") === "fill" ? -100 : null) : wb.value.offsetWidth,
+              Height: wb.value.getAttribute("height-type") ? (wb.value.getAttribute("height-type") === "fill" ? -100 : null) : wb.value.offsetHeight,
+            }
+          };
           let newOffX = maxX - Math.round(wb.value.getBoundingClientRect().width / scale);
           updatePosition({ Left: newOffX }, wb);
+          if (comParent) {
+            delete wb.StyleItem;
+            delete wb.FrameItem;
+            let stCssSelector = cssItem.Css.split("/**/");
+            let index = stCssSelector.findIndex(stCss => stCss.includes([...wb.value.classList].find(cls => cls.startsWith("w-st"))));
+            let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+            newCssText.push(...wb.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+            stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+            cssItem.Css = stCssSelector.join("/**/");
+            wb.value.removeAttribute("style");
+          }
         }
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       }
       break;
     case "align top":
@@ -105,23 +337,105 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             for (let child of children) {
+              child.StyleItem ??= {
+                PositionItem: {},
+                FrameItem: {
+                  Width: child.value.getAttribute("width-type") ? (child.value.getAttribute("width-type") === "fill" ? -100 : null) : child.value.offsetWidth,
+                  Height: child.value.getAttribute("height-type") ? (child.value.getAttribute("height-type") === "fill" ? -100 : null) : child.value.offsetHeight,
+                }
+              };
               child.StyleItem.PositionItem.ConstraintsY = Constraints.top;
               updatePosition({ Top: "0px" }, child);
+              if (editComp) {
+                delete child.StyleItem;
+                delete child.FrameItem;
+                let stCssSelector = cssItem.Css.split("/**/");
+                let index = stCssSelector.findIndex(stCss => stCss.includes([...child.value.classList].find(cls => cls.startsWith("w-st"))));
+                let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+                newCssText.push(...child.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+                stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+                cssItem.Css = stCssSelector.join("/**/");
+                document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+                  applyRule.removeAttribute("style");
+                  applyRule.setAttribute("constY", Constraints.top);
+                });
+              }
             }
-            listUpdate.push(...children);
+            if (editComp) {
+              let stTag = document.getElementById(`w-st-comp${wb.GID}`);
+              stTag.innerHTML = cssItem.Css;
+              // StyleDA.editStyleSheet(cssItem);
+            } else {
+              listUpdate.push(...children);
+            }
           }
         }
       } else if (selected_list.length === 1) {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        selected_list[0].StyleItem ??= {
+          PositionItem: {},
+          FrameItem: {
+            Width: selected_list[0].value.getAttribute("width-type") ? (selected_list[0].value.getAttribute("width-type") === "fill" ? -100 : null) : selected_list[0].value.offsetWidth,
+            Height: selected_list[0].value.getAttribute("height-type") ? (selected_list[0].value.getAttribute("height-type") === "fill" ? -100 : null) : selected_list[0].value.offsetHeight,
+          }
+        };
         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.top;
         updatePosition({ Top: "0px" }, selected_list[0]);
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
+          delete selected_list[0].StyleItem;
+          delete selected_list[0].FrameItem;
+          let stCssSelector = cssItem.Css.split("/**/");
+          let index = stCssSelector.findIndex(stCss => stCss.includes([...selected_list[0].value.classList].find(cls => cls.startsWith("w-st"))));
+          let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+          newCssText.push(...selected_list[0].value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+          stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+          cssItem.Css = stCssSelector.join("/**/");
+          document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+            applyRule.removeAttribute("style");
+            applyRule.setAttribute("constY", Constraints.top);
+          });
+          let stTag = document.getElementById(`w-st-comp${comParent.id}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       } else {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        let cssItem = comParent ? StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id) : null;
         let minY = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px"))));
         for (let wb of selected_list) {
+          wb.StyleItem ??= {
+            PositionItem: {},
+            FrameItem: {
+              Width: wb.value.getAttribute("width-type") ? (wb.value.getAttribute("width-type") === "fill" ? -100 : null) : wb.value.offsetWidth,
+              Height: wb.value.getAttribute("height-type") ? (wb.value.getAttribute("height-type") === "fill" ? -100 : null) : wb.value.offsetHeight,
+            }
+          };
           updatePosition({ Top: minY }, wb);
+          if (comParent) {
+            delete wb.StyleItem;
+            delete wb.FrameItem;
+            let stCssSelector = cssItem.Css.split("/**/");
+            let index = stCssSelector.findIndex(stCss => stCss.includes([...wb.value.classList].find(cls => cls.startsWith("w-st"))));
+            let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+            newCssText.push(...wb.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+            stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+            cssItem.Css = stCssSelector.join("/**/");
+            wb.value.removeAttribute("style");
+          }
         }
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       }
       break;
     case "align vertical center":
@@ -130,30 +444,112 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             let parentH = Math.round(wb.value.getBoundingClientRect().height / scale);
             for (let child of children) {
+              child.StyleItem ??= {
+                PositionItem: {},
+                FrameItem: {
+                  Width: child.value.getAttribute("width-type") ? (child.value.getAttribute("width-type") === "fill" ? -100 : null) : child.value.offsetWidth,
+                  Height: child.value.getAttribute("height-type") ? (child.value.getAttribute("height-type") === "fill" ? -100 : null) : child.value.offsetHeight,
+                }
+              };
               child.StyleItem.PositionItem.ConstraintsY = Constraints.center;
               let newOffY = `${(parentH - Math.round(child.value.getBoundingClientRect().height / scale)) / 2}px`;
               updatePosition({ Top: newOffY }, child);
+              if (editComp) {
+                delete child.StyleItem;
+                delete child.FrameItem;
+                let stCssSelector = cssItem.Css.split("/**/");
+                let index = stCssSelector.findIndex(stCss => stCss.includes([...child.value.classList].find(cls => cls.startsWith("w-st"))));
+                let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+                newCssText.push(...child.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+                stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+                cssItem.Css = stCssSelector.join("/**/");
+                document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+                  applyRule.removeAttribute("style");
+                  applyRule.setAttribute("constY", Constraints.center);
+                });
+              }
             }
-            listUpdate.push(...children);
+            if (editComp) {
+              let stTag = document.getElementById(`w-st-comp${wb.GID}`);
+              stTag.innerHTML = cssItem.Css;
+              // StyleDA.editStyleSheet(cssItem);
+            } else {
+              listUpdate.push(...children);
+            }
           }
         }
       } else if (selected_list.length === 1) {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        selected_list[0].StyleItem ??= {
+          PositionItem: {},
+          FrameItem: {
+            Width: selected_list[0].value.getAttribute("width-type") ? (selected_list[0].value.getAttribute("width-type") === "fill" ? -100 : null) : selected_list[0].value.offsetWidth,
+            Height: selected_list[0].value.getAttribute("height-type") ? (selected_list[0].value.getAttribute("height-type") === "fill" ? -100 : null) : selected_list[0].value.offsetHeight,
+          }
+        };
         let parentH = Math.round(selected_list[0].value.parentElement.getBoundingClientRect().height / scale);
         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.center;
         let newOffY = `${(parentH - Math.round(selected_list[0].value.getBoundingClientRect().height / scale)) / 2}px`;
         updatePosition({ Top: newOffY }, selected_list[0]);
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
+          delete selected_list[0].StyleItem;
+          delete selected_list[0].FrameItem;
+          let stCssSelector = cssItem.Css.split("/**/");
+          let index = stCssSelector.findIndex(stCss => stCss.includes([...selected_list[0].value.classList].find(cls => cls.startsWith("w-st"))));
+          let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+          newCssText.push(...selected_list[0].value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+          stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+          cssItem.Css = stCssSelector.join("/**/");
+          document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+            applyRule.removeAttribute("style");
+            applyRule.setAttribute("constY", Constraints.center);
+          });
+          let stTag = document.getElementById(`w-st-comp${comParent.id}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       } else {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        let cssItem = comParent ? StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id) : null;
         let minY = Math.min(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px"))));
         let maxY = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px")) + Math.round(e.value.getBoundingClientRect().height / scale)));
         let newOffY = minY + (maxY - minY) / 2;
         for (let wb of selected_list) {
+          wb.StyleItem ??= {
+            PositionItem: {},
+            FrameItem: {
+              Width: wb.value.getAttribute("width-type") ? (wb.value.getAttribute("width-type") === "fill" ? -100 : null) : wb.value.offsetWidth,
+              Height: wb.value.getAttribute("height-type") ? (wb.value.getAttribute("height-type") === "fill" ? -100 : null) : wb.value.offsetHeight,
+            }
+          };
           let new_offsetY = newOffY - Math.round(wb.value.getBoundingClientRect().height / scale) / 2;
           updatePosition({ Top: new_offsetY }, wb);
+          if (comParent) {
+            delete wb.StyleItem;
+            delete wb.FrameItem;
+            let stCssSelector = cssItem.Css.split("/**/");
+            let index = stCssSelector.findIndex(stCss => stCss.includes([...wb.value.classList].find(cls => cls.startsWith("w-st"))));
+            let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+            newCssText.push(...wb.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+            stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+            cssItem.Css = stCssSelector.join("/**/");
+            wb.value.removeAttribute("style");
+          }
         }
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       }
       break;
     case "align bottom":
@@ -162,24 +558,106 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             for (let child of children) {
+              child.StyleItem ??= {
+                PositionItem: {},
+                FrameItem: {
+                  Width: child.value.getAttribute("width-type") ? (child.value.getAttribute("width-type") === "fill" ? -100 : null) : child.value.offsetWidth,
+                  Height: child.value.getAttribute("height-type") ? (child.value.getAttribute("height-type") === "fill" ? -100 : null) : child.value.offsetHeight,
+                }
+              };
               child.StyleItem.PositionItem.ConstraintsY = Constraints.bottom;
               updatePosition({ Bottom: "0px" }, child);
+              if (editComp) {
+                delete child.StyleItem;
+                delete child.FrameItem;
+                let stCssSelector = cssItem.Css.split("/**/");
+                let index = stCssSelector.findIndex(stCss => stCss.includes([...child.value.classList].find(cls => cls.startsWith("w-st"))));
+                let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+                newCssText.push(...child.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+                stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+                cssItem.Css = stCssSelector.join("/**/");
+                document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+                  applyRule.removeAttribute("style");
+                  applyRule.setAttribute("constY", Constraints.bottom);
+                });
+              }
             }
-            listUpdate.push(...children);
+            if (editComp) {
+              let stTag = document.getElementById(`w-st-comp${wb.GID}`);
+              stTag.innerHTML = cssItem.Css;
+              // StyleDA.editStyleSheet(cssItem);
+            } else {
+              listUpdate.push(...children);
+            }
           }
         }
       } else if (selected_list.length === 1) {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        selected_list[0].StyleItem ??= {
+          PositionItem: {},
+          FrameItem: {
+            Width: selected_list[0].value.getAttribute("width-type") ? (selected_list[0].value.getAttribute("width-type") === "fill" ? -100 : null) : selected_list[0].value.offsetWidth,
+            Height: selected_list[0].value.getAttribute("height-type") ? (selected_list[0].value.getAttribute("height-type") === "fill" ? -100 : null) : selected_list[0].value.offsetHeight,
+          }
+        };
         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.bottom;
         updatePosition({ Bottom: "0px" }, selected_list[0]);
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
+          delete selected_list[0].StyleItem;
+          delete selected_list[0].FrameItem;
+          let stCssSelector = cssItem.Css.split("/**/");
+          let index = stCssSelector.findIndex(stCss => stCss.includes([...selected_list[0].value.classList].find(cls => cls.startsWith("w-st"))));
+          let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+          newCssText.push(...selected_list[0].value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+          stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+          cssItem.Css = stCssSelector.join("/**/");
+          document.querySelectorAll(stCssSelector[index].replace(/\{.*\}/g, "").trim()).forEach(applyRule => {
+            applyRule.removeAttribute("style");
+            applyRule.setAttribute("constY", Constraints.bottom);
+          });
+          let stTag = document.getElementById(`w-st-comp${comParent.id}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       } else {
+        let comParent = $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)[0];
+        let cssItem = comParent ? StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id) : null;
         let maxY = Math.max(...selected_list.map((e) => parseFloat(window.getComputedStyle(e.value).top.replace("px")) + Math.round(e.value.getBoundingClientRect().height / scale)));
         for (let wb of selected_list) {
+          wb.StyleItem ??= {
+            PositionItem: {},
+            FrameItem: {
+              Width: wb.value.getAttribute("width-type") ? (wb.value.getAttribute("width-type") === "fill" ? -100 : null) : wb.value.offsetWidth,
+              Height: wb.value.getAttribute("height-type") ? (wb.value.getAttribute("height-type") === "fill" ? -100 : null) : wb.value.offsetHeight,
+            }
+          };
           let newOffY = maxY - Math.round(wb.value.getBoundingClientRect().height / scale);
           updatePosition({ Top: newOffY }, wb);
+          if (comParent) {
+            delete wb.StyleItem;
+            delete wb.FrameItem;
+            let stCssSelector = cssItem.Css.split("/**/");
+            let index = stCssSelector.findIndex(stCss => stCss.includes([...wb.value.classList].find(cls => cls.startsWith("w-st"))));
+            let newCssText = stCssSelector[index].match(/\{.*\}/g)[0].replace(/(\{|\})/g, "").split(";").filter(stProp => !stProp.match(/(width|height|left|top|bottom|right|transform)/g));
+            newCssText.push(...wb.value.style.cssText.split(";").filter(stProp => stProp.match(/(width|height|left|top|bottom|right|transform)/g)));
+            stCssSelector[index] = stCssSelector[index].replace(/\{.*\}/g, `{ ${newCssText.join(";")} }`);
+            cssItem.Css = stCssSelector.join("/**/");
+            wb.value.removeAttribute("style");
+          }
         }
-        listUpdate.push(...selected_list);
+        if (comParent) {
+          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`);
+          stTag.innerHTML = cssItem.Css;
+          // StyleDA.editStyleSheet(cssItem);
+        } else {
+          listUpdate.push(...selected_list);
+        }
       }
       break;
     default:
@@ -419,11 +897,23 @@ function updatePosition(position_item, wbaseItem) {
     if (!elementHTML.style.height || elementHTML.style.height == "auto") {
       elementHTML.style.height = elementHTML.offsetHeight + "px";
     }
-    elementHTML.style.right = null;
-    elementHTML.style.bottom = null;
+    if (elementHTML.style.right) {
+      elementHTML.style.right = null;
+    } else {
+      elementHTML.style.right = "unset";
+    }
+    if (elementHTML.style.bottom) {
+      elementHTML.style.bottom = null;
+    } else {
+      elementHTML.style.bottom = "unset";
+    }
     elementHTML.style.left = position_item.Left;
     elementHTML.style.top = position_item.Top;
-    elementHTML.style.transform = null;
+    if (elementHTML.style.transform) {
+      elementHTML.style.transform = null;
+    } else {
+      elementHTML.style.transform = "unset";
+    }
     updateConstraints(wbaseItem);
   } else if (position_item.Left != undefined) {
     if (!isNaN(position_item.Left)) position_item.Left = `${position_item.Left}px`;
@@ -431,18 +921,34 @@ function updatePosition(position_item, wbaseItem) {
     if (elementHTML.style.width == "auto") {
       elementHTML.style.width = elementHTML.offsetWidth + "px";
     }
-    elementHTML.style.right = null;
+    if (elementHTML.style.right) {
+      elementHTML.style.right = null;
+    } else {
+      elementHTML.style.right = "unset";
+    }
     elementHTML.style.left = position_item.Left;
-    if (elementHTML.style.transform) elementHTML.style.transform = elementHTML.style.transform.replace("translateX(-50%)", "");
+    if (elementHTML.getAttribute("constY") === Constraints.center) {
+      elementHTML.style.transform = "translateY(-50%)";
+    } else {
+      elementHTML.style.transform = "unset";
+    }
     updateConstraints(wbaseItem);
   } else if (position_item.Right != undefined) {
     let elementHTML = document.getElementById(wbaseItem.GID);
     if (!elementHTML.style.width || elementHTML.style.width == "auto") {
       elementHTML.style.width = elementHTML.offsetWidth + "px";
     }
-    elementHTML.style.left = null;
+    if (elementHTML.style.left) {
+      elementHTML.style.left = null;
+    } else {
+      elementHTML.style.left = "unset";
+    }
     elementHTML.style.right = position_item.Right;
-    if (elementHTML.style.transform) elementHTML.style.transform = elementHTML.style.transform.replace("translateX(-50%)", "");
+    if (elementHTML.getAttribute("constY") === Constraints.center) {
+      elementHTML.style.transform = "translateY(-50%)";
+    } else {
+      elementHTML.style.transform = "unset";
+    }
     updateConstraints(wbaseItem);
   } else if (position_item.Top != undefined) {
     if (!isNaN(position_item.Top)) position_item.Top = `${position_item.Top}px`;
@@ -450,18 +956,34 @@ function updatePosition(position_item, wbaseItem) {
     if (!elementHTML.style.height || elementHTML.style.height == "auto") {
       elementHTML.style.height = elementHTML.offsetHeight + "px";
     }
-    elementHTML.style.bottom = null;
+    if (elementHTML.style.bottom) {
+      elementHTML.style.bottom = null;
+    } else {
+      elementHTML.style.bottom = "unset";
+    }
     elementHTML.style.top = position_item.Top;
-    if (elementHTML.style.transform) elementHTML.style.transform = elementHTML.style.transform.replace("translateY(-50%)", "");
+    if (elementHTML.getAttribute("constX") === Constraints.center) {
+      elementHTML.style.transform = "translateX(-50%)";
+    } else {
+      elementHTML.style.transform = "unset";
+    }
     updateConstraints(wbaseItem);
   } else if (position_item.Bottom != undefined) {
     let elementHTML = document.getElementById(wbaseItem.GID);
     if (elementHTML.style.height == "auto") {
       elementHTML.style.height = elementHTML.offsetHeight + "px";
     }
-    elementHTML.style.top = null;
+    if (elementHTML.style.top) {
+      elementHTML.style.top = null;
+    } else {
+      elementHTML.style.top = "unset";
+    }
     elementHTML.style.bottom = position_item.Bottom;
-    if (elementHTML.style.transform) elementHTML.style.transform = elementHTML.style.transform.replace("translateY(-50%)", "");
+    if (elementHTML.getAttribute("constX") === Constraints.center) {
+      elementHTML.style.transform = "translateX(-50%)";
+    } else {
+      elementHTML.style.transform = "unset";
+    }
     updateConstraints(wbaseItem);
   }
 }
@@ -548,8 +1070,10 @@ function updateConstraints(wbaseItem) {
   let constX = Constraints.left;
   let constY = Constraints.top;
   if (wbaseItem.ParentID != wbase_parentID) {
-    constX = wbaseItem.StyleItem.PositionItem.ConstraintsX ?? wbaseItem.value.getAttribute("constX");
-    constY = wbaseItem.StyleItem.PositionItem.ConstraintsY ?? wbaseItem.value.getAttribute("constY");
+    wbaseItem.StyleItem.PositionItem.ConstraintsX ??= wbaseItem.value.getAttribute("constX");
+    wbaseItem.StyleItem.PositionItem.ConstraintsY ??= wbaseItem.value.getAttribute("constY");
+    constX = wbaseItem.StyleItem.PositionItem.ConstraintsX;
+    constY = wbaseItem.StyleItem.PositionItem.ConstraintsY;
   }
   let wbaseHTML = wbaseItem.value;
   switch (constX) {
@@ -2362,26 +2886,24 @@ function combineAsVariant() {
   let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.variant));
   new_wbase_item = createNewWbase(new_wbase_item).pop();
   new_wbase_item.IsWini = true;
-  new_wbase_item.StyleItem.PositionItem.Left = `${
-    Math.min(
-      ...selected_list.map((e) => {
-        let leftValue = getWBaseOffset(e).x;
-        e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
-        e.StyleItem.PositionItem.Left = `${leftValue}px`;
-        return leftValue;
-      }),
-    ).toFixed(2) - 8
-  }px`;
-  new_wbase_item.StyleItem.PositionItem.Top = `${
-    Math.min(
-      ...selected_list.map((e) => {
-        let topValue = getWBaseOffset(e).y;
-        e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
-        e.StyleItem.PositionItem.Top = `${topValue}px`;
-        return topValue;
-      }),
-    ).toFixed(2) - 8
-  }px`;
+  new_wbase_item.StyleItem.PositionItem.Left = `${Math.min(
+    ...selected_list.map((e) => {
+      let leftValue = getWBaseOffset(e).x;
+      e.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+      e.StyleItem.PositionItem.Left = `${leftValue}px`;
+      return leftValue;
+    }),
+  ).toFixed(2) - 8
+    }px`;
+  new_wbase_item.StyleItem.PositionItem.Top = `${Math.min(
+    ...selected_list.map((e) => {
+      let topValue = getWBaseOffset(e).y;
+      e.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+      e.StyleItem.PositionItem.Top = `${topValue}px`;
+      return topValue;
+    }),
+  ).toFixed(2) - 8
+    }px`;
   new_wbase_item.CountChild = selected_list.length;
   new_wbase_item.ListChildID = selected_list.map((e) => e.GID);
   new_wbase_item.StyleItem.FrameItem.Width = select_box.w / scale + 16;
