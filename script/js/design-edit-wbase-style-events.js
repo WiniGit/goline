@@ -19,6 +19,7 @@ function alignPosition(align_value) {
                 }
               };
               child.StyleItem.PositionItem.ConstraintsX = Constraints.left;
+              child.value.setAttribute("constX", Constraints.left);
               updatePosition({ Left: "0px" }, child);
               if (editComp) {
                 delete child.StyleItem;
@@ -54,6 +55,7 @@ function alignPosition(align_value) {
           }
         };
         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.left;
+        selected_list[0].value.setAttribute("constX", Constraints.left);
         updatePosition({ Left: "0px" }, selected_list[0]);
         if (comParent) {
           let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
@@ -128,6 +130,7 @@ function alignPosition(align_value) {
               };
               child.StyleItem.PositionItem.ConstraintsX = Constraints.center;
               let newOffX = `${(parentW - Math.round(child.value.getBoundingClientRect().width / scale)) / 2}px`;
+              child.value.setAttribute("constX", Constraints.center);
               updatePosition({ Left: newOffX }, child);
               if (editComp) {
                 delete child.StyleItem;
@@ -165,6 +168,7 @@ function alignPosition(align_value) {
         let parentW = Math.round(selected_list[0].value.parentElement.getBoundingClientRect().width / scale);
         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.center;
         let newOffX = `${(parentW - Math.round(selected_list[0].value.getBoundingClientRect().width / scale)) / 2}px`;
+        selected_list[0].value.setAttribute("constX", Constraints.center);
         updatePosition({ Left: newOffX }, selected_list[0]);
         if (comParent) {
           let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
@@ -240,6 +244,7 @@ function alignPosition(align_value) {
                 }
               };
               child.StyleItem.PositionItem.ConstraintsX = Constraints.right;
+              child.value.setAttribute("constX", Constraints.right);
               updatePosition({ Right: "0px" }, child);
               if (editComp) {
                 delete child.StyleItem;
@@ -275,6 +280,7 @@ function alignPosition(align_value) {
           }
         };
         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.right;
+        selected_list[0].value.setAttribute("constX", Constraints.right);
         updatePosition({ Right: "0px" }, selected_list[0]);
         if (comParent) {
           let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
@@ -348,6 +354,7 @@ function alignPosition(align_value) {
                 }
               };
               child.StyleItem.PositionItem.ConstraintsY = Constraints.top;
+              child.value.setAttribute("constY", Constraints.top);
               updatePosition({ Top: "0px" }, child);
               if (editComp) {
                 delete child.StyleItem;
@@ -383,6 +390,7 @@ function alignPosition(align_value) {
           }
         };
         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.top;
+        selected_list[0].value.setAttribute("constY", Constraints.top);
         updatePosition({ Top: "0px" }, selected_list[0]);
         if (comParent) {
           let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
@@ -457,6 +465,7 @@ function alignPosition(align_value) {
               };
               child.StyleItem.PositionItem.ConstraintsY = Constraints.center;
               let newOffY = `${(parentH - Math.round(child.value.getBoundingClientRect().height / scale)) / 2}px`;
+              child.value.setAttribute("constY", Constraints.center);
               updatePosition({ Top: newOffY }, child);
               if (editComp) {
                 delete child.StyleItem;
@@ -494,6 +503,7 @@ function alignPosition(align_value) {
         let parentH = Math.round(selected_list[0].value.parentElement.getBoundingClientRect().height / scale);
         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.center;
         let newOffY = `${(parentH - Math.round(selected_list[0].value.getBoundingClientRect().height / scale)) / 2}px`;
+        selected_list[0].value.setAttribute("constY", Constraints.center);
         updatePosition({ Top: newOffY }, selected_list[0]);
         if (comParent) {
           let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);
@@ -569,6 +579,7 @@ function alignPosition(align_value) {
                 }
               };
               child.StyleItem.PositionItem.ConstraintsY = Constraints.bottom;
+              child.value.setAttribute("constY", Constraints.bottom);
               updatePosition({ Bottom: "0px" }, child);
               if (editComp) {
                 delete child.StyleItem;
@@ -604,6 +615,7 @@ function alignPosition(align_value) {
           }
         };
         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.bottom;
+        selected_list[0].value.setAttribute("constY", Constraints.bottom);
         updatePosition({ Bottom: "0px" }, selected_list[0]);
         if (comParent) {
           let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === comParent.id);

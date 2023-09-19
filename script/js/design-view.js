@@ -50,10 +50,10 @@ function updateUIDesignView() {
     listEditContainer.appendChild(localSkins);
   } else {
     let editAlign = createEditAlign();
-    // let editSizePosition = createEditSizePosition();
+    let editSizePosition = createEditSizePosition();
     // // let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign);
-    // listEditContainer.appendChild(editSizePosition);
+    listEditContainer.appendChild(editSizePosition);
     // if (selected_list.length === 1 && selected_list[0].IsWini && selected_list[0].CateID !== EnumCate.tool_variant) {
     //   let editVariables = createVariables();
     //   listEditContainer.appendChild(editVariables);
@@ -200,7 +200,7 @@ function createCanvasBackground() {
 function createEditAlign() {
   let editAlignContainer = document.createElement("div");
   editAlignContainer.id = "edit_align_div";
-  let isEnable = !$(selected_list[0].value).parents(`.wbaseItem-value[isinstance="true"]`)?.length && selected_list.every((wb) => (window.getComputedStyle(wb.value).position == "absolute" && (selected_list.length > 1 || wb.Level > 1)) || [...wb.value.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)].some((childWb) => window.getComputedStyle(childWb).position == "absolute"));
+  let isEnable = !selected_list[0].value.closest(`.wbaseItem-value[isinstance="true"]`) && selected_list.every((wb) => (window.getComputedStyle(wb.value).position === "absolute" && (selected_list.length > 1 || wb.Level > 1)) || [...wb.value.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)].some((childWb) => window.getComputedStyle(childWb).position === "absolute"));
   if(isEnable) {
     isEnable = !selected_list.some(wb => wb.IsInstance && (window.getComputedStyle(wb.value).position !== "absolute" || wb.Level === 1));
   }
@@ -231,7 +231,7 @@ function createEditSizePosition() {
   let edit_size_position_div = document.createElement("div");
   edit_size_position_div.id = "edit_size_position_div";
   edit_size_position_div.className = "edit-container";
-  if (selected_list.every((e) => !e.IsInstance && EnumCate.extend_frame.some((cate) => e.CateID === cate))) {
+  if (selected_list.every((e) => !e.IsInstance && EnumCate.extend_frame.some((ct) => e.CateID === ct))) {
     let pageDeviceContainer = document.createElement("div");
     pageDeviceContainer.className = "page-device-container row";
     let btn_select_frame_size = document.createElement("button");
