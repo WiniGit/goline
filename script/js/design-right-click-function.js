@@ -57,7 +57,7 @@ let feature_list = [
   //   shortKey: "Alt+K",
   //   onclick: unComponent,
   //   isShow: function () {
-  //     return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant;
+  //     return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.variant;
   //   },
   // },
   {

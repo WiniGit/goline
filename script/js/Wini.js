@@ -55,7 +55,7 @@ let keyTimeStamp = 0;
 function keyUpEvent(event) {
   console.log("keyup:", keyid, event.key);
   isKeyUp = true;
-  if ((document.activeElement.localName === "input" && !document.activeElement.readOnly) || document.activeElement.getAttribute("cateid") == EnumCate.tool_text || action_list[action_index]?.index != undefined) return;
+  if ((document.activeElement.localName === "input" && !document.activeElement.readOnly) || document.activeElement.getAttribute("cateid") == EnumCate.text || action_list[action_index]?.index != undefined) return;
   event.preventDefault();
 
   let isCtrlKey = isMac ? event.metaKey : event.ctrlKey;
@@ -98,7 +98,7 @@ function keyUpEvent(event) {
         if (isCtrlKey && event.altKey) {
           if (selected_list.some((e) => !e.IsWini)) createComponent();
         } else if (event.altKey) {
-          if (selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.tool_variant) unComponent();
+          if (selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.variant) unComponent();
         }
         break;
       case "/": // /
@@ -542,10 +542,10 @@ function selectParent(event) {
     }
     let list = listWbOnScreen;
     let parent_cate = [...EnumCate.parent_cate];
-    if (selected_list.every((e) => e.CateID != EnumCate.tool_variant && e.IsWini)) {
-      parent_cate.push(EnumCate.tool_variant);
+    if (selected_list.every((e) => e.CateID != EnumCate.variant && e.IsWini)) {
+      parent_cate.push(EnumCate.variant);
     }
-    let containVariant = selected_list.some((e) => e.CateID === EnumCate.tool_variant || document.getElementById(e.GID).querySelectorAll(".w-variant").length > 0);
+    let containVariant = selected_list.some((e) => e.CateID === EnumCate.variant || document.getElementById(e.GID).querySelectorAll(".w-variant").length > 0);
     let objp = list.filter((eHTML) => {
       if (
         eHTML.parents(`.wbaseItem-value[iswini="true"]`).length ||
@@ -563,7 +563,7 @@ function selectParent(event) {
           .getAttribute("listid")
           .split(",")
           .filter((id) => id != wbase_parentID)
-          .some((id) => document.getElementById(id).getAttribute("cateid") == EnumCate.tool_variant)
+          .some((id) => document.getElementById(id).getAttribute("cateid") == EnumCate.variant)
       ) {
         return false;
       }
@@ -729,7 +729,7 @@ function centerViewInitListener() {
         window.getSelection().removeAllRanges();
       }
       return;
-    } else if (document.activeElement.getAttribute("cateid") == EnumCate.tool_text) {
+    } else if (document.activeElement.getAttribute("cateid") == EnumCate.text) {
       return;
     } else if (event.key?.toLowerCase() === "tab") {
       event.preventDefault();
@@ -765,7 +765,7 @@ function centerViewInitListener() {
       childList: true,
     });
   });
-  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.tool_frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
+  [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.frame}"]`), ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.form}"]`)].forEach((page) => {
     resizeWbase.observe(page);
   });
   listShowName = [...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`), ...EnumCate.show_name.map((ct) => [...divSection.querySelectorAll(`:scope > .wbaseItem-value[cateid="${ct}"]:not(*[isinstance="true"])`)]).reduce((a, b) => a.concat(b))].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex));
@@ -777,7 +777,7 @@ const childObserver = new MutationObserver((mutationList) => {
       let listBrpKey = ProjectDA.obj.ResponsiveJson.BreakPoint.map((brp) => brp.Key.match(brpRegex).pop().replace(/[()]/g, ""));
       let listClass = ["min-brp", ...wbaseValue.classList].filter((wbClass) => listBrpKey.every((brpKey) => brpKey != wbClass));
       wbaseValue.className = listClass.join(" ");
-      if (wbaseValue.getAttribute("cateid") == EnumCate.tool_variant) {
+      if (wbaseValue.getAttribute("cateid") == EnumCate.variant) {
         childObserver.disconnect(wbaseValue, {
           childList: true,
         });
@@ -802,7 +802,7 @@ const childObserver = new MutationObserver((mutationList) => {
           wbaseValue.className += ` ${closestBrp}`;
         }
         resizeWbase.observe(wbaseValue);
-      } else if (wbaseValue.getAttribute("cateid") == EnumCate.tool_variant) {
+      } else if (wbaseValue.getAttribute("cateid") == EnumCate.variant) {
         childObserver.observe(wbaseValue, {
           childList: true,
         });
@@ -885,8 +885,8 @@ function moveListener(event) {
               preAction.className = preAction.className.replace("caret-down", "caret-right");
             }
           } else {
-            if (eLayer.getAttribute("cateid") == EnumCate.tool_variant) {
-              if (selected_list[0].CateID === EnumCate.tool_variant || !selected_list[0].IsWini) {
+            if (eLayer.getAttribute("cateid") == EnumCate.variant) {
+              if (selected_list[0].CateID === EnumCate.variant || !selected_list[0].IsWini) {
                 let preAction = eLayer.querySelector(`.prefix-btn`);
                 if (preAction) {
                   preAction.className = preAction.className.replace("caret-right", "caret-down");
@@ -2147,7 +2147,7 @@ function doubleClickEvent(event) {
       let currentLevel = selected_list.length > 0 ? selected_list[0].Level : 1;
       let target_element = element_path.slice(0, parent_index).find((eHTML) => eHTML.classList?.contains("wbaseItem-value") && eHTML.getAttribute("Level") == currentLevel + 1) ?? element_path[parent_index];
       if (selected_list.length == 1 && target_element?.id == selected_list[0].GID) {
-        if (target_element.getAttribute("cateid") == EnumCate.tool_text) {
+        if (target_element.getAttribute("cateid") == EnumCate.text) {
           target_element.querySelector("span").contentEditable = true;
           target_element.querySelector("span").focus();
         } else if (event.target.localName == "path") {
@@ -2436,7 +2436,7 @@ function upListener(event) {
       if (WBaseDA.listData.length > 0) {
         list_add = WBaseDA.listData;
       } else {
-        list_add = selected_list.filter((e) => e.CateID !== EnumCate.tool_text);
+        list_add = selected_list.filter((e) => e.CateID !== EnumCate.text);
       }
       // ! add wbase thường
       if (!event.altKey) {
@@ -2463,7 +2463,7 @@ function upListener(event) {
       if (select_box_parentID != wbase_parentID) isInFlex = window.getComputedStyle(document.getElementById(select_box_parentID)).display.match("flex");
       for (let wbaseItem of selected_list) {
         let eHTML = wbaseItem.value;
-        if (wbaseItem.CateID == EnumCate.tool_text) {
+        if (wbaseItem.CateID == EnumCate.text) {
           enumObj = EnumObj.typoStyleFramePosition;
         }
         if (wbaseItem.StyleItem.FrameItem.Width != undefined) {

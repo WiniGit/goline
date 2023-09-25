@@ -62,7 +62,7 @@ async function initData() {
   for (let item of wbase_list) {
     item.value = null;
     let children = [];
-    if ([EnumCate.tool_variant, ...EnumCate.parent_cate].some((ct) => ct == item.CateID)) children = wbase_list.filter((e) => e.ParentID === item.GID);
+    if ([EnumCate.variant, ...EnumCate.parent_cate].some((ct) => ct == item.CateID)) children = wbase_list.filter((e) => e.ParentID === item.GID);
     await initComponents(item, children, false);
     item.value.id = item.GID;
     if (item.ParentID === wbase_parentID) {
@@ -531,7 +531,7 @@ function createWbaseHTML(rect_box, newObj) {
   } else {
     removeAllRects();
     addSelectList([new_obj]);
-    if (new_obj.CateID === EnumCate.tool_text) {
+    if (new_obj.CateID === EnumCate.text) {
       new_obj.isNew = true;
       new_obj.value.querySelector("span").contentEditable = true;
       new_obj.value.querySelector("span").focus();
@@ -994,7 +994,7 @@ function dragWbaseEnd() {
         } else {
           handleStyleSize(oldParent);
         }
-        if (oldParent?.CateID === EnumCate.tool_variant) {
+        if (oldParent?.CateID === EnumCate.variant) {
           let listProperty = PropertyDA.list.filter((e) => e.BaseID === oldParent.GID);
           for (let propertyItem of listProperty) {
             propertyItem.BasePropertyItems = propertyItem.BasePropertyItems.filter((e) => selected_list.every((wbase) => e.BaseID != wbase.GID));
@@ -1661,7 +1661,7 @@ function ctrlZ() {
           if (oldWBaseList.every((e) => e.GID !== newParent.GID)) {
             newParent.ListChildID = newParent.ListChildID.filter((id) => action.selected.every((e) => e.GID !== id));
             newParent.CountChild = newParent.ListChildID.length;
-            if (oldParent?.CateID === EnumCate.tool_variant) {
+            if (oldParent?.CateID === EnumCate.variant) {
               PropertyDA.list = PropertyDA.list.filter((e) => e.BaseID !== oldParent.GID);
               PropertyDA.list.push(...oldParent.PropertyItems);
             }
@@ -1733,7 +1733,7 @@ function ctrlZ() {
           let parentLevel = Math.min(...listUpdate.map((e) => e.Level));
           for (let wbaseItem of listUpdate) {
             wbaseItem.IsDeleted = false;
-            if (wbaseItem.CateID == EnumCate.tool_variant) {
+            if (wbaseItem.CateID == EnumCate.variant) {
               PropertyDA.list = PropertyDA.list.filter((e) => e.BaseID !== wbaseItem.GID);
               PropertyDA.list.push(...wbaseItem.PropertyItems);
             }

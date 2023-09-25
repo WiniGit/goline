@@ -72,7 +72,7 @@ async function initComponents(item, list, initListener = true) {
     item.VariablesData = JSON.parse(item.AttributesItem.Variables);
   }
   if (item.IsWini) {
-    if (item.CateID == EnumCate.tool_variant) {
+    if (item.CateID == EnumCate.variant) {
       item.PropertyItems = PropertyDA.list.filter((e) => e.BaseID == item.GID);
       for (let property of item.PropertyItems) {
         property.BasePropertyItems = property.BasePropertyItems.filter((e) => item.ListChildID.some((id) => id === e.BaseID));
@@ -88,20 +88,20 @@ async function initComponents(item, list, initListener = true) {
   }
   if (item.StyleItem) initSkinWbase(item);
   switch (item.CateID) {
-    case EnumCate.tool_frame:
+    case EnumCate.frame:
       createFrameHTML(item, list);
       break;
     case EnumCate.form:
       createFrameHTML(item, list);
       $(item.value).addClass("w-form");
       break;
-    case EnumCate.tool_variant:
+    case EnumCate.variant:
       createVariantHTML(item, list);
       break;
-    case EnumCate.tool_rectangle:
+    case EnumCate.rectangle:
       createRectangleHTML(item);
       break;
-    case EnumCate.tool_text:
+    case EnumCate.text:
       createTextHTML(item);
       break;
     case EnumCate.textfield:
@@ -196,10 +196,10 @@ async function initComponents(item, list, initListener = true) {
 
 async function updateComponentContent(item) {
   switch (item.CateID) {
-    case EnumCate.tool_rectangle:
+    case EnumCate.rectangle:
       item.value.style.backgroundImage = `url(${urlImg + item.StyleItem.DecorationItem.replaceAll(" ", "%20")})`;
       break;
-    case EnumCate.tool_text:
+    case EnumCate.text:
       item.value.innerText = item.AttributesItem.Content ?? "";
       break;
     case EnumCate.radio_button:
@@ -536,7 +536,7 @@ function initSkinWbase(item) {
       }
     }
   }
-  if (item.StyleItem.TextStyleID || item.CateID === EnumCate.tool_text || item.CateID === EnumCate.textformfield) {
+  if (item.StyleItem.TextStyleID || item.CateID === EnumCate.text || item.CateID === EnumCate.textformfield) {
     let typoID = item.StyleItem.TextStyleID;
     if (typoID) {
       let typoSkin = (isLocalItem ? TypoDA.list : TypoDA.listAssets).find((e) => e.GID == typoID || e.ListID?.includes(typoID));
@@ -667,7 +667,7 @@ function initWbaseStyle(item) {
     handleStyleSize(item);
     if (isNaN(item.StyleItem.FrameItem.TopLeft)) {
       switch (item.CateID) {
-        case EnumCate.tool_rectangle:
+        case EnumCate.rectangle:
           item.value.style.borderRadius = "50%";
           break;
         default:
@@ -773,7 +773,7 @@ function initWbaseStyle(item) {
 
 function handleStyleSize(item) {
   if (isNaN(item.StyleItem.FrameItem.Width)) {
-    if (item.CateID === EnumCate.tool_text) {
+    if (item.CateID === EnumCate.text) {
       item.value.style.width = "max-content";
     } else {
       item.value.style.width = "fit-content";

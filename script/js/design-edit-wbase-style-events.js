@@ -8,7 +8,7 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position === "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant;
             let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             for (let child of children) {
               child.StyleItem ??= {
@@ -117,7 +117,7 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant;
             let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             let parentW = Math.round(wb.value.getBoundingClientRect().width / scale);
             for (let child of children) {
@@ -233,7 +233,7 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant;
             let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             for (let child of children) {
               child.StyleItem ??= {
@@ -343,7 +343,7 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant;
             let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             for (let child of children) {
               child.StyleItem ??= {
@@ -452,7 +452,7 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant;
             let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             let parentH = Math.round(wb.value.getBoundingClientRect().height / scale);
             for (let child of children) {
@@ -568,7 +568,7 @@ function alignPosition(align_value) {
           let children = [...wb.value.querySelectorAll(`.wbaseItem-value[level="${selected_list[0].Level + 1}"]`)].filter((childWb) => window.getComputedStyle(childWb).position == "absolute");
           if (children.length > 0) {
             children = wbase_list.filter((e) => children.some((eHTML) => e.GID === eHTML.id));
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.tool_variant;
+            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant;
             let cssItem = StyleDA.cssStyleSheets.find((e) => e.GID === wb.GID);
             for (let child of children) {
               child.StyleItem ??= {
@@ -2211,13 +2211,13 @@ function addBackgroundColor() {
     let elementHTML = document.getElementById(list_change_background[i].GID);
     let new_color_value;
     switch (list_change_background[i].CateID) {
-      case EnumCate.tool_frame:
+      case EnumCate.frame:
         new_color_value = "FFFFFFFF";
         break;
       case EnumCate.form:
         new_color_value = "FFFFFFFF";
         break;
-      case EnumCate.tool_variant:
+      case EnumCate.variant:
         new_color_value = "FFFFFFFF";
         break;
       default:
@@ -3415,7 +3415,7 @@ function createForm() {
 
 function removeForm() {
   selected_list[0].Name = "Frame";
-  selected_list[0].CateID = EnumCate.tool_frame;
+  selected_list[0].CateID = EnumCate.frame;
   let newFrame = document.createElement("div");
   for (let i = 0; i < selected_list[0].value.attributes.length; i++) {
     let attrObj = selected_list[0].value.attributes[i];

@@ -124,7 +124,7 @@ async function push_dataProject() {
         case EnumCate.chart:
           buildChart(wbValue);
           break;
-        case EnumCate.tool_text:
+        case EnumCate.text:
           wbValue.removeAttribute("contenteditable");
           break;
         case EnumCate.textformfield:

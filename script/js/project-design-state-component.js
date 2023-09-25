@@ -1753,7 +1753,7 @@ function createDataForm() {
     };
     body.replaceChildren(inputNameFieldContainer);
   }
-  if (selected_list.length > 1 || selected_list[0].CateID === EnumCate.tool_frame) {
+  if (selected_list.length > 1 || selected_list[0].CateID === EnumCate.frame) {
     header.innerHTML = "Data form";
     let iconAddForm = document.createElement("i");
     iconAddForm.className = "fa-solid fa-plus";

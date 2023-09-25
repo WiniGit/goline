@@ -54,7 +54,7 @@ function updateUIDesignView() {
     // // let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign);
     listEditContainer.appendChild(editSizePosition);
-    // if (selected_list.length === 1 && selected_list[0].IsWini && selected_list[0].CateID !== EnumCate.tool_variant) {
+    // if (selected_list.length === 1 && selected_list[0].IsWini && selected_list[0].CateID !== EnumCate.variant) {
     //   let editVariables = createVariables();
     //   listEditContainer.appendChild(editVariables);
     // }
@@ -201,7 +201,7 @@ function createEditAlign() {
   let editAlignContainer = document.createElement("div");
   editAlignContainer.id = "edit_align_div";
   let isEnable = !selected_list[0].value.closest(`.wbaseItem-value[isinstance="true"]`) && selected_list.every((wb) => (window.getComputedStyle(wb.value).position === "absolute" && (selected_list.length > 1 || wb.Level > 1)) || [...wb.value.querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)].some((childWb) => window.getComputedStyle(childWb).position === "absolute"));
-  if(isEnable) {
+  if (isEnable) {
     isEnable = !selected_list.some(wb => wb.IsInstance && (window.getComputedStyle(wb.value).position !== "absolute" || wb.Level === 1));
   }
   editAlignContainer.setAttribute("enable", isEnable);
@@ -246,6 +246,7 @@ function createEditSizePosition() {
         if (i + 1 != listDevice.length) col.style.borderBottom = "0.5px solid #e5e5e5";
         for (let device of listDevice[i]) {
           let option = document.createElement("div");
+          option.className = "w-device-option-tile"
           option.onclick = function (ev) {
             ev.stopPropagation();
             inputFrameItem({ Width: device.Width, Height: device.Height });
@@ -254,20 +255,12 @@ function createEditSizePosition() {
           };
           let icon_check = document.createElement("i");
           icon_check.className = "fa-solid fa-check";
-          icon_check.style.boxSizing = "border-box";
-          icon_check.style.color = "#ffffff";
-          icon_check.style.marginRight = "8px";
-          if (btn_title.innerHTML == device.Name) icon_check.style.visibility = "visible";
-          else icon_check.style.visibility = "hidden";
-          option.appendChild(icon_check);
+          icon_check.style.visibility = btn_title.innerHTML === device.Name ? "visible" : "hidden";
           let title = document.createElement("span");
           title.innerHTML = device.Name;
-          title.style.flex = 1;
-          title.style.width = "100%";
-          option.appendChild(title);
           let size = document.createElement("span");
           size.innerHTML = `${device.Width}x${device.Height}`;
-          option.appendChild(size);
+          option.replaceChildren(icon_check, title, size);
           col.appendChild(option);
         }
         popup.appendChild(col);
@@ -284,38 +277,6 @@ function createEditSizePosition() {
     let btn_icon_down = document.createElement("i");
     btn_icon_down.className = "fa-solid fa-chevron-down fa-2xs";
     btn_select_frame_size.replaceChildren(btn_title, btn_icon_down);
-    // if (selected_list.every((e) => !e.WAutolayoutItem)) {
-    //   let group_btn_frame_direction = document.createElement("div");
-    //   pageDeviceContainer.appendChild(group_btn_frame_direction);
-    //   group_btn_frame_direction.id = "group_btn_frame_direction";
-    //   group_btn_frame_direction.className = "group_btn_direction";
-    //   let btn_vertical = document.createElement("img");
-    //   let btn_horizontal = document.createElement("img");
-    //   group_btn_frame_direction.replaceChildren(btn_vertical, btn_horizontal);
-    //   btn_vertical.onclick = function () {
-    //     if (this.style.backgroundColor == "transparent") {
-    //       this.style.backgroundColor = "#e5e5e5";
-    //       btn_horizontal.style.backgroundColor = "transparent";
-    //     }
-    //   };
-    //   btn_horizontal.onclick = function () {
-    //     if (this.style.backgroundColor == "transparent") {
-    //       this.style.backgroundColor = "#e5e5e5";
-    //       btn_vertical.style.backgroundColor = "transparent";
-    //     }
-    //   };
-    // }
-    // if (selected_list.every((e) => !e.WAutolayoutItem)) {
-    //   let icon_resize_to_fit = document.createElement("img");
-    //   pageDeviceContainer.appendChild(icon_resize_to_fit);
-    //   icon_resize_to_fit.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/resize_to_fit.svg";
-    //   icon_resize_to_fit.className = "img-button size-32";
-    //   icon_resize_to_fit.style.borderRadius = "2px";
-    //   icon_resize_to_fit.style.padding = "6px 8px";
-    //   icon_resize_to_fit.onclick = function () {
-    //     frameHugChildrenSize();
-    //   };
-    // }
     edit_size_position_div.appendChild(pageDeviceContainer);
   }
 
@@ -466,160 +427,148 @@ function createEditSizePosition() {
       edit_height.lastChild.disabled = true;
     }
   }
-  if (selected_list.every((e) => e.CateID !== EnumCate.table)) {
-    let radiusContainer = document.createElement("div");
-    radiusContainer.className = "row";
-    // input edit rotate
-    let edit_rotate = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rotate_rect.svg", undefined, "0");
-
-    // input edit radius
-    let list_seleted_radius = selected_list.filter((e) => e.StyleItem.FrameItem?.TopLeft != undefined);
-    if (list_seleted_radius.length > 0) {
-      let list_radius_value = list_seleted_radius.map((e) => [e.StyleItem.FrameItem.TopLeft, e.StyleItem.FrameItem.TopRight, e.StyleItem.FrameItem.BottomLeft, e.StyleItem.FrameItem.BottomRight]);
-      list_radius_value = [].concat(...list_radius_value).filterAndMap();
-      let edit_radius = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg", undefined, list_radius_value.length == 1 ? list_radius_value[0] : "mixed");
-      edit_radius.lastChild.onblur = function () {
-        let newValue = parseFloat(this.value);
-        if (isNaN(newValue)) {
-          let list_radius_value = list_seleted_radius.map((e) => [e.StyleItem.FrameItem.TopLeft, e.StyleItem.FrameItem.TopRight, e.StyleItem.FrameItem.BottomLeft, e.StyleItem.FrameItem.BottomRight]);
-          list_radius_value = [].concat(...list_radius_value).filterAndMap();
-          this.value = list_radius_value.length == q ? list_radius_value[0] : "mixed";
+  // input edit radius
+  const allowRadius = [EnumCate.rectangle, EnumCate.frame, EnumCate.form, EnumCate.textformfield, EnumCate.button];
+  let showInputRadius = selected_list.filter((e) => allowRadius.some(ct => e.CateID === ct));
+  let radiusContainer = document.createElement("div");
+  radiusContainer.className = "row";
+  // input edit rotate
+  let edit_rotate = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rotate_rect.svg", undefined, "0");
+  if (showInputRadius.length > 0) {
+    let list_radius_value = showInputRadius.map((e) => window.getComputedStyle(e.value).borderRadius.split(" ").map(brvl => parseFloat(brvl.replace("px"))));
+    list_radius_value = [].concat(...list_radius_value).filterAndMap();
+    let edit_radius = _textField("82px", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg", undefined, list_radius_value.length == 1 ? list_radius_value[0] : "mixed");
+    edit_radius.lastChild.onblur = function () {
+      let newValue = parseFloat(this.value);
+      if (isNaN(newValue)) {
+        let list_radius_value = list_seleted_radius.map((e) => [e.StyleItem.FrameItem.TopLeft, e.StyleItem.FrameItem.TopRight, e.StyleItem.FrameItem.BottomLeft, e.StyleItem.FrameItem.BottomRight]);
+        list_radius_value = [].concat(...list_radius_value).filterAndMap();
+        this.value = list_radius_value.length == 1 ? list_radius_value[0] : "mixed";
+      } else {
+        inputFrameItem({
+          TopLeft: newValue,
+          TopRight: newValue,
+          BottomLeft: newValue,
+          BottomRight: newValue,
+        });
+        input_top_left.value = newValue;
+        input_top_right = newValue;
+        input_bot_left = newValue;
+        input_bot_right = newValue;
+      }
+    };
+    let icon_radius_detail = document.createElement("img");
+    icon_radius_detail.setAttribute("show-details", false);
+    icon_radius_detail.className = "radius-details img-button size-24";
+    icon_radius_detail.onclick = function () {
+      icon_radius_detail.setAttribute("show-details", icon_radius_detail.getAttribute("show-details") != "true");
+      if (icon_radius_detail.getAttribute("show-details") == "true") {
+        edit_radius.style.pointerEvents = "none";
+      } else {
+        edit_radius.style.pointerEvents = "auto";
+      }
+    };
+    radiusContainer.replaceChildren(edit_rotate, edit_radius, icon_radius_detail);
+    edit_size_position_div.appendChild(radiusContainer);
+    // fifth line contain 4 rect radius topleft, topright, botleft, botright
+    let _row_radius_detail = document.createElement("div");
+    _row_radius_detail.id = "row_radius_detail";
+    let icon_HTML = document.createElement("img");
+    icon_HTML.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg";
+    icon_HTML.className = "img-button size-24";
+    _row_radius_detail.replaceChildren(icon_HTML, ...["borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius"].map(radiusProp => {
+      let radiusInputDetail = document.createElement("input");
+      let rvalue = showInputRadius.filterAndMap((e) => window.getComputedStyle(e.value)[radiusProp].replace("px", ""));
+      radiusInputDetail.value = rvalue.length == 1 ? rvalue[0] : "mixed";
+      radiusInputDetail.onfocus = function () {
+        this.setSelectionRange(0, this.value.length);
+      };
+      return radiusInputDetail;
+    }));
+    $("body").on("blur", "#row_radius_detail > input:nth-child(2)", function () {
+      let newValue = parseFloat(this.value);
+      if (isNaN(newValue)) {
+        let list_top_left_value = selected_list.filter((e) => e.StyleItem.FrameItem?.TopLeft != undefined).map((e) => e.StyleItem.FrameItem.TopLeft);
+        let top_left_value = list_top_left_value[0];
+        list_top_left_value = list_top_left_value.filter((e) => e != top_left_value);
+        this.value = list_top_left_value.length == 0 ? top_left_value : "mixed";
+      } else {
+        inputFrameItem({ TopLeft: newValue });
+        if (this.value == input_top_right.value && this.value == input_bot_left.value && this.value == input_bot_right.value) {
+          edit_radius.lastChild.value = this.value;
         } else {
-          inputFrameItem({
-            TopLeft: newValue,
-            TopRight: newValue,
-            BottomLeft: newValue,
-            BottomRight: newValue,
-          });
-          input_top_left.value = newValue;
-          input_top_right = newValue;
-          input_bot_left = newValue;
-          input_bot_right = newValue;
+          edit_radius.lastChild.value = "mixed";
         }
-      };
-      let icon_radius_detail = document.createElement("img");
-      icon_radius_detail.setAttribute("show-details", false);
-      icon_radius_detail.className = "radius-details img-button size-24";
-      icon_radius_detail.onclick = function () {
-        icon_radius_detail.setAttribute("show-details", icon_radius_detail.getAttribute("show-details") != "true");
-        if (icon_radius_detail.getAttribute("show-details") == "true") {
-          edit_radius.style.pointerEvents = "none";
+      }
+    });
+    $("body").on("blur", "#row_radius_detail > input:nth-child(3)", function () {
+      let newValue = parseFloat(this.value);
+      if (isNaN(newValue)) {
+        let list_top_right_value = selected_list.filter((e) => e.StyleItem.FrameItem?.Topright != undefined).map((e) => e.StyleItem.FrameItem.TopRight);
+        let top_right_value = list_top_right_value[0];
+        list_top_right_value = list_top_right_value.filter((e) => e != top_right_value);
+        this.value = list_top_right_value.length == 0 ? top_right_value : "mixed";
+      } else {
+        inputFrameItem({ TopRight: newValue });
+        if (this.value == input_top_left.value && this.value == input_bot_left.value && this.value == input_bot_right.value) {
+          edit_radius.lastChild.value = this.value;
         } else {
-          edit_radius.style.pointerEvents = "auto";
+          edit_radius.lastChild.value = "mixed";
         }
-      };
-      radiusContainer.replaceChildren(edit_rotate, edit_radius, icon_radius_detail);
-      edit_size_position_div.appendChild(radiusContainer);
-      // fifth line contain 4 rect radius topleft, topright, botleft, botright
-      let _row_radius_detail = document.createElement("div");
-      _row_radius_detail.id = "row_radius_detail";
-      let icon_HTML = document.createElement("img");
-      icon_HTML.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg";
-      icon_HTML.className = "img-button size-24";
-      _row_radius_detail.appendChild(icon_HTML);
-      let input_top_left = document.createElement("input");
-      let list_radius_top_left = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.TopLeft);
-      input_top_left.value = list_radius_top_left.length == 1 ? list_radius_top_left[0] : "mixed";
-      let input_top_right = document.createElement("input");
-      let list_radius_top_right = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.TopRight);
-      input_top_right.value = list_radius_top_right.length == 1 ? list_radius_top_right[0] : "mixed";
-      let input_bot_left = document.createElement("input");
-      let list_radius_bot_left = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.BottomLeft);
-      input_bot_left.value = list_radius_bot_left.length == 1 ? list_radius_bot_left[0] : "mixed";
-      let input_bot_right = document.createElement("input");
-      let list_radius_bot_right = list_seleted_radius.filterAndMap((e) => e.StyleItem.FrameItem.BottomRight);
-      input_bot_right.value = list_radius_bot_right.length == 1 ? list_radius_bot_right[0] : "mixed";
-      [input_top_left, input_top_right, input_bot_right, input_bot_left].forEach((element_input) => {
-        element_input.onfocus = function () {
-          this.setSelectionRange(0, this.value.length);
-        };
-        _row_radius_detail.appendChild(element_input);
-      });
-      input_top_left.onblur = function () {
-        let newValue = parseFloat(this.value);
-        if (isNaN(newValue)) {
-          let list_top_left_value = selected_list.filter((e) => e.StyleItem.FrameItem?.TopLeft != undefined).map((e) => e.StyleItem.FrameItem.TopLeft);
-          let top_left_value = list_top_left_value[0];
-          list_top_left_value = list_top_left_value.filter((e) => e != top_left_value);
-          this.value = list_top_left_value.length == 0 ? top_left_value : "mixed";
+      }
+    });
+    $("body").on("blur", "#row_radius_detail > input:nth-child(4)", function () {
+      let newValue = parseFloat(this.value);
+      if (isNaN(newValue)) {
+        let list_bot_left_value = selected_list.filter((e) => e.StyleItem.FrameItem?.BottomLeft != undefined).map((e) => e.StyleItem.FrameItem.BottomLeft);
+        let bot_left_value = list_bot_left_value[0];
+        list_bot_left_value = list_bot_left_value.filter((e) => e != bot_left_value);
+        this.value = list_bot_left_value.length == 0 ? bot_left_value : "mixed";
+      } else {
+        inputFrameItem({ BottomLeft: newValue });
+        if (this.value == input_top_right.value && this.value == input_top_left.value && this.value == input_bot_right.value) {
+          edit_radius.lastChild.value = this.value;
         } else {
-          inputFrameItem({ TopLeft: newValue });
-          if (this.value == input_top_right.value && this.value == input_bot_left.value && this.value == input_bot_right.value) {
-            edit_radius.lastChild.value = this.value;
-          } else {
-            edit_radius.lastChild.value = "mixed";
-          }
+          edit_radius.lastChild.value = "mixed";
         }
-      };
-      input_top_right.onblur = function () {
-        let newValue = parseFloat(this.value);
-        if (isNaN(newValue)) {
-          let list_top_right_value = selected_list.filter((e) => e.StyleItem.FrameItem?.Topright != undefined).map((e) => e.StyleItem.FrameItem.TopRight);
-          let top_right_value = list_top_right_value[0];
-          list_top_right_value = list_top_right_value.filter((e) => e != top_right_value);
-          this.value = list_top_right_value.length == 0 ? top_right_value : "mixed";
+      }
+    });
+    $("body").on("blur", "#row_radius_detail > input:nth-child(5)", function () {
+      let newValue = parseFloat(this.value);
+      if (isNaN(newValue)) {
+        let list_bot_right_value = selected_list.filter((e) => e.StyleItem.FrameItem?.BottomRight != undefined).map((e) => e.StyleItem.FrameItem.BottomRight);
+        let bot_right_value = list_bot_right_value[0];
+        list_bot_right_value = list_bot_right_value.filter((e) => e != bot_right_value);
+        this.value = list_bot_right_value.length == 0 ? bot_right_value : "mixed";
+      } else {
+        inputFrameItem({ BottomRight: newValue });
+        if (this.value == input_top_right.value && this.value == input_top_left.value && this.value == input_bot_left.value) {
+          edit_radius.lastChild.value = this.value;
         } else {
-          inputFrameItem({ TopRight: newValue });
-          if (this.value == input_top_left.value && this.value == input_bot_left.value && this.value == input_bot_right.value) {
-            edit_radius.lastChild.value = this.value;
-          } else {
-            edit_radius.lastChild.value = "mixed";
-          }
+          edit_radius.lastChild.value = "mixed";
         }
-      };
-      input_bot_left.onblur = function () {
-        let newValue = parseFloat(this.value);
-        if (isNaN(newValue)) {
-          let list_bot_left_value = selected_list.filter((e) => e.StyleItem.FrameItem?.BottomLeft != undefined).map((e) => e.StyleItem.FrameItem.BottomLeft);
-          let bot_left_value = list_bot_left_value[0];
-          list_bot_left_value = list_bot_left_value.filter((e) => e != bot_left_value);
-          this.value = list_bot_left_value.length == 0 ? bot_left_value : "mixed";
-        } else {
-          inputFrameItem({ BottomLeft: newValue });
-          if (this.value == input_top_right.value && this.value == input_top_left.value && this.value == input_bot_right.value) {
-            edit_radius.lastChild.value = this.value;
-          } else {
-            edit_radius.lastChild.value = "mixed";
-          }
-        }
-      };
-      input_bot_right.onblur = function () {
-        let newValue = parseFloat(this.value);
-        if (isNaN(newValue)) {
-          let list_bot_right_value = selected_list.filter((e) => e.StyleItem.FrameItem?.BottomRight != undefined).map((e) => e.StyleItem.FrameItem.BottomRight);
-          let bot_right_value = list_bot_right_value[0];
-          list_bot_right_value = list_bot_right_value.filter((e) => e != bot_right_value);
-          this.value = list_bot_right_value.length == 0 ? bot_right_value : "mixed";
-        } else {
-          inputFrameItem({ BottomRight: newValue });
-          if (this.value == input_top_right.value && this.value == input_top_left.value && this.value == input_bot_left.value) {
-            edit_radius.lastChild.value = this.value;
-          } else {
-            edit_radius.lastChild.value = "mixed";
-          }
-        }
-      };
-      edit_size_position_div.appendChild(_row_radius_detail);
-    }
-    if (selected_list.filter((e) => EnumCate.no_child_component.every((cate) => e.CateID != cate)).length > 0) {
-      // sixth line is btn checkboc clip content (overflow)
-      let btn_clip_content = document.createElement("div");
-      btn_clip_content.className = "row regular1";
-      btn_clip_content.style.margin = "4px 0 0 16px";
-      let checkbox = document.createElement("input");
-      btn_clip_content.appendChild(checkbox);
-      checkbox.type = "checkbox";
-      checkbox.style.marginRight = "8px";
-      checkbox.defaultChecked = selected_list.every((wbaseItem) => wbaseItem.StyleItem.FrameItem.IsClip);
-      checkbox.style.pointerEvents = "none";
-      checkbox.style.width = "fit-content";
-      btn_clip_content.innerHTML += "Clip content";
-      btn_clip_content.onclick = function () {
-        this.firstChild.checked = !this.firstChild.checked;
-        inputFrameItem({ IsClip: this.firstChild.checked });
-      };
-      edit_size_position_div.appendChild(btn_clip_content);
-    }
+      }
+    });
+    edit_size_position_div.appendChild(_row_radius_detail);
+  }
+  if (selected_list.filter((e) => e !== EnumCate.table && EnumCate.no_child_component.every((cate) => e.CateID != cate)).length > 0) {
+    // sixth line is btn checkboc clip content (overflow)
+    let btn_clip_content = document.createElement("div");
+    btn_clip_content.className = "row regular1";
+    btn_clip_content.style.margin = "4px 0 0 16px";
+    let checkbox = document.createElement("input");
+    btn_clip_content.appendChild(checkbox);
+    checkbox.type = "checkbox";
+    checkbox.style.marginRight = "8px";
+    checkbox.defaultChecked = selected_list.every((wbaseItem) => wbaseItem.StyleItem.FrameItem.IsClip);
+    checkbox.style.pointerEvents = "none";
+    checkbox.style.width = "fit-content";
+    btn_clip_content.innerHTML += "Clip content";
+    btn_clip_content.onclick = function () {
+      this.firstChild.checked = !this.firstChild.checked;
+      inputFrameItem({ IsClip: this.firstChild.checked });
+    };
+    edit_size_position_div.appendChild(btn_clip_content);
   }
   return edit_size_position_div;
 }
@@ -782,7 +731,7 @@ function createAutoLayout() {
     _row1.appendChild(btn_extension);
     btn_extension.className = "fa-solid fa-ellipsis icon_btn_default_style";
     btn_extension.onclick = function () {
-      setTimeout(function () {}, 200);
+      setTimeout(function () { }, 200);
     };
     // input edit child space
     let childSpaceValues = autoLayoutList.filterAndMap((e) => e.WAutolayoutItem.ChildSpace);
@@ -1332,7 +1281,7 @@ function showPopupSelectResizeType(popup_list_resize_type, isW, type) {
   }
   var activeHug = false;
   activeHug = selected_list.every((e) => {
-    if (e.CateID === EnumCate.tool_text || e.CateID === EnumCate.table) return true;
+    if (e.CateID === EnumCate.text || e.CateID === EnumCate.table) return true;
     if (e.WAutolayoutItem && !(e.WAutolayoutItem.IsScroll && e.WAutolayoutItem.IsWrap)) {
       if (isW) {
         if (e.CateID !== EnumCate.textformfield) {
@@ -2360,7 +2309,7 @@ function createEditBorder() {
       });
       btnSelectBorderSide.appendChild(dropdown_type);
 
-      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg", null, function () {});
+      let edit_line_action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg", null, function () { });
       edit_line_action2.className = "action-button";
       action_edit_line_container.appendChild(edit_line_action2);
 
@@ -2723,7 +2672,7 @@ function createEditEffect() {
       btn_select_eType.firstChild.innerHTML = eTypeValues.length == 1 ? eTypeValues[0] : "mixed";
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () { });
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
 
@@ -2993,7 +2942,7 @@ function createDropdownTableSkin(enumCate, offset, currentSkinID) {
   let titleBar = document.createElement("div");
   titleBar.className = "row";
   let title = document.createElement("span");
-  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/library-black.svg", null, function () {});
+  let action1 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/library-black.svg", null, function () { });
 
   let action2 = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/add2.svg", null, function () {
     setTimeout(function () {
@@ -4235,7 +4184,7 @@ function popupEditSkin(enumCate, jsonSkin) {
       btn_select_eType.firstChild.innerHTML = jsonSkin.Type;
       div_select_eType.appendChild(btn_select_eType);
 
-      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () {});
+      let btn_isShow = createButtonAction("https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg", "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg", function () { });
       btn_isShow.className = "action-button";
       div_select_eType.appendChild(btn_isShow);
       //
@@ -4435,7 +4384,7 @@ function createEditVariants() {
   div_list_property.id = "list_property_div";
 
   // TH đang chọn obj là component có nhiều variants
-  if (selected_list.length == 1 && selected_list[0].CateID == EnumCate.tool_variant) {
+  if (selected_list.length == 1 && selected_list[0].CateID == EnumCate.variant) {
     let titleInnerHTML = document.createElement("p");
     titleInnerHTML.style.margin = "4px 0 0 6px";
     titleInnerHTML.innerHTML = "Property";
@@ -4451,7 +4400,7 @@ function createEditVariants() {
     div_list_property.replaceChildren(...list_property_tile);
   }
   // TH đang chọn nhiều obj là component nhg ko có variants con nào
-  else if (select_box_parentID != wbase_parentID && document.getElementById(select_box_parentID).getAttribute("cateid") == EnumCate.tool_variant) {
+  else if (select_box_parentID != wbase_parentID && document.getElementById(select_box_parentID).getAttribute("cateid") == EnumCate.variant) {
     btnTitle.style.pointerEvents = "none";
     action_add.style.display = "none";
     // TH các component này là những variant của 1 component cha
@@ -4512,7 +4461,7 @@ function createEditVariants() {
       list_property_tile.push(property_tile);
     }
     div_list_property.replaceChildren(...list_property_tile);
-  } else if (selected_list.length > 1 && selected_list.every((e) => e.IsWini && e.CateID != EnumCate.tool_variant)) {
+  } else if (selected_list.length > 1 && selected_list.every((e) => e.IsWini && e.CateID != EnumCate.variant)) {
     btnTitle.style.pointerEvents = "none";
     let titleInnerHTML = document.createElement("p");
     titleInnerHTML.style.margin = "4px 0 0 6px";

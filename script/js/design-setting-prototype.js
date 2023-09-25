@@ -160,7 +160,7 @@ function update_UI_selectDataPopup() {
 
         let list_page = wbase_list.filter(e =>
             e.Level == 1
-            && (e.CateID == EnumCate.tool_frame || e.CateID == EnumCate.form)
+            && (e.CateID == EnumCate.frame || e.CateID == EnumCate.form)
             && (e.GID != checkPage())
             && !selected_list[0].ListID.includes(e.GID)
         );

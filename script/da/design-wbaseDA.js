@@ -100,16 +100,15 @@ class EnumCate {
   static toolbar = 120;
   static form = 128;
   // static ? = 129;
-  static frame = 362;
-  static spacing = 363;
+  // static ? = 363;
   static view = 134;
   static carousel = 136;
-  static view_fullLayout = 135;
-  static tool_rectangle = 138;
-  static tool_text = 139;
-  static tool_frame = 140;
+  // static ? = 135;
+  static rectangle = 138;
+  static text = 139;
+  static frame = 140;
   // static ? = 142;
-  static tool_variant = 238;
+  static variant = 238;
   // static ? = 239;
   static chart = 240;
   static tree = 241;
@@ -119,17 +118,17 @@ class EnumCate {
 
   static baseComponent = [this.button, this.w_switch, this.checkbox, this.radio_button, this.textformfield, this.textfield, this.table, this.tree, this.chart, this.carousel];
 
-  static extend_frame = [this.tool_frame, this.form];
+  static extend_frame = [this.frame, this.form];
 
   static output_cate = [this.radio_button, this.w_switch, this.checkbox, this.textformfield];
 
-  static parent_cate = [this.tool_frame, this.form, this.textformfield, this.button, this.table, this.tree, this.carousel];
+  static parent_cate = [this.frame, this.form, this.textformfield, this.button, this.table, this.tree, this.carousel];
 
-  static no_child_component = [this.tool_rectangle, this.tool_text, this.checkbox, this.progress_bar, this.progress_circle, this.radio_button, this.w_switch, this.svg];
+  static no_child_component = [this.rectangle, this.text, this.checkbox, this.progress_bar, this.progress_circle, this.radio_button, this.w_switch, this.svg];
 
-  static noImgBg = [this.svg, ...this.scale_size_component, this.table, this.tree, this.chart, this.carousel, this.tool_text];
+  static noImgBg = [this.svg, ...this.scale_size_component, this.table, this.tree, this.chart, this.carousel, this.text];
 
-  static show_name = [this.tool_frame, this.form, this.tool_variant];
+  static show_name = [this.frame, this.form, this.variant];
 
   static data_component = [this.tree, this.chart, this.carousel, this.table];
 }
@@ -484,7 +483,7 @@ class WBaseDefault {
     Level: 1,
     ParentID: wbase_parentID,
     IsShow: true,
-    CateID: EnumCate.tool_rectangle,
+    CateID: EnumCate.rectangle,
     CountChild: 0,
     IsWini: false,
     PageID: current_page,
@@ -561,7 +560,7 @@ class WBaseDefault {
     Level: 1,
     ParentID: wbase_parentID,
     IsShow: true,
-    CateID: EnumCate.tool_rectangle,
+    CateID: EnumCate.rectangle,
     CountChild: 0,
     IsWini: false,
     PageID: current_page,
@@ -596,7 +595,7 @@ class WBaseDefault {
     Level: 1,
     ParentID: wbase_parentID,
     IsShow: true,
-    CateID: EnumCate.tool_text,
+    CateID: EnumCate.text,
     Sort: 1,
     CountChild: 0,
     IsWini: false,
@@ -643,7 +642,7 @@ class WBaseDefault {
     Level: 1,
     ParentID: wbase_parentID,
     IsShow: true,
-    CateID: EnumCate.tool_frame,
+    CateID: EnumCate.frame,
     CountChild: 0,
     IsWini: false,
     PageID: current_page.ID,
@@ -683,7 +682,7 @@ class WBaseDefault {
     Level: 1,
     ParentID: wbase_parentID,
     IsShow: true,
-    CateID: EnumCate.tool_variant,
+    CateID: EnumCate.variant,
     CountChild: 0,
     IsWini: true,
     PageID: current_page.ID,
@@ -1507,7 +1506,7 @@ class WBaseDA {
       }
       for (let wbaseItem of delete_list) {
         wbaseItem.IsDeleted = true;
-        if (wbaseItem.CateID == EnumCate.tool_variant) {
+        if (wbaseItem.CateID == EnumCate.variant) {
           PropertyDA.list = PropertyDA.list.filter((e) => e.BaseID != wbaseItem.GID);
         }
         if (wbaseItem.BasePropertyItems && wbaseItem.BasePropertyItems.length > 0) {

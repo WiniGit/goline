@@ -1052,7 +1052,7 @@ class WbaseIO {
       }
     }
     for (let wbaseItem of list) {
-      if (wbaseItem.CateID == EnumCate.tool_variant) {
+      if (wbaseItem.CateID == EnumCate.variant) {
         PropertyDA.list = PropertyDA.list.filter((e) => e.BaseID != wbaseItem.GID);
       }
       if (wbaseItem.BasePropertyItems && wbaseItem.BasePropertyItems.length > 0) {

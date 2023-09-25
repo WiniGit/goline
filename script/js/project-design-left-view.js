@@ -86,11 +86,11 @@ function showSearchResult() {
     -1, //base component
     -2, // search by text content
     -3, // local component
-    EnumCate.tool_text,
+    EnumCate.text,
     EnumCate.svg,
-    EnumCate.tool_rectangle,
-    EnumCate.tool_frame,
-    EnumCate.tool_variant,
+    EnumCate.rectangle,
+    EnumCate.frame,
+    EnumCate.variant,
   ];
   let searchContainer = document.createElement("div");
   searchContainer.className = "col";
@@ -111,25 +111,25 @@ function showSearchResult() {
         filterList = wbase_list.filter((wb) => EnumCate.baseComponent.some((ct) => wb.CateID === ct) && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())));
         break;
       case -2:
-        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_text && wb.AttributesItem.Content.toLowerCase().includes(Ultis.toSlug(this.value.toLowerCase())));
+        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.text && wb.AttributesItem.Content.toLowerCase().includes(Ultis.toSlug(this.value.toLowerCase())));
         break;
       case -3:
         filterList = wbase_list.filter((wb) => wb.IsWini);
         break;
-      case EnumCate.tool_text:
-        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_text && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())));
+      case EnumCate.text:
+        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.text && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())));
         break;
       case EnumCate.svg:
         filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.svg && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())));
         break;
-      case EnumCate.tool_rectangle:
-        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_rectangle && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())));
+      case EnumCate.rectangle:
+        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.rectangle && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())));
         break;
-      case EnumCate.tool_frame:
+      case EnumCate.frame:
         filterList = wbase_list.filter((wb) => EnumCate.extend_frame.some((ct) => wb.CateID === ct) && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())));
         break;
-      case EnumCate.tool_variant:
-        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.tool_variant && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())));
+      case EnumCate.variant:
+        filterList = wbase_list.filter((wb) => wb.CateID === EnumCate.variant && Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())));
         break;
       default:
         break;
@@ -139,20 +139,20 @@ function showSearchResult() {
         let result = document.createElement("div");
         result.className = "layer-search-result row";
         let cateImg = document.createElement("img");
-        if (wb.IsWini && wb.CateID != EnumCate.tool_variant) {
+        if (wb.IsWini && wb.CateID != EnumCate.variant) {
           cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/component.svg";
         } else {
           switch (wb.CateID) {
-            case EnumCate.tool_frame:
+            case EnumCate.frame:
               cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame_black.svg";
               break;
-            case EnumCate.tool_rectangle:
+            case EnumCate.rectangle:
               cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle_black.svg";
               break;
-            case EnumCate.tool_text:
+            case EnumCate.text:
               cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text_black.svg";
               break;
-            case EnumCate.tool_variant:
+            case EnumCate.variant:
               cateImg.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/multiple_component.svg";
               break;
             default:
@@ -236,19 +236,19 @@ function showSearchResult() {
             case -3:
               type.innerHTML = "Local component";
               break;
-            case EnumCate.tool_text:
+            case EnumCate.text:
               type.innerHTML = "Text";
               break;
             case EnumCate.svg:
               type.innerHTML = "Svg picture";
               break;
-            case EnumCate.tool_rectangle:
+            case EnumCate.rectangle:
               type.innerHTML = "Rectangle";
               break;
-            case EnumCate.tool_frame:
+            case EnumCate.frame:
               type.innerHTML = "Frame";
               break;
-            case EnumCate.tool_variant:
+            case EnumCate.variant:
               type.innerHTML = "Variant";
               break;
             default:
@@ -449,7 +449,7 @@ function createLayerTile(wbaseItem, isShowChildren = false) {
   wbase_tile.appendChild(icon_lock);
   //
   let wbaseChildren = [];
-  if ([EnumCate.tool_variant, ...EnumCate.parent_cate].some((cate) => wbaseItem.CateID === cate)) {
+  if ([EnumCate.variant, ...EnumCate.parent_cate].some((cate) => wbaseItem.CateID === cate)) {
     let childrenLayer = document.createElement("div");
     layerContainer.appendChild(childrenLayer);
     childrenLayer.id = `parentID:${wbaseItem.GID}`;
@@ -837,7 +837,7 @@ function createComponentTile(item, space = 0) {
   title.innerHTML = `${item.Name}`;
   title.className = "title";
   select_tile.appendChild(title);
-  if (item.CateID === EnumCate.tool_variant) {
+  if (item.CateID === EnumCate.variant) {
     let currentTile = document.getElementById(`Component:${item.GID}`);
     let isShow = false;
     if (currentTile) {
@@ -944,8 +944,8 @@ function ondragSortLayer(event) {
     let layerViewY = document.getElementById(`parentID:${wbase_parentID}`).getBoundingClientRect().y - 40; // 40 is height of tab bar
     let sortWbase = wbase_list.find((wbaseItem) => wbaseItem.GID === wbaseID);
     let parent_cate = [...EnumCate.parent_cate];
-    if (selected_list[0].CateID !== EnumCate.tool_variant && selected_list[0].IsWini) {
-      parent_cate.push(EnumCate.tool_variant);
+    if (selected_list[0].CateID !== EnumCate.variant && selected_list[0].IsWini) {
+      parent_cate.push(EnumCate.variant);
     }
     let wbaseHTML = document.getElementById(wbaseID);
     if (wbaseHTML) {
@@ -1023,7 +1023,7 @@ function endDragSortLayer() {
           oldParent.StyleItem.FrameItem.Width = oldParentHTML.offsetWidth;
           listUpdate.push(oldParent);
         }
-        if (oldParent.CateID === EnumCate.tool_variant) {
+        if (oldParent.CateID === EnumCate.variant) {
           let listProperty = PropertyDA.list.filter((e) => e.BaseID === oldParent.GID);
           for (let property of listProperty) {
             property.BasePropertyItems = property.BasePropertyItems.filter((e) => e.BaseID != thisWbaseItem.GID);
