@@ -587,6 +587,10 @@ input[type="color"]::-webkit-color-swatch {
   margin-left: 20px;
 }
 
+.img-button.tlwh-option.toggle {
+  border-color: #e5e5e5;
+}
+
 .img-button.size-32 {
   width: 32px;
   height: 32px;

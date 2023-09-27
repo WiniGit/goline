@@ -295,26 +295,22 @@ function createEditSizePosition() {
   };
   editXYContainer.replaceChildren(edit_left, edit_top);
   let parentHTML = document.getElementById(select_box_parentID);
-  if (EnumCate.extend_frame.some((cate) => parentHTML?.getAttribute("cateid") == cate) && window.getComputedStyle(parentHTML).display.match("flex")) {
-    let isFixPos = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
+  if (EnumCate.extend_frame.some((ct) => parentHTML?.getAttribute("cateid") == ct) && window.getComputedStyle(parentHTML).display.match("flex")) {
+    let isFixPos = selected_list.every((e) => e.value.classList.contains("fixed-position"));
     let iconFixPos = document.createElement("img");
-    iconFixPos.className = "img-button size-28 tlwh-option";
+    iconFixPos.className = "img-button size-28 tlwh-option" + (isFixPos ? " toggle" : "");
     iconFixPos.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/fix_position.svg";
-    if (isFixPos) {
-      iconFixPos.style.border = "1px solid #e5e5e5";
-    } else {
-      edit_top.lastChild.disabled = true;
-      edit_left.lastChild.disabled = true;
-    }
+    edit_top.lastChild.disabled = !isFixPos;
+    edit_left.lastChild.disabled = !isFixPos;
     iconFixPos.onclick = function () {
       isFixPos = !isFixPos;
       inputPositionItem({ FixPosition: isFixPos });
-      if (isFixPos) {
-        iconFixPos.style.border = "1px solid #e5e5e5";
-      } else {
-        edit_top.lastChild.disabled = true;
-        edit_left.lastChild.disabled = true;
-      }
+      if (isFixPos)
+        this.classList.add("toggle");
+      else
+        this.classList.remove("toggle");
+      edit_top.lastChild.disabled = !isFixPos;
+      edit_left.lastChild.disabled = !isFixPos;
       updateUIEditAlign();
     };
     editXYContainer.appendChild(iconFixPos);
@@ -346,20 +342,18 @@ function createEditSizePosition() {
     }
     updateInputTLWH();
   };
-  let isRatio = selected_list.some((wbaseItem) => EnumCate.scale_size_component.some((cate) => wbaseItem.CateID === cate));
+  let isRatio = selected_list.some((wb) => EnumCate.scale_size_component.some((ct) => wb.CateID === ct));
   let icon_ratioWH = document.createElement("img");
   icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${isRatio ? "ratioWH" : "un_ratioWH"}.svg`;
-  icon_ratioWH.className = "img-button size-28 tlwh-option";
+  icon_ratioWH.className = "img-button size-28 tlwh-option" + (isRatio ? " toggle" : "");
   if (!isRatio) {
     icon_ratioWH.onclick = function () {
       isRatio = !isRatio;
-      if (isRatio) {
-        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/ratioWH.svg";
-        this.style.borderColor = "transparent";
-      } else {
-        this.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/un_ratioWH.svg";
-        this.style.borderColor = "#f1f1f1";
-      }
+      this.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${isRatio ? "ratioWH" : "un_ratioWH"}.svg`;
+      if (isRatio)
+        this.classList.add("toggle");
+      else
+        this.classList.remove("toggle");
     };
   }
   editWHContainer.replaceChildren(edit_width, edit_height, icon_ratioWH);
@@ -375,45 +369,40 @@ function createEditSizePosition() {
     let resizeContainer = document.createElement("div");
     resizeContainer.className = "row";
     resizeContainer.style.height = "32px";
-    let initResizeW = "fixed";
-    if (selected_list.every((e) => e.value.style.width == "100%")) {
-      initResizeW = "fill";
-    } else if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
-      initResizeW = "hug";
-    } else if (selected_list.every((e) => e.value.style.width)) {
-      initResizeW = "fixed";
-    } else {
-      initResizeW = "mixed";
-    }
-    let icon_resize_w = _btnSelectResizeType(true, initResizeW);
-    let initResizeH = "fixed";
-    if (selected_list.every((e) => e.value.style.height == "100%")) {
-      initResizeH = "fill";
-    } else if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
-      initResizeH = "hug";
-    } else if (selected_list.every((e) => e.value.style.height)) {
-      initResizeH = "fixed";
-    } else {
-      initResizeH = "mixed";
-    }
-    let icon_resize_h = _btnSelectResizeType(false, initResizeH);
-    resizeContainer.replaceChildren(icon_resize_w, icon_resize_h);
+    const initResizeW = function () {
+      let vl = "";
+      if (selected_list.every((e) => e.value.style.width == "100%")) {
+        vl = "fill";
+      } else if (selected_list.every((e) => !e.value.style.width || e.value.style.width == "fit-content" || e.value.style.width == "max-content")) {
+        vl = "hug";
+      } else if (selected_list.every((e) => e.value.style.width)) {
+        vl = "fixed";
+      } else {
+        vl = "mixed";
+      }
+      edit_width.lastChild.disabled = vl !== "fixed";
+      icon_ratioWH.style.display = (vl === "fixed" ? null : "none");
+      return vl;
+    };
+    let resizeWBtn = _btnSelectResizeType(true, initResizeW());
+    const initResizeH = function () {
+      let vl = "";
+      if (selected_list.every((e) => e.value.style.height == "100%")) {
+        vl = "fill";
+      } else if (selected_list.every((e) => !e.value.style.height || e.value.style.height == "fit-content")) {
+        vl = "hug";
+      } else if (selected_list.every((e) => e.value.style.height)) {
+        vl = "fixed";
+      } else {
+        vl = "mixed";
+      }
+      edit_height.lastChild.disabled = vl !== "fixed";
+      icon_ratioWH.style.display ??= (vl === "fixed" ? null : "none");
+      return vl;
+    };
+    let resizeHBtn = _btnSelectResizeType(false, initResizeH());
+    resizeContainer.replaceChildren(resizeWBtn, resizeHBtn);
     edit_size_position_div.appendChild(resizeContainer);
-    if (initResizeW == "fixed" && initResizeH == "fixed") {
-      icon_ratioWH.style.display = "block";
-    } else {
-      icon_ratioWH.style.display = "none";
-    }
-    if (initResizeW == "fixed") {
-      edit_width.lastChild.disabled = false;
-    } else {
-      edit_width.lastChild.disabled = true;
-    }
-    if (initResizeH == "fixed") {
-      edit_height.lastChild.disabled = false;
-    } else {
-      edit_height.lastChild.disabled = true;
-    }
   }
   // input edit radius
   const allowRadius = [EnumCate.rectangle, EnumCate.frame, EnumCate.form, EnumCate.textformfield, EnumCate.button];
@@ -445,18 +434,14 @@ function createEditSizePosition() {
         input_bot_right = newValue;
       }
     };
-    let icon_radius_detail = document.createElement("img");
-    icon_radius_detail.setAttribute("show-details", false);
-    icon_radius_detail.className = "radius-details img-button size-24";
-    icon_radius_detail.onclick = function () {
-      icon_radius_detail.setAttribute("show-details", icon_radius_detail.getAttribute("show-details") != "true");
-      if (icon_radius_detail.getAttribute("show-details") == "true") {
-        edit_radius.style.pointerEvents = "none";
-      } else {
-        edit_radius.style.pointerEvents = "auto";
-      }
+    let toggleRadiusDetails = document.createElement("img");
+    toggleRadiusDetails.setAttribute("show-details", false);
+    toggleRadiusDetails.className = "radius-details img-button size-24";
+    toggleRadiusDetails.onclick = function () {
+      toggleRadiusDetails.setAttribute("show-details", toggleRadiusDetails.getAttribute("show-details") != "true");
+      edit_radius.style.pointerEvents = toggleRadiusDetails.getAttribute("show-details") == "true" ? "none" : "auto";
     };
-    radiusContainer.replaceChildren(edit_rotate, edit_radius, icon_radius_detail);
+    radiusContainer.replaceChildren(edit_rotate, edit_radius, toggleRadiusDetails);
     edit_size_position_div.appendChild(radiusContainer);
     // fifth line contain 4 rect radius topleft, topright, botleft, botright
     let _row_radius_detail = document.createElement("div");
