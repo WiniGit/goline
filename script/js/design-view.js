@@ -253,14 +253,7 @@ function createEditSizePosition() {
             popup.remove();
             updateUIEditPosition();
           };
-          let icon_check = document.createElement("i");
-          icon_check.className = "fa-solid fa-check";
-          icon_check.style.visibility = btn_title.innerHTML === device.Name ? "visible" : "hidden";
-          let title = document.createElement("span");
-          title.innerHTML = device.Name;
-          let size = document.createElement("span");
-          size.innerHTML = `${device.Width}x${device.Height}`;
-          option.replaceChildren(icon_check, title, size);
+          option.innerHTML = `<i class="fa-solid fa-check" style="visibility: ${btn_title.innerHTML === device.Name ? "visible" : "hidden"}"></i><span>${device.Name}</span><span>${device.Width}x${device.Height}</span>`;
           col.appendChild(option);
         }
         popup.appendChild(col);
@@ -270,13 +263,8 @@ function createEditSizePosition() {
         popup.style.height = `${document.body.getBoundingClientRect().bottom - popup.getBoundingClientRect().y}px`;
       }
     };
-    let btn_title = document.createElement("p");
-    btn_title.className = "semibold1";
     let listSize = selected_list.filter((e) => EnumCate.extend_frame.some((cate) => e.CateID == cate)).filterAndMap((e) => `${parseInt(e.StyleItem.FrameItem.Width)}x${parseInt(e.StyleItem.FrameItem.Height)}`);
-    btn_title.innerHTML = listSize.length === 1 ? listDevice.reduce((a, b) => a.concat(b)).find((device) => `${device.Width}x${device.Height}` === listSize[0])?.Name ?? "Device size" : "Device size";
-    let btn_icon_down = document.createElement("i");
-    btn_icon_down.className = "fa-solid fa-chevron-down fa-2xs";
-    btn_select_frame_size.replaceChildren(btn_title, btn_icon_down);
+    btn_select_frame_size.innerHTML = `<p class="semibold1">${listSize.length === 1 ? listDevice.reduce((a, b) => a.concat(b)).find((device) => `${device.Width}x${device.Height}` === listSize[0])?.Name ?? "Device size" : "Device size"}</p><i class="fa-solid fa-chevron-down fa-2xs"></i>`
     edit_size_position_div.appendChild(pageDeviceContainer);
   }
 
