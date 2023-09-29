@@ -59,11 +59,11 @@ function updateUIDesignView() {
     //   listEditContainer.appendChild(editVariables);
     // }
     // // listEditContainer.appendChild(selectClass);
-    // if (select_box_parentID != wbase_parentID && !(window.getComputedStyle(document.getElementById(select_box_parentID)).display.match(/(flex|table)/g) && !selected_list.some((e) => e.StyleItem.PositionItem.FixPosition))) {
-    //   let editConstraints = createConstraints();
-    //   listEditContainer.appendChild(editConstraints);
-    // }
-    // if (select_box_parentID != wbase_parentID && selected_list.every((e) => window.getComputedStyle(e.value).position != "absolute")) {
+    if (select_box_parentID != wbase_parentID && selected_list.some((e) => window.getComputedStyle(e.value).position === "absolute")) {
+      let editConstraints = createConstraints();
+      listEditContainer.appendChild(editConstraints);
+    }
+    // if (select_box_parentID != wbase_parentID && selected_list.every((e) => window.getComputedStyle(e.value).position !== "absolute")) {
     //   let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
     //   let framePage = pageParent[pageParent.length - 1];
     //   if (framePage?.classList?.contains("w-variant")) framePage = pageParent[pageParent.length - 2];
@@ -75,10 +75,10 @@ function updateUIDesignView() {
     //     }
     //   }
     // }
-    // if (selected_list.length > 1 || selected_list.some((e) => e.WAutolayoutItem) || EnumCate.extend_frame.some((cate) => selected_list[0].CateID == cate)) {
-    //   let editAutoLayout = createAutoLayout();
-    //   listEditContainer.appendChild(editAutoLayout);
-    // }
+    if (selected_list.some(wb => [EnumCate.table,...EnumCate.no_child_component].every(ct => wb.CateID !== ct))) {
+      let editAutoLayout = createAutoLayout();
+      listEditContainer.appendChild(editAutoLayout);
+    }
     // //
     // if (selected_list.length > 0 && selected_list.every((wb) => wb.StyleItem.DecorationItem && wb.StyleItem.DecorationItem.ColorValue == selected_list[0].StyleItem.DecorationItem.ColorValue)) {
     //   let editBackground = createEditBackground();
@@ -231,7 +231,7 @@ function createEditSizePosition() {
   let edit_size_position_div = document.createElement("div");
   edit_size_position_div.id = "edit_size_position_div";
   edit_size_position_div.className = "edit-container";
-  if (selected_list.every((e) => !e.IsInstance && EnumCate.extend_frame.some((ct) => e.CateID === ct))) {
+  if (select_box_parentID === wbase_parentID && selected_list.every((e) => !e.IsInstance && EnumCate.extend_frame.some((ct) => e.CateID === ct))) {
     let pageDeviceContainer = document.createElement("div");
     pageDeviceContainer.className = "page-device-container row";
     let btn_select_frame_size = document.createElement("button");
@@ -524,22 +524,14 @@ function createEditSizePosition() {
     });
     edit_size_position_div.appendChild(_row_radius_detail);
   }
-  if (selected_list.filter((e) => e !== EnumCate.table && EnumCate.no_child_component.every((cate) => e.CateID != cate)).length > 0) {
+  if (selected_list.filter((wb) => wb !== EnumCate.table && EnumCate.no_child_component.every((ct) => wb.CateID != ct)).length > 0) {
     // sixth line is btn checkboc clip content (overflow)
-    let btn_clip_content = document.createElement("div");
+    let btn_clip_content = document.createElement("label");
     btn_clip_content.className = "row regular1";
     btn_clip_content.style.margin = "4px 0 0 16px";
-    let checkbox = document.createElement("input");
-    btn_clip_content.appendChild(checkbox);
-    checkbox.type = "checkbox";
-    checkbox.style.marginRight = "8px";
-    checkbox.defaultChecked = selected_list.every((wbaseItem) => wbaseItem.StyleItem.FrameItem.IsClip);
-    checkbox.style.pointerEvents = "none";
-    checkbox.style.width = "fit-content";
-    btn_clip_content.innerHTML += "Clip content";
-    btn_clip_content.onclick = function () {
-      this.firstChild.checked = !this.firstChild.checked;
-      inputFrameItem({ IsClip: this.firstChild.checked });
+    btn_clip_content.innerHTML = `<input type="checkbox"${selected_list.filter(wb => wb.CateID !== EnumCate.table).every((wb) => window.getComputedStyle(wb.value).overflow.includes("hidden")) ? " checked" : ""} style="margin-right: 8px; width: fit-content" />Clip content`;
+    btn_clip_content.firstChild.onchange = function (ev) {
+      inputFrameItem({ IsClip: ev.target.checked });
     };
     edit_size_position_div.appendChild(btn_clip_content);
   }
@@ -974,27 +966,24 @@ function createConstraints() {
   let editConstContainer = document.createElement("div");
   editConstContainer.className = "row";
   bodyContainer.appendChild(editConstContainer);
-  let constraintsXValues = selected_list.filterAndMap((e) => e.StyleItem.PositionItem.ConstraintsX);
+  let constraintsXValues = selected_list.filterAndMap((e) => e.value.getAttribute("constx"));
   let constraintsX = constraintsXValues.length == 1 ? constraintsXValues[0] : "mixed";
-  let constraintsYValues = selected_list.filterAndMap((e) => e.StyleItem.PositionItem.ConstraintsY);
+  let constraintsYValues = selected_list.filterAndMap((e) => e.value.getAttribute("consty"));
   let constraintsY = constraintsYValues.length == 1 ? constraintsYValues[0] : "mixed";
 
   let constraintsRect = document.createElement("div");
   constraintsRect.className = "connstraints-rect";
   let selectConstraintsCol = document.createElement("div");
   selectConstraintsCol.className = "col";
-  selectConstraintsCol.style.width = "calc(100% - 106px)";
-  selectConstraintsCol.style.margin = "0 12px";
-  selectConstraintsCol.style.gap = "4px";
   editConstContainer.replaceChildren(constraintsRect, selectConstraintsCol);
 
   let listContraintsX = [Constraints.left, Constraints.right, Constraints.center];
   let listContraintsY = [Constraints.top, Constraints.bottom, Constraints.center];
   if (selected_list.every((wb) => EnumCate.scale_size_component.every((cate) => wb.CateID != cate))) {
-    if (selected_list.every((wb) => wb.value.style.width && wb.value.style.width != "fit-content" && wb.value.style.width != "max-content")) {
+    if (selected_list.every((wb) => wb.value.getAttribute("width-type") !== "fit")) {
       listContraintsX.push(Constraints.left_right, Constraints.scale);
     }
-    if (selected_list.every((wb) => wb.value.style.height && wb.value.style.height != "fit-content")) {
+    if (selected_list.every((wb) => wb.value.getAttribute("height-type") !== "fit")) {
       listContraintsY.push(Constraints.top_bottom, Constraints.scale);
     }
   }
@@ -1108,32 +1097,32 @@ function createConstraints() {
 
   selectConstraintsCol.replaceChildren(dropdownConstX, dropdownConstY);
 
-  if (select_box_parentID !== wbase_parentID) {
-    let parentHTML = document.getElementById(select_box_parentID);
-    if (parentHTML.getAttribute("level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match("flex")) {
-      let fixPosRow = document.createElement("div");
-      fixPosRow.className = "row";
-      fixPosRow.style.margin = "8px 0 0 8px";
-      fixPosRow.style.gap = "8px";
-      let checkboxIsFix = document.createElement("input");
-      checkboxIsFix.id = "check-fix-pos";
-      checkboxIsFix.type = "checkbox";
-      checkboxIsFix.style.scale = 1.2;
-      checkboxIsFix.style.width = "fit-content";
-      checkboxIsFix.defaultChecked = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
-      checkboxIsFix.onchange = function (e) {
-        e.stopPropagation();
-        inputPositionItem({ FixPosition: this.checked });
-        updateUIConstraints();
-      };
-      let labelFixPos = document.createElement("label");
-      labelFixPos.className = "regular1";
-      labelFixPos.htmlFor = "check-fix-pos";
-      labelFixPos.innerHTML = "Fix position when scrolling";
-      fixPosRow.replaceChildren(checkboxIsFix, labelFixPos);
-      bodyContainer.appendChild(fixPosRow);
-    }
-  }
+  // if (select_box_parentID !== wbase_parentID) {
+  //   let parentHTML = document.getElementById(select_box_parentID);
+  //   if (parentHTML.getAttribute("level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match("flex")) {
+  //     let fixPosRow = document.createElement("div");
+  //     fixPosRow.className = "row";
+  //     fixPosRow.style.margin = "8px 0 0 8px";
+  //     fixPosRow.style.gap = "8px";
+  //     let checkboxIsFix = document.createElement("input");
+  //     checkboxIsFix.id = "check-fix-pos";
+  //     checkboxIsFix.type = "checkbox";
+  //     checkboxIsFix.style.scale = 1.2;
+  //     checkboxIsFix.style.width = "fit-content";
+  //     checkboxIsFix.defaultChecked = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
+  //     checkboxIsFix.onchange = function (e) {
+  //       e.stopPropagation();
+  //       inputPositionItem({ FixPosition: this.checked });
+  //       updateUIConstraints();
+  //     };
+  //     let labelFixPos = document.createElement("label");
+  //     labelFixPos.className = "regular1";
+  //     labelFixPos.htmlFor = "check-fix-pos";
+  //     labelFixPos.innerHTML = "Fix position when scrolling";
+  //     fixPosRow.replaceChildren(checkboxIsFix, labelFixPos);
+  //     bodyContainer.appendChild(fixPosRow);
+  //   }
+  // }
 
   return editContainer;
 }
