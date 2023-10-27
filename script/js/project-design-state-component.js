@@ -75,7 +75,7 @@ function get_colorValue(item, check) {
       value = BorderDA.list.find((e) => e.GID === item.BorderSkinID)?.ColorValue ?? selected_list[0].StyleItem.DecorationItem?.BorderItem?.ColorValue ?? "ffffffff";
     }
 
-    return value.substring(2) + value.substring(2, 0);
+    return value;
   } else {
     return "FFFFFFFF";
   }
@@ -383,7 +383,7 @@ function update_StyleState(componentState) {
   let effect_skin = EffectDA.list.find((e) => e.GID == itemState.EffectSkinID);
 
   if (color_skin) {
-    selected_list[0].value.style.backgroundColor = `#${color_skin.substring(2) + color_skin.substring(2, 0)}`;
+    selected_list[0].value.style.backgroundColor = `#${color_skin}`;
   }
   if (border_skin) {
     let list_width = border_skin.Width.split(" ");
@@ -392,10 +392,10 @@ function update_StyleState(componentState) {
     selected_list[0].value.style.borderBottomWidth = list_width[2] + "px";
     selected_list[0].value.style.borderLeftWidth = list_width[3] + "px";
     selected_list[0].value.style.borderStyle = border_skin.BorderStyle;
-    selected_list[0].value.style.borderColor = `#${border_skin.ColorValue.substring(2)}${border_skin.ColorValue.substring(0, 2)}`;
+    selected_list[0].value.style.borderColor = `#${border_skin.ColorValue}`;
   }
   if (effect_skin) {
-    selected_list[0].value.style.boxShadow = `${effect_skin.OffsetX}px ${effect_skin.OffsetY}px ${effect_skin.BlurRadius}px ${effect_skin.SpreadRadius}px #${effect_skin.ColorValue.substring(2)}${effect_skin.ColorValue.substring(0, 2)} ${effect_skin.Type == ShadowType.inner ? "inset" : ""}`;
+    selected_list[0].value.style.boxShadow = `${effect_skin.OffsetX}px ${effect_skin.OffsetY}px ${effect_skin.BlurRadius}px ${effect_skin.SpreadRadius}px #${effect_skin.ColorValue} ${effect_skin.Type == ShadowType.inner ? "inset" : ""}`;
   }
 }
 
@@ -413,7 +413,7 @@ $("body").on("mousedown", ".setting-state-container.disable-setting .setting-sta
 
 $("body").on("mouseup", ".setting-state-container .setting-state-header-label", function (ev) {
   let _item = selected_list[0];
-  let initial_value = _item.StyleItem.DecorationItem.ColorValue.substring(2) + _item.StyleItem.DecorationItem.ColorValue.substring(2, 0);
+  let initial_value = _item.StyleItem.DecorationItem.ColorValue;
 
   _item.value.style.backgroundColor = `#${initial_value}`;
 
@@ -424,13 +424,13 @@ $("body").on("mouseup", ".setting-state-container .setting-state-header-label", 
     selected_list[0].value.style.borderBottomWidth = list_width[2] + "px";
     selected_list[0].value.style.borderLeftWidth = list_width[3] + "px";
     selected_list[0].value.style.borderStyle = border_skin.BorderStyle;
-    selected_list[0].value.style.borderColor = `#${border_skin.ColorValue.substring(2)}${border_skin.ColorValue.substring(0, 2)}`;
+    selected_list[0].value.style.borderColor = `#${border_skin.ColorValue}`;
   } else {
     selected_list[0].value.style.border = "none";
   }
 
   if (_item.StyleItem.DecorationItem.EffectItem) {
-    selected_list[0].value.style.boxShadow = `${_item.StyleItem.DecorationItem.EffectItem.OffsetX}px ${_item.StyleItem.DecorationItem.EffectItem.OffsetY}px ${_item.StyleItem.DecorationItem.EffectItem.BlurRadius}px ${_item.StyleItem.DecorationItem.EffectItem.SpreadRadius}px #${_item.StyleItem.DecorationItem.EffectItem.ColorValue.substring(2)}${_item.StyleItem.DecorationItem.EffectItem.ColorValue.substring(0, 2)} ${_item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.inner ? "inset" : ""}`;
+    selected_list[0].value.style.boxShadow = `${_item.StyleItem.DecorationItem.EffectItem.OffsetX}px ${_item.StyleItem.DecorationItem.EffectItem.OffsetY}px ${_item.StyleItem.DecorationItem.EffectItem.BlurRadius}px ${_item.StyleItem.DecorationItem.EffectItem.SpreadRadius}px #${_item.StyleItem.DecorationItem.EffectItem.ColorValue} ${_item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.inner ? "inset" : ""}`;
   } else {
     selected_list[0].value.style.boxShadow = "none";
   }
@@ -1448,7 +1448,7 @@ function editJsonItemByCate() {
                       let stateColor = "#E14337";
                       if (errorState.BorderSkinID?.length === 36) {
                         stateColor = BorderDA.list.find((e) => e.GID === errorState.BorderSkinID);
-                        stateColor = `#${stateColor.ColorValue.substring(2)}${stateColor.ColorValue.substring(0, 2)}`;
+                        stateColor = `#${stateColor.ColorValue}`;
                       }
                       selected_list[0].value.style.setProperty("--state-color", stateColor);
                     }
@@ -1574,7 +1574,7 @@ function editColorContainer(color, func) {
   colorContainer.className = "row edit-color-container";
   let demoColor = document.createElement("input");
   demoColor.type = "color";
-  demoColor.defaultValue = `#${color.substring(2)}`;
+  demoColor.defaultValue = `#${color}`;
   demoColor.className = "demo-color";
   demoColor.oninput = function (e) {
     e.stopPropagation();
@@ -1587,7 +1587,7 @@ function editColorContainer(color, func) {
     func(Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))) + this.value.replace("#", ""));
   };
   let hexColor = document.createElement("input");
-  hexColor.defaultValue = `${color.substring(2)}`;
+  hexColor.defaultValue = `${color.substring(0,6)}`;
   hexColor.className = "hex-color-value regular1";
   hexColor.oninput = function () {
     if (this.value.startsWith("#")) {
@@ -1601,7 +1601,7 @@ function editColorContainer(color, func) {
     func(Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))) + this.value.replace("#", ""));
   };
   let opacityColor = document.createElement("input");
-  opacityColor.defaultValue = `${Ultis.hexToPercent(color.substring(0, 2))}%`;
+  opacityColor.defaultValue = `${Ultis.hexToPercent(color.substring(6))}%`;
   opacityColor.className = "opacity-color-value regular1";
   opacityColor.onblur = function (e) {
     e.stopPropagation();
@@ -1626,9 +1626,9 @@ function editColorContainer(color, func) {
         e.onclick = function (ev) {
           ev.stopPropagation();
           let newColorValue = ColorDA.list.find((skin) => skin.GID == this.id.replace("skinID:", "")).Value;
-          demoColor.value = `#${newColorValue.substring(2)}`;
-          hexColor.value = `${newColorValue.substring(2)}`;
-          opacityColor.value = `${Ultis.hexToPercent(newColorValue.substring(0, 2))}%`;
+          demoColor.value = `#${newColorValue.substring(0,6)}`;
+          hexColor.value = `${newColorValue.substring(0,6)}`;
+          opacityColor.value = `${Ultis.hexToPercent(newColorValue.substring(6))}%`;
           func(newColorValue);
           document.getElementById("popup_table_skin").remove();
         };

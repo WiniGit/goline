@@ -2800,6 +2800,7 @@ div:has(> .edit-color-container) {
 #edit_auto_layout_div .check-box-label[disabled="true"] {
   position: relative;
   color: #c4c4c4 !important;
+  pointer-events: none;
 }
 
 .check-box-label[disabled="true"]:hover:after {

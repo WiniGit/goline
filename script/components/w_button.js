@@ -29,5 +29,5 @@ function wbutton(item, data) {
   // }
   // item.value.onmouseout = function (ev) {
   //   ev.stopPropagation();
-  //   item.value.style.backgroundColor = `#${item.StyleItem.DecorationItem.ColorValue.substring(2)}${item.StyleItem.DecorationItem.ColorValue.substring(2, 0)}`;
+  //   item.value.style.backgroundColor = `#${item.StyleItem.DecorationItem.ColorValue}`;
   // }

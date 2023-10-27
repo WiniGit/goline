@@ -15,15 +15,15 @@ function createSwitch(initValue = false, wbaseItem) {
 	if (wbaseItem) {
 		if (wbaseItem.AttributesItem.NameField !== "")
 			input.name = wbaseItem.AttributesItem.NameField;
-		toggle.style.setProperty("--dot-color", `#${wbaseItem.JsonItem.DotColor.substring(2) + wbaseItem.JsonItem.DotColor.substring(2, 0)}`);
-		toggle.style.setProperty("--unchecked-bg", `#${wbaseItem.JsonItem.InactiveColor.substring(2) + wbaseItem.JsonItem.InactiveColor.substring(2, 0)}`);
+		toggle.style.setProperty("--dot-color", `#${wbaseItem.JsonItem.DotColor}`);
+		toggle.style.setProperty("--unchecked-bg", `#${wbaseItem.JsonItem.InactiveColor}`);
 	}
 	input.onchange = function (e) {
 		e.stopImmediatePropagation();
 		e.stopPropagation();
 		if (wbaseItem) {
 			wbaseItem.AttributesItem.Content = `${this.checked}`;
-			toggle.style.setProperty("--unchecked-bg", `#${wbaseItem.JsonItem.InactiveColor.substring(2) + wbaseItem.JsonItem.InactiveColor.substring(2, 0)}`);
+			toggle.style.setProperty("--unchecked-bg", `#${wbaseItem.JsonItem.InactiveColor}`);
 		}
 	}
 	return toggle;

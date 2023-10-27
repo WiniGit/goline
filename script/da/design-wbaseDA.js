@@ -131,6 +131,8 @@ class EnumCate {
   static show_name = [this.frame, this.form, this.variant];
 
   static data_component = [this.tree, this.chart, this.carousel, this.table];
+
+  static accept_border_effect = [this.frame, this.form, this.rectangle, this.variant, this.table, this.button, this.textformfield, this.svg]
 }
 
 class AlignmentType {
@@ -490,7 +492,7 @@ class WBaseDefault {
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
-        ColorValue: "FFC4C4C4",
+        ColorValue: "C4C4C4FF",
       },
       FrameItem: {
         Width: 512.0,
@@ -567,7 +569,7 @@ class WBaseDefault {
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
-        ColorValue: "FFC4C4C4",
+        ColorValue: "C4C4C4FF",
       },
       FrameItem: {
         Width: 512.0,
@@ -607,7 +609,7 @@ class WBaseDefault {
         FontWeight: "400",
         CateID: EnumCate.typography,
         IsStyle: false,
-        ColorValue: "FF000000",
+        ColorValue: "000000FF",
         LetterSpacing: 0,
         FontFamily: "Roboto",
         Name: "default",
@@ -693,7 +695,7 @@ class WBaseDefault {
           Name: "new border",
           BorderStyle: BorderStyle.dotted,
           IsStyle: false,
-          ColorValue: "FF7B61FF",
+          ColorValue: "7B61FFFF",
           BorderSide: BorderSide.all,
           Width: "2 2 2 2",
         },
@@ -735,7 +737,7 @@ class WBaseDefault {
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
-        ColorValue: "FF366AE2",
+        ColorValue: "366AE2FF",
       },
       FrameItem: {
         TopLeft: 8.0,
@@ -801,7 +803,7 @@ class WBaseDefault {
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
-        ColorValue: "ff1890ff",
+        ColorValue: "1890ffff",
       },
       FrameItem: {
         Width: 60.0,
@@ -822,7 +824,7 @@ class WBaseDefault {
     Name: "Switch",
     JsonItem: {
       DotColor: "FFFFFFFF",
-      InactiveColor: "FFF2F5F8",
+      InactiveColor: "F2F5F8FF",
       Enable: true,
     },
   };
@@ -854,11 +856,11 @@ class WBaseDefault {
         BottomRight: 4,
       },
       DecorationItem: {
-        ColorValue: "FF366AE2",
+        ColorValue: "366AE2FF",
         BorderItem: {
           Width: "2 2 2 2",
           BorderStyle: BorderStyle.solid,
-          ColorValue: "FFE5EAF0",
+          ColorValue: "E5EAF0FF",
           IsStyle: false,
           BorderSide: BorderSide.all,
         },
@@ -872,7 +874,7 @@ class WBaseDefault {
     JsonItem: {
       CheckColor: "ffffffff",
       Enable: true,
-      InactiveColor: "ff9e9e9e",
+      InactiveColor: "9e9e9eff",
     },
   };
 
@@ -894,11 +896,11 @@ class WBaseDefault {
         Height: 20,
       },
       DecorationItem: {
-        ColorValue: "FF1890ff",
+        ColorValue: "1890ffFF",
         BorderItem: {
           Width: "2 2 2 2",
           BorderStyle: BorderStyle.solid,
-          ColorValue: "FF2196F3",
+          ColorValue: "2196F3FF",
           IsStyle: false,
           BorderSide: BorderSide.all,
         },
@@ -924,7 +926,7 @@ class WBaseDefault {
     IsWini: false,
     CountChild: 0,
     StyleItem: {
-      ColorValue: "00FFFFFF",
+      ColorValue: "FFFFFF00",
     },
     AttributesItem: {
       Name: "Textfield",
@@ -968,7 +970,7 @@ class WBaseDefault {
         BorderItem: {
           Width: "1 1 1 1",
           BorderStyle: BorderStyle.solid,
-          ColorValue: "FFE5EAF0",
+          ColorValue: "E5EAF0FF",
           IsStyle: false,
           BorderSide: BorderSide.all,
         },
@@ -978,7 +980,7 @@ class WBaseDefault {
         FontWeight: "400",
         CateID: EnumCate.typography,
         IsStyle: false,
-        ColorValue: "FF394960",
+        ColorValue: "394960FF",
         LetterSpacing: 0,
         FontFamily: "Roboto",
         Height: 24,
@@ -1064,7 +1066,7 @@ class WBaseDefault {
         BorderItem: {
           Width: "1 1 1 1",
           BorderStyle: BorderStyle.solid,
-          ColorValue: "FFE5EAF0",
+          ColorValue: "E5EAF0FF",
           IsStyle: false,
           BorderSide: BorderSide.all,
         },
@@ -1178,7 +1180,7 @@ class WBaseDefault {
     JsonItem: {
       ActionPosition: "right",
       ActionType: "chevron",
-      ActionColor: "FF1e3050",
+      ActionColor: "1e3050FF",
       ActionSize: 20,
       IndentSpace: 16,
     },
@@ -1249,7 +1251,7 @@ class WBaseDefault {
         FontWeight: "500",
         CateID: EnumCate.typography,
         IsStyle: false,
-        ColorValue: "FF394960",
+        ColorValue: "394960FF",
         FontFamily: "Roboto",
       },
     },
@@ -1336,9 +1338,9 @@ class WBaseDefault {
     JsonItem: {
       Effect: WCarouselEffect.easeInOut,
       ActionType: "chevron",
-      ActionColor: "ff1b1b1b",
+      ActionColor: "1b1b1bff",
       ActionSize: 24,
-      ActionBackground: "bff6f6f6",
+      ActionBackground: "f6f6f6bf",
       TransitionTime: 3000,
       TransformTime: 500,
       AutoPlay: true,

@@ -209,7 +209,7 @@ async function updateComponentContent(item) {
         e.stopPropagation();
         item.JsonItem.Checked = this.checked;
         if (this.checked) {
-          item.value.style.borderColor = `#${item.StyleItem.DecorationItem.ColorValue?.substring(2) + item.StyleItem.DecorationItem.ColorValue?.substring(2, 0)}`;
+          item.value.style.borderColor = `#${item.StyleItem.DecorationItem.ColorValue}`;
           item.value.querySelector(":scope > .checkmark").style.display = "block";
           if (this.name && this.name !== "") {
             let formParent = document.querySelector(`form:has(#${this.id})`);
@@ -228,7 +228,7 @@ async function updateComponentContent(item) {
             }
           }
         } else {
-          item.value.style.borderColor = `#${item.StyleItem.DecorationItem.BorderItem?.ColorValue?.substring(2) + item.StyleItem.DecorationItem.BorderItem?.ColorValue?.substring(2, 0)}`;
+          item.value.style.borderColor = `#${item.StyleItem.DecorationItem.BorderItem?.ColorValue}`;
           item.value.querySelector(":scope > .checkmark").style.display = "none";
         }
       };
@@ -265,7 +265,7 @@ async function updateComponentContent(item) {
             let eventFocus = item.JsonEventItem.find((evt) => evt.Name === "State")?.ListState?.find((state) => state.Type === ComponentState.focus);
             if (eventFocus && eventFocus.BorderSkinID && eventFocus.BorderSkinID != "") {
               let borderSkin = BorderDA.list.find((skin) => skin.GID === eventFocus.BorderSkinID);
-              focusColor = `#${borderSkin.ColorValue.substring(2)}${borderSkin.ColorValue.substring(0, 2)}`;
+              focusColor = `#${borderSkin.ColorValue}`;
             }
           }
           $(this.parentElement).find("label").css("color", focusColor);
@@ -284,9 +284,9 @@ async function updateComponentContent(item) {
           this.value = this.checked;
           item.AttributesItem.Content = `${this.checked}`;
           if (this.checked) {
-            item.value.style.backgroundColor = `#${item.StyleItem.DecorationItem.ColorValue.substring(2) + item.StyleItem.DecorationItem.ColorValue.substring(2, 0)}`;
+            item.value.style.backgroundColor = `#${item.StyleItem.DecorationItem.ColorValue}`;
           } else {
-            item.value.style.backgroundColor = `#${item.JsonItem.InactiveColor.substring(2) + item.JsonItem.InactiveColor.substring(2, 0)}`;
+            item.value.style.backgroundColor = `#${item.JsonItem.InactiveColor}`;
           }
         }
       };
@@ -308,12 +308,11 @@ async function updateComponentContent(item) {
           this.value = this.checked;
           item.AttributesItem.Content = `${this.checked}`;
           if (this.checked) {
-            item.value.style.backgroundColor = `#${item.StyleItem.DecorationItem.ColorValue.substring(2) + item.StyleItem.DecorationItem.ColorValue.substring(2, 0)}`;
+            item.value.style.backgroundColor = `#${item.StyleItem.DecorationItem.ColorValue}`;
           } else {
-            item.value.style.backgroundColor = `#${item.JsonItem.InactiveColor.substring(2) + item.JsonItem.InactiveColor.substring(2, 0)}`;
+            item.value.style.backgroundColor = `#${item.JsonItem.InactiveColor}`;
           }
         }
-        drawCheckMark(item.value);
       };
       $(item.value.querySelector("input")).trigger("change");
       break;
@@ -702,13 +701,13 @@ function initWbaseStyle(item) {
         } else {
           switch (item.CateID) {
             case EnumCate.w_switch:
-              item.value.style.setProperty("--checked-bg", `#${background.substring(2)}${background.substring(0, 2)}`);
+              item.value.style.setProperty("--checked-bg", `#${background}`);
               break;
             case EnumCate.checkbox:
-              item.value.style.setProperty("--checked-bg", `#${background.substring(2)}${background.substring(0, 2)}`);
+              item.value.style.setProperty("--checked-bg", `#${background}`);
               break;
             default:
-              item.value.style.backgroundColor = `#${background.substring(2)}${background.substring(0, 2)}`;
+              item.value.style.backgroundColor = `#${background}`;
               break;
           }
         }
@@ -725,8 +724,7 @@ function initWbaseStyle(item) {
         let listWidth = item.StyleItem.DecorationItem.BorderItem.Width.split(" ");
         item.value.style.borderWidth = `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`;
         item.value.style.borderStyle = item.StyleItem.DecorationItem.BorderItem.BorderStyle;
-        let border_color = item.StyleItem.DecorationItem.BorderItem.ColorValue;
-        item.value.style.borderColor = `#${border_color.substring(2)}${border_color.substring(0, 2)}`;
+        item.value.style.borderColor = `#${item.StyleItem.DecorationItem.BorderItem.ColorValue}`;
       } else {
         item.StyleItem.DecorationItem.BorderID = null;
         item.StyleItem.DecorationItem.BorderItem = null;
@@ -744,7 +742,7 @@ function initWbaseStyle(item) {
       } else {
         let effect_color = item.StyleItem.DecorationItem.EffectItem.ColorValue;
         /* offset-x | offset-y | blur-radius | spread-radius | color */
-        item.value.style.boxShadow = `${item.StyleItem.DecorationItem.EffectItem.OffsetX}px ${item.StyleItem.DecorationItem.EffectItem.OffsetY}px ${item.StyleItem.DecorationItem.EffectItem.BlurRadius}px ${item.StyleItem.DecorationItem.EffectItem.SpreadRadius}px #${effect_color.substring(2)}${effect_color.substring(0, 2)} ${item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.inner ? "inset" : ""}`;
+        item.value.style.boxShadow = `${item.StyleItem.DecorationItem.EffectItem.OffsetX}px ${item.StyleItem.DecorationItem.EffectItem.OffsetY}px ${item.StyleItem.DecorationItem.EffectItem.BlurRadius}px ${item.StyleItem.DecorationItem.EffectItem.SpreadRadius}px #${effect_color}${item.StyleItem.DecorationItem.EffectItem.Type == ShadowType.inner ? " inset" : ""}`;
       }
     }
   }
@@ -758,7 +756,7 @@ function initWbaseStyle(item) {
       item.value.style.fontSize = `${item.StyleItem.TextStyleItem.FontSize}px`;
       item.value.style.fontWeight = item.StyleItem.TextStyleItem.FontWeight;
       if (item.StyleItem.TextStyleItem.LetterSpacing) item.value.style.letterSpacing = `${item.StyleItem.TextStyleItem.LetterSpacing}px`;
-      item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue?.substring(2)}${item.StyleItem.TextStyleItem.ColorValue?.substring(0, 2)}`;
+      item.value.style.color = `#${item.StyleItem.TextStyleItem.ColorValue}`;
       if (item.StyleItem.TextStyleItem.Height != undefined) {
         item.value.style.lineHeight = `${item.StyleItem.TextStyleItem.Height}px`;
       }

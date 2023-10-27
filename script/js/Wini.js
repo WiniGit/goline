@@ -548,7 +548,7 @@ function selectParent(event) {
     let containVariant = selected_list.some((e) => e.CateID === EnumCate.variant || document.getElementById(e.GID).querySelectorAll(".w-variant").length > 0);
     let objp = list.filter((eHTML) => {
       if (
-        eHTML.parents(`.wbaseItem-value[iswini="true"]`).length ||
+        $(eHTML).parents(`.wbaseItem-value[iswini="true"]`).length ||
         eHTML.getAttribute("isinstance") === "true" ||
         parent_cate.every((cate) => cate != eHTML.getAttribute("cateid")) || // eHTML ko đc xếp loại là wbaseItem có item con
         selected_list.some((wb) => wb.GID == eHTML.id || wb.value.contains(eHTML)) || // eHTML ko thể là chính nó hoặc element con của nó

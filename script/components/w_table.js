@@ -40,8 +40,8 @@ function createTable(item, listChild) {
     }
     table.style.setProperty("--col-border", `${item.JsonItem.ColBorderWidth ?? 0}px`);
     table.style.setProperty("--row-border", `${item.JsonItem.RowBorderWidth ?? 0}px`);
-    table.style.setProperty("--header-bg", `#${item.JsonItem.HeaderBackground.substring(2)}${item.JsonItem.HeaderBackground.substring(0, 2)}`);
-    table.style.setProperty("--footer-bg", `#${item.JsonItem.FooterBackground.substring(2)}${item.JsonItem.FooterBackground.substring(0, 2)}`);
+    table.style.setProperty("--header-bg", `#${item.JsonItem.HeaderBackground}`);
+    table.style.setProperty("--footer-bg", `#${item.JsonItem.FooterBackground}`);
     table.replaceChildren(...children);
     return table;
 }

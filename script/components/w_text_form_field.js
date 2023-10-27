@@ -71,7 +71,7 @@ function createTextFieldHTML(item, parent) {
       let eventFocus = parent.JsonEventItem.find((evt) => evt.Name === "State")?.ListState?.find((state) => state.Type === ComponentState.focus);
       if (eventFocus && eventFocus.BorderSkinID && eventFocus.BorderSkinID != "") {
         let borderSkin = BorderDA.list.find((skin) => skin.GID === eventFocus.BorderSkinID);
-        focusColor = `#${borderSkin.ColorValue.substring(2)}${borderSkin.ColorValue.substring(0, 2)}`;
+        focusColor = `#${borderSkin.ColorValue}`;
       }
     }
     item.value.style.setProperty("--focus-color", focusColor);
@@ -88,7 +88,7 @@ function createTextFieldHTML(item, parent) {
         input.type = "password";
         obscureBtn.innerHTML = txtfd_eye_off;
         if(parent.StyleItem) {
-          let suffixColor = parent.StyleItem.TextStyleItem?.ColorValue?.substring(2) ?? "00204D";
+          let suffixColor = parent.StyleItem.TextStyleItem?.ColorValue ?? "00204D";
           item.value.style.setProperty("--suffix-icon-color", `#${suffixColor}`)
         }
         item.value.appendChild(obscureBtn);
@@ -102,7 +102,7 @@ function createTextFieldHTML(item, parent) {
         calendarBtn.className = "suffix-btn-txtfd calendar-icon";
         calendarBtn.innerHTML = txtfd_calendar;
         if(parent.StyleItem) {
-          let suffixColor = parent.StyleItem.TextStyleItem?.ColorValue?.substring(2) ?? "00204D";
+          let suffixColor = parent.StyleItem.TextStyleItem?.ColorValue ?? "00204D";
           item.value.style.setProperty("--suffix-icon-color", `#${suffixColor}`)
         }
         item.value.appendChild(calendarBtn);

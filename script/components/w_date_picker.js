@@ -416,6 +416,6 @@ function createDatePickerHTML(item) {
 	input.value = selectDate.toString();
 	let btnCalendar = document.createElement("div");
 	btnCalendar.className = "icon";
-	btnCalendar.innerHTML = txtfd_eye_on.replace('fill="#282829"', `fill="#${item.StyleItem.TextStyleItem.ColorValue.substring(2)}"`);
+	btnCalendar.innerHTML = txtfd_eye_on.replace('fill="#282829"', `fill="#${item.StyleItem.TextStyleItem.ColorValue}"`);
 	item.value.replaceChildren(input, btnCalendar);
 }

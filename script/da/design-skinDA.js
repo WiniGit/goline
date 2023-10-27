@@ -80,7 +80,7 @@ class StyleDA {
           let mergeColorSkin = styleInitItem.ColorItems.find((skinItem) => skinItem.ListID.includes(wbaseItem.StyleItem.DecorationItem.ColorID));
           wbaseItem.StyleItem.DecorationItem.ColorID = mergeColorSkin.GID;
           wbaseItem.StyleItem.DecorationItem.ColorValue = mergeColorSkin.Value;
-          wbaseItem.value.style.backgroundColor = `#${mergeColorSkin.Value.substring(2)}${mergeColorSkin.Value.substring(0, 2)}`;
+          wbaseItem.value.style.backgroundColor = `#${mergeColorSkin.Value}`;
         });
     }
     if (styleInitItem.TextStyleItems?.length > 0) {
@@ -215,7 +215,7 @@ class TypoDA {
         wb.value.style.fontSize = `${defaultTypo.FontSize}px`;
         wb.value.style.fontWeight = defaultTypo.FontWeight;
         if (defaultTypo.LetterSpacing) wb.value.style.letterSpacing = `${defaultTypo.LetterSpacing}px`;
-        wb.value.style.color = `#${defaultTypo.ColorValue.substring(2)}${defaultTypo.ColorValue.substring(0, 2)}`;
+        wb.value.style.color = `#${defaultTypo.ColorValue}`;
         if (defaultTypo.Height != undefined) {
           wb.value.style.lineHeight = `${defaultTypo.Height}px`;
         }

@@ -20,7 +20,7 @@ function createChart(item) {
         ? {
             x: {
               ticks: {
-                color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
+                color: `#${labelStyle.ColorValue}`,
                 font: {
                   size: labelStyle.FontSize,
                   weight: labelStyle.FontWeight,
@@ -33,7 +33,7 @@ function createChart(item) {
               max: item.JsonItem.MaxValue,
               ticks: {
                 stepSize: item.JsonItem.StepSize,
-                color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
+                color: `#${labelStyle.ColorValue}`,
                 font: {
                   size: labelStyle.FontSize,
                   weight: labelStyle.FontWeight,
@@ -70,7 +70,7 @@ function buildChart(chart) {
         ? {
             x: {
               ticks: {
-                color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
+                color: `#${labelStyle.ColorValue}`,
                 font: {
                   size: labelStyle.FontSize,
                   weight: labelStyle.FontWeight,
@@ -83,7 +83,7 @@ function buildChart(chart) {
               max: item.JsonItem.MaxValue,
               ticks: {
                 stepSize: item.JsonItem.StepSize,
-                color: `#${labelStyle.ColorValue.substring(2)}${labelStyle.ColorValue.substring(0, 2)}`,
+                color: `#${labelStyle.ColorValue}`,
                 font: {
                   size: labelStyle.FontSize,
                   weight: labelStyle.FontWeight,

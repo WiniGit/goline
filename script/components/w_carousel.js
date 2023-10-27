@@ -11,8 +11,8 @@ function createCarousel(item, listChild) {
     carousel.setAttribute("transform-ms", item.JsonItem.TransformTime);
     carousel.setAttribute("effect", item.JsonItem.Effect);
     carousel.style.setProperty("--action-size", `${item.JsonItem.ActionSize}px`);
-    carousel.style.setProperty("--action-color", `#${item.JsonItem.ActionColor.substring(2)}${item.JsonItem.ActionColor.substring(0, 2)}`);
-    carousel.style.setProperty("--action-bg", `#${item.JsonItem.ActionBackground.substring(2)}${item.JsonItem.ActionBackground.substring(0, 2)}`);
+    carousel.style.setProperty("--action-color", `#${item.JsonItem.ActionColor}`);
+    carousel.style.setProperty("--action-bg", `#${item.JsonItem.ActionBackground}`);
     //
     let slideList = document.createElement("div");
     $(slideList).addClass("slide-list");
@@ -40,7 +40,7 @@ function createCarousel(item, listChild) {
         }
         if (caroItem.background) {
             if (caroItem.background.match(hexRegex)) {
-                slide.style.backgroundColor = `#${caroItem.background.substring(2)}${caroItem.background.substring(0, 2)}`;
+                slide.style.backgroundColor = `#${caroItem.background}`;
             } else {
                 slide.style.backgroundImage = `url(${caroItem.background})`;
             }

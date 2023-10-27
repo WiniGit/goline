@@ -14,7 +14,7 @@ function createTree(item, listChild) {
   item.JsonItem.DefaultHide ??= false;
   $(tree).attr("default-hide", `${item.JsonItem.DefaultHide}`);
   actionHide.className = `fa-solid fa-${item.JsonItem.ActionType}-${item.JsonItem.DefaultHide ? "right" : "down"} btn-tree-action`;
-  actionHide.style.color = `#${item.JsonItem.ActionColor?.substring(2)}${item.JsonItem.ActionColor?.substring(0, 2)}`;
+  actionHide.style.color = `#${item.JsonItem.ActionColor}`;
   actionHide.onclick = function (e) {
     e.stopPropagation();
     let isHideChildren = !this.className.includes("right");
