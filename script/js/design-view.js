@@ -1,13 +1,4 @@
-function setupRightView () {
-  // setup tab change
-  // create elements in design view
-  right_view.onkeydown = function (e) {
-    if (e.key === 'Enter' && document.activeElement.localName === 'input') {
-      document.activeElement.blur()
-    }
-  }
-  updateUIDesignView()
-}
+import { EditAlignBlock } from './module-design-view/edit-align.js'
 
 $('body').on('click', '.tab_right', function () {
   if (design_view_index != $(this).data('index')) {
@@ -39,7 +30,7 @@ $('body').on('click', '.tab_right', function () {
 function updateUIDesignView () {
   let scrollY = design_view.scrollTop
   let listEditContainer = document.createDocumentFragment()
-  if (selected_list.length == 0) {
+  if (selected_list.length === 0) {
     let editCanvasBground = createCanvasBackground()
     listEditContainer.appendChild(editCanvasBground)
     let winiRes = winiResponsive()
@@ -49,7 +40,7 @@ function updateUIDesignView () {
     let localSkins = createSelectionSkins()
     listEditContainer.appendChild(localSkins)
   } else {
-    let editAlign = createEditAlign()
+    let editAlign = EditAlignBlock()
     let editSizePosition = createEditSizePosition()
     // // let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign)
@@ -62,7 +53,7 @@ function updateUIDesignView () {
     if (
       select_box_parentID != wbase_parentID &&
       selected_list.some(
-        e => window.getComputedStyle(e.value).position === 'absolute'
+        wb => window.getComputedStyle(wb.value).position === 'absolute'
       )
     ) {
       let editConstraints = createConstraints()
@@ -125,7 +116,6 @@ function updateUIDesignView () {
   })
 }
 
-//
 // edit canvas background color
 function createCanvasBackground () {
   var canvas_view_background = document.createElement('div')
@@ -174,59 +164,59 @@ function createCanvasBackground () {
 }
 
 // edit align UI
-function createEditAlign () {
-  let editAlignContainer = document.createElement('div')
-  editAlignContainer.id = 'edit_align_div'
-  let isEnable =
-    !selected_list[0].value.closest(`.wbaseItem-value[isinstance="true"]`) &&
-    selected_list.every(
-      wb =>
-        (window.getComputedStyle(wb.value).position === 'absolute' &&
-          (selected_list.length > 1 || wb.Level > 1)) ||
-        [
-          ...wb.value.querySelectorAll(
-            `.wbaseItem-value[level="${wb.Level + 1}"]`
-          )
-        ].some(
-          childWb => window.getComputedStyle(childWb).position === 'absolute'
-        )
-    )
-  if (isEnable) {
-    isEnable = !selected_list.some(
-      wb =>
-        wb.IsInstance &&
-        (window.getComputedStyle(wb.value).position !== 'absolute' ||
-          wb.Level === 1)
-    )
-  }
-  editAlignContainer.setAttribute('enable', isEnable)
-  editAlignContainer.replaceChildren(
-    ...[
-      'align left',
-      'align horizontal center',
-      'align right',
-      'align top',
-      'align vertical center',
-      'align bottom'
-    ].map(alignType => {
-      let btnAlign = document.createElement('img')
-      btnAlign.className = 'img-button size-32'
-      if (isEnable)
-        btnAlign.onclick = function () {
-          alignPosition(alignType)
-          updateUIEditPosition()
-          updateUIConstraints()
-        }
-      return btnAlign
-    })
-  )
-  return editAlignContainer
-}
+// function createEditAlign () {
+//   let editAlignContainer = document.createElement('div')
+//   editAlignContainer.id = 'edit_align_div'
+//   let isEnable =
+//     !selected_list[0].value.closest(`.wbaseItem-value[isinstance="true"]`) &&
+//     selected_list.every(
+//       wb =>
+//         (window.getComputedStyle(wb.value).position === 'absolute' &&
+//           (selected_list.length > 1 || wb.Level > 1)) ||
+//         [
+//           ...wb.value.querySelectorAll(
+//             `.wbaseItem-value[level="${wb.Level + 1}"]`
+//           )
+//         ].some(
+//           childWb => window.getComputedStyle(childWb).position === 'absolute'
+//         )
+//     )
+//   if (isEnable) {
+//     isEnable = !selected_list.some(
+//       wb =>
+//         wb.IsInstance &&
+//         (window.getComputedStyle(wb.value).position !== 'absolute' ||
+//           wb.Level === 1)
+//     )
+//   }
+//   editAlignContainer.setAttribute('enable', isEnable)
+//   editAlignContainer.replaceChildren(
+//     ...[
+//       'align left',
+//       'align horizontal center',
+//       'align right',
+//       'align top',
+//       'align vertical center',
+//       'align bottom'
+//     ].map(alignType => {
+//       let btnAlign = document.createElement('img')
+//       btnAlign.className = 'img-button size-32'
+//       if (isEnable)
+//         btnAlign.onclick = function () {
+//           alignPosition(alignType)
+//           updateUIEditPosition()
+//           updateUIConstraints()
+//         }
+//       return btnAlign
+//     })
+//   )
+//   return editAlignContainer
+// }
 
-function updateUIEditAlign () {
-  let newEditAlign = createEditAlign()
-  document.getElementById('edit_align_div').replaceWith(newEditAlign)
-}
+// function updateUIEditAlign () {
+//   let newEditAlign = createEditAlign()
+//   document.getElementById('edit_align_div').replaceWith(newEditAlign)
+// }
 
 // edit position UI
 function createEditSizePosition () {
@@ -7186,3 +7176,16 @@ function createVariables () {
   editContainer.replaceChildren(header, body)
   return editContainer
 }
+
+function setupRightView () {
+  // setup tab change
+  // create elements in design view
+  right_view.onkeydown = function (e) {
+    if (e.key === 'Enter' && document.activeElement.localName === 'input') {
+      document.activeElement.blur()
+    }
+  }
+  updateUIDesignView()
+}
+
+export { setupRightView }
