@@ -1,4 +1,1488 @@
-function alignPosition (align_value) {
+// function alignPosition (align_value) {
+//   let is_edit_children =
+//     (selected_list.length === 1 &&
+//       !selected_list[0].IsInstance &&
+//       [
+//         ...selected_list[0].value.querySelectorAll(
+//           `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+//         )
+//       ].some(
+//         childWb => window.getComputedStyle(childWb).position === 'absolute'
+//       )) ||
+//     !selected_list.every(
+//       wb => window.getComputedStyle(wb.value).position === 'absolute'
+//     )
+//   let listUpdate = []
+//   switch (align_value) {
+//     case 'align left':
+//       if (is_edit_children) {
+//         for (let wb of selected_list) {
+//           let children = [
+//             ...wb.value.querySelectorAll(
+//               `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+//             )
+//           ].filter(
+//             childWb => window.getComputedStyle(childWb).position === 'absolute'
+//           )
+//           if (children.length > 0) {
+//             children = wbase_list.filter(e =>
+//               children.some(eHTML => e.GID === eHTML.id)
+//             )
+//             let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+//             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+//             for (let child of children) {
+//               child.StyleItem ??= {
+//                 PositionItem: {},
+//                 FrameItem: {
+//                   Width: child.value.getAttribute('width-type')
+//                     ? child.value.getAttribute('width-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetWidth,
+//                   Height: child.value.getAttribute('height-type')
+//                     ? child.value.getAttribute('height-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetHeight
+//                 }
+//               }
+//               child.StyleItem.PositionItem.ConstraintsX = Constraints.left
+//               child.value.setAttribute('constX', Constraints.left)
+//               updatePosition({ Left: '0px' }, child)
+//               if (editComp) {
+//                 delete child.StyleItem
+//                 delete child.FrameItem
+//                 let stCssSelector = cssItem.Css.split('/**/')
+//                 let index = stCssSelector.findIndex(stCss =>
+//                   stCss.includes(
+//                     [...child.value.classList].find(cls =>
+//                       cls.startsWith('w-st')
+//                     )
+//                   )
+//                 )
+//                 let newCssText = stCssSelector[index]
+//                   .match(/\{.*\}/g)[0]
+//                   .replace(/(\{|\})/g, '')
+//                   .split(';')
+//                   .filter(
+//                     stProp =>
+//                       !stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                   )
+//                 newCssText.push(
+//                   ...child.value.style.cssText
+//                     .split(';')
+//                     .filter(stProp =>
+//                       stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                     )
+//                 )
+//                 stCssSelector[index] = stCssSelector[index].replace(
+//                   /\{.*\}/g,
+//                   `{ ${newCssText.join(';')} }`
+//                 )
+//                 cssItem.Css = stCssSelector.join('/**/')
+//                 document
+//                   .querySelectorAll(
+//                     stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//                   )
+//                   .forEach(applyRule => {
+//                     applyRule.removeAttribute('style')
+//                     applyRule.setAttribute('constX', Constraints.left)
+//                   })
+//               }
+//             }
+//             if (editComp) {
+//               let stTag = document.getElementById(`w-st-comp${wb.GID}`)
+//               stTag.innerHTML = cssItem.Css
+//               // StyleDA.editStyleSheet(cssItem);
+//             } else {
+//               listUpdate.push(...children)
+//             }
+//           }
+//         }
+//       } else if (selected_list.length === 1) {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         selected_list[0].StyleItem ??= {
+//           PositionItem: {},
+//           FrameItem: {
+//             Width: selected_list[0].value.getAttribute('width-type')
+//               ? selected_list[0].value.getAttribute('width-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetWidth,
+//             Height: selected_list[0].value.getAttribute('height-type')
+//               ? selected_list[0].value.getAttribute('height-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetHeight
+//           }
+//         }
+//         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.left
+//         selected_list[0].value.setAttribute('constX', Constraints.left)
+//         updatePosition({ Left: '0px' }, selected_list[0])
+//         if (comParent) {
+//           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           delete selected_list[0].StyleItem
+//           delete selected_list[0].FrameItem
+//           let stCssSelector = cssItem.Css.split('/**/')
+//           let index = stCssSelector.findIndex(stCss =>
+//             stCss.includes(
+//               [...selected_list[0].value.classList].find(cls =>
+//                 cls.startsWith('w-st')
+//               )
+//             )
+//           )
+//           let newCssText = stCssSelector[index]
+//             .match(/\{.*\}/g)[0]
+//             .replace(/(\{|\})/g, '')
+//             .split(';')
+//             .filter(
+//               stProp =>
+//                 !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//             )
+//           newCssText.push(
+//             ...selected_list[0].value.style.cssText
+//               .split(';')
+//               .filter(stProp =>
+//                 stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//               )
+//           )
+//           stCssSelector[index] = stCssSelector[index].replace(
+//             /\{.*\}/g,
+//             `{ ${newCssText.join(';')} }`
+//           )
+//           cssItem.Css = stCssSelector.join('/**/')
+//           document
+//             .querySelectorAll(
+//               stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//             )
+//             .forEach(applyRule => {
+//               applyRule.removeAttribute('style')
+//               applyRule.setAttribute('constX', Constraints.left)
+//             })
+//           let stTag = document.getElementById(`w-st-comp${comParent.id}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       } else {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         let cssItem = comParent
+//           ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           : null
+//         let minX = Math.min(
+//           ...selected_list.map(e =>
+//             parseFloat(window.getComputedStyle(e.value).left.replace('px'))
+//           )
+//         )
+//         for (let wb of selected_list) {
+//           wb.StyleItem ??= {
+//             PositionItem: {},
+//             FrameItem: {
+//               Width: wb.value.getAttribute('width-type')
+//                 ? wb.value.getAttribute('width-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetWidth,
+//               Height: wb.value.getAttribute('height-type')
+//                 ? wb.value.getAttribute('height-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetHeight
+//             }
+//           }
+//           updatePosition({ Left: minX }, wb)
+//           if (comParent) {
+//             delete wb.StyleItem
+//             delete wb.FrameItem
+//             let stCssSelector = cssItem.Css.split('/**/')
+//             let index = stCssSelector.findIndex(stCss =>
+//               stCss.includes(
+//                 [...wb.value.classList].find(cls => cls.startsWith('w-st'))
+//               )
+//             )
+//             let newCssText = stCssSelector[index]
+//               .match(/\{.*\}/g)[0]
+//               .replace(/(\{|\})/g, '')
+//               .split(';')
+//               .filter(
+//                 stProp =>
+//                   !stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//               )
+//             newCssText.push(
+//               ...wb.value.style.cssText
+//                 .split(';')
+//                 .filter(stProp =>
+//                   stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//                 )
+//             )
+//             stCssSelector[index] = stCssSelector[index].replace(
+//               /\{.*\}/g,
+//               `{ ${newCssText.join(';')} }`
+//             )
+//             cssItem.Css = stCssSelector.join('/**/')
+//             wb.value.removeAttribute('style')
+//           }
+//         }
+//         if (comParent) {
+//           let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       }
+//       break
+//     case 'align horizontal center':
+//       if (is_edit_children) {
+//         for (let wb of selected_list) {
+//           let children = [
+//             ...wb.value.querySelectorAll(
+//               `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+//             )
+//           ].filter(
+//             childWb => window.getComputedStyle(childWb).position == 'absolute'
+//           )
+//           if (children.length > 0) {
+//             children = wbase_list.filter(e =>
+//               children.some(eHTML => e.GID === eHTML.id)
+//             )
+//             let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+//             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+//             let parentW = Math.round(
+//               wb.value.getBoundingClientRect().width / scale
+//             )
+//             for (let child of children) {
+//               child.StyleItem ??= {
+//                 PositionItem: {},
+//                 FrameItem: {
+//                   Width: child.value.getAttribute('width-type')
+//                     ? child.value.getAttribute('width-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetWidth,
+//                   Height: child.value.getAttribute('height-type')
+//                     ? child.value.getAttribute('height-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetHeight
+//                 }
+//               }
+//               child.StyleItem.PositionItem.ConstraintsX = Constraints.center
+//               let newOffX = `${
+//                 (parentW -
+//                   Math.round(
+//                     child.value.getBoundingClientRect().width / scale
+//                   )) /
+//                 2
+//               }px`
+//               child.value.setAttribute('constX', Constraints.center)
+//               updatePosition({ Left: newOffX }, child)
+//               if (editComp) {
+//                 delete child.StyleItem
+//                 delete child.FrameItem
+//                 let stCssSelector = cssItem.Css.split('/**/')
+//                 let index = stCssSelector.findIndex(stCss =>
+//                   stCss.includes(
+//                     [...child.value.classList].find(cls =>
+//                       cls.startsWith('w-st')
+//                     )
+//                   )
+//                 )
+//                 let newCssText = stCssSelector[index]
+//                   .match(/\{.*\}/g)[0]
+//                   .replace(/(\{|\})/g, '')
+//                   .split(';')
+//                   .filter(
+//                     stProp =>
+//                       !stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                   )
+//                 newCssText.push(
+//                   ...child.value.style.cssText
+//                     .split(';')
+//                     .filter(stProp =>
+//                       stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                     )
+//                 )
+//                 stCssSelector[index] = stCssSelector[index].replace(
+//                   /\{.*\}/g,
+//                   `{ ${newCssText.join(';')} }`
+//                 )
+//                 cssItem.Css = stCssSelector.join('/**/')
+//                 document
+//                   .querySelectorAll(
+//                     stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//                   )
+//                   .forEach(applyRule => {
+//                     applyRule.removeAttribute('style')
+//                     applyRule.setAttribute('constX', Constraints.center)
+//                   })
+//               }
+//             }
+//             if (editComp) {
+//               let stTag = document.getElementById(`w-st-comp${wb.GID}`)
+//               stTag.innerHTML = cssItem.Css
+//               // StyleDA.editStyleSheet(cssItem);
+//             } else {
+//               listUpdate.push(...children)
+//             }
+//           }
+//         }
+//       } else if (selected_list.length === 1) {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         selected_list[0].StyleItem ??= {
+//           PositionItem: {},
+//           FrameItem: {
+//             Width: selected_list[0].value.getAttribute('width-type')
+//               ? selected_list[0].value.getAttribute('width-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetWidth,
+//             Height: selected_list[0].value.getAttribute('height-type')
+//               ? selected_list[0].value.getAttribute('height-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetHeight
+//           }
+//         }
+//         let parentW = Math.round(
+//           selected_list[0].value.parentElement.getBoundingClientRect().width /
+//             scale
+//         )
+//         selected_list[0].StyleItem.PositionItem.ConstraintsX =
+//           Constraints.center
+//         let newOffX = `${
+//           (parentW -
+//             Math.round(
+//               selected_list[0].value.getBoundingClientRect().width / scale
+//             )) /
+//           2
+//         }px`
+//         selected_list[0].value.setAttribute('constX', Constraints.center)
+//         updatePosition({ Left: newOffX }, selected_list[0])
+//         if (comParent) {
+//           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           delete selected_list[0].StyleItem
+//           delete selected_list[0].FrameItem
+//           let stCssSelector = cssItem.Css.split('/**/')
+//           let index = stCssSelector.findIndex(stCss =>
+//             stCss.includes(
+//               [...selected_list[0].value.classList].find(cls =>
+//                 cls.startsWith('w-st')
+//               )
+//             )
+//           )
+//           let newCssText = stCssSelector[index]
+//             .match(/\{.*\}/g)[0]
+//             .replace(/(\{|\})/g, '')
+//             .split(';')
+//             .filter(
+//               stProp =>
+//                 !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//             )
+//           newCssText.push(
+//             ...selected_list[0].value.style.cssText
+//               .split(';')
+//               .filter(stProp =>
+//                 stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//               )
+//           )
+//           stCssSelector[index] = stCssSelector[index].replace(
+//             /\{.*\}/g,
+//             `{ ${newCssText.join(';')} }`
+//           )
+//           cssItem.Css = stCssSelector.join('/**/')
+//           document
+//             .querySelectorAll(
+//               stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//             )
+//             .forEach(applyRule => {
+//               applyRule.removeAttribute('style')
+//               applyRule.setAttribute('constX', Constraints.center)
+//             })
+//           let stTag = document.getElementById(`w-st-comp${comParent.id}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       } else {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         let cssItem = comParent
+//           ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           : null
+//         let minX = Math.min(
+//           ...selected_list.map(e =>
+//             parseFloat(window.getComputedStyle(e.value).left.replace('px'))
+//           )
+//         )
+//         let maxX = Math.max(
+//           ...selected_list.map(
+//             e =>
+//               parseFloat(window.getComputedStyle(e.value).left.replace('px')) +
+//               Math.round(e.value.getBoundingClientRect().width / scale)
+//           )
+//         )
+//         let newOffX = minX + (maxX - minX) / 2
+//         for (let wb of selected_list) {
+//           wb.StyleItem ??= {
+//             PositionItem: {},
+//             FrameItem: {
+//               Width: wb.value.getAttribute('width-type')
+//                 ? wb.value.getAttribute('width-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetWidth,
+//               Height: wb.value.getAttribute('height-type')
+//                 ? wb.value.getAttribute('height-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetHeight
+//             }
+//           }
+//           let new_offsetX =
+//             newOffX -
+//             Math.round(wb.value.getBoundingClientRect().width / scale) / 2
+//           updatePosition({ Left: new_offsetX }, wb)
+//           if (comParent) {
+//             delete wb.StyleItem
+//             delete wb.FrameItem
+//             let stCssSelector = cssItem.Css.split('/**/')
+//             let index = stCssSelector.findIndex(stCss =>
+//               stCss.includes(
+//                 [...wb.value.classList].find(cls => cls.startsWith('w-st'))
+//               )
+//             )
+//             let newCssText = stCssSelector[index]
+//               .match(/\{.*\}/g)[0]
+//               .replace(/(\{|\})/g, '')
+//               .split(';')
+//               .filter(
+//                 stProp =>
+//                   !stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//               )
+//             newCssText.push(
+//               ...wb.value.style.cssText
+//                 .split(';')
+//                 .filter(stProp =>
+//                   stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//                 )
+//             )
+//             stCssSelector[index] = stCssSelector[index].replace(
+//               /\{.*\}/g,
+//               `{ ${newCssText.join(';')} }`
+//             )
+//             cssItem.Css = stCssSelector.join('/**/')
+//             wb.value.removeAttribute('style')
+//           }
+//         }
+//         if (comParent) {
+//           let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       }
+//       break
+//     case 'align right':
+//       if (is_edit_children) {
+//         for (let wb of selected_list) {
+//           let children = [
+//             ...wb.value.querySelectorAll(
+//               `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+//             )
+//           ].filter(
+//             childWb => window.getComputedStyle(childWb).position == 'absolute'
+//           )
+//           if (children.length > 0) {
+//             children = wbase_list.filter(e =>
+//               children.some(eHTML => e.GID === eHTML.id)
+//             )
+//             let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+//             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+//             for (let child of children) {
+//               child.StyleItem ??= {
+//                 PositionItem: {},
+//                 FrameItem: {
+//                   Width: child.value.getAttribute('width-type')
+//                     ? child.value.getAttribute('width-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetWidth,
+//                   Height: child.value.getAttribute('height-type')
+//                     ? child.value.getAttribute('height-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetHeight
+//                 }
+//               }
+//               child.StyleItem.PositionItem.ConstraintsX = Constraints.right
+//               child.value.setAttribute('constX', Constraints.right)
+//               updatePosition({ Right: '0px' }, child)
+//               if (editComp) {
+//                 delete child.StyleItem
+//                 delete child.FrameItem
+//                 let stCssSelector = cssItem.Css.split('/**/')
+//                 let index = stCssSelector.findIndex(stCss =>
+//                   stCss.includes(
+//                     [...child.value.classList].find(cls =>
+//                       cls.startsWith('w-st')
+//                     )
+//                   )
+//                 )
+//                 let newCssText = stCssSelector[index]
+//                   .match(/\{.*\}/g)[0]
+//                   .replace(/(\{|\})/g, '')
+//                   .split(';')
+//                   .filter(
+//                     stProp =>
+//                       !stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                   )
+//                 newCssText.push(
+//                   ...child.value.style.cssText
+//                     .split(';')
+//                     .filter(stProp =>
+//                       stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                     )
+//                 )
+//                 stCssSelector[index] = stCssSelector[index].replace(
+//                   /\{.*\}/g,
+//                   `{ ${newCssText.join(';')} }`
+//                 )
+//                 cssItem.Css = stCssSelector.join('/**/')
+//                 document
+//                   .querySelectorAll(
+//                     stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//                   )
+//                   .forEach(applyRule => {
+//                     applyRule.removeAttribute('style')
+//                     applyRule.setAttribute('constX', Constraints.right)
+//                   })
+//               }
+//             }
+//             if (editComp) {
+//               let stTag = document.getElementById(`w-st-comp${wb.GID}`)
+//               stTag.innerHTML = cssItem.Css
+//               // StyleDA.editStyleSheet(cssItem);
+//             } else {
+//               listUpdate.push(...children)
+//             }
+//           }
+//         }
+//       } else if (selected_list.length === 1) {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         selected_list[0].StyleItem ??= {
+//           PositionItem: {},
+//           FrameItem: {
+//             Width: selected_list[0].value.getAttribute('width-type')
+//               ? selected_list[0].value.getAttribute('width-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetWidth,
+//             Height: selected_list[0].value.getAttribute('height-type')
+//               ? selected_list[0].value.getAttribute('height-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetHeight
+//           }
+//         }
+//         selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.right
+//         selected_list[0].value.setAttribute('constX', Constraints.right)
+//         updatePosition({ Right: '0px' }, selected_list[0])
+//         if (comParent) {
+//           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           delete selected_list[0].StyleItem
+//           delete selected_list[0].FrameItem
+//           let stCssSelector = cssItem.Css.split('/**/')
+//           let index = stCssSelector.findIndex(stCss =>
+//             stCss.includes(
+//               [...selected_list[0].value.classList].find(cls =>
+//                 cls.startsWith('w-st')
+//               )
+//             )
+//           )
+//           let newCssText = stCssSelector[index]
+//             .match(/\{.*\}/g)[0]
+//             .replace(/(\{|\})/g, '')
+//             .split(';')
+//             .filter(
+//               stProp =>
+//                 !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//             )
+//           newCssText.push(
+//             ...selected_list[0].value.style.cssText
+//               .split(';')
+//               .filter(stProp =>
+//                 stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//               )
+//           )
+//           stCssSelector[index] = stCssSelector[index].replace(
+//             /\{.*\}/g,
+//             `{ ${newCssText.join(';')} }`
+//           )
+//           cssItem.Css = stCssSelector.join('/**/')
+//           document
+//             .querySelectorAll(
+//               stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//             )
+//             .forEach(applyRule => {
+//               applyRule.removeAttribute('style')
+//               applyRule.setAttribute('constX', Constraints.right)
+//             })
+//           let stTag = document.getElementById(`w-st-comp${comParent.id}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       } else {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         let cssItem = comParent
+//           ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           : null
+//         let maxX = Math.max(
+//           ...selected_list.map(
+//             e =>
+//               parseFloat(window.getComputedStyle(e.value).left.replace('px')) +
+//               Math.round(e.value.getBoundingClientRect().width / scale)
+//           )
+//         )
+//         for (let wb of selected_list) {
+//           wb.StyleItem ??= {
+//             PositionItem: {},
+//             FrameItem: {
+//               Width: wb.value.getAttribute('width-type')
+//                 ? wb.value.getAttribute('width-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetWidth,
+//               Height: wb.value.getAttribute('height-type')
+//                 ? wb.value.getAttribute('height-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetHeight
+//             }
+//           }
+//           let newOffX =
+//             maxX - Math.round(wb.value.getBoundingClientRect().width / scale)
+//           updatePosition({ Left: newOffX }, wb)
+//           if (comParent) {
+//             delete wb.StyleItem
+//             delete wb.FrameItem
+//             let stCssSelector = cssItem.Css.split('/**/')
+//             let index = stCssSelector.findIndex(stCss =>
+//               stCss.includes(
+//                 [...wb.value.classList].find(cls => cls.startsWith('w-st'))
+//               )
+//             )
+//             let newCssText = stCssSelector[index]
+//               .match(/\{.*\}/g)[0]
+//               .replace(/(\{|\})/g, '')
+//               .split(';')
+//               .filter(
+//                 stProp =>
+//                   !stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//               )
+//             newCssText.push(
+//               ...wb.value.style.cssText
+//                 .split(';')
+//                 .filter(stProp =>
+//                   stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//                 )
+//             )
+//             stCssSelector[index] = stCssSelector[index].replace(
+//               /\{.*\}/g,
+//               `{ ${newCssText.join(';')} }`
+//             )
+//             cssItem.Css = stCssSelector.join('/**/')
+//             wb.value.removeAttribute('style')
+//           }
+//         }
+//         if (comParent) {
+//           let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       }
+//       break
+//     case 'align top':
+//       if (is_edit_children) {
+//         for (let wb of selected_list) {
+//           let children = [
+//             ...wb.value.querySelectorAll(
+//               `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+//             )
+//           ].filter(
+//             childWb => window.getComputedStyle(childWb).position == 'absolute'
+//           )
+//           if (children.length > 0) {
+//             children = wbase_list.filter(e =>
+//               children.some(eHTML => e.GID === eHTML.id)
+//             )
+//             let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+//             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+//             for (let child of children) {
+//               child.StyleItem ??= {
+//                 PositionItem: {},
+//                 FrameItem: {
+//                   Width: child.value.getAttribute('width-type')
+//                     ? child.value.getAttribute('width-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetWidth,
+//                   Height: child.value.getAttribute('height-type')
+//                     ? child.value.getAttribute('height-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetHeight
+//                 }
+//               }
+//               child.StyleItem.PositionItem.ConstraintsY = Constraints.top
+//               child.value.setAttribute('constY', Constraints.top)
+//               updatePosition({ Top: '0px' }, child)
+//               if (editComp) {
+//                 delete child.StyleItem
+//                 delete child.FrameItem
+//                 let stCssSelector = cssItem.Css.split('/**/')
+//                 let index = stCssSelector.findIndex(stCss =>
+//                   stCss.includes(
+//                     [...child.value.classList].find(cls =>
+//                       cls.startsWith('w-st')
+//                     )
+//                   )
+//                 )
+//                 let newCssText = stCssSelector[index]
+//                   .match(/\{.*\}/g)[0]
+//                   .replace(/(\{|\})/g, '')
+//                   .split(';')
+//                   .filter(
+//                     stProp =>
+//                       !stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                   )
+//                 newCssText.push(
+//                   ...child.value.style.cssText
+//                     .split(';')
+//                     .filter(stProp =>
+//                       stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                     )
+//                 )
+//                 stCssSelector[index] = stCssSelector[index].replace(
+//                   /\{.*\}/g,
+//                   `{ ${newCssText.join(';')} }`
+//                 )
+//                 cssItem.Css = stCssSelector.join('/**/')
+//                 document
+//                   .querySelectorAll(
+//                     stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//                   )
+//                   .forEach(applyRule => {
+//                     applyRule.removeAttribute('style')
+//                     applyRule.setAttribute('constY', Constraints.top)
+//                   })
+//               }
+//             }
+//             if (editComp) {
+//               let stTag = document.getElementById(`w-st-comp${wb.GID}`)
+//               stTag.innerHTML = cssItem.Css
+//               // StyleDA.editStyleSheet(cssItem);
+//             } else {
+//               listUpdate.push(...children)
+//             }
+//           }
+//         }
+//       } else if (selected_list.length === 1) {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         selected_list[0].StyleItem ??= {
+//           PositionItem: {},
+//           FrameItem: {
+//             Width: selected_list[0].value.getAttribute('width-type')
+//               ? selected_list[0].value.getAttribute('width-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetWidth,
+//             Height: selected_list[0].value.getAttribute('height-type')
+//               ? selected_list[0].value.getAttribute('height-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetHeight
+//           }
+//         }
+//         selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.top
+//         selected_list[0].value.setAttribute('constY', Constraints.top)
+//         updatePosition({ Top: '0px' }, selected_list[0])
+//         if (comParent) {
+//           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           delete selected_list[0].StyleItem
+//           delete selected_list[0].FrameItem
+//           let stCssSelector = cssItem.Css.split('/**/')
+//           let index = stCssSelector.findIndex(stCss =>
+//             stCss.includes(
+//               [...selected_list[0].value.classList].find(cls =>
+//                 cls.startsWith('w-st')
+//               )
+//             )
+//           )
+//           let newCssText = stCssSelector[index]
+//             .match(/\{.*\}/g)[0]
+//             .replace(/(\{|\})/g, '')
+//             .split(';')
+//             .filter(
+//               stProp =>
+//                 !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//             )
+//           newCssText.push(
+//             ...selected_list[0].value.style.cssText
+//               .split(';')
+//               .filter(stProp =>
+//                 stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//               )
+//           )
+//           stCssSelector[index] = stCssSelector[index].replace(
+//             /\{.*\}/g,
+//             `{ ${newCssText.join(';')} }`
+//           )
+//           cssItem.Css = stCssSelector.join('/**/')
+//           document
+//             .querySelectorAll(
+//               stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//             )
+//             .forEach(applyRule => {
+//               applyRule.removeAttribute('style')
+//               applyRule.setAttribute('constY', Constraints.top)
+//             })
+//           let stTag = document.getElementById(`w-st-comp${comParent.id}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       } else {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         let cssItem = comParent
+//           ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           : null
+//         let minY = Math.min(
+//           ...selected_list.map(e =>
+//             parseFloat(window.getComputedStyle(e.value).top.replace('px'))
+//           )
+//         )
+//         for (let wb of selected_list) {
+//           wb.StyleItem ??= {
+//             PositionItem: {},
+//             FrameItem: {
+//               Width: wb.value.getAttribute('width-type')
+//                 ? wb.value.getAttribute('width-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetWidth,
+//               Height: wb.value.getAttribute('height-type')
+//                 ? wb.value.getAttribute('height-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetHeight
+//             }
+//           }
+//           updatePosition({ Top: minY }, wb)
+//           if (comParent) {
+//             delete wb.StyleItem
+//             delete wb.FrameItem
+//             let stCssSelector = cssItem.Css.split('/**/')
+//             let index = stCssSelector.findIndex(stCss =>
+//               stCss.includes(
+//                 [...wb.value.classList].find(cls => cls.startsWith('w-st'))
+//               )
+//             )
+//             let newCssText = stCssSelector[index]
+//               .match(/\{.*\}/g)[0]
+//               .replace(/(\{|\})/g, '')
+//               .split(';')
+//               .filter(
+//                 stProp =>
+//                   !stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//               )
+//             newCssText.push(
+//               ...wb.value.style.cssText
+//                 .split(';')
+//                 .filter(stProp =>
+//                   stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//                 )
+//             )
+//             stCssSelector[index] = stCssSelector[index].replace(
+//               /\{.*\}/g,
+//               `{ ${newCssText.join(';')} }`
+//             )
+//             cssItem.Css = stCssSelector.join('/**/')
+//             wb.value.removeAttribute('style')
+//           }
+//         }
+//         if (comParent) {
+//           let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       }
+//       break
+//     case 'align vertical center':
+//       if (is_edit_children) {
+//         for (let wb of selected_list) {
+//           let children = [
+//             ...wb.value.querySelectorAll(
+//               `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+//             )
+//           ].filter(
+//             childWb => window.getComputedStyle(childWb).position == 'absolute'
+//           )
+//           if (children.length > 0) {
+//             children = wbase_list.filter(e =>
+//               children.some(eHTML => e.GID === eHTML.id)
+//             )
+//             let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+//             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+//             let parentH = Math.round(
+//               wb.value.getBoundingClientRect().height / scale
+//             )
+//             for (let child of children) {
+//               child.StyleItem ??= {
+//                 PositionItem: {},
+//                 FrameItem: {
+//                   Width: child.value.getAttribute('width-type')
+//                     ? child.value.getAttribute('width-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetWidth,
+//                   Height: child.value.getAttribute('height-type')
+//                     ? child.value.getAttribute('height-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetHeight
+//                 }
+//               }
+//               child.StyleItem.PositionItem.ConstraintsY = Constraints.center
+//               let newOffY = `${
+//                 (parentH -
+//                   Math.round(
+//                     child.value.getBoundingClientRect().height / scale
+//                   )) /
+//                 2
+//               }px`
+//               child.value.setAttribute('constY', Constraints.center)
+//               updatePosition({ Top: newOffY }, child)
+//               if (editComp) {
+//                 delete child.StyleItem
+//                 delete child.FrameItem
+//                 let stCssSelector = cssItem.Css.split('/**/')
+//                 let index = stCssSelector.findIndex(stCss =>
+//                   stCss.includes(
+//                     [...child.value.classList].find(cls =>
+//                       cls.startsWith('w-st')
+//                     )
+//                   )
+//                 )
+//                 let newCssText = stCssSelector[index]
+//                   .match(/\{.*\}/g)[0]
+//                   .replace(/(\{|\})/g, '')
+//                   .split(';')
+//                   .filter(
+//                     stProp =>
+//                       !stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                   )
+//                 newCssText.push(
+//                   ...child.value.style.cssText
+//                     .split(';')
+//                     .filter(stProp =>
+//                       stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                     )
+//                 )
+//                 stCssSelector[index] = stCssSelector[index].replace(
+//                   /\{.*\}/g,
+//                   `{ ${newCssText.join(';')} }`
+//                 )
+//                 cssItem.Css = stCssSelector.join('/**/')
+//                 document
+//                   .querySelectorAll(
+//                     stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//                   )
+//                   .forEach(applyRule => {
+//                     applyRule.removeAttribute('style')
+//                     applyRule.setAttribute('constY', Constraints.center)
+//                   })
+//               }
+//             }
+//             if (editComp) {
+//               let stTag = document.getElementById(`w-st-comp${wb.GID}`)
+//               stTag.innerHTML = cssItem.Css
+//               // StyleDA.editStyleSheet(cssItem);
+//             } else {
+//               listUpdate.push(...children)
+//             }
+//           }
+//         }
+//       } else if (selected_list.length === 1) {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         selected_list[0].StyleItem ??= {
+//           PositionItem: {},
+//           FrameItem: {
+//             Width: selected_list[0].value.getAttribute('width-type')
+//               ? selected_list[0].value.getAttribute('width-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetWidth,
+//             Height: selected_list[0].value.getAttribute('height-type')
+//               ? selected_list[0].value.getAttribute('height-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetHeight
+//           }
+//         }
+//         let parentH = Math.round(
+//           selected_list[0].value.parentElement.getBoundingClientRect().height /
+//             scale
+//         )
+//         selected_list[0].StyleItem.PositionItem.ConstraintsY =
+//           Constraints.center
+//         let newOffY = `${
+//           (parentH -
+//             Math.round(
+//               selected_list[0].value.getBoundingClientRect().height / scale
+//             )) /
+//           2
+//         }px`
+//         selected_list[0].value.setAttribute('constY', Constraints.center)
+//         updatePosition({ Top: newOffY }, selected_list[0])
+//         if (comParent) {
+//           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           delete selected_list[0].StyleItem
+//           delete selected_list[0].FrameItem
+//           let stCssSelector = cssItem.Css.split('/**/')
+//           let index = stCssSelector.findIndex(stCss =>
+//             stCss.includes(
+//               [...selected_list[0].value.classList].find(cls =>
+//                 cls.startsWith('w-st')
+//               )
+//             )
+//           )
+//           let newCssText = stCssSelector[index]
+//             .match(/\{.*\}/g)[0]
+//             .replace(/(\{|\})/g, '')
+//             .split(';')
+//             .filter(
+//               stProp =>
+//                 !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//             )
+//           newCssText.push(
+//             ...selected_list[0].value.style.cssText
+//               .split(';')
+//               .filter(stProp =>
+//                 stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//               )
+//           )
+//           stCssSelector[index] = stCssSelector[index].replace(
+//             /\{.*\}/g,
+//             `{ ${newCssText.join(';')} }`
+//           )
+//           cssItem.Css = stCssSelector.join('/**/')
+//           document
+//             .querySelectorAll(
+//               stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//             )
+//             .forEach(applyRule => {
+//               applyRule.removeAttribute('style')
+//               applyRule.setAttribute('constY', Constraints.center)
+//             })
+//           let stTag = document.getElementById(`w-st-comp${comParent.id}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       } else {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         let cssItem = comParent
+//           ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           : null
+//         let minY = Math.min(
+//           ...selected_list.map(e =>
+//             parseFloat(window.getComputedStyle(e.value).top.replace('px'))
+//           )
+//         )
+//         let maxY = Math.max(
+//           ...selected_list.map(
+//             e =>
+//               parseFloat(window.getComputedStyle(e.value).top.replace('px')) +
+//               Math.round(e.value.getBoundingClientRect().height / scale)
+//           )
+//         )
+//         let newOffY = minY + (maxY - minY) / 2
+//         for (let wb of selected_list) {
+//           wb.StyleItem ??= {
+//             PositionItem: {},
+//             FrameItem: {
+//               Width: wb.value.getAttribute('width-type')
+//                 ? wb.value.getAttribute('width-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetWidth,
+//               Height: wb.value.getAttribute('height-type')
+//                 ? wb.value.getAttribute('height-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetHeight
+//             }
+//           }
+//           let new_offsetY =
+//             newOffY -
+//             Math.round(wb.value.getBoundingClientRect().height / scale) / 2
+//           updatePosition({ Top: new_offsetY }, wb)
+//           if (comParent) {
+//             delete wb.StyleItem
+//             delete wb.FrameItem
+//             let stCssSelector = cssItem.Css.split('/**/')
+//             let index = stCssSelector.findIndex(stCss =>
+//               stCss.includes(
+//                 [...wb.value.classList].find(cls => cls.startsWith('w-st'))
+//               )
+//             )
+//             let newCssText = stCssSelector[index]
+//               .match(/\{.*\}/g)[0]
+//               .replace(/(\{|\})/g, '')
+//               .split(';')
+//               .filter(
+//                 stProp =>
+//                   !stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//               )
+//             newCssText.push(
+//               ...wb.value.style.cssText
+//                 .split(';')
+//                 .filter(stProp =>
+//                   stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//                 )
+//             )
+//             stCssSelector[index] = stCssSelector[index].replace(
+//               /\{.*\}/g,
+//               `{ ${newCssText.join(';')} }`
+//             )
+//             cssItem.Css = stCssSelector.join('/**/')
+//             wb.value.removeAttribute('style')
+//           }
+//         }
+//         if (comParent) {
+//           let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       }
+//       break
+//     case 'align bottom':
+//       if (is_edit_children) {
+//         for (let wb of selected_list) {
+//           let children = [
+//             ...wb.value.querySelectorAll(
+//               `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+//             )
+//           ].filter(
+//             childWb => window.getComputedStyle(childWb).position == 'absolute'
+//           )
+//           if (children.length > 0) {
+//             children = wbase_list.filter(e =>
+//               children.some(eHTML => e.GID === eHTML.id)
+//             )
+//             let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+//             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+//             for (let child of children) {
+//               child.StyleItem ??= {
+//                 PositionItem: {},
+//                 FrameItem: {
+//                   Width: child.value.getAttribute('width-type')
+//                     ? child.value.getAttribute('width-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetWidth,
+//                   Height: child.value.getAttribute('height-type')
+//                     ? child.value.getAttribute('height-type') === 'fill'
+//                       ? -100
+//                       : null
+//                     : child.value.offsetHeight
+//                 }
+//               }
+//               child.StyleItem.PositionItem.ConstraintsY = Constraints.bottom
+//               child.value.setAttribute('constY', Constraints.bottom)
+//               updatePosition({ Bottom: '0px' }, child)
+//               if (editComp) {
+//                 delete child.StyleItem
+//                 delete child.FrameItem
+//                 let stCssSelector = cssItem.Css.split('/**/')
+//                 let index = stCssSelector.findIndex(stCss =>
+//                   stCss.includes(
+//                     [...child.value.classList].find(cls =>
+//                       cls.startsWith('w-st')
+//                     )
+//                   )
+//                 )
+//                 let newCssText = stCssSelector[index]
+//                   .match(/\{.*\}/g)[0]
+//                   .replace(/(\{|\})/g, '')
+//                   .split(';')
+//                   .filter(
+//                     stProp =>
+//                       !stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                   )
+//                 newCssText.push(
+//                   ...child.value.style.cssText
+//                     .split(';')
+//                     .filter(stProp =>
+//                       stProp.match(
+//                         /(width|height|left|top|bottom|right|transform)/g
+//                       )
+//                     )
+//                 )
+//                 stCssSelector[index] = stCssSelector[index].replace(
+//                   /\{.*\}/g,
+//                   `{ ${newCssText.join(';')} }`
+//                 )
+//                 cssItem.Css = stCssSelector.join('/**/')
+//                 document
+//                   .querySelectorAll(
+//                     stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//                   )
+//                   .forEach(applyRule => {
+//                     applyRule.removeAttribute('style')
+//                     applyRule.setAttribute('constY', Constraints.bottom)
+//                   })
+//               }
+//             }
+//             if (editComp) {
+//               let stTag = document.getElementById(`w-st-comp${wb.GID}`)
+//               stTag.innerHTML = cssItem.Css
+//               // StyleDA.editStyleSheet(cssItem);
+//             } else {
+//               listUpdate.push(...children)
+//             }
+//           }
+//         }
+//       } else if (selected_list.length === 1) {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         selected_list[0].StyleItem ??= {
+//           PositionItem: {},
+//           FrameItem: {
+//             Width: selected_list[0].value.getAttribute('width-type')
+//               ? selected_list[0].value.getAttribute('width-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetWidth,
+//             Height: selected_list[0].value.getAttribute('height-type')
+//               ? selected_list[0].value.getAttribute('height-type') === 'fill'
+//                 ? -100
+//                 : null
+//               : selected_list[0].value.offsetHeight
+//           }
+//         }
+//         selected_list[0].StyleItem.PositionItem.ConstraintsY =
+//           Constraints.bottom
+//         selected_list[0].value.setAttribute('constY', Constraints.bottom)
+//         updatePosition({ Bottom: '0px' }, selected_list[0])
+//         if (comParent) {
+//           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           delete selected_list[0].StyleItem
+//           delete selected_list[0].FrameItem
+//           let stCssSelector = cssItem.Css.split('/**/')
+//           let index = stCssSelector.findIndex(stCss =>
+//             stCss.includes(
+//               [...selected_list[0].value.classList].find(cls =>
+//                 cls.startsWith('w-st')
+//               )
+//             )
+//           )
+//           let newCssText = stCssSelector[index]
+//             .match(/\{.*\}/g)[0]
+//             .replace(/(\{|\})/g, '')
+//             .split(';')
+//             .filter(
+//               stProp =>
+//                 !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//             )
+//           newCssText.push(
+//             ...selected_list[0].value.style.cssText
+//               .split(';')
+//               .filter(stProp =>
+//                 stProp.match(/(width|height|left|top|bottom|right|transform)/g)
+//               )
+//           )
+//           stCssSelector[index] = stCssSelector[index].replace(
+//             /\{.*\}/g,
+//             `{ ${newCssText.join(';')} }`
+//           )
+//           cssItem.Css = stCssSelector.join('/**/')
+//           document
+//             .querySelectorAll(
+//               stCssSelector[index].replace(/\{.*\}/g, '').trim()
+//             )
+//             .forEach(applyRule => {
+//               applyRule.removeAttribute('style')
+//               applyRule.setAttribute('constY', Constraints.bottom)
+//             })
+//           let stTag = document.getElementById(`w-st-comp${comParent.id}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       } else {
+//         let comParent = $(selected_list[0].value).parents(
+//           `.wbaseItem-value[iswini="true"]`
+//         )[0]
+//         let cssItem = comParent
+//           ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
+//           : null
+//         let maxY = Math.max(
+//           ...selected_list.map(
+//             e =>
+//               parseFloat(window.getComputedStyle(e.value).top.replace('px')) +
+//               Math.round(e.value.getBoundingClientRect().height / scale)
+//           )
+//         )
+//         for (let wb of selected_list) {
+//           wb.StyleItem ??= {
+//             PositionItem: {},
+//             FrameItem: {
+//               Width: wb.value.getAttribute('width-type')
+//                 ? wb.value.getAttribute('width-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetWidth,
+//               Height: wb.value.getAttribute('height-type')
+//                 ? wb.value.getAttribute('height-type') === 'fill'
+//                   ? -100
+//                   : null
+//                 : wb.value.offsetHeight
+//             }
+//           }
+//           let newOffY =
+//             maxY - Math.round(wb.value.getBoundingClientRect().height / scale)
+//           updatePosition({ Top: newOffY }, wb)
+//           if (comParent) {
+//             delete wb.StyleItem
+//             delete wb.FrameItem
+//             let stCssSelector = cssItem.Css.split('/**/')
+//             let index = stCssSelector.findIndex(stCss =>
+//               stCss.includes(
+//                 [...wb.value.classList].find(cls => cls.startsWith('w-st'))
+//               )
+//             )
+//             let newCssText = stCssSelector[index]
+//               .match(/\{.*\}/g)[0]
+//               .replace(/(\{|\})/g, '')
+//               .split(';')
+//               .filter(
+//                 stProp =>
+//                   !stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//               )
+//             newCssText.push(
+//               ...wb.value.style.cssText
+//                 .split(';')
+//                 .filter(stProp =>
+//                   stProp.match(
+//                     /(width|height|left|top|bottom|right|transform)/g
+//                   )
+//                 )
+//             )
+//             stCssSelector[index] = stCssSelector[index].replace(
+//               /\{.*\}/g,
+//               `{ ${newCssText.join(';')} }`
+//             )
+//             cssItem.Css = stCssSelector.join('/**/')
+//             wb.value.removeAttribute('style')
+//           }
+//         }
+//         if (comParent) {
+//           let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
+//           stTag.innerHTML = cssItem.Css
+//           // StyleDA.editStyleSheet(cssItem);
+//         } else {
+//           listUpdate.push(...selected_list)
+//         }
+//       }
+//       break
+//     default:
+//       break
+//   }
+//   if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.position)
+//   updateUISelectBox()
+// }
+
+function handleEditAlign (newValue) {
   let is_edit_children =
     (selected_list.length === 1 &&
       !selected_list[0].IsInstance &&
@@ -13,235 +1497,255 @@ function alignPosition (align_value) {
       wb => window.getComputedStyle(wb.value).position === 'absolute'
     )
   let listUpdate = []
-  switch (align_value) {
+  switch (newValue) {
     case 'align left':
       if (is_edit_children) {
         for (let wb of selected_list) {
           let children = [
             ...wb.value.querySelectorAll(
-              `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+              `.wbaseItem-value[level="${wb.Level + 1}"]`
             )
           ].filter(
-            childWb => window.getComputedStyle(childWb).position === 'absolute'
+            cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (children.length > 0) {
-            children = wbase_list.filter(e =>
-              children.some(eHTML => e.GID === eHTML.id)
-            )
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            for (let child of children) {
-              child.StyleItem ??= {
-                PositionItem: {},
-                FrameItem: {
-                  Width: child.value.getAttribute('width-type')
-                    ? child.value.getAttribute('width-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetWidth,
-                  Height: child.value.getAttribute('height-type')
-                    ? child.value.getAttribute('height-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetHeight
-                }
+            for (let cWbHTML of children) {
+              let cssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              switch (cWbHTML.getAttribute('constx')) {
+                case Constraints.left_right:
+                  cssRule.style.width = cWbHTML.offsetWidth + 'px'
+                  break
+                case Constraints.scale:
+                  cssRule.style.width = cWbHTML.offsetWidth + 'px'
+                  break
+                default:
+                  break
               }
-              child.StyleItem.PositionItem.ConstraintsX = Constraints.left
-              child.value.setAttribute('constX', Constraints.left)
-              updatePosition({ Left: '0px' }, child)
-              if (editComp) {
-                delete child.StyleItem
-                delete child.FrameItem
-                let stCssSelector = cssItem.Css.split('/**/')
-                let index = stCssSelector.findIndex(stCss =>
-                  stCss.includes(
-                    [...child.value.classList].find(cls =>
-                      cls.startsWith('w-st')
-                    )
-                  )
-                )
-                let newCssText = stCssSelector[index]
-                  .match(/\{.*\}/g)[0]
-                  .replace(/(\{|\})/g, '')
-                  .split(';')
-                  .filter(
-                    stProp =>
-                      !stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                  )
-                newCssText.push(
-                  ...child.value.style.cssText
-                    .split(';')
-                    .filter(stProp =>
-                      stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                    )
-                )
-                stCssSelector[index] = stCssSelector[index].replace(
-                  /\{.*\}/g,
-                  `{ ${newCssText.join(';')} }`
-                )
-                cssItem.Css = stCssSelector.join('/**/')
-                document
-                  .querySelectorAll(
-                    stCssSelector[index].replace(/\{.*\}/g, '').trim()
-                  )
-                  .forEach(applyRule => {
-                    applyRule.removeAttribute('style')
-                    applyRule.setAttribute('constX', Constraints.left)
-                  })
-              }
+              if (cWbHTML.getAttribute('consty') === Constraints.center) {
+                cssRule.style.transform = 'translateY(-50%)'
+              } else cssRule.style.transform = ''
+              cssRule.style.left = '0px'
+              cssRule.style.right = ''
+              cWbHTML.setAttribute('constx', Constraints.left)
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                cssRule.cssText
+              )
             }
-            if (editComp) {
-              let stTag = document.getElementById(`w-st-comp${wb.GID}`)
-              stTag.innerHTML = cssItem.Css
-              // StyleDA.editStyleSheet(cssItem);
-            } else {
+            StyleDA.editStyleSheet(cssItem)
+          } else {
+            if (children.length > 0) {
+              children = wbase_list.filter(e =>
+                children.some(cWbHTML => e.GID === cWbHTML.id)
+              )
+              for (let cWb of children) {
+                switch (cWb.value.getAttribute('constx')) {
+                  case Constraints.left_right:
+                    cWb.value.style.width = cWb.value.offsetWidth + 'px'
+                    break
+                  case Constraints.scale:
+                    cWb.value.style.width = cWb.value.offsetWidth + 'px'
+                    break
+                  default:
+                    break
+                }
+                if (cWb.value.getAttribute('consty') === Constraints.center) {
+                  cWb.value.style.transform = 'translateY(-50%)'
+                } else cWb.value.style.transform = ''
+                cWb.value.style.left = '0px'
+                cWb.value.style.right = ''
+                cWb.value.setAttribute('constx', Constraints.left)
+              }
               listUpdate.push(...children)
             }
           }
         }
       } else if (selected_list.length === 1) {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        selected_list[0].StyleItem ??= {
-          PositionItem: {},
-          FrameItem: {
-            Width: selected_list[0].value.getAttribute('width-type')
-              ? selected_list[0].value.getAttribute('width-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetWidth,
-            Height: selected_list[0].value.getAttribute('height-type')
-              ? selected_list[0].value.getAttribute('height-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetHeight
+        if (selected_list[0].StyleItem) {
+          switch (selected_list[0].value.getAttribute('constx')) {
+            case Constraints.left_right:
+              selected_list[0].value.style.width =
+                selected_list[0].value.offsetWidth + 'px'
+              break
+            case Constraints.scale:
+              selected_list[0].value.style.width =
+                selected_list[0].value.offsetWidth + 'px'
+              break
+            default:
+              break
           }
-        }
-        selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.left
-        selected_list[0].value.setAttribute('constX', Constraints.left)
-        updatePosition({ Left: '0px' }, selected_list[0])
-        if (comParent) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          delete selected_list[0].StyleItem
-          delete selected_list[0].FrameItem
-          let stCssSelector = cssItem.Css.split('/**/')
-          let index = stCssSelector.findIndex(stCss =>
-            stCss.includes(
-              [...selected_list[0].value.classList].find(cls =>
-                cls.startsWith('w-st')
-              )
-            )
-          )
-          let newCssText = stCssSelector[index]
-            .match(/\{.*\}/g)[0]
-            .replace(/(\{|\})/g, '')
-            .split(';')
-            .filter(
-              stProp =>
-                !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-            )
-          newCssText.push(
-            ...selected_list[0].value.style.cssText
-              .split(';')
-              .filter(stProp =>
-                stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-              )
-          )
-          stCssSelector[index] = stCssSelector[index].replace(
-            /\{.*\}/g,
-            `{ ${newCssText.join(';')} }`
-          )
-          cssItem.Css = stCssSelector.join('/**/')
-          document
-            .querySelectorAll(
-              stCssSelector[index].replace(/\{.*\}/g, '').trim()
-            )
-            .forEach(applyRule => {
-              applyRule.removeAttribute('style')
-              applyRule.setAttribute('constX', Constraints.left)
-            })
-          let stTag = document.getElementById(`w-st-comp${comParent.id}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
+          if (
+            selected_list[0].value.getAttribute('consty') === Constraints.center
+          ) {
+            selected_list[0].value.style.transform = 'translateY(-50%)'
+          } else selected_list[0].value.style.transform = ''
+          selected_list[0].value.style.left = '0px'
+          selected_list[0].value.style.right = ''
+          selected_list[0].value.setAttribute('constx', Constraints.left)
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              selected_list[0].value
+            )
+          )
+          switch (selected_list[0].value.getAttribute('constx')) {
+            case Constraints.left_right:
+              cssRule.style.width = selected_list[0].value.offsetWidth + 'px'
+              break
+            case Constraints.scale:
+              cssRule.style.width = selected_list[0].value.offsetWidth + 'px'
+              break
+            default:
+              break
+          }
+          if (
+            selected_list[0].value.getAttribute('consty') === Constraints.center
+          ) {
+            cssRule.style.transform = 'translateY(-50%)'
+          } else cssRule.style.transform = ''
+          cssRule.style.left = '0px'
+          cssRule.style.right = ''
+          selected_list[0].value.setAttribute('constx', Constraints.left)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       } else {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        let cssItem = comParent
-          ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          : null
         let minX = Math.min(
-          ...selected_list.map(e =>
-            parseFloat(window.getComputedStyle(e.value).left.replace('px'))
+          ...selected_list.map(wb =>
+            parseFloat(window.getComputedStyle(wb.value).left.replace('px'))
           )
         )
-        for (let wb of selected_list) {
-          wb.StyleItem ??= {
-            PositionItem: {},
-            FrameItem: {
-              Width: wb.value.getAttribute('width-type')
-                ? wb.value.getAttribute('width-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetWidth,
-              Height: wb.value.getAttribute('height-type')
-                ? wb.value.getAttribute('height-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetHeight
+        let pStyle = window.getComputedStyle(
+          selected_list[0].value.parentElement
+        )
+        if (selected_list[0].StyleItem) {
+          for (let wb of selected_list) {
+            switch (wb.value.getAttribute('constx')) {
+              case Constraints.right:
+                wb.value.style.right = `${Math.round(
+                  parseFloat(pStyle.width.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                    minX
+                )}px`
+                break
+              case Constraints.left_right:
+                wb.value.style.right = `${Math.round(
+                  parseFloat(pStyle.width.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                    minX
+                )}px`
+                wb.value.style.left = minX + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  minX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                }px`
+                wb.value.style.left = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let leftValue = `${(
+                  (minX * 100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}%`
+                let rightValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.width.replace('px')) -
+                      parseFloat(pStyle.borderRightWidth.replace('px')) -
+                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                      minX
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}px`
+                wb.value.style.left = leftValue
+                wb.value.style.right = rightValue
+                break
+              default:
+                wb.value.style.left = minX + 'px'
+                break
             }
           }
-          updatePosition({ Left: minX }, wb)
-          if (comParent) {
-            delete wb.StyleItem
-            delete wb.FrameItem
-            let stCssSelector = cssItem.Css.split('/**/')
-            let index = stCssSelector.findIndex(stCss =>
-              stCss.includes(
-                [...wb.value.classList].find(cls => cls.startsWith('w-st'))
-              )
-            )
-            let newCssText = stCssSelector[index]
-              .match(/\{.*\}/g)[0]
-              .replace(/(\{|\})/g, '')
-              .split(';')
-              .filter(
-                stProp =>
-                  !stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-              )
-            newCssText.push(
-              ...wb.value.style.cssText
-                .split(';')
-                .filter(stProp =>
-                  stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-                )
-            )
-            stCssSelector[index] = stCssSelector[index].replace(
-              /\{.*\}/g,
-              `{ ${newCssText.join(';')} }`
-            )
-            cssItem.Css = stCssSelector.join('/**/')
-            wb.value.removeAttribute('style')
-          }
-        }
-        if (comParent) {
-          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          for (let wb of selected_list) {
+            let cssRule = StyleDA.docStyleSheets.find(e =>
+              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+                wb.value
+              )
+            )
+            switch (wb.value.getAttribute('constx')) {
+              case Constraints.right:
+                cssRule.style.right = `${Math.round(
+                  parseFloat(pStyle.width.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                    minX
+                )}px`
+                break
+              case Constraints.left_right:
+                cssRule.style.right = `${Math.round(
+                  parseFloat(pStyle.width.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                    minX
+                )}px`
+                cssRule.style.left = minX + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  minX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                }px`
+                cssRule.style.left = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let leftValue = `${(
+                  (minX * 100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}%`
+                let rightValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.width.replace('px')) -
+                      parseFloat(pStyle.borderRightWidth.replace('px')) -
+                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                      minX
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}px`
+                cssRule.style.left = leftValue
+                cssRule.style.right = rightValue
+                break
+              default:
+                cssRule.style.left = minX + 'px'
+                break
+            }
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              cssRule.cssText
+            )
+          }
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       break
@@ -250,262 +1754,257 @@ function alignPosition (align_value) {
         for (let wb of selected_list) {
           let children = [
             ...wb.value.querySelectorAll(
-              `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+              `.wbaseItem-value[level="${wb.Level + 1}"]`
             )
           ].filter(
-            childWb => window.getComputedStyle(childWb).position == 'absolute'
+            cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (children.length > 0) {
-            children = wbase_list.filter(e =>
-              children.some(eHTML => e.GID === eHTML.id)
-            )
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            let parentW = Math.round(
-              wb.value.getBoundingClientRect().width / scale
-            )
-            for (let child of children) {
-              child.StyleItem ??= {
-                PositionItem: {},
-                FrameItem: {
-                  Width: child.value.getAttribute('width-type')
-                    ? child.value.getAttribute('width-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetWidth,
-                  Height: child.value.getAttribute('height-type')
-                    ? child.value.getAttribute('height-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetHeight
-                }
+            for (let cWbHTML of children) {
+              let cssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              switch (cWbHTML.getAttribute('constx')) {
+                case Constraints.left_right:
+                  cssRule.style.width = cWbHTML.offsetWidth + 'px'
+                  break
+                case Constraints.scale:
+                  cssRule.style.width = cWbHTML.offsetWidth + 'px'
+                  break
+                default:
+                  break
               }
-              child.StyleItem.PositionItem.ConstraintsX = Constraints.center
-              let newOffX = `${
-                (parentW -
-                  Math.round(
-                    child.value.getBoundingClientRect().width / scale
-                  )) /
-                2
-              }px`
-              child.value.setAttribute('constX', Constraints.center)
-              updatePosition({ Left: newOffX }, child)
-              if (editComp) {
-                delete child.StyleItem
-                delete child.FrameItem
-                let stCssSelector = cssItem.Css.split('/**/')
-                let index = stCssSelector.findIndex(stCss =>
-                  stCss.includes(
-                    [...child.value.classList].find(cls =>
-                      cls.startsWith('w-st')
-                    )
-                  )
-                )
-                let newCssText = stCssSelector[index]
-                  .match(/\{.*\}/g)[0]
-                  .replace(/(\{|\})/g, '')
-                  .split(';')
-                  .filter(
-                    stProp =>
-                      !stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                  )
-                newCssText.push(
-                  ...child.value.style.cssText
-                    .split(';')
-                    .filter(stProp =>
-                      stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                    )
-                )
-                stCssSelector[index] = stCssSelector[index].replace(
-                  /\{.*\}/g,
-                  `{ ${newCssText.join(';')} }`
-                )
-                cssItem.Css = stCssSelector.join('/**/')
-                document
-                  .querySelectorAll(
-                    stCssSelector[index].replace(/\{.*\}/g, '').trim()
-                  )
-                  .forEach(applyRule => {
-                    applyRule.removeAttribute('style')
-                    applyRule.setAttribute('constX', Constraints.center)
-                  })
-              }
+              if (cWbHTML.getAttribute('consty') === Constraints.center) {
+                cssRule.style.transform = 'translate(-50%,-50%)'
+              } else cssRule.style.transform = 'translateX(-50%)'
+              cssRule.style.left = `calc(50% + 0px)`
+              cssRule.style.right = ''
+              cWbHTML.setAttribute('constx', Constraints.center)
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                cssRule.cssText
+              )
             }
-            if (editComp) {
-              let stTag = document.getElementById(`w-st-comp${wb.GID}`)
-              stTag.innerHTML = cssItem.Css
-              // StyleDA.editStyleSheet(cssItem);
-            } else {
+            StyleDA.editStyleSheet(cssItem)
+          } else {
+            if (children.length > 0) {
+              children = wbase_list.filter(e =>
+                children.some(cWbHTML => e.GID === cWbHTML.id)
+              )
+              for (let cWb of children) {
+                switch (cWb.value.getAttribute('constx')) {
+                  case Constraints.left_right:
+                    cWb.value.style.width = cWb.value.offsetWidth + 'px'
+                    break
+                  case Constraints.scale:
+                    cWb.value.style.width = cWb.value.offsetWidth + 'px'
+                    break
+                  default:
+                    break
+                }
+                if (cWb.value.getAttribute('consty') === Constraints.center) {
+                  cWb.value.style.transform = 'translate(-50%,-50%)'
+                } else cWb.value.style.transform = 'translateX(-50%)'
+                wb.value.style.left = `calc(50% + 0px)`
+                cWb.value.style.right = ''
+                cWb.value.setAttribute('constx', Constraints.center)
+              }
               listUpdate.push(...children)
             }
           }
         }
       } else if (selected_list.length === 1) {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        selected_list[0].StyleItem ??= {
-          PositionItem: {},
-          FrameItem: {
-            Width: selected_list[0].value.getAttribute('width-type')
-              ? selected_list[0].value.getAttribute('width-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetWidth,
-            Height: selected_list[0].value.getAttribute('height-type')
-              ? selected_list[0].value.getAttribute('height-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetHeight
+        if (selected_list[0].StyleItem) {
+          switch (selected_list[0].value.getAttribute('constx')) {
+            case Constraints.left_right:
+              selected_list[0].value.style.width =
+                selected_list[0].value.offsetWidth + 'px'
+              break
+            case Constraints.scale:
+              selected_list[0].value.style.width =
+                selected_list[0].value.offsetWidth + 'px'
+              break
+            default:
+              break
           }
-        }
-        let parentW = Math.round(
-          selected_list[0].value.parentElement.getBoundingClientRect().width /
-            scale
-        )
-        selected_list[0].StyleItem.PositionItem.ConstraintsX =
-          Constraints.center
-        let newOffX = `${
-          (parentW -
-            Math.round(
-              selected_list[0].value.getBoundingClientRect().width / scale
-            )) /
-          2
-        }px`
-        selected_list[0].value.setAttribute('constX', Constraints.center)
-        updatePosition({ Left: newOffX }, selected_list[0])
-        if (comParent) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          delete selected_list[0].StyleItem
-          delete selected_list[0].FrameItem
-          let stCssSelector = cssItem.Css.split('/**/')
-          let index = stCssSelector.findIndex(stCss =>
-            stCss.includes(
-              [...selected_list[0].value.classList].find(cls =>
-                cls.startsWith('w-st')
-              )
-            )
-          )
-          let newCssText = stCssSelector[index]
-            .match(/\{.*\}/g)[0]
-            .replace(/(\{|\})/g, '')
-            .split(';')
-            .filter(
-              stProp =>
-                !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-            )
-          newCssText.push(
-            ...selected_list[0].value.style.cssText
-              .split(';')
-              .filter(stProp =>
-                stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-              )
-          )
-          stCssSelector[index] = stCssSelector[index].replace(
-            /\{.*\}/g,
-            `{ ${newCssText.join(';')} }`
-          )
-          cssItem.Css = stCssSelector.join('/**/')
-          document
-            .querySelectorAll(
-              stCssSelector[index].replace(/\{.*\}/g, '').trim()
-            )
-            .forEach(applyRule => {
-              applyRule.removeAttribute('style')
-              applyRule.setAttribute('constX', Constraints.center)
-            })
-          let stTag = document.getElementById(`w-st-comp${comParent.id}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
+          if (
+            selected_list[0].value.getAttribute('consty') === Constraints.center
+          ) {
+            selected_list[0].value.style.transform = 'translate(-50%,-50%)'
+          } else selected_list[0].value.style.transform = 'translateX(-50%)'
+          selected_list[0].value.style.left = 'calc(50% + 0px)'
+          selected_list[0].value.style.right = ''
+          selected_list[0].value.setAttribute('constx', Constraints.center)
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              selected_list[0].value
+            )
+          )
+          switch (selected_list[0].value.getAttribute('constx')) {
+            case Constraints.left_right:
+              cssRule.style.width = selected_list[0].value.offsetWidth + 'px'
+              break
+            case Constraints.scale:
+              cssRule.style.width = selected_list[0].value.offsetWidth + 'px'
+              break
+            default:
+              break
+          }
+          if (
+            selected_list[0].value.getAttribute('consty') === Constraints.center
+          ) {
+            cssRule.style.transform = 'translate(-50%,-50%)'
+          } else cssRule.style.transform = 'translateX(-50%)'
+          cssRule.style.left = 'calc(50% + 0px)'
+          cssRule.style.right = ''
+          selected_list[0].value.setAttribute('constx', Constraints.center)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       } else {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        let cssItem = comParent
-          ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          : null
+        let pStyle = window.getComputedStyle(
+          selected_list[0].value.parentElement
+        )
         let minX = Math.min(
-          ...selected_list.map(e =>
-            parseFloat(window.getComputedStyle(e.value).left.replace('px'))
+          ...selected_list.map(wb =>
+            parseFloat(window.getComputedStyle(wb.value).left.replace('px'))
           )
         )
         let maxX = Math.max(
           ...selected_list.map(
-            e =>
-              parseFloat(window.getComputedStyle(e.value).left.replace('px')) +
-              Math.round(e.value.getBoundingClientRect().width / scale)
+            wb =>
+              parseFloat(window.getComputedStyle(wb.value).left.replace('px')) +
+              wb.value.offsetWidth
           )
         )
         let newOffX = minX + (maxX - minX) / 2
-        for (let wb of selected_list) {
-          wb.StyleItem ??= {
-            PositionItem: {},
-            FrameItem: {
-              Width: wb.value.getAttribute('width-type')
-                ? wb.value.getAttribute('width-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetWidth,
-              Height: wb.value.getAttribute('height-type')
-                ? wb.value.getAttribute('height-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetHeight
+        if (selected_list[0].StyleItem) {
+          for (let wb of selected_list) {
+            switch (wb.value.getAttribute('constx')) {
+              case Constraints.right:
+                wb.value.style.right = `${Math.round(
+                  parseFloat(pStyle.width.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                    newOffX
+                )}px`
+                break
+              case Constraints.left_right:
+                wb.value.style.right = `${Math.round(
+                  parseFloat(pStyle.width.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                    newOffX
+                )}px`
+                wb.value.style.left = newOffX + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  newOffX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                }px`
+                wb.value.style.left = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let leftValue = `${(
+                  (newOffX * 100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}%`
+                let rightValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.width.replace('px')) -
+                      parseFloat(pStyle.borderRightWidth.replace('px')) -
+                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                      newOffX
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}px`
+                wb.value.style.left = leftValue
+                wb.value.style.right = rightValue
+                break
+              default:
+                wb.value.style.left = newOffX + 'px'
+                break
             }
           }
-          let new_offsetX =
-            newOffX -
-            Math.round(wb.value.getBoundingClientRect().width / scale) / 2
-          updatePosition({ Left: new_offsetX }, wb)
-          if (comParent) {
-            delete wb.StyleItem
-            delete wb.FrameItem
-            let stCssSelector = cssItem.Css.split('/**/')
-            let index = stCssSelector.findIndex(stCss =>
-              stCss.includes(
-                [...wb.value.classList].find(cls => cls.startsWith('w-st'))
-              )
-            )
-            let newCssText = stCssSelector[index]
-              .match(/\{.*\}/g)[0]
-              .replace(/(\{|\})/g, '')
-              .split(';')
-              .filter(
-                stProp =>
-                  !stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-              )
-            newCssText.push(
-              ...wb.value.style.cssText
-                .split(';')
-                .filter(stProp =>
-                  stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-                )
-            )
-            stCssSelector[index] = stCssSelector[index].replace(
-              /\{.*\}/g,
-              `{ ${newCssText.join(';')} }`
-            )
-            cssItem.Css = stCssSelector.join('/**/')
-            wb.value.removeAttribute('style')
-          }
-        }
-        if (comParent) {
-          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          for (let wb of selected_list) {
+            let cssRule = StyleDA.docStyleSheets.find(e =>
+              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+                wb.value
+              )
+            )
+            switch (wb.value.getAttribute('constx')) {
+              case Constraints.right:
+                cssRule.style.right = `${Math.round(
+                  parseFloat(pStyle.width.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                    newOffX
+                )}px`
+                break
+              case Constraints.left_right:
+                cssRule.style.right = `${Math.round(
+                  parseFloat(pStyle.width.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                    newOffX
+                )}px`
+                cssRule.style.left = newOffX + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  newOffX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                }px`
+                cssRule.style.left = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let leftValue = `${(
+                  (newOffX * 100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}%`
+                let rightValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.width.replace('px')) -
+                      parseFloat(pStyle.borderRightWidth.replace('px')) -
+                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                      newOffX
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}px`
+                cssRule.style.left = leftValue
+                cssRule.style.right = rightValue
+                break
+              default:
+                cssRule.style.left = newOffX + 'px'
+                break
+            }
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              cssRule.cssText
+            )
+          }
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       break
@@ -514,233 +2013,243 @@ function alignPosition (align_value) {
         for (let wb of selected_list) {
           let children = [
             ...wb.value.querySelectorAll(
-              `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+              `.wbaseItem-value[level="${wb.Level + 1}"]`
             )
           ].filter(
-            childWb => window.getComputedStyle(childWb).position == 'absolute'
+            cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (children.length > 0) {
-            children = wbase_list.filter(e =>
-              children.some(eHTML => e.GID === eHTML.id)
-            )
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            for (let child of children) {
-              child.StyleItem ??= {
-                PositionItem: {},
-                FrameItem: {
-                  Width: child.value.getAttribute('width-type')
-                    ? child.value.getAttribute('width-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetWidth,
-                  Height: child.value.getAttribute('height-type')
-                    ? child.value.getAttribute('height-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetHeight
-                }
+            for (let cWbHTML of children) {
+              let cssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              switch (cWbHTML.getAttribute('constx')) {
+                case Constraints.left_right:
+                  cssRule.style.width = cWbHTML.offsetWidth + 'px'
+                  break
+                case Constraints.scale:
+                  cssRule.style.width = cWbHTML.offsetWidth + 'px'
+                  break
+                default:
+                  break
               }
-              child.StyleItem.PositionItem.ConstraintsX = Constraints.right
-              child.value.setAttribute('constX', Constraints.right)
-              updatePosition({ Right: '0px' }, child)
-              if (editComp) {
-                delete child.StyleItem
-                delete child.FrameItem
-                let stCssSelector = cssItem.Css.split('/**/')
-                let index = stCssSelector.findIndex(stCss =>
-                  stCss.includes(
-                    [...child.value.classList].find(cls =>
-                      cls.startsWith('w-st')
-                    )
-                  )
-                )
-                let newCssText = stCssSelector[index]
-                  .match(/\{.*\}/g)[0]
-                  .replace(/(\{|\})/g, '')
-                  .split(';')
-                  .filter(
-                    stProp =>
-                      !stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                  )
-                newCssText.push(
-                  ...child.value.style.cssText
-                    .split(';')
-                    .filter(stProp =>
-                      stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                    )
-                )
-                stCssSelector[index] = stCssSelector[index].replace(
-                  /\{.*\}/g,
-                  `{ ${newCssText.join(';')} }`
-                )
-                cssItem.Css = stCssSelector.join('/**/')
-                document
-                  .querySelectorAll(
-                    stCssSelector[index].replace(/\{.*\}/g, '').trim()
-                  )
-                  .forEach(applyRule => {
-                    applyRule.removeAttribute('style')
-                    applyRule.setAttribute('constX', Constraints.right)
-                  })
-              }
+              if (cWbHTML.getAttribute('consty') === Constraints.center) {
+                cssRule.style.transform = 'translateY(-50%)'
+              } else cssRule.style.transform = ''
+              cssRule.style.left = ''
+              cssRule.style.right = '0px'
+              cWbHTML.setAttribute('constx', Constraints.right)
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                cssRule.cssText
+              )
             }
-            if (editComp) {
-              let stTag = document.getElementById(`w-st-comp${wb.GID}`)
-              stTag.innerHTML = cssItem.Css
-              // StyleDA.editStyleSheet(cssItem);
-            } else {
+            StyleDA.editStyleSheet(cssItem)
+          } else {
+            if (children.length > 0) {
+              children = wbase_list.filter(e =>
+                children.some(cWbHTML => e.GID === cWbHTML.id)
+              )
+              for (let cWb of children) {
+                switch (cWb.value.getAttribute('constx')) {
+                  case Constraints.left_right:
+                    cWb.value.style.width = cWb.value.offsetWidth + 'px'
+                    break
+                  case Constraints.scale:
+                    cWb.value.style.width = cWb.value.offsetWidth + 'px'
+                    break
+                  default:
+                    break
+                }
+                if (cWb.value.getAttribute('consty') === Constraints.center) {
+                  cWb.value.style.transform = 'translateY(-50%)'
+                } else cWb.value.style.transform = ''
+                cWb.value.style.left = ''
+                cWb.value.style.right = '0px'
+                cWb.value.setAttribute('constx', Constraints.right)
+              }
               listUpdate.push(...children)
             }
           }
         }
       } else if (selected_list.length === 1) {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        selected_list[0].StyleItem ??= {
-          PositionItem: {},
-          FrameItem: {
-            Width: selected_list[0].value.getAttribute('width-type')
-              ? selected_list[0].value.getAttribute('width-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetWidth,
-            Height: selected_list[0].value.getAttribute('height-type')
-              ? selected_list[0].value.getAttribute('height-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetHeight
+        if (selected_list[0].StyleItem) {
+          switch (selected_list[0].value.getAttribute('constx')) {
+            case Constraints.left_right:
+              selected_list[0].value.style.width =
+                selected_list[0].value.offsetWidth + 'px'
+              break
+            case Constraints.scale:
+              selected_list[0].value.style.width =
+                selected_list[0].value.offsetWidth + 'px'
+              break
+            default:
+              break
           }
-        }
-        selected_list[0].StyleItem.PositionItem.ConstraintsX = Constraints.right
-        selected_list[0].value.setAttribute('constX', Constraints.right)
-        updatePosition({ Right: '0px' }, selected_list[0])
-        if (comParent) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          delete selected_list[0].StyleItem
-          delete selected_list[0].FrameItem
-          let stCssSelector = cssItem.Css.split('/**/')
-          let index = stCssSelector.findIndex(stCss =>
-            stCss.includes(
-              [...selected_list[0].value.classList].find(cls =>
-                cls.startsWith('w-st')
-              )
-            )
-          )
-          let newCssText = stCssSelector[index]
-            .match(/\{.*\}/g)[0]
-            .replace(/(\{|\})/g, '')
-            .split(';')
-            .filter(
-              stProp =>
-                !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-            )
-          newCssText.push(
-            ...selected_list[0].value.style.cssText
-              .split(';')
-              .filter(stProp =>
-                stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-              )
-          )
-          stCssSelector[index] = stCssSelector[index].replace(
-            /\{.*\}/g,
-            `{ ${newCssText.join(';')} }`
-          )
-          cssItem.Css = stCssSelector.join('/**/')
-          document
-            .querySelectorAll(
-              stCssSelector[index].replace(/\{.*\}/g, '').trim()
-            )
-            .forEach(applyRule => {
-              applyRule.removeAttribute('style')
-              applyRule.setAttribute('constX', Constraints.right)
-            })
-          let stTag = document.getElementById(`w-st-comp${comParent.id}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
+          if (
+            selected_list[0].value.getAttribute('consty') === Constraints.center
+          ) {
+            selected_list[0].value.style.transform = 'translateY(-50%)'
+          } else selected_list[0].value.style.transform = ''
+          selected_list[0].value.style.left = ''
+          selected_list[0].value.style.right = '0px'
+          selected_list[0].value.setAttribute('constx', Constraints.right)
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              selected_list[0].value
+            )
+          )
+          switch (selected_list[0].value.getAttribute('constx')) {
+            case Constraints.left_right:
+              cssRule.style.width = selected_list[0].value.offsetWidth + 'px'
+              break
+            case Constraints.scale:
+              cssRule.style.width = selected_list[0].value.offsetWidth + 'px'
+              break
+            default:
+              break
+          }
+          if (
+            selected_list[0].value.getAttribute('consty') === Constraints.center
+          ) {
+            cssRule.style.transform = 'translateY(-50%)'
+          } else cssRule.style.transform = ''
+          cssRule.style.left = ''
+          cssRule.style.right = '0px'
+          selected_list[0].value.setAttribute('constx', Constraints.right)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       } else {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        let cssItem = comParent
-          ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          : null
         let maxX = Math.max(
           ...selected_list.map(
-            e =>
-              parseFloat(window.getComputedStyle(e.value).left.replace('px')) +
-              Math.round(e.value.getBoundingClientRect().width / scale)
+            wb =>
+              parseFloat(window.getComputedStyle(wb.value).left.replace('px')) +
+              wb.value.offsetWidth
           )
         )
-        for (let wb of selected_list) {
-          wb.StyleItem ??= {
-            PositionItem: {},
-            FrameItem: {
-              Width: wb.value.getAttribute('width-type')
-                ? wb.value.getAttribute('width-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetWidth,
-              Height: wb.value.getAttribute('height-type')
-                ? wb.value.getAttribute('height-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetHeight
+        let pStyle = window.getComputedStyle(
+          selected_list[0].value.parentElement
+        )
+        if (selected_list[0].StyleItem) {
+          for (let wb of selected_list) {
+            switch (wb.value.getAttribute('constx')) {
+              case Constraints.left:
+                wb.value.style.left = `${Math.round(
+                  maxX - wb.value.offsetWidth
+                )}px`
+                break
+              case Constraints.left_right:
+                wb.value.style.left = `${Math.round(
+                  maxX - wb.value.offsetWidth
+                )}px`
+                wb.value.style.right = maxX + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  maxX -
+                  wb.value.offsetWidth +
+                  (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                }px`
+                wb.value.style.left = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let leftValue = `${(
+                  ((maxX - wb.value.offsetWidth) * 100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}%`
+                let rightValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.width.replace('px')) -
+                      parseFloat(pStyle.borderRightWidth.replace('px')) -
+                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                      (maxX - wb.value.offsetWidth)
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}px`
+                wb.value.style.left = leftValue
+                wb.value.style.right = rightValue
+                break
+              default:
+                wb.value.style.right = maxX + 'px'
+                break
             }
           }
-          let newOffX =
-            maxX - Math.round(wb.value.getBoundingClientRect().width / scale)
-          updatePosition({ Left: newOffX }, wb)
-          if (comParent) {
-            delete wb.StyleItem
-            delete wb.FrameItem
-            let stCssSelector = cssItem.Css.split('/**/')
-            let index = stCssSelector.findIndex(stCss =>
-              stCss.includes(
-                [...wb.value.classList].find(cls => cls.startsWith('w-st'))
-              )
-            )
-            let newCssText = stCssSelector[index]
-              .match(/\{.*\}/g)[0]
-              .replace(/(\{|\})/g, '')
-              .split(';')
-              .filter(
-                stProp =>
-                  !stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-              )
-            newCssText.push(
-              ...wb.value.style.cssText
-                .split(';')
-                .filter(stProp =>
-                  stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-                )
-            )
-            stCssSelector[index] = stCssSelector[index].replace(
-              /\{.*\}/g,
-              `{ ${newCssText.join(';')} }`
-            )
-            cssItem.Css = stCssSelector.join('/**/')
-            wb.value.removeAttribute('style')
-          }
-        }
-        if (comParent) {
-          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          for (let wb of selected_list) {
+            let cssRule = StyleDA.docStyleSheets.find(e =>
+              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+                wb.value
+              )
+            )
+            switch (wb.value.getAttribute('constx')) {
+              case Constraints.left:
+                cssRule.style.left = `${Math.round(
+                  maxX - wb.value.offsetWidth
+                )}px`
+                break
+              case Constraints.left_right:
+                cssRule.style.left = `${Math.round(
+                  maxX - wb.value.offsetWidth
+                )}px`
+                cssRule.style.right = maxX + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  maxX -
+                  wb.value.offsetWidth +
+                  (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                }px`
+                cssRule.style.left = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let leftValue = `${(
+                  ((maxX - wb.value.offsetWidth) * 100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}%`
+                let rightValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.width.replace('px')) -
+                      parseFloat(pStyle.borderRightWidth.replace('px')) -
+                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                      (maxX - wb.value.offsetWidth)
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetWidth
+                ).toFixed(2)}px`
+                cssRule.style.left = leftValue
+                cssRule.style.right = rightValue
+                break
+              default:
+                cssRule.style.right = maxX + 'px'
+                break
+            }
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              cssRule.cssText
+            )
+          }
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       break
@@ -749,229 +2258,249 @@ function alignPosition (align_value) {
         for (let wb of selected_list) {
           let children = [
             ...wb.value.querySelectorAll(
-              `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+              `.wbaseItem-value[level="${wb.Level + 1}"]`
             )
           ].filter(
-            childWb => window.getComputedStyle(childWb).position == 'absolute'
+            cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (children.length > 0) {
-            children = wbase_list.filter(e =>
-              children.some(eHTML => e.GID === eHTML.id)
-            )
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            for (let child of children) {
-              child.StyleItem ??= {
-                PositionItem: {},
-                FrameItem: {
-                  Width: child.value.getAttribute('width-type')
-                    ? child.value.getAttribute('width-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetWidth,
-                  Height: child.value.getAttribute('height-type')
-                    ? child.value.getAttribute('height-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetHeight
-                }
+            for (let cWbHTML of children) {
+              let cssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              switch (cWbHTML.getAttribute('consty')) {
+                case Constraints.top_bottom:
+                  cssRule.style.height = cWbHTML.offsetHeight + 'px'
+                  break
+                case Constraints.scale:
+                  cssRule.style.height = cWbHTML.offsetHeight + 'px'
+                  break
+                default:
+                  break
               }
-              child.StyleItem.PositionItem.ConstraintsY = Constraints.top
-              child.value.setAttribute('constY', Constraints.top)
-              updatePosition({ Top: '0px' }, child)
-              if (editComp) {
-                delete child.StyleItem
-                delete child.FrameItem
-                let stCssSelector = cssItem.Css.split('/**/')
-                let index = stCssSelector.findIndex(stCss =>
-                  stCss.includes(
-                    [...child.value.classList].find(cls =>
-                      cls.startsWith('w-st')
-                    )
-                  )
-                )
-                let newCssText = stCssSelector[index]
-                  .match(/\{.*\}/g)[0]
-                  .replace(/(\{|\})/g, '')
-                  .split(';')
-                  .filter(
-                    stProp =>
-                      !stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                  )
-                newCssText.push(
-                  ...child.value.style.cssText
-                    .split(';')
-                    .filter(stProp =>
-                      stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                    )
-                )
-                stCssSelector[index] = stCssSelector[index].replace(
-                  /\{.*\}/g,
-                  `{ ${newCssText.join(';')} }`
-                )
-                cssItem.Css = stCssSelector.join('/**/')
-                document
-                  .querySelectorAll(
-                    stCssSelector[index].replace(/\{.*\}/g, '').trim()
-                  )
-                  .forEach(applyRule => {
-                    applyRule.removeAttribute('style')
-                    applyRule.setAttribute('constY', Constraints.top)
-                  })
-              }
+              if (cWbHTML.getAttribute('constx') === Constraints.center) {
+                cssRule.style.transform = 'translateX(-50%)'
+              } else cssRule.style.transform = ''
+              cssRule.style.top = '0px'
+              cssRule.style.bottom = ''
+              cWbHTML.setAttribute('consty', Constraints.top)
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                cssRule.cssText
+              )
             }
-            if (editComp) {
-              let stTag = document.getElementById(`w-st-comp${wb.GID}`)
-              stTag.innerHTML = cssItem.Css
-              // StyleDA.editStyleSheet(cssItem);
-            } else {
+            StyleDA.editStyleSheet(cssItem)
+          } else {
+            if (children.length > 0) {
+              children = wbase_list.filter(e =>
+                children.some(cWbHTML => e.GID === cWbHTML.id)
+              )
+              for (let cWb of children) {
+                switch (cWb.value.getAttribute('consty')) {
+                  case Constraints.top_bottom:
+                    cWb.value.style.height = cWb.value.offsetHeight + 'px'
+                    break
+                  case Constraints.scale:
+                    cWb.value.style.height = cWb.value.offsetHeight + 'px'
+                    break
+                  default:
+                    break
+                }
+                if (cWb.value.getAttribute('constx') === Constraints.center) {
+                  cWb.value.style.transform = 'translateX(-50%)'
+                } else cWb.value.style.transform = ''
+                cWb.value.style.top = '0px'
+                cWb.value.style.bottom = ''
+                cWb.value.setAttribute('consty', Constraints.top)
+              }
               listUpdate.push(...children)
             }
           }
         }
       } else if (selected_list.length === 1) {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        selected_list[0].StyleItem ??= {
-          PositionItem: {},
-          FrameItem: {
-            Width: selected_list[0].value.getAttribute('width-type')
-              ? selected_list[0].value.getAttribute('width-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetWidth,
-            Height: selected_list[0].value.getAttribute('height-type')
-              ? selected_list[0].value.getAttribute('height-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetHeight
+        if (selected_list[0].StyleItem) {
+          switch (selected_list[0].value.getAttribute('consty')) {
+            case Constraints.top_bottom:
+              selected_list[0].value.style.height =
+                selected_list[0].value.offsetHeight + 'px'
+              break
+            case Constraints.scale:
+              selected_list[0].value.style.height =
+                selected_list[0].value.offsetHeight + 'px'
+              break
+            default:
+              break
           }
-        }
-        selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.top
-        selected_list[0].value.setAttribute('constY', Constraints.top)
-        updatePosition({ Top: '0px' }, selected_list[0])
-        if (comParent) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          delete selected_list[0].StyleItem
-          delete selected_list[0].FrameItem
-          let stCssSelector = cssItem.Css.split('/**/')
-          let index = stCssSelector.findIndex(stCss =>
-            stCss.includes(
-              [...selected_list[0].value.classList].find(cls =>
-                cls.startsWith('w-st')
-              )
-            )
-          )
-          let newCssText = stCssSelector[index]
-            .match(/\{.*\}/g)[0]
-            .replace(/(\{|\})/g, '')
-            .split(';')
-            .filter(
-              stProp =>
-                !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-            )
-          newCssText.push(
-            ...selected_list[0].value.style.cssText
-              .split(';')
-              .filter(stProp =>
-                stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-              )
-          )
-          stCssSelector[index] = stCssSelector[index].replace(
-            /\{.*\}/g,
-            `{ ${newCssText.join(';')} }`
-          )
-          cssItem.Css = stCssSelector.join('/**/')
-          document
-            .querySelectorAll(
-              stCssSelector[index].replace(/\{.*\}/g, '').trim()
-            )
-            .forEach(applyRule => {
-              applyRule.removeAttribute('style')
-              applyRule.setAttribute('constY', Constraints.top)
-            })
-          let stTag = document.getElementById(`w-st-comp${comParent.id}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
+          if (
+            selected_list[0].value.getAttribute('constx') === Constraints.center
+          ) {
+            selected_list[0].value.style.transform = 'translateX(-50%)'
+          } else selected_list[0].value.style.transform = ''
+          selected_list[0].value.style.top = '0px'
+          selected_list[0].value.style.bottom = ''
+          selected_list[0].value.setAttribute('consty', Constraints.top)
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              selected_list[0].value
+            )
+          )
+          switch (selected_list[0].value.getAttribute('consty')) {
+            case Constraints.top_bottom:
+              cssRule.style.height = selected_list[0].value.offsetHeight + 'px'
+              break
+            case Constraints.scale:
+              cssRule.style.height = selected_list[0].value.offsetHeight + 'px'
+              break
+            default:
+              break
+          }
+          if (
+            selected_list[0].value.getAttribute('constx') === Constraints.center
+          ) {
+            cssRule.style.transform = 'translateX(-50%)'
+          } else cssRule.style.transform = ''
+          cssRule.style.top = '0px'
+          cssRule.style.bottom = ''
+          selected_list[0].value.setAttribute('consty', Constraints.top)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       } else {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        let cssItem = comParent
-          ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          : null
         let minY = Math.min(
-          ...selected_list.map(e =>
-            parseFloat(window.getComputedStyle(e.value).top.replace('px'))
+          ...selected_list.map(wb =>
+            parseFloat(window.getComputedStyle(wb.value).top.replace('px'))
           )
         )
-        for (let wb of selected_list) {
-          wb.StyleItem ??= {
-            PositionItem: {},
-            FrameItem: {
-              Width: wb.value.getAttribute('width-type')
-                ? wb.value.getAttribute('width-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetWidth,
-              Height: wb.value.getAttribute('height-type')
-                ? wb.value.getAttribute('height-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetHeight
+        let pStyle = window.getComputedStyle(
+          selected_list[0].value.parentElement
+        )
+        if (selected_list[0].StyleItem) {
+          for (let wb of selected_list) {
+            switch (wb.value.getAttribute('consty')) {
+              case Constraints.bottom:
+                wb.value.style.bottom = `${Math.round(
+                  parseFloat(pStyle.height.replace('px')) -
+                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                    parseFloat(pStyle.borderTopWidth.replace('px')) -
+                    minY
+                )}px`
+                break
+              case Constraints.top_bottom:
+                wb.value.style.bottom = `${Math.round(
+                  parseFloat(pStyle.height.replace('px')) -
+                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                    parseFloat(pStyle.borderTopWidth.replace('px')) -
+                    minY
+                )}px`
+                wb.value.style.top = minY + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  minY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                }px`
+                wb.value.style.top = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let topValue = `${(
+                  (minY * 100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}%`
+                let botValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.height.replace('px')) -
+                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                      parseFloat(pStyle.borderRightWidth.replace('px')) -
+                      minY
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}px`
+                wb.value.style.top = topValue
+                wb.value.style.bottom = botValue
+                break
+              default:
+                wb.value.style.top = minY + 'px'
+                break
             }
           }
-          updatePosition({ Top: minY }, wb)
-          if (comParent) {
-            delete wb.StyleItem
-            delete wb.FrameItem
-            let stCssSelector = cssItem.Css.split('/**/')
-            let index = stCssSelector.findIndex(stCss =>
-              stCss.includes(
-                [...wb.value.classList].find(cls => cls.startsWith('w-st'))
-              )
-            )
-            let newCssText = stCssSelector[index]
-              .match(/\{.*\}/g)[0]
-              .replace(/(\{|\})/g, '')
-              .split(';')
-              .filter(
-                stProp =>
-                  !stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-              )
-            newCssText.push(
-              ...wb.value.style.cssText
-                .split(';')
-                .filter(stProp =>
-                  stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-                )
-            )
-            stCssSelector[index] = stCssSelector[index].replace(
-              /\{.*\}/g,
-              `{ ${newCssText.join(';')} }`
-            )
-            cssItem.Css = stCssSelector.join('/**/')
-            wb.value.removeAttribute('style')
-          }
-        }
-        if (comParent) {
-          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          for (let wb of selected_list) {
+            let cssRule = StyleDA.docStyleSheets.find(e =>
+              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+                wb.value
+              )
+            )
+            switch (wb.value.getAttribute('consty')) {
+              case Constraints.bottom:
+                cssRule.style.bottom = `${Math.round(
+                  parseFloat(pStyle.height.replace('px')) -
+                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    minY
+                )}px`
+                break
+              case Constraints.top_bottom:
+                cssRule.style.bottom = `${Math.round(
+                  parseFloat(pStyle.height.replace('px')) -
+                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    minY
+                )}px`
+                cssRule.style.top = minY + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  minY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                }px`
+                cssRule.style.top = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let topValue = `${(
+                  (minY * 100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}%`
+                let botValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.height.replace('px')) -
+                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                      parseFloat(pStyle.borderTopWidth.replace('px')) -
+                      minY
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}px`
+                cssRule.style.top = topValue
+                cssRule.style.bottom = botValue
+                break
+              default:
+                cssRule.style.top = minY + 'px'
+                break
+            }
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              cssRule.cssText
+            )
+          }
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       break
@@ -980,262 +2509,257 @@ function alignPosition (align_value) {
         for (let wb of selected_list) {
           let children = [
             ...wb.value.querySelectorAll(
-              `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+              `.wbaseItem-value[level="${wb.Level + 1}"]`
             )
           ].filter(
-            childWb => window.getComputedStyle(childWb).position == 'absolute'
+            cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (children.length > 0) {
-            children = wbase_list.filter(e =>
-              children.some(eHTML => e.GID === eHTML.id)
-            )
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            let parentH = Math.round(
-              wb.value.getBoundingClientRect().height / scale
-            )
-            for (let child of children) {
-              child.StyleItem ??= {
-                PositionItem: {},
-                FrameItem: {
-                  Width: child.value.getAttribute('width-type')
-                    ? child.value.getAttribute('width-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetWidth,
-                  Height: child.value.getAttribute('height-type')
-                    ? child.value.getAttribute('height-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetHeight
-                }
+            for (let cWbHTML of children) {
+              let cssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              switch (cWbHTML.getAttribute('consty')) {
+                case Constraints.top_bottom:
+                  cssRule.style.height = cWbHTML.offsetHeight + 'px'
+                  break
+                case Constraints.scale:
+                  cssRule.style.height = cWbHTML.offsetHeight + 'px'
+                  break
+                default:
+                  break
               }
-              child.StyleItem.PositionItem.ConstraintsY = Constraints.center
-              let newOffY = `${
-                (parentH -
-                  Math.round(
-                    child.value.getBoundingClientRect().height / scale
-                  )) /
-                2
-              }px`
-              child.value.setAttribute('constY', Constraints.center)
-              updatePosition({ Top: newOffY }, child)
-              if (editComp) {
-                delete child.StyleItem
-                delete child.FrameItem
-                let stCssSelector = cssItem.Css.split('/**/')
-                let index = stCssSelector.findIndex(stCss =>
-                  stCss.includes(
-                    [...child.value.classList].find(cls =>
-                      cls.startsWith('w-st')
-                    )
-                  )
-                )
-                let newCssText = stCssSelector[index]
-                  .match(/\{.*\}/g)[0]
-                  .replace(/(\{|\})/g, '')
-                  .split(';')
-                  .filter(
-                    stProp =>
-                      !stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                  )
-                newCssText.push(
-                  ...child.value.style.cssText
-                    .split(';')
-                    .filter(stProp =>
-                      stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                    )
-                )
-                stCssSelector[index] = stCssSelector[index].replace(
-                  /\{.*\}/g,
-                  `{ ${newCssText.join(';')} }`
-                )
-                cssItem.Css = stCssSelector.join('/**/')
-                document
-                  .querySelectorAll(
-                    stCssSelector[index].replace(/\{.*\}/g, '').trim()
-                  )
-                  .forEach(applyRule => {
-                    applyRule.removeAttribute('style')
-                    applyRule.setAttribute('constY', Constraints.center)
-                  })
-              }
+              if (cWbHTML.getAttribute('constx') === Constraints.center) {
+                cssRule.style.transform = 'translate(-50%,-50%)'
+              } else cssRule.style.transform = 'translateY(-50%)'
+              cssRule.style.top = `calc(50% + 0px)`
+              cssRule.style.bottom = ''
+              cWbHTML.setAttribute('consty', Constraints.center)
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                cssRule.cssText
+              )
             }
-            if (editComp) {
-              let stTag = document.getElementById(`w-st-comp${wb.GID}`)
-              stTag.innerHTML = cssItem.Css
-              // StyleDA.editStyleSheet(cssItem);
-            } else {
+            StyleDA.editStyleSheet(cssItem)
+          } else {
+            if (children.length > 0) {
+              children = wbase_list.filter(e =>
+                children.some(cWbHTML => e.GID === cWbHTML.id)
+              )
+              for (let cWb of children) {
+                switch (cWb.value.getAttribute('consty')) {
+                  case Constraints.top_bottom:
+                    cWb.value.style.height = cWb.value.offsetHeight + 'px'
+                    break
+                  case Constraints.scale:
+                    cWb.value.style.height = cWb.value.offsetHeight + 'px'
+                    break
+                  default:
+                    break
+                }
+                if (cWb.value.getAttribute('constx') === Constraints.center) {
+                  cWb.value.style.transform = 'translate(-50%,-50%)'
+                } else cWb.value.style.transform = 'translateY(-50%)'
+                wb.value.style.top = `calc(50% + 0px)`
+                cWb.value.style.bottom = ''
+                cWb.value.setAttribute('consty', Constraints.center)
+              }
               listUpdate.push(...children)
             }
           }
         }
       } else if (selected_list.length === 1) {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        selected_list[0].StyleItem ??= {
-          PositionItem: {},
-          FrameItem: {
-            Width: selected_list[0].value.getAttribute('width-type')
-              ? selected_list[0].value.getAttribute('width-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetWidth,
-            Height: selected_list[0].value.getAttribute('height-type')
-              ? selected_list[0].value.getAttribute('height-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetHeight
+        if (selected_list[0].StyleItem) {
+          switch (selected_list[0].value.getAttribute('consty')) {
+            case Constraints.top_bottom:
+              selected_list[0].value.style.height =
+                selected_list[0].value.offsetHeight + 'px'
+              break
+            case Constraints.scale:
+              selected_list[0].value.style.height =
+                selected_list[0].value.offsetHeight + 'px'
+              break
+            default:
+              break
           }
-        }
-        let parentH = Math.round(
-          selected_list[0].value.parentElement.getBoundingClientRect().height /
-            scale
-        )
-        selected_list[0].StyleItem.PositionItem.ConstraintsY =
-          Constraints.center
-        let newOffY = `${
-          (parentH -
-            Math.round(
-              selected_list[0].value.getBoundingClientRect().height / scale
-            )) /
-          2
-        }px`
-        selected_list[0].value.setAttribute('constY', Constraints.center)
-        updatePosition({ Top: newOffY }, selected_list[0])
-        if (comParent) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          delete selected_list[0].StyleItem
-          delete selected_list[0].FrameItem
-          let stCssSelector = cssItem.Css.split('/**/')
-          let index = stCssSelector.findIndex(stCss =>
-            stCss.includes(
-              [...selected_list[0].value.classList].find(cls =>
-                cls.startsWith('w-st')
-              )
-            )
-          )
-          let newCssText = stCssSelector[index]
-            .match(/\{.*\}/g)[0]
-            .replace(/(\{|\})/g, '')
-            .split(';')
-            .filter(
-              stProp =>
-                !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-            )
-          newCssText.push(
-            ...selected_list[0].value.style.cssText
-              .split(';')
-              .filter(stProp =>
-                stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-              )
-          )
-          stCssSelector[index] = stCssSelector[index].replace(
-            /\{.*\}/g,
-            `{ ${newCssText.join(';')} }`
-          )
-          cssItem.Css = stCssSelector.join('/**/')
-          document
-            .querySelectorAll(
-              stCssSelector[index].replace(/\{.*\}/g, '').trim()
-            )
-            .forEach(applyRule => {
-              applyRule.removeAttribute('style')
-              applyRule.setAttribute('constY', Constraints.center)
-            })
-          let stTag = document.getElementById(`w-st-comp${comParent.id}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
+          if (
+            selected_list[0].value.getAttribute('constx') === Constraints.center
+          ) {
+            selected_list[0].value.style.transform = 'translate(-50%,-50%)'
+          } else selected_list[0].value.style.transform = 'translateY(-50%)'
+          selected_list[0].value.style.top = 'calc(50% + 0px)'
+          selected_list[0].value.style.bottom = ''
+          selected_list[0].value.setAttribute('consty', Constraints.center)
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              selected_list[0].value
+            )
+          )
+          switch (selected_list[0].value.getAttribute('consty')) {
+            case Constraints.top_bottom:
+              cssRule.style.height = selected_list[0].value.offsetHeight + 'px'
+              break
+            case Constraints.scale:
+              cssRule.style.height = selected_list[0].value.offsetHeight + 'px'
+              break
+            default:
+              break
+          }
+          if (
+            selected_list[0].value.getAttribute('constx') === Constraints.center
+          ) {
+            cssRule.style.transform = 'translate(-50%,-50%)'
+          } else cssRule.style.transform = 'translateY(-50%)'
+          cssRule.style.top = 'calc(50% + 0px)'
+          cssRule.style.bottom = ''
+          selected_list[0].value.setAttribute('consty', Constraints.center)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       } else {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        let cssItem = comParent
-          ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          : null
+        let pStyle = window.getComputedStyle(
+          selected_list[0].value.parentElement
+        )
         let minY = Math.min(
-          ...selected_list.map(e =>
-            parseFloat(window.getComputedStyle(e.value).top.replace('px'))
+          ...selected_list.map(wb =>
+            parseFloat(window.getComputedStyle(wb.value).top.replace('px'))
           )
         )
         let maxY = Math.max(
           ...selected_list.map(
-            e =>
-              parseFloat(window.getComputedStyle(e.value).top.replace('px')) +
-              Math.round(e.value.getBoundingClientRect().height / scale)
+            wb =>
+              parseFloat(window.getComputedStyle(wb.value).top.replace('px')) +
+              wb.value.offsetHeight
           )
         )
         let newOffY = minY + (maxY - minY) / 2
-        for (let wb of selected_list) {
-          wb.StyleItem ??= {
-            PositionItem: {},
-            FrameItem: {
-              Width: wb.value.getAttribute('width-type')
-                ? wb.value.getAttribute('width-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetWidth,
-              Height: wb.value.getAttribute('height-type')
-                ? wb.value.getAttribute('height-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetHeight
+        if (selected_list[0].StyleItem) {
+          for (let wb of selected_list) {
+            switch (wb.value.getAttribute('consty')) {
+              case Constraints.bottom:
+                wb.value.style.bottom = `${Math.round(
+                  parseFloat(pStyle.height.replace('px')) -
+                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                    parseFloat(pStyle.borderTopWidth.replace('px')) -
+                    newOffY
+                )}px`
+                break
+              case Constraints.top_bottom:
+                wb.value.style.bottom = `${Math.round(
+                  parseFloat(pStyle.height.replace('px')) -
+                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                    parseFloat(pStyle.borderTopWidth.replace('px')) -
+                    newOffY
+                )}px`
+                wb.value.style.top = newOffY + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  newOffY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                }px`
+                wb.value.style.top = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let topValue = `${(
+                  (newOffY * 100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}%`
+                let botValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.height.replace('px')) -
+                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                      parseFloat(pStyle.borderTopWidth.replace('px')) -
+                      newOffY
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}px`
+                wb.value.style.top = topValue
+                wb.value.style.bottom = botValue
+                break
+              default:
+                wb.value.style.top = newOffY + 'px'
+                break
             }
           }
-          let new_offsetY =
-            newOffY -
-            Math.round(wb.value.getBoundingClientRect().height / scale) / 2
-          updatePosition({ Top: new_offsetY }, wb)
-          if (comParent) {
-            delete wb.StyleItem
-            delete wb.FrameItem
-            let stCssSelector = cssItem.Css.split('/**/')
-            let index = stCssSelector.findIndex(stCss =>
-              stCss.includes(
-                [...wb.value.classList].find(cls => cls.startsWith('w-st'))
-              )
-            )
-            let newCssText = stCssSelector[index]
-              .match(/\{.*\}/g)[0]
-              .replace(/(\{|\})/g, '')
-              .split(';')
-              .filter(
-                stProp =>
-                  !stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-              )
-            newCssText.push(
-              ...wb.value.style.cssText
-                .split(';')
-                .filter(stProp =>
-                  stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-                )
-            )
-            stCssSelector[index] = stCssSelector[index].replace(
-              /\{.*\}/g,
-              `{ ${newCssText.join(';')} }`
-            )
-            cssItem.Css = stCssSelector.join('/**/')
-            wb.value.removeAttribute('style')
-          }
-        }
-        if (comParent) {
-          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          for (let wb of selected_list) {
+            let cssRule = StyleDA.docStyleSheets.find(e =>
+              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+                wb.value
+              )
+            )
+            switch (wb.value.getAttribute('consty')) {
+              case Constraints.bottom:
+                cssRule.style.bottom = `${Math.round(
+                  parseFloat(pStyle.height.replace('px')) -
+                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                    parseFloat(pStyle.borderTopWidth.replace('px')) -
+                    newOffY
+                )}px`
+                break
+              case Constraints.top_bottom:
+                cssRule.style.bottom = `${Math.round(
+                  parseFloat(pStyle.height.replace('px')) -
+                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                    parseFloat(pStyle.borderTopWidth.replace('px')) -
+                    newOffY
+                )}px`
+                cssRule.style.top = newOffY + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  newOffY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                }px`
+                cssRule.style.top = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let topValue = `${(
+                  (newOffY * 100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}%`
+                let botValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.height.replace('px')) -
+                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                      parseFloat(pStyle.borderTopWidth.replace('px')) -
+                      newOffY
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}px`
+                cssRule.style.top = topValue
+                cssRule.style.bottom = botValue
+                break
+              default:
+                cssRule.style.top = newOffY + 'px'
+                break
+            }
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              cssRule.cssText
+            )
+          }
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       break
@@ -1244,234 +2768,243 @@ function alignPosition (align_value) {
         for (let wb of selected_list) {
           let children = [
             ...wb.value.querySelectorAll(
-              `.wbaseItem-value[level="${selected_list[0].Level + 1}"]`
+              `.wbaseItem-value[level="${wb.Level + 1}"]`
             )
           ].filter(
-            childWb => window.getComputedStyle(childWb).position == 'absolute'
+            cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (children.length > 0) {
-            children = wbase_list.filter(e =>
-              children.some(eHTML => e.GID === eHTML.id)
-            )
-            let editComp = wb.IsWini && wb.CateID !== EnumCate.variant
+          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            for (let child of children) {
-              child.StyleItem ??= {
-                PositionItem: {},
-                FrameItem: {
-                  Width: child.value.getAttribute('width-type')
-                    ? child.value.getAttribute('width-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetWidth,
-                  Height: child.value.getAttribute('height-type')
-                    ? child.value.getAttribute('height-type') === 'fill'
-                      ? -100
-                      : null
-                    : child.value.offsetHeight
-                }
+            for (let cWbHTML of children) {
+              let cssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              switch (cWbHTML.getAttribute('consty')) {
+                case Constraints.top_bottom:
+                  cssRule.style.height = cWbHTML.offsetHeight + 'px'
+                  break
+                case Constraints.scale:
+                  cssRule.style.height = cWbHTML.offsetHeight + 'px'
+                  break
+                default:
+                  break
               }
-              child.StyleItem.PositionItem.ConstraintsY = Constraints.bottom
-              child.value.setAttribute('constY', Constraints.bottom)
-              updatePosition({ Bottom: '0px' }, child)
-              if (editComp) {
-                delete child.StyleItem
-                delete child.FrameItem
-                let stCssSelector = cssItem.Css.split('/**/')
-                let index = stCssSelector.findIndex(stCss =>
-                  stCss.includes(
-                    [...child.value.classList].find(cls =>
-                      cls.startsWith('w-st')
-                    )
-                  )
-                )
-                let newCssText = stCssSelector[index]
-                  .match(/\{.*\}/g)[0]
-                  .replace(/(\{|\})/g, '')
-                  .split(';')
-                  .filter(
-                    stProp =>
-                      !stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                  )
-                newCssText.push(
-                  ...child.value.style.cssText
-                    .split(';')
-                    .filter(stProp =>
-                      stProp.match(
-                        /(width|height|left|top|bottom|right|transform)/g
-                      )
-                    )
-                )
-                stCssSelector[index] = stCssSelector[index].replace(
-                  /\{.*\}/g,
-                  `{ ${newCssText.join(';')} }`
-                )
-                cssItem.Css = stCssSelector.join('/**/')
-                document
-                  .querySelectorAll(
-                    stCssSelector[index].replace(/\{.*\}/g, '').trim()
-                  )
-                  .forEach(applyRule => {
-                    applyRule.removeAttribute('style')
-                    applyRule.setAttribute('constY', Constraints.bottom)
-                  })
-              }
+              if (cWbHTML.getAttribute('constx') === Constraints.center) {
+                cssRule.style.transform = 'translateX(-50%)'
+              } else cssRule.style.transform = ''
+              cssRule.style.top = ''
+              cssRule.style.bottom = '0px'
+              cWbHTML.setAttribute('consty', Constraints.bottom)
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                cssRule.cssText
+              )
             }
-            if (editComp) {
-              let stTag = document.getElementById(`w-st-comp${wb.GID}`)
-              stTag.innerHTML = cssItem.Css
-              // StyleDA.editStyleSheet(cssItem);
-            } else {
+            StyleDA.editStyleSheet(cssItem)
+          } else {
+            if (children.length > 0) {
+              children = wbase_list.filter(e =>
+                children.some(cWbHTML => e.GID === cWbHTML.id)
+              )
+              for (let cWb of children) {
+                switch (cWb.value.getAttribute('consty')) {
+                  case Constraints.top_bottom:
+                    cWb.value.style.height = cWb.value.offsetHeight + 'px'
+                    break
+                  case Constraints.scale:
+                    cWb.value.style.height = cWb.value.offsetHeight + 'px'
+                    break
+                  default:
+                    break
+                }
+                if (cWb.value.getAttribute('constx') === Constraints.center) {
+                  cWb.value.style.transform = 'translateX(-50%)'
+                } else cWb.value.style.transform = ''
+                cWb.value.style.top = ''
+                cWb.value.style.bottom = '0px'
+                cWb.value.setAttribute('consty', Constraints.bottom)
+              }
               listUpdate.push(...children)
             }
           }
         }
       } else if (selected_list.length === 1) {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        selected_list[0].StyleItem ??= {
-          PositionItem: {},
-          FrameItem: {
-            Width: selected_list[0].value.getAttribute('width-type')
-              ? selected_list[0].value.getAttribute('width-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetWidth,
-            Height: selected_list[0].value.getAttribute('height-type')
-              ? selected_list[0].value.getAttribute('height-type') === 'fill'
-                ? -100
-                : null
-              : selected_list[0].value.offsetHeight
+        if (selected_list[0].StyleItem) {
+          switch (selected_list[0].value.getAttribute('consty')) {
+            case Constraints.top_bottom:
+              selected_list[0].value.style.height =
+                selected_list[0].value.offsetHeight + 'px'
+              break
+            case Constraints.scale:
+              selected_list[0].value.style.height =
+                selected_list[0].value.offsetHeight + 'px'
+              break
+            default:
+              break
           }
-        }
-        selected_list[0].StyleItem.PositionItem.ConstraintsY =
-          Constraints.bottom
-        selected_list[0].value.setAttribute('constY', Constraints.bottom)
-        updatePosition({ Bottom: '0px' }, selected_list[0])
-        if (comParent) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          delete selected_list[0].StyleItem
-          delete selected_list[0].FrameItem
-          let stCssSelector = cssItem.Css.split('/**/')
-          let index = stCssSelector.findIndex(stCss =>
-            stCss.includes(
-              [...selected_list[0].value.classList].find(cls =>
-                cls.startsWith('w-st')
-              )
-            )
-          )
-          let newCssText = stCssSelector[index]
-            .match(/\{.*\}/g)[0]
-            .replace(/(\{|\})/g, '')
-            .split(';')
-            .filter(
-              stProp =>
-                !stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-            )
-          newCssText.push(
-            ...selected_list[0].value.style.cssText
-              .split(';')
-              .filter(stProp =>
-                stProp.match(/(width|height|left|top|bottom|right|transform)/g)
-              )
-          )
-          stCssSelector[index] = stCssSelector[index].replace(
-            /\{.*\}/g,
-            `{ ${newCssText.join(';')} }`
-          )
-          cssItem.Css = stCssSelector.join('/**/')
-          document
-            .querySelectorAll(
-              stCssSelector[index].replace(/\{.*\}/g, '').trim()
-            )
-            .forEach(applyRule => {
-              applyRule.removeAttribute('style')
-              applyRule.setAttribute('constY', Constraints.bottom)
-            })
-          let stTag = document.getElementById(`w-st-comp${comParent.id}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
+          if (
+            selected_list[0].value.getAttribute('constx') === Constraints.center
+          ) {
+            selected_list[0].value.style.transform = 'translateX(-50%)'
+          } else selected_list[0].value.style.transform = ''
+          selected_list[0].value.style.top = ''
+          selected_list[0].value.style.bottom = '0px'
+          selected_list[0].value.setAttribute('consty', Constraints.bottom)
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              selected_list[0].value
+            )
+          )
+          switch (selected_list[0].value.getAttribute('consty')) {
+            case Constraints.top_bottom:
+              cssRule.style.height = selected_list[0].value.offsetHeight + 'px'
+              break
+            case Constraints.scale:
+              cssRule.style.height = selected_list[0].value.offsetHeight + 'px'
+              break
+            default:
+              break
+          }
+          if (
+            selected_list[0].value.getAttribute('constx') === Constraints.center
+          ) {
+            cssRule.style.transform = 'translateX(-50%)'
+          } else cssRule.style.transform = ''
+          cssRule.style.top = ''
+          cssRule.style.bottom = '0px'
+          selected_list[0].value.setAttribute('consty', Constraints.bottom)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       } else {
-        let comParent = $(selected_list[0].value).parents(
-          `.wbaseItem-value[iswini="true"]`
-        )[0]
-        let cssItem = comParent
-          ? StyleDA.cssStyleSheets.find(e => e.GID === comParent.id)
-          : null
         let maxY = Math.max(
           ...selected_list.map(
-            e =>
-              parseFloat(window.getComputedStyle(e.value).top.replace('px')) +
-              Math.round(e.value.getBoundingClientRect().height / scale)
+            wb =>
+              parseFloat(window.getComputedStyle(wb.value).top.replace('px')) +
+              wb.value.offsetHeight
           )
         )
-        for (let wb of selected_list) {
-          wb.StyleItem ??= {
-            PositionItem: {},
-            FrameItem: {
-              Width: wb.value.getAttribute('width-type')
-                ? wb.value.getAttribute('width-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetWidth,
-              Height: wb.value.getAttribute('height-type')
-                ? wb.value.getAttribute('height-type') === 'fill'
-                  ? -100
-                  : null
-                : wb.value.offsetHeight
+        let pStyle = window.getComputedStyle(
+          selected_list[0].value.parentElement
+        )
+        if (selected_list[0].StyleItem) {
+          for (let wb of selected_list) {
+            switch (wb.value.getAttribute('consty')) {
+              case Constraints.top:
+                wb.value.style.top = `${Math.round(
+                  maxY - wb.value.offsetHeight
+                )}px`
+                break
+              case Constraints.top_bottom:
+                wb.value.style.top = `${Math.round(
+                  maxY - wb.value.offsetHeight
+                )}px`
+                wb.value.style.bottom = maxY + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  maxY -
+                  wb.value.offsetHeight +
+                  (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                }px`
+                wb.value.style.top = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let topValue = `${(
+                  ((maxY - wb.value.offsetHeight) * 100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}%`
+                let botValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.height.replace('px')) -
+                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                      parseFloat(pStyle.borderTopWidth.replace('px')) -
+                      (maxY - wb.value.offsetHeight)
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}px`
+                wb.value.style.top = topValue
+                wb.value.style.bottom = botValue
+                break
+              default:
+                wb.value.style.bottom = maxY + 'px'
+                break
             }
           }
-          let newOffY =
-            maxY - Math.round(wb.value.getBoundingClientRect().height / scale)
-          updatePosition({ Top: newOffY }, wb)
-          if (comParent) {
-            delete wb.StyleItem
-            delete wb.FrameItem
-            let stCssSelector = cssItem.Css.split('/**/')
-            let index = stCssSelector.findIndex(stCss =>
-              stCss.includes(
-                [...wb.value.classList].find(cls => cls.startsWith('w-st'))
-              )
-            )
-            let newCssText = stCssSelector[index]
-              .match(/\{.*\}/g)[0]
-              .replace(/(\{|\})/g, '')
-              .split(';')
-              .filter(
-                stProp =>
-                  !stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-              )
-            newCssText.push(
-              ...wb.value.style.cssText
-                .split(';')
-                .filter(stProp =>
-                  stProp.match(
-                    /(width|height|left|top|bottom|right|transform)/g
-                  )
-                )
-            )
-            stCssSelector[index] = stCssSelector[index].replace(
-              /\{.*\}/g,
-              `{ ${newCssText.join(';')} }`
-            )
-            cssItem.Css = stCssSelector.join('/**/')
-            wb.value.removeAttribute('style')
-          }
-        }
-        if (comParent) {
-          let stTag = document.getElementById(`w-st-comp${cssItem.GID}`)
-          stTag.innerHTML = cssItem.Css
-          // StyleDA.editStyleSheet(cssItem);
-        } else {
           listUpdate.push(...selected_list)
+        } else {
+          let pWbComponent = selected_list[0].value.closest(
+            `.wbaseItem-value[iswini="true"]`
+          )
+          let cssItem = StyleDA.cssStyleSheets.find(
+            e => e.GID === pWbComponent.id
+          )
+          for (let wb of selected_list) {
+            let cssRule = StyleDA.docStyleSheets.find(e =>
+              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+                wb.value
+              )
+            )
+            switch (wb.value.getAttribute('consty')) {
+              case Constraints.top:
+                cssRule.style.top = `${Math.round(
+                  maxY - wb.value.offsetHeight
+                )}px`
+                break
+              case Constraints.top_bottom:
+                cssRule.style.top = `${Math.round(
+                  maxY - wb.value.offsetHeight
+                )}px`
+                cssRule.style.bottom = maxY + 'px'
+                break
+              case Constraints.center:
+                let centerValue = `${
+                  maxY -
+                  wb.value.offsetHeight +
+                  (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                }px`
+                cssRule.style.top = `calc(50% + ${centerValue})`
+                break
+              case Constraints.scale:
+                let topValue = `${(
+                  ((maxY - wb.value.offsetHeight) * 100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}%`
+                let botValue = `${(
+                  (Math.round(
+                    parseFloat(pStyle.height.replace('px')) -
+                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                      parseFloat(pStyle.borderTopWidth.replace('px')) -
+                      (maxY - wb.value.offsetHeight)
+                  ) *
+                    100) /
+                  wb.value.parentElement.offsetHeight
+                ).toFixed(2)}px`
+                cssRule.style.top = topValue
+                cssRule.style.bottom = botValue
+                break
+              default:
+                cssRule.style.bottom = maxY + 'px'
+                break
+            }
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              cssRule.cssText
+            )
+          }
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       break

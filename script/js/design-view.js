@@ -213,7 +213,7 @@ function createEditAlign () {
       btnAlign.className = 'img-button size-32'
       if (isEnable)
         btnAlign.onclick = function () {
-          alignPosition(alignType)
+          handleEditAlign(alignType)
           updateUIEditPosition()
           updateUIConstraints()
         }
