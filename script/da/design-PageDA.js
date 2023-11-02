@@ -1,4 +1,4 @@
-﻿class PageDA {
+﻿export default class PageDA {
   static list = [];
   static enableEdit = false;
   static obj = { ID: 0, ProjectID: 0, Permission: 2 };

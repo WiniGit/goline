@@ -1,3 +1,7 @@
+import ProjectDA from "../da/ProjectDA.js";
+import { EnumCate, ToolState } from "../da/design-wbaseDA.js";
+import UserService from "../user-service.js";
+
 // header
 let projectHeader = document.getElementById("header");
 projectHeader.onkeydown = function (e) {
@@ -363,7 +367,7 @@ input_scale.appendChild(icon_down);
 share_tool.replaceChildren(customer_circle, button_share, history, button_play, input_scale);
 
 //
-function customerList() {
+export  function customerList() {
   let user = UserService.getUser();
   ProjectDA.obj.CustomerProjectItems.forEach((e) => {
     e.CustomerType = EnumObj.customerProject;
@@ -428,7 +432,7 @@ function customerList() {
 let projectTitle = document.getElementById("project_name");
 projectTitle.innerHTML = ProjectDA.obj.Name;
 
-function permissionTool() {
+export function permissionTool() {
   create_obj_tool.replaceChildren(
     logo_wini,
     ...list_tool.map((wTool) => {

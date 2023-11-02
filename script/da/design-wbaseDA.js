@@ -1,3 +1,5 @@
+import { domainApi } from "../appconfig.js";
+
 class ToolState {
   static move = "Move";
   static frame = "Frame";
@@ -332,11 +334,11 @@ const svgRegex = /(fill|stroke)(="[^none](\w|\d|#){1,}"|:[^none](\w|\d|#){1,})/g
 const brpRegex = /\(([^)-]+)\)/g;
 const spChaRegex = /[!@#\$%\^\&*\)\(+=._-]/g;
 const classRegex = /\.([^\s{}]+)/g;
-var wbase_list = [];
-var base_component_list = [];
+export var wbase_list = [];
+export var base_component_list = [];
 var cssStyleSheets = [];
-var assets_list = [];
-var selected_list = [];
+export var assets_list = [];
+export var selected_list = [];
 var alt_list = [];
 var copy_item = [];
 var drag_start_list = [];
@@ -1376,6 +1378,28 @@ class WBaseDA {
   static listData = [];
   static isCtrlZ = false;
 
+  static arrange (list) {
+    if (list) {
+      list.sort((a, b) => {
+        value = b.Level - a.Level
+        if (value == 0) {
+          return a.Sort - b.Sort
+        } else {
+          return value
+        }
+      })
+    } else {
+      wbase_list.sort((a, b) => {
+        value = b.Level - a.Level
+        if (value == 0) {
+          return a.Sort - b.Sort
+        } else {
+          return value
+        }
+      })
+    }
+  }
+
   static async apiGetInitWbase() {
     let attributeData = await $.get(this.attribute_url + `?pageid=${PageDA.obj.ID}`);
     attributeData = attributeData.Data;
@@ -1702,3 +1726,5 @@ function clearActionListFrom(index = -1) {
   if (index < 0) action_list = [];
   else action_list = action_list.slice(0, index + 1);
 }
+
+export {WBaseDA, EnumCate, ToolState}

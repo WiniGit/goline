@@ -1,4 +1,6 @@
-function wbutton(item, data) {
+import { initPositionStyle } from "./handleData.js";
+
+export default function wbutton(item, data) {
   item.value = document.createElement("button");
   item.value.type = "button";
   $(item.value).addClass("w-button");

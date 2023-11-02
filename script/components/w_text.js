@@ -1,4 +1,4 @@
-function createTextHTML(item) {
+export default function createTextHTML(item) {
   item.value = document.createElement("div");
   let contentSpan = document.createElement("span");
   contentSpan.innerText = item.AttributesItem.Content ?? "";

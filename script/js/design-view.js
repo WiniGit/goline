@@ -7188,4 +7188,3 @@ function setupRightView () {
   updateUIDesignView()
 }
 
-export { setupRightView }

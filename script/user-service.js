@@ -1,4 +1,4 @@
-class UserService {
+export default class UserService {
     static getToken() {
         return Ultis.getStorage('token');
     }

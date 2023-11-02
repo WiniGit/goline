@@ -1,4 +1,11 @@
 ﻿// const { data } = require("jquery");
+import PageDA from "../da/design-PageDA.js";
+import { EnumCate, WBaseDA } from "../da/design-wbaseDA.js";
+import { EnumEvent, EnumObj } from "../enum-obj-event.js";
+import UserService from "../user-service.js";
+import { socketWini, urlFile } from "../appconfig.js";
+import ProjectDA from "../da/ProjectDA.js";
+import { io } from "https://cdn.socket.io/4.5.4/socket.io.min.js";
 
 const urlImg = urlFile;
 // const urlImg = "http://10.15.138.23:86/";
@@ -728,7 +735,7 @@ socket.on("server-main", async (data) => {
         })
       : data.data.filter((e) => e.GID !== wbase_parentID);
     listData = initDOM(listData);
-    arrange(listData);
+    WBaseDA.arrange(listData);
     if (data.enumEvent === EnumEvent.delete) {
       WbaseIO.delete(listData);
     } else {
@@ -806,13 +813,13 @@ socket.on("server-refresh", (data) => {
   }
 });
 
-class WiniIO {
+export default class WiniIO {
   static emitMain(obj) {
     obj.userItem = UserService.getUser();
     obj.token = UserService.getToken();
     obj.pid = parseInt(obj.pid ?? ProjectDA.obj.ID);
     obj.pageid = obj.pageid ?? PageDA.obj.ID;
-    arrange(obj.data);
+    WBaseDA.arrange(obj.data);
     obj.data = obj.data.reverse();
     console.log(Date.now(), " : ", obj);
     obj.data = [

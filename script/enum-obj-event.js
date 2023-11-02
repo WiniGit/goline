@@ -1,4 +1,4 @@
-class EnumObj {
+ class EnumObj {
     // only for ctrlz
     static skin = 0;
     //
@@ -61,7 +61,7 @@ class EnumObj {
     static padddingWbaseFrame = 59;
     static css = 60;
 }
-class EnumEvent {
+ class EnumEvent {
     static edit_delete = -1;
     static copy = 0;
     static add = 1;
@@ -95,20 +95,22 @@ class EnumEvent {
     static editRouter = 29;
 }
 
-class WEnum {
-    static field = 1;
-    static list = 2;
-    static obj = 3;
-    static enumDataType(type) {
-        switch (type) {
-            case field:
-                return 'Field';
-            case list:
-                return 'List';
-            case obj:
-                return 'Obj';
-            default:
-                return '';
-        }
-    }
-}
+// class WEnum {
+//     static field = 1;
+//     static list = 2;
+//     static obj = 3;
+//     static enumDataType(type) {
+//         switch (type) {
+//             case field:
+//                 return 'Field';
+//             case list:
+//                 return 'List';
+//             case obj:
+//                 return 'Obj';
+//             default:
+//                 return '';
+//         }
+//     }
+// }
+
+export {EnumObj, EnumEvent}

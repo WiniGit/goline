@@ -1,4 +1,4 @@
-class ProjectDA {
+export default class ProjectDA {
   static selected;
   static obj_click;
   static list = [];

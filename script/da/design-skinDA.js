@@ -541,3 +541,6 @@ class CateDA {
     WiniIO.emitPort(cateItem, url, EnumObj.project, EnumEvent.delete);
   }
 }
+
+
+export {StyleDA, ColorDA, TypoDA, BorderDA, EffectDA, CateDA}

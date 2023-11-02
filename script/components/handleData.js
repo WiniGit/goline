@@ -1,67 +1,11 @@
-﻿function initDOM(list) {
-  list.forEach((e) => {
-    e.value = document.createElement("div");
-    e.value.id = e.GID;
-    if (e.IsWini && !e.CopyID) e.value.setAttribute("iswini", "true");
-  });
-  let sortItems = [];
-  let newList = [];
-  list.forEach((e) => {
-    if (e.ParentID === wbase_parentID) {
-      e.Level = 1;
-      e.ListID = wbase_parentID;
-    } else {
-      let parent = list.find((eP) => eP.GID === e.ParentID);
-      if (parent) {
-        sortItems.push(e);
-        parent.value.appendChild(e.value);
-        e.Sort = parent.ListChildID.indexOf(e.GID);
-      } else {
-        if (wbase_list.length > 0) {
-          parent = document.getElementById(e.ParentID);
-          if (parent) {
-            e.ListID = parent.getAttribute("listid") + `,${e.ParentID}`;
-            e.Level = e.ListID.split(",").length;
-            let m = e.value;
-            e.ListID.split(",")
-              .filter((id) => id !== wbase_parentID)
-              .reverse()
-              .forEach((id) => {
-                let tmp = document.createElement("div");
-                tmp.id = id;
-                tmp.appendChild(m);
-                m = tmp;
-              });
-          }
-        }
-        if (!parent) {
-          e.ParentID = wbase_parentID;
-          e.Level = 1;
-          e.ListID = wbase_parentID;
-        }
-      }
-    }
-    newList.push(e);
-  });
-  sortItems.forEach((e) => {
-    e.ListID = [...$(e.value).parents("div")]
-      .map((eP) => {
-        if (eP.getAttribute("iswini") && !e.IsWini) {
-          delete e.CopyID;
-          delete e.ChildID;
-        }
-        return eP.id;
-      })
-      .reverse();
-    e.ListID.unshift(wbase_parentID);
-    e.Level = e.ListID.length;
-    e.ListID = e.ListID.join(",");
-  });
-  return newList;
-}
+﻿import { EnumCate } from "../da/design-wbaseDA.js";
+import wbutton from "./w_button.js";
+import createFrameHTML from "./w_frame.js";
+import createRectangleHTML from "./w_rectangle.js";
+import createTextHTML from "./w_text.js";
 
 /// lalala
-async function initComponents(item, list, initListener = true) {
+export async function initComponents(item, list, initListener = true) {
   if (item.AttributesItem.Json) {
     item.JsonItem = JSON.parse(item.AttributesItem.Json);
   }
@@ -91,66 +35,66 @@ async function initComponents(item, list, initListener = true) {
     case EnumCate.frame:
       createFrameHTML(item, list);
       break;
-    case EnumCate.form:
-      createFrameHTML(item, list);
-      $(item.value).addClass("w-form");
-      break;
-    case EnumCate.variant:
-      createVariantHTML(item, list);
-      break;
+    // case EnumCate.form:
+    //   createFrameHTML(item, list);
+    //   $(item.value).addClass("w-form");
+    //   break;
+    // case EnumCate.variant:
+    //   createVariantHTML(item, list);
+    //   break;
     case EnumCate.rectangle:
       createRectangleHTML(item);
       break;
     case EnumCate.text:
       createTextHTML(item);
       break;
-    case EnumCate.textfield:
-      createTextFieldHTML(item);
-      break;
-    case EnumCate.textformfield:
-      createTextFormFieldHTML(item, list);
-      break;
-    case EnumCate.w_switch:
-      createSwitchHTML(item);
-      break;
-    case EnumCate.svg:
-      if (item.build) {
-        await createSvgImgHTML(item);
-      } else {
-        createSvgImgHTML(item);
-      }
-      break;
-    case EnumCate.checkbox:
-      createCheckBoxHTML(item);
-      break;
-    case EnumCate.radio_button:
-      createRadioHTML(item);
-      break;
-    case EnumCate.progress_bar:
-      createProgressBarHTML(item);
-      break;
+    // case EnumCate.textfield:
+    //   createTextFieldHTML(item);
+    //   break;
+    // case EnumCate.textformfield:
+    //   createTextFormFieldHTML(item, list);
+    //   break;
+    // case EnumCate.w_switch:
+    //   createSwitchHTML(item);
+    //   break;
+    // case EnumCate.svg:
+    //   if (item.build) {
+    //     await createSvgImgHTML(item);
+    //   } else {
+    //     createSvgImgHTML(item);
+    //   }
+    //   break;
+    // case EnumCate.checkbox:
+    //   createCheckBoxHTML(item);
+    //   break;
+    // case EnumCate.radio_button:
+    //   createRadioHTML(item);
+    //   break;
+    // case EnumCate.progress_bar:
+    //   createProgressBarHTML(item);
+      // break;
     case EnumCate.button:
       wbutton(item, list);
       break;
-    case EnumCate.tree:
-      if (item.AttributesItem.Content != "") item.TreeData = JSON.parse(item.AttributesItem.Content);
-      createTreeHTML(item, list);
-      break;
-    case EnumCate.table:
-      if (item.AttributesItem.Content != "") item.TableRows = JSON.parse(item.AttributesItem.Content);
-      createTableHTML(item, list);
-      break;
-    case EnumCate.datePicker:
-      createDatePickerHTML(item);
-      break;
-    case EnumCate.chart:
-      if (item.AttributesItem.Content != "") item.ChartData = JSON.parse(item.AttributesItem.Content);
-      createChartHTML(item);
-      break;
-    case EnumCate.carousel:
-      if (item.AttributesItem.Content != "") item.CarouselData = JSON.parse(item.AttributesItem.Content);
-      createCarouselHTML(item, list);
-      break;
+    // case EnumCate.tree:
+    //   if (item.AttributesItem.Content != "") item.TreeData = JSON.parse(item.AttributesItem.Content);
+    //   createTreeHTML(item, list);
+    //   break;
+    // case EnumCate.table:
+    //   if (item.AttributesItem.Content != "") item.TableRows = JSON.parse(item.AttributesItem.Content);
+    //   createTableHTML(item, list);
+    //   break;
+    // case EnumCate.datePicker:
+    //   createDatePickerHTML(item);
+    //   break;
+    // case EnumCate.chart:
+    //   if (item.AttributesItem.Content != "") item.ChartData = JSON.parse(item.AttributesItem.Content);
+    //   createChartHTML(item);
+    //   break;
+    // case EnumCate.carousel:
+    //   if (item.AttributesItem.Content != "") item.CarouselData = JSON.parse(item.AttributesItem.Content);
+    //   createCarouselHTML(item, list);
+      // break;
     default:
       item.value = document.createElement("div");
       break;
@@ -582,7 +526,7 @@ async function callAPI(request) {
   return response;
 }
 
-function initPositionStyle(item) {
+export function initPositionStyle(item) {
   if (item.StyleItem) {
     if (item.ParentID === wbase_parentID) item.StyleItem.PositionItem.FixPosition = false;
     if (item.StyleItem.PositionItem.FixPosition) $(item.value).addClass("fixed-position");

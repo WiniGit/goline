@@ -1,4 +1,4 @@
-function createFrameHTML(item, data) {
+export default function createFrameHTML(item, data) {
   item.value = document.createElement(item.CateID === EnumCate.form ? "form" : "div");
   $(item.value).addClass("w-frame");
   if (item.WAutolayoutItem) {

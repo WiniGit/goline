@@ -1,12 +1,12 @@
 var domainUrl = 'http://localhost:3000/';
 
-var domainApi = 'https://apip.wini.vn/';
+export const domainApi = 'https://apip.wini.vn/';
 // 
-var socketHome = "wss://home.wini.vn";
-var socketWini = "wss://server.wini.vn";
+export const socketHome = "wss://home.wini.vn";
+export const socketWini = "wss://server.wini.vn";
 var socketWiniFile = "https://server.wini.vn";
 
-var urlFile = "https://file.wini.vn/";
+export const urlFile = "https://file.wini.vn/";
 // var urlFile = "https://demo.wini.vn/";
 var downloadUrl = "http://download.wini.vn/";
 
