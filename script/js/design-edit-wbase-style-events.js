@@ -74,6 +74,8 @@ function handleEditAlign (newValue) {
                 cWb.value.style.left = '0px'
                 cWb.value.style.right = ''
                 cWb.value.setAttribute('constx', Constraints.left)
+                cWb.StyleItem.PositionItem.Left = '0px'
+                cWb.StyleItem.PositionItem.ConstraintsX = Constraints.left
               }
               listUpdate.push(...children)
             }
@@ -101,6 +103,9 @@ function handleEditAlign (newValue) {
           selected_list[0].value.style.left = '0px'
           selected_list[0].value.style.right = ''
           selected_list[0].value.setAttribute('constx', Constraints.left)
+          selected_list[0].StyleItem.PositionItem.Left = '0px'
+          selected_list[0].StyleItem.PositionItem.ConstraintsX =
+            Constraints.left
           listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
@@ -157,6 +162,7 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
                     minX
                 )}px`
+                wb.StyleItem.PositionItem.Right = wb.value.style.right
                 break
               case Constraints.left_right:
                 wb.value.style.right = `${Math.round(
@@ -166,12 +172,15 @@ function handleEditAlign (newValue) {
                     minX
                 )}px`
                 wb.value.style.left = minX + 'px'
+                wb.StyleItem.PositionItem.Left = wb.value.style.left
+                wb.StyleItem.PositionItem.Right = wb.value.style.right
                 break
               case Constraints.center:
                 let centerValue = `${
                   minX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
                 }px`
                 wb.value.style.left = `calc(50% + ${centerValue})`
+                wb.StyleItem.PositionItem.Right = centerValue
                 break
               case Constraints.scale:
                 let leftValue = `${(
@@ -190,9 +199,12 @@ function handleEditAlign (newValue) {
                 ).toFixed(2)}px`
                 wb.value.style.left = leftValue
                 wb.value.style.right = rightValue
+                wb.StyleItem.PositionItem.Left = leftValue
+                wb.StyleItem.PositionItem.Right = rightValue
                 break
               default:
                 wb.value.style.left = minX + 'px'
+                wb.StyleItem.PositionItem.Left = minX + 'px'
                 break
             }
           }
@@ -325,6 +337,8 @@ function handleEditAlign (newValue) {
                 wb.value.style.left = `calc(50% + 0px)`
                 cWb.value.style.right = ''
                 cWb.value.setAttribute('constx', Constraints.center)
+                cWb.StyleItem.PositionItem.Right = '0px'
+                cWb.StyleItem.PositionItem.ConstraintsX = Constraints.center
               }
               listUpdate.push(...children)
             }
@@ -352,6 +366,9 @@ function handleEditAlign (newValue) {
           selected_list[0].value.style.left = 'calc(50% + 0px)'
           selected_list[0].value.style.right = ''
           selected_list[0].value.setAttribute('constx', Constraints.center)
+          selected_list[0].StyleItem.PositionItem.Right = '0px'
+          selected_list[0].StyleItem.PositionItem.ConstraintsX =
+            Constraints.center
           listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
@@ -416,6 +433,7 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
                     newOffX
                 )}px`
+                wb.StyleItem.PositionItem.Right = wb.value.style.right
                 break
               case Constraints.left_right:
                 wb.value.style.right = `${Math.round(
@@ -425,12 +443,15 @@ function handleEditAlign (newValue) {
                     newOffX
                 )}px`
                 wb.value.style.left = newOffX + 'px'
+                wb.StyleItem.PositionItem.Left = wb.value.style.left
+                wb.StyleItem.PositionItem.Right = wb.value.style.right
                 break
               case Constraints.center:
                 let centerValue = `${
                   newOffX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
                 }px`
                 wb.value.style.left = `calc(50% + ${centerValue})`
+                wb.StyleItem.PositionItem.Right = centerValue
                 break
               case Constraints.scale:
                 let leftValue = `${(
@@ -449,9 +470,12 @@ function handleEditAlign (newValue) {
                 ).toFixed(2)}px`
                 wb.value.style.left = leftValue
                 wb.value.style.right = rightValue
+                wb.StyleItem.PositionItem.Left = leftValue
+                wb.StyleItem.PositionItem.Right = rightValue
                 break
               default:
                 wb.value.style.left = newOffX + 'px'
+                wb.StyleItem.PositionItem.Left = newOffX + 'px'
                 break
             }
           }
@@ -584,6 +608,8 @@ function handleEditAlign (newValue) {
                 cWb.value.style.left = ''
                 cWb.value.style.right = '0px'
                 cWb.value.setAttribute('constx', Constraints.right)
+                cWb.StyleItem.PositionItem.Right = '0px'
+                cWb.StyleItem.PositionItem.ConstraintsY = Constraints.right
               }
               listUpdate.push(...children)
             }
@@ -611,6 +637,9 @@ function handleEditAlign (newValue) {
           selected_list[0].value.style.left = ''
           selected_list[0].value.style.right = '0px'
           selected_list[0].value.setAttribute('constx', Constraints.right)
+          selected_list[0].StyleItem.PositionItem.Right = '0px'
+          selected_list[0].StyleItem.PositionItem.ConstraintsY =
+            Constraints.right
           listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
@@ -666,12 +695,15 @@ function handleEditAlign (newValue) {
                 wb.value.style.left = `${Math.round(
                   maxX - wb.value.offsetWidth
                 )}px`
+                wb.StyleItem.PositionItem.Left = wb.value.style.left
                 break
               case Constraints.left_right:
                 wb.value.style.left = `${Math.round(
                   maxX - wb.value.offsetWidth
                 )}px`
                 wb.value.style.right = maxX + 'px'
+                wb.StyleItem.PositionItem.Left = wb.value.style.left
+                wb.StyleItem.PositionItem.Right = wb.value.style.right
                 break
               case Constraints.center:
                 let centerValue = `${
@@ -680,6 +712,7 @@ function handleEditAlign (newValue) {
                   (wb.value.offsetWidth - wb.value.offsetWidth) / 2
                 }px`
                 wb.value.style.left = `calc(50% + ${centerValue})`
+                wb.StyleItem.PositionItem.Right = centerValue
                 break
               case Constraints.scale:
                 let leftValue = `${(
@@ -698,9 +731,12 @@ function handleEditAlign (newValue) {
                 ).toFixed(2)}px`
                 wb.value.style.left = leftValue
                 wb.value.style.right = rightValue
+                wb.StyleItem.PositionItem.Left = leftValue
+                wb.StyleItem.PositionItem.Right = rightValue
                 break
               default:
                 wb.value.style.right = maxX + 'px'
+                wb.StyleItem.PositionItem.Right = maxX + 'px'
                 break
             }
           }
@@ -1529,6 +1565,886 @@ function handleEditAlign (newValue) {
   }
   if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.position)
   updateUISelectBox()
+}
+
+function handleEditOffset ({
+  width,
+  height,
+  x,
+  y,
+  radius,
+  radiusTL,
+  radiusTR,
+  radiusBL,
+  radiusBR,
+  fixPosition
+}) {
+  let listUpdate = []
+  if (width !== undefined && height !== undefined) {
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        let children = [
+          ...wb.value.querySelectorAll(
+            `.wbaseItem-value[level="${wb.Level + 1}"]`
+          )
+        ]
+        if (width === null) {
+          if (wb.value.classList.contains('w-row')) {
+            children = children.filter(
+              e => e.getAttribute('width-type') === 'fill'
+            )
+          } else if (
+            children.every(e => e.getAttribute('width-type') === 'fill')
+          ) {
+            children = children
+              .sort((a, b) => a.offsetWidth - b.offsetWidth)
+              .slice(0, 1)
+          } else {
+            children = []
+          }
+          if (children.length > 0) {
+            if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+              let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+              for (let cWbHTML of children) {
+                let cssRule = StyleDA.docStyleSheets.find(e =>
+                  [...wb.value.querySelectorAll(e.selectorText)].includes(
+                    cWbHTML
+                  )
+                )
+                cssRule.style.width = cWbHTML.offsetWidth + 'px'
+                cWbHTML.removeAttribute('width-type')
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                  cssRule.cssText
+                )
+              }
+              StyleDA.editStyleSheet(cssItem)
+            } else {
+              children = wbase_list.filter(wb =>
+                children.some(wbHTML => wb.GID === wbHTML)
+              )
+              for (let cWb of children) {
+                cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
+                cWb.value.style.width = cWb.value.offsetWidth + 'px'
+                cWb.value.removeAttribute('width-type')
+              }
+              listUpdate.push(...children)
+            }
+          }
+          wb.StyleItem.FrameItem.Width = null
+          wb.value.style.width = null
+          wb.value.setAttribute('width-type', 'fit')
+        } else if (width < 0) {
+          wb.StyleItem.FrameItem.Width = width
+          wb.value.style.width = '100%'
+          wb.value.setAttribute('width-type', 'fill')
+        } else {
+          wb.StyleItem.FrameItem.Width = width
+          wb.value.style.width = width + 'px'
+          wb.value.removeAttribute('width-type')
+        }
+        if (height === null) {
+          if (wb.value.classList.contains('w-col')) {
+            children = children.filter(
+              e => e.getAttribute('height-type') === 'fill'
+            )
+          } else if (
+            children.every(e => e.getAttribute('height-type') === 'fill')
+          ) {
+            children = children
+              .sort((a, b) => (a.offsetHeight = b.offsetHeight))
+              .slice(0, 1)
+          } else {
+            children = []
+          }
+          if (children.length > 0) {
+            if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+              let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+              for (let cWbHTML of children) {
+                let cssRule = StyleDA.docStyleSheets.find(e =>
+                  [...wb.value.querySelectorAll(e.selectorText)].includes(
+                    cWbHTML
+                  )
+                )
+                cssRule.style.height = cWbHTML.offsetHeight + 'px'
+                cWbHTML.removeAttribute('height-type')
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                  cssRule.cssText
+                )
+              }
+              StyleDA.editStyleSheet(cssItem)
+            } else {
+              children = wbase_list.filter(wb =>
+                children.some(wbHTML => wb.GID === wbHTML)
+              )
+              for (let cWb of children) {
+                cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
+                cWb.value.style.height = cWb.value.offsetHeight + 'px'
+                cWb.value.removeAttribute('height-type')
+              }
+              listUpdate.push(...children)
+            }
+          }
+          wb.StyleItem.FrameItem.Height = null
+          wb.value.style.height = null
+          wb.value.setAttribute('height-type', 'fit')
+        } else if (height < 0) {
+          wb.StyleItem.FrameItem.Height = height
+          wb.value.style.height = '100%'
+          wb.value.setAttribute('height-type', 'fill')
+        } else {
+          wb.StyleItem.FrameItem.Height = height
+          wb.value.style.height = height + 'px'
+          wb.value.removeAttribute('height-type')
+        }
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.frame)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        let children = [
+          ...wb.value.querySelectorAll(
+            `.wbaseItem-value[level="${wb.Level + 1}"]`
+          )
+        ]
+        if (width === null) {
+          if (wb.value.classList.contains('w-row')) {
+            children = children.filter(
+              e => e.getAttribute('width-type') === 'fill'
+            )
+          } else if (
+            children.every(e => e.getAttribute('width-type') === 'fill')
+          ) {
+            children = children
+              .sort((a, b) => (a.offsetWidth = b.offsetWidth))
+              .slice(0, 1)
+          } else {
+            children = []
+          }
+          if (children.length > 0) {
+            for (let cWbHTML of children) {
+              let cCssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.value.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              cCssRule.style.width = cWbHTML.offsetWidth + 'px'
+              cWbHTML.removeAttribute('width-type')
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cCssRule.selectorText} {[^}]*}`, 'g'),
+                cCssRule.cssText
+              )
+            }
+          }
+          cssRule.style.width = null
+          wb.value.setAttribute('width-type', 'fit')
+        } else if (width < 0) {
+          cssRule.style.width = '100%'
+          wb.value.setAttribute('width-type', 'fill')
+        } else {
+          cssRule.style.width = width + 'px'
+          wb.value.removeAttribute('width-type')
+        }
+        if (height === null) {
+          if (wb.value.classList.contains('w-col')) {
+            children = children.filter(
+              e => e.getAttribute('height-type') === 'fill'
+            )
+          } else if (
+            children.every(e => e.getAttribute('height-type') === 'fill')
+          ) {
+            children = children
+              .sort((a, b) => a.offsetHeight - b.offsetHeight)
+              .slice(0, 1)
+          } else {
+            children = []
+          }
+          if (children.length > 0) {
+            for (let cWbHTML of children) {
+              let cCssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.value.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              cCssRule.style.height = cWbHTML.offsetHeight + 'px'
+              cWbHTML.removeAttribute('height-type')
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cCssRule.selectorText} {[^}]*}`, 'g'),
+                cCssRule.cssText
+              )
+            }
+          }
+          cssRule.style.height = null
+          wb.value.setAttribute('height-type', 'fit')
+        } else if (height < 0) {
+          cssRule.style.height = '100%'
+          wb.value.setAttribute('height-type', 'fill')
+        } else {
+          cssRule.style.height = height + 'px'
+          wb.value.removeAttribute('height-type')
+        }
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+      }
+    }
+  } else if (width !== undefined) {
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        let children = [
+          ...wb.value.querySelectorAll(
+            `.wbaseItem-value[level="${wb.Level + 1}"]`
+          )
+        ]
+        if (width === null) {
+          if (wb.value.classList.contains('w-row')) {
+            children = children.filter(
+              e => e.getAttribute('width-type') === 'fill'
+            )
+          } else if (
+            children.every(e => e.getAttribute('width-type') === 'fill')
+          ) {
+            children = children
+              .sort((a, b) => a.offsetWidth - b.offsetWidth)
+              .slice(0, 1)
+          } else {
+            children = []
+          }
+          if (children.length > 0) {
+            if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+              let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+              for (let cWbHTML of children) {
+                let cssRule = StyleDA.docStyleSheets.find(e =>
+                  [...wb.value.querySelectorAll(e.selectorText)].includes(
+                    cWbHTML
+                  )
+                )
+                cssRule.style.width = cWbHTML.offsetWidth + 'px'
+                cWbHTML.removeAttribute('width-type')
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                  cssRule.cssText
+                )
+              }
+              StyleDA.editStyleSheet(cssItem)
+            } else {
+              children = wbase_list.filter(wb =>
+                children.some(wbHTML => wb.GID === wbHTML)
+              )
+              for (let cWb of children) {
+                cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
+                cWb.value.style.width = cWb.value.offsetWidth + 'px'
+                cWb.value.removeAttribute('width-type')
+              }
+              listUpdate.push(...children)
+            }
+          }
+          wb.StyleItem.FrameItem.Width = null
+          wb.value.style.width = null
+          wb.value.setAttribute('width-type', 'fit')
+        } else if (width < 0) {
+          wb.StyleItem.FrameItem.Width = width
+          wb.value.style.width = '100%'
+          wb.value.setAttribute('width-type', 'fill')
+        } else {
+          wb.StyleItem.FrameItem.Width = width
+          wb.value.style.width = width + 'px'
+          wb.value.removeAttribute('width-type')
+        }
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.frame)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        let children = [
+          ...wb.value.querySelectorAll(
+            `.wbaseItem-value[level="${wb.Level + 1}"]`
+          )
+        ]
+        if (width === null) {
+          if (wb.value.classList.contains('w-row')) {
+            children = children.filter(
+              e => e.getAttribute('width-type') === 'fill'
+            )
+          } else if (
+            children.every(e => e.getAttribute('width-type') === 'fill')
+          ) {
+            children = children
+              .sort((a, b) => (a.offsetWidth = b.offsetWidth))
+              .slice(0, 1)
+          } else {
+            children = []
+          }
+          if (children.length > 0) {
+            for (let cWbHTML of children) {
+              let cCssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.value.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              cCssRule.style.width = cWbHTML.offsetWidth + 'px'
+              cWbHTML.removeAttribute('width-type')
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cCssRule.selectorText} {[^}]*}`, 'g'),
+                cCssRule.cssText
+              )
+            }
+          }
+          cssRule.style.width = null
+          wb.value.setAttribute('width-type', 'fit')
+        } else if (width < 0) {
+          cssRule.style.width = '100%'
+          wb.value.setAttribute('width-type', 'fill')
+        } else {
+          cssRule.style.width = width + 'px'
+          wb.value.removeAttribute('width-type')
+        }
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+      }
+    }
+  } else if (height !== undefined) {
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        let children = [
+          ...wb.value.querySelectorAll(
+            `.wbaseItem-value[level="${wb.Level + 1}"]`
+          )
+        ]
+        if (height === null) {
+          if (wb.value.classList.contains('w-col')) {
+            children = children.filter(
+              e => e.getAttribute('height-type') === 'fill'
+            )
+          } else if (
+            children.every(e => e.getAttribute('height-type') === 'fill')
+          ) {
+            children = children
+              .sort((a, b) => (a.offsetHeight = b.offsetHeight))
+              .slice(0, 1)
+          } else {
+            children = []
+          }
+          if (children.length > 0) {
+            if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+              let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+              for (let cWbHTML of children) {
+                let cssRule = StyleDA.docStyleSheets.find(e =>
+                  [...wb.value.querySelectorAll(e.selectorText)].includes(
+                    cWbHTML
+                  )
+                )
+                cssRule.style.height = cWbHTML.offsetHeight + 'px'
+                cWbHTML.removeAttribute('height-type')
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                  cssRule.cssText
+                )
+              }
+              StyleDA.editStyleSheet(cssItem)
+            } else {
+              children = wbase_list.filter(wb =>
+                children.some(wbHTML => wb.GID === wbHTML)
+              )
+              for (let cWb of children) {
+                cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
+                cWb.value.style.height = cWb.value.offsetHeight + 'px'
+                cWb.value.removeAttribute('height-type')
+              }
+              listUpdate.push(...children)
+            }
+          }
+          wb.StyleItem.FrameItem.Height = null
+          wb.value.style.height = null
+          wb.value.setAttribute('height-type', 'fit')
+        } else if (height < 0) {
+          wb.StyleItem.FrameItem.Height = height
+          wb.value.style.height = '100%'
+          wb.value.setAttribute('height-type', 'fill')
+        } else {
+          wb.StyleItem.FrameItem.Height = height
+          wb.value.style.height = height + 'px'
+          wb.value.removeAttribute('height-type')
+        }
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.frame)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        let children = [
+          ...wb.value.querySelectorAll(
+            `.wbaseItem-value[level="${wb.Level + 1}"]`
+          )
+        ]
+        if (height === null) {
+          if (wb.value.classList.contains('w-col')) {
+            children = children.filter(
+              e => e.getAttribute('height-type') === 'fill'
+            )
+          } else if (
+            children.every(e => e.getAttribute('height-type') === 'fill')
+          ) {
+            children = children
+              .sort((a, b) => a.offsetHeight - b.offsetHeight)
+              .slice(0, 1)
+          } else {
+            children = []
+          }
+          if (children.length > 0) {
+            for (let cWbHTML of children) {
+              let cCssRule = StyleDA.docStyleSheets.find(e =>
+                [...wb.value.querySelectorAll(e.selectorText)].includes(cWbHTML)
+              )
+              cCssRule.style.height = cWbHTML.offsetHeight + 'px'
+              cWbHTML.removeAttribute('height-type')
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cCssRule.selectorText} {[^}]*}`, 'g'),
+                cCssRule.cssText
+              )
+            }
+          }
+          cssRule.style.height = null
+          wb.value.setAttribute('height-type', 'fit')
+        } else if (height < 0) {
+          cssRule.style.height = '100%'
+          wb.value.setAttribute('height-type', 'fill')
+        } else {
+          cssRule.style.height = height + 'px'
+          wb.value.removeAttribute('height-type')
+        }
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+      }
+    }
+  } else if (x !== undefined) {
+    let pStyle = window.getComputedStyle(selected_list[0].value.parentElement)
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        switch (wb.value.getAttribute('constx')) {
+          case Constraints.right:
+            wb.value.style.right = `${Math.round(
+              parseFloat(pStyle.width.replace('px')) -
+                parseFloat(pStyle.borderRightWidth.replace('px')) -
+                parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                x
+            )}px`
+            break
+          case Constraints.left_right:
+            wb.value.style.right = `${Math.round(
+              parseFloat(pStyle.width.replace('px')) -
+                parseFloat(pStyle.borderRightWidth.replace('px')) -
+                parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                x
+            )}px`
+            wb.value.style.left = x + 'px'
+            break
+          case Constraints.center:
+            let centerValue = `${
+              x + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+            }px`
+            wb.value.style.left = `calc(50% + ${centerValue})`
+            break
+          case Constraints.scale:
+            let leftValue = `${(
+              (x * 100) /
+              wb.value.parentElement.offsetWidth
+            ).toFixed(2)}%`
+            let rightValue = `${(
+              (Math.round(
+                parseFloat(pStyle.width.replace('px')) -
+                  parseFloat(pStyle.borderRightWidth.replace('px')) -
+                  parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                  x
+              ) *
+                100) /
+              wb.value.parentElement.offsetWidth
+            ).toFixed(2)}px`
+            wb.value.style.left = leftValue
+            wb.value.style.right = rightValue
+            break
+          default:
+            wb.value.style.left = x + 'px'
+            break
+        }
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.position)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        switch (wb.value.getAttribute('constx')) {
+          case Constraints.right:
+            cssRule.style.right = `${Math.round(
+              parseFloat(pStyle.width.replace('px')) -
+                parseFloat(pStyle.borderRightWidth.replace('px')) -
+                parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                x
+            )}px`
+            break
+          case Constraints.left_right:
+            cssRule.style.right = `${Math.round(
+              parseFloat(pStyle.width.replace('px')) -
+                parseFloat(pStyle.borderRightWidth.replace('px')) -
+                parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                x
+            )}px`
+            cssRule.style.left = x + 'px'
+            break
+          case Constraints.center:
+            let centerValue = `${
+              x + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+            }px`
+            cssRule.style.left = `calc(50% + ${centerValue})`
+            break
+          case Constraints.scale:
+            let leftValue = `${(
+              (x * 100) /
+              wb.value.parentElement.offsetWidth
+            ).toFixed(2)}%`
+            let rightValue = `${(
+              (Math.round(
+                parseFloat(pStyle.width.replace('px')) -
+                  parseFloat(pStyle.borderRightWidth.replace('px')) -
+                  parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                  x
+              ) *
+                100) /
+              wb.value.parentElement.offsetWidth
+            ).toFixed(2)}px`
+            cssRule.style.left = leftValue
+            cssRule.style.right = rightValue
+            break
+          default:
+            cssRule.style.left = x + 'px'
+            break
+        }
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (y !== undefined) {
+    let pStyle = window.getComputedStyle(selected_list[0].value.parentElement)
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        switch (wb.value.getAttribute('consty')) {
+          case Constraints.bottom:
+            wb.value.style.bottom = `${Math.round(
+              parseFloat(pStyle.height.replace('px')) -
+                parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                parseFloat(pStyle.borderTopWidth.replace('px')) -
+                y
+            )}px`
+            break
+          case Constraints.top_bottom:
+            wb.value.style.bottom = `${Math.round(
+              parseFloat(pStyle.height.replace('px')) -
+                parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                parseFloat(pStyle.borderTopWidth.replace('px')) -
+                y
+            )}px`
+            wb.value.style.top = y + 'px'
+            break
+          case Constraints.center:
+            let centerValue = `${
+              y + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+            }px`
+            wb.value.style.top = `calc(50% + ${centerValue})`
+            break
+          case Constraints.scale:
+            let topValue = `${(
+              (y * 100) /
+              wb.value.parentElement.offsetHeight
+            ).toFixed(2)}%`
+            let botValue = `${(
+              (Math.round(
+                parseFloat(pStyle.height.replace('px')) -
+                  parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                  parseFloat(pStyle.borderRightWidth.replace('px')) -
+                  y
+              ) *
+                100) /
+              wb.value.parentElement.offsetHeight
+            ).toFixed(2)}px`
+            wb.value.style.top = topValue
+            wb.value.style.bottom = botValue
+            break
+          default:
+            wb.value.style.top = y + 'px'
+            break
+        }
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.position)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        switch (wb.value.getAttribute('consty')) {
+          case Constraints.bottom:
+            cssRule.style.bottom = `${Math.round(
+              parseFloat(pStyle.height.replace('px')) -
+                parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                parseFloat(pStyle.borderRightWidth.replace('px')) -
+                y
+            )}px`
+            break
+          case Constraints.top_bottom:
+            cssRule.style.bottom = `${Math.round(
+              parseFloat(pStyle.height.replace('px')) -
+                parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                parseFloat(pStyle.borderRightWidth.replace('px')) -
+                y
+            )}px`
+            cssRule.style.top = y + 'px'
+            break
+          case Constraints.center:
+            let centerValue = `${
+              y + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+            }px`
+            cssRule.style.top = `calc(50% + ${centerValue})`
+            break
+          case Constraints.scale:
+            let topValue = `${(
+              (y * 100) /
+              wb.value.parentElement.offsetHeight
+            ).toFixed(2)}%`
+            let botValue = `${(
+              (Math.round(
+                parseFloat(pStyle.height.replace('px')) -
+                  parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                  parseFloat(pStyle.borderTopWidth.replace('px')) -
+                  y
+              ) *
+                100) /
+              wb.value.parentElement.offsetHeight
+            ).toFixed(2)}px`
+            cssRule.style.top = topValue
+            cssRule.style.bottom = botValue
+            break
+          default:
+            cssRule.style.top = y + 'px'
+            break
+        }
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (radius !== undefined) {
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        wb.StyleItem.FrameItem.TopLeft = radius
+        wb.StyleItem.FrameItem.TopRight = radius
+        wb.StyleItem.FrameItem.BottomLeft = radius
+        wb.StyleItem.FrameItem.BottomRight = radius
+        wb.value.style.borderRadius = `${radius}px`
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.frame)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderRadius = `${radius}px`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (radiusTL !== undefined) {
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        wb.StyleItem.FrameItem.TopLeft = radiusTL
+        wb.value.style.borderTopLeftRadius = `${radiusTL}px`
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.frame)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderTopLeftRadius = `${radiusTL}px`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (radiusTR !== undefined) {
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        wb.StyleItem.FrameItem.TopRight = radiusTR
+        wb.value.style.borderTopRightRadius = `${radiusTR}px`
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.frame)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderTopRightRadius = `${radiusTR}px`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (radiusBL !== undefined) {
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        wb.StyleItem.FrameItem.BottomLeft = radiusBL
+        wb.value.style.borderBottomLeftRadius = `${radiusBL}px`
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.frame)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderBottomLeftRadius = `${radiusBL}px`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (radiusBR !== undefined) {
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        wb.StyleItem.FrameItem.BottomRight = radiusBR
+        wb.value.style.borderBottomRightRadius = `${radiusBR}px`
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.frame)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderBottomRightRadius = `${radiusBR}px`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (fixPosition !== undefined) {
+    if (selected_list[0].StyleItem) {
+      let pWb = wbase_list.find(wb => wb.GID === select_box_parentID)
+      for (let wb of selected_list) {
+        if (fixPosition) {
+          if (pWb.value.getAttribute('width-type') === 'fit') {
+            pWb.StyleItem.FrameItem.Width = pWb.value.offsetWidth
+            pWb.value.style.width = pWb.value.offsetWidth + 'px'
+            pWb.value.removeAttribute('width-type')
+            listUpdate.push(pWb)
+          }
+          if (pWb.value.getAttribute('height-type') === 'fit') {
+            pWb.StyleItem.FrameItem.Height = pWb.value.offsetHeight
+            pWb.value.style.height = pWb.value.offsetHeight + 'px'
+            pWb.value.removeAttribute('height-type')
+            if (!listUpdate.includes(pWb)) listUpdate.push(pWb)
+          }
+          if (wb.value.getAttribute('width-type') === 'fill') {
+            wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
+            wb.value.style.width = wb.value.offsetWidth + 'px'
+            wb.value.removeAttribute('width-type')
+          }
+          if (wb.value.getAttribute('height-type') === 'fill') {
+            wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
+            wb.value.style.height = wb.value.offsetHeight + 'px'
+            wb.value.removeAttribute('height-type')
+          }
+          wb.StyleItem.PositionItem.ConstraintsX = Constraints.left
+          wb.StyleItem.PositionItem.ConstraintsY = Constraints.top
+          wb.value.setAttribute('constx', Constraints.left)
+          wb.value.setAttribute('consty', Constraints.top)
+          wb.value.style.left = wb.value.style.top = $(wb.value).addClass(
+            'fixed-position'
+          )
+        } else {
+          $(wb.value).removeClass('fixed-position')
+          wb.value.style.position = null
+          wb.value.style.left = null
+          wb.value.style.right = null
+          wb.value.style.top = null
+          wb.value.style.bottom = null
+          wb.value.style.transform = null
+        }
+      }
+    } else {
+    }
+  }
 }
 
 function frameHugChildrenSize () {

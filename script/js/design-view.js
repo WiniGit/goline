@@ -49,8 +49,8 @@ function updateUIDesignView () {
     let localSkins = createSelectionSkins()
     listEditContainer.appendChild(localSkins)
   } else {
-    let editAlign = createEditAlign()
-    let editSizePosition = createEditSizePosition()
+    let editAlign = EditAlignBlock()
+    let editSizePosition = EditOffsetBlock()
     // // let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign)
     listEditContainer.appendChild(editSizePosition)
@@ -174,7 +174,7 @@ function createCanvasBackground () {
 }
 
 // edit align UI
-function createEditAlign () {
+function EditAlignBlock () {
   let editAlignContainer = document.createElement('div')
   editAlignContainer.id = 'edit_align_div'
   let isEnable =
@@ -223,13 +223,13 @@ function createEditAlign () {
   return editAlignContainer
 }
 
-function updateUIEditAlign () {
-  let newEditAlign = createEditAlign()
+function reloadEditAlignBlock () {
+  let newEditAlign = EditAlignBlock()
   document.getElementById('edit_align_div').replaceWith(newEditAlign)
 }
 
 // edit position UI
-function createEditSizePosition () {
+function EditOffsetBlock () {
   let edit_size_position_div = document.createElement('div')
   edit_size_position_div.id = 'edit_size_position_div'
   edit_size_position_div.className = 'edit-container'
@@ -256,8 +256,8 @@ function createEditSizePosition () {
           let option = document.createElement('div')
           option.className = 'w-device-option-tile'
           option.onclick = function (ev) {
-            ev.stopPropagation()
-            inputFrameItem({ Width: device.Width, Height: device.Height })
+            ev.stopPropagation() 
+            handleEditOffset({ width: device.Width, height: device.Height })
             popup.remove()
             updateUIEditPosition()
           }
@@ -282,7 +282,7 @@ function createEditSizePosition () {
       }
     }
     let listSize = selected_list
-      .filter(e => EnumCate.extend_frame.some(cate => e.CateID == cate))
+      .filter(e => EnumCate.extend_frame.some(ct => e.CateID === ct))
       .filterAndMap(
         e =>
           `${parseInt(e.StyleItem.FrameItem.Width)}x${parseInt(
@@ -314,7 +314,7 @@ function createEditSizePosition () {
     onBlur: function (ev) {
       let newValue = parseFloat(ev.target.value)
       if (!isNaN(newValue)) {
-        inputPositionItem({ Left: newValue })
+        handleEditOffset({ x: newValue })
       }
       updateInputTLWH()
     }
@@ -330,7 +330,7 @@ function createEditSizePosition () {
     onBlur: function (ev) {
       let newValue = parseFloat(ev.target.value)
       if (!isNaN(newValue)) {
-        inputPositionItem({ Top: newValue })
+        handleEditOffset({ y: newValue })
       }
       updateInputTLWH()
     }
@@ -360,7 +360,7 @@ function createEditSizePosition () {
       else this.classList.remove('toggle')
       edit_top.lastChild.disabled = !isFixPos
       edit_left.lastChild.disabled = !isFixPos
-      updateUIEditAlign()
+      reloadEditAlignBlock()
     }
     editXYContainer.appendChild(iconFixPos)
   }
@@ -701,7 +701,7 @@ function createEditSizePosition () {
 
 // update style HTML edit position UI
 function updateUIEditPosition () {
-  // let newEditSizePositionForm = createEditSizePosition();
+  // let newEditSizePositionForm = EditOffsetBlock();
   // document.getElementById("edit_size_position_div").replaceWith(newEditSizePositionForm);
 }
 
