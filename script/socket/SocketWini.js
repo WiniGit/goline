@@ -1,66 +1,69 @@
 ﻿// const { data } = require("jquery");
 
-const urlImg = urlFile;
+const urlImg = urlFile
 // const urlImg = "http://10.15.138.23:86/";
-const urlSocketIO = socketWini;
+const urlSocketIO = socketWini
 // const socket = io("ws://10.15.138.23:4000"
 const socket = io(urlSocketIO, {
   //reconnectionDelayMax: 1000,
   auth: {
-    token: "123",
+    token: '123'
   },
   query: {
-    "my-key": "my-value",
-  },
-});
-socket.on("connect", () => {
+    'my-key': 'my-value'
+  }
+})
+socket.on('connect', () => {
   // WIndexedDB.initDB();
-  console.log("socketID:" + socket.id); // "G5p5..."
-  console.log("socket connect" + socket.connected); // true
-  PageDA.obj = undefined;
-  PageDA.list = [];
+  console.log('socketID:' + socket.id) // "G5p5..."
+  console.log('socket connect' + socket.connected) // true
+  PageDA.obj = undefined
+  PageDA.list = []
   if (socket.connected) {
     PageDA.pageLoadingView(function () {
-      clearActionListFrom();
-      WiniIO.emitRefreshToken();
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      const projectID = urlParams.get("id");
-      ProjectDA.openingList = JSON.parse(Ultis.getStorage("list-project-tab")) ?? [];
-      ProjectDA.obj = ProjectDA.openingList.find((e) => e.ID === projectID);
+      clearActionListFrom()
+      WiniIO.emitRefreshToken()
+      const queryString = window.location.search
+      const urlParams = new URLSearchParams(queryString)
+      const projectID = urlParams.get('id')
+      ProjectDA.openingList =
+        JSON.parse(Ultis.getStorage('list-project-tab')) ?? []
+      ProjectDA.obj = ProjectDA.openingList.find(e => e.ID === projectID)
       if (!ProjectDA.obj) {
-        ProjectDA.obj = { ID: projectID };
+        ProjectDA.obj = { ID: projectID }
       }
-      ProjectDA.getProjectInfor();
-      ProjectDA.getByID();
-      ProjectDA.getPermission();
-      ProjectDA.init();
-    });
+      ProjectDA.getProjectInfor()
+      ProjectDA.getByID()
+      ProjectDA.getPermission()
+      ProjectDA.init()
+    })
   }
-});
+})
 //socket.io.on("error", (error) => {
 //	// ...
 //	socket.io.on("reconnect_attempt", (attempt) => {
 //		// ...
 //	});
 //});
-socket.io.on("ping", () => {
+socket.io.on('ping', () => {
   //console.log("ping_connect");
-});
+})
 
-socket.on("server-log", (data) => {
-  console.log("server-log");
-  console.log(data);
+socket.on('server-log', data => {
+  console.log('server-log')
+  console.log(data)
   switch (data.Code) {
     case StatusApi.refreshToken:
-      toastr["error"]("Phiên làm việc của bạn đã hết hạn, vui lòng đăng nhập lại!!!");
-      window.location.href = "/View/login-tool-view.html";
-      break;
+      toastr['error'](
+        'Phiên làm việc của bạn đã hết hạn, vui lòng đăng nhập lại!!!'
+      )
+      window.location.href = '/View/login-tool-view.html'
+      break
     default:
-      toastr["error"](data.Message);
+      toastr['error'](data.Message)
     // window.location.href = "/View/home-screen.html";
   }
-});
+})
 // socket.on('server-init-style', (data) => {
 //     console.log("init style");
 //     let result = data.data;
@@ -102,198 +105,241 @@ socket.on("server-log", (data) => {
 //         }
 //     })
 // });
-socket.on("server-color", (data) => {
-  console.log("server-color");
-  console.log(data);
-  let obj = data.data;
+socket.on('server-color', data => {
+  console.log('server-color')
+  console.log(data)
+  let obj = data.data
   if (data.pid == ProjectDA.obj.ID) {
     switch (data.enumEvent) {
       case EnumEvent.delete:
-        ColorDA.list = ColorDA.list.filter((e) => e.GID != obj.GID);
-        break;
+        ColorDA.list = ColorDA.list.filter(e => e.GID != obj.GID)
+        break
       case EnumEvent.unDelete:
-        ColorDA.list.push(obj);
-        break;
+        ColorDA.list.push(obj)
+        break
       default:
-        if (ColorDA.list.some((e) => e.GID == obj.GID)) {
-          ColorDA.list[ColorDA.list.findIndex((e) => e.GID == obj.GID)] = obj;
-          CateDA.convertData(CateDA.list);
-          CateDA.updateUISkin(EnumCate.color, obj.GID);
+        if (ColorDA.list.some(e => e.GID == obj.GID)) {
+          ColorDA.list[ColorDA.list.findIndex(e => e.GID == obj.GID)] = obj
+          CateDA.convertData(CateDA.list)
+          CateDA.updateUISkin(EnumCate.color, obj.GID)
         } else {
-          ColorDA.list.push(obj);
-          CateDA.convertData(CateDA.list);
+          ColorDA.list.push(obj)
+          document.documentElement.style.setProperty(
+            `--background-color-${obj.GID}`,
+            `#${obj.Value}`
+          )
+          CateDA.convertData(CateDA.list)
         }
-        let create_skin_popup = document.getElementById("create_skin_popup");
-        if (window.getComputedStyle(create_skin_popup).display != "none") {
-          create_skin_popup.style.display = "none";
+        let create_skin_popup = document.getElementById('create_skin_popup')
+        if (window.getComputedStyle(create_skin_popup).display != 'none') {
+          create_skin_popup.style.display = 'none'
           if (selected_list.length > 0) {
-            editBackground({ ColorItem: obj });
-            document.getElementById("popup_table_skin").remove();
-            updateUIBackground();
+            editBackground({ ColorItem: obj })
+            document.getElementById('popup_table_skin').remove()
+            updateUIBackground()
           }
         }
-        break;
+        break
     }
   }
-});
-socket.on("server-border", (data) => {
-  console.log("server-border");
-  let obj = data.data;
+})
+socket.on('server-border', data => {
+  console.log('server-border')
+  let obj = data.data
   if (data.pid == ProjectDA.obj.ID) {
     switch (data.enumEvent) {
       case EnumEvent.delete:
-        BorderDA.list = BorderDA.list.filter((e) => e.GID != obj.GID);
-        break;
+        BorderDA.list = BorderDA.list.filter(e => e.GID != obj.GID)
+        break
       case EnumEvent.unDelete:
-        BorderDA.list.push(obj);
-        break;
+        BorderDA.list.push(obj)
+        break
       default:
-        if (BorderDA.list.some((e) => e.GID == obj.GID)) {
-          BorderDA.list[BorderDA.list.findIndex((e) => e.GID == obj.GID)] = obj;
-          CateDA.updateUISkin(EnumCate.border, obj.GID);
+        if (BorderDA.list.some(e => e.GID == obj.GID)) {
+          BorderDA.list[BorderDA.list.findIndex(e => e.GID == obj.GID)] = obj
+          CateDA.updateUISkin(EnumCate.border, obj.GID)
         } else {
-          BorderDA.list.push(obj);
-          CateDA.convertData(CateDA.list);
+          BorderDA.list.push(obj)
+          document.documentElement.style.setProperty(
+            `--border-width-${obj.GID}`,
+            obj.Width.split(' ')
+              .map(e => `${e}px`)
+              .join(' ')
+          )
+          document.documentElement.style.setProperty(
+            `--border-style-${obj.GID}`,
+            obj.BorderStyle
+          )
+          document.documentElement.style.setProperty(
+            `--border-color-${obj.GID}`,
+            `#${obj.ColorValue}`
+          )
+          CateDA.convertData(CateDA.list)
         }
-        let create_skin_popup = document.getElementById("create_skin_popup");
-        if (window.getComputedStyle(create_skin_popup).display != "none") {
-          create_skin_popup.style.display = "none";
+        let create_skin_popup = document.getElementById('create_skin_popup')
+        if (window.getComputedStyle(create_skin_popup).display != 'none') {
+          create_skin_popup.style.display = 'none'
           if (selected_list.length > 0) {
-            editBorder(obj);
-            document.getElementById("popup_table_skin").remove();
-            updateUIBorder();
+            editBorder(obj)
+            document.getElementById('popup_table_skin').remove()
+            updateUIBorder()
           }
         }
-        break;
+        break
     }
   }
-});
-socket.on("server-effect", (data) => {
-  console.log("server-effect");
-  let obj = data.data;
+})
+socket.on('server-effect', data => {
+  console.log('server-effect')
+  let obj = data.data
   if (data.pid == ProjectDA.obj.ID) {
     switch (data.enumEvent) {
       case EnumEvent.delete:
-        EffectDA.list = EffectDA.list.filter((e) => e.GID != obj.GID);
-        break;
+        EffectDA.list = EffectDA.list.filter(e => e.GID != obj.GID)
+        break
       case EnumEvent.unDelete:
-        EffectDA.list.push(obj);
-        break;
+        EffectDA.list.push(obj)
+        break
       default:
-        if (EffectDA.list.some((e) => e.GID == obj.GID)) {
-          EffectDA.list[EffectDA.list.findIndex((e) => e.GID == obj.GID)] = obj;
-          CateDA.updateUISkin(EnumCate.effect, obj.GID);
+        if (EffectDA.list.some(e => e.GID == obj.GID)) {
+          EffectDA.list[EffectDA.list.findIndex(e => e.GID == obj.GID)] = obj
+          CateDA.updateUISkin(EnumCate.effect, obj.GID)
         } else {
-          EffectDA.list.push(obj);
-          CateDA.convertData(CateDA.list);
+          EffectDA.list.push(obj)
+          if (obj.Type === ShadowType.layer_blur) {
+            document.documentElement.style.setProperty(
+              `--effect-blur-${obj.GID}`,
+              `blur(${obj.BlurRadius}px)`
+            )
+          } else {
+            document.documentElement.style.setProperty(
+              `--effect-shadow-${obj.GID}`,
+              `${obj.OffsetX}px ${obj.OffsetY}px ${obj.BlurRadius}px ${
+                obj.SpreadRadius
+              }px #${obj.ColorValue} ${
+                obj.Type == ShadowType.inner ? 'inset' : ''
+              }`
+            )
+          }
+          CateDA.convertData(CateDA.list)
         }
-        let create_skin_popup = document.getElementById("create_skin_popup");
-        if (window.getComputedStyle(create_skin_popup).display != "none") {
-          create_skin_popup.style.display = "none";
+        let create_skin_popup = document.getElementById('create_skin_popup')
+        if (window.getComputedStyle(create_skin_popup).display != 'none') {
+          create_skin_popup.style.display = 'none'
           if (selected_list.length > 0) {
-            editEffect(obj);
-            document.getElementById("popup_table_skin").remove();
-            updateUIEffect();
+            editEffect(obj)
+            document.getElementById('popup_table_skin').remove()
+            updateUIEffect()
           }
         }
-        break;
+        break
     }
   }
-});
-socket.on("server-typo", (data) => {
-  console.log("server-typo");
-  let obj = data.data;
+})
+socket.on('server-typo', data => {
+  console.log('server-typo')
+  let obj = data.data
   if (data.pid == ProjectDA.obj.ID) {
     switch (data.enumEvent) {
       case EnumEvent.delete:
-        TypoDA.list = TypoDA.list.filter((e) => e.GID != obj.GID);
-        break;
+        TypoDA.list = TypoDA.list.filter(e => e.GID != obj.GID)
+        break
       case EnumEvent.unDelete:
-        TypoDA.list.push(obj);
-        break;
+        TypoDA.list.push(obj)
+        break
       default:
-        if (TypoDA.list.some((e) => e.GID == obj.GID)) {
-          TypoDA.list[TypoDA.list.findIndex((e) => e.GID == obj.GID)] = obj;
-          CateDA.updateUISkin(EnumCate.typography, obj.GID);
+        if (TypoDA.list.some(e => e.GID == obj.GID)) {
+          TypoDA.list[TypoDA.list.findIndex(e => e.GID == obj.GID)] = obj
+          CateDA.updateUISkin(EnumCate.typography, obj.GID)
         } else {
-          TypoDA.list.push(obj);
-          CateDA.convertData(CateDA.list);
+          TypoDA.list.push(obj)
+          document.documentElement.style.setProperty(
+            `--font-style-${obj.GID}`,
+            `${obj.FontWeight} ${obj.FontSize}px/${
+              obj.Height != undefined ? obj.Height + 'px' : 'normal'
+            } ${obj.FontFamily}`
+          )
+          document.documentElement.style.setProperty(
+            `--font-color-${obj.GID}`,
+            `#${obj.ColorValue}`
+          )
+          CateDA.convertData(CateDA.list)
         }
-        let create_skin_popup = document.getElementById("create_skin_popup");
-        if (window.getComputedStyle(create_skin_popup).display != "none") {
-          create_skin_popup.style.display = "none";
+        let create_skin_popup = document.getElementById('create_skin_popup')
+        if (window.getComputedStyle(create_skin_popup).display != 'none') {
+          create_skin_popup.style.display = 'none'
           if (selected_list.length > 0) {
-            editTextStyle(obj);
-            document.getElementById("popup_table_skin").remove();
-            updateUITextStyle();
+            editTextStyle(obj)
+            document.getElementById('popup_table_skin').remove()
+            updateUITextStyle()
           }
         }
-        break;
+        break
     }
   }
-});
-socket.on("server-property", (data) => {
-  var obj = data["data"];
-  switch (data["enumEvent"]) {
+})
+socket.on('server-property', data => {
+  var obj = data['data']
+  switch (data['enumEvent']) {
     case EnumEvent.add:
-      PropertyDA.list.push(obj);
-      break;
+      PropertyDA.list.push(obj)
+      break
     case EnumEvent.edit:
-      PropertyDA.list[PropertyDA.list.findIndex((e) => e.id == obj.id)] = obj;
-      break;
+      PropertyDA.list[PropertyDA.list.findIndex(e => e.id == obj.id)] = obj
+      break
     case EnumEvent.delete:
-      PropertyDA.list = PropertyDA.list.filter((e) => e.id != obj.id);
-      break;
+      PropertyDA.list = PropertyDA.list.filter(e => e.id != obj.id)
+      break
     case EnumEvent.unDelete:
-      PropertyDA.list.push(obj);
-      break;
+      PropertyDA.list.push(obj)
+      break
   }
-});
-socket.on("server-page", (data) => {
-  console.log("server-page");
-  console.log(data);
+})
+socket.on('server-page', data => {
+  console.log('server-page')
+  console.log(data)
   if (data.pid == ProjectDA.obj.ID) {
     switch (data.enumEvent) {
       case EnumEvent.delete:
-        var obj = data.data;
-        let deleteIndex = PageDA.list.findIndex((e) => e.ID == obj.ID) - 1;
+        var obj = data.data
+        let deleteIndex = PageDA.list.findIndex(e => e.ID == obj.ID) - 1
         if (deleteIndex < 0) {
-          deleteIndex = 0;
+          deleteIndex = 0
         }
-        PageDA.list = PageDA.list.filter((e) => e.ID != obj.ID);
+        PageDA.list = PageDA.list.filter(e => e.ID != obj.ID)
         if (PageDA.obj.ID == obj.ID) {
-          PageDA.selectPage(PageDA.list[deleteIndex]);
+          PageDA.selectPage(PageDA.list[deleteIndex])
         }
-        break;
+        break
       case EnumEvent.unDelete:
-        var obj = data["data"];
-        PageDA.list.push(obj);
-        break;
+        var obj = data['data']
+        PageDA.list.push(obj)
+        break
       case EnumEvent.sort:
-        break;
+        break
       default:
-        var obj = data.data;
-        let editIndex = PageDA.list.findIndex((e) => e.ID == obj.ID);
+        var obj = data.data
+        let editIndex = PageDA.list.findIndex(e => e.ID == obj.ID)
         if (editIndex > 0) {
-          PageDA.list[editIndex] = obj;
+          PageDA.list[editIndex] = obj
         } else {
-          PageDA.list.push(obj);
-          PageDA.selectPage(obj);
+          PageDA.list.push(obj)
+          PageDA.selectPage(obj)
         }
-        break;
+        break
     }
   }
-});
-socket.on("server-get", (data) => {
-  console.log("server-get");
-  console.log(data);
+})
+socket.on('server-get', data => {
+  console.log('server-get')
+  console.log(data)
   switch (data.enumObj) {
     case EnumObj.apiOutput:
-      OutputDA.list = data.data;
-      break;
+      OutputDA.list = data.data
+      break
     case EnumObj.apiInput:
-      InputDA.list = data.data;
-      break;
+      InputDA.list = data.data
+      break
     //! GET router .....................
     // case EnumObj.router:
     //     switch (data.enumEvent) {
@@ -306,23 +352,23 @@ socket.on("server-get", (data) => {
     case EnumObj.request:
       switch (data.enumEvent) {
         case EnumEvent.init:
-          RequestDA.list = data.data;
+          RequestDA.list = data.data
           // update_ListApiDropdown();
-          f12_update_selectWbase();
-          $(".f12-container").css("display", "flex");
-          break;
+          f12_update_selectWbase()
+          $('.f12-container').css('display', 'flex')
+          break
         case EnumEvent.getByID:
-          switch ($($(".f12-container .tab.selected")).data("tab")) {
+          switch ($($('.f12-container .tab.selected')).data('tab')) {
             case 1:
-              RequestDA.selected = data.data;
-              f12_update_listOutputRow();
-              break;
+              RequestDA.selected = data.data
+              f12_update_listOutputRow()
+              break
             case 2:
-              F12Container.api_input = data.data;
-              f12_update_listInputRow();
-              break;
+              F12Container.api_input = data.data
+              f12_update_listInputRow()
+              break
             default:
-              update_UI_dataView();
+              update_UI_dataView()
           }
           // if (F12View.tab_index == 1) {
           //     RequestDA.selected = data.data;
@@ -340,432 +386,531 @@ socket.on("server-get", (data) => {
           //TODO: Prototype router select popup
           // add_inputContainer(data.data);
           // add_outputContainer(data.data);
-          break;
+          break
         default:
       }
-      break;
+      break
     case EnumObj.cate:
       switch (data.enumEvent) {
         case EnumEvent.init:
           if (data.headers.pid == ProjectDA.obj.ID) {
-            CateDA.convertData(data.data);
-            updateUISelectionSkins();
-            CateDA.needInit = false;
+            CateDA.convertData(data.data)
+            updateUISelectionSkins()
+            CateDA.needInit = false
           } else {
-            StyleDA.listCate = data.data;
-            StyleDA.init();
+            StyleDA.listCate = data.data
+            StyleDA.init()
           }
-          break;
+          break
         default:
-          break;
+          break
       }
-      break;
+      break
     case EnumObj.page:
       if (PageDA.list.isNotEmpty) {
-        PageDA.obj = data["data"];
-        PageDA.list[PageDA.list.findIndex((element) => element.ID == PageDA.obj.ID)] = PageDA.obj;
-        inviteMemberProject(EnumWg.context);
+        PageDA.obj = data['data']
+        PageDA.list[
+          PageDA.list.findIndex(element => element.ID == PageDA.obj.ID)
+        ] = PageDA.obj
+        inviteMemberProject(EnumWg.context)
       }
-      break;
+      break
     case EnumObj.wBase:
       switch (data.enumEvent) {
         case EnumEvent.get:
-          let listAssets = data.data;
-          listAssets = initDOM(listAssets);
+          let listAssets = data.data
+          listAssets = initDOM(listAssets)
           if (listAssets.length > 0) {
-            assets_list = assets_list.filter((wb) => wb.PageID !== listAssets[0].PageID);
-            assets_list.push(...listAssets);
-            let listProjectID = listAssets.filterAndMap((e) => e.ProjectID);
-            [...ProjectDA.assetsList, ProjectDA.obj].filter((pro) => listProjectID.some((id) => pro.ID == id)).forEach((projectItem) => updateListComponentByProject(projectItem));
+            assets_list = assets_list.filter(
+              wb => wb.PageID !== listAssets[0].PageID
+            )
+            assets_list.push(...listAssets)
+            let listProjectID = listAssets.filterAndMap(e => e.ProjectID)
+            ;[...ProjectDA.assetsList, ProjectDA.obj]
+              .filter(pro => listProjectID.some(id => pro.ID == id))
+              .forEach(projectItem => updateListComponentByProject(projectItem))
           } else {
-            WBaseDA.assetsLoading = false;
-            $(assets_view.querySelector(".list_tile:has(> .data-loader)")).trigger("click");
+            WBaseDA.assetsLoading = false
+            $(
+              assets_view.querySelector('.list_tile:has(> .data-loader)')
+            ).trigger('click')
           }
-          break;
+          break
         default:
-          break;
+          break
       }
-      break;
+      break
     // !GET Style
     case EnumObj.style:
       switch (data.enumEvent) {
         case EnumEvent.init:
-          StyleDA.convertInitData(data.data);
-          linkSkinView(ProjectDA.list.find((e) => e.ID == data.headers.pid));
-          StyleDA.skinProjectID = null;
-          break;
+          StyleDA.convertInitData(data.data)
+          linkSkinView(ProjectDA.list.find(e => e.ID == data.headers.pid))
+          StyleDA.skinProjectID = null
+          break
         case EnumEvent.get:
-          let listSkinProject = data.data;
-          ProjectDA.assetsList = listSkinProject.map((skinProject) => {
+          let listSkinProject = data.data
+          ProjectDA.assetsList = listSkinProject.map(skinProject => {
             return {
               ID: skinProject.ID,
-              Name: skinProject.Name,
-            };
-          });
-          ColorDA.listAssets = listSkinProject.map((skinProject) => skinProject.ColorItems).reduce((a, b) => a.concat(b));
-          TypoDA.listAssets = listSkinProject.map((skinProject) => skinProject.TextStyleItems).reduce((a, b) => a.concat(b));
-          BorderDA.listAssets = listSkinProject.map((skinProject) => skinProject.BorderItems).reduce((a, b) => a.concat(b));
-          EffectDA.listAssets = listSkinProject.map((skinProject) => skinProject.EffectItems).reduce((a, b) => a.concat(b));
-          initUIAssetView();
-          break;
+              Name: skinProject.Name
+            }
+          })
+          ColorDA.listAssets = listSkinProject
+            .map(skinProject => skinProject.ColorItems)
+            .reduce((a, b) => a.concat(b))
+          TypoDA.listAssets = listSkinProject
+            .map(skinProject => skinProject.TextStyleItems)
+            .reduce((a, b) => a.concat(b))
+          BorderDA.listAssets = listSkinProject
+            .map(skinProject => skinProject.BorderItems)
+            .reduce((a, b) => a.concat(b))
+          EffectDA.listAssets = listSkinProject
+            .map(skinProject => skinProject.EffectItems)
+            .reduce((a, b) => a.concat(b))
+          initUIAssetView()
+          break
         case EnumEvent.merge:
-          StyleDA.mergeSkins = data.data;
-          mergeSkinDialog();
-          break;
+          StyleDA.mergeSkins = data.data
+          mergeSkinDialog()
+          break
         default:
-          break;
+          break
       }
-      break;
+      break
     // !GET project
     case EnumObj.project:
       //
       switch (data.enumEvent) {
         case EnumEvent.getProjectByID:
-          ProjectDA.obj = data.data;
-          if (ProjectDA.obj.ResponsiveJson) ProjectDA.obj.ResponsiveJson = JSON.parse(ProjectDA.obj.ResponsiveJson);
+          ProjectDA.obj = data.data
+          if (ProjectDA.obj.ResponsiveJson)
+            ProjectDA.obj.ResponsiveJson = JSON.parse(
+              ProjectDA.obj.ResponsiveJson
+            )
           // ProjectDA.initLayoutResponsive();
-          let projectTitle = document.getElementById("project_name");
+          let projectTitle = document.getElementById('project_name')
           if (projectTitle) {
-            projectTitle.innerHTML = ProjectDA.obj?.Name;
+            projectTitle.innerHTML = ProjectDA.obj?.Name
           }
           try {
-            updateUIBreakpoint();
-            customerList();
+            updateUIBreakpoint()
+            customerList()
           } catch (error) {
             setTimeout(function () {
-              updateUIBreakpoint();
-              customerList();
-            }, 250);
+              updateUIBreakpoint()
+              customerList()
+            }, 250)
           }
           if (data.data.RouterJson) {
-            RouterDA.list = JSON.parse(data.data.RouterJson);
+            RouterDA.list = JSON.parse(data.data.RouterJson)
           } else {
-            RouterDA.list = [];
+            RouterDA.list = []
           }
-          break;
+          break
         case EnumEvent.init:
-          ProjectDA.list = data.data.sort((a, b) => b.DateUpdate - a.DateUpdate);
-          TitleBarDA.initDataStorage();
-          break;
+          ProjectDA.list = data.data.sort((a, b) => b.DateUpdate - a.DateUpdate)
+          TitleBarDA.initDataStorage()
+          break
         case EnumEvent.permission:
           try {
             for (let wpageItem of data.data.WPageItems) {
               if (wpageItem.Name == undefined) {
-                wpageItem.Name = `Page ${i + 1}`;
+                wpageItem.Name = `Page ${i + 1}`
               }
             }
-            PageDA.list.push(...data.data.WPageItems);
+            PageDA.list.push(...data.data.WPageItems)
             if (PageDA.list.length > 0) {
-              PageDA.obj = Ultis.getStorage("opening-page");
-              if (checkTypeof(PageDA.obj) === "string") PageDA.obj = JSON.parse(PageDA.obj);
-              if (PageDA.obj == undefined || PageDA.obj.ProjectID != ProjectDA.obj.ID) {
-                PageDA.obj = PageDA.list.find((e) => e.ID == ProjectDA.obj.PageDefaultID) ?? PageDA.list[0];
+              PageDA.obj = Ultis.getStorage('opening-page')
+              if (checkTypeof(PageDA.obj) === 'string')
+                PageDA.obj = JSON.parse(PageDA.obj)
+              if (
+                PageDA.obj == undefined ||
+                PageDA.obj.ProjectID != ProjectDA.obj.ID
+              ) {
+                PageDA.obj =
+                  PageDA.list.find(e => e.ID == ProjectDA.obj.PageDefaultID) ??
+                  PageDA.list[0]
               }
-              PageDA.obj.Permission = data.data.Permission;
+              PageDA.obj.Permission = data.data.Permission
               if (PageDA.obj?.scale == undefined) {
-                PageDA.obj.scale = scale;
-                PageDA.obj.topx = topx;
-                PageDA.obj.leftx = leftx;
+                PageDA.obj.scale = scale
+                PageDA.obj.topx = topx
+                PageDA.obj.leftx = leftx
               }
-              PageDA.checkEditPermission(PageDA.obj);
+              PageDA.checkEditPermission(PageDA.obj)
             }
-            WiniIO.emitInit();
-            permissionTool();
-            initData();
-            CollectionDA.getListDocument();
+            WiniIO.emitInit()
+            permissionTool()
+            initData()
+            CollectionDA.getListDocument()
             // TODO: next vesion code blow
             // InputDA.init();
             // OutputDA.init();
           } catch (error) {
-            toastr["error"]["Bạn không có quyền truy cập dự án này!"];
+            toastr['error']['Bạn không có quyền truy cập dự án này!']
           }
-          break;
+          break
         default:
-          break;
+          break
       }
       //
-      break;
+      break
     // !GET collection
     case EnumObj.collection:
       switch (data.enumEvent) {
         case EnumEvent.init:
-          CollectionDA.list = data["data"];
-          CollectionDA.documentList = CollectionDA.list.filter((e) => e.Type == ApiSelection.document);
+          CollectionDA.list = data['data']
+          CollectionDA.documentList = CollectionDA.list.filter(
+            e => e.Type == ApiSelection.document
+          )
           if (CollectionDA.documentList.length == 0) {
             let defaultFolder = {
               ID: 0,
-              Name: "default folder",
-              Type: ApiSelection.document,
-            };
-            CollectionDA.addDocument(defaultFolder);
+              Name: 'default folder',
+              Type: ApiSelection.document
+            }
+            CollectionDA.addDocument(defaultFolder)
           }
-          break;
+          break
         default:
-          break;
+          break
       }
-      break;
+      break
     // !GET file
     case EnumObj.file:
-      console.log("get file");
+      console.log('get file')
       switch (data.enumEvent) {
         case EnumEvent.init:
-          FileDA.list = data.data;
-          showImgDocument();
-          selectFolder(CollectionDA.documentList[1]);
-          break;
+          FileDA.list = data.data
+          showImgDocument()
+          selectFolder(CollectionDA.documentList[1])
+          break
         default:
-          break;
+          break
       }
-      break;
+      break
     // !GET customer
     case EnumObj.customer:
       switch (data.enumEvent) {
         case EnumEvent.get:
           if (data.data) {
             // nếu đã tồn tại
-            if (ProjectDA.obj.CustomerProjectItems.some((e) => e.CustomerID == data.data.ID)) {
-              toastr["warning"]("Người dùng đã là thành viên của dự án!");
+            if (
+              ProjectDA.obj.CustomerProjectItems.some(
+                e => e.CustomerID == data.data.ID
+              )
+            ) {
+              toastr['warning']('Người dùng đã là thành viên của dự án!')
             } else {
               let customerInviteItem = {
                 ID: 0,
                 Permission: ProjectDA.permission,
                 CustomerID: data.data.ID,
                 CustomerName: data.data.Email,
-                ProjectID: ProjectDA.obj.ID,
-              };
-              ProjectDA.addCustomerProject(customerInviteItem);
-              $(".wpopup-background").remove();
+                ProjectID: ProjectDA.obj.ID
+              }
+              ProjectDA.addCustomerProject(customerInviteItem)
+              $('.wpopup-background').remove()
             }
           } else {
-            toastr["warning"]("Người dùng chưa đăng ký tài khoản Wini!");
+            toastr['warning']('Người dùng chưa đăng ký tài khoản Wini!')
           }
-          break;
+          break
       }
     default:
-      break;
+      break
   }
-});
-socket.on("server-google", (data) => {
-  UserService.setToken(data["data"]["Token"], data["data"]["RefreshToken"]);
-  UserDA.setToStore(data["data"]);
-  moveProject({ ID: 0 });
-});
-socket.on("server-post", (data) => {
-  console.log("server post");
-  console.log(data);
+})
+socket.on('server-google', data => {
+  UserService.setToken(data['data']['Token'], data['data']['RefreshToken'])
+  UserDA.setToStore(data['data'])
+  moveProject({ ID: 0 })
+})
+socket.on('server-post', data => {
+  console.log('server post')
+  console.log(data)
   switch (data.enumObj) {
     case EnumObj.project:
       switch (data.enumEvent) {
         case EnumEvent.add:
-          var pro = data.data;
-          ProjectDA.list.push(pro);
-          ProjectDA.obj = pro;
+          var pro = data.data
+          ProjectDA.list.push(pro)
+          ProjectDA.obj = pro
           // add project tab
-          TitleBarDA.list.push(pro);
-          Ultis.setStorage("project-tab-selected", pro.ID);
-          Ultis.setStorage("list-project-tab", JSON.stringify(TitleBarDA.list));
-          TitleBarDA.updateTitleBar();
+          TitleBarDA.list.push(pro)
+          Ultis.setStorage('project-tab-selected', pro.ID)
+          Ultis.setStorage('list-project-tab', JSON.stringify(TitleBarDA.list))
+          TitleBarDA.updateTitleBar()
           //
-          window.location.href = "/View/project-design-view.html?id=" + pro.ID;
-          break;
+          window.location.href = '/View/project-design-view.html?id=' + pro.ID
+          break
         default:
-          if (TitleBarDA.list.some((e) => e.ID == data.data.ID)) {
-            TitleBarDA.list.find((e) => e.ID == data.data.ID).Name = data.data.Name;
-            Ultis.setStorage("list-project-tab", JSON.stringify(TitleBarDA.list));
-            TitleBarDA.initDataStorage();
+          if (TitleBarDA.list.some(e => e.ID == data.data.ID)) {
+            TitleBarDA.list.find(e => e.ID == data.data.ID).Name =
+              data.data.Name
+            Ultis.setStorage(
+              'list-project-tab',
+              JSON.stringify(TitleBarDA.list)
+            )
+            TitleBarDA.initDataStorage()
           }
           if (ProjectDA.obj.EditListID) {
-            document.getElementById("dialog_link_component_skin").parentElement.remove();
-            ProjectDA.obj.EditListID = null;
-            $.get(WBaseDA.skin_url + `?pid=${ProjectDA.obj.ID}`).then((res) => {
-              ColorDA.list = res.Data.ColorItems;
-              TypoDA.list = res.Data.TextStyleItems;
-              EffectDA.list = res.Data.EffectItems;
-              BorderDA.list = res.Data.BorderItems;
-              PropertyDA.list = res.Data.WPropertyItems;
-              CateDA.initCate();
-            });
-            initUIAssetView(true);
+            document
+              .getElementById('dialog_link_component_skin')
+              .parentElement.remove()
+            ProjectDA.obj.EditListID = null
+            $.get(WBaseDA.skin_url + `?pid=${ProjectDA.obj.ID}`).then(res => {
+              ColorDA.list = res.Data.ColorItems
+              TypoDA.list = res.Data.TextStyleItems
+              EffectDA.list = res.Data.EffectItems
+              BorderDA.list = res.Data.BorderItems
+              PropertyDA.list = res.Data.WPropertyItems
+              CateDA.initCate()
+            })
+            initUIAssetView(true)
           }
-          break;
+          break
       }
-      break;
+      break
     // !POST Style
     case EnumObj.style:
       switch (data.enumEvent) {
         case EnumEvent.copy:
-          StyleDA.copySkinToProject(data.data);
-          break;
+          StyleDA.copySkinToProject(data.data)
+          break
         case EnumEvent.merge:
           // StyleDA.mergeSkinSuccess(data.data);
-          break;
+          break
         default:
-          break;
+          break
       }
-      break;
+      break
     // !POST cate
     case EnumObj.cate:
-      let newId = data.data;
-      CateDA.list[CateDA.list.length - 1].ID = newId;
-      let is_show_popup_create = window.getComputedStyle(document.getElementById("create_skin_popup")).display != "none";
+      let newId = data.data
+      CateDA.list[CateDA.list.length - 1].ID = newId
+      let is_show_popup_create =
+        window.getComputedStyle(document.getElementById('create_skin_popup'))
+          .display != 'none'
       switch (CateDA.parentCateID) {
         case EnumCate.color:
           if (is_show_popup_create) {
-            ColorDA.newColor.CateID = newId;
-            ColorDA.add(ColorDA.newColor);
+            ColorDA.newColor.CateID = newId
+            ColorDA.add(ColorDA.newColor)
           } else {
-            let colorItem = ColorDA.list.find((e) => e.CateID == -1);
-            colorItem.CateID = newId;
-            ColorDA.edit(colorItem);
+            let colorItem = ColorDA.list.find(e => e.CateID == -1)
+            colorItem.CateID = newId
+            ColorDA.edit(colorItem)
           }
-          break;
+          break
         case EnumCate.border:
           if (is_show_popup_create) {
-            BorderDA.newBorder.CateID = newId;
-            BorderDA.add(BorderDA.newBorder);
+            BorderDA.newBorder.CateID = newId
+            BorderDA.add(BorderDA.newBorder)
           } else {
-            let borderItem = BorderDA.list.find((e) => e.CateID == -1);
-            borderItem.CateID = newId;
-            BorderDA.edit(borderItem);
+            let borderItem = BorderDA.list.find(e => e.CateID == -1)
+            borderItem.CateID = newId
+            BorderDA.edit(borderItem)
           }
-          break;
+          break
         case EnumCate.effect:
           if (is_show_popup_create) {
-            EffectDA.newEffect.CateID = newId;
-            EffectDA.add(EffectDA.newEffect);
+            EffectDA.newEffect.CateID = newId
+            EffectDA.add(EffectDA.newEffect)
           } else {
-            let effectItem = EffectDA.list.find((e) => e.CateID == -1);
-            effectItem.CateID = newId;
-            EffectDA.edit(effectItem);
+            let effectItem = EffectDA.list.find(e => e.CateID == -1)
+            effectItem.CateID = newId
+            EffectDA.edit(effectItem)
           }
-          break;
+          break
         case EnumCate.typography:
           if (is_show_popup_create) {
-            TypoDA.newTypo.CateID = newId;
-            TypoDA.add(TypoDA.newTypo);
+            TypoDA.newTypo.CateID = newId
+            TypoDA.add(TypoDA.newTypo)
           } else {
-            let typoItem = TypoDA.list.find((e) => e.CateID == -1);
-            typoItem.CateID = newId;
-            TypoDA.edit(typoItem);
+            let typoItem = TypoDA.list.find(e => e.CateID == -1)
+            typoItem.CateID = newId
+            TypoDA.edit(typoItem)
           }
-          break;
+          break
         default:
-          break;
+          break
       }
-      CateDA.convertData(CateDA.list);
-      break;
+      CateDA.convertData(CateDA.list)
+      break
     // !POST collection
     case EnumObj.collection:
       switch (data.enumEvent) {
         case EnumEvent.add:
-          CollectionDA.documentList.push(data.data);
-          let listFolder = document.getElementById("list_folder_container");
+          CollectionDA.documentList.push(data.data)
+          let listFolder = document.getElementById('list_folder_container')
           if (listFolder) {
-            let newFolderTile = createFolderTile(data.data);
-            listFolder.appendChild(newFolderTile);
-            selectFolder(data.data);
+            let newFolderTile = createFolderTile(data.data)
+            listFolder.appendChild(newFolderTile)
+            selectFolder(data.data)
           }
-          break;
+          break
         case EnumEvent.edit:
-          break;
+          break
         case EnumEvent.delete:
-          break;
+          break
         default:
-          break;
+          break
       }
-      break;
+      break
     // !POST customerProject
     case EnumObj.customerProject:
       switch (data.enumEvent) {
         case EnumEvent.add:
-          ProjectDA.obj.CustomerProjectItems.push(data.data);
-          toastr["success"]("Thêm thành viên vào dự án thành công");
-          customerList();
-          break;
+          ProjectDA.obj.CustomerProjectItems.push(data.data)
+          toastr['success']('Thêm thành viên vào dự án thành công')
+          customerList()
+          break
         case EnumEvent.delete:
           // ProjectDA.objOneClick.ListCustomerProject = ProjectDA.objOneClick.ListCustomerProject.filter((e) => e.CustomerID != data.data);
-          break;
+          break
       }
     default:
-      break;
+      break
   }
-});
+})
 // Nhận Wbase từ các máy khác
-socket.on("server-main", async (data) => {
-  console.log("server-main");
-  console.log(data);
-  if (!document.getElementById("body").querySelector(".loading-view") && data.pageid === PageDA.obj.ID) {
-    let copyList = [];
-    let initskin = false;
-    let thisAction;
-    if (data.token === UserService.getToken() || data.token === UserService.getRefreshToken()) {
-      thisAction = action_list[data.index];
+socket.on('server-main', async data => {
+  console.log('server-main')
+  console.log(data)
+  if (
+    !document.getElementById('body').querySelector('.loading-view') &&
+    data.pageid === PageDA.obj.ID
+  ) {
+    let copyList = []
+    let initskin = false
+    let thisAction
+    if (
+      data.token === UserService.getToken() ||
+      data.token === UserService.getRefreshToken()
+    ) {
+      thisAction = action_list[data.index]
       if (thisAction.tmpHTML) {
-        wbase_list = wbase_list.filter((e) => {
-          let check = thisAction.tmpHTML.every((eHTML) => eHTML.id !== e.GID);
+        wbase_list = wbase_list.filter(e => {
+          let check = thisAction.tmpHTML.every(eHTML => eHTML.id !== e.GID)
           if (!check) {
-            copyList.push(e);
-            if (e.ProjectID !== data.pid) initskin = true;
+            copyList.push(e)
+            if (e.ProjectID !== data.pid) initskin = true
           }
-          return check;
-        });
+          return check
+        })
       }
     }
-    let importColor = [];
-    let importTypo = [];
-    let importBorder = [];
-    let importEffect = [];
+    let importColor = []
+    let importTypo = []
+    let importBorder = []
+    let importEffect = []
     let listData = initskin
-      ? data.data.filter((e) => {
+      ? data.data.filter(e => {
           if (e.GID !== wbase_parentID) {
-            if (e.StyleItem?.DecorationItem?.ColorID) importColor.push(e.StyleItem.DecorationItem.ColorID);
-            if (e.StyleItem?.DecorationItem?.BorderID) importBorder.push(e.StyleItem.DecorationItem.BorderID);
-            if (e.StyleItem?.DecorationItem?.EffectID) importEffect.push(e.StyleItem.DecorationItem.EffectID);
-            if (e.StyleItem?.TextStyleID) importTypo.push(e.StyleItem.TextStyleID);
-            return true;
+            if (e.StyleItem?.DecorationItem?.ColorID)
+              importColor.push(e.StyleItem.DecorationItem.ColorID)
+            if (e.StyleItem?.DecorationItem?.BorderID)
+              importBorder.push(e.StyleItem.DecorationItem.BorderID)
+            if (e.StyleItem?.DecorationItem?.EffectID)
+              importEffect.push(e.StyleItem.DecorationItem.EffectID)
+            if (e.StyleItem?.TextStyleID)
+              importTypo.push(e.StyleItem.TextStyleID)
+            return true
           }
-          return false;
+          return false
         })
-      : data.data.filter((e) => e.GID !== wbase_parentID);
-    listData = initDOM(listData);
-    arrange(listData);
+      : data.data.filter(e => e.GID !== wbase_parentID)
+    listData = initDOM(listData)
+    arrange(listData)
     if (data.enumEvent === EnumEvent.delete) {
-      WbaseIO.delete(listData);
+      WbaseIO.delete(listData)
     } else {
       if (initskin) {
-        ColorDA.list.push(...ColorDA.listAssets.filter((skin) => importColor.some((id) => skin.GID === id && ColorDA.list.every((localSkin) => localSkin.GID !== id))));
-        TypoDA.list.push(...TypoDA.listAssets.filter((skin) => importTypo.some((id) => skin.GID === id && TypoDA.list.every((localSkin) => localSkin.GID !== id))));
-        BorderDA.list.push(...BorderDA.listAssets.filter((skin) => importBorder.some((id) => skin.GID === id && BorderDA.list.every((localSkin) => localSkin.GID !== id))));
-        EffectDA.list.push(...EffectDA.listAssets.filter((skin) => importEffect.some((id) => skin.GID === id && EffectDA.list.every((localSkin) => localSkin.GID !== id))));
-        CateDA.initCate();
+        ColorDA.list.push(
+          ...ColorDA.listAssets.filter(skin =>
+            importColor.some(
+              id =>
+                skin.GID === id &&
+                ColorDA.list.every(localSkin => localSkin.GID !== id)
+            )
+          )
+        )
+        TypoDA.list.push(
+          ...TypoDA.listAssets.filter(skin =>
+            importTypo.some(
+              id =>
+                skin.GID === id &&
+                TypoDA.list.every(localSkin => localSkin.GID !== id)
+            )
+          )
+        )
+        BorderDA.list.push(
+          ...BorderDA.listAssets.filter(skin =>
+            importBorder.some(
+              id =>
+                skin.GID === id &&
+                BorderDA.list.every(localSkin => localSkin.GID !== id)
+            )
+          )
+        )
+        EffectDA.list.push(
+          ...EffectDA.listAssets.filter(skin =>
+            importEffect.some(
+              id =>
+                skin.GID === id &&
+                EffectDA.list.every(localSkin => localSkin.GID !== id)
+            )
+          )
+        )
+        CateDA.initCate()
       }
-      await WbaseIO.addOrUpdate(listData, data.enumEvent);
+      await WbaseIO.addOrUpdate(listData, data.enumEvent)
       if (thisAction?.tmpHTML) {
-        thisAction.tmpHTML.forEach((e) => e.remove());
-        thisAction.tmpHTML = null;
+        thisAction.tmpHTML.forEach(e => e.remove())
+        thisAction.tmpHTML = null
       }
       if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
-        replaceAllLyerItemHTML();
+        replaceAllLyerItemHTML()
         if (action_index === data.index) {
-          clearActionListFrom(action_index - 1);
-          addSelectList(listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)));
-          action_list[action_index].enumEvent = EnumEvent.add;
+          clearActionListFrom(action_index - 1)
+          addSelectList(
+            listData.filter(e =>
+              copyList.some(copyE => copyE.Level === e.Level)
+            )
+          )
+          action_list[action_index].enumEvent = EnumEvent.add
         } else {
-          let oldData = [];
+          let oldData = []
           if (!data.parentid) {
             oldData.push({
               GID: wbase_parentID,
-              ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
-              Level: 0,
-            });
+              ListChildID: wbase_list
+                .filter(e => e.ParentID === wbase_parentID)
+                .map(e => e.GID),
+              Level: 0
+            })
           }
           action_list[data.index] = {
             oldData: oldData,
-            selected: listData.filter((e) => copyList.some((copyE) => copyE.Level === e.Level)).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))),
+            selected: listData
+              .filter(e => copyList.some(copyE => copyE.Level === e.Level))
+              .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem))),
             enumObj: EnumObj.wBase,
-            enumEvent: EnumEvent.add,
-          };
-          oldData.push(...wbase_list.filter((wbaseItem) => wbaseItem.GID === data.parentid || action_list[data.index].selected.some((selectItem) => wbaseItem.ListID.includes(selectItem.GID))).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))));
+            enumEvent: EnumEvent.add
+          }
+          oldData.push(
+            ...wbase_list
+              .filter(
+                wbaseItem =>
+                  wbaseItem.GID === data.parentid ||
+                  action_list[data.index].selected.some(selectItem =>
+                    wbaseItem.ListID.includes(selectItem.GID)
+                  )
+              )
+              .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem)))
+          )
         }
       }
     }
@@ -779,432 +924,526 @@ socket.on("server-main", async (data) => {
     //   wdraw();
     // }
   }
-});
-socket.on("server-mouse", (data) => {
+})
+socket.on('server-mouse', data => {
   if (data.data.ID !== UserService.getUser().ID) {
-    listRect = listRect.filter((e) => e.ID !== data.data.ID);
-    listRect.push(data.data);
+    listRect = listRect.filter(e => e.ID !== data.data.ID)
+    listRect.push(data.data)
     // wdraw();
   }
-});
+})
 // socket.on("server-update", (data) => {
 //   var listu = data;
 //   WbaseIO.addOrUpdate({ data: listu });
 // });
 
-socket.on("server-refresh", (data) => {
-  const href = window.location.href;
+socket.on('server-refresh', data => {
+  const href = window.location.href
   if (data != null && data.data.Code == 200) {
-    UserService.setToken(data.data.Data.Token, UserService.getRefreshToken());
+    UserService.setToken(data.data.Data.Token, UserService.getRefreshToken())
   } else {
-    if (!href.includes("login-success.html")) {
-      window.location.href = "/View/login-tool-view.html";
+    if (!href.includes('login-success.html')) {
+      window.location.href = '/View/login-tool-view.html'
     } else {
-      window.location.href = "/View/login-web-success.html";
+      window.location.href = '/View/login-web-success.html'
     }
-    toastr["error"]("Phiên làm việc của bạn đã hết hạn, vui lòng đăng nhập lại!!!");
+    toastr['error'](
+      'Phiên làm việc của bạn đã hết hạn, vui lòng đăng nhập lại!!!'
+    )
   }
-});
+})
 
 class WiniIO {
-  static emitMain(obj) {
-    obj.userItem = UserService.getUser();
-    obj.token = UserService.getToken();
-    obj.pid = parseInt(obj.pid ?? ProjectDA.obj.ID);
-    obj.pageid = obj.pageid ?? PageDA.obj.ID;
-    arrange(obj.data);
-    obj.data = obj.data.reverse();
-    console.log(Date.now(), " : ", obj);
+  static emitMain (obj) {
+    obj.userItem = UserService.getUser()
+    obj.token = UserService.getToken()
+    obj.pid = parseInt(obj.pid ?? ProjectDA.obj.ID)
+    obj.pageid = obj.pageid ?? PageDA.obj.ID
+    arrange(obj.data)
+    obj.data = obj.data.reverse()
+    console.log(Date.now(), ' : ', obj)
     obj.data = [
-      ...obj.data.map((e) => {
-        let dtItem = JSON.parse(JSON.stringify(e));
-        delete dtItem.ListID;
-        delete dtItem.Level;
-        return dtItem;
-      }),
-    ];
-    if (obj.enumEvent !== EnumEvent.add) obj.data = obj.data.filter((e) => e.CateID !== EnumCate.textfield);
-    if (obj.pageid === PageDA.obj.ID && action_index >= 0 && action_index === action_list.length - 1) {
-      action_list[action_index].enumObj = obj.enumObj;
-      action_list[action_index].enumEvent = obj.enumEvent;
+      ...obj.data.map(e => {
+        let dtItem = JSON.parse(JSON.stringify(e))
+        delete dtItem.ListID
+        delete dtItem.Level
+        return dtItem
+      })
+    ]
+    if (obj.enumEvent !== EnumEvent.add)
+      obj.data = obj.data.filter(e => e.CateID !== EnumCate.textfield)
+    if (
+      obj.pageid === PageDA.obj.ID &&
+      action_index >= 0 &&
+      action_index === action_list.length - 1
+    ) {
+      action_list[action_index].enumObj = obj.enumObj
+      action_list[action_index].enumEvent = obj.enumEvent
     }
-    if (obj.data.some((wbaseItem) => wbaseItem.VariablesData || wbaseItem.JsonItem || wbaseItem.JsonEventItem || wbaseItem.TableRows || wbaseItem.TreeData)) {
+    if (
+      obj.data.some(
+        wbaseItem =>
+          wbaseItem.VariablesData ||
+          wbaseItem.JsonItem ||
+          wbaseItem.JsonEventItem ||
+          wbaseItem.TableRows ||
+          wbaseItem.TreeData
+      )
+    ) {
       for (let wbaseItem of obj.data) {
         if (wbaseItem.JsonItem) {
-          wbaseItem.AttributesItem.Json = JSON.stringify(wbaseItem.JsonItem);
+          wbaseItem.AttributesItem.Json = JSON.stringify(wbaseItem.JsonItem)
         }
         if (wbaseItem.JsonEventItem) {
-          wbaseItem.AttributesItem.JsonEvent = JSON.stringify(wbaseItem.JsonEventItem);
+          wbaseItem.AttributesItem.JsonEvent = JSON.stringify(
+            wbaseItem.JsonEventItem
+          )
         }
         if (wbaseItem.VariablesData) {
-          wbaseItem.AttributesItem.Variables = JSON.stringify(wbaseItem.VariablesData);
+          wbaseItem.AttributesItem.Variables = JSON.stringify(
+            wbaseItem.VariablesData
+          )
         }
         if (wbaseItem.TableRows) {
-          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.TableRows);
+          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.TableRows)
         } else if (wbaseItem.TreeData) {
-          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.TreeData);
+          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.TreeData)
         } else if (wbaseItem.ChartData) {
-          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.ChartData);
+          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.ChartData)
         } else if (wbaseItem.CarouselData) {
-          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.CarouselData);
+          wbaseItem.AttributesItem.Content = JSON.stringify(
+            wbaseItem.CarouselData
+          )
         }
       }
     }
     if (obj.enumEvent < 0) {
-      let updateList = obj.data.filter((e) => !e.IsDeleted);
-      let deleteList = obj.data.filter((e) => e.IsDeleted);
-      obj.enumEvent = EnumEvent.edit;
-      obj.data = updateList;
-      socket.emit("client-main", obj);
+      let updateList = obj.data.filter(e => !e.IsDeleted)
+      let deleteList = obj.data.filter(e => e.IsDeleted)
+      obj.enumEvent = EnumEvent.edit
+      obj.data = updateList
+      socket.emit('client-main', obj)
       if (deleteList.length > 0) {
-        obj.enumEvent = EnumEvent.delete;
-        obj.enumObj = EnumObj.wBase;
-        obj.data = deleteList;
-        socket.emit("client-main", obj);
+        obj.enumEvent = EnumEvent.delete
+        obj.enumObj = EnumObj.wBase
+        obj.data = deleteList
+        socket.emit('client-main', obj)
       }
-      return;
+      return
     }
-    if (obj.data.some((e) => e.GID === wbase_parentID)) {
-      toastr["warning"]("Nhớ thao tác này để báo Thuno nếu load lại có mất hết sorry ace!!!!!!!");
+    if (obj.data.some(e => e.GID === wbase_parentID)) {
+      toastr['warning'](
+        'Nhớ thao tác này để báo Thuno nếu load lại có mất hết sorry ace!!!!!!!'
+      )
     }
-    socket.emit("client-main", obj);
+    socket.emit('client-main', obj)
   }
 
-  static emitProperty(item, enumEvent) {
-    var jsonData = item;
-    socket.emit("client-property", {
+  static emitProperty (item, enumEvent) {
+    var jsonData = item
+    socket.emit('client-property', {
       headers: UserService.headerProject(),
       data: jsonData,
       pid: PageDA.obj.ProjectID,
-      enumEvent: enumEvent,
-    });
+      enumEvent: enumEvent
+    })
   }
 
-  static emitColor(color, enumEvent) {
-    console.log("emit-color");
-    let jsonData = color;
-    console.log(jsonData);
-    socket.emit("client-color", {
-      headers: UserService.headerProject(),
-      data: jsonData,
-      enumEvent: enumEvent,
-      pid: PageDA.obj.ProjectID,
-      pageid: PageDA.obj.ID,
-      enumObj: EnumObj.color,
-    });
-  }
-
-  static emitTypo(typo, enumEvent) {
-    var jsonData = typo;
-    socket.emit("client-typo", {
+  static emitColor (color, enumEvent) {
+    console.log('emit-color')
+    let jsonData = color
+    console.log(jsonData)
+    socket.emit('client-color', {
       headers: UserService.headerProject(),
       data: jsonData,
       enumEvent: enumEvent,
       pid: PageDA.obj.ProjectID,
       pageid: PageDA.obj.ID,
-      enumObj: EnumObj.textStyle,
-    });
+      enumObj: EnumObj.color
+    })
   }
 
-  static emitEffect(effect, enumEvent) {
-    var jsonData = effect;
-    socket.emit("client-effect", {
+  static emitTypo (typo, enumEvent) {
+    var jsonData = typo
+    socket.emit('client-typo', {
       headers: UserService.headerProject(),
       data: jsonData,
       enumEvent: enumEvent,
       pid: PageDA.obj.ProjectID,
       pageid: PageDA.obj.ID,
-      enumObj: EnumObj.effect,
-    });
+      enumObj: EnumObj.textStyle
+    })
   }
 
-  static emitBorder(borderItem, enumEvent) {
-    var jsonData = borderItem;
-    socket.emit("client-border", {
+  static emitEffect (effect, enumEvent) {
+    var jsonData = effect
+    socket.emit('client-effect', {
       headers: UserService.headerProject(),
       data: jsonData,
       enumEvent: enumEvent,
       pid: PageDA.obj.ProjectID,
       pageid: PageDA.obj.ID,
-      enumObj: EnumObj.border,
-    });
+      enumObj: EnumObj.effect
+    })
   }
 
-  static emitInit() {
-    socket.emit("client-init", {
+  static emitBorder (borderItem, enumEvent) {
+    var jsonData = borderItem
+    socket.emit('client-border', {
+      headers: UserService.headerProject(),
+      data: jsonData,
+      enumEvent: enumEvent,
+      pid: PageDA.obj.ProjectID,
+      pageid: PageDA.obj.ID,
+      enumObj: EnumObj.border
+    })
+  }
+
+  static emitInit () {
+    socket.emit('client-init', {
       pid: ProjectDA.obj.ID,
-      headers: UserService.headerProject(),
-    });
+      headers: UserService.headerProject()
+    })
   }
 
-  static emitPage(listPage, enumEvent) {
-    console.log("client-page");
-    let jsonData;
+  static emitPage (listPage, enumEvent) {
+    console.log('client-page')
+    let jsonData
     if (enumEvent != EnumEvent.sort) {
-      jsonData = listPage[0];
+      jsonData = listPage[0]
     } else {
-      jsonData = listPage;
+      jsonData = listPage
     }
-    socket.emit("client-page", {
+    socket.emit('client-page', {
       pid: ProjectDA.obj.ID,
       data: jsonData,
       enumEvent: enumEvent,
-      headers: UserService.headerProject(),
-    });
+      headers: UserService.headerProject()
+    })
   }
 
-  static kc = { xMouse: 0, yMouse: 0 };
-  static emitMouse(mouseItem) {
-    if ((!this.kc.w && mouseItem.w !== undefined) || Math.sqrt(Math.pow(this.kc.xMouse - mouseItem.xMouse, 2) + Math.pow(this.kc.yMouse - mouseItem.yMouse, 2)) >= 20 / scale) {
-      let mouseData = JSON.parse(JSON.stringify(mouseItem));
-      this.kc = mouseData;
-      mouseData.ID = UserService.getUser().ID;
+  static kc = { xMouse: 0, yMouse: 0 }
+  static emitMouse (mouseItem) {
+    if (
+      (!this.kc.w && mouseItem.w !== undefined) ||
+      Math.sqrt(
+        Math.pow(this.kc.xMouse - mouseItem.xMouse, 2) +
+          Math.pow(this.kc.yMouse - mouseItem.yMouse, 2)
+      ) >=
+        20 / scale
+    ) {
+      let mouseData = JSON.parse(JSON.stringify(mouseItem))
+      this.kc = mouseData
+      mouseData.ID = UserService.getUser().ID
       if (PageDA.obj?.ProjectID) {
-        socket.emit("client-mouse", {
+        socket.emit('client-mouse', {
           headers: UserService.headerProject(),
           pid: PageDA.obj.ProjectID,
-          data: mouseData,
-        });
+          data: mouseData
+        })
       }
     }
   }
 
-  static emitCss(cssItem, enumEvent) {
-    socket.emit("client-css", {
+  static emitCss (cssItem, enumEvent) {
+    socket.emit('client-css', {
       pid: PageDA.obj.ProjectID,
       data: cssItem,
       enumEvent: enumEvent
-    });
+    })
   }
 
-  static emitGet(json, url, enumObj, enumEvent) {
-    var header = UserService.headerProject();
-    socket.emit("client-get", {
+  static emitGet (json, url, enumObj, enumEvent) {
+    var header = UserService.headerProject()
+    socket.emit('client-get', {
       headers: header,
       body: json,
       url: url,
       data: [],
       enumObj: enumObj,
       enumEvent: enumEvent,
-      userId: UserService.getUser().ID,
-    });
+      userId: UserService.getUser().ID
+    })
   }
 
-  static emitPort(json, url, enumObj, enumEvent) {
-    socket.emit("client-post", {
+  static emitPort (json, url, enumObj, enumEvent) {
+    socket.emit('client-post', {
       headers: UserService.headerProject(),
       body: json,
       url: url,
       data: [],
       enumEvent: enumEvent,
       enumObj: enumObj,
-      userId: UserService.getUser().ID,
-    });
+      userId: UserService.getUser().ID
+    })
   }
 
-  static emitFile(listFile, collectionId) {
+  static emitFile (listFile, collectionId) {
     let result = BaseDA.uploadFile(
       listFile,
       // "http://10.15.138.23:4000/uploadfile",
-      socketWiniFile + "/uploadfile",
-      collectionId,
-    );
-    return result;
+      socketWiniFile + '/uploadfile',
+      collectionId
+    )
+    return result
   }
 
-  static emitRefreshToken() {
-    socket.emit("client-refresh", { headers: UserService.headerRefreshSocket(), data: [] });
+  static emitRefreshToken () {
+    socket.emit('client-refresh', {
+      headers: UserService.headerRefreshSocket(),
+      data: []
+    })
   }
 }
 class WbaseIO {
-  static delete(list) {
-    if (list.some((e) => e.GID == hover_wbase?.GID)) {
-      updateHoverWbase();
+  static delete (list) {
+    if (list.some(e => e.GID == hover_wbase?.GID)) {
+      updateHoverWbase()
     }
-    selected_list = selected_list.filter((e) => list.every((deleteItem) => deleteItem.GID !== e.GID));
-    updateUISelectBox();
-    updateUIDesignView();
-    let reBuildParent = false;
+    selected_list = selected_list.filter(e =>
+      list.every(deleteItem => deleteItem.GID !== e.GID)
+    )
+    updateUISelectBox()
+    updateUIDesignView()
+    let reBuildParent = false
     if (list[0].ParentID !== wbase_parentID) {
-      let parentWbase = wbase_list.find((wbaseItem) => wbaseItem.GID === list[0].ParentID);
+      let parentWbase = wbase_list.find(
+        wbaseItem => wbaseItem.GID === list[0].ParentID
+      )
       if (parentWbase) {
-        parentWbase.ListChildID = parentWbase.ListChildID.filter((id) => list.every((deleteItem) => deleteItem.GID != id));
-        parentWbase.CountChild = parentWbase.ListChildID.length;
-        let oldParentHTML = parentWbase.value;
-        if (parentWbase.CountChild === 0 && parentWbase.WAutolayoutItem && (oldParentHTML.style.width == "fit-content" || oldParentHTML.style.height == "fit-content")) {
-          if (oldParentHTML.style.width == "fit-content") {
-            oldParentHTML.style.width = oldParentHTML.offsetWidth + "px";
-            parentWbase.StyleItem.FrameItem.Width = oldParentHTML.offsetWidth;
+        parentWbase.ListChildID = parentWbase.ListChildID.filter(id =>
+          list.every(deleteItem => deleteItem.GID != id)
+        )
+        parentWbase.CountChild = parentWbase.ListChildID.length
+        let oldParentHTML = parentWbase.value
+        if (
+          parentWbase.CountChild === 0 &&
+          parentWbase.WAutolayoutItem &&
+          (oldParentHTML.style.width == 'fit-content' ||
+            oldParentHTML.style.height == 'fit-content')
+        ) {
+          if (oldParentHTML.style.width == 'fit-content') {
+            oldParentHTML.style.width = oldParentHTML.offsetWidth + 'px'
+            parentWbase.StyleItem.FrameItem.Width = oldParentHTML.offsetWidth
           }
-          if (oldParentHTML.style.height == "fit-content") {
-            oldParentHTML.style.height = oldParentHTML.offsetHeight + "px";
-            parentWbase.StyleItem.FrameItem.Height = oldParentHTML.offsetHeight;
+          if (oldParentHTML.style.height == 'fit-content') {
+            oldParentHTML.style.height = oldParentHTML.offsetHeight + 'px'
+            parentWbase.StyleItem.FrameItem.Height = oldParentHTML.offsetHeight
           }
         }
         if (parentWbase.CateID === EnumCate.table) {
           parentWbase.TableRows.reduce((a, b) => a.concat(b))
-            .filter((cell) => list.some((deleteItem) => cell.contentid.includes(deleteItem.GID)))
-            .forEach((cell) => {
-              let newListContentID = cell.contentid.split(",").filter((id) => list.every((deleteItem) => deleteItem.GID !== id));
-              cell.contentid = newListContentID.join(",");
-            });
+            .filter(cell =>
+              list.some(deleteItem => cell.contentid.includes(deleteItem.GID))
+            )
+            .forEach(cell => {
+              let newListContentID = cell.contentid
+                .split(',')
+                .filter(id => list.every(deleteItem => deleteItem.GID !== id))
+              cell.contentid = newListContentID.join(',')
+            })
         }
       }
     }
     for (let wbaseItem of list) {
       if (wbaseItem.CateID == EnumCate.variant) {
-        PropertyDA.list = PropertyDA.list.filter((e) => e.BaseID != wbaseItem.GID);
+        PropertyDA.list = PropertyDA.list.filter(e => e.BaseID != wbaseItem.GID)
       }
-      if (wbaseItem.BasePropertyItems && wbaseItem.BasePropertyItems.length > 0) {
+      if (
+        wbaseItem.BasePropertyItems &&
+        wbaseItem.BasePropertyItems.length > 0
+      ) {
         for (let baseProperty of wbaseItem.BasePropertyItems) {
-          let propertyItem = PropertyDA.list.find((e) => e.GID == baseProperty.PropertyID);
-          propertyItem.BasePropertyItems = propertyItem.BasePropertyItems.filter((e) => e.GID != baseProperty.GID);
+          let propertyItem = PropertyDA.list.find(
+            e => e.GID == baseProperty.PropertyID
+          )
+          propertyItem.BasePropertyItems =
+            propertyItem.BasePropertyItems.filter(
+              e => e.GID != baseProperty.GID
+            )
         }
       }
-      let eHTML = document.getElementById(wbaseItem.GID);
+      let eHTML = document.getElementById(wbaseItem.GID)
       if (eHTML) {
-        if ($(eHTML).parents(".w-tree")) reBuildParent = $(eHTML).parents(".w-tree");
-        eHTML.remove();
+        if ($(eHTML).parents('.w-tree'))
+          reBuildParent = $(eHTML).parents('.w-tree')
+        eHTML.remove()
       }
     }
-    wbase_list = wbase_list.filter((e) => !list.some((delete_item) => delete_item.GID == e.GID || e.ListID.includes(delete_item.GID)));
-    arrange();
+    wbase_list = wbase_list.filter(
+      e =>
+        !list.some(
+          delete_item =>
+            delete_item.GID == e.GID || e.ListID.includes(delete_item.GID)
+        )
+    )
+    arrange()
     if (reBuildParent.length) {
-      switch (parseInt(reBuildParent[0].getAttribute("cateid"))) {
+      switch (parseInt(reBuildParent[0].getAttribute('cateid'))) {
         case EnumCate.tree:
-          reBuildParent = reBuildParent[0];
+          reBuildParent = reBuildParent[0]
           createTree(
-            wbase_list.find((e) => e.GID === reBuildParent.id),
-            wbase_list.filter((e) => e.ParentID === reBuildParent.id),
-          );
-          break;
+            wbase_list.find(e => e.GID === reBuildParent.id),
+            wbase_list.filter(e => e.ParentID === reBuildParent.id)
+          )
+          break
         default:
-          break;
+          break
       }
     }
   }
 
-  static async addOrUpdate(list, enumEvent) {
-    let relativeList = [];
+  static async addOrUpdate (list, enumEvent) {
+    let relativeList = []
     if (enumEvent === EnumEvent.parent) {
-      relativeList = wbase_list.filter((wbaseItem) => list.some((editItem) => wbaseItem.ListID.includes(editItem.GID) || wbaseItem.ListChildID.includes(editItem.GID)));
+      relativeList = wbase_list.filter(wbaseItem =>
+        list.some(
+          editItem =>
+            wbaseItem.ListID.includes(editItem.GID) ||
+            wbaseItem.ListChildID.includes(editItem.GID)
+        )
+      )
     }
-    wbase_list = wbase_list.filter((e) => list.every((element) => e.GID !== element.GID));
-    wbase_list.push(...list);
+    wbase_list = wbase_list.filter(e =>
+      list.every(element => e.GID !== element.GID)
+    )
+    wbase_list.push(...list)
     if (relativeList.length > 0) {
       for (let item of relativeList) {
-        if (list.some((editItem) => item.ListID.includes(editItem.GID))) {
+        if (list.some(editItem => item.ListID.includes(editItem.GID))) {
           if (item.ParentID === wbase_parentID) {
-            item.ListID = wbase_parentID;
+            item.ListID = wbase_parentID
           } else {
-            item.ListID = wbase_list.find((e) => e.GID === item.ParentID).ListID + "," + item.ParentID;
+            item.ListID =
+              wbase_list.find(e => e.GID === item.ParentID).ListID +
+              ',' +
+              item.ParentID
           }
-          item.Level = item.ListID.split(",").length;
+          item.Level = item.ListID.split(',').length
         } else {
-          let children = wbase_list.filter((e) => e.ParentID === item.GID);
-          children.sort((a, b) => a.Sort - b.Sort);
-          item.ListChildID = children.map((e) => e.GID);
-          item.CountChild = children.length;
+          let children = wbase_list.filter(e => e.ParentID === item.GID)
+          children.sort((a, b) => a.Sort - b.Sort)
+          item.ListChildID = children.map(e => e.GID)
+          item.CountChild = children.length
         }
       }
     }
-    arrange();
-    let parentList = [];
+    arrange()
+    let parentList = []
     for (let item of list) {
-      item.value = null;
+      item.value = null
       if (item.BasePropertyItems && item.BasePropertyItems.length > 0) {
         for (let baseProperty of item.BasePropertyItems) {
           if (baseProperty.BaseID == undefined) {
-            baseProperty.BaseID = item.GID;
+            baseProperty.BaseID = item.GID
           }
-          let property = PropertyDA.list.find((e) => baseProperty.PropertyID == e.GID);
-          if (property && property.BasePropertyItems.every((e) => e.GID != baseProperty.GID)) {
-            property.listBaseProperty.push(e);
+          let property = PropertyDA.list.find(
+            e => baseProperty.PropertyID == e.GID
+          )
+          if (
+            property &&
+            property.BasePropertyItems.every(e => e.GID != baseProperty.GID)
+          ) {
+            property.listBaseProperty.push(e)
           } else {
-            if (PropertyDA.list.some((e) => e.GID != baseProperty.PropertyID)) {
+            if (PropertyDA.list.some(e => e.GID != baseProperty.PropertyID)) {
               PropertyDA.list.push({
                 GID: baseProperty.PropertyID,
-                Name: `Property ${PropertyDA.list.filter((property) => property.BaseID == item.ParentID).length + 1}`,
+                Name: `Property ${
+                  PropertyDA.list.filter(
+                    property => property.BaseID == item.ParentID
+                  ).length + 1
+                }`,
                 BaseID: item.ParentID,
-                BasePropertyItems: [baseProperty],
-              });
+                BasePropertyItems: [baseProperty]
+              })
             }
           }
         }
       }
       if (item.ParentID === wbase_parentID) {
-        let currentItemHTML = document.getElementById(item.GID);
+        let currentItemHTML = document.getElementById(item.GID)
         await initComponents(
           item,
-          wbase_list.filter((e) => e.ParentID === item.GID),
-          false,
-        );
-        if (currentItemHTML) currentItemHTML.replaceWith(item.value);
-        item.value.id = item.GID;
-        initPositionStyle(item);
-        divSection.appendChild(item.value);
+          wbase_list.filter(e => e.ParentID === item.GID),
+          false
+        )
+        if (currentItemHTML) currentItemHTML.replaceWith(item.value)
+        item.value.id = item.GID
+        initPositionStyle(item)
+        divSection.appendChild(item.value)
       } else {
-        document.getElementById(item.GID)?.remove();
+        document.getElementById(item.GID)?.remove()
         await initComponents(
           item,
-          wbase_list.filter((e) => e.ParentID === item.GID),
-        );
-        parentList.push(item.ParentID);
+          wbase_list.filter(e => e.ParentID === item.GID)
+        )
+        parentList.push(item.ParentID)
       }
     }
-    parentList = parentList.filterAndMap();
-    parentList = [...relativeList, ...wbase_list.filter((e) => parentList.some((id) => e.GID === id))];
+    parentList = parentList.filterAndMap()
+    parentList = [
+      ...relativeList,
+      ...wbase_list.filter(e => parentList.some(id => e.GID === id))
+    ]
     for (let wb of parentList) {
       await initComponents(
         wb,
-        wbase_list.filter((el) => el.ParentID === wb.GID),
-        false,
-      );
+        wbase_list.filter(el => el.ParentID === wb.GID),
+        false
+      )
       if (wb.ParentID === wbase_parentID) {
-        let currentValue = document.getElementById(wb.GID);
-        initPositionStyle(wb);
-        if (currentValue && $(currentValue).parents(".wbaseItem-value").length === 0) {
-          currentValue.replaceWith(wb.value);
+        let currentValue = document.getElementById(wb.GID)
+        initPositionStyle(wb)
+        if (
+          currentValue &&
+          $(currentValue).parents('.wbaseItem-value').length === 0
+        ) {
+          currentValue.replaceWith(wb.value)
         } else {
-          currentValue?.remove();
-          divSection.appendChild(wb.value);
+          currentValue?.remove()
+          divSection.appendChild(wb.value)
         }
       } else {
-        let currentE = document.getElementById(wb.GID);
+        let currentE = document.getElementById(wb.GID)
         if (currentE) {
-          currentE?.replaceWith(wb.value);
+          currentE?.replaceWith(wb.value)
         } else {
-          let parentHTML = document.getElementById(wb.ParentID);
+          let parentHTML = document.getElementById(wb.ParentID)
           if (parentHTML) {
-            switch (parseInt(parentHTML.getAttribute("cateid"))) {
+            switch (parseInt(parentHTML.getAttribute('cateid'))) {
               case EnumCate.tree:
                 createTree(
-                  wbase_list.find((e) => e.GID === wb.ParentID),
-                  wbase_list.filter((e) => e.ParentID === wb.ParentID),
-                );
-                break;
+                  wbase_list.find(e => e.GID === wb.ParentID),
+                  wbase_list.filter(e => e.ParentID === wb.ParentID)
+                )
+                break
               case EnumCate.table:
                 createTable(
-                  wbase_list.find((e) => e.GID === wb.ParentID),
-                  wbase_list.filter((e) => e.ParentID === wb.ParentID),
-                );
-                break;
+                  wbase_list.find(e => e.GID === wb.ParentID),
+                  wbase_list.filter(e => e.ParentID === wb.ParentID)
+                )
+                break
               default:
-                if (!window.getComputedStyle(parentHTML).display.match("flex")) {
-                  initPositionStyle(wb);
+                if (
+                  !window.getComputedStyle(parentHTML).display.match('flex')
+                ) {
+                  initPositionStyle(wb)
                 }
-                parentHTML.appendChild(wb.value);
-                break;
+                parentHTML.appendChild(wb.value)
+                break
             }
           }
         }
       }
-      wb.value.id = wb.GID;
+      wb.value.id = wb.GID
     }
-    if (list.some((e) => e.GID === hover_wbase?.GID)) {
-      updateHoverWbase();
+    if (list.some(e => e.GID === hover_wbase?.GID)) {
+      updateHoverWbase()
     }
-    selected_list = selected_list.filter((e) => list.every((editItem) => editItem.GID !== e.GID));
-    updateUISelectBox();
+    selected_list = selected_list.filter(e =>
+      list.every(editItem => editItem.GID !== e.GID)
+    )
+    updateUISelectBox()
   }
 }

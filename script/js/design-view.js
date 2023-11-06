@@ -256,7 +256,7 @@ function EditOffsetBlock () {
           let option = document.createElement('div')
           option.className = 'w-device-option-tile'
           option.onclick = function (ev) {
-            ev.stopPropagation() 
+            ev.stopPropagation()
             handleEditOffset({ width: device.Width, height: device.Height })
             popup.remove()
             updateUIEditPosition()
@@ -374,11 +374,11 @@ function EditOffsetBlock () {
   let edit_width = _textField({
     id: 'edit_frame_item_w',
     label: 'W',
-    value: list_width.length == 1 ? list_width[0] : 'mixed',
+    value: list_width.length === 1 ? list_width[0] : 'mixed',
     onBlur: function (ev) {
       let newValue = parseFloat(ev.target.value)
       if (!isNaN(newValue)) {
-        inputFrameItem({ Width: newValue }, isRatio)
+        handleEditOffset({ width: newValue, ratioWH: isRatio })
       }
       updateInputTLWH()
     }
@@ -392,7 +392,7 @@ function EditOffsetBlock () {
     onBlur: function (ev) {
       let newValue = parseFloat(ev.target.value)
       if (!isNaN(newValue)) {
-        inputFrameItem({ Height: newValue }, isRatio)
+        handleEditOffset({ height: newValue, ratioWH: isRatio })
       }
       updateInputTLWH()
     }
@@ -495,16 +495,10 @@ function EditOffsetBlock () {
           ev.target.value =
             list_radius_value.length == 1 ? list_radius_value[0] : 'mixed'
         } else {
-          inputFrameItem({
-            TopLeft: newValue,
-            TopRight: newValue,
-            BottomLeft: newValue,
-            BottomRight: newValue
-          })
-          input_top_left.value = newValue
-          input_top_right = newValue
-          input_bot_left = newValue
-          input_bot_right = newValue
+          handleEditOffset({ radius: newValue })
+          _row_radius_detail
+            .querySelectorAll(':scope > input')
+            .forEach(i => (i.value = newValue))
         }
       }
     })
@@ -546,7 +540,7 @@ function EditOffsetBlock () {
         let rvalue = showInputRadius.filterAndMap(e =>
           window.getComputedStyle(e.value)[radiusProp].replace('px', '')
         )
-        radiusInputDetail.value = rvalue.length == 1 ? rvalue[0] : 'mixed'
+        radiusInputDetail.value = rvalue.length === 1 ? rvalue[0] : 'mixed'
         radiusInputDetail.onfocus = function () {
           this.setSelectionRange(0, this.value.length)
         }
@@ -569,16 +563,13 @@ function EditOffsetBlock () {
           this.value =
             list_top_left_value.length == 0 ? top_left_value : 'mixed'
         } else {
-          inputFrameItem({ TopLeft: newValue })
-          if (
-            this.value == input_top_right.value &&
-            this.value == input_bot_left.value &&
-            this.value == input_bot_right.value
-          ) {
-            edit_radius.lastChild.value = this.value
-          } else {
-            edit_radius.lastChild.value = 'mixed'
-          }
+          handleEditOffset({ radiusTL: newValue })
+          edit_radius.lastChild.value =
+            [
+              ..._row_radius_detail.querySelectorAll(':scope > input')
+            ].filterAndMap(i => i.value).length > 1
+              ? 'mixed'
+              : this.value
         }
       }
     )
@@ -598,16 +589,13 @@ function EditOffsetBlock () {
           this.value =
             list_top_right_value.length == 0 ? top_right_value : 'mixed'
         } else {
-          inputFrameItem({ TopRight: newValue })
-          if (
-            this.value == input_top_left.value &&
-            this.value == input_bot_left.value &&
-            this.value == input_bot_right.value
-          ) {
-            edit_radius.lastChild.value = this.value
-          } else {
-            edit_radius.lastChild.value = 'mixed'
-          }
+          handleEditOffset({ radiusTR: newValue })
+          edit_radius.lastChild.value =
+            [
+              ..._row_radius_detail.querySelectorAll(':scope > input')
+            ].filterAndMap(i => i.value).length > 1
+              ? 'mixed'
+              : this.value
         }
       }
     )
@@ -627,16 +615,13 @@ function EditOffsetBlock () {
           this.value =
             list_bot_left_value.length == 0 ? bot_left_value : 'mixed'
         } else {
-          inputFrameItem({ BottomLeft: newValue })
-          if (
-            this.value == input_top_right.value &&
-            this.value == input_top_left.value &&
-            this.value == input_bot_right.value
-          ) {
-            edit_radius.lastChild.value = this.value
-          } else {
-            edit_radius.lastChild.value = 'mixed'
-          }
+          handleEditOffset({ radiusBL: newValue })
+          edit_radius.lastChild.value =
+            [
+              ..._row_radius_detail.querySelectorAll(':scope > input')
+            ].filterAndMap(i => i.value).length > 1
+              ? 'mixed'
+              : this.value
         }
       }
     )
@@ -656,16 +641,13 @@ function EditOffsetBlock () {
           this.value =
             list_bot_right_value.length == 0 ? bot_right_value : 'mixed'
         } else {
-          inputFrameItem({ BottomRight: newValue })
-          if (
-            this.value == input_top_right.value &&
-            this.value == input_top_left.value &&
-            this.value == input_bot_left.value
-          ) {
-            edit_radius.lastChild.value = this.value
-          } else {
-            edit_radius.lastChild.value = 'mixed'
-          }
+          handleEditOffset({ radiusBR: newValue })
+          edit_radius.lastChild.value =
+            [
+              ..._row_radius_detail.querySelectorAll(':scope > input')
+            ].filterAndMap(i => i.value).length > 1
+              ? 'mixed'
+              : this.value
         }
       }
     )

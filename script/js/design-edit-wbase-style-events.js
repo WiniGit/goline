@@ -609,7 +609,7 @@ function handleEditAlign (newValue) {
                 cWb.value.style.right = '0px'
                 cWb.value.setAttribute('constx', Constraints.right)
                 cWb.StyleItem.PositionItem.Right = '0px'
-                cWb.StyleItem.PositionItem.ConstraintsY = Constraints.right
+                cWb.StyleItem.PositionItem.ConstraintsX = Constraints.right
               }
               listUpdate.push(...children)
             }
@@ -638,7 +638,7 @@ function handleEditAlign (newValue) {
           selected_list[0].value.style.right = '0px'
           selected_list[0].value.setAttribute('constx', Constraints.right)
           selected_list[0].StyleItem.PositionItem.Right = '0px'
-          selected_list[0].StyleItem.PositionItem.ConstraintsY =
+          selected_list[0].StyleItem.PositionItem.ConstraintsX =
             Constraints.right
           listUpdate.push(...selected_list)
         } else {
@@ -865,6 +865,8 @@ function handleEditAlign (newValue) {
                 cWb.value.style.top = '0px'
                 cWb.value.style.bottom = ''
                 cWb.value.setAttribute('consty', Constraints.top)
+                cWb.StyleItem.PositionItem.Top = '0px'
+                cWb.StyleItem.PositionItem.ConstraintsY = Constraints.top
               }
               listUpdate.push(...children)
             }
@@ -892,6 +894,8 @@ function handleEditAlign (newValue) {
           selected_list[0].value.style.top = '0px'
           selected_list[0].value.style.bottom = ''
           selected_list[0].value.setAttribute('consty', Constraints.top)
+          selected_list[0].StyleItem.PositionItem.Top = '0px'
+          selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.top
           listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
@@ -948,6 +952,7 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.borderTopWidth.replace('px')) -
                     minY
                 )}px`
+                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
                 break
               case Constraints.top_bottom:
                 wb.value.style.bottom = `${Math.round(
@@ -957,12 +962,15 @@ function handleEditAlign (newValue) {
                     minY
                 )}px`
                 wb.value.style.top = minY + 'px'
+                wb.StyleItem.PositionItem.Top = wb.value.style.top
+                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
                 break
               case Constraints.center:
                 let centerValue = `${
                   minY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
                 }px`
                 wb.value.style.top = `calc(50% + ${centerValue})`
+                wb.StyleItem.PositionItem.Bottom = centerValue
                 break
               case Constraints.scale:
                 let topValue = `${(
@@ -981,9 +989,12 @@ function handleEditAlign (newValue) {
                 ).toFixed(2)}px`
                 wb.value.style.top = topValue
                 wb.value.style.bottom = botValue
+                wb.StyleItem.PositionItem.Top = topValue
+                wb.StyleItem.PositionItem.Bottom = botValue
                 break
               default:
                 wb.value.style.top = minY + 'px'
+                wb.StyleItem.PositionItem.Top = minY + 'px'
                 break
             }
           }
@@ -1116,6 +1127,8 @@ function handleEditAlign (newValue) {
                 wb.value.style.top = `calc(50% + 0px)`
                 cWb.value.style.bottom = ''
                 cWb.value.setAttribute('consty', Constraints.center)
+                cWb.StyleItem.PositionItem.Right = '0px'
+                cWb.StyleItem.PositionItem.ConstraintsY = Constraints.center
               }
               listUpdate.push(...children)
             }
@@ -1143,6 +1156,9 @@ function handleEditAlign (newValue) {
           selected_list[0].value.style.top = 'calc(50% + 0px)'
           selected_list[0].value.style.bottom = ''
           selected_list[0].value.setAttribute('consty', Constraints.center)
+          selected_list[0].StyleItem.PositionItem.Bottom = '0px'
+          selected_list[0].StyleItem.PositionItem.ConstraintsY =
+            Constraints.center
           listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
@@ -1207,6 +1223,7 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.borderTopWidth.replace('px')) -
                     newOffY
                 )}px`
+                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
                 break
               case Constraints.top_bottom:
                 wb.value.style.bottom = `${Math.round(
@@ -1216,12 +1233,15 @@ function handleEditAlign (newValue) {
                     newOffY
                 )}px`
                 wb.value.style.top = newOffY + 'px'
+                wb.StyleItem.PositionItem.Top = wb.value.style.top
+                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
                 break
               case Constraints.center:
                 let centerValue = `${
                   newOffY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
                 }px`
                 wb.value.style.top = `calc(50% + ${centerValue})`
+                wb.StyleItem.PositionItem.Bottom = wb.value.style.centerValue
                 break
               case Constraints.scale:
                 let topValue = `${(
@@ -1240,9 +1260,12 @@ function handleEditAlign (newValue) {
                 ).toFixed(2)}px`
                 wb.value.style.top = topValue
                 wb.value.style.bottom = botValue
+                wb.StyleItem.PositionItem.Top = topValue
+                wb.StyleItem.PositionItem.Bottom = botValue
                 break
               default:
                 wb.value.style.top = newOffY + 'px'
+                wb.StyleItem.PositionItem.Top = newOffY + 'px'
                 break
             }
           }
@@ -1375,6 +1398,8 @@ function handleEditAlign (newValue) {
                 cWb.value.style.top = ''
                 cWb.value.style.bottom = '0px'
                 cWb.value.setAttribute('consty', Constraints.bottom)
+                wb.StyleItem.PositionItem.Bottom = botValue
+                wb.StyleItem.PositionItem.ConstraintsY = Constraints.bottom
               }
               listUpdate.push(...children)
             }
@@ -1402,6 +1427,9 @@ function handleEditAlign (newValue) {
           selected_list[0].value.style.top = ''
           selected_list[0].value.style.bottom = '0px'
           selected_list[0].value.setAttribute('consty', Constraints.bottom)
+          selected_list[0].StyleItem.PositionItem.Bottom = botValue
+          selected_list[0].StyleItem.PositionItem.ConstraintsY =
+            Constraints.bottom
           listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
@@ -1457,12 +1485,15 @@ function handleEditAlign (newValue) {
                 wb.value.style.top = `${Math.round(
                   maxY - wb.value.offsetHeight
                 )}px`
+                wb.StyleItem.PositionItem.Top = wb.value.style.top
                 break
               case Constraints.top_bottom:
                 wb.value.style.top = `${Math.round(
                   maxY - wb.value.offsetHeight
                 )}px`
                 wb.value.style.bottom = maxY + 'px'
+                wb.StyleItem.PositionItem.Top = wb.value.style.top
+                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
                 break
               case Constraints.center:
                 let centerValue = `${
@@ -1471,6 +1502,7 @@ function handleEditAlign (newValue) {
                   (wb.value.offsetHeight - wb.value.offsetHeight) / 2
                 }px`
                 wb.value.style.top = `calc(50% + ${centerValue})`
+                wb.StyleItem.PositionItem.Bottom = centerValue
                 break
               case Constraints.scale:
                 let topValue = `${(
@@ -1489,9 +1521,12 @@ function handleEditAlign (newValue) {
                 ).toFixed(2)}px`
                 wb.value.style.top = topValue
                 wb.value.style.bottom = botValue
+                wb.StyleItem.PositionItem.Top = topValue
+                wb.StyleItem.PositionItem.Bottom = botValue
                 break
               default:
                 wb.value.style.bottom = maxY + 'px'
+                wb.StyleItem.PositionItem.Bottom = maxY + 'px'
                 break
             }
           }
@@ -1577,10 +1612,11 @@ function handleEditOffset ({
   radiusTR,
   radiusBL,
   radiusBR,
-  fixPosition
+  fixPosition,
+  ratioWH = false
 }) {
   let listUpdate = []
-  if (width !== undefined && height !== undefined) {
+  if ((width !== undefined && height !== undefined) || ratioWH) {
     if (selected_list[0].StyleItem) {
       for (let wb of selected_list) {
         let children = [
@@ -1588,6 +1624,13 @@ function handleEditOffset ({
             `.wbaseItem-value[level="${wb.Level + 1}"]`
           )
         ]
+        if(ratioWH) {
+          if(width !== undefined) {
+            height = (width * wb.value.offsetHeight) / wb.value.offsetWidth
+          } else {
+            width = (height * wb.value.offsetWidth) / wb.value.offsetHeight
+          }
+        }
         if (width === null) {
           if (wb.value.classList.contains('w-row')) {
             children = children.filter(
@@ -2052,6 +2095,7 @@ function handleEditOffset ({
                 parseFloat(pStyle.borderLeftWidth.replace('px')) -
                 x
             )}px`
+            wb.StyleItem.PositionItem.Right = wb.value.style.right
             break
           case Constraints.left_right:
             wb.value.style.right = `${Math.round(
@@ -2061,12 +2105,15 @@ function handleEditOffset ({
                 x
             )}px`
             wb.value.style.left = x + 'px'
+            wb.StyleItem.PositionItem.Left = x + 'px'
+            wb.StyleItem.PositionItem.Right = wb.value.style.right
             break
           case Constraints.center:
             let centerValue = `${
               x + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
             }px`
             wb.value.style.left = `calc(50% + ${centerValue})`
+            wb.StyleItem.PositionItem.Right = centerValue
             break
           case Constraints.scale:
             let leftValue = `${(
@@ -2085,9 +2132,12 @@ function handleEditOffset ({
             ).toFixed(2)}px`
             wb.value.style.left = leftValue
             wb.value.style.right = rightValue
+            wb.StyleItem.PositionItem.Left = leftValue
+            wb.StyleItem.PositionItem.Right = rightValue
             break
           default:
             wb.value.style.left = x + 'px'
+            wb.StyleItem.PositionItem.Left = x + 'px'
             break
         }
       }
@@ -2167,6 +2217,7 @@ function handleEditOffset ({
                 parseFloat(pStyle.borderTopWidth.replace('px')) -
                 y
             )}px`
+            wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
             break
           case Constraints.top_bottom:
             wb.value.style.bottom = `${Math.round(
@@ -2176,12 +2227,15 @@ function handleEditOffset ({
                 y
             )}px`
             wb.value.style.top = y + 'px'
+            wb.StyleItem.PositionItem.Top = y + 'px'
+            wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
             break
           case Constraints.center:
             let centerValue = `${
               y + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
             }px`
             wb.value.style.top = `calc(50% + ${centerValue})`
+            wb.StyleItem.PositionItem.Bottom = centerValue
             break
           case Constraints.scale:
             let topValue = `${(
@@ -2200,9 +2254,12 @@ function handleEditOffset ({
             ).toFixed(2)}px`
             wb.value.style.top = topValue
             wb.value.style.bottom = botValue
+            wb.StyleItem.PositionItem.Top = topValue
+            wb.StyleItem.PositionItem.Bottom = botValue
             break
           default:
             wb.value.style.top = y + 'px'
+            wb.StyleItem.PositionItem.Top = y + 'px'
             break
         }
       }
@@ -2445,6 +2502,7 @@ function handleEditOffset ({
     } else {
     }
   }
+  updateUISelectBox()
 }
 
 function frameHugChildrenSize () {

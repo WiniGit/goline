@@ -28,14 +28,13 @@ async function initData() {
   });
   BorderDA.list = skinResponse.Data.BorderItems;
   BorderDA.list.forEach((borderSkin) => {
-    let listWidth = borderSkin.Width.split(" ");
-    document.documentElement.style.setProperty(`--border-width-${borderSkin.GID}`, `${listWidth[0]}px ${listWidth[1]}px ${listWidth[2]}px ${listWidth[3]}px`);
+    document.documentElement.style.setProperty(`--border-width-${borderSkin.GID}`, borderSkin.Width.split(" ").map(e => `${e}px`).join(" "));
     document.documentElement.style.setProperty(`--border-style-${borderSkin.GID}`, borderSkin.BorderStyle);
     document.documentElement.style.setProperty(`--border-color-${borderSkin.GID}`, `#${borderSkin.ColorValue}`);
   });
   EffectDA.list = skinResponse.Data.EffectItems;
   EffectDA.list.forEach((effectSkin) => {
-    if (effectSkin.Type == ShadowType.layer_blur) {
+    if (effectSkin.Type === ShadowType.layer_blur) {
       document.documentElement.style.setProperty(`--effect-blur-${effectSkin.GID}`, `blur(${effectSkin.BlurRadius}px)`);
     } else {
       document.documentElement.style.setProperty(`--effect-shadow-${effectSkin.GID}`, `${effectSkin.OffsetX}px ${effectSkin.OffsetY}px ${effectSkin.BlurRadius}px ${effectSkin.SpreadRadius}px #${effectSkin.ColorValue} ${effectSkin.Type == ShadowType.inner ? "inset" : ""}`);
