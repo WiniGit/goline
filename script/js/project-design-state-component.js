@@ -1574,7 +1574,7 @@ function editColorContainer(color, func) {
   colorContainer.className = "row edit-color-container";
   let demoColor = document.createElement("input");
   demoColor.type = "color";
-  demoColor.defaultValue = `#${color}`;
+  demoColor.defaultValue = `#${color.substring(0,6)}`;
   demoColor.className = "demo-color";
   demoColor.oninput = function (e) {
     e.stopPropagation();

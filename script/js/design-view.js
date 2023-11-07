@@ -125,7 +125,6 @@ function updateUIDesignView () {
   })
 }
 
-//
 // edit canvas background color
 function createCanvasBackground () {
   var canvas_view_background = document.createElement('div')

@@ -33,7 +33,7 @@ async function getColorSvg(item) {
         let _colorValue = value.replace(/(fill|stroke)/g, "").replace(/[^\w ]/g, "");
         _colorValue = Ultis.colorNameToHex(_colorValue) ?? _colorValue;
         if (_colorValue.length == 6) {
-          _colorValue = "ff" + _colorValue;
+          _colorValue = _colorValue + "ff";
         }
         return _colorValue;
       });
