@@ -1736,7 +1736,8 @@ function handleEditOffset ({
   radiusBL,
   radiusBR,
   fixPosition,
-  ratioWH = false
+  ratioWH = false,
+  isClip
 }) {
   let listUpdate = []
   if ((width !== undefined && height !== undefined) || ratioWH) {
@@ -2706,6 +2707,31 @@ function handleEditOffset ({
       }
     } else {
     }
+  } else if(typeof isClip === "boolean") {
+    if (selected_list[0].StyleItem) {
+      for (let wb of selected_list) {
+        wb.StyleItem.FrameItem.IsClip = isClip
+        wb.value.style.overflow = isClip ? "hidden" : null
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.frame)
+    } else {
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.overflow = isClip ? "hidden" : null
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
   }
   updateUISelectBox()
 }
@@ -3580,169 +3606,6 @@ function frameHugChildrenSize () {
   WBaseDA.edit(list_update, EnumObj.framePosition)
 }
 
-function inputFrameItem (frame_item, isRatioWH) {
-  let _enumObj = EnumObj.frame
-  if (frame_item.Width != undefined && frame_item.Height != undefined) {
-    for (let wbaseItem of selected_list) {
-      wbaseItem.StyleItem.FrameItem.Width = frame_item.Width
-      wbaseItem.StyleItem.FrameItem.Height = frame_item.Height
-      handleStyleSize(wbaseItem)
-      if (
-        select_box_parentID != wbase_parentID &&
-        window.getComputedStyle(wb.value).position === 'absolute'
-      ) {
-        _enumObj = EnumObj.framePosition
-        updateConstraints(wb)
-      }
-    }
-  } else if (frame_item.Width != undefined) {
-    for (let wb of selected_list) {
-      switch (wb.CateID) {
-        case EnumCate.w_switch:
-          wb.StyleItem.FrameItem.Width = frame_item.Width
-          wb.StyleItem.FrameItem.Height = Math.round((frame_item.Width * 5) / 9)
-          break
-        case EnumCate.radio_button:
-          wb.StyleItem.FrameItem.Width = frame_item.Width
-          wb.StyleItem.FrameItem.Height = frame_item.Width
-          break
-        case EnumCate.checkbox:
-          wb.StyleItem.FrameItem.Width = frame_item.Width
-          wb.StyleItem.FrameItem.Height = frame_item.Width
-          break
-        default:
-          if (isRatioWH) {
-            let ratio = wb.value.offsetHeight / wb.value.offsetWidth
-            let newH = frame_item.Width * ratio
-            wb.StyleItem.FrameItem.Width = frame_item.Width
-            wb.StyleItem.FrameItem.Height = newH
-          } else {
-            wb.StyleItem.FrameItem.Width = frame_item.Width
-          }
-          break
-      }
-      handleStyleSize(wb)
-      if (
-        select_box_parentID != wbase_parentID &&
-        window.getComputedStyle(wb.value).position === 'absolute'
-      ) {
-        _enumObj = EnumObj.framePosition
-        updateConstraints(wb)
-      }
-    }
-  } else if (frame_item.Height != undefined) {
-    for (let wb of selected_list) {
-      switch (wb.CateID) {
-        case EnumCate.w_switch:
-          wb.StyleItem.FrameItem.Height = frame_item.Height
-          wb.StyleItem.FrameItem.Width = Math.round((frame_item.Height * 9) / 5)
-          break
-        case EnumCate.radio_button:
-          wb.StyleItem.FrameItem.Width = frame_item.Height
-          wb.StyleItem.FrameItem.Height = frame_item.Height
-          break
-        case EnumCate.checkbox:
-          wb.StyleItem.FrameItem.Width = frame_item.Height
-          wb.StyleItem.FrameItem.Height = frame_item.Height
-          break
-        default:
-          if (isRatioWH) {
-            var ratio = wb.value.offsetWidth / wb.value.offsetHeight
-            var newW = frame_item.Height * ratio
-            wb.StyleItem.FrameItem.Width = newW
-            if (wb.CateID === EnumCate.tree) {
-              wb.StyleItem.FrameItem.Height =
-                frame_item.Height /
-                ([...wb.value.querySelectorAll('.w-tree')].filter(
-                  wtree => wtree.offsetHeight > 0
-                ).length +
-                  1)
-            } else {
-              wb.StyleItem.FrameItem.Height = frame_item.Height
-            }
-          } else {
-            if (wb.CateID === EnumCate.tree) {
-              wb.StyleItem.FrameItem.Height =
-                frame_item.Height /
-                ([...wb.value.querySelectorAll('.w-tree')].filter(
-                  wtree => wtree.offsetHeight > 0
-                ).length +
-                  1)
-            } else {
-              wb.StyleItem.FrameItem.Height = frame_item.Height
-            }
-          }
-          break
-      }
-      handleStyleSize(wb)
-      if (
-        select_box_parentID != wbase_parentID &&
-        window.getComputedStyle(wb.value).position === 'absolute'
-      ) {
-        _enumObj = EnumObj.framePosition
-        updateConstraints(wb)
-      }
-    }
-  }
-  if (
-    frame_item.TopLeft != undefined &&
-    frame_item.TopRight != undefined &&
-    frame_item.BottomLeft != undefined &&
-    frame_item.BottomRight != undefined
-  ) {
-    for (let i = 0; i < selected_list.length; i++) {
-      selected_list[i].StyleItem.FrameItem.TopLeft = frame_item.TopLeft
-      selected_list[i].StyleItem.FrameItem.TopRight = frame_item.TopRight
-      selected_list[i].StyleItem.FrameItem.BottomLeft = frame_item.BottomLeft
-      selected_list[i].StyleItem.FrameItem.BottomRight = frame_item.BottomRight
-      var elementHTML = document.getElementById(selected_list[i].GID)
-      elementHTML.style.borderTopLeftRadius = `${frame_item.TopLeft}px`
-      elementHTML.style.borderTopRightRadius = `${frame_item.TopRight}px`
-      elementHTML.style.borderBottomLeftRadius = `${frame_item.BottomLeft}px`
-      elementHTML.style.borderBottomRightRadius = `${frame_item.BottomRight}px`
-    }
-  } else {
-    if (frame_item.TopLeft != undefined) {
-      for (let i = 0; i < selected_list.length; i++) {
-        selected_list[i].StyleItem.FrameItem.TopLeft = frame_item.TopLeft
-        var elementHTML = document.getElementById(selected_list[i].GID)
-        elementHTML.style.borderTopLeftRadius = `${frame_item.TopLeft}px`
-      }
-    }
-    if (frame_item.TopRight != undefined) {
-      for (let i = 0; i < selected_list.length; i++) {
-        selected_list[i].StyleItem.FrameItem.TopRight = frame_item.TopRight
-        var elementHTML = document.getElementById(selected_list[i].GID)
-        elementHTML.style.borderTopRightRadius = `${frame_item.TopRight}px`
-      }
-    }
-    if (frame_item.BottomLeft != undefined) {
-      for (let i = 0; i < selected_list.length; i++) {
-        selected_list[i].StyleItem.FrameItem.BottomLeft = frame_item.BottomLeft
-        var elementHTML = document.getElementById(selected_list[i].GID)
-        elementHTML.style.borderBottomLeftRadius = `${frame_item.BottomLeft}px`
-      }
-    }
-    if (frame_item.BottomRight != undefined) {
-      for (let i = 0; i < selected_list.length; i++) {
-        selected_list[i].StyleItem.FrameItem.BottomRight =
-          frame_item.BottomRight
-        var elementHTML = document.getElementById(selected_list[i].GID)
-        elementHTML.style.borderBottomRightRadius = `${frame_item.BottomRight}px`
-      }
-    }
-  }
-  if (frame_item.IsClip != undefined) {
-    for (let i = 0; i < selected_list.length; i++) {
-      selected_list[i].StyleItem.FrameItem.IsClip = frame_item.IsClip
-      var elementHTML = document.getElementById(selected_list[i].GID)
-      elementHTML.style.overflow = frame_item.IsClip ? 'hidden' : 'visible'
-    }
-  }
-  WBaseDA.edit(selected_list, _enumObj)
-  updateUISelectBox()
-}
-
 function updatePosition (position_item, wbaseItem) {
   if (position_item.Left != undefined && position_item.Top != undefined) {
     if (!isNaN(position_item.Left))
@@ -3845,23 +3708,6 @@ function updatePosition (position_item, wbaseItem) {
     }
     updateConstraints(wbaseItem)
   }
-}
-
-function inputPositionItem (position_item) {
-  if (position_item.ConstraintsX != undefined) {
-    for (let wbaseItem of selected_list) {
-      wbaseItem.StyleItem.PositionItem.ConstraintsX = position_item.ConstraintsX
-      updateConstraints(wbaseItem)
-    }
-  }
-  if (position_item.ConstraintsY != undefined) {
-    for (let wbaseItem of selected_list) {
-      wbaseItem.StyleItem.PositionItem.ConstraintsY = position_item.ConstraintsY
-      updateConstraints(wbaseItem)
-    }
-  }
-  WBaseDA.edit(selected_list, EnumObj.position)
-  updateUISelectBox()
 }
 
 function updateConstraints (wbaseItem) {

@@ -674,7 +674,7 @@ function EditOffsetBlock () {
         : ''
     } style="margin-right: 8px; width: fit-content" />Clip content`
     btn_clip_content.firstChild.onchange = function (ev) {
-      inputFrameItem({ IsClip: ev.target.checked })
+      handleEditOffset({ isClip: ev.target.checked })
     }
     edit_size_position_div.appendChild(btn_clip_content)
   }
