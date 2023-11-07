@@ -593,6 +593,8 @@ function initPositionStyle(item) {
       item.value.style.top = valueT;
       item.value.style.transform = null;
     } else {
+      item.value.setAttribute("constx", item.StyleItem.PositionItem.ConstraintsX)
+      item.value.setAttribute("consty", item.StyleItem.PositionItem.ConstraintsY)
       let valueR = item.StyleItem.PositionItem.Right;
       let valueB = item.StyleItem.PositionItem.Bottom;
       switch (item.StyleItem.PositionItem.ConstraintsX) {

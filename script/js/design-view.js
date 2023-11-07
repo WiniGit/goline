@@ -65,7 +65,7 @@ function updateUIDesignView () {
         e => window.getComputedStyle(e.value).position === 'absolute'
       )
     ) {
-      let editConstraints = createConstraints()
+      let editConstraints = EditConstraintsBlock()
       listEditContainer.appendChild(editConstraints)
     }
     // if (select_box_parentID != wbase_parentID && selected_list.every((e) => window.getComputedStyle(e.value).position !== "absolute")) {
@@ -304,8 +304,8 @@ function EditOffsetBlock () {
   let editXYContainer = document.createElement('div')
   editXYContainer.className = 'row'
   // input edit left position
-  let list_offsetX = selected_list.filterAndMap(wbaseItem =>
-    `${getWBaseOffset(wbaseItem).x}`.replace('.00', '')
+  let list_offsetX = selected_list.filterAndMap(wb =>
+    `${getWBaseOffset(wb).x}`.replace('.00', '')
   )
   let edit_left = _textField({
     id: 'edit_position_item_left',
@@ -320,8 +320,8 @@ function EditOffsetBlock () {
     }
   })
   // input edit right position
-  let list_offsetY = selected_list.filterAndMap(wbaseItem =>
-    `${getWBaseOffset(wbaseItem).y}`.replace('.00', '')
+  let list_offsetY = selected_list.filterAndMap(wb =>
+    `${getWBaseOffset(wb).y}`.replace('.00', '')
   )
   let edit_top = _textField({
     id: 'edit_position_item_top',
@@ -355,7 +355,7 @@ function EditOffsetBlock () {
     edit_left.lastChild.disabled = !isFixPos
     iconFixPos.onclick = function () {
       isFixPos = !isFixPos
-      inputPositionItem({ FixPosition: isFixPos })
+      handleEditOffset({ fixPosition: isFixPos })
       if (isFixPos) this.classList.add('toggle')
       else this.classList.remove('toggle')
       edit_top.lastChild.disabled = !isFixPos
@@ -1214,7 +1214,7 @@ function _textField ({
 }
 
 // ! Constraints
-function createConstraints () {
+function EditConstraintsBlock () {
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-constraints'
   editContainer.className = 'edit-container'
@@ -1239,12 +1239,12 @@ function createConstraints () {
     e.value.getAttribute('constx')
   )
   let constraintsX =
-    constraintsXValues.length == 1 ? constraintsXValues[0] : 'mixed'
+    constraintsXValues.length === 1 ? constraintsXValues[0] : 'mixed'
   let constraintsYValues = selected_list.filterAndMap(e =>
     e.value.getAttribute('consty')
   )
   let constraintsY =
-    constraintsYValues.length == 1 ? constraintsYValues[0] : 'mixed'
+    constraintsYValues.length === 1 ? constraintsYValues[0] : 'mixed'
 
   let constraintsRect = document.createElement('div')
   constraintsRect.className = 'connstraints-rect'
@@ -1264,7 +1264,7 @@ function createConstraints () {
   ]
   if (
     selected_list.every(wb =>
-      EnumCate.scale_size_component.every(cate => wb.CateID != cate)
+      EnumCate.scale_size_component.every(ct => wb.CateID != ct)
     )
   ) {
     if (
@@ -1310,7 +1310,7 @@ function createConstraints () {
         break
     }
     selectBtn.onclick = function () {
-      inputPositionItem({ ConstraintsY: constY })
+      handleEditConstraints({ constY: constY })
       updateUIConstraints()
     }
     constraintsRect.appendChild(selectBtn)
@@ -1344,7 +1344,7 @@ function createConstraints () {
         break
     }
     selectBtn.onclick = function () {
-      inputPositionItem({ ConstraintsX: constX })
+      handleEditConstraints({ constX: constX })
       updateUIConstraints()
     }
     constraintsRect.appendChild(selectBtn)
@@ -1362,7 +1362,7 @@ function createConstraints () {
       }
     },
     function (value) {
-      inputPositionItem({ ConstraintsX: value })
+      handleEditConstraints({ constX: value })
       updateUIConstraints()
     }
   )
@@ -1380,7 +1380,7 @@ function createConstraints () {
       }
     },
     function (value) {
-      inputPositionItem({ ConstraintsY: value })
+      handleEditConstraints({ constY: value })
       updateUIConstraints()
     }
   )
@@ -1388,39 +1388,12 @@ function createConstraints () {
 
   selectConstraintsCol.replaceChildren(dropdownConstX, dropdownConstY)
 
-  // if (select_box_parentID !== wbase_parentID) {
-  //   let parentHTML = document.getElementById(select_box_parentID);
-  //   if (parentHTML.getAttribute("level") == 1 && EnumCate.extend_frame.some((cate) => parentHTML.getAttribute("cateid") == cate) && !window.getComputedStyle(parentHTML).display.match("flex")) {
-  //     let fixPosRow = document.createElement("div");
-  //     fixPosRow.className = "row";
-  //     fixPosRow.style.margin = "8px 0 0 8px";
-  //     fixPosRow.style.gap = "8px";
-  //     let checkboxIsFix = document.createElement("input");
-  //     checkboxIsFix.id = "check-fix-pos";
-  //     checkboxIsFix.type = "checkbox";
-  //     checkboxIsFix.style.scale = 1.2;
-  //     checkboxIsFix.style.width = "fit-content";
-  //     checkboxIsFix.defaultChecked = selected_list.every((e) => e.StyleItem.PositionItem.FixPosition);
-  //     checkboxIsFix.onchange = function (e) {
-  //       e.stopPropagation();
-  //       inputPositionItem({ FixPosition: this.checked });
-  //       updateUIConstraints();
-  //     };
-  //     let labelFixPos = document.createElement("label");
-  //     labelFixPos.className = "regular1";
-  //     labelFixPos.htmlFor = "check-fix-pos";
-  //     labelFixPos.innerHTML = "Fix position when scrolling";
-  //     fixPosRow.replaceChildren(checkboxIsFix, labelFixPos);
-  //     bodyContainer.appendChild(fixPosRow);
-  //   }
-  // }
-
   return editContainer
 }
 
 function updateUIConstraints () {
   if (document.getElementById('edit-constraints')) {
-    let newEditConst = createConstraints()
+    let newEditConst = EditConstraintsBlock()
     document.getElementById('edit-constraints').replaceWith(newEditConst)
   }
 }
@@ -2097,7 +2070,7 @@ function createEditTextStyle () {
     let cateItem = CateDA.list_typo_cate.find(e => e.ID == typoSkin.CateID)
     let skin_tile = wbaseSkinTile({
       cate: EnumCate.typography,
-      prefixValue: ` . ${typoSkin.FontSize}/${typoSkin.Height ?? 'auto'}`,
+      prefixValue: `${typoSkin.FontSize}/${typoSkin.Height ?? 'auto'}`,
       title: (cateItem ? `${cateItem.Name}/` : '') + typoSkin.Name,
       onClick: function () {
         let offset = header.getBoundingClientRect()
@@ -5078,7 +5051,7 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
       }
       break
     case EnumCate.typography:
-      btn_table_skin.innerHTML = `<p style="font-size: 14px">Ag</p><div style="margin: 0 8px;flex: 1"><p>${title}</p><p style="color: #c4c4c4"> . ${prefixValue}</p></div>`
+      btn_table_skin.innerHTML = `<p style="font-size: 14px">Ag</p><div class="row" style="margin: 0 8px;flex: 1"><p>${title}</p><p style="color: #c4c4c4"> . ${prefixValue}</p></div>`
       btn_unLink.onclick = function () {
         unlinkTypoSkin()
         updateUITextStyle()
