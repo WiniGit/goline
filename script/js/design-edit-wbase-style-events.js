@@ -2993,7 +2993,7 @@ function handleEditConstraints ({ constX, constY }) {
             })
             let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let centerValue = `${
-              x + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+              x + (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
             }px`
             cssRule.style.left = `calc(50% + ${centerValue})`
             cssRule.style.right = null
@@ -3371,7 +3371,7 @@ function handleEditConstraints ({ constX, constY }) {
             })
             let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let centerValue = `${
-              y + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+              y + (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) / 2
             }px`
             cssRule.style.top = `calc(50% + ${centerValue})`
             cssRule.style.bottom = null
