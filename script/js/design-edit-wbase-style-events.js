@@ -189,7 +189,9 @@ function handleEditAlign (newValue) {
                 break
               case Constraints.center:
                 let centerValue = `${
-                  minX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                  minX +
+                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
+                    2
                 }px`
                 wb.value.style.left = `calc(50% + ${centerValue})`
                 wb.StyleItem.PositionItem.Right = centerValue
@@ -204,7 +206,8 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.width.replace('px')) -
                       parseFloat(pStyle.borderRightWidth.replace('px')) -
                       parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                      minX - wb.value.offsetWidth
+                      minX -
+                      wb.value.offsetWidth
                   ) *
                     100) /
                   wb.value.parentElement.offsetWidth
@@ -240,7 +243,8 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.width.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    minX - wb.value.offsetWidth
+                    minX -
+                    wb.value.offsetWidth
                 )}px`
                 break
               case Constraints.left_right:
@@ -248,13 +252,16 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.width.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    minX - wb.value.offsetWidth
+                    minX -
+                    wb.value.offsetWidth
                 )}px`
                 cssRule.style.left = minX + 'px'
                 break
               case Constraints.center:
                 let centerValue = `${
-                  minX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                  minX +
+                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
+                    2
                 }px`
                 cssRule.style.left = `calc(50% + ${centerValue})`
                 break
@@ -268,7 +275,8 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.width.replace('px')) -
                       parseFloat(pStyle.borderRightWidth.replace('px')) -
                       parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                      minX - wb.value.offsetWidth
+                      minX -
+                      wb.value.offsetWidth
                   ) *
                     100) /
                   wb.value.parentElement.offsetWidth
@@ -457,7 +465,8 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.width.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    newOffX - wb.value.offsetWidth
+                    newOffX -
+                    wb.value.offsetWidth
                 )}px`
                 wb.StyleItem.PositionItem.Right = wb.value.style.right
                 break
@@ -466,7 +475,8 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.width.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    newOffX - wb.value.offsetWidth
+                    newOffX -
+                    wb.value.offsetWidth
                 )}px`
                 wb.value.style.left = newOffX + 'px'
                 wb.StyleItem.PositionItem.Left = wb.value.style.left
@@ -474,7 +484,9 @@ function handleEditAlign (newValue) {
                 break
               case Constraints.center:
                 let centerValue = `${
-                  newOffX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                  newOffX +
+                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
+                    2
                 }px`
                 wb.value.style.left = `calc(50% + ${centerValue})`
                 wb.StyleItem.PositionItem.Right = centerValue
@@ -489,7 +501,8 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.width.replace('px')) -
                       parseFloat(pStyle.borderRightWidth.replace('px')) -
                       parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                      newOffX - wb.value.offsetWidth
+                      newOffX -
+                      wb.value.offsetWidth
                   ) *
                     100) /
                   wb.value.parentElement.offsetWidth
@@ -525,7 +538,8 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.width.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    newOffX - wb.value.offsetWidth
+                    newOffX -
+                    wb.value.offsetWidth
                 )}px`
                 break
               case Constraints.left_right:
@@ -533,13 +547,16 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.width.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    newOffX - wb.value.offsetWidth
+                    newOffX -
+                    wb.value.offsetWidth
                 )}px`
                 cssRule.style.left = newOffX + 'px'
                 break
               case Constraints.center:
                 let centerValue = `${
-                  newOffX + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                  newOffX +
+                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
+                    2
                 }px`
                 cssRule.style.left = `calc(50% + ${centerValue})`
                 break
@@ -553,7 +570,8 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.width.replace('px')) -
                       parseFloat(pStyle.borderRightWidth.replace('px')) -
                       parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                      newOffX - wb.value.offsetWidth
+                      newOffX -
+                      wb.value.offsetWidth
                   ) *
                     100) /
                   wb.value.parentElement.offsetWidth
@@ -748,7 +766,8 @@ function handleEditAlign (newValue) {
                 let centerValue = `${
                   maxX -
                   wb.value.offsetWidth +
-                  (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
+                    2
                 }px`
                 wb.value.style.left = `calc(50% + ${centerValue})`
                 wb.StyleItem.PositionItem.Right = centerValue
@@ -809,7 +828,8 @@ function handleEditAlign (newValue) {
                 let centerValue = `${
                   maxX -
                   wb.value.offsetWidth +
-                  (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
+                    2
                 }px`
                 cssRule.style.left = `calc(50% + ${centerValue})`
                 break
@@ -1001,7 +1021,8 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.height.replace('px')) -
                     parseFloat(pStyle.borderBottomWidth.replace('px')) -
                     parseFloat(pStyle.borderTopWidth.replace('px')) -
-                    minY - wb.value.offsetHeight
+                    minY -
+                    wb.value.offsetHeight
                 )}px`
                 wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
                 break
@@ -1010,7 +1031,8 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.height.replace('px')) -
                     parseFloat(pStyle.borderBottomWidth.replace('px')) -
                     parseFloat(pStyle.borderTopWidth.replace('px')) -
-                    minY - wb.value.offsetHeight
+                    minY -
+                    wb.value.offsetHeight
                 )}px`
                 wb.value.style.top = minY + 'px'
                 wb.StyleItem.PositionItem.Top = wb.value.style.top
@@ -1018,7 +1040,10 @@ function handleEditAlign (newValue) {
                 break
               case Constraints.center:
                 let centerValue = `${
-                  minY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                  minY +
+                  (wb.value.offsetHeight -
+                    wb.value.parentElement.offsetHeight) /
+                    2
                 }px`
                 wb.value.style.top = `calc(50% + ${centerValue})`
                 wb.StyleItem.PositionItem.Bottom = centerValue
@@ -1033,7 +1058,8 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.height.replace('px')) -
                       parseFloat(pStyle.borderBottomWidth.replace('px')) -
                       parseFloat(pStyle.borderRightWidth.replace('px')) -
-                      minY - wb.value.offsetHeight
+                      minY -
+                      wb.value.offsetHeight
                   ) *
                     100) /
                   wb.value.parentElement.offsetHeight
@@ -1069,7 +1095,8 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.height.replace('px')) -
                     parseFloat(pStyle.borderBottomWidth.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
-                    minY - wb.value.offsetHeight
+                    minY -
+                    wb.value.offsetHeight
                 )}px`
                 break
               case Constraints.top_bottom:
@@ -1077,13 +1104,17 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.height.replace('px')) -
                     parseFloat(pStyle.borderBottomWidth.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
-                    minY - wb.value.offsetHeight
+                    minY -
+                    wb.value.offsetHeight
                 )}px`
                 cssRule.style.top = minY + 'px'
                 break
               case Constraints.center:
                 let centerValue = `${
-                  minY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                  minY +
+                  (wb.value.offsetHeight -
+                    wb.value.parentElement.offsetHeight) /
+                    2
                 }px`
                 cssRule.style.top = `calc(50% + ${centerValue})`
                 break
@@ -1097,7 +1128,8 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.height.replace('px')) -
                       parseFloat(pStyle.borderBottomWidth.replace('px')) -
                       parseFloat(pStyle.borderTopWidth.replace('px')) -
-                      minY - wb.value.offsetHeight
+                      minY -
+                      wb.value.offsetHeight
                   ) *
                     100) /
                   wb.value.parentElement.offsetHeight
@@ -1303,7 +1335,10 @@ function handleEditAlign (newValue) {
                 break
               case Constraints.center:
                 let centerValue = `${
-                  newOffY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                  newOffY +
+                  (wb.value.offsetHeight -
+                    wb.value.parentElement.offsetHeight) /
+                    2
                 }px`
                 wb.value.style.top = `calc(50% + ${centerValue})`
                 wb.StyleItem.PositionItem.Bottom = wb.value.style.centerValue
@@ -1318,7 +1353,8 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.height.replace('px')) -
                       parseFloat(pStyle.borderBottomWidth.replace('px')) -
                       parseFloat(pStyle.borderTopWidth.replace('px')) -
-                      newOffY - wb.value.offsetHeight
+                      newOffY -
+                      wb.value.offsetHeight
                   ) *
                     100) /
                   wb.value.parentElement.offsetHeight
@@ -1368,7 +1404,10 @@ function handleEditAlign (newValue) {
                 break
               case Constraints.center:
                 let centerValue = `${
-                  newOffY + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                  newOffY +
+                  (wb.value.offsetHeight -
+                    wb.value.parentElement.offsetHeight) /
+                    2
                 }px`
                 cssRule.style.top = `calc(50% + ${centerValue})`
                 break
@@ -1382,7 +1421,8 @@ function handleEditAlign (newValue) {
                     parseFloat(pStyle.height.replace('px')) -
                       parseFloat(pStyle.borderBottomWidth.replace('px')) -
                       parseFloat(pStyle.borderTopWidth.replace('px')) -
-                      newOffY - wb.value.offsetHeight
+                      newOffY -
+                      wb.value.offsetHeight
                   ) *
                     100) /
                   wb.value.parentElement.offsetHeight
@@ -1578,7 +1618,9 @@ function handleEditAlign (newValue) {
                 let centerValue = `${
                   maxY -
                   wb.value.offsetHeight +
-                  (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                  (wb.value.offsetHeight -
+                    wb.value.parentElement.offsetHeight) /
+                    2
                 }px`
                 wb.value.style.top = `calc(50% + ${centerValue})`
                 wb.StyleItem.PositionItem.Bottom = centerValue
@@ -1639,7 +1681,9 @@ function handleEditAlign (newValue) {
                 let centerValue = `${
                   maxY -
                   wb.value.offsetHeight +
-                  (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+                  (wb.value.offsetHeight -
+                    wb.value.parentElement.offsetHeight) /
+                    2
                 }px`
                 cssRule.style.top = `calc(50% + ${centerValue})`
                 break
@@ -2238,7 +2282,8 @@ function handleEditOffset ({
               parseFloat(pStyle.width.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
                 parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x - wb.value.offsetWidth
+                x -
+                wb.value.offsetWidth
             )}px`
             wb.StyleItem.PositionItem.Right = wb.value.style.right
             break
@@ -2247,7 +2292,8 @@ function handleEditOffset ({
               parseFloat(pStyle.width.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
                 parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x - wb.value.offsetWidth
+                x -
+                wb.value.offsetWidth
             )}px`
             wb.value.style.left = x + 'px'
             wb.StyleItem.PositionItem.Left = x + 'px'
@@ -2255,7 +2301,8 @@ function handleEditOffset ({
             break
           case Constraints.center:
             let centerValue = `${
-              x + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+              x +
+              (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
             }px`
             wb.value.style.left = `calc(50% + ${centerValue})`
             wb.StyleItem.PositionItem.Right = centerValue
@@ -2270,7 +2317,8 @@ function handleEditOffset ({
                 parseFloat(pStyle.width.replace('px')) -
                   parseFloat(pStyle.borderRightWidth.replace('px')) -
                   parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                  x - wb.value.offsetWidth
+                  x -
+                  wb.value.offsetWidth
               ) *
                 100) /
               wb.value.parentElement.offsetWidth
@@ -2303,7 +2351,8 @@ function handleEditOffset ({
               parseFloat(pStyle.width.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
                 parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x - wb.value.offsetWidth
+                x -
+                wb.value.offsetWidth
             )}px`
             break
           case Constraints.left_right:
@@ -2311,13 +2360,15 @@ function handleEditOffset ({
               parseFloat(pStyle.width.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
                 parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x - wb.value.offsetWidth
+                x -
+                wb.value.offsetWidth
             )}px`
             cssRule.style.left = x + 'px'
             break
           case Constraints.center:
             let centerValue = `${
-              x + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+              x +
+              (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
             }px`
             cssRule.style.left = `calc(50% + ${centerValue})`
             break
@@ -2331,7 +2382,8 @@ function handleEditOffset ({
                 parseFloat(pStyle.width.replace('px')) -
                   parseFloat(pStyle.borderRightWidth.replace('px')) -
                   parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                  x - wb.value.offsetWidth
+                  x -
+                  wb.value.offsetWidth
               ) *
                 100) /
               wb.value.parentElement.offsetWidth
@@ -2360,7 +2412,8 @@ function handleEditOffset ({
               parseFloat(pStyle.height.replace('px')) -
                 parseFloat(pStyle.borderBottomWidth.replace('px')) -
                 parseFloat(pStyle.borderTopWidth.replace('px')) -
-                y - wb.value.offsetHeight
+                y -
+                wb.value.offsetHeight
             )}px`
             wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
             break
@@ -2369,7 +2422,8 @@ function handleEditOffset ({
               parseFloat(pStyle.height.replace('px')) -
                 parseFloat(pStyle.borderBottomWidth.replace('px')) -
                 parseFloat(pStyle.borderTopWidth.replace('px')) -
-                y - wb.value.offsetHeight
+                y -
+                wb.value.offsetHeight
             )}px`
             wb.value.style.top = y + 'px'
             wb.StyleItem.PositionItem.Top = y + 'px'
@@ -2377,7 +2431,8 @@ function handleEditOffset ({
             break
           case Constraints.center:
             let centerValue = `${
-              y + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+              y +
+              (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) / 2
             }px`
             wb.value.style.top = `calc(50% + ${centerValue})`
             wb.StyleItem.PositionItem.Bottom = centerValue
@@ -2392,7 +2447,8 @@ function handleEditOffset ({
                 parseFloat(pStyle.height.replace('px')) -
                   parseFloat(pStyle.borderBottomWidth.replace('px')) -
                   parseFloat(pStyle.borderRightWidth.replace('px')) -
-                  y - wb.value.offsetHeight
+                  y -
+                  wb.value.offsetHeight
               ) *
                 100) /
               wb.value.parentElement.offsetHeight
@@ -2425,7 +2481,8 @@ function handleEditOffset ({
               parseFloat(pStyle.height.replace('px')) -
                 parseFloat(pStyle.borderBottomWidth.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
-                y - wb.value.offsetHeight
+                y -
+                wb.value.offsetHeight
             )}px`
             break
           case Constraints.top_bottom:
@@ -2433,13 +2490,15 @@ function handleEditOffset ({
               parseFloat(pStyle.height.replace('px')) -
                 parseFloat(pStyle.borderBottomWidth.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
-                y - wb.value.offsetHeight
+                y -
+                wb.value.offsetHeight
             )}px`
             cssRule.style.top = y + 'px'
             break
           case Constraints.center:
             let centerValue = `${
-              y + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+              y +
+              (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) / 2
             }px`
             cssRule.style.top = `calc(50% + ${centerValue})`
             break
@@ -2453,7 +2512,8 @@ function handleEditOffset ({
                 parseFloat(pStyle.height.replace('px')) -
                   parseFloat(pStyle.borderBottomWidth.replace('px')) -
                   parseFloat(pStyle.borderTopWidth.replace('px')) -
-                  y - wb.value.offsetHeight
+                  y -
+                  wb.value.offsetHeight
               ) *
                 100) /
               wb.value.parentElement.offsetHeight
@@ -2727,12 +2787,13 @@ function handleEditConstraints ({ constX, constY }) {
         )
         if (selected_list[0].StyleItem) {
           for (let wb of selected_list) {
-            let x = `${getWBaseOffset(wb).x}`.replace('.00', '') + 'px'
+            let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let right = `${Math.round(
               parseFloat(pStyle.width.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
                 parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x - wb.value.offsetWidth
+                x -
+                wb.value.offsetWidth
             )}px`
             wb.StyleItem.PositionItem.Right = right
             wb.StyleItem.PositionItem.ConstraintsX = Constraints.right
@@ -2784,12 +2845,13 @@ function handleEditConstraints ({ constX, constY }) {
               }
               return check
             })
-            let x = `${getWBaseOffset(wb).x}`.replace('.00', '') + 'px'
+            let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let right = `${Math.round(
               parseFloat(pStyle.width.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
                 parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x - wb.value.offsetWidth
+                x -
+                wb.value.offsetWidth
             )}px`
             cssRule.style.left = null
             cssRule.style.right = right
@@ -2810,18 +2872,19 @@ function handleEditConstraints ({ constX, constY }) {
         )
         if (selected_list[0].StyleItem) {
           for (let wb of selected_list) {
-            let x = `${getWBaseOffset(wb).x}`.replace('.00', '') + 'px'
+            let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let right = `${Math.round(
               parseFloat(pStyle.width.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
                 parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x - wb.value.offsetWidth
+                x -
+                wb.value.offsetWidth
             )}px`
-            wb.StyleItem.PositionItem.Left = x
+            wb.StyleItem.PositionItem.Left = x + 'px'
             wb.StyleItem.PositionItem.Right = right
             wb.StyleItem.PositionItem.ConstraintsX = Constraints.left_right
             wb.value.setAttribute('constx', Constraints.left_right)
-            wb.value.style.left = x
+            wb.value.style.left = x + 'px'
             wb.value.style.right = right
             wb.value.style.width = null
             if (wb.value.getAttribute('consty') === Constraints.center) {
@@ -2848,14 +2911,15 @@ function handleEditConstraints ({ constX, constY }) {
                 )
               return check
             })
-            let x = `${getWBaseOffset(wb).x}`.replace('.00', '') + 'px'
+            let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let right = `${Math.round(
               parseFloat(pStyle.width.replace('px')) -
                 parseFloat(pStyle.borderRightWidth.replace('px')) -
                 parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x - wb.value.offsetWidth
+                x -
+                wb.value.offsetWidth
             )}px`
-            cssRule.style.left = x
+            cssRule.style.left = x + "px"
             cssRule.style.right = right
             cssRule.style.width = null
             if (wb.value.getAttribute('consty') === Constraints.center) {
@@ -2872,9 +2936,10 @@ function handleEditConstraints ({ constX, constY }) {
       case Constraints.center:
         if (selected_list[0].StyleItem) {
           for (let wb of selected_list) {
-            let x = `${getWBaseOffset(wb).x}`.replace('.00', '') + 'px'
+            let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let centerValue = `${
-              x + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
+              x +
+              (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
             }px`
             wb.StyleItem.PositionItem.Right = centerValue
             wb.StyleItem.PositionItem.ConstraintsX = Constraints.center
@@ -2926,7 +2991,7 @@ function handleEditConstraints ({ constX, constY }) {
               }
               return check
             })
-            let x = `${getWBaseOffset(wb).x}`.replace('.00', '') + 'px'
+            let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let centerValue = `${
               x + (wb.value.offsetWidth - wb.value.offsetWidth) / 2
             }px`
@@ -2946,7 +3011,7 @@ function handleEditConstraints ({ constX, constY }) {
       case Constraints.scale:
         if (selected_list[0].StyleItem) {
           for (let wb of selected_list) {
-            let x = `${getWBaseOffset(wb).x}`.replace('.00', '') + 'px'
+            let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let leftValue = `${(
               (x * 100) /
               wb.value.parentElement.offsetWidth
@@ -2956,7 +3021,8 @@ function handleEditConstraints ({ constX, constY }) {
                 parseFloat(pStyle.width.replace('px')) -
                   parseFloat(pStyle.borderRightWidth.replace('px')) -
                   parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                  x - wb.value.offsetWidth
+                  x -
+                  wb.value.offsetWidth
               ) *
                 100) /
               wb.value.parentElement.offsetWidth
@@ -2992,7 +3058,7 @@ function handleEditConstraints ({ constX, constY }) {
                 )
               return check
             })
-            let x = `${getWBaseOffset(wb).x}`.replace('.00', '') + 'px'
+            let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let leftValue = `${(
               (x * 100) /
               wb.value.parentElement.offsetWidth
@@ -3002,7 +3068,8 @@ function handleEditConstraints ({ constX, constY }) {
                 parseFloat(pStyle.width.replace('px')) -
                   parseFloat(pStyle.borderRightWidth.replace('px')) -
                   parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                  x - wb.value.offsetWidth
+                  x -
+                  wb.value.offsetWidth
               ) *
                 100) /
               wb.value.parentElement.offsetWidth
@@ -3074,9 +3141,7 @@ function handleEditConstraints ({ constX, constY }) {
                   default:
                     break
                 }
-                selector.forEach(e =>
-                  e.setAttribute('consty', Constraints.top)
-                )
+                selector.forEach(e => e.setAttribute('consty', Constraints.top))
               }
               return check
             })
@@ -3100,12 +3165,13 @@ function handleEditConstraints ({ constX, constY }) {
         )
         if (selected_list[0].StyleItem) {
           for (let wb of selected_list) {
-            let y = `${getWBaseOffset(wb).y}`.replace('.00', '') + 'px'
+            let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let bot = `${Math.round(
               parseFloat(pStyle.height.replace('px')) -
                 parseFloat(pStyle.borderBottomWidth.replace('px')) -
                 parseFloat(pStyle.borderTopWidth.replace('px')) -
-                y - wb.value.offsetHeight
+                y -
+                wb.value.offsetHeight
             )}px`
             wb.StyleItem.PositionItem.Bottom = bot
             wb.StyleItem.PositionItem.ConstraintsY = Constraints.bottom
@@ -3157,12 +3223,13 @@ function handleEditConstraints ({ constX, constY }) {
               }
               return check
             })
-            let y = `${getWBaseOffset(wb).y}`.replace('.00', '') + 'px'
+            let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let bot = `${Math.round(
               parseFloat(pStyle.height.replace('px')) -
                 parseFloat(pStyle.borderBottomWidth.replace('px')) -
                 parseFloat(pStyle.borderTopWidth.replace('px')) -
-                y - wb.value.offsetHeight
+                y -
+                wb.value.offsetHeight
             )}px`
             cssRule.style.top = null
             cssRule.style.right = bot
@@ -3183,18 +3250,19 @@ function handleEditConstraints ({ constX, constY }) {
         )
         if (selected_list[0].StyleItem) {
           for (let wb of selected_list) {
-            let y = `${getWBaseOffset(wb).y}`.replace('.00', '') + 'px'
+            let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let bot = `${Math.round(
               parseFloat(pStyle.height.replace('px')) -
                 parseFloat(pStyle.borderBottomWidth.replace('px')) -
                 parseFloat(pStyle.borderTopWidth.replace('px')) -
-                y - wb.value.offsetHeight
+                y -
+                wb.value.offsetHeight
             )}px`
-            wb.StyleItem.PositionItem.Top = y
+            wb.StyleItem.PositionItem.Top = y + "px"
             wb.StyleItem.PositionItem.Bottom = bot
             wb.StyleItem.PositionItem.ConstraintsY = Constraints.top_bottom
             wb.value.setAttribute('constx', Constraints.top_bottom)
-            wb.value.style.top = y
+            wb.value.style.top = y + "px"
             wb.value.style.bottom = bot
             wb.value.style.height = null
             if (wb.value.getAttribute('constx') === Constraints.center) {
@@ -3221,14 +3289,15 @@ function handleEditConstraints ({ constX, constY }) {
                 )
               return check
             })
-            let y = `${getWBaseOffset(wb).y}`.replace('.00', '') + 'px'
+            let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let bot = `${Math.round(
               parseFloat(pStyle.height.replace('px')) -
                 parseFloat(pStyle.borderBottomWidth.replace('px')) -
                 parseFloat(pStyle.borderTopWidth.replace('px')) -
-                y - wb.value.offsetHeight
+                y -
+                wb.value.offsetHeight
             )}px`
-            cssRule.style.top = y
+            cssRule.style.top = y + "px"
             cssRule.style.bottom = bot
             cssRule.style.height = null
             if (wb.value.getAttribute('constx') === Constraints.center) {
@@ -3245,9 +3314,10 @@ function handleEditConstraints ({ constX, constY }) {
       case Constraints.center:
         if (selected_list[0].StyleItem) {
           for (let wb of selected_list) {
-            let y = `${getWBaseOffset(wb).y}`.replace('.00', '') + 'px'
+            let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let centerValue = `${
-              y + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
+              y +
+              (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) / 2
             }px`
             wb.StyleItem.PositionItem.Bottom = centerValue
             wb.StyleItem.PositionItem.ConstraintsY = Constraints.center
@@ -3299,7 +3369,7 @@ function handleEditConstraints ({ constX, constY }) {
               }
               return check
             })
-            let y = `${getWBaseOffset(wb).y}`.replace('.00', '') + 'px'
+            let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let centerValue = `${
               y + (wb.value.offsetHeight - wb.value.offsetHeight) / 2
             }px`
@@ -3319,7 +3389,7 @@ function handleEditConstraints ({ constX, constY }) {
       case Constraints.scale:
         if (selected_list[0].StyleItem) {
           for (let wb of selected_list) {
-            let y = `${getWBaseOffset(wb).y}`.replace('.00', '') + 'px'
+            let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let topValue = `${(
               (y * 100) /
               wb.value.parentElement.offsetHeight
@@ -3329,7 +3399,8 @@ function handleEditConstraints ({ constX, constY }) {
                 parseFloat(pStyle.height.replace('px')) -
                   parseFloat(pStyle.borderBottomWidth.replace('px')) -
                   parseFloat(pStyle.borderTopWidth.replace('px')) -
-                  y - wb.value.offsetHeight
+                  y -
+                  wb.value.offsetHeight
               ) *
                 100) /
               wb.value.parentElement.offsetHeight
@@ -3365,7 +3436,7 @@ function handleEditConstraints ({ constX, constY }) {
                 )
               return check
             })
-            let y = `${getWBaseOffset(wb).y}`.replace('.00', '') + 'px'
+            let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let topValue = `${(
               (y * 100) /
               wb.value.parentElement.offsetHeight
@@ -3375,7 +3446,8 @@ function handleEditConstraints ({ constX, constY }) {
                 parseFloat(pStyle.height.replace('px')) -
                   parseFloat(pStyle.borderBottomWidth.replace('px')) -
                   parseFloat(pStyle.borderTopWidth.replace('px')) -
-                  y - wb.value.offsetHeight
+                  y -
+                  wb.value.offsetHeight
               ) *
                 100) /
               wb.value.parentElement.offsetHeight
