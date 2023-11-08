@@ -1216,7 +1216,7 @@ function handleEditAlign (newValue) {
                   cWb.value.style.transform = 'translate(-50%,-50%)'
                 } else cWb.value.style.transform = 'translateY(-50%)'
                 wb.value.style.top = `calc(50% + 0px)`
-                cWb.value.style.bottom = ''
+                cWb.value.style.bottom = null
                 cWb.value.setAttribute('consty', Constraints.center)
                 cWb.StyleItem.PositionItem.Right = '0px'
                 cWb.StyleItem.PositionItem.ConstraintsY = Constraints.center
@@ -1286,7 +1286,7 @@ function handleEditAlign (newValue) {
             cssRule.style.transform = 'translate(-50%,-50%)'
           } else cssRule.style.transform = 'translateY(-50%)'
           cssRule.style.top = 'calc(50% + 0px)'
-          cssRule.style.bottom = ''
+          cssRule.style.bottom = null
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
@@ -1511,7 +1511,7 @@ function handleEditAlign (newValue) {
                 cWb.value.style.top = ''
                 cWb.value.style.bottom = '0px'
                 cWb.value.setAttribute('consty', Constraints.bottom)
-                wb.StyleItem.PositionItem.Bottom = botValue
+                wb.StyleItem.PositionItem.Bottom = '0px'
                 wb.StyleItem.PositionItem.ConstraintsY = Constraints.bottom
               }
               listUpdate.push(...children)
@@ -1540,7 +1540,7 @@ function handleEditAlign (newValue) {
           selected_list[0].value.style.top = ''
           selected_list[0].value.style.bottom = '0px'
           selected_list[0].value.setAttribute('consty', Constraints.bottom)
-          selected_list[0].StyleItem.PositionItem.Bottom = botValue
+          selected_list[0].StyleItem.PositionItem.Bottom = '0px'
           selected_list[0].StyleItem.PositionItem.ConstraintsY =
             Constraints.bottom
           listUpdate.push(...selected_list)
@@ -1992,6 +1992,7 @@ function handleEditOffset ({
       }
     }
   } else if (width !== undefined) {
+    let resizeFixed = width === 'fixed'
     if (selected_list[0].StyleItem) {
       for (let wb of selected_list) {
         let children = [
@@ -1999,6 +2000,7 @@ function handleEditOffset ({
             `.wbaseItem-value[level="${wb.Level + 1}"]`
           )
         ]
+        if (resizeFixed) width = wb.value.offsetWidth
         if (width === null) {
           if (wb.value.classList.contains('w-row')) {
             children = children.filter(
@@ -2067,6 +2069,7 @@ function handleEditOffset ({
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
+        if (resizeFixed) width = wb.value.offsetWidth
         let cssRule = StyleDA.docStyleSheets.find(rule => {
           let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
           let check = selector.includes(wb.value)
@@ -2133,6 +2136,7 @@ function handleEditOffset ({
       }
     }
   } else if (height !== undefined) {
+    let resizeFixed = height === 'fixed'
     if (selected_list[0].StyleItem) {
       for (let wb of selected_list) {
         let children = [
@@ -2140,6 +2144,7 @@ function handleEditOffset ({
             `.wbaseItem-value[level="${wb.Level + 1}"]`
           )
         ]
+        if (resizeFixed) height = wb.value.offsetHeight
         if (height === null) {
           if (wb.value.classList.contains('w-col')) {
             children = children.filter(
@@ -2208,6 +2213,7 @@ function handleEditOffset ({
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
+        if (resizeFixed) height = wb.value.offsetHeight
         let cssRule = StyleDA.docStyleSheets.find(rule => {
           let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
           let check = selector.includes(wb.value)
@@ -2707,11 +2713,11 @@ function handleEditOffset ({
       }
     } else {
     }
-  } else if(typeof isClip === "boolean") {
+  } else if (typeof isClip === 'boolean') {
     if (selected_list[0].StyleItem) {
       for (let wb of selected_list) {
         wb.StyleItem.FrameItem.IsClip = isClip
-        wb.value.style.overflow = isClip ? "hidden" : null
+        wb.value.style.overflow = isClip ? 'hidden' : null
       }
       listUpdate.push(...selected_list)
       WBaseDA.edit(listUpdate, EnumObj.frame)
@@ -2724,7 +2730,7 @@ function handleEditOffset ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.overflow = isClip ? "hidden" : null
+        cssRule.style.overflow = isClip ? 'hidden' : null
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -2945,7 +2951,7 @@ function handleEditConstraints ({ constX, constY }) {
                 x -
                 wb.value.offsetWidth
             )}px`
-            cssRule.style.left = x + "px"
+            cssRule.style.left = x + 'px'
             cssRule.style.right = right
             cssRule.style.width = null
             if (wb.value.getAttribute('consty') === Constraints.center) {
@@ -3019,7 +3025,8 @@ function handleEditConstraints ({ constX, constY }) {
             })
             let x = parseFloat(`${getWBaseOffset(wb).x}`.replace('.00', ''))
             let centerValue = `${
-              x + (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
+              x +
+              (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
             }px`
             cssRule.style.left = `calc(50% + ${centerValue})`
             cssRule.style.right = null
@@ -3284,11 +3291,11 @@ function handleEditConstraints ({ constX, constY }) {
                 y -
                 wb.value.offsetHeight
             )}px`
-            wb.StyleItem.PositionItem.Top = y + "px"
+            wb.StyleItem.PositionItem.Top = y + 'px'
             wb.StyleItem.PositionItem.Bottom = bot
             wb.StyleItem.PositionItem.ConstraintsY = Constraints.top_bottom
             wb.value.setAttribute('constx', Constraints.top_bottom)
-            wb.value.style.top = y + "px"
+            wb.value.style.top = y + 'px'
             wb.value.style.bottom = bot
             wb.value.style.height = null
             if (wb.value.getAttribute('constx') === Constraints.center) {
@@ -3323,7 +3330,7 @@ function handleEditConstraints ({ constX, constY }) {
                 y -
                 wb.value.offsetHeight
             )}px`
-            cssRule.style.top = y + "px"
+            cssRule.style.top = y + 'px'
             cssRule.style.bottom = bot
             cssRule.style.height = null
             if (wb.value.getAttribute('constx') === Constraints.center) {
@@ -3397,7 +3404,8 @@ function handleEditConstraints ({ constX, constY }) {
             })
             let y = parseFloat(`${getWBaseOffset(wb).y}`.replace('.00', ''))
             let centerValue = `${
-              y + (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) / 2
+              y +
+              (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) / 2
             }px`
             cssRule.style.top = `calc(50% + ${centerValue})`
             cssRule.style.bottom = null
@@ -3498,112 +3506,15 @@ function handleEditConstraints ({ constX, constY }) {
   }
 }
 
-function frameHugChildrenSize () {
-  let frameList = selected_list.filter(
-    e =>
-      EnumCate.extend_frame.some(cate => e.CateID === cate) &&
-      (e.value.style.width != '100%' || e.value.style.height != '100%')
-  )
-  let list_update = [...frameList]
-  for (let wbaseItem of frameList) {
-    let childrenHTML = [...wbaseItem.value.childNodes]
-    if (
-      wbaseItem.value.style.width != '100%' &&
-      wbaseItem.value.style.height != '100%'
-    ) {
-      let dx = parseFloat(
-        Math.min(...childrenHTML.map(e => e.offsetLeft)).toFixed(2)
-      )
-      let dy = parseFloat(
-        Math.min(...childrenHTML.map(e => e.offsetTop)).toFixed(2)
-      )
-      wbaseItem.StyleItem.PositionItem.Left = `${
-        wbaseItem.value.offsetLeft + dx
-      }px`
-      wbaseItem.StyleItem.PositionItem.Top = `${
-        wbaseItem.value.offsetTop + dy
-      }px`
-      childrenHTML.forEach(childHTML => {
-        if (childHTML.style.width == 'auto') {
-          childHTML.style.width = childHTML.offsetWidth + 'px'
-        }
-        if (childHTML.style.height == 'auto') {
-          childHTML.style.height = childHTML.offsetHeight + 'px'
-        }
-        childHTML.style.right = null
-        childHTML.style.bottom = null
-        childHTML.style.left = `${childHTML.offsetLeft - dx}px`
-        childHTML.style.top = `${childHTML.offsetTop - dy}px`
-      })
-      wbaseItem.StyleItem.FrameItem.Width = Math.max(
-        ...childrenHTML.map(e => e.offsetLeft + e.offsetWidth)
-      ).toFixed(2)
-      wbaseItem.StyleItem.FrameItem.Height = Math.max(
-        ...childrenHTML.map(e => e.offsetTop + e.offsetHeight)
-      ).toFixed(2)
-      wbaseItem.value.style.right = null
-      wbaseItem.value.style.bottom = null
-      wbaseItem.value.style.transform = null
-      wbaseItem.value.style.left = wbaseItem.StyleItem.PositionItem.Left
-      wbaseItem.value.style.top = wbaseItem.StyleItem.PositionItem.Top
-      wbaseItem.value.style.width = wbaseItem.StyleItem.FrameItem.Width + 'px'
-      wbaseItem.value.style.height = wbaseItem.StyleItem.FrameItem.Height + 'px'
-      if (wbaseItem.ParentID !== wbase_parentID) updateConstraints(wbaseItem)
-      wbase_list
-        .filter(e => e.ParentID === wbaseItem.GID)
-        .forEach(child => {
-          updateConstraints(child)
-          list_update.push(child)
-        })
-    } else if (wbaseItem.value.style.width != '100%') {
-      let dx = parseFloat(
-        Math.min(...childrenHTML.map(e => e.offsetLeft)).toFixed(2)
-      )
-      wbaseItem.StyleItem.PositionItem.Left = `${dx}px`
-      childrenHTML.forEach(childHTML => {
-        if (childHTML.style.width == 'auto') {
-          childHTML.style.width = childHTML.offsetWidth + 'px'
-        }
-        childHTML.style.right = `unset`
-        childHTML.style.left = `${childHTML.offsetLeft - dx}px`
-        childHTML.style.transform = null
-      })
-      wbaseItem.StyleItem.FrameItem.Width = Math.max(
-        ...childrenHTML.map(e => e.offsetLeft + e.offsetWidth)
-      ).toFixed(2)
-      wbaseItem.value.style.width = wbaseItem.StyleItem.FrameItem.Width + 'px'
-      wbase_list
-        .filter(e => e.ParentID === wbaseItem.GID)
-        .forEach(child => {
-          updateConstraints(child)
-          list_update.push(child)
-        })
-    } else if (wbaseItem.value.style.height != '100%') {
-      let dy = parseFloat(
-        Math.min(...childrenHTML.map(e => e.offsetTop)).toFixed(2)
-      )
-      wbaseItem.StyleItem.PositionItem.Top = `${dy}px`
-      childrenHTML.forEach(childHTML => {
-        if (childHTML.style.height == 'auto') {
-          childHTML.style.height = childHTML.offsetHeight + 'px'
-        }
-        childHTML.style.bottom = `unset`
-        childHTML.style.top = `${childHTML.offsetTop - dy}px`
-        childHTML.style.transform = null
-      })
-      wbaseItem.StyleItem.FrameItem.Height = Math.max(
-        ...childrenHTML.map(e => e.offsetTop + e.offsetHeight)
-      ).toFixed(2)
-      wbaseItem.value.style.height = wbaseItem.StyleItem.FrameItem.Height + 'px'
-      wbase_list
-        .filter(e => e.ParentID === wbaseItem.GID)
-        .forEach(child => {
-          updateConstraints(child)
-          list_update.push(child)
-        })
+function handleEditBackground() {
+  let listUpdate = selected_list.filter(wb => wb.CateID !== EnumCate.text)
+  if(listUpdate[0].StyleItem) {
+    for(let wb of listUpdate) {
+      
     }
+  } else {
+
   }
-  WBaseDA.edit(list_update, EnumObj.framePosition)
 }
 
 function updatePosition (position_item, wbaseItem) {

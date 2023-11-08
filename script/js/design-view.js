@@ -1816,9 +1816,10 @@ function createEditBackground () {
             ...colorsSelectionList.querySelectorAll('.parameter-form')
           ].map(eHTML => {
             return (
+              eHTML.querySelector('.edit-color-form').value +
               Ultis.percentToHex(
                 eHTML.querySelector('.edit-opacity-form').value.replace('%', '')
-              ) + eHTML.querySelector('.edit-color-form').value
+              )
             )
           })
           editBackground(
@@ -1896,35 +1897,15 @@ function createEditBackground () {
       editContainer.appendChild(editImgTile)
 
       let divSelectImg = document.createElement('div')
+      divSelectImg.innerHTML = `<div style="background: url(${window
+        .getComputedStyle(selected_list[0].value)
+        .backgroundImage.replace(/(url\("|"\))/g, '')
+        }) 0 0 / cover no-repeat; width: 20px; height: 16px; margin: 6px"></div><p>Image</p><input class="regular1" value="100%" style="width: 38px; min-width: 40px;padding: 0 0 0 6px"/>`
       editImgTile.appendChild(divSelectImg)
 
-      let imgDemo = document.createElement('div')
-      imgDemo.style.backgroundImage = `url(${
-        urlImg + selected_list[0].StyleItem.DecorationItem.ColorValue
-      })`
-      imgDemo.style.backgroundSize = 'cover'
-      imgDemo.style.backgroundPosition = 'center'
-      imgDemo.style.backgroundRepeat = 'no-repeat'
-      imgDemo.style.width = '20px'
-      imgDemo.style.height = '16px'
-      imgDemo.style.margin = '6px'
-      imgDemo.onclick = function () {
-        if (document.getElementById('popup_img_document') == undefined) {
-          FileDA.init()
-        }
-      }
-      divSelectImg.appendChild(imgDemo)
-      let imgName = document.createElement('p')
-      imgName.innerHTML = 'Image'
-
-      divSelectImg.appendChild(imgName)
-      let inputOpacity = document.createElement('input')
-      inputOpacity.value = '100%'
-      inputOpacity.style.width = '38px'
-      inputOpacity.style.minWidth = '0px'
-      inputOpacity.style.minWidth = '40px'
-      inputOpacity.style.padding = '0 0 0 6px'
-      divSelectImg.appendChild(inputOpacity)
+      $(divSelectImg).on('click', 'div', function () {
+        if (!document.getElementById('popup_img_document')) FileDA.init()
+      })
 
       let btnEye = document.createElement('img')
       btnEye.src =
