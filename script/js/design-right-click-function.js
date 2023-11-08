@@ -361,12 +361,13 @@ function createComponent() {
     }
     let newStyle = document.createElement("style");
     newStyle.id = `w-st-comp${wb.GID}`;
-    let wbCssText = wb.value.style.cssText.split(";");
+    // let wbCssText = wb.value.style.cssText.split(";");
     let cssItem = {
       GID: wb.GID,
       Name: wbClassName,
       PageID: PageDA.obj.ID,
-      Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
+      // Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
+      Css: ``,
     };
     let children = [];
     if (wb.CateID === EnumCate.svg) {

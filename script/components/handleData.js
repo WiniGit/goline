@@ -691,10 +691,10 @@ function initWbaseStyle(item) {
         if (item.StyleItem.DecorationItem.ColorID) {
           switch (item.CateID) {
             case EnumCate.w_switch:
-              item.value.style.setProperty("--checked-bg", `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`);
+              item.value.style.setProperty("--checked-color", `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`);
               break;
             case EnumCate.checkbox:
-              item.value.style.setProperty("--checked-bg", `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`);
+              item.value.style.setProperty("--checked-color", `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`);
               break;
             default:
               item.value.style.backgroundColor = `var(--background-color-${item.StyleItem.DecorationItem.ColorID})`;
@@ -703,10 +703,10 @@ function initWbaseStyle(item) {
         } else {
           switch (item.CateID) {
             case EnumCate.w_switch:
-              item.value.style.setProperty("--checked-bg", `#${background}`);
+              item.value.style.setProperty("--checked-color", `#${background}`);
               break;
             case EnumCate.checkbox:
-              item.value.style.setProperty("--checked-bg", `#${background}`);
+              item.value.style.setProperty("--checked-color", `#${background}`);
               break;
             default:
               item.value.style.backgroundColor = `#${background}`;

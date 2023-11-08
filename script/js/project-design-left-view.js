@@ -1316,7 +1316,7 @@ function createProjectTile(projectItem, suffixOnclick) {
   let toggle = createSwitch(ProjectDA.obj.ListID?.split(",")?.includes(projectItem.ID.toString()));
   $(toggle).addClass(" toggle_ptoject_tile");
   toggle.style.setProperty("--unchecked-bg", "#ccc");
-  toggle.style.setProperty("--checked-bg", "#1890ff");
+  toggle.style.setProperty("--checked-color", "#1890ff");
   if (projectItem.Permission === EnumPermission.view) {
     toggle.style.pointerEvents = "none";
   }

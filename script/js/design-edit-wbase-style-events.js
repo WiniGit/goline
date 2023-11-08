@@ -726,7 +726,7 @@ function handleEditAlign (newValue) {
           ) {
             cssRule.style.transform = 'translateY(-50%)'
           } else cssRule.style.transform = null
-          cssRule.style.left = ''
+          cssRule.style.left = null
           cssRule.style.right = '0px'
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -903,7 +903,7 @@ function handleEditAlign (newValue) {
                 cssRule.style.transform = 'translateX(-50%)'
               } else cssRule.style.transform = null
               cssRule.style.top = '0px'
-              cssRule.style.bottom = ''
+              cssRule.style.bottom = null
               cssItem.Css = cssItem.Css.replace(
                 new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
                 cssRule.cssText
@@ -930,7 +930,7 @@ function handleEditAlign (newValue) {
                   cWb.value.style.transform = 'translateX(-50%)'
                 } else cWb.value.style.transform = null
                 cWb.value.style.top = '0px'
-                cWb.value.style.bottom = ''
+                cWb.value.style.bottom = null
                 cWb.value.setAttribute('consty', Constraints.top)
                 cWb.StyleItem.PositionItem.Top = '0px'
                 cWb.StyleItem.PositionItem.ConstraintsY = Constraints.top
@@ -959,7 +959,7 @@ function handleEditAlign (newValue) {
             selected_list[0].value.style.transform = 'translateX(-50%)'
           } else selected_list[0].value.style.transform = null
           selected_list[0].value.style.top = '0px'
-          selected_list[0].value.style.bottom = ''
+          selected_list[0].value.style.bottom = null
           selected_list[0].value.setAttribute('consty', Constraints.top)
           selected_list[0].StyleItem.PositionItem.Top = '0px'
           selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.top
@@ -997,7 +997,7 @@ function handleEditAlign (newValue) {
             cssRule.style.transform = 'translateX(-50%)'
           } else cssRule.style.transform = null
           cssRule.style.top = '0px'
-          cssRule.style.bottom = ''
+          cssRule.style.bottom = null
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
@@ -1189,7 +1189,7 @@ function handleEditAlign (newValue) {
                 cssRule.style.transform = 'translate(-50%,-50%)'
               } else cssRule.style.transform = 'translateY(-50%)'
               cssRule.style.top = `calc(50% + 0px)`
-              cssRule.style.bottom = ''
+              cssRule.style.bottom = null
               cssItem.Css = cssItem.Css.replace(
                 new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
                 cssRule.cssText
@@ -1245,7 +1245,7 @@ function handleEditAlign (newValue) {
             selected_list[0].value.style.transform = 'translate(-50%,-50%)'
           } else selected_list[0].value.style.transform = 'translateY(-50%)'
           selected_list[0].value.style.top = 'calc(50% + 0px)'
-          selected_list[0].value.style.bottom = ''
+          selected_list[0].value.style.bottom = null
           selected_list[0].value.setAttribute('consty', Constraints.center)
           selected_list[0].StyleItem.PositionItem.Bottom = '0px'
           selected_list[0].StyleItem.PositionItem.ConstraintsY =
@@ -1481,7 +1481,7 @@ function handleEditAlign (newValue) {
               if (cWbHTML.getAttribute('constx') === Constraints.center) {
                 cssRule.style.transform = 'translateX(-50%)'
               } else cssRule.style.transform = null
-              cssRule.style.top = ''
+              cssRule.style.top = null
               cssRule.style.bottom = '0px'
               cssItem.Css = cssItem.Css.replace(
                 new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -1508,7 +1508,7 @@ function handleEditAlign (newValue) {
                 if (cWb.value.getAttribute('constx') === Constraints.center) {
                   cWb.value.style.transform = 'translateX(-50%)'
                 } else cWb.value.style.transform = null
-                cWb.value.style.top = ''
+                cWb.value.style.top = null
                 cWb.value.style.bottom = '0px'
                 cWb.value.setAttribute('consty', Constraints.bottom)
                 wb.StyleItem.PositionItem.Bottom = '0px'
@@ -1537,7 +1537,7 @@ function handleEditAlign (newValue) {
           ) {
             selected_list[0].value.style.transform = 'translateX(-50%)'
           } else selected_list[0].value.style.transform = null
-          selected_list[0].value.style.top = ''
+          selected_list[0].value.style.top = null
           selected_list[0].value.style.bottom = '0px'
           selected_list[0].value.setAttribute('consty', Constraints.bottom)
           selected_list[0].StyleItem.PositionItem.Bottom = '0px'
@@ -1578,7 +1578,7 @@ function handleEditAlign (newValue) {
           ) {
             cssRule.style.transform = 'translateX(-50%)'
           } else cssRule.style.transform = null
-          cssRule.style.top = ''
+          cssRule.style.top = null
           cssRule.style.bottom = '0px'
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -3506,14 +3506,220 @@ function handleEditConstraints ({ constX, constY }) {
   }
 }
 
-function handleEditBackground() {
+function addBackgroundColor () {
   let listUpdate = selected_list.filter(wb => wb.CateID !== EnumCate.text)
-  if(listUpdate[0].StyleItem) {
-    for(let wb of listUpdate) {
-      
+  if (listUpdate[0].StyleItem) {
+    for (let wb of listUpdate) {
+      switch (wb.CateID) {
+        case EnumCate.frame:
+          var new_color_value = 'FFFFFFFF'
+          break
+        case EnumCate.form:
+          var new_color_value = 'FFFFFFFF'
+          break
+        case EnumCate.variant:
+          var new_color_value = 'FFFFFFFF'
+          break
+        case EnumCate.rectangle:
+          var new_color_value = 'C4C4C4FF'
+          break
+        default:
+          var new_color_value = 'D9D9D9FF'
+          break
+      }
+      wb.StyleItem.DecorationItem.ColorValue = new_color_value
+      wb.value.style.backgroundColor = `#${new_color_value}`
     }
+    WBaseDA.edit(listUpdate, EnumObj.decoration)
   } else {
+    let pWbComponent = listUpdate[0].value.closest(
+      `.wbaseItem-value[iswini="true"]`
+    )
+    let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+    for (let wb of listUpdate) {
+      let cssRule = StyleDA.docStyleSheets.find(e =>
+        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+      )
+      switch (wb.CateID) {
+        case EnumCate.frame:
+          var new_color_value = 'FFFFFFFF'
+          break
+        case EnumCate.form:
+          var new_color_value = 'FFFFFFFF'
+          break
+        case EnumCate.variant:
+          var new_color_value = 'FFFFFFFF'
+          break
+        case EnumCate.rectangle:
+          var new_color_value = 'C4C4C4FF'
+          break
+        default:
+          var new_color_value = 'D9D9D9FF'
+          break
+      }
+      cssRule.style.backgroundColor = `#${new_color_value}`
+      cssItem.Css = cssItem.Css.replace(
+        new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+        cssRule.cssText
+      )
+    }
+    StyleDA.editStyleSheet(cssItem)
+  }
+}
 
+function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
+  let listUpdate = selected_list.filter(wb => wb.CateID !== EnumCate.text)
+  if (colorSkin) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.DecorationItem.ColorID = colorSkin.GID
+        wb.StyleItem.DecorationItem.ColorValue = colorSkin.Value
+        wb.value.style.backgroundImage = null
+        switch (wb.CateID) {
+          case EnumCate.svg:
+            getColorSvg(wb)
+            break
+          case EnumCate.radio_button:
+            wb.value.style.setProperty('--checked-color', `#${colorSkin.Value}`)
+            break
+          case EnumCate.w_switch:
+            wb.value.style.setProperty('--checked-color', `#${colorSkin.Value}`)
+            break
+          case EnumCate.checkbox:
+            wb.value.style.setProperty('--checked-color', `#${colorSkin.Value}`)
+            break
+          default:
+            wb.value.style.backgroundColor = `var(--background-color-${colorSkin.GID})`
+            break
+        }
+      }
+      WBaseDA.edit(listUpdate, EnumObj.decoration)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.backgroundImage = null
+        switch (wb.CateID) {
+          case EnumCate.svg:
+            getColorSvg(wb)
+            break
+          case EnumCate.radio_button:
+            cssRule.style.setProperty('--checked-color', `#${colorSkin.Value}`)
+            break
+          case EnumCate.w_switch:
+            cssRule.style.setProperty('--checked-color', `#${colorSkin.Value}`)
+            break
+          case EnumCate.checkbox:
+            cssRule.style.setProperty('--checked-color', `#${colorSkin.Value}`)
+            break
+          default:
+            cssRule.style.backgroundColor = `var(--background-color-${colorSkin.GID})`
+            break
+        }
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (hexCode !== undefined) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.DecorationItem.ColorID = null
+        wb.StyleItem.DecorationItem.ColorValue = hexCode
+        wb.value.style.backgroundImage = null
+        switch (wb.CateID) {
+          case EnumCate.svg:
+            getColorSvg(wb)
+            break
+          case EnumCate.radio_button:
+            wb.value.style.setProperty('--checked-color', `#${hexCode}`)
+            break
+          case EnumCate.w_switch:
+            wb.value.style.setProperty('--checked-color', `#${hexCode}`)
+            break
+          case EnumCate.checkbox:
+            wb.value.style.setProperty('--checked-color', `#${hexCode}`)
+            break
+          default:
+            wb.value.style.backgroundColor =
+              hexCode === null ? null : `#${hexCode}`
+            break
+        }
+      }
+      if (onSubmit) WBaseDA.edit(listUpdate, EnumObj.decoration)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.backgroundImage = null
+        switch (wb.CateID) {
+          case EnumCate.svg:
+            getColorSvg(wb)
+            break
+          case EnumCate.radio_button:
+            cssRule.style.setProperty('--checked-color', `#${hexCode}`)
+            break
+          case EnumCate.w_switch:
+            cssRule.style.setProperty('--checked-color', `#${hexCode}`)
+            break
+          case EnumCate.checkbox:
+            cssRule.style.setProperty('--checked-color', `#${hexCode}`)
+            break
+          default:
+            cssRule.style.backgroundColor =
+              hexCode === null ? null : `#${hexCode}`
+            break
+        }
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      if (onSubmit) StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (image) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.DecorationItem.ColorID = null
+        wb.StyleItem.DecorationItem.ColorValue = image.replaceAll(' ', '%20')
+        wb.value.style.backgroundColor = null
+        wb.value.style.backgroundImage = `url(${
+          urlImg + image.replaceAll(' ', '%20')
+        })`
+      }
+      WBaseDA.edit(listUpdate, EnumObj.decoration)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.backgroundColor = null
+        cssRule.style.backgroundImage = `url(${
+          urlImg + image.replaceAll(' ', '%20')
+        })`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
   }
 }
 
@@ -5260,34 +5466,6 @@ function unlinkBorderSkin () {
   WBaseDA.addStyle(listBorder, EnumObj.border)
 }
 
-function addBackgroundColor () {
-  let list_change_background = selected_list.filter(
-    e => e.StyleItem.DecorationItem
-  )
-  for (let i = 0; i < list_change_background.length; i++) {
-    let elementHTML = document.getElementById(list_change_background[i].GID)
-    let new_color_value
-    switch (list_change_background[i].CateID) {
-      case EnumCate.frame:
-        new_color_value = 'FFFFFFFF'
-        break
-      case EnumCate.form:
-        new_color_value = 'FFFFFFFF'
-        break
-      case EnumCate.variant:
-        new_color_value = 'FFFFFFFF'
-        break
-      default:
-        new_color_value = 'FFD9D9D9'
-        break
-    }
-    list_change_background[i].StyleItem.DecorationItem.ColorValue =
-      new_color_value
-    elementHTML.style.backgroundColor = `#${new_color_value}`
-  }
-  WBaseDA.edit(list_change_background, EnumObj.decoration)
-}
-
 async function deleteBackgroundColor () {
   let list_change_background = selected_list.filter(
     e => e.StyleItem.DecorationItem
@@ -5320,19 +5498,19 @@ async function editBackground (decorationItem, onSubmit = true) {
           break
         case EnumCate.radio_button:
           wbaseItem.value.style.setProperty(
-            '--checked-border',
+            '--checked-color',
             `#${new_color_value}`
           )
           break
         case EnumCate.w_switch:
           wbaseItem.value.style.setProperty(
-            '--checked-bg',
+            '--checked-color',
             `#${new_color_value}`
           )
           break
         case EnumCate.checkbox:
           wbaseItem.value.style.setProperty(
-            '--checked-bg',
+            '--checked-color',
             `#${new_color_value}`
           )
           break
@@ -5353,19 +5531,19 @@ async function editBackground (decorationItem, onSubmit = true) {
             break
           case EnumCate.radio_button:
             wbaseItem.value.style.setProperty(
-              '--checked-border',
+              '--checked-color',
               `#${new_color_value}`
             )
             break
           case EnumCate.w_switch:
             wbaseItem.value.style.setProperty(
-              '--checked-bg',
+              '--checked-color',
               `#${new_color_value}`
             )
             break
           case EnumCate.checkbox:
             wbaseItem.value.style.setProperty(
-              '--checked-bg',
+              '--checked-color',
               `#${new_color_value}`
             )
             break

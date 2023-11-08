@@ -721,18 +721,18 @@ body:has(> .w-date-picker-popup) {
 /* .wbaseItem-value:hover {}
 .w-button:focus {} */
 .w-switch:has(> input:checked) {
-  background-color: var(--checked-bg) !important;
+  background-color: var(--checked-color) !important;
 }
 .w-radio-btn:has(> input[type="radio"]:checked) {
-  border-color: var(--checked-border) !important;
+  border-color: var(--checked-color) !important;
 }
 
 .w-radio-btn > input[type="radio"]:checked ~ .checkmark {
   display: block !important;
-  background-color: var(--checked-border);
+  background-color: var(--checked-color);
 }
 .w-check-box:has(> input:checked) {
-  background-color: var(--checked-bg) !important;
+  background-color: var(--checked-color) !important;
   border: none !important;
 }
 

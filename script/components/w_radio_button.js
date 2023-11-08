@@ -12,14 +12,14 @@ function createRadioButton(wbaseItem) {
   input.value = wbaseItem.AttributesItem.Content;
   let checkmark = document.createElement("span");
   checkmark.className = "checkmark";
-  toggle.style.setProperty("--checked-border", `#${wbaseItem.StyleItem.DecorationItem.ColorValue}`);
+  toggle.style.setProperty("--checked-color", `#${wbaseItem.StyleItem.DecorationItem.ColorValue}`);
   toggle.style.setProperty("--unchecked-border", `#${wbaseItem.StyleItem.DecorationItem.BorderItem?.ColorValue}`);
   toggle.replaceChildren(input, checkmark);
   input.onchange = function (e) {
     e.stopImmediatePropagation();
     e.stopPropagation();
     wbaseItem.JsonItem.Checked = this.checked;
-    toggle.style.setProperty("--checked-border", `#${wbaseItem.StyleItem.DecorationItem.ColorValue}`);
+    toggle.style.setProperty("--checked-color", `#${wbaseItem.StyleItem.DecorationItem.ColorValue}`);
     toggle.style.setProperty("--unchecked-border", `#${wbaseItem.StyleItem.DecorationItem.BorderItem?.ColorValue}`);
     if (this.checked) {
       if (this.name && this.name !== "") {

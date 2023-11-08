@@ -93,7 +93,7 @@ function updateUIDesignView () {
       selected_list.length > 0 &&
       selected_list.every(wb => wb.CateID !== EnumCate.text)
     ) {
-      let editBackground = createEditBackground()
+      let editBackground = EditBackgroundBlock()
       listEditContainer.appendChild(editBackground)
     }
     if (
@@ -1697,7 +1697,7 @@ function _btnAlignType () {
 }
 
 //! background-color || img
-function createEditBackground () {
+function EditBackgroundBlock () {
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-background'
   editContainer.style.rowGap = '6px'
@@ -1732,39 +1732,157 @@ function createEditBackground () {
     )
   ) {
     header.appendChild(btnSelectImg)
-    let listColorID = selected_list.filterAndMap(
-      wb =>
-        wb.StyleItem?.DecorationItem?.ColorID ??
-        StyleDA.docStyleSheets
-          .find(cssRule =>
-            [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-              wb.value
+    let listColorID = selected_list.filterAndMap(wb =>
+      wb.StyleItem
+        ? wb.StyleItem.DecorationItem?.ColorID ??
+          wb.StyleItem.DecorationItem?.ColorValue
+        : StyleDA.docStyleSheets
+            .find(cssRule =>
+              [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                wb.value
+              )
             )
-          )
-          ?.style?.backgroundColor?.replace('var(--background-color-', '')
-          ?.replace(')', '')
+            ?.style?.backgroundColor?.replace(
+              /(var\(--background-color-|\))/g,
+              ''
+            )
     )
-    if (listColorID.length === 1 && listColorID[0]) {
-      let colorSkin = ColorDA.list.find(skin => listColorID[0] == skin.GID)
-      let cateItem
-      if (colorSkin) {
-        if (colorSkin.CateID != EnumCate.color) {
-          cateItem = CateDA.list_color_cate.find(e => e.ID == colorSkin.CateID)
-        }
-        let skin_tile = wbaseSkinTile({
-          cate: EnumCate.color,
-          prefixValue: `#${colorSkin.Value}`,
-          title: (cateItem ? `${cateItem.Name}/` : '') + colorSkin.Name,
-          onclick: function () {
-            let offset = header.getBoundingClientRect()
-            createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID)
-          },
-          onRemove: function () {
-            deleteBackgroundColor().then(_ => updateUIBackground())
+
+    if (listColorID.length === 1) {
+      if (listColorID[0]?.length === 36) {
+        let colorSkin = ColorDA.list.find(skin => listColorID[0] === skin.GID)
+        let cateItem
+        if (colorSkin) {
+          if (colorSkin.CateID !== EnumCate.color) {
+            cateItem = CateDA.list_color_cate.find(
+              e => e.ID == colorSkin.CateID
+            )
           }
-        })
-        editContainer.appendChild(skin_tile)
-        if (checkedComponent) skin_tile.lastChild.style.display = 'none'
+          let skin_tile = wbaseSkinTile({
+            cate: EnumCate.color,
+            prefixValue: `#${colorSkin.Value}`,
+            title: (cateItem ? `${cateItem.Name}/` : '') + colorSkin.Name,
+            onclick: function () {
+              let offset = header.getBoundingClientRect()
+              createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID)
+            },
+            onRemove: function () {
+              deleteBackgroundColor().then(_ => reloadEditBackgroundBlock())
+            }
+          })
+          editContainer.appendChild(skin_tile)
+          if (checkedComponent) skin_tile.lastChild.style.display = 'none'
+        }
+      } else if (listColorID[0]) {
+        let selectColorValue = listColorID[0].includes('rgb')
+          ? Ultis.rgbToHex(listColorID[0])
+          : listColorID[0]
+        //body
+        let colorsSelectionList = document.createElement('div')
+        colorsSelectionList.id = 'colors_selection_list'
+        colorsSelectionList.className = 'col'
+        editContainer.appendChild(colorsSelectionList)
+        let listEditColorForm = []
+
+        if (selectColorValue.split(',').length > 1) {
+          for (let colorForm of selectColorValue.split(',')) {
+            let formEdit = editColorContainer(
+              colorForm,
+              function (_, onSubmit) {
+                let newListColorValue = [
+                  ...colorsSelectionList.querySelectorAll(
+                    '.edit-color-container'
+                  )
+                ].map(eHTML => {
+                  return (
+                    eHTML.querySelector('.hex-color-value').value +
+                    Ultis.percentToHex(
+                      eHTML
+                        .querySelector('.opacity-color-value')
+                        .value.replace('%', '')
+                    )
+                  )
+                })
+                handleEditBackground({
+                  hexCode: newListColorValue.join(','),
+                  onSubmit: onSubmit
+                })
+                if (onSubmit) reloadEditBackgroundBlock()
+              }
+            )
+            formEdit.style.justifyContent = 'space-between'
+            formEdit.style.marginRight = '8px'
+            listEditColorForm.push(formEdit)
+          }
+        } else {
+          function updateColor (onSubmit = true) {
+            let colorTile = colorsSelectionList.querySelector('.parameter-form')
+            handleEditBackground({
+              hexCode:
+                colorTile.querySelector('.edit-color-form').value +
+                Ultis.percentToHex(
+                  colorTile
+                    .querySelector('.edit-opacity-form')
+                    .value.replace('%', '')
+                ),
+              onSubmit: onSubmit
+            })
+            if (onSubmit) reloadEditBackgroundBlock()
+          }
+          let formEdit = createEditColorForm(
+            function () {
+              updateColor(false)
+            },
+            updateColor,
+            function () {
+              handleEditBackground({ hexCode: null })
+              reloadEditBackgroundBlock()
+            }
+          )
+          for (let eHTML of formEdit.childNodes) {
+            // input type color & edit hex color
+            if (eHTML.className.includes('parameter-form')) {
+              for (let parameterHTML of eHTML.childNodes) {
+                if (parameterHTML.className.includes('show-color-container')) {
+                  parameterHTML.value = `#${selectColorValue.substring(0, 6)}`
+                } else if (
+                  parameterHTML.className.includes('edit-color-form')
+                ) {
+                  parameterHTML.value = selectColorValue
+                    .substring(0, 6)
+                    .toUpperCase()
+                } else if (
+                  parameterHTML.className.includes('edit-opacity-form')
+                ) {
+                  parameterHTML.value =
+                    Ultis.hexToPercent(selectColorValue.substring(6)) + '%'
+                }
+              }
+            }
+          }
+          listEditColorForm.push(formEdit)
+        }
+        if (checkedComponent)
+          listEditColorForm.forEach(
+            colorForm =>
+              (colorForm.querySelector(
+                '.action-button:last-child'
+              ).style.display = 'none')
+          )
+        colorsSelectionList.replaceChildren(...listEditColorForm)
+        if (listEditColorForm.length <= 1) {
+          header.appendChild(btnSelectSkin)
+        }
+      } else {
+        header.appendChild(btnSelectSkin)
+        header.appendChild(btnSelectImg)
+        let btnAdd = document.createElement('i')
+        btnAdd.className = 'fa-solid fa-plus fa-sm bg-header-action'
+        btnAdd.onclick = function () {
+          addBackgroundColor()
+          reloadEditBackgroundBlock()
+        }
+        header.appendChild(btnAdd)
       }
     } else if (
       selected_list.filterAndMap(
@@ -1802,7 +1920,7 @@ function createEditBackground () {
               onSubmit
             ).then(_ => {
               if (onSubmit) {
-                updateUIBackground()
+                reloadEditBackgroundBlock()
               }
             })
           })
@@ -1827,7 +1945,7 @@ function createEditBackground () {
             onSubmit
           ).then(_ => {
             if (onSubmit) {
-              updateUIBackground()
+              reloadEditBackgroundBlock()
             }
           })
         }
@@ -1837,7 +1955,7 @@ function createEditBackground () {
           },
           updateColor,
           function () {
-            deleteBackgroundColor().then(_ => updateUIBackground())
+            deleteBackgroundColor().then(_ => reloadEditBackgroundBlock())
           }
         )
         for (let eHTML of formEdit.childNodes) {
@@ -1882,9 +2000,7 @@ function createEditBackground () {
     }
   } else if (
     selected_list.every(
-      wb =>
-        wb.StyleItem.DecorationItem.ColorValue &&
-        !wb.StyleItem.DecorationItem.ColorValue.match(hexRegex)
+      wb => window.getComputedStyle(wb.value).backgroundImage !== 'none'
     )
   ) {
     header.appendChild(btnSelectSkin)
@@ -1899,8 +2015,10 @@ function createEditBackground () {
       let divSelectImg = document.createElement('div')
       divSelectImg.innerHTML = `<div style="background: url(${window
         .getComputedStyle(selected_list[0].value)
-        .backgroundImage.replace(/(url\("|"\))/g, '')
-        }) 0 0 / cover no-repeat; width: 20px; height: 16px; margin: 6px"></div><p>Image</p><input class="regular1" value="100%" style="width: 38px; min-width: 40px;padding: 0 0 0 6px"/>`
+        .backgroundImage.replace(
+          /(url\("|"\))/g,
+          ''
+        )}) 0 0 / cover no-repeat; width: 20px; height: 16px; margin: 6px"></div><p>Image</p><input class="regular1" value="100%" style="width: 38px; min-width: 40px;padding: 0 0 0 6px"/>`
       editImgTile.appendChild(divSelectImg)
 
       $(divSelectImg).on('click', 'div', function () {
@@ -1920,8 +2038,8 @@ function createEditBackground () {
       btnRemoveBgImg.style.padding = '10px 8px'
       editImgTile.appendChild(btnRemoveBgImg)
       btnRemoveBgImg.onclick = function () {
-        removeBackgroundImg()
-        updateUIBackground()
+        handleEditBackground({hexCode: null})
+        reloadEditBackgroundBlock()
       }
     } else {
       header.appendChild(btnSelectSkin)
@@ -1933,21 +2051,18 @@ function createEditBackground () {
     }
   } else {
     header.appendChild(btnSelectSkin)
-    header.appendChild(btnSelectImg)
-    let btnAdd = document.createElement('i')
-    btnAdd.className = 'fa-solid fa-plus fa-sm bg-header-action'
-    btnAdd.onclick = function () {
-      addBackgroundColor()
-      updateUIBackground()
-    }
-    header.appendChild(btnAdd)
+    let notiText = document.createElement('p')
+    notiText.className = 'regular1'
+    notiText.style.margin = '4px 8px'
+    notiText.innerHTML = 'choose a color skin to replace mixed content'
+    editContainer.appendChild(notiText)
   }
 
   return editContainer
 }
 
-function updateUIBackground () {
-  let newEditBackground = createEditBackground()
+function reloadEditBackgroundBlock () {
+  let newEditBackground = EditBackgroundBlock()
   document.getElementById('edit-background').replaceWith(newEditBackground)
 }
 
@@ -4017,10 +4132,9 @@ function createSkinTileHTML (enumCate, jsonSkin) {
       skin_tile.onclick = function (e) {
         e.stopPropagation()
         if (selected_list.length > 0) {
-          editBackground({ ColorItem: jsonSkin })
-          document.getElementById('popup_table_skin').remove()
-          document.getElementById('popup_edit_skin')?.remove()
-          updateUIBackground()
+          handleEditBackground({ colorSkin: jsonSkin })
+          document.querySelectorAll('.popup_remove').forEach(popup => popup.remove())
+          reloadEditBackgroundBlock()
         }
       }
       let demo_color = document.createElement('div')
@@ -4045,8 +4159,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
         e.stopPropagation()
         if (selected_list.length > 0) {
           editTextStyle(jsonSkin)
-          document.getElementById('popup_table_skin').remove()
-          document.getElementById('popup_edit_skin')?.remove()
+          document.querySelectorAll('.popup_remove').forEach(popup => popup.remove())
           updateUITextStyle()
         }
       }
@@ -4080,8 +4193,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
         e.stopPropagation()
         if (selected_list.length > 0) {
           editBorder(jsonSkin)
-          document.getElementById('popup_table_skin').remove()
-          document.getElementById('popup_edit_skin')?.remove()
+          document.querySelectorAll('.popup_remove').forEach(popup => popup.remove())
           updateUIBorder()
         }
       }
@@ -4107,8 +4219,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
         e.stopPropagation()
         if (selected_list.length > 0) {
           editEffect(jsonSkin)
-          document.getElementById('popup_table_skin').remove()
-          document.getElementById('popup_edit_skin')?.remove()
+          document.querySelectorAll('.popup_remove').forEach(popup => popup.remove())
           updateUIEffect()
         }
       }
@@ -5027,7 +5138,7 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
       btn_table_skin.innerHTML = `<div style="width: 15px;height: 15px;border-radius: 50%;border: 0.5px solid #c4c4c4; background-color: ${prefixValue}"></div><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
       btn_unLink.onclick = function () {
         unlinkColorSkin()
-        updateUIBackground()
+        reloadEditBackgroundBlock()
       }
       break
     case EnumCate.typography:
