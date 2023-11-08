@@ -1579,12 +1579,12 @@ function editColorContainer(color, func) {
   demoColor.oninput = function (e) {
     e.stopPropagation();
     hexColor.value = this.value.replace("#", "");
-    func(Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))) + this.value.replace("#", ""), false);
+    func(this.value.replace("#", "") + Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))), false);
   };
   demoColor.onblur = function (e) {
     e.stopPropagation();
     hexColor.value = this.value.replace("#", "");
-    func(Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))) + this.value.replace("#", ""));
+    func(this.value.replace("#", "") + Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))));
   };
   let hexColor = document.createElement("input");
   hexColor.defaultValue = `${color.substring(0,6)}`;
@@ -1598,7 +1598,7 @@ function editColorContainer(color, func) {
   };
   hexColor.onblur = function (e) {
     e.stopPropagation();
-    func(Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))) + this.value.replace("#", ""));
+    func(this.value.replace("#", "") + Ultis.percentToHex(parseFloat(opacityColor.value.replace("%", ""))));
   };
   let opacityColor = document.createElement("input");
   opacityColor.defaultValue = `${Ultis.hexToPercent(color.substring(6))}%`;
@@ -1606,7 +1606,7 @@ function editColorContainer(color, func) {
   opacityColor.onblur = function (e) {
     e.stopPropagation();
     if (!isNaN(parseInt(this.value.replace("%", "")))) {
-      func(Ultis.percentToHex(this.value.replace("%", "")) + hexColor.value);
+      func(hexColor.value + Ultis.percentToHex(this.value.replace("%", "")));
       this.value = parseInt(this.value.replace("%", "")) + "%";
     }
   };
