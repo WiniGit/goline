@@ -102,7 +102,7 @@ function updateUIDesignView () {
           wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
       )
     ) {
-      let editTextStyle = createEditTextStyle()
+      let editTextStyle = EditTypoBlock()
       listEditContainer.appendChild(editTextStyle)
     }
     if (
@@ -1778,7 +1778,7 @@ function EditBackgroundBlock () {
         }
       } else if (listColorID[0]) {
         let selectColorValue = listColorID[0].includes('rgb')
-          ? Ultis.rgbToHex(listColorID[0]).replace('#', ' ')
+          ? Ultis.rgbToHex(listColorID[0]).replace('#', '')
           : listColorID[0]
         //body
         let colorsSelectionList = document.createElement('div')
@@ -2092,7 +2092,7 @@ let list_font_size = [
 let list_font_weight = ['200', '300', '400', '500', '600', '700', '800', '900']
 
 // ! textStyle
-function createEditTextStyle () {
+function EditTypoBlock () {
   let listTextStyle = selected_list.filter(
     wb => wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
   )
@@ -2190,7 +2190,7 @@ function createEditTextStyle () {
     editContainer.appendChild(text_style_attribute)
     function updateTextStyleColor (params, onSubmit = true) {
       handleEditTypo({ color: params, onSubmit: onSubmit })
-      if (onSubmit) updateUITextStyle()
+      if (onSubmit) reloadEditTypoBlock()
     }
     let edit_text_color = createEditColorForm(function (params) {
       updateTextStyleColor(params, false)
@@ -2225,8 +2225,10 @@ function createEditTextStyle () {
         let newFontFamily = list_font_family.find(
           e => e.toLowerCase() === option.toLowerCase()
         )
-        if (newFontFamily) handleEditTypo({ fontFamily: newFontFamily })
-        updateUITextStyle()
+        if (newFontFamily) {
+          handleEditTypo({ fontFamily: newFontFamily })
+          btn_select_font_family.firstChild.value = newFontFamily
+        }
       }
     )
     btn_select_font_family.firstChild.value =
@@ -2254,7 +2256,7 @@ function createEditTextStyle () {
       },
       function (value) {
         handleEditTypo({ fontWeight: value })
-        updateUITextStyle()
+        btn_select_font_weight.firstChild.innerHTML = value
       }
     )
     btn_select_font_weight.firstChild.innerHTML =
@@ -2274,7 +2276,7 @@ function createEditTextStyle () {
       function (option) {
         if (!isNaN(parseFloat(option))) {
           handleEditTypo({ fontSize: parseFloat(option) })
-          updateUITextStyle()
+          btn_select_font_size.firstChild.value = option
         }
       },
       true
@@ -2310,7 +2312,7 @@ function createEditTextStyle () {
         } else if (!isNaN(parseFloat(this.value))) {
           handleEditTypo({ height: parseFloat(this.value) })
         }
-        updateUITextStyle()
+        reloadEditTypoBlock()
         updateInputTLWH()
       }
     })
@@ -2327,7 +2329,7 @@ function createEditTextStyle () {
         if (!isNaN(parseFloat(this.value))) {
           handleEditTypo({ letterSpacing: parseFloat(this.value) })
         }
-        updateUITextStyle()
+        reloadEditTypoBlock()
       }
     })
     input_letter_spacing.style.flex = 1
@@ -2397,7 +2399,7 @@ function createEditTextStyle () {
     ],
     function (value) {
       handleEditTypo({ textAlign: value })
-      updateUITextStyle()
+      reloadEditTypoBlock()
     }
   )
   let firstTextAlign = textAlignValues.length > 1 ? 'mixed' : textAlignValues[0]
@@ -2425,7 +2427,7 @@ function createEditTextStyle () {
     ],
     function (value) {
       handleEditTypo({ alignVertical: value })
-      updateUITextStyle()
+      reloadEditTypoBlock()
     }
   )
   group_btn_text_align_vertical.style.marginLeft = '42px'
@@ -2460,8 +2462,8 @@ function _groupBtnSelect (list_icon, func) {
   return group_btn_select
 }
 
-function updateUITextStyle () {
-  let newEditTextStyle = createEditTextStyle()
+function reloadEditTypoBlock () {
+  let newEditTextStyle = EditTypoBlock()
   document.getElementById('edit_text_style').replaceWith(newEditTextStyle)
 }
 
@@ -4157,11 +4159,11 @@ function createSkinTileHTML (enumCate, jsonSkin) {
       skin_tile.onclick = function (e) {
         e.stopPropagation()
         if (selected_list.length > 0) {
-          handleEditTypo({typoSkin: jsonSkin})
+          handleEditTypo({ typoSkin: jsonSkin })
           document
             .querySelectorAll('.popup_remove')
             .forEach(popup => popup.remove())
-          updateUITextStyle()
+          reloadEditTypoBlock()
         }
       }
       let demo_typo = document.createElement('p')
@@ -5150,7 +5152,7 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
       btn_table_skin.innerHTML = `<p style="font-size: 14px">Ag</p><div class="row" style="margin: 0 8px;flex: 1"><p>${title}</p><p style="color: #c4c4c4"> . ${prefixValue}</p></div>`
       btn_unLink.onclick = function () {
         unlinkTypoSkin()
-        updateUITextStyle()
+        reloadEditTypoBlock()
       }
       break
     case EnumCate.border:
