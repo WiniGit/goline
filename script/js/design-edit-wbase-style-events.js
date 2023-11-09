@@ -3803,7 +3803,7 @@ function unlinkTypoSkin () {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      let wbStyle = window.getComputedStyle(wb.value)
+      let wbStyle = wb.CateID === EnumCate.text ? window.getComputedStyle(wb.value) : window.getComputedStyle(wb.value.querySelector("input"))
       let typoItem = {
         FontSize: wbStyle.fontSize,
         FontWeight: wbStyle.fontWeight,

@@ -3730,9 +3730,6 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
       break
     case EnumCate.typography:
       title.innerHTML = 'Typography skin'
-      if (selected_list.filter(e => e.StyleItem.TextStyleItem).length == 0) {
-        action2.style.display = 'none'
-      }
       break
     case EnumCate.border:
       title.innerHTML = 'Border skin'
