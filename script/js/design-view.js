@@ -4160,7 +4160,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
       skin_tile.onclick = function (e) {
         e.stopPropagation()
         if (selected_list.length > 0) {
-          editTextStyle(jsonSkin)
+          handleEditTypo({typoSkin: jsonSkin})
           document
             .querySelectorAll('.popup_remove')
             .forEach(popup => popup.remove())

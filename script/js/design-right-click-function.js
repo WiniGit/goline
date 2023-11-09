@@ -536,7 +536,7 @@ function createComponent () {
                     e => !e.match(/(z-index|left|top|bottom|right|transform)/g)
                   )
                   .join(';')
-              : childWbCssText.join(';')
+              : childWbCssText.filter(e => e !== 'order').join(';')
           } }`
         }
         if (childWb.CateID === EnumCate.svg) {

@@ -122,6 +122,9 @@ async function initData () {
                 case 'fit-content':
                   wbHTML.setAttribute('width-type', 'fit')
                   break
+                case 'max-content':
+                  wbHTML.setAttribute('width-type', 'fit')
+                  break
                 default:
                   wbHTML.removeAttribute('width-type')
                   break

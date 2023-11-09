@@ -3789,6 +3789,7 @@ function unlinkTypoSkin () {
       wb.value.style.fontSize = `${newTextStyleItem.FontSize}px`
       wb.value.style.fontWeight = newTextStyleItem.FontWeight
       wb.value.style.color = `#${newTextStyleItem.ColorValue}`
+      wb.value.style.letterSpacing = `${newTextStyleItem.LetterSpacing}px`
       if (newTextStyleItem.Height != undefined)
         wb.value.style.lineHeight = `${newTextStyleItem.Height}px`
     }
@@ -3802,28 +3803,30 @@ function unlinkTypoSkin () {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
       )
+      let wbStyle = window.getComputedStyle(wb.value)
       let typoItem = {
-        FontSize: parseFloat(rule.fontSize.replace('px', '')),
-        FontWeight: rule.fontWeight,
-        ColorValue: Ultis.rgbToHex(rule.color).replace('#', ''),
+        FontSize: wbStyle.fontSize,
+        FontWeight: wbStyle.fontWeight,
+        ColorValue: Ultis.rgbToHex(wbStyle.color),
         LetterSpacing: parseFloat(
-          rule.letterSpacing.length > 0
-            ? rule.letterSpacing.replace('px', '')
+          wbStyle.letterSpacing.length > 0
+            ? wbStyle.letterSpacing
             : '0'
         ),
-        FontFamily: rule.fontFamily,
+        FontFamily: wbStyle.fontFamily,
         Height:
-          rule.lineHeight.length > 0
-            ? parseFloat(rule.lineHeight.replace('px', ''))
+          wbStyle.lineHeight.length > 0
+            ? wbStyle.lineHeight
             : null,
       }
       cssRule.style.font = null
       cssRule.style.fontFamily = typoItem.FontFamily
-      cssRule.style.fontSize = `${typoItem.FontSize}px`
+      cssRule.style.fontSize = typoItem.FontSize
       cssRule.style.fontWeight = typoItem.FontWeight
-      cssRule.style.color = `#${typoItem.ColorValue}`
+      cssRule.style.color = typoItem.ColorValue
+      cssRule.style.letterSpacing = typoItem.LetterSpacing
       if (typoItem.Height != null)
-        cssRule.style.lineHeight = `${typoItem.Height}px`
+        cssRule.style.lineHeight = typoItem.Height
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
