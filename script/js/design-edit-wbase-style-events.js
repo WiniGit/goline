@@ -3950,8 +3950,8 @@ function handleEditTypo ({
   } else if (fontWeight) {
     if (listUpdate[0].StyleItem) {
       for (let wb of listUpdate) {
-        wb.StyleItem.TextStyleItem.FontFamily = fontFamily
-        wb.value.style.fontFamily = fontFamily
+        wb.StyleItem.TextStyleItem.FontWeight = fontWeight
+        wb.value.style.fontWeight = fontWeight
       }
       WBaseDA.edit(listUpdate, EnumObj.textStyle)
     } else {
@@ -3963,7 +3963,7 @@ function handleEditTypo ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.fontFamily = fontFamily
+        cssRule.style.fontWeight = fontWeight
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
