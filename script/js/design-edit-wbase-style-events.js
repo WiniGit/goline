@@ -1741,6 +1741,8 @@ function handleEditOffset ({
 }) {
   let listUpdate = []
   if ((width !== undefined && height !== undefined) || ratioWH) {
+    let resizeFixedW = width === 'fixed'
+    let resizeFixedH = height === 'fixed'
     if (selected_list[0].StyleItem) {
       for (let wb of selected_list) {
         let children = [
@@ -1748,6 +1750,8 @@ function handleEditOffset ({
             `.wbaseItem-value[level="${wb.Level + 1}"]`
           )
         ]
+        if (resizeFixedW) width = wb.value.offsetWidth
+        if (resizeFixedH) height = wb.value.offsetHeight
         if (ratioWH) {
           if (width !== undefined) {
             height = (width * wb.value.offsetHeight) / wb.value.offsetWidth
@@ -1882,6 +1886,8 @@ function handleEditOffset ({
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
+        if (resizeFixedW) width = wb.value.offsetWidth
+        if (resizeFixedH) height = wb.value.offsetHeight
         let cssRule = StyleDA.docStyleSheets.find(rule => {
           let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
           let check = selector.includes(wb.value)
@@ -3567,6 +3573,40 @@ function addBackgroundColor () {
   }
 }
 
+function unlinkColorSkin () {
+  let listUpdate = selected_list.filter(wb => wb.CateID !== EnumCate.text)
+  if (listUpdate[0].StyleItem) {
+    for (let wb of listUpdate) {
+      wb.StyleItem.DecorationItem.ColorID = null
+      let backgroundColor = Ultis.rgbToHex(
+        window.getComputedStyle(wb.value).backgroundColor
+      )
+      wb.StyleItem.DecorationItem.ColorValue = backgroundColor.replace('#', '')
+      wb.value.style.backgroundColor = backgroundColor
+    }
+    WBaseDA.edit(listUpdate, EnumObj.decoration)
+  } else {
+    let pWbComponent = listUpdate[0].value.closest(
+      `.wbaseItem-value[iswini="true"]`
+    )
+    let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+    for (let wb of listUpdate) {
+      let cssRule = StyleDA.docStyleSheets.find(e =>
+        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+      )
+      let backgroundColor = Ultis.rgbToHex(
+        window.getComputedStyle(wb.value).backgroundColor
+      )
+      cssRule.style.backgroundColor = backgroundColor
+      cssItem.Css = cssItem.Css.replace(
+        new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+        cssRule.cssText
+      )
+    }
+    StyleDA.editStyleSheet(cssItem)
+  }
+}
+
 function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
   let listUpdate = selected_list.filter(wb => wb.CateID !== EnumCate.text)
   if (colorSkin) {
@@ -3713,6 +3753,313 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
         cssRule.style.backgroundImage = `url(${
           urlImg + image.replaceAll(' ', '%20')
         })`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  }
+}
+
+function unlinkTypoSkin () {
+  let listUpdate = selected_list.filter(
+    wb => wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
+  )
+  if (listUpdate[0].StyleItem) {
+    for (let wb of listUpdate) {
+      let skinTypo = wb.StyleItem.TextStyleItem
+      let newTextStyleItem = {
+        GID: uuidv4(),
+        Name: 'new text style',
+        FontSize: skinTypo.FontSize,
+        FontWeight: skinTypo.FontWeight,
+        CateID: 17,
+        IsStyle: false,
+        ColorValue: skinTypo.ColorValue,
+        LetterSpacing: skinTypo.LetterSpacing,
+        FontFamily: skinTypo.FontFamily,
+        Height: skinTypo.Height
+      }
+      wb.StyleItem.TextStyleID = newTextStyleItem.GID
+      wb.StyleItem.TextStyleItem = newTextStyleItem
+      wb.value.style.font = null
+      wb.value.style.fontFamily = newTextStyleItem.FontFamily
+      wb.value.style.fontSize = `${newTextStyleItem.FontSize}px`
+      wb.value.style.fontWeight = newTextStyleItem.FontWeight
+      wb.value.style.color = `#${newTextStyleItem.ColorValue}`
+      if (newTextStyleItem.Height != undefined)
+        wb.value.style.lineHeight = `${newTextStyleItem.Height}px`
+    }
+    WBaseDA.addStyle(listUpdate, EnumObj.textStyle)
+  } else {
+    let pWbComponent = listUpdate[0].value.closest(
+      `.wbaseItem-value[iswini="true"]`
+    )
+    let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+    for (let wb of listUpdate) {
+      let cssRule = StyleDA.docStyleSheets.find(e =>
+        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+      )
+      let typoItem = {
+        FontSize: parseFloat(rule.fontSize.replace('px', '')),
+        FontWeight: rule.fontWeight,
+        ColorValue: Ultis.rgbToHex(rule.color).replace('#', ''),
+        LetterSpacing: parseFloat(
+          rule.letterSpacing.length > 0
+            ? rule.letterSpacing.replace('px', '')
+            : '0'
+        ),
+        FontFamily: rule.fontFamily,
+        Height:
+          rule.lineHeight.length > 0
+            ? parseFloat(rule.lineHeight.replace('px', ''))
+            : null,
+      }
+      cssRule.style.font = null
+      cssRule.style.fontFamily = typoItem.FontFamily
+      cssRule.style.fontSize = `${typoItem.FontSize}px`
+      cssRule.style.fontWeight = typoItem.FontWeight
+      cssRule.style.color = `#${typoItem.ColorValue}`
+      if (typoItem.Height != null)
+        cssRule.style.lineHeight = `${typoItem.Height}px`
+      cssItem.Css = cssItem.Css.replace(
+        new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+        cssRule.cssText
+      )
+    }
+    StyleDA.editStyleSheet(cssItem)
+  }
+}
+
+function handleEditTypo ({
+  typoSkin,
+  color,
+  fontFamily,
+  fontSize,
+  fontWeight,
+  height,
+  letterSpacing,
+  textAlign,
+  alignVertical,
+  onSubmit = true
+}) {
+  let listUpdate = selected_list.filter(
+    wb => wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
+  )
+  if (typoSkin) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.TextStyleID = typoSkin.GID
+        wb.StyleItem.TextStyleItem = typoSkin
+        wb.value.style.font = `var(--font-style-${typoSkin.GID})`
+        wb.value.style.color = `var(--font-color-${typoSkin.GID})`
+      }
+      WBaseDA.edit(listUpdate, EnumObj.style)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.font = `var(--font-style-${typoSkin.GID})`
+        cssRule.style.color = `var(--font-color-${typoSkin.GID})`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (color) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.TextStyleItem.ColorValue = color
+        wb.value.style.color = `#${color}`
+      }
+      if (onSubmit) WBaseDA.edit(listUpdate, EnumObj.textStyle)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.color = `#${color}`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      if (onSubmit) StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (fontFamily) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.TextStyleItem.FontFamily = fontFamily
+        wb.value.style.fontFamily = fontFamily
+      }
+      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.fontFamily = fontFamily
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (fontSize !== undefined) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.TextStyleItem.FontSize = fontSize
+        wb.value.style.fontSize = `${fontSize}px`
+      }
+      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.fontSize = `${fontSize}px`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (fontWeight) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.TextStyleItem.FontFamily = fontFamily
+        wb.value.style.fontFamily = fontFamily
+      }
+      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.fontFamily = fontFamily
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (height !== undefined) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.TextStyleItem.Height = height
+        wb.value.style.height = height === null ? height : `${height}px`
+      }
+      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.height = height === null ? height : `${height}px`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (letterSpacing !== undefined) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.TextStyleItem.LetterSpacing = letterSpacing
+        wb.value.style.letterSpacing = `${letterSpacing}px`
+      }
+      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.letterSpacing = `${letterSpacing}px`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (textAlign) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.TypoStyleItem.TextAlign = textAlign
+        wb.value.style.textAlign = textAlign
+      }
+      WBaseDA.edit(listUpdate, EnumObj.typoStyleItem)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.textAlign = textAlign
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (alignVertical) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.StyleItem.TypoStyleItem.TextAlignVertical = alignVertical
+        wb.value.style.alignItems = alignVertical
+      }
+      WBaseDA.edit(listUpdate, EnumObj.typoStyleItem)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.alignItems = alignVertical
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -4066,224 +4413,6 @@ function updateConstraints (wbaseItem) {
       break
   }
   initPositionStyle(wbaseItem)
-}
-
-function selectResizeType (isW = true, type) {
-  let enumObj = EnumObj.frame
-  let parent_wbase
-  if (select_box_parentID !== wbase_parentID)
-    parent_wbase = wbase_list.find(e => e.GID == select_box_parentID)
-  let parentHTML = parent_wbase?.value
-  let list_update = []
-  list_update.push(...selected_list)
-  if (isW) {
-    switch (type) {
-      case 'fixed':
-        for (let wb of selected_list) {
-          wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
-          wb.value.style.width = `${wb.value.offsetWidth}px`
-          wbHTML.removeAttribute('width-type')
-        }
-        break
-      case 'hug':
-        let checkConstX = false
-        if (parent_wbase) {
-          checkConstX = parentHTML.classList.contains('w-stack')
-        }
-        for (let wb of selected_list) {
-          let wbHTML = wb.value
-          if (window.getComputedStyle(wbHTML).display.match('flex')) {
-            if (wbHTML.classList.contains('w-row')) {
-              let list_child = wbase_list.filter(
-                e =>
-                  e.ParentID == wb.GID &&
-                  e.value.getAttribute('width-type') === 'fill'
-              )
-              list_update.push(...list_child)
-              for (let childWb of list_child) {
-                childWb.StyleItem.FrameItem.Width = childWb.value.offsetWidth
-                childWb.value.style.width = `${childWb.value.offsetWidth}px`
-              }
-            } else {
-              let fillChild = [
-                ...wbHTML.querySelectorAll(
-                  `.wbaseItem-value[level="${wb.Level + 1}"][width-type="fill"]`
-                )
-              ]
-              if (childrenHTML.length === fillChild.length) {
-                fillChild.sort((a, b) => b.offsetWidth - a.offsetWidth)
-                let wbChild = wbase_list.find(e => e.GID == fillChild[0].id)
-                wbChild.StyleItem.FrameItem.Width = wbChild.value.offsetWidth
-                wbChild.value.style.width = wbChild.value.offsetWidth + 'px'
-                wbChild.value.removeAttribute('width-type')
-                list_update.push(wbChild)
-              }
-            }
-          }
-          if (checkConstX) {
-            if (
-              [Constraints.center, Constraints.scale].some(
-                constX => wb.StyleItem.PositionItem.ConstraintsX === constX
-              )
-            ) {
-              enumObj = EnumObj.framePosition
-              wb.StyleItem.PositionItem.ConstraintsX = Constraints.left
-              wb.StyleItem.PositionItem.Left = wbase_eHTML.offsetLeft + 'px'
-              initPositionStyle(wb)
-            }
-          }
-          wb.StyleItem.FrameItem.Width = null
-          wbHTML.style.width = 'fit-content'
-          wbHTML.style.minWidth = null
-          wbHTML.setAttribute('width-type', 'fit')
-        }
-        break
-      case 'fill':
-        if (parent_wbase) {
-          if (
-            !parentHTML.style.width ||
-            parentHTML.style.width == 'fit-content'
-          ) {
-            if (parentHTML.classList.contains('w-row')) {
-              parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth
-              parentHTML.style.width = `${parentHTML.offsetWidth}px`
-              list_update.push(parent_wbase)
-            } else {
-              let fillChild = [
-                ...parentHTML.querySelectorAll(
-                  `.wbaseItem-value[level="${
-                    parent_wbase.Level + 1
-                  }"]:not(*[width-type="fill"])`
-                )
-              ]
-              if (
-                fillChild.every(e => selected_list.some(wb => e.id === wb.GID))
-              ) {
-                parent_wbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth
-                parentHTML.style.width = `${parentHTML.offsetWidth}px`
-                list_update.push(parent_wbase)
-              }
-            }
-          }
-          for (let wb of selected_list) {
-            let wbHTML = wb.value
-            wb.StyleItem.FrameItem.Width =
-              wbHTML.offsetWidth === 0 ? -1 : -wbHTML.offsetWidth
-            wbHTML.style.width = '100%'
-            wbHTML.setAttribute('width-type', 'fill')
-          }
-        } else return
-        break
-      default:
-        break
-    }
-  } else {
-    switch (type) {
-      case 'fixed':
-        for (let wb of selected_list) {
-          wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
-          wb.value.style.height = `${wb.value.offsetHeight}px`
-          wbHTML.removeAttribute('height-type')
-        }
-        break
-      case 'hug':
-        let checkConstY = false
-        if (parent_wbase) {
-          checkConstY = parentHTML.classList.contains('w-stack')
-        }
-        for (let wb of selected_list) {
-          let wbHTML = wb.value
-          if (window.getComputedStyle(wbHTML).display.match('flex')) {
-            if (wbHTML.classList.contains('w-col')) {
-              let list_child = wbase_list.filter(
-                e =>
-                  e.ParentID == wb.GID &&
-                  e.value.getAttribute('height-type') === 'fill'
-              )
-              list_update.push(...list_child)
-              for (let childWb of list_child) {
-                childWb.StyleItem.FrameItem.Height = childWb.value.offsetHeight
-                childWb.value.style.height = `${childWb.value.offsetHeight}px`
-              }
-            } else {
-              let fillChild = [
-                ...wbHTML.querySelectorAll(
-                  `.wbaseItem-value[level="${
-                    wb.Level + 1
-                  }"][height-type="fill"]`
-                )
-              ]
-              if (childrenHTML.length === fillChild.length) {
-                fillChild.sort((a, b) => b.offsetHeight - a.offsetHeight)
-                let wbChild = wbase_list.find(e => e.GID == fillChild[0].id)
-                wbChild.StyleItem.FrameItem.Height = wbChild.value.offsetHeight
-                wbChild.value.style.height = wbChild.value.offsetHeight + 'px'
-                wbChild.value.removeAttribute('height-type')
-                list_update.push(wbChild)
-              }
-            }
-          }
-          if (checkConstY) {
-            if (
-              [Constraints.center, Constraints.scale].some(
-                constY => wb.StyleItem.PositionItem.ConstraintsY === constY
-              )
-            ) {
-              enumObj = EnumObj.framePosition
-              wb.StyleItem.PositionItem.ConstraintsY = Constraints.top
-              wb.StyleItem.PositionItem.Top = wbase_eHTML.offsetTop + 'px'
-              initPositionStyle(wb)
-            }
-          }
-          wb.StyleItem.FrameItem.Height = null
-          wbHTML.style.height = 'fit-content'
-          wbHTML.style.minHeight = null
-          wbHTML.setAttribute('height-type', 'fit')
-        }
-        break
-      case 'fill':
-        if (parent_wbase) {
-          if (
-            !parentHTML.style.height ||
-            parentHTML.style.height == 'fit-content'
-          ) {
-            if (parentHTML.classList.contains('w-col')) {
-              parent_wbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight
-              parentHTML.style.height = `${parentHTML.offsetHeight}px`
-              list_update.push(parent_wbase)
-            } else {
-              let fillChild = [
-                ...parentHTML.querySelectorAll(
-                  `.wbaseItem-value[level="${
-                    parent_wbase.Level + 1
-                  }"]:not(*[height-type="fill"])`
-                )
-              ]
-              if (
-                fillChild.every(e => selected_list.some(wb => e.id === wb.GID))
-              ) {
-                parent_wbase.StyleItem.FrameItem.Height =
-                  parentHTML.offsetHeight
-                parentHTML.style.height = `${parentHTML.offsetHeight}px`
-                list_update.push(parent_wbase)
-              }
-            }
-          }
-          for (let wb of selected_list) {
-            let wbHTML = wb.value
-            wb.StyleItem.FrameItem.Height =
-              wbHTML.offsetHeight === 0 ? -1 : -wbHTML.offsetHeight
-            wbHTML.style.height = '100%'
-            wbHTML.setAttribute('height-type', 'fill')
-          }
-        } else return
-        break
-      default:
-        break
-    }
-  }
-  WBaseDA.edit(list_update, enumObj)
-  setTimeout(updateUISelectBox, 20)
 }
 
 async function addAutoLayout () {
@@ -5576,20 +5705,6 @@ function editBackgroundImage (url) {
   }
 }
 
-function removeBackgroundImg () {
-  let list_change_background = selected_list.filter(
-    wb =>
-      wb.StyleItem.DecorationItem &&
-      EnumCate.noImgBg.every(ct => wb.CateID !== ct)
-  )
-  for (let wb of list_change_background) {
-    wb.StyleItem.DecorationItem.ColorValue = ''
-    wb.value.style.backgroundImage = null
-    wb.value.style.backgroundColor = null
-  }
-  WBaseDA.edit(list_change_background, EnumObj.decoration)
-}
-
 function editColorSkin (color_item, thisSkin) {
   if (color_item.Name) {
     let listName = color_item.Name.replace('\\', '/').split('/')
@@ -5625,20 +5740,6 @@ function editColorSkin (color_item, thisSkin) {
       `#${thisSkin.Value}`
     )
   }
-}
-
-function unlinkColorSkin () {
-  let list_change_background = selected_list.filter(
-    e => e.StyleItem.DecorationItem
-  )
-  for (let wb of list_change_background) {
-    wb.StyleItem.DecorationItem.ColorID = null
-    let backgroundColor = Ultis.rgbToHex(
-      window.getComputedStyle(wb.value).backgroundColor
-    ).replace('#', '')
-    wb.StyleItem.DecorationItem.ColorValue = backgroundColor
-  }
-  WBaseDA.edit(list_change_background, EnumObj.decoration)
 }
 
 function editTextStyle (text_style_item, onSubmit = true) {
@@ -5941,36 +6042,6 @@ function editTypoSkin (text_style_item, thisSkin) {
       }
     }
   }
-}
-
-function unlinkTypoSkin () {
-  let listTypo = selected_list.filter(e => e.StyleItem.TextStyleItem)
-  for (let wb of listTypo) {
-    let currentTextStyle = wb.StyleItem.TextStyleItem
-    let newTextStyleItem = {
-      GID: uuidv4(),
-      Name: 'new text style',
-      FontSize: currentTextStyle.FontSize,
-      FontWeight: currentTextStyle.FontWeight,
-      CateID: 17,
-      IsStyle: false,
-      ColorValue: currentTextStyle.ColorValue,
-      LetterSpacing: currentTextStyle.LetterSpacing,
-      FontFamily: currentTextStyle.FontFamily,
-      Height: currentTextStyle.Height
-    }
-    wb.StyleItem.TextStyleID = newTextStyleItem.GID
-    wb.StyleItem.TextStyleItem = newTextStyleItem
-    wb.value.style.font = null
-    wb.value.style.fontFamily = newTextStyleItem.FontFamily
-    wb.value.style.fontSize = `${newTextStyleItem.FontSize}px`
-    wb.value.style.fontWeight = newTextStyleItem.FontWeight
-    wb.value.style.color = `#${newTextStyleItem.ColorValue}`
-    if (newTextStyleItem.Height != undefined) {
-      wb.value.style.lineHeight = `${newTextStyleItem.Height}px`
-    }
-  }
-  WBaseDA.addStyle(listTypo, EnumObj.textStyle)
 }
 
 function addEffect () {

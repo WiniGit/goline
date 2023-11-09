@@ -136,7 +136,7 @@ socket.on('server-color', data => {
           if (selected_list.length > 0) {
             editBackground({ ColorItem: obj })
             document.getElementById('popup_table_skin').remove()
-            updateUIBackground()
+            reloadEditBackgroundBlock()
           }
         }
         break

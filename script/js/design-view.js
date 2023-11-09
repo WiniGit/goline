@@ -213,7 +213,7 @@ function EditAlignBlock () {
       if (isEnable)
         btnAlign.onclick = function () {
           handleEditAlign(alignType)
-          updateUIEditPosition()
+          reloadEditOffsetBlock()
           updateUIConstraints()
         }
       return btnAlign
@@ -258,7 +258,7 @@ function EditOffsetBlock () {
             ev.stopPropagation()
             handleEditOffset({ width: device.Width, height: device.Height })
             popup.remove()
-            updateUIEditPosition()
+            reloadEditOffsetBlock()
           }
           option.innerHTML = `<i class="fa-solid fa-check" style="visibility: ${
             btn_title.innerHTML === device.Name ? 'visible' : 'hidden'
@@ -681,7 +681,7 @@ function EditOffsetBlock () {
 }
 
 // update style HTML edit position UI
-function updateUIEditPosition () {
+function reloadEditOffsetBlock () {
   // let newEditSizePositionForm = EditOffsetBlock();
   // document.getElementById("edit_size_position_div").replaceWith(newEditSizePositionForm);
 }
@@ -1453,7 +1453,8 @@ function _btnSelectResizeType (isW = true, type) {
           resize_type_option.innerHTML += `fixed ${isW ? 'width' : 'height'}`
           resize_type_option.onclick = function (e) {
             e.stopPropagation()
-            selectResizeType(isW, 'fixed')
+            if (isW) handleEditOffset({ width: 'fixed' })
+            else handleEditOffset({ height: 'fixed' })
             popup_list_resize_type.remove()
             updateInputTLWH()
             updateUIConstraints()
@@ -1468,7 +1469,8 @@ function _btnSelectResizeType (isW = true, type) {
           resize_type_option.innerHTML += 'hug contents'
           resize_type_option.onclick = function (e) {
             e.stopPropagation()
-            selectResizeType(isW, 'hug')
+            if (isW) handleEditOffset({ width: null })
+            else handleEditOffset({ height: null })
             popup_list_resize_type.remove()
             updateInputTLWH()
             updateUIConstraints()
@@ -1483,7 +1485,8 @@ function _btnSelectResizeType (isW = true, type) {
           resize_type_option.innerHTML += 'fill container'
           resize_type_option.onclick = function (e) {
             e.stopPropagation()
-            selectResizeType(isW, 'fill')
+            if (isW) handleEditOffset({ width: -1 })
+            else handleEditOffset({ height: -1 })
             popup_list_resize_type.remove()
             updateInputTLWH()
             updateUIConstraints()
@@ -1775,7 +1778,7 @@ function EditBackgroundBlock () {
         }
       } else if (listColorID[0]) {
         let selectColorValue = listColorID[0].includes('rgb')
-          ? Ultis.rgbToHex(listColorID[0])
+          ? Ultis.rgbToHex(listColorID[0]).replace('#', ' ')
           : listColorID[0]
         //body
         let colorsSelectionList = document.createElement('div')
@@ -2038,7 +2041,7 @@ function EditBackgroundBlock () {
       btnRemoveBgImg.style.padding = '10px 8px'
       editImgTile.appendChild(btnRemoveBgImg)
       btnRemoveBgImg.onclick = function () {
-        handleEditBackground({hexCode: null})
+        handleEditBackground({ hexCode: null })
         reloadEditBackgroundBlock()
       }
     } else {
@@ -2101,9 +2104,7 @@ function createEditTextStyle () {
   header.className = 'header_design_style'
   editContainer.appendChild(header)
   let title = document.createElement('p')
-  title.innerHTML = listTextStyle.every(e => e.CateID === EnumCate.chart)
-    ? 'Chart label'
-    : 'Text'
+  title.innerHTML = 'Text'
   header.appendChild(title)
 
   let btnSelectSkin = createButtonAction(
@@ -2188,19 +2189,12 @@ function createEditTextStyle () {
     $(text_style_attribute).css({ width: '100%', 'box-sizing': 'border-box' })
     editContainer.appendChild(text_style_attribute)
     function updateTextStyleColor (params, onSubmit = true) {
-      editTextStyle({ ColorValue: params }, onSubmit)
-      if (onSubmit) {
-        updateUITextStyle()
-      }
+      handleEditTypo({ color: params, onSubmit: onSubmit })
+      if (onSubmit) updateUITextStyle()
     }
-    let edit_text_color = createEditColorForm(
-      function (params) {
-        updateTextStyleColor(params, false)
-      },
-      function (params) {
-        updateTextStyleColor(params)
-      }
-    )
+    let edit_text_color = createEditColorForm(function (params) {
+      updateTextStyleColor(params, false)
+    }, updateTextStyleColor)
     let colorParamForm = edit_text_color.querySelector('.parameter-form')
     for (let elementHTML of colorParamForm.childNodes) {
       let color_value = listTypoSkin[0].ColorValue
@@ -2231,9 +2225,7 @@ function createEditTextStyle () {
         let newFontFamily = list_font_family.find(
           e => e.toLowerCase() === option.toLowerCase()
         )
-        if (newFontFamily) {
-          editTextStyle({ FontFamily: newFontFamily })
-        }
+        if (newFontFamily) handleEditTypo({ fontFamily: newFontFamily })
         updateUITextStyle()
       }
     )
@@ -2261,7 +2253,7 @@ function createEditTextStyle () {
         }
       },
       function (value) {
-        editTextStyle({ FontWeight: value })
+        handleEditTypo({ fontWeight: value })
         updateUITextStyle()
       }
     )
@@ -2281,7 +2273,7 @@ function createEditTextStyle () {
       },
       function (option) {
         if (!isNaN(parseFloat(option))) {
-          editTextStyle({ FontSize: parseFloat(option) })
+          handleEditTypo({ fontSize: parseFloat(option) })
           updateUITextStyle()
         }
       },
@@ -2313,10 +2305,10 @@ function createEditTextStyle () {
             : lineHeightValues[0]
           : 'mixed',
       onBlur: function () {
-        if (this.value.toLowerCase() == 'auto') {
-          editTextStyle({ Height: this.value })
+        if (this.value.toLowerCase() === 'auto') {
+          handleEditTypo({ height: null })
         } else if (!isNaN(parseFloat(this.value))) {
-          editTextStyle({ Height: parseFloat(this.value) })
+          handleEditTypo({ height: parseFloat(this.value) })
         }
         updateUITextStyle()
         updateInputTLWH()
@@ -2333,7 +2325,7 @@ function createEditTextStyle () {
       iconSize: '28px',
       onBlur: function () {
         if (!isNaN(parseFloat(this.value))) {
-          editTextStyle({ LetterSpacing: parseFloat(this.value) })
+          handleEditTypo({ letterSpacing: parseFloat(this.value) })
         }
         updateUITextStyle()
       }
@@ -2360,9 +2352,20 @@ function createEditTextStyle () {
       }
     ],
     function (value) {
-      editTextStyle({ AutoSize: value })
+      switch (value) {
+        case TextAutoSize.autoWidth:
+          handleEditOffset({ width: null, height: null })
+          break
+        case TextAutoSize.autoHeight:
+          handleEditOffset({ width: 'fixed', height: null })
+          break
+        case TextAutoSize.fixedSize:
+          handleEditOffset({ width: 'fixed', height: 'fixed' })
+          break
+        default:
+          break
+      }
       updateInputTLWH()
-      updateUITextStyle()
       updateUIConstraints()
       updateUISelectBox()
     }
@@ -2393,7 +2396,7 @@ function createEditTextStyle () {
       }
     ],
     function (value) {
-      editTextStyle({ TextAlign: value })
+      handleEditTypo({ textAlign: value })
       updateUITextStyle()
     }
   )
@@ -2421,7 +2424,7 @@ function createEditTextStyle () {
       }
     ],
     function (value) {
-      editTextStyle({ TextAlignVertical: value })
+      handleEditTypo({ alignVertical: value })
       updateUITextStyle()
     }
   )
@@ -2467,10 +2470,7 @@ function updateUIAutoSizeWH (groupBtn) {
     groupBtn ?? document.getElementById('group_btn_text_auto_size')
   if (group_btn_auto_size) {
     let autoSizeValues = selected_list
-      .filter(
-        wb =>
-          wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
-      )
+      .filter(wb => wb.CateID === EnumCate.text)
       .filterAndMap(wb => {
         switch (wb.value.getAttribute('width-type')) {
           case 'fit':
@@ -3423,17 +3423,17 @@ function createEditColorForm (funcEdit, funcSubmit, funcDelete) {
   let colorSelected = document.createElement('input')
   colorSelected.className = 'show-color-container'
   colorSelected.type = 'color'
-  colorSelected.oninput = function (e) {
+  colorSelected.oninput = function () {
     editColorForm.value = this.value.replace('#', '').toUpperCase()
     funcEdit(
-      Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', ''))) +
-        this.value.replace('#', '')
+      this.value.replace('#', '') +
+        Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', '')))
     )
   }
   colorSelected.onblur = function () {
     funcSubmit(
-      Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', ''))) +
-        this.value.replace('#', '')
+      this.value.replace('#', '') +
+        Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', '')))
     )
   }
 
@@ -3527,8 +3527,8 @@ function createEditColorForm (funcEdit, funcSubmit, funcDelete) {
     this.value = this.value.replace('#', '')
     if (this.value.length == 6) {
       funcSubmit(
-        Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', ''))) +
-          this.value
+        this.value +
+          Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', '')))
       )
     } else {
       this.value = startHexColor
@@ -3548,7 +3548,7 @@ function createEditColorForm (funcEdit, funcSubmit, funcDelete) {
     divider.style.backgroundColor = 'transparent'
     opacity_value = parseFloat(this.value.replace('%', ''))
     if (opacity_value != undefined) {
-      funcSubmit(Ultis.percentToHex(opacity_value) + editColorForm.value)
+      funcSubmit(editColorForm.value + Ultis.percentToHex(opacity_value))
     } else {
       this.value = startOpacity
     }
@@ -4133,7 +4133,9 @@ function createSkinTileHTML (enumCate, jsonSkin) {
         e.stopPropagation()
         if (selected_list.length > 0) {
           handleEditBackground({ colorSkin: jsonSkin })
-          document.querySelectorAll('.popup_remove').forEach(popup => popup.remove())
+          document
+            .querySelectorAll('.popup_remove')
+            .forEach(popup => popup.remove())
           reloadEditBackgroundBlock()
         }
       }
@@ -4159,7 +4161,9 @@ function createSkinTileHTML (enumCate, jsonSkin) {
         e.stopPropagation()
         if (selected_list.length > 0) {
           editTextStyle(jsonSkin)
-          document.querySelectorAll('.popup_remove').forEach(popup => popup.remove())
+          document
+            .querySelectorAll('.popup_remove')
+            .forEach(popup => popup.remove())
           updateUITextStyle()
         }
       }
@@ -4193,7 +4197,9 @@ function createSkinTileHTML (enumCate, jsonSkin) {
         e.stopPropagation()
         if (selected_list.length > 0) {
           editBorder(jsonSkin)
-          document.querySelectorAll('.popup_remove').forEach(popup => popup.remove())
+          document
+            .querySelectorAll('.popup_remove')
+            .forEach(popup => popup.remove())
           updateUIBorder()
         }
       }
@@ -4219,7 +4225,9 @@ function createSkinTileHTML (enumCate, jsonSkin) {
         e.stopPropagation()
         if (selected_list.length > 0) {
           editEffect(jsonSkin)
-          document.querySelectorAll('.popup_remove').forEach(popup => popup.remove())
+          document
+            .querySelectorAll('.popup_remove')
+            .forEach(popup => popup.remove())
           updateUIEffect()
         }
       }
@@ -6838,7 +6846,7 @@ function colNumberByBrp (enable = true) {
         }
       }
       WBaseDA.edit(selected_list, eObj)
-      updateUIEditPosition()
+      reloadEditOffsetBlock()
       updateUIColNumber()
       updateUISelectBox()
     }
@@ -6990,7 +6998,7 @@ function colNumberByBrp (enable = true) {
               }
             }
             WBaseDA.edit(selected_list)
-            updateUIEditPosition()
+            reloadEditOffsetBlock()
             updateUIColNumber()
             updateUISelectBox()
           }
@@ -7032,7 +7040,7 @@ function colNumberByBrp (enable = true) {
         }
         listUpdate.push(...selected_list)
         WBaseDA.edit(listUpdate, eObj)
-        updateUIEditPosition()
+        reloadEditOffsetBlock()
         updateUIColNumber()
         updateUISelectBox()
       }
@@ -7082,7 +7090,7 @@ function colNumberByBrp (enable = true) {
                   )
                 }
                 WBaseDA.edit(selected_list)
-                updateUIEditPosition()
+                reloadEditOffsetBlock()
                 updateUIColNumber()
                 updateUISelectBox()
               }
