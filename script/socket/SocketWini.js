@@ -134,7 +134,7 @@ socket.on('server-color', data => {
         if (window.getComputedStyle(create_skin_popup).display != 'none') {
           create_skin_popup.style.display = 'none'
           if (selected_list.length > 0) {
-            editBackground({ ColorItem: obj })
+            handleEditBackground({ colorSkin: obj })
             document.getElementById('popup_table_skin').remove()
             reloadEditBackgroundBlock()
           }
@@ -180,7 +180,7 @@ socket.on('server-border', data => {
         if (window.getComputedStyle(create_skin_popup).display != 'none') {
           create_skin_popup.style.display = 'none'
           if (selected_list.length > 0) {
-            editBorder(obj)
+            handleEditBorder({ borderSkin: obj })
             document.getElementById('popup_table_skin').remove()
             updateUIBorder()
           }
@@ -269,7 +269,7 @@ socket.on('server-typo', data => {
         if (window.getComputedStyle(create_skin_popup).display != 'none') {
           create_skin_popup.style.display = 'none'
           if (selected_list.length > 0) {
-            handleEditTypo({typoSkin: obj})
+            handleEditTypo({ typoSkin: obj })
             document.getElementById('popup_table_skin').remove()
             reloadEditTypoBlock()
           }

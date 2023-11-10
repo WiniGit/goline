@@ -132,7 +132,7 @@ class EnumCate {
 
   static data_component = [this.tree, this.chart, this.carousel, this.table];
 
-  static accept_border_effect = [this.frame, this.form, this.rectangle, this.variant, this.table, this.button, this.textformfield, this.svg]
+  static accept_border_effect = [this.frame, this.form, this.rectangle, this.variant, this.table, this.button, this.textformfield, this.svg, this.checkbox]
 }
 
 class AlignmentType {

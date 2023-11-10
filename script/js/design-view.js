@@ -816,9 +816,7 @@ function createAutoLayout () {
   let autoLayoutList = selected_list.filter(wb =>
     EnumCate.no_child_component.every(ct => wb.CateID !== ct)
   )
-  let isEditTable =
-    autoLayoutList.length > 0 &&
-    autoLayoutList.every(e => e.CateID === EnumCate.table)
+  let isEditTable = autoLayoutList.every(wb => wb.CateID === EnumCate.table)
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_auto_layout_div'
   editContainer.className = 'edit-container'
@@ -1770,7 +1768,8 @@ function EditBackgroundBlock () {
               createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID)
             },
             onRemove: function () {
-              deleteBackgroundColor().then(_ => reloadEditBackgroundBlock())
+              handleEditBackground({ hexCode: null })
+              reloadEditBackgroundBlock()
             }
           })
           editContainer.appendChild(skin_tile)
@@ -1911,21 +1910,19 @@ function EditBackgroundBlock () {
               ...colorsSelectionList.querySelectorAll('.edit-color-container')
             ].map(eHTML => {
               return (
+                eHTML.querySelector('.hex-color-value').value +
                 Ultis.percentToHex(
                   eHTML
                     .querySelector('.opacity-color-value')
                     .value.replace('%', '')
-                ) + eHTML.querySelector('.hex-color-value').value
+                )
               )
             })
-            editBackground(
-              { ColorValue: newListColorValue.join(',') },
-              onSubmit
-            ).then(_ => {
-              if (onSubmit) {
-                reloadEditBackgroundBlock()
-              }
+            handleEditBackground({
+              hexCode: newListColorValue.join(','),
+              onSubmit: onSubmit
             })
+            if (onSubmit) reloadEditBackgroundBlock()
           })
           formEdit.style.justifyContent = 'space-between'
           formEdit.style.marginRight = '8px'
@@ -1943,14 +1940,11 @@ function EditBackgroundBlock () {
               )
             )
           })
-          editBackground(
-            { ColorValue: newListColorValue.join(',') },
-            onSubmit
-          ).then(_ => {
-            if (onSubmit) {
-              reloadEditBackgroundBlock()
-            }
+          handleEditBackground({
+            hexCode: newListColorValue.join(','),
+            onSubmit: onSubmit
           })
+          if (onSubmit) reloadEditBackgroundBlock()
         }
         let formEdit = createEditColorForm(
           function () {
@@ -1958,7 +1952,8 @@ function EditBackgroundBlock () {
           },
           updateColor,
           function () {
-            deleteBackgroundColor().then(_ => reloadEditBackgroundBlock())
+            handleEditBackground({ hexCode: null })
+            reloadEditBackgroundBlock()
           }
         )
         for (let eHTML of formEdit.childNodes) {
@@ -2670,7 +2665,7 @@ function createEditBorder () {
   )
   //
   let listBorderSkin = listBorder.filterAndMap(wb => {
-    if (wb.StyleItem?.DecorationItem) {
+    if (wb.StyleItem) {
       return wb.StyleItem.DecorationItem.BorderItem
         ? wb.StyleItem.DecorationItem.BorderItem.IsStyle
           ? wb.StyleItem.DecorationItem.BorderID
@@ -2716,6 +2711,7 @@ function createEditBorder () {
               borderWidth = borderWidth.join(' ')
               break
           }
+          wb.borderSide = borderSide
           return {
             Width: borderWidth,
             BorderStyle: rule.borderStyle,
@@ -2766,18 +2762,14 @@ function createEditBorder () {
     if (borderColorValues.length == 1) {
       let colorValue = borderColorValues[0]
       function updateBorderColor (params, onSubmit = true) {
-        editBorder({ ColorValue: params }, onSubmit)
-        if (onSubmit) {
-          updateUIBorder()
-        }
+        handleEditBorder({ ColorValue: params, onSubmit: onSubmit })
+        if (onSubmit) updateUIBorder()
       }
       let formEditColor = createEditColorForm(
         function (params) {
           updateBorderColor(params, false)
         },
-        function (params) {
-          updateBorderColor(params)
-        },
+        updateBorderColor,
         function () {
           deleteBorder()
           updateUIBorder()
@@ -2817,7 +2809,7 @@ function createEditBorder () {
         }
       },
       function (value) {
-        editBorder({ BorderStyle: value })
+        handleEditBorder({ style: value })
         updateUIBorder()
       }
     )
@@ -2852,41 +2844,37 @@ function createEditBorder () {
     })
     edit_stroke_width.lastChild.onblur = function () {
       let newValue = parseFloat(this.value)
+      let thisWidthValues = [
+        input_border_left,
+        input_border_top,
+        input_border_right,
+        input_border_bottom
+      ]
       if (newValue != undefined) {
         switch (firstSideValue) {
           case BorderSide.top:
-            editBorder({ TopWidth: this.value })
+            handleEditBorder({ tWidth: this.value })
             input_border_top.value = this.value
             break
           case BorderSide.right:
-            editBorder({ RightWidth: this.value })
+            handleEditBorder({ rWidth: this.value })
             input_border_right.value = this.value
             break
           case BorderSide.bottom:
-            editBorder({ BottomWidth: this.value })
+            handleEditBorder({ bWidth: this.value })
             input_border_bottom.value = this.value
             break
           case BorderSide.left:
-            editBorder({ LeftWidth: this.value })
+            handleEditBorder({ lWidth: this.value })
             input_border_left.value = this.value
             break
           default:
-            editBorder({ Width: this.value })
-            ;[
-              input_border_left,
-              input_border_top,
-              input_border_right,
-              input_border_bottom
-            ].forEach(_input => (_input.value = this.value))
+            handleEditBorder({ width: this.value })
+            thisWidthValues.forEach(i => (i.value = this.value))
             break
         }
       } else {
-        let thisWidthValues = [
-          input_border_left,
-          input_border_top,
-          input_border_right,
-          input_border_bottom
-        ].filterAndMap(_input => _input.value)
+        thisWidthValues = thisWidthValues.filterAndMap(i => i.value)
         this.value = thisWidthValues.length > 1 ? 'mixed' : thisWidthValues[0]
       }
     }
@@ -2903,14 +2891,11 @@ function createEditBorder () {
       function () {
         dropdown_type.style.display = 'flex'
         dropdown_type.childNodes[0].style.display = 'none'
-        let list_border_side = selected_list
-          .filter(e => e.StyleItem.DecorationItem?.BorderItem)
-          .map(e => e.StyleItem.DecorationItem.BorderItem.BorderSide)
-        if (list_border_side.every(side => side == list_border_side[0])) {
+        if (sideValues.length === 1) {
           for (let i = 1; i < dropdown_type.childNodes.length; i++) {
             let type = dropdown_type.childNodes[i].getAttribute('type')
             dropdown_type.childNodes[i].firstChild.style.opacity =
-              type == list_border_side[0] ? 1 : 0
+              type == sideValues[0] ? 1 : 0
           }
         } else {
           dropdown_type.childNodes[0].style.display = 'flex'
@@ -2925,13 +2910,10 @@ function createEditBorder () {
     action_edit_line_container.appendChild(btnSelectBorderSide)
 
     let dropdown_type = selectBorderSide('All', function (value) {
-      if (
-        selected_list.every(wbaseItem =>
-          EnumCate.scale_size_component.every(cate => wbaseItem.CateID !== cate)
-        )
-      )
-        editBorder({ BorderSide: value })
-      updateUIBorder()
+      if (selected_list.every(wb => wb.CateID !== EnumCate.checkbox)) {
+        handleEditBorder({ side: value })
+        reloadUIBySide(value)
+      }
     })
     btnSelectBorderSide.appendChild(dropdown_type)
 
@@ -2950,108 +2932,111 @@ function createEditBorder () {
       width: '88px',
       icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left-black.svg',
       value: '0',
-      iconSize: '36px'
-    })
-    input_border_left.style.display = 'flex'
-    input_border_left.style.marginLeft = '8px'
-    input_border_left.lastChild.onblur = function () {
-      let left_width_value = parseFloat(this.value)
-      if (!isNaN(left_width_value)) {
-        editBorder({ LeftWidth: this.value })
+      iconSize: '36px',
+      onBlur: function () {
+        let left_width_value = parseFloat(this.value)
+        if (!isNaN(left_width_value)) {
+          handleEditBorder({ lWidth: this.value })
+        }
+        updateUIBorder()
       }
-      updateUIBorder()
-    }
-    group_custom_border_side.appendChild(input_border_left)
-    var input_border_top = _textField({
+    })
+    input_border_left.style.marginLeft = '8px'
+    let input_border_top = _textField({
       width: '88px',
       icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top-black.svg',
       value: '0',
-      iconSize: '36px'
-    })
-    input_border_top.style.display = 'flex'
-    input_border_top.style.marginRight = '35px'
-    input_border_top.lastChild.onblur = function () {
-      let top_width_value = parseFloat(this.value)
-      if (!isNaN(top_width_value)) {
-        editBorder({ TopWidth: this.value })
+      iconSize: '36px',
+      onBlur: function () {
+        let top_width_value = parseFloat(this.value)
+        if (!isNaN(top_width_value)) {
+          handleEditBorder({ tWidth: this.value })
+        }
+        updateUIBorder()
       }
-      updateUIBorder()
-    }
-    group_custom_border_side.appendChild(input_border_top)
-    var input_border_right = _textField({
+    })
+    input_border_top.style.marginRight = '35px'
+    let input_border_right = _textField({
       width: '88px',
       icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right-black.svg',
       value: '0',
-      iconSize: '36px'
-    })
-    input_border_right.style.display = 'flex'
-    input_border_right.style.marginLeft = '8px'
-    input_border_right.lastChild.onblur = function () {
-      let right_width_value = parseFloat(this.value)
-      if (!isNaN(right_width_value)) {
-        editBorder({ RightWidth: this.value })
+      iconSize: '36px',
+      onBlur: function () {
+        let right_width_value = parseFloat(this.value)
+        if (!isNaN(right_width_value)) {
+          handleEditBorder({ rWidth: this.value })
+        }
+        updateUIBorder()
       }
-      updateUIBorder()
-    }
-    group_custom_border_side.appendChild(input_border_right)
-    var input_border_bottom = _textField({
+    })
+    input_border_right.style.marginLeft = '8px'
+    let input_border_bottom = _textField({
       width: '88px',
       icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom-black.svg',
       value: '0',
-      iconSize: '36px'
+      iconSize: '36px',
+      onBlur: function () {
+        let bottom_width_value = parseFloat(this.value)
+        if (!isNaN(bottom_width_value)) {
+          handleEditBorder({ bWidth: this.value })
+        }
+        updateUIBorder()
+      }
     })
     input_border_bottom.style.marginRight = '35px'
-    input_border_bottom.style.display = 'flex'
-    input_border_bottom.lastChild.onblur = function () {
-      let bottom_width_value = parseFloat(this.value)
-      if (!isNaN(bottom_width_value)) {
-        editBorder({ BottomWidth: this.value })
-      }
-      updateUIBorder()
-    }
-    group_custom_border_side.appendChild(input_border_bottom)
+    group_custom_border_side.replaceChildren(
+      input_border_left,
+      input_border_top,
+      input_border_right,
+      input_border_bottom
+    )
     let firstSideValue = sideValues.length == 1 ? sideValues[0] : 'mixed'
-    if (firstSideValue == BorderSide.custom) {
-      group_custom_border_side.style.display = 'flex'
-      btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg`
-      for (let j = 0; j < group_custom_border_side.childNodes.length; j++) {
-        let list_width = []
-        let inputValue
-        switch (j) {
-          case 0:
-            // case edit left border width
-            list_width = listBorderSkin.filterAndMap(e =>
-              e.Width.split(' ').pop()
-            )
-            inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-            break
-          case 1:
-            // case edit top border width
-            list_width = listBorderSkin.filterAndMap(e =>
-              e.Width.split(' ').shift()
-            )
-            inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-            break
-          case 2:
-            // case edit right border width
-            list_width = listBorderSkin.filterAndMap(e => e.Width.split(' ')[1])
-            inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-            break
-          case 3:
-            // case edit bottom border width
-            list_width = listBorderSkin.filterAndMap(e => e.Width.split(' ')[2])
-            inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-            break
-          default:
-            break
+    function reloadUIBySide (changeSide) {
+      if (changeSide === BorderSide.custom) {
+        group_custom_border_side.style.display = 'flex'
+        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg`
+        for (let j = 0; j < group_custom_border_side.childNodes.length; j++) {
+          switch (j) {
+            case 0:
+              // case edit left border width
+              var list_width = listBorderSkin.filterAndMap(e =>
+                e.Width.split(' ').pop()
+              )
+              var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
+              break
+            case 1:
+              // case edit top border width
+              var list_width = listBorderSkin.filterAndMap(e =>
+                e.Width.split(' ').shift()
+              )
+              var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
+              break
+            case 2:
+              // case edit right border width
+              var list_width = listBorderSkin.filterAndMap(
+                e => e.Width.split(' ')[1]
+              )
+              var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
+              break
+            case 3:
+              // case edit bottom border width
+              var list_width = listBorderSkin.filterAndMap(
+                e => e.Width.split(' ')[2]
+              )
+              var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
+              break
+            default:
+              break
+          }
+          let inputForm = group_custom_border_side.childNodes[j]
+          inputForm.lastChild.value = inputValue
         }
-        let inputForm = group_custom_border_side.childNodes[j]
-        inputForm.lastChild.value = inputValue
+      } else {
+        group_custom_border_side.style.display = 'none'
+        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-${firstSideValue.toLowerCase()}-black.svg`
       }
-    } else {
-      group_custom_border_side.style.display = 'none'
-      btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-${firstSideValue.toLowerCase()}-black.svg`
     }
+    reloadUIBySide(firstSideValue)
   }
   return editContainer
 }
@@ -4195,7 +4180,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
       skin_tile.onclick = function (e) {
         e.stopPropagation()
         if (selected_list.length > 0) {
-          editBorder(jsonSkin)
+          handleEditBorder({ borderSkin: jsonSkin })
           document
             .querySelectorAll('.popup_remove')
             .forEach(popup => popup.remove())
