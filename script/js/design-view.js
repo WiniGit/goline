@@ -2769,7 +2769,7 @@ function EditBorderBlock () {
     if (borderColorValues.length == 1) {
       let colorValue = borderColorValues[0]
       function updateBorderColor (params, onSubmit = true) {
-        handleEditBorder({ ColorValue: params, onSubmit: onSubmit })
+        handleEditBorder({ color: params, onSubmit: onSubmit })
         if (onSubmit) reloadEditBorderBlock()
       }
       let formEditColor = createEditColorForm(
