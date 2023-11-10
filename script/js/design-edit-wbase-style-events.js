@@ -4534,7 +4534,7 @@ function handleEditBorder ({
           .split(' ')
           .sort(
             (a, b) =>
-              parseFloat(a.replace('px', '')) - parseFloat(b.replace('px', ''))
+              parseFloat(b.replace('px', '')) - parseFloat(a.replace('px', ''))
           )
         switch (side) {
           case BorderSide.all:
