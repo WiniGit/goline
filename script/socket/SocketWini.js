@@ -182,7 +182,7 @@ socket.on('server-border', data => {
           if (selected_list.length > 0) {
             handleEditBorder({ borderSkin: obj })
             document.getElementById('popup_table_skin').remove()
-            updateUIBorder()
+            reloadEditBorderBlock()
           }
         }
         break

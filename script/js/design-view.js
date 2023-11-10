@@ -110,7 +110,7 @@ function updateUIDesignView () {
         EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
       )
     ) {
-      let editBorder = createEditBorder()
+      let editBorder = EditBorderBlock()
       listEditContainer.appendChild(editBorder)
       let editEffect = createEditEffect()
       listEditContainer.appendChild(editEffect)
@@ -2639,7 +2639,7 @@ let list_border_style = [
 ]
 
 //! border
-function createEditBorder () {
+function EditBorderBlock () {
   let listBorder = selected_list.filter(wb =>
     EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
   )
@@ -2694,6 +2694,13 @@ function createEditBorder () {
               borderWidth = [...borderWidth, ...borderWidth].join(' ')
               break
             case 3:
+              if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
+                if (borderWidth[0] > 0) {
+                  borderSide = BorderSide.top
+                } else{
+                  borderSide = BorderSide.bottom
+                } 
+              }
               borderWidth = [...borderWidth, borderWidth[1]].join(' ')
               break
             default: // 4
@@ -2737,7 +2744,7 @@ function createEditBorder () {
       },
       onRemove: function () {
         deleteBorder()
-        updateUIBorder()
+        reloadEditBorderBlock()
       }
     })
     editContainer.appendChild(skin_tile)
@@ -2746,7 +2753,7 @@ function createEditBorder () {
     btnAdd.className = 'fa-solid fa-plus fa-sm'
     btnAdd.onclick = function () {
       addBorder()
-      updateUIBorder()
+      reloadEditBorderBlock()
     }
     header.appendChild(btnAdd)
   } else if (listBorderSkin.some(e => typeof e !== 'object')) {
@@ -2763,7 +2770,7 @@ function createEditBorder () {
       let colorValue = borderColorValues[0]
       function updateBorderColor (params, onSubmit = true) {
         handleEditBorder({ ColorValue: params, onSubmit: onSubmit })
-        if (onSubmit) updateUIBorder()
+        if (onSubmit) reloadEditBorderBlock()
       }
       let formEditColor = createEditColorForm(
         function (params) {
@@ -2772,7 +2779,7 @@ function createEditBorder () {
         updateBorderColor,
         function () {
           deleteBorder()
-          updateUIBorder()
+          reloadEditBorderBlock()
         }
       )
       editContainer.appendChild(formEditColor)
@@ -2810,7 +2817,7 @@ function createEditBorder () {
       },
       function (value) {
         handleEditBorder({ style: value })
-        updateUIBorder()
+        reloadEditBorderBlock()
       }
     )
     btnSelectStyle.firstChild.innerHTML =
@@ -2938,7 +2945,7 @@ function createEditBorder () {
         if (!isNaN(left_width_value)) {
           handleEditBorder({ lWidth: this.value })
         }
-        updateUIBorder()
+        reloadEditBorderBlock()
       }
     })
     input_border_left.style.marginLeft = '8px'
@@ -2952,7 +2959,7 @@ function createEditBorder () {
         if (!isNaN(top_width_value)) {
           handleEditBorder({ tWidth: this.value })
         }
-        updateUIBorder()
+        reloadEditBorderBlock()
       }
     })
     input_border_top.style.marginRight = '35px'
@@ -2966,7 +2973,7 @@ function createEditBorder () {
         if (!isNaN(right_width_value)) {
           handleEditBorder({ rWidth: this.value })
         }
-        updateUIBorder()
+        reloadEditBorderBlock()
       }
     })
     input_border_right.style.marginLeft = '8px'
@@ -2980,7 +2987,7 @@ function createEditBorder () {
         if (!isNaN(bottom_width_value)) {
           handleEditBorder({ bWidth: this.value })
         }
-        updateUIBorder()
+        reloadEditBorderBlock()
       }
     })
     input_border_bottom.style.marginRight = '35px'
@@ -3041,8 +3048,8 @@ function createEditBorder () {
   return editContainer
 }
 
-function updateUIBorder () {
-  let newEditBorder = createEditBorder()
+function reloadEditBorderBlock () {
+  let newEditBorder = EditBorderBlock()
   document.getElementById('edit-border').replaceWith(newEditBorder)
 }
 
@@ -4184,7 +4191,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           document
             .querySelectorAll('.popup_remove')
             .forEach(popup => popup.remove())
-          updateUIBorder()
+          reloadEditBorderBlock()
         }
       }
       let demo_border = document.createElement('div')
@@ -5144,7 +5151,7 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
       btn_table_skin.innerHTML = `<div style="width: 15px;height: 15px;border-radius: 50%;border: 0.5px solid #c4c4c4; background-color: ${prefixValue}"></div><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
       btn_unLink.onclick = function () {
         unlinkBorderSkin()
-        updateUIBorder()
+        reloadEditBorderBlock()
       }
       break
     case EnumCate.effect:
