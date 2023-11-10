@@ -2699,13 +2699,13 @@ function createEditBorder () {
             default: // 4
               if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
                 if (borderWidth[0] > 0) {
-                  borderWidth = BorderSide.top
+                  borderSide = BorderSide.top
                 } else if (borderWidth[1] > 0) {
-                  borderWidth = BorderSide.right
+                  borderSide = BorderSide.right
                 } else if (borderWidth[2] > 0) {
-                  borderWidth = BorderSide.bottom
+                  borderSide = BorderSide.bottom
                 } else {
-                  borderWidth = BorderSide.left
+                  borderSide = BorderSide.left
                 }
               }
               borderWidth = borderWidth.join(' ')
