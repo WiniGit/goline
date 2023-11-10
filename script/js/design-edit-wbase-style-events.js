@@ -4555,7 +4555,7 @@ function handleEditBorder ({
           default:
             break
         }
-        cssRule.style.borderWidth = widthList.map(e => `${e}px`).join(' ')
+        cssRule.style.borderWidth = widthList.join(' ')
         delete wb.borderSide
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
