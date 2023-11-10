@@ -4496,7 +4496,7 @@ function handleEditBorder ({
       for (let wb of listUpdate) {
         let widthList = wb.StyleItem.DecorationItem.BorderItem.Width.split(
           ' '
-        ).sort((a, b) => parseFloat(a) - parseFloat(b))
+        ).sort((a, b) => parseFloat(b) - parseFloat(a))
         switch (side) {
           case BorderSide.all:
             widthList = [widthList[0], widthList[0], widthList[0], widthList[0]]

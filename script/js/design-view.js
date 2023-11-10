@@ -2697,9 +2697,9 @@ function EditBorderBlock () {
               if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
                 if (borderWidth[0] > 0) {
                   borderSide = BorderSide.top
-                } else{
+                } else {
                   borderSide = BorderSide.bottom
-                } 
+                }
               }
               borderWidth = [...borderWidth, borderWidth[1]].join(' ')
               break
@@ -2892,37 +2892,16 @@ function EditBorderBlock () {
     formEditLine.appendChild(action_edit_line_container)
 
     let sideValues = listBorderSkin.filterAndMap(e => e.BorderSide)
-    let btnSelectBorderSide = createButtonAction(
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg',
-      null,
-      function () {
-        dropdown_type.style.display = 'flex'
-        dropdown_type.childNodes[0].style.display = 'none'
-        if (sideValues.length === 1) {
-          for (let i = 1; i < dropdown_type.childNodes.length; i++) {
-            let type = dropdown_type.childNodes[i].getAttribute('type')
-            dropdown_type.childNodes[i].firstChild.style.opacity =
-              type == sideValues[0] ? 1 : 0
-          }
-        } else {
-          dropdown_type.childNodes[0].style.display = 'flex'
-          for (let i = 0; i < dropdown_type.childNodes.length; i++) {
-            let type = dropdown_type.childNodes[i].getAttribute('type')
-            dropdown_type.childNodes[i].firstChild.style.opacity =
-              type == 'mixed' ? 1 : 0
-          }
+    let btnSelectBorderSide = selectBorderSide(
+      sideValues.length === 1 ? sideValues[0] : 'mixed',
+      function (value) {
+        if (selected_list.every(wb => wb.CateID !== EnumCate.checkbox)) {
+          handleEditBorder({ side: value })
+          reloadUIBySide(value)
         }
       }
     )
     action_edit_line_container.appendChild(btnSelectBorderSide)
-
-    let dropdown_type = selectBorderSide('All', function (value) {
-      if (selected_list.every(wb => wb.CateID !== EnumCate.checkbox)) {
-        handleEditBorder({ side: value })
-        reloadUIBySide(value)
-      }
-    })
-    btnSelectBorderSide.appendChild(dropdown_type)
 
     let edit_line_action2 = createButtonAction(
       'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg',
@@ -3582,6 +3561,26 @@ function selectBorderSide (params, onclick) {
       name: BorderSide.custom
     }
   ]
+  let button = document.createElement('button')
+  button.className = 'action-button'
+
+  let buttonIcon = document.createElement('img')
+  buttonIcon.src = list.find(e => e.name === params)
+  buttonIcon.style.pointerEvents = 'none'
+  button.appendChild(buttonIcon)
+  button.onclick = function (ev) {
+    if (ev.target.className.includes(`${this.className}`)) {
+      setTimeout(function () {
+        dropdownContainer.style.display = 'flex'
+        dropdownContainer.childNodes[0].style.display = 'none'
+        for (let i = 1; i < dropdownContainer.childNodes.length; i++) {
+          let type = dropdownContainer.childNodes[i].getAttribute('type')
+          dropdownContainer.childNodes[i].firstChild.style.opacity =
+            type == params ? 1 : 0
+        }
+      }, 200)
+    }
+  }
 
   let dropdownContainer = document.createElement('div')
   dropdownContainer.className = 'dropdown-border-type wini_popup'
@@ -3622,7 +3621,8 @@ function selectBorderSide (params, onclick) {
     option.appendChild(optionTitle)
     dropdownContainer.appendChild(option)
   }
-  return dropdownContainer
+  button.appendChild(dropdownContainer)
+  return button
 }
 
 function createButtonAction (src1, src2, action) {
@@ -4713,23 +4713,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       }
       formEditLine.appendChild(edit_stroke_width)
 
-      let btnSelectBorderSide = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg',
-        null,
-        function () {
-          dropdown_type.style.display = 'flex'
-          dropdown_type.childNodes[0].style.display = 'none'
-          for (let i = 1; i < dropdown_type.childNodes.length; i++) {
-            let type = dropdown_type.childNodes[i].getAttribute('type')
-            dropdown_type.childNodes[i].firstChild.style.opacity =
-              type == jsonSkin.BorderSide ? 1 : 0
-          }
-        }
-      )
-      btnSelectBorderSide.className = 'action-button'
-      formEditLine.appendChild(btnSelectBorderSide)
-
-      let dropdown_type = selectBorderSide(
+      let btnSelectBorderSide = selectBorderSide(
         jsonSkin.BorderSide,
         function (value) {
           let thisSkin = BorderDA.list.find(e => e.GID == jsonSkin.GID)
@@ -4755,7 +4739,7 @@ function popupEditSkin (enumCate, jsonSkin) {
           }
         }
       )
-      btnSelectBorderSide.appendChild(dropdown_type)
+      formEditLine.appendChild(btnSelectBorderSide)
 
       let group_custom_border_side = document.createElement('div')
       body.appendChild(group_custom_border_side)
