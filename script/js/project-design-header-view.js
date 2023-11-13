@@ -32,7 +32,7 @@ function createNewSkin () {
       var new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
-        Value: selected_list[0].StyleItem.DecorationItem.ColorValue
+        Value: Ultis.rgbToHex(window.getComputedStyle(wb.value).backgroundColor)
       }
       break
     case EnumCate.typography:
@@ -60,33 +60,87 @@ function createNewSkin () {
       }
       break
     case EnumCate.border:
-      let select_border = selected_list.find(
-        e => e.StyleItem.DecorationItem.BorderItem
-      ).StyleItem.DecorationItem.BorderItem
+      let select_border = window.getComputedStyle(
+        selected_list.find(wb =>
+          EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+        ).value
+      )
+      let borderWidth = select_border.borderWidth.replaceAll('px', '').split(' ')
+      let borderSide = BorderSide.custom
+      switch (borderWidth.length) {
+        case 1:
+          borderWidth = `${borderWidth} ${borderWidth} ${borderWidth} ${borderWidth}`
+          borderSide = BorderSide.all
+          break
+        case 2:
+          borderWidth = [...borderWidth, ...borderWidth].join(' ')
+          break
+        case 3:
+          if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
+            if (borderWidth[0] > 0) {
+              borderSide = BorderSide.top
+            } else {
+              borderSide = BorderSide.bottom
+            }
+          }
+          borderWidth = [...borderWidth, borderWidth[1]].join(' ')
+          break
+        default: // 4
+          if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
+            if (borderWidth[0] > 0) {
+              borderSide = BorderSide.top
+            } else if (borderWidth[1] > 0) {
+              borderSide = BorderSide.right
+            } else if (borderWidth[2] > 0) {
+              borderSide = BorderSide.bottom
+            } else {
+              borderSide = BorderSide.left
+            }
+          }
+          borderWidth = borderWidth.join(' ')
+          break
+      }
       var new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
-        BorderStyle: select_border.BorderStyle,
-        IsStyle: true,
-        BorderSide: select_border.BorderSide,
-        Width: select_border.Width,
-        ColorValue: select_border.ColorValue
+        Width: borderWidth,
+        BorderStyle: select_border.borderStyle,
+        ColorValue: Ultis.rgbToHex(select_border.borderColor).replace('#', ''),
+        IsStyle: false,
+        BorderSide: borderSide
       }
       break
     case EnumCate.effect:
-      let select_effect = selected_list.find(
-        e => e.StyleItem.DecorationItem.EffectItem
-      ).StyleItem.DecorationItem.EffectItem
+      let select_effect = window.getComputedStyle(
+        selected_list.find(wb =>
+          EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+        ).value
+      )
       var new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
         IsStyle: true,
-        OffsetX: select_effect.OffsetX,
-        OffsetY: select_effect.OffsetY,
-        ColorValue: select_effect.ColorValue,
-        BlurRadius: select_effect.BlurRadius,
-        SpreadRadius: select_effect.SpreadRadius,
-        Type: select_effect.Type
+      }
+      if (select_effect.filter !== "none") {
+        new_skin['Type'] = ShadowType.layer_blur
+        new_skin['BlurRadius'] = select_effect.filter.replace(/(blur\(|px\))/g, '')
+      } else {
+        let effectColor = select_effect.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        let props = select_effect.boxShadow
+          .replace(effectColor, '')
+          .trim()
+          .split(' ')
+        new_skin['Type'] = props.includes('inset')
+          ? ShadowType.inner
+          : ShadowType.dropdown
+        new_skin['OffsetX'] = parseFloat(props[0].replace('px'))
+        new_skin['OffsetY'] = parseFloat(props[1].replace('px'))
+        new_skin['BlurRadius'] = parseFloat(props[2].replace('px'))
+        new_skin['SpreadRadius'] = parseFloat(props[3].replace('px'))
+        new_skin['ColorValue'] = Ultis.rgbToHex(effectColor).replace(
+          '#',
+          ''
+        )
       }
       break
     default:
