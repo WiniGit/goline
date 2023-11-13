@@ -227,9 +227,9 @@ socket.on('server-effect', data => {
         if (window.getComputedStyle(create_skin_popup).display != 'none') {
           create_skin_popup.style.display = 'none'
           if (selected_list.length > 0) {
-            editEffect(obj)
+            handleEditEffect({ effectSkin: obj })
             document.getElementById('popup_table_skin').remove()
-            updateUIEffect()
+            reloadEditEffectBlock()
           }
         }
         break

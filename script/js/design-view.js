@@ -112,7 +112,7 @@ function updateUIDesignView () {
     ) {
       let editBorder = EditBorderBlock()
       listEditContainer.appendChild(editBorder)
-      let editEffect = createEditEffect()
+      let editEffect = EditEffectBlock()
       listEditContainer.appendChild(editEffect)
     }
     // let editVariants = createEditVariants();
@@ -3038,7 +3038,7 @@ let list_effect_type = [
   ShadowType.layer_blur
 ]
 // ! effect
-function createEditEffect () {
+function EditEffectBlock () {
   let listEffect = selected_list.filter(wb =>
     EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
   )
@@ -3085,8 +3085,11 @@ function createEditEffect () {
           ).replace(')', '')
         } else {
           let effectItem = { IsStyle: false }
-          if (rule.boxShadow.length > 0 && rule.boxShadow !== 'none') {
-            let effectColor = rule.boxShadow.match(/rgba\(.*\)/g)[0]
+          if (rule.filter?.length > 0) {
+            effectItem['Type'] = ShadowType.layer_blur
+            effectItem['BlurRadius'] = rule.filter.replace(/(blur\(|px\))/g, '')
+          } else {
+            let effectColor = rule.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
             let props = rule.boxShadow
               .replace(effectColor, '')
               .trim()
@@ -3102,11 +3105,6 @@ function createEditEffect () {
               '#',
               ''
             )
-          } else {
-            effectItem['Type'] = ShadowType.layer_blur
-            effectItem['BlurRadius'] = rule.filter
-              .replace('blur(', '')
-              .replace('px)', '')
           }
           return effectItem
         }
@@ -3126,7 +3124,7 @@ function createEditEffect () {
       },
       onRemove: function () {
         deleteEffect()
-        updateUIEffect()
+        reloadEditEffectBlock()
       }
     })
     editContainer.appendChild(skin_tile)
@@ -3135,7 +3133,7 @@ function createEditEffect () {
     btnAdd.className = 'fa-solid fa-plus fa-sm'
     btnAdd.onclick = function () {
       addEffect()
-      updateUIEffect()
+      reloadEditEffectBlock()
     }
     header.appendChild(btnAdd)
   } else if (listEffectSkin.some(e => typeof e !== 'object')) {
@@ -3269,7 +3267,7 @@ function createEditEffect () {
     input_offsetX.id = 'edit_effect_offsetX'
     input_offsetX.lastChild.onblur = function () {
       if (!isNaN(parseFloat(this.value))) {
-        editEffect({ OffsetX: parseFloat(this.value) })
+        handleEditEffect({ offX: parseFloat(this.value) })
       }
       updateUIEffectAttribute()
     }
@@ -3277,7 +3275,7 @@ function createEditEffect () {
     input_blur.id = 'edit_effect_blur'
     input_blur.lastChild.onblur = function () {
       if (!isNaN(parseFloat(this.value))) {
-        editEffect({ BlurRadius: parseFloat(this.value) })
+        handleEditEffect({ blurRadius: parseFloat(this.value) })
       }
       updateUIEffectAttribute()
     }
@@ -3285,7 +3283,7 @@ function createEditEffect () {
     input_offsetY.id = 'edit_effect_offsetY'
     input_offsetY.lastChild.onblur = function () {
       if (!isNaN(parseFloat(this.value))) {
-        editEffect({ OffsetY: parseFloat(this.value) })
+        handleEditEffect({ offY: parseFloat(this.value) })
       }
       updateUIEffectAttribute()
     }
@@ -3297,7 +3295,7 @@ function createEditEffect () {
     input_spread.id = 'edit_effect_spread'
     input_spread.lastChild.onblur = function () {
       if (!isNaN(parseFloat(this.value))) {
-        editEffect({ SpreadRadius: parseFloat(this.value) })
+        handleEditEffect({ spreadRadius: parseFloat(this.value) })
       }
       updateUIEffectAttribute()
     }
@@ -3309,19 +3307,12 @@ function createEditEffect () {
     )
 
     function updateEffectColor (params, onSubmit = true) {
-      editEffect({ ColorValue: params }, onSubmit)
-      if (onSubmit) {
-        updateUIEffectAttribute()
-      }
+      handleEditEffect({ color: params, onSubmit: onSubmit })
+      if (onSubmit) updateUIEffectAttribute()
     }
-    let select_effect_color = createEditColorForm(
-      function (params) {
-        updateEffectColor(params, false)
-      },
-      function (params) {
-        updateEffectColor(params)
-      }
-    )
+    let select_effect_color = createEditColorForm(function (params) {
+      updateEffectColor(params, false)
+    }, updateEffectColor)
     select_effect_color.style.margin = '4px'
     select_effect_color.id = 'edit-effect-color'
     div_attribute.appendChild(select_effect_color)
@@ -3345,8 +3336,8 @@ function createEditEffect () {
         }
       },
       function (option) {
-        editEffect({ Type: option })
-        updateUIEffect()
+        handleEditEffect({ type: option })
+        reloadEditEffectBlock()
       }
     )
     btn_select_eType.id = 'btn_select_effect_type'
@@ -3366,7 +3357,7 @@ function createEditEffect () {
       null,
       function () {
         deleteEffect()
-        updateUIEffect()
+        reloadEditEffectBlock()
       }
     )
     div_select_eType.appendChild(btn_delete)
@@ -3376,8 +3367,8 @@ function createEditEffect () {
   return editContainer
 }
 
-function updateUIEffect () {
-  let newEditEffect = createEditEffect()
+function reloadEditEffectBlock () {
+  let newEditEffect = EditEffectBlock()
   document.getElementById('edit-effect').replaceWith(newEditEffect)
 }
 
@@ -4215,11 +4206,11 @@ function createSkinTileHTML (enumCate, jsonSkin) {
       skin_tile.onclick = function (e) {
         e.stopPropagation()
         if (selected_list.length > 0) {
-          editEffect(jsonSkin)
+          handleEditEffect({effectSkin: jsonSkin})
           document
             .querySelectorAll('.popup_remove')
             .forEach(popup => popup.remove())
-          updateUIEffect()
+          reloadEditEffectBlock()
         }
       }
       let demo_effect = document.createElement('img')
@@ -5142,7 +5133,7 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
       btn_table_skin.innerHTML = `<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg" style="width: 16px;height: 16px"/><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
       btn_unLink.onclick = function () {
         unlinkEffectSkin()
-        updateUIEffect()
+        reloadEditEffectBlock()
       }
       break
     default:
