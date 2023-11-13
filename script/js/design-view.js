@@ -4895,100 +4895,97 @@ function popupEditSkin (enumCate, jsonSkin) {
           let div_attribute = document.createElement('div')
           popupEditEffect.appendChild(div_attribute)
           if (thisSkin.Type != ShadowType.layer_blur) {
-            let input_offsetX = _textField(
-              '84px',
-              undefined,
-              'X',
-              '0',
-              undefined
-            )
-            input_offsetX.lastChild.value = thisSkin.OffsetX
-            input_offsetX.lastChild.onblur = function () {
-              let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
-              if (!isNaN(parseFloat(this.value))) {
-                editEffectSkin({ OffsetX: parseFloat(this.value) }, thisSkin)
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                  thisSkin.OffsetY
-                }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
-                  thisSkin.ColorValue
-                } 
-                      ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
-              } else {
-                this.value = thisSkin.OffsetX
+            let input_offsetX = _textField({
+              width: '84px',
+              label: 'X',
+              value: thisSkin.OffsetX,
+              onBlur: function (ev) {
+                let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
+                if (!isNaN(parseFloat(ev.target.value))) {
+                  editEffectSkin(
+                    { OffsetX: parseFloat(ev.target.value) },
+                    thisSkin
+                  )
+                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
+                    thisSkin.OffsetY
+                  }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
+                    thisSkin.ColorValue
+                  } 
+                        ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
+                } else {
+                  ev.target.value = thisSkin.OffsetX
+                }
               }
-            }
+            })
             div_attribute.appendChild(input_offsetX)
           }
-          let input_blur = _textField('84px', undefined, 'Blur', '0', undefined)
-          input_blur.lastChild.value = thisSkin.BlurRadius
-          input_blur.lastChild.onblur = function () {
-            let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
-            if (!isNaN(parseFloat(this.value))) {
-              editEffectSkin({ BlurRadius: parseFloat(this.value) }, thisSkin)
-              if (thisSkin.Type == ShadowType.layer_blur) {
-                demoShadow.style.filter = `blur(${thisSkin.BlurRadius}px)`
-              } else {
-                let effect_color = thisSkin.ColorValue
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                  thisSkin.OffsetY
-                }px ${thisSkin.BlurRadius}px ${
-                  thisSkin.SpreadRadius
-                }px #${effect_color} 
+          let input_blur = _textField({
+            width: '84px',
+            label: 'Blur',
+            value: thisSkin.BlurRadius,
+            onBlur: function (ev) {
+              let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
+              if (!isNaN(parseFloat(ev.target.value))) {
+                editEffectSkin({ BlurRadius: parseFloat(ev.target.value) }, thisSkin)
+                if (thisSkin.Type == ShadowType.layer_blur) {
+                  demoShadow.style.filter = `blur(${thisSkin.BlurRadius}px)`
+                } else {
+                  let effect_color = thisSkin.ColorValue
+                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
+                    thisSkin.OffsetY
+                  }px ${thisSkin.BlurRadius}px ${
+                    thisSkin.SpreadRadius
+                  }px #${effect_color} 
                       ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
+                }
+              } else {
+                ev.target.value = thisSkin.BlurRadius
               }
-            } else {
-              this.value = thisSkin.BlurRadius
             }
-          }
+          })
           div_attribute.appendChild(input_blur)
           if (thisSkin.Type != ShadowType.layer_blur) {
-            let input_offsetY = _textField(
-              '84px',
-              undefined,
-              'Y',
-              '0',
-              undefined
-            )
-            input_offsetY.lastChild.value = thisSkin.OffsetY
-            input_offsetY.lastChild.onblur = function () {
-              let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
-              if (!isNaN(parseFloat(this.value))) {
-                editEffectSkin({ OffsetY: parseFloat(this.value) }, thisSkin)
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                  thisSkin.OffsetY
-                }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
-                  thisSkin.ColorValue
-                } 
-                    ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
-              } else {
-                this.value = thisSkin.OffsetY
+            let input_offsetY = _textField({
+              width: '84px',
+              label:'Y',
+              value: thisSkin.OffsetY,
+              onBlur: function (ev) {
+                let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
+                if (!isNaN(parseFloat(ev.target.value))) {
+                  editEffectSkin({ OffsetY: parseFloat(ev.target.value) }, thisSkin)
+                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
+                    thisSkin.OffsetY
+                  }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
+                    thisSkin.ColorValue
+                  } 
+                      ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
+                } else {
+                  ev.target.value = thisSkin.OffsetY
+                }
+              } 
+            })
+            let input_spread = _textField({
+              width:'84px',
+              label: 'Spread',
+              value: thisSkin.SpreadRadius,
+              onBlur: function (ev) {
+                let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
+                if (!isNaN(parseFloat(ev.target.value))) {
+                  editEffectSkin(
+                    { SpreadRadius: parseFloat(ev.target.value) },
+                    thisSkin
+                  )
+                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
+                    thisSkin.OffsetY
+                  }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
+                    thisSkin.ColorValue
+                  } 
+                      ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
+                } else {
+                  ev.target.value = thisSkin.OffsetY
+                }
               }
-            }
-            let input_spread = _textField(
-              '84px',
-              undefined,
-              'Spread',
-              '0',
-              undefined
-            )
-            input_spread.lastChild.value = thisSkin.SpreadRadius
-            input_spread.lastChild.onblur = function () {
-              let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
-              if (!isNaN(parseFloat(this.value))) {
-                editEffectSkin(
-                  { SpreadRadius: parseFloat(this.value) },
-                  thisSkin
-                )
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                  thisSkin.OffsetY
-                }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
-                  thisSkin.ColorValue
-                } 
-                    ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
-              } else {
-                this.value = thisSkin.OffsetY
-              }
-            }
+            })
             div_attribute.appendChild(input_offsetY)
             div_attribute.appendChild(input_spread)
             let inputEffectColor = createEditColorForm(

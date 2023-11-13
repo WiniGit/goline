@@ -32,14 +32,20 @@ function createNewSkin () {
       var new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
-        Value: Ultis.rgbToHex(window.getComputedStyle(wb.value).backgroundColor)
+        Value: Ultis.rgbToHex(
+          window.getComputedStyle(selected_list[0].value).backgroundColor
+        )
       }
       break
     case EnumCate.typography:
-      let select_typo =
-        wb.CateID === EnumCate.text
-          ? window.getComputedStyle(wb.value)
-          : window.getComputedStyle(wb.value.querySelector('input'))
+      let select_typo = selected_list.find(
+        wb =>
+          wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
+      )
+      select_typo =
+        select_typo.CateID === EnumCate.text
+          ? window.getComputedStyle(select_typo.value)
+          : window.getComputedStyle(select_typo.value.querySelector('input'))
       var new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
@@ -65,7 +71,9 @@ function createNewSkin () {
           EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
         ).value
       )
-      let borderWidth = select_border.borderWidth.replaceAll('px', '').split(' ')
+      let borderWidth = select_border.borderWidth
+        .replaceAll('px', '')
+        .split(' ')
       let borderSide = BorderSide.custom
       switch (borderWidth.length) {
         case 1:
@@ -119,11 +127,14 @@ function createNewSkin () {
       var new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
-        IsStyle: true,
+        IsStyle: true
       }
-      if (select_effect.filter !== "none") {
+      if (select_effect.filter !== 'none') {
         new_skin['Type'] = ShadowType.layer_blur
-        new_skin['BlurRadius'] = select_effect.filter.replace(/(blur\(|px\))/g, '')
+        new_skin['BlurRadius'] = select_effect.filter.replace(
+          /(blur\(|px\))/g,
+          ''
+        )
       } else {
         let effectColor = select_effect.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
         let props = select_effect.boxShadow
@@ -137,10 +148,7 @@ function createNewSkin () {
         new_skin['OffsetY'] = parseFloat(props[1].replace('px'))
         new_skin['BlurRadius'] = parseFloat(props[2].replace('px'))
         new_skin['SpreadRadius'] = parseFloat(props[3].replace('px'))
-        new_skin['ColorValue'] = Ultis.rgbToHex(effectColor).replace(
-          '#',
-          ''
-        )
+        new_skin['ColorValue'] = Ultis.rgbToHex(effectColor).replace('#', '')
       }
       break
     default:
