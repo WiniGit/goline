@@ -6554,8 +6554,8 @@ function handleEditEffect ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        let effectColor = cssRule.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = cssRule.boxShadow.replace(effectColor, '').trim().split(' ')
+        let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        let props = cssRule.style.boxShadow.replace(effectColor, '').trim().split(' ')
         props[0] = `${offX}px`
         cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
         cssItem.Css = cssItem.Css.replace(
@@ -6586,8 +6586,8 @@ function handleEditEffect ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        let effectColor = cssRule.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = cssRule.boxShadow.replace(effectColor, '').trim().split(' ')
+        let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        let props = cssRule.style.boxShadow.replace(effectColor, '').trim().split(' ')
         props[1] = `${offY}px`
         cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
         cssItem.Css = cssItem.Css.replace(
@@ -6618,8 +6618,8 @@ function handleEditEffect ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        let effectColor = cssRule.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = cssRule.boxShadow.replace(effectColor, '').trim().split(' ')
+        let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        let props = cssRule.style.boxShadow.replace(effectColor, '').trim().split(' ')
         props[3] = `${spreadRadius}px`
         cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
         cssItem.Css = cssItem.Css.replace(
@@ -6657,8 +6657,8 @@ function handleEditEffect ({
         if (cssRule.style.filter?.length > 0) {
           cssRule.style.filter = `blur(${blurRadius}px)`
         } else {
-          let effectColor = cssRule.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-          let props = cssRule.boxShadow
+          let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+          let props = cssRule.style.boxShadow
             .replace(effectColor, '')
             .trim()
             .split(' ')
@@ -6696,8 +6696,8 @@ function handleEditEffect ({
               )
             )
             if (cssRule.style.filter === '') {
-              let effectColor = cssRule.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-              let props = cssRule.boxShadow
+              let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+              let props = cssRule.style.boxShadow
                 .replace(effectColor, '')
                 .trim()
                 .split(' ')
