@@ -3263,42 +3263,50 @@ function EditEffectBlock () {
     popup_edit_effect_style.appendChild(popup_title)
     let div_attribute = document.createElement('div')
     popup_edit_effect_style.appendChild(div_attribute)
-    let input_offsetX = _textField({ width: '84px', label: 'X', value: '0' })
-    input_offsetX.id = 'edit_effect_offsetX'
-    input_offsetX.lastChild.onblur = function () {
-      if (!isNaN(parseFloat(this.value))) {
-        handleEditEffect({ offX: parseFloat(this.value) })
+    let input_offsetX = _textField({
+      id: 'edit_effect_offsetX',
+      width: '84px',
+      label: 'X',
+      value: '0',
+      onBlur: function () {
+        if (!isNaN(parseFloat(this.value))) {
+          handleEditEffect({ offX: parseFloat(this.value) })
+        }
       }
-      updateUIEffectAttribute()
-    }
-    let input_blur = _textField({ width: '84px', label: 'Blur', value: '0' })
-    input_blur.id = 'edit_effect_blur'
-    input_blur.lastChild.onblur = function () {
-      if (!isNaN(parseFloat(this.value))) {
-        handleEditEffect({ blurRadius: parseFloat(this.value) })
+    })
+    let input_blur = _textField({
+      id: 'edit_effect_blur',
+      width: '84px',
+      label: 'Blur',
+      value: '0',
+      onBlur: function () {
+        if (!isNaN(parseFloat(this.value))) {
+          handleEditEffect({ blurRadius: parseFloat(this.value) })
+        }
       }
-      updateUIEffectAttribute()
-    }
-    let input_offsetY = _textField({ width: '84px', label: 'Y', value: '0' })
-    input_offsetY.id = 'edit_effect_offsetY'
-    input_offsetY.lastChild.onblur = function () {
-      if (!isNaN(parseFloat(this.value))) {
-        handleEditEffect({ offY: parseFloat(this.value) })
+    })
+    let input_offsetY = _textField({
+      id: 'edit_effect_offsetY',
+      width: '84px',
+      label: 'Y',
+      value: '0',
+      onBlur: function () {
+        if (!isNaN(parseFloat(this.value))) {
+          handleEditEffect({ offY: parseFloat(this.value) })
+        }
       }
-      updateUIEffectAttribute()
-    }
+    })
     let input_spread = _textField({
+      id: 'edit_effect_spread',
       width: '84px',
       label: 'Spread',
-      value: '0'
-    })
-    input_spread.id = 'edit_effect_spread'
-    input_spread.lastChild.onblur = function () {
-      if (!isNaN(parseFloat(this.value))) {
-        handleEditEffect({ spreadRadius: parseFloat(this.value) })
+      value: '0',
+      onBlur: function () {
+        if (!isNaN(parseFloat(this.value))) {
+          handleEditEffect({ spreadRadius: parseFloat(this.value) })
+        }
       }
-      updateUIEffectAttribute()
-    }
+    })
     div_attribute.replaceChildren(
       input_offsetX,
       input_blur,
@@ -3308,7 +3316,7 @@ function EditEffectBlock () {
 
     function updateEffectColor (params, onSubmit = true) {
       handleEditEffect({ color: params, onSubmit: onSubmit })
-      if (onSubmit) updateUIEffectAttribute()
+      // if (onSubmit) updateUIEffectAttribute()
     }
     let select_effect_color = createEditColorForm(function (params) {
       updateEffectColor(params, false)
@@ -4206,7 +4214,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
       skin_tile.onclick = function (e) {
         e.stopPropagation()
         if (selected_list.length > 0) {
-          handleEditEffect({effectSkin: jsonSkin})
+          handleEditEffect({ effectSkin: jsonSkin })
           document
             .querySelectorAll('.popup_remove')
             .forEach(popup => popup.remove())
