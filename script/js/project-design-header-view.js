@@ -25,7 +25,7 @@ function createNewSkin () {
     )
     ?.getAttribute('cate')
   let input_value = [...input_new_skin_name.childNodes].find(
-    e => e.localName == 'input'
+    e => e.localName === 'input'
   ).value
   switch (parseInt(popup_cate)) {
     case EnumCate.color:

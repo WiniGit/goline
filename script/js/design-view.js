@@ -39,7 +39,7 @@ $('body').on('click', '.tab_right', function () {
 function updateUIDesignView () {
   let scrollY = design_view.scrollTop
   let listEditContainer = document.createDocumentFragment()
-  if (selected_list.length == 0) {
+  if (selected_list.length === 0) {
     let editCanvasBground = createCanvasBackground()
     listEditContainer.appendChild(editCanvasBground)
     let winiRes = winiResponsive()
@@ -51,14 +51,14 @@ function updateUIDesignView () {
   } else {
     let editAlign = EditAlignBlock()
     let editSizePosition = EditOffsetBlock()
-    // // let selectClass = selectionClass();
+    let selectClass = selectionClass();
     listEditContainer.appendChild(editAlign)
     listEditContainer.appendChild(editSizePosition)
+    listEditContainer.appendChild(selectClass);
     // if (selected_list.length === 1 && selected_list[0].IsWini && selected_list[0].CateID !== EnumCate.variant) {
     //   let editVariables = createVariables();
     //   listEditContainer.appendChild(editVariables);
     // }
-    // // listEditContainer.appendChild(selectClass);
     if (
       select_box_parentID != wbase_parentID &&
       selected_list.some(
@@ -1025,7 +1025,7 @@ function createAutoLayout () {
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
         if (newValue != undefined) {
-          inputPadding({ Left: newValue, Right: newValue })
+          handleEditPadding({ left: newValue, right: newValue })
           input_padding_left.lastChild.value = ev.target.value
           padLeftValue = ev.target.value
           input_padding_right.lastChild.value = ev.target.value
@@ -1043,7 +1043,7 @@ function createAutoLayout () {
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
         if (newValue != undefined) {
-          inputPadding({ Top: newValue, Bottom: newValue })
+          handleEditPadding({ top: newValue, bottom: newValue })
           input_padding_top.lastChild.value = ev.target.value
           padTopValue = ev.target.value
           input_padding_bottom.lastChild.value = ev.target.value
@@ -1060,8 +1060,8 @@ function createAutoLayout () {
       value: padLeftValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
-        if (newValue != undefined) {
-          inputPadding({ Left: newValue })
+        if (!isNaN(newValue)) {
+          handleEditPadding({ left: newValue })
           padLeftValue = ev.target.value
           input_padding_horizontal.lastChild.value =
             padLeftValue == padRightValue ? padLeftValue : 'mixed'
@@ -1076,8 +1076,8 @@ function createAutoLayout () {
       value: padTopValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
-        if (newValue != undefined) {
-          inputPadding({ Top: newValue })
+        if (!isNaN(newValue)) {
+          handleEditPadding({ top: newValue })
           padTopValue = ev.target.value
           input_padding_vertical.lastChild.value =
             padTopValue == padBotValue ? padTopValue : 'mixed'
@@ -1098,9 +1098,9 @@ function createAutoLayout () {
       icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding right.svg',
       value: padRightValue,
       onBlur: function (ev) {
-        var newValue = parseFloat(ev.target.value)
-        if (newValue != undefined) {
-          inputPadding({ Right: newValue })
+        let newValue = parseFloat(ev.target.value)
+        if (!isNaN(newValue)) {
+          handleEditPadding({ right: newValue })
           padRightValue = ev.target.value
           input_padding_horizontal.lastChild.value =
             padLeftValue == padRightValue ? padLeftValue : 'mixed'
@@ -1116,8 +1116,8 @@ function createAutoLayout () {
       value: padBotValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
-        if (newValue != undefined) {
-          inputPadding({ Bottom: newValue })
+        if (!isNaN(newValue)) {
+          handleEditPadding({ bottom: newValue })
           padBotValue = ev.target.value
           input_padding_vertical.lastChild.value =
             padTopValue == padBotValue ? padTopValue : 'mixed'
@@ -7100,17 +7100,16 @@ function selectionClass () {
   let iconAdd = document.createElement('i')
   iconAdd.className = 'fa-solid fa-plus fa-sm'
 
-  let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
-    null,
-    function () {
-      // let offset = header.getBoundingClientRect();
-      // createDropdownTableSkin(EnumCate.typography, offset);
-    }
-  )
-  btnSelectSkin.className = 'action-button'
+  // let btnSelectSkin = createButtonAction(
+  //   'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
+  //   null,
+  //   function () {
+  //     // let offset = header.getBoundingClientRect();
+  //     // createDropdownTableSkin(EnumCate.typography, offset);
+  //   }
+  // )
 
-  header.replaceChildren(title, iconAdd, btnSelectSkin)
+  header.replaceChildren(title, iconAdd) // ,btnSelectSkin)
 
   let body = document.createElement('div')
   body.className = 'col'

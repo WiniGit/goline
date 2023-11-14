@@ -941,7 +941,7 @@ function selectFolder (collectionItem, search = '') {
             .find(e => e.ID == this.getAttribute('fileID'))
             ?.Url?.replaceAll(' ', '%20')
           if (thisUrl) {
-            editBackgroundImage(thisUrl)
+            handleEditBackground({ image: thisUrl })
             reloadEditBackgroundBlock()
           }
         }

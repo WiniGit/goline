@@ -3729,7 +3729,10 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
       }
       if (onSubmit) StyleDA.editStyleSheet(cssItem)
     }
-  } else if (image) {
+  } else if (image && !image.endsWith('.svg')) {
+    listUpdate = listUpdate.filter(wb =>
+      EnumCate.noImgBg.every(ct => wb.CateID !== ct)
+    )
     if (listUpdate[0].StyleItem) {
       for (let wb of listUpdate) {
         wb.StyleItem.DecorationItem.ColorID = null
@@ -5738,26 +5741,45 @@ function removeLayout () {
   WBaseDA.edit(listUpdate, EnumObj.basePositionFrame)
 }
 
-function inputPadding (padding_item) {
-  for (let wbaseItem of selected_list) {
-    if (padding_item.Left != undefined) {
-      wbaseItem.StyleItem.PaddingItem.Left = padding_item.Left
-      handleStyleLayout(wbaseItem, true)
+function handleEditPadding ({ top, right, bottom, left }) {
+  let listUpdate = selected_list.filter(wb =>
+    EnumCate.no_child_component.every(ct => wb.CateID !== ct)
+  )
+  if (listUpdate[0].StyleItem) {
+    for (let wb of listUpdate) {
+      if (top != undefined) wb.StyleItem.PaddingItem.Top = top
+      if (right != undefined) wb.StyleItem.PaddingItem.Right = right
+      if (bottom != undefined) wb.StyleItem.PaddingItem.Bottom = bottom
+      if (left !== undefined) wb.StyleItem.PaddingItem.Left = left
+      //
+      wb.value.style.setProperty(
+        '--padding',
+        `${wb.StyleItem.PaddingItem.Top}px ${wb.StyleItem.PaddingItem.Right}px ${wb.StyleItem.PaddingItem.Bottom}px ${wb.StyleItem.PaddingItem.Left}px`
+      )
     }
-    if (padding_item.Top != undefined) {
-      wbaseItem.StyleItem.PaddingItem.Top = padding_item.Top
-      handleStyleLayout(wbaseItem, true)
+    WBaseDA.edit(selected_list, EnumObj.paddingPosition)
+  } else {
+    let pWbComponent = listUpdate[0].value.closest(
+      `.wbaseItem-value[iswini="true"]`
+    )
+    let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+    for (let wb of listUpdate) {
+      let cssRule = StyleDA.docStyleSheets.find(e =>
+        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+      )
+      let paddingValues = cssRule.style.getPropertyValue('--padding').split(' ')
+      if (top != undefined) paddingValues[0] = top
+      if (right != undefined) paddingValues[1] = right
+      if (bottom != undefined) paddingValues[2] = bottom
+      if (left !== undefined) paddingValues[3] = left
+      cssRule.style.setProperty('--padding', paddingValues.join(' '))
+      cssItem.Css = cssItem.Css.replace(
+        new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+        cssRule.cssText
+      )
     }
-    if (padding_item.Right != undefined) {
-      wbaseItem.StyleItem.PaddingItem.Right = padding_item.Right
-      handleStyleLayout(wbaseItem, true)
-    }
-    if (padding_item.Bottom != undefined) {
-      wbaseItem.StyleItem.PaddingItem.Bottom = padding_item.Bottom
-      handleStyleLayout(wbaseItem, true)
-    }
+    StyleDA.editStyleSheet(cssItem)
   }
-  WBaseDA.edit(selected_list, EnumObj.paddingPosition)
   updateUISelectBox()
 }
 
@@ -5972,23 +5994,6 @@ async function editBackground (decorationItem, onSubmit = true) {
     }
   }
   if (onSubmit) {
-    WBaseDA.edit(list_change_background, EnumObj.decoration)
-  }
-}
-
-function editBackgroundImage (url) {
-  if (!url.endsWith('.svg')) {
-    let list_change_background = selected_list.filter(
-      wb =>
-        wb.StyleItem.DecorationItem &&
-        EnumCate.noImgBg.every(ct => wb.CateID !== ct)
-    )
-    for (let wb of list_change_background) {
-      wb.StyleItem.DecorationItem.ColorID = null
-      wb.StyleItem.DecorationItem.ColorValue = url
-      wb.value.style.backgroundImage = `url(${urlImg + url})`
-      wb.value.style.backgroundColor = null
-    }
     WBaseDA.edit(list_change_background, EnumObj.decoration)
   }
 }
@@ -6555,7 +6560,10 @@ function handleEditEffect ({
           [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = cssRule.style.boxShadow.replace(effectColor, '').trim().split(' ')
+        let props = cssRule.style.boxShadow
+          .replace(effectColor, '')
+          .trim()
+          .split(' ')
         props[0] = `${offX}px`
         cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
         cssItem.Css = cssItem.Css.replace(
@@ -6587,7 +6595,10 @@ function handleEditEffect ({
           [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = cssRule.style.boxShadow.replace(effectColor, '').trim().split(' ')
+        let props = cssRule.style.boxShadow
+          .replace(effectColor, '')
+          .trim()
+          .split(' ')
         props[1] = `${offY}px`
         cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
         cssItem.Css = cssItem.Css.replace(
@@ -6619,7 +6630,10 @@ function handleEditEffect ({
           [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = cssRule.style.boxShadow.replace(effectColor, '').trim().split(' ')
+        let props = cssRule.style.boxShadow
+          .replace(effectColor, '')
+          .trim()
+          .split(' ')
         props[3] = `${spreadRadius}px`
         cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
         cssItem.Css = cssItem.Css.replace(
@@ -6657,7 +6671,8 @@ function handleEditEffect ({
         if (cssRule.style.filter?.length > 0) {
           cssRule.style.filter = `blur(${blurRadius}px)`
         } else {
-          let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+          let effectColor =
+            cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
           let props = cssRule.style.boxShadow
             .replace(effectColor, '')
             .trim()
@@ -6696,7 +6711,8 @@ function handleEditEffect ({
               )
             )
             if (cssRule.style.filter === '') {
-              let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+              let effectColor =
+                cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
               let props = cssRule.style.boxShadow
                 .replace(effectColor, '')
                 .trim()
