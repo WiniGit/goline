@@ -56,7 +56,7 @@ let feature_list = [
     title: 'Add auto layout',
     shortKey: 'Shift+A',
     onclick: addAutoLayout,
-    isShow: () => selected_list.length > 0
+    isShow: () => selected_list.length > 0 && selected_list[0].StyleItem
   },
   {
     title: 'Create component',

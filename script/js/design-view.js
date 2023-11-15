@@ -51,10 +51,10 @@ function updateUIDesignView () {
   } else {
     let editAlign = EditAlignBlock()
     let editSizePosition = EditOffsetBlock()
-    let selectClass = selectionClass();
+    // let selectClass = selectionClass()
     listEditContainer.appendChild(editAlign)
     listEditContainer.appendChild(editSizePosition)
-    listEditContainer.appendChild(selectClass);
+    // listEditContainer.appendChild(selectClass)
     // if (selected_list.length === 1 && selected_list[0].IsWini && selected_list[0].CateID !== EnumCate.variant) {
     //   let editVariables = createVariables();
     //   listEditContainer.appendChild(editVariables);
@@ -68,31 +68,37 @@ function updateUIDesignView () {
       let editConstraints = EditConstraintsBlock()
       listEditContainer.appendChild(editConstraints)
     }
-    // if (select_box_parentID != wbase_parentID && selected_list.every((e) => window.getComputedStyle(e.value).position !== "absolute")) {
-    //   let pageParent = $(selected_list[0].value).parents(".wbaseItem-va69lue");
-    //   let framePage = pageParent[pageParent.length - 1];
-    //   if (framePage?.classList?.contains("w-variant")) framePage = pageParent[pageParent.length - 2];
-    //   if (framePage) {
-    //     let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
-    //     if (isPage) {
-    //       let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
-    //       listEditContainer.appendChild(selectColByBrp);
-    //     }
-    //   }
-    // }
+    if (
+      selected_list.every(
+        wb =>
+          wb.Level > 1 &&
+          window.getComputedStyle(wb.value).position !== 'absolute'
+      )
+    ) {
+      //   let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
+      //   let framePage = pageParent[pageParent.length - 1];
+      //   if (framePage?.classList?.contains("w-variant")) framePage = pageParent[pageParent.length - 2];
+      //   if (framePage) {
+      //     let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
+      //     if (isPage) {
+      //       let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
+      //       listEditContainer.appendChild(selectColByBrp);
+      //     }
+      //   }
+    }
     if (
       selected_list.some(wb =>
         EnumCate.no_child_component.every(ct => wb.CateID !== ct)
-      )
+      ) &&
+      (selected_list.length === 1 ||
+        selected_list[0].StyleItem ||
+        selected_list.every(wb => wb.WAutolayoutItem))
     ) {
       let editAutoLayout = createAutoLayout()
       listEditContainer.appendChild(editAutoLayout)
     }
     //
-    if (
-      selected_list.length > 0 &&
-      selected_list.every(wb => wb.CateID !== EnumCate.text)
-    ) {
+    if (selected_list.every(wb => wb.CateID !== EnumCate.text)) {
       let editBackground = EditBackgroundBlock()
       listEditContainer.appendChild(editBackground)
     }
@@ -4926,7 +4932,10 @@ function popupEditSkin (enumCate, jsonSkin) {
             onBlur: function (ev) {
               let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
               if (!isNaN(parseFloat(ev.target.value))) {
-                editEffectSkin({ BlurRadius: parseFloat(ev.target.value) }, thisSkin)
+                editEffectSkin(
+                  { BlurRadius: parseFloat(ev.target.value) },
+                  thisSkin
+                )
                 if (thisSkin.Type == ShadowType.layer_blur) {
                   demoShadow.style.filter = `blur(${thisSkin.BlurRadius}px)`
                 } else {
@@ -4947,12 +4956,15 @@ function popupEditSkin (enumCate, jsonSkin) {
           if (thisSkin.Type != ShadowType.layer_blur) {
             let input_offsetY = _textField({
               width: '84px',
-              label:'Y',
+              label: 'Y',
               value: thisSkin.OffsetY,
               onBlur: function (ev) {
                 let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
                 if (!isNaN(parseFloat(ev.target.value))) {
-                  editEffectSkin({ OffsetY: parseFloat(ev.target.value) }, thisSkin)
+                  editEffectSkin(
+                    { OffsetY: parseFloat(ev.target.value) },
+                    thisSkin
+                  )
                   demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
                     thisSkin.OffsetY
                   }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
@@ -4962,10 +4974,10 @@ function popupEditSkin (enumCate, jsonSkin) {
                 } else {
                   ev.target.value = thisSkin.OffsetY
                 }
-              } 
+              }
             })
             let input_spread = _textField({
-              width:'84px',
+              width: '84px',
               label: 'Spread',
               value: thisSkin.SpreadRadius,
               onBlur: function (ev) {
@@ -7119,20 +7131,12 @@ function selectionClass () {
     ...listStyleClass.map(clName => {
       let classTile = document.createElement('div')
       classTile.className = 'row style-class-tile'
-      let titleClass = document.createElement('p')
-      titleClass.innerHTML = clName
-      titleClass.className = 'regular1'
-      let btn_unLink = document.createElement('img')
-      btn_unLink.src =
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg'
-      let targetImg = document.createElement('img')
-      targetImg.src =
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/target.svg'
-      classTile.replaceChildren(titleClass, btn_unLink, targetImg)
+      classTile.innerHTML = `<p class="regular1">${clName}</p>
+      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg"/>
+      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/target.svg"/>`
       return classTile
     })
   )
-
   return editContainer
 }
 

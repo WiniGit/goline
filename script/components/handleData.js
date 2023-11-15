@@ -1069,7 +1069,7 @@ function handleStyleLayout (wbaseItem, onlyPadding = false) {
         wCrossAxis(wbaseItem.WAutolayoutItem.Alignment, isRow)
       )
       wbaseItem.value
-        .querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`)
+        .querySelectorAll(`.wbaseItem-value[level="${wbaseItem.Level + 1}"]`)
         .forEach(childCol => {
           childCol.style.setProperty(
             '--gutter',
@@ -1097,25 +1097,6 @@ function handleStyleLayout (wbaseItem, onlyPadding = false) {
       $(wbaseItem.value).addClass('w-col')
     }
   }
-}
-
-function removeAutoLayoutProperty (eHTML) {
-  $(eHTML).removeClass('w-row')
-  $(eHTML).removeClass('w-col')
-  eHTML.style.removeProperty('--flex-wrap')
-  eHTML.style.removeProperty('--child-space')
-  eHTML.style.removeProperty('--run-space')
-  eHTML.style.removeProperty('--main-axis-align')
-  eHTML.style.removeProperty('--cross-axis-align')
-  eHTML
-    .querySelectorAll(
-      `.col-[level="${parseInt(eHTML.getAttribute('level')) + 1}"]`
-    )
-    .forEach(childCol => {
-      childCol.style.removeProperty('--gutter')
-    })
-  eHTML.style.removeProperty('--padding')
-  $(eHTML).addClass('w-stack')
 }
 
 function addStyleComponents (item, elements) {
