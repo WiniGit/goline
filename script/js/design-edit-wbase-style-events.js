@@ -5115,7 +5115,10 @@ async function addAutoLayout () {
           let childRule = StyleDA.docStyleSheets.find(e =>
             [...pWbComponent.querySelectorAll(e.selectorText)].includes(cWbHTML)
           )
-          childRule.style.setProperty('--gutter', `${newLayoutItem.ChildSpace}px`)
+          childRule.style.setProperty(
+            '--gutter',
+            `${newLayoutItem.ChildSpace}px`
+          )
         })
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -5228,535 +5231,1013 @@ async function addAutoLayout () {
   }
 }
 
-function handleEditLayout ({direction, alignment, childSpace, isWrap, runSpace, isScroll}) {
-  let list_update = []
-  let _enumObj = EnumObj.autoLayout
+function handleEditLayout ({
+  direction,
+  alignment,
+  childSpace,
+  isWrap,
+  runSpace,
+  isScroll
+}) {
+  let listUpdate = []
   if (direction) {
     // TH user muốn cập nhật layout từ dạng chiều ngang sang chiều dọc
-    if (auto_layout_item.Direction == 'Vertical') {
-      // lấy ra danh sách wbase item parent đang autoLayout theo chiều ngang
-      let list_layout_horizontal = selected_list.filter(
-        e => e.WAutolayoutItem.Direction != 'Vertical'
-      )
-      list_update.push(...list_layout_horizontal)
-      for (let wbaseItem of list_layout_horizontal) {
-        // gán lại chiều autoLayout của wbase item này sang chiều dọc
-        wbaseItem.WAutolayoutItem.Direction = 'Vertical'
-        let elementHTML = wbaseItem.value
-        let _layout = wbaseItem.WAutolayoutItem
-        // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
-        if (_layout.Alignment.includes('SpaceBetween')) {
-          // align TopSpaceBetween => SpaceBetweenLeft
-          if (_layout.Alignment.includes('Top'))
-            _layout.Alignment = 'SpaceBetweenLeft'
-          // align BottomSpaceBetween => SpaceBetweenRight
-          if (_layout.Alignment.includes('Bottom'))
-            _layout.Alignment = 'SpaceBetweenRight'
-        }
-        handleStyleLayout(wbaseItem)
-        let frame = wbaseItem.StyleItem.FrameItem
-        let parent_item = wbase_list.find(e => e.GID == wbaseItem.ParentID)
-        // đảo ngược thuộc tính của resizing ( thuộc tính của width height ) của wbase item này
-        //
-        //TH width của wbase item này đang hug contents thì height của wbase item này phải chuyển về dạng hug contents
-        if (frame.Width == undefined) {
-          // TH height của wbase item này dạng fill container thì phải chuyển width của wbase item này về dạng fill container
-          if (frame.Height < 0) {
-            _enumObj = EnumObj.autoLayoutFrame
-            //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
-            if (parent_item.StyleItem.FrameItem.Width == undefined) {
-              parent_item.StyleItem.FrameItem.Width =
-                elementHTML.parentElement.offsetWidth
-              elementHTML.parentElement.style.width = `${elementHTML.parentElement.offsetWidth}px`
-              list_update.push(parent_item)
+    listUpdate = selected_list.filter(
+      wb =>
+        wb.value.classList.contains(
+          direction === 'Vertical' ? 'w-row' : 'w-col'
+        ) && wb.CateID !== EnumCate.table
+    )
+    let pWb = wbase_list.find(e => e.GID === select_box_parentID)
+    if (direction === 'Vertical') {
+      if (listUpdate[0].StyleItem) {
+        for (let wb of listUpdate) {
+          // gán lại chiều autoLayout của wbase item này sang chiều dọc
+          wb.WAutolayoutItem.Direction = direction
+          let _layout = wb.WAutolayoutItem
+          // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
+          if (_layout.Alignment.includes('SpaceBetween')) {
+            // align TopSpaceBetween => SpaceBetweenLeft
+            if (_layout.Alignment.includes('Top'))
+              _layout.Alignment = 'SpaceBetweenLeft'
+            // align BottomSpaceBetween => SpaceBetweenRight
+            if (_layout.Alignment.includes('Bottom'))
+              _layout.Alignment = 'SpaceBetweenRight'
+          }
+          //TH width của wbase item này đang hug contents thì height của wbase item này phải chuyển về dạng hug contents
+          if (wb.StyleItem.FrameItem.Width == null) {
+            // TH height của wbase item này dạng fill container thì phải chuyển width của wbase item này về dạng fill container
+            if (wb.StyleItem.FrameItem.Height < 0) {
+              //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
+              if (pWb.StyleItem.FrameItem.Width == null) {
+                pWb.StyleItem.FrameItem.Width = pWb.value.offsetWidth
+                pWb.value.style.width = `${pWb.value.offsetWidth}px`
+                pWb.value.removeAttribute('width-type')
+                listUpdate.push(pWb)
+              }
+              wb.StyleItem.FrameItem.Width = -1
+              wb.value.style.width = '100%'
+              wb.value.setAttribute('width-type', 'fill')
             }
-            frame.Width = -elementHTML.offsetWidth
-            elementHTML.style.width = '100%'
-          }
-          // TH height của wbase item này dạng fixed thì phải chuyển width của wbase item này về dạng fixed
-          else if (frame.Height != undefined) {
-            _enumObj = EnumObj.autoLayoutFrame
-            frame.Width = elementHTML.offsetWidth
-            elementHTML.style.width = `${elementHTML.offsetWidth}px`
-          }
-          // gán height của wbase item này null để hug contents
-          frame.Height = undefined
-          elementHTML.style.height = 'fit-content'
-          //TH đang có bất kì wbase item con của item này đang fill container height thì phải chuyển height của nó về fixed
-          let list_child_fillH = wbase_list.filter(
-            e =>
-              e.ParentID == elementHTML.id && e.StyleItem.FrameItem.Height < 0
-          )
-          list_update.push(...list_child_fillH)
-          for (let j = 0; j < list_child_fillH.length; j++) {
-            let child_elementHTML = document.getElementById(
-              list_child_fillH[j].GID
-            )
-            list_child_fillH[j].StyleItem.FrameItem.Height =
-              child_elementHTML.offsetHeight
-            child_elementHTML.style.height = `${child_elementHTML.offsetHeight}px`
-          }
-        }
-        //TH width của wbase item này đang fill container thì height của wbase item này phải chuyển về dạng fill container
-        else if (frame.Width < 0) {
-          _enumObj = EnumObj.autoLayoutFrame
-          //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
-          if (parent_item.StyleItem.FrameItem.Height == undefined) {
-            list_update.push(parent_item)
-            parent_item.StyleItem.FrameItem.Height =
-              elementHTML.parentElement.offsetHeight
-            elementHTML.parentElement.style.height = `${elementHTML.parentElement.offsetHeight}px`
-          }
-          elementHTML.style.height = '100%'
-          // TH height của wbase item này dạng hug contents thì phải chuyển width của wbase item này về dạng hug contents
-          if (frame.Height == undefined) {
-            frame.Width = undefined
-            elementHTML.style.width = 'fit-content'
-            //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
-            let list_child_fillW = wbase_list.filter(
+            // TH height của wbase item này dạng fixed thì phải chuyển width của wbase item này về dạng fixed
+            else if (wb.StyleItem.FrameItem.Height >= 0) {
+              wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
+              wb.value.style.width = `${wb.value.offsetWidth}px`
+              cWb.value.removeAttribute('width-type')
+            }
+            // gán height của wbase item này null để hug contents
+            //TH đang có bất kì wbase item con của item này đang fill container height thì phải chuyển height của nó về fixed
+            let listChildFillH = wbase_list.filter(
               e =>
-                e.ParentID == elementHTML.id && e.StyleItem.FrameItem.Width < 0
+                e.ParentID === wb.GID &&
+                e.value.getAttribute('height-type') === 'fill'
             )
-            list_update.push(...list_child_fillW)
-            for (let j = 0; j < list_child_fillW.length; j++) {
-              let child_elementHTML = document.getElementById(
-                list_child_fillW[j].GID
-              )
-              list_child_fillW[j].StyleItem.FrameItem.Width =
-                child_elementHTML.offsetWidth
-              child_elementHTML.style.width = `${child_elementHTML.offsetWidth}px`
+            if (listChildFillH.length > 0) {
+              if (listChildFillH[0].StyleItem) {
+                for (let cWb of listChildFillH) {
+                  cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
+                  cWb.value.style.height = `${cWb.value.offsetHeight}px`
+                  cWb.value.removeAttribute('height-type')
+                }
+                listUpdate.push(...listChildFillH)
+              } else {
+                var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+                for (let cWb of listChildFillH) {
+                  StyleDA.docStyleSheets.find(rule => {
+                    let selector = [
+                      ...pWbComponent.querySelectorAll(rule.selectorText)
+                    ]
+                    let check = selector.includes(cWb.value)
+                    if (check) {
+                      rule.style.height = `${cWb.value.offsetHeight}px`
+                      selector.forEach(e => e.removeAttribute('height-type'))
+                      cssItem.Css = cssItem.Css.replace(
+                        new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                        rule.cssText
+                      )
+                    }
+                    return check
+                  })
+                }
+              }
             }
-          } else if (frame.Height > 0) {
-            frame.Width = elementHTML.offsetWidth
-            elementHTML.style.width = `${elementHTML.offsetWidth}px`
+            wb.StyleItem.FrameItem.Height = null
+            wb.value.style.height = null
+            wb.value.setAttribute('height-type', 'fit')
           }
-          frame.Height = -elementHTML.offsetHeight
-        }
-      }
-    }
-    // TH user muốn cập nhật layout từ dạng chiều dọc sang chiều ngang
-    else {
-      // lấy ra danh sách wbase item parent đang autoLayout theo chiều dọc
-      let list_layout_vertical = selected_list.filter(
-        e => e.WAutolayoutItem.Direction != 'Horizontal'
-      )
-      list_update.push(...list_layout_vertical)
-      for (let wbaseItem of list_layout_vertical) {
-        wbaseItem.WAutolayoutItem.Direction = 'Horizontal'
-        let elementHTML = wbaseItem.value
-        let _layout = wbaseItem.WAutolayoutItem
-        // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
-        if (_layout.Alignment.includes('SpaceBetween')) {
-          // align SpaceBetweenLeft => TopSpaceBetween
-          if (_layout.Alignment.includes('Left'))
-            _layout.Alignment = 'TopSpaceBetween'
-          // align SpaceBetweenRight => BottomSpaceBetween
-          if (_layout.Alignment.includes('Right'))
-            _layout.Alignment = 'BottomSpaceBetween'
-        }
-        handleStyleLayout(wbaseItem)
-        let frame = wbaseItem.StyleItem.FrameItem
-        let parent_item = wbase_list.find(e => e.GID == wbaseItem.ParentID)
-        // đảo ngược thuộc tính của resizing ( thuộc tính của width height ) của wbase item này
-        //
-        //TH height của wbase item này đang hug contents thì width của wbase item này phải chuyển về dạng hug contents
-        if (frame.Height == undefined) {
-          _enumObj = EnumObj.autoLayoutFrame
-          // TH width của wbase item này dạng fill container thì phải chuyển height của wbase item này về dạng fill container
-          if (frame.Width < 0) {
-            frame.Height = -elementHTML.offsetHeight
-            elementHTML.style.height = '100%'
+          //TH width của wbase item này đang fill container thì height của wbase item này phải chuyển về dạng fill container
+          else if (wb.StyleItem.FrameItem.Width < 0) {
             //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
-            if (parent_item.StyleItem.FrameItem.Height == undefined) {
-              list_update.push(parent_item)
-              parent_item.StyleItem.FrameItem.Height =
-                elementHTML.parentElement.offsetHeight
-              elementHTML.parentElement.style.height = `${elementHTML.parentElement.offsetHeight}px`
+            if (pWb.StyleItem.FrameItem.Height == null) {
+              pWb.StyleItem.FrameItem.Height = pWb.value.offsetHeight
+              pWb.value.style.height = `${pWb.value.offsetHeight}px`
+              pWb.value.removeAttribute('height-type')
+              listUpdate.push(pWb)
             }
-          }
-          // TH width của wbase item này dạng fixed thì phải chuyển height của wbase item này về dạng fixed
-          else if (frame.Width > 0) {
-            frame.Height = elementHTML.offsetHeight
-            elementHTML.style.height = `${elementHTML.offsetHeight}px`
-          }
-          // gán width của wbase item này null để hug contents
-          frame.Width = undefined
-          elementHTML.style.width = 'fit-content'
-          //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
-          let list_child_fillW = wbase_list.filter(
-            e => e.ParentID == elementHTML.id && e.StyleItem.FrameItem.Width < 0
-          )
-          list_update.push(...list_child_fillW)
-          for (let j = 0; j < list_child_fillW.length; j++) {
-            let child_elementHTML = document.getElementById(
-              list_child_fillW[j].GID
-            )
-            list_child_fillW[j].StyleItem.FrameItem.Width =
-              child_elementHTML.offsetWidth
-            child_elementHTML.style.width = `${child_elementHTML.offsetWidth}px`
-          }
-        }
-        //TH height của wbase item này đang fill container thì width của wbase item này phải chuyển về dạng fill container
-        else if (frame.Height < 0) {
-          _enumObj = EnumObj.autoLayoutFrame
-          //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
-          if (parent_item.StyleItem.FrameItem.Width == undefined) {
-            list_update.push(parent_item)
-            parent_item.StyleItem.FrameItem.Width =
-              elementHTML.parentElement.offsetWidth
-            elementHTML.parentElement.style.width = `${elementHTML.parentElement.offsetWidth}px`
-          }
-          elementHTML.style.width = '100%'
-          // TH width của wbase item này dạng hug contents thì phải chuyển height của wbase item này về dạng hug contents
-          if (frame.Width == undefined) {
-            frame.Height = undefined
-            elementHTML.style.height = 'fit-content'
-            //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển height của nó về fixed
-            let list_child_fillH = wbase_list.filter(
-              e =>
-                e.parentId == elementHTML.id && e.StyleItem.FrameItem.Height < 0
-            )
-            list_update.push(...list_child_fillH)
-            for (let j = 0; j < list_child_fillH.length; j++) {
-              let child_elementHTML = document.getElementById(
-                list_child_fillH[j].GID
+            // TH height của wbase item này dạng hug contents thì phải chuyển width của wbase item này về dạng hug contents
+            if (wb.StyleItem.FrameItem.Height == null) {
+              //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
+              let listChildFillW = wbase_list.filter(
+                e =>
+                  e.ParentID === wb.GID &&
+                  e.value.getAttribute('width-type') === 'fill'
               )
-              list_child_fillH[j].StyleItem.FrameItem.Height =
-                child_elementHTML.offsetHeight
-              child_elementHTML.style.height = `${child_elementHTML.offsetHeight}px`
+              if (listChildFillW.length > 0) {
+                if (listChildFillW[0].StyleItem) {
+                  for (let cWb of listChildFillW) {
+                    cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
+                    cWb.value.style.width = `${cWb.value.offsetWidth}px`
+                    cWb.value.removeAttribute('width-type')
+                  }
+                  listUpdate.push(...listChildFillW)
+                } else {
+                  cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+                  for (let cWb of listChildFillW) {
+                    StyleDA.docStyleSheets.find(rule => {
+                      let selector = [
+                        ...pWbComponent.querySelectorAll(rule.selectorText)
+                      ]
+                      let check = selector.includes(cWb.value)
+                      if (check) {
+                        rule.style.width = `${cWb.value.offsetWidth}px`
+                        selector.forEach(e => e.removeAttribute('width-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                          rule.cssText
+                        )
+                      }
+                      return check
+                    })
+                  }
+                }
+              }
+              wb.StyleItem.FrameItem.Width = null
+              wb.value.style.width = null
+              wb.value.setAttribute('width-type', 'fit')
+            } else if (wb.StyleItem.FrameItem.Height >= 0) {
+              wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
+              wb.value.style.width = `${wb.value.offsetWidth}px`
+              wb.value.removeAttribute('width-type')
             }
-          } else if (frame.Width > 0) {
-            frame.Height = elementHTML.offsetHeight
-            elementHTML.style.height = `${elementHTML.offsetHeight}px`
+            wb.StyleItem.FrameItem.Height = -1
+            wb.value.style.height = '100%'
+            wb.value.setAttribute('height-type', 'fill')
           }
-          frame.Width = -elementHTML.offsetWidth
-        }
-      }
-    }
-  }
-  if (auto_layout_item.Alignment) {
-    list_update.push(...selected_list)
-    switch (auto_layout_item.Alignment) {
-      case 'TopLeft':
-        for (let i = 0; i < selected_list.length; i++) {
-          selected_list[i].WAutolayoutItem.Alignment = 'TopLeft'
-          selected_list[i].value.style.setProperty(
+          $(wb.value).removeClass('w-row')
+          $(wb.value).addClass('w-col')
+          wb.value.style.setProperty(
             '--main-axis-align',
-            wMainAxis(
-              'TopLeft',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
+            wMainAxis(_layout.Alignment, false)
           )
-          selected_list[i].value.style.setProperty(
+          wb.value.style.setProperty(
             '--cross-axis-align',
-            wCrossAxis(
-              'TopLeft',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
+            wCrossAxis(_layout.Alignment, false)
           )
         }
-        break
-      case 'TopCenter':
-        for (let i = 0; i < selected_list.length; i++) {
-          selected_list[i].WAutolayoutItem.Alignment = 'TopCenter'
-          selected_list[i].value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              'TopCenter',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-          selected_list[i].value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              'TopCenter',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-        }
-        break
-      case 'TopRight':
-        for (let i = 0; i < selected_list.length; i++) {
-          selected_list[i].WAutolayoutItem.Alignment = 'TopRight'
-          selected_list[i].value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              'TopRight',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-          selected_list[i].value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              'TopRight',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-        }
-        break
-      case 'LeftCenter':
-        for (let i = 0; i < selected_list.length; i++) {
-          selected_list[i].WAutolayoutItem.Alignment = 'LeftCenter'
-          selected_list[i].value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              'LeftCenter',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-          selected_list[i].value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              'LeftCenter',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-        }
-        break
-      case 'Center':
-        for (let i = 0; i < selected_list.length; i++) {
-          selected_list[i].WAutolayoutItem.Alignment = 'Center'
-          selected_list[i].value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              'Center',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-          selected_list[i].value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              'Center',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-        }
-        break
-      case 'RightCenter':
-        for (let i = 0; i < selected_list.length; i++) {
-          selected_list[i].WAutolayoutItem.Alignment = 'RightCenter'
-          selected_list[i].value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              'RightCenter',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-          selected_list[i].value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              'RightCenter',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-        }
-        break
-      case 'BottomLeft':
-        for (let i = 0; i < selected_list.length; i++) {
-          selected_list[i].WAutolayoutItem.Alignment = 'BottomLeft'
-          selected_list[i].value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              'BottomLeft',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-          selected_list[i].value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              'BottomLeft',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-        }
-        break
-      case 'BottomCenter':
-        for (let i = 0; i < selected_list.length; i++) {
-          selected_list[i].WAutolayoutItem.Alignment = 'BottomCenter'
-          selected_list[i].value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              'BottomCenter',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-          selected_list[i].value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              'BottomCenter',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-        }
-        break
-      case 'BottomRight':
-        for (let i = 0; i < selected_list.length; i++) {
-          selected_list[i].WAutolayoutItem.Alignment = 'BottomRight'
-          selected_list[i].value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              'BottomRight',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-          selected_list[i].value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              'BottomRight',
-              selected_list[i].WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-        }
-        break
-      default:
-        if (
-          auto_layout_item.Alignment == 'TopSpaceBetween' ||
-          auto_layout_item.Alignment == 'SpaceBetweenLeft'
-        ) {
-          for (let i = 0; i < selected_list.length; i++) {
-            let is_horizontal =
-              selected_list[i].WAutolayoutItem.Direction == 'Horizontal'
-            if (is_horizontal) {
-              selected_list[i].WAutolayoutItem.Alignment = 'TopSpaceBetween'
-            } else {
-              selected_list[i].WAutolayoutItem.Alignment = 'SpaceBetweenLeft'
-            }
-            handleStyleLayout(selected_list[i])
-          }
-        } else if (auto_layout_item.Alignment == 'SpaceBetweenCenter') {
-          for (let i = 0; i < selected_list.length; i++) {
-            selected_list[i].WAutolayoutItem.Alignment = 'SpaceBetweenCenter'
-            handleStyleLayout(selected_list[i])
-          }
-        } else {
-          for (let i = 0; i < selected_list.length; i++) {
-            let is_horizontal =
-              selected_list[i].WAutolayoutItem.Airection == 'Horizontal'
-            if (is_horizontal) {
-              selected_list[i].WAutolayoutItem.Alignment = 'BottomSpaceBetween'
-            } else {
-              selected_list[i].WAutolayoutItem.Alignment = 'SpaceBetweenRight'
-            }
-            handleStyleLayout(selected_list[i])
-          }
-        }
-        break
-    }
-  }
-  if (auto_layout_item.ChildSpace != undefined) {
-    list_update.push(...selected_list)
-    // thực hiện update cho list frame hoặc form có autoLayout
-    for (let wbaseItem of selected_list) {
-      let elementHTML = wbaseItem.value
-      // update giá trị childSpace mới ( khoảng cách giữa các phần tử con )
-      wbaseItem.WAutolayoutItem.ChildSpace = auto_layout_item.ChildSpace
-      let is_horizontal = wbaseItem.WAutolayoutItem.Direction == 'Horizontal'
-      // TH align của layout này đang ở dạng spaceBetween thì phải cập nhật đồng thời align của layout về khác dạng spaceBetween
-      if (wbaseItem.WAutolayoutItem.Alignment.includes('SpaceBetween')) {
-        // TH layout theo chiều ngang
-        if (wbaseItem.WAutolayoutItem.Direction == 'Horizontal') {
-          wbaseItem.WAutolayoutItem.Alignment =
-            wbaseItem.WAutolayoutItem.Alignment.replace('SpaceBetween', 'Left')
-        }
-        // TH layout theo chiều dọc
-        else {
-          wbaseItem.WAutolayoutItem.Alignment =
-            wbaseItem.WAutolayoutItem.Alignment.replace('SpaceBetween', 'Top')
-        }
-      }
-      elementHTML.style.setProperty(
-        '--child-space',
-        `${auto_layout_item.ChildSpace}px`
-      )
-      elementHTML
-        .querySelectorAll(`.col-[level="${wbaseItem.Level + 1}"]`)
-        .forEach(childCol => {
-          childCol.style.setProperty(
-            '--gutter',
-            `${auto_layout_item.ChildSpace}px`
-          )
-        })
-    }
-  }
-  if (auto_layout_item.IsWrap != undefined) {
-    list_update.push(...selected_list)
-    for (let wbaseItem of selected_list) {
-      wbaseItem.WAutolayoutItem.IsWrap = auto_layout_item.IsWrap
-      handleStyleLayout(wbaseItem)
-      if (auto_layout_item.IsWrap) {
-        if (wbaseItem.WAutolayoutItem.Direction === 'Vertical') {
-          if (wbaseItem.StyleItem.FrameItem.Height == undefined) {
-            _enumObj = EnumObj.autoLayoutFrame
-            wbaseItem.StyleItem.FrameItem.Height = parseFloat(
-              window.getComputedStyle(wbaseItem.value).height.replace('px')
-            )
-            wbaseItem.value.style.height =
-              wbaseItem.StyleItem.FrameItem.Height + 'px'
-          }
-          if (wbaseItem.CountChild > 0) {
-            let listFillWChild = [
-              ...wbaseItem.value.querySelectorAll(':scope > .wbaseItem-value')
-            ].filter(childHTML => childHTML.style.width == '100%')
-            listFillWChild.forEach(childHTML => {
-              let childItem = wbase_list.find(e => e.GID === childHTML.id)
-              childItem.StyleItem.FrameItem.Width = childHTML.offsetWidth
-              childHTML.style.width = childItem.StyleItem.FrameItem.Width + 'px'
-              list_update.push(childItem)
-            })
-          }
-        } else {
-          if (wbaseItem.StyleItem.FrameItem.Width == undefined) {
-            _enumObj = EnumObj.autoLayoutFrame
-            wbaseItem.StyleItem.FrameItem.Width = parseFloat(
-              window.getComputedStyle(wbaseItem.value).width.replace('px')
-            )
-            wbaseItem.value.style.width =
-              wbaseItem.StyleItem.FrameItem.Width + 'px'
-          }
-          if (wbaseItem.CountChild > 0) {
-            let listFillHChild = [
-              ...wbaseItem.value.querySelectorAll(
-                `.wbaseItem-value[level="${wbaseItem.Level + 1}"]`
-              )
-            ].filter(childHTML => childHTML.style.height == '100%')
-            listFillHChild.forEach(childHTML => {
-              let childItem = wbase_list.find(e => e.GID === childHTML.id)
-              childItem.StyleItem.FrameItem.Height = childHTML.offsetHeight
-              childHTML.style.height =
-                childItem.StyleItem.FrameItem.Height + 'px'
-              list_update.push(childItem)
-            })
-          }
-        }
-      }
-    }
-  }
-  if (auto_layout_item.RunSpace != undefined) {
-    list_update.push(...selected_list)
-    // thực hiện update cho list frame hoặc form có autoLayout
-    for (let wbaseItem of selected_list) {
-      let elementHTML = wbaseItem.value
-      // update giá trị RunSpace mới ( khoảng cách giữa các phần tử con )
-      wbaseItem.WAutolayoutItem.RunSpace = auto_layout_item.RunSpace
-      elementHTML.style.setProperty(
-        '--run-space',
-        `${auto_layout_item.RunSpace}px`
-      )
-    }
-  }
-  if (auto_layout_item.IsScroll != undefined) {
-    list_update.push(...selected_list)
-    for (let wbaseItem of selected_list) {
-      let elementHTML = wbaseItem.value
-      wbaseItem.WAutolayoutItem.IsScroll = auto_layout_item.IsScroll
-      if (auto_layout_item.IsScroll) {
-        elementHTML.setAttribute('scroll', 'true')
+        if (cssItem) StyleDA.editStyleSheet(cssItem)
       } else {
-        elementHTML.removeAttribute('scroll', 'true')
+        let pWbComponent = listUpdate[0].value.closest(
+          `.wbaseItem-value[iswini="true"]`
+        )
+        let cssItem = StyleDA.cssStyleSheets.find(
+          e => e.GID === pWbComponent.id
+        )
+        for (let wb of listUpdate) {
+          wb.WAutolayoutItem.Direction = direction
+          let _layout = wb.WAutolayoutItem
+          // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
+          if (_layout.Alignment.includes('SpaceBetween')) {
+            // align TopSpaceBetween => SpaceBetweenLeft
+            if (_layout.Alignment.includes('Top'))
+              _layout.Alignment = 'SpaceBetweenLeft'
+            // align BottomSpaceBetween => SpaceBetweenRight
+            if (_layout.Alignment.includes('Bottom'))
+              _layout.Alignment = 'SpaceBetweenRight'
+          }
+          StyleDA.docStyleSheets.find(rule => {
+            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let check = selector.includes(wb.value)
+            if (check) {
+              if (wb.value.getAttribute('width-type') === 'fit') {
+                // TH height của wbase item này dạng fill container thì phải chuyển width của wbase item này về dạng fill container
+                if (wb.value.getAttribute('height-type') === 'fill') {
+                  //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
+                  if (pWb.value.getAttribute('width-type') === 'fit') {
+                    if (pWb.StyleItem) {
+                      pWb.StyleItem.FrameItem.Width = pWb.value.offsetWidth
+                      pWb.value.style.width = `${pWb.value.offsetWidth}px`
+                      pWb.value.removeAttribute('width-type')
+                      listUpdate.push(pWb)
+                    } else {
+                      StyleDA.docStyleSheets.find(pRule => {
+                        let selectorP = [
+                          ...pWbComponent.querySelectorAll(pRule.selectorText)
+                        ]
+                        let checkP = selectorP.includes(pWb.value)
+                        if (checkP) {
+                          pRule.style.width = `${pWb.value.offsetWidth}px`
+                          selectorP.forEach(e =>
+                            e.removeAttribute('width-type')
+                          )
+                          cssItem.Css = cssItem.Css.replace(
+                            new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
+                            pRule.cssText
+                          )
+                        }
+                        return checkP
+                      })
+                    }
+                  }
+                  rule.style.width = '100%'
+                  selector.forEach(e => e.setAttribute('width-type', 'fill'))
+                }
+                // TH height của wbase item này dạng fixed thì phải chuyển width của wbase item này về dạng fixed
+                else if (!wb.value.getAttribute('height-type')) {
+                  rule.style.width = `${wb.value.offsetWidth}px`
+                  selector.forEach(e => e.removeAttribute('width-type'))
+                }
+                // gán height của wbase item này null để hug contents
+                //TH đang có bất kì wbase item con của item này đang fill container height thì phải chuyển height của nó về fixed
+                let listChildFillH = wb.value.querySelectorAll(
+                  `.wbaseItem-value[level="${
+                    wb.Level + 1
+                  }"][height-type="fill"]`
+                )
+                for (let cWbHTML of listChildFillH) {
+                  StyleDA.docStyleSheets.find(cRule => {
+                    let selectorC = [
+                      ...pWbComponent.querySelectorAll(cRule.selectorText)
+                    ]
+                    let checkC = selectorC.includes(cWbHTML)
+                    if (checkC) {
+                      cRule.style.height = `${cWbHTML.offsetHeight}px`
+                      selectorC.forEach(e => e.removeAttribute('height-type'))
+                      cssItem.Css = cssItem.Css.replace(
+                        new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
+                        cRule.cssText
+                      )
+                    }
+                    return checkC
+                  })
+                }
+                rule.style.height = null
+                selector.forEach(e => e.setAttribute('height-type', 'fit'))
+              }
+              //TH width của wbase item này đang fill container thì height của wbase item này phải chuyển về dạng fill container
+              else if (wb.value.getAttribute('width-type') === 'fill') {
+                //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
+                if (pWb.value.getAttribute('height-type', 'fit')) {
+                  if (pWb.StyleItem) {
+                    pWb.StyleItem.FrameItem.Height = pWb.value.offsetHeight
+                    pWb.value.style.height = `${pWb.value.offsetHeight}px`
+                    pWb.value.removeAttribute('height-type')
+                    listUpdate.push(pWb)
+                  } else {
+                    StyleDA.docStyleSheets.find(pRule => {
+                      let selectorP = [
+                        ...pWbComponent.querySelectorAll(pRule.selectorText)
+                      ]
+                      let checkP = selectorP.includes(pWb.value)
+                      if (checkP) {
+                        pRule.style.height = `${pWb.value.offsetHeight}px`
+                        selectorP.forEach(e => e.removeAttribute('height-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
+                          pRule.cssText
+                        )
+                      }
+                      return checkP
+                    })
+                  }
+                }
+                // TH height của wbase item này dạng hug contents thì phải chuyển width của wbase item này về dạng hug contents
+                if (wb.value.getAttribute('height-type', 'fit')) {
+                  //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
+                  let listChildFillW = wb.value.querySelectorAll(
+                    `.wbaseItem-value[level="${
+                      wb.Level + 1
+                    }"][width-type="fill"]`
+                  )
+                  for (let cWbHTML of listChildFillW) {
+                    StyleDA.docStyleSheets.find(cRule => {
+                      let selectorC = [
+                        ...pWbComponent.querySelectorAll(cRule.selectorText)
+                      ]
+                      let checkC = selectorC.includes(cWbHTML)
+                      if (checkC) {
+                        cRule.style.width = `${cWbHTML.offsetWidth}px`
+                        selectorC.forEach(e => e.removeAttribute('width-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
+                          cRule.cssText
+                        )
+                      }
+                      return checkC
+                    })
+                  }
+                  rule.style.width = null
+                  selector.forEach(e => e.setAttribute('width-type', 'fit'))
+                } else if (!wb.value.getAttribute('height-type')) {
+                  rule.style.width = `${wb.value.offsetWidth}px`
+                  selector.forEach(e => e.removeAttribute('width-type'))
+                }
+                rule.style.height = '100%'
+                selector.forEach(e => e.setAttribute('height-type', 'fill'))
+              }
+              selector.forEach(e => {
+                $(e).removeClass('w-row')
+                $(e).addClass('w-col')
+              })
+              rule.style.setProperty(
+                '--main-axis-align',
+                wMainAxis(_layout.Alignment, false)
+              )
+              rule.style.setProperty(
+                '--cross-axis-align',
+                wCrossAxis(_layout.Alignment, false)
+              )
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                rule.cssText
+              )
+            }
+            return check
+          })
+        }
+        StyleDA.editStyleSheet(cssItem)
+      }
+    } else {
+      if (listUpdate[0].StyleItem) {
+        for (let wb of listUpdate) {
+          wb.WAutolayoutItem.Direction = direction
+          let _layout = wb.WAutolayoutItem
+          // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
+          if (_layout.Alignment.includes('SpaceBetween')) {
+            // align SpaceBetweenLeft => TopSpaceBetween
+            if (_layout.Alignment.includes('Left'))
+              _layout.Alignment = 'TopSpaceBetween'
+            // align SpaceBetweenRight => BottomSpaceBetween
+            if (_layout.Alignment.includes('Right'))
+              _layout.Alignment = 'BottomSpaceBetween'
+          }
+          //TH height của wbase item này đang hug contents thì width của wbase item này phải chuyển về dạng hug contents
+          if (wb.StyleItem.FrameItem.Height == null) {
+            // TH width của wbase item này dạng fill container thì phải chuyển height của wbase item này về dạng fill container
+            if (wb.StyleItem.FrameItem.Width < 0) {
+              //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
+              if (pWb.StyleItem.FrameItem.Height == null) {
+                pWb.StyleItem.FrameItem.Height = pWb.value.offsetHeight
+                pWb.value.style.height = `${pWb.value.offsetHeight}px`
+                pWb.value.removeAttribute('height-type')
+                listUpdate.push(pWb)
+              }
+              wb.StyleItem.FrameItem.Height = -1
+              wb.value.style.height = '100%'
+              wb.value.setAttribute('height-type', 'fill')
+            }
+            // TH width của wbase item này dạng fixed thì phải chuyển height của wbase item này về dạng fixed
+            else if (wb.StyleItem.FrameItem.Width >= 0) {
+              wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
+              wb.value.style.height = `${wb.value.offsetHeight}px`
+              wb.value.removeAttribute('height-type')
+            }
+            //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
+            let listChildFillW = wbase_list.filter(
+              e =>
+                e.ParentID === wb.GID &&
+                e.value.getAttribute('width-type') === 'fill'
+            )
+            if (listChildFillW.length > 0) {
+              if (listChildFillW[0].StyleItem) {
+                for (let cWb of listChildFillW) {
+                  cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
+                  cWb.value.style.width = `${cWb.value.offsetWidth}px`
+                  cWb.value.removeAttribute('width-type')
+                }
+                listUpdate.push(...listChildFillW)
+              } else {
+                var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+                for (let cWb of listChildFillW) {
+                  StyleDA.docStyleSheets.find(rule => {
+                    let selector = [
+                      ...pWbComponent.querySelectorAll(rule.selectorText)
+                    ]
+                    let check = selector.includes(cWb.value)
+                    if (check) {
+                      rule.style.width = `${cWb.value.offsetWidth}px`
+                      selector.forEach(e => e.removeAttribute('width-type'))
+                      cssItem.Css = cssItem.Css.replace(
+                        new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                        rule.cssText
+                      )
+                    }
+                    return check
+                  })
+                }
+              }
+            }
+            // gán width của wbase item này null để hug contents
+            wb.StyleItem.FrameItem.Width = null
+            wb.value.style.width = null
+            wb.value.setAttribute('width-type', 'fit')
+          }
+          //TH height của wbase item này đang fill container thì width của wbase item này phải chuyển về dạng fill container
+          else if (wb.StyleItem.FrameItem.Height < 0) {
+            //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
+            if (pWb.StyleItem.FrameItem.Width == null) {
+              pWb.StyleItem.FrameItem.Width = pWb.value.offsetWidth
+              pWb.value.style.width = `${pWb.value.offsetWidth}px`
+              pWb.value.removeAttribute('width-type')
+              listUpdate.push(pWb)
+            }
+            // TH width của wbase item này dạng hug contents thì phải chuyển height của wbase item này về dạng hug contents
+            if (wb.StyleItem.FrameItem.Width == null) {
+              //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển height của nó về fixed
+              let listChildFillH = wbase_list.filter(
+                e =>
+                  e.ParentID === wb.GID &&
+                  e.value.getAttribute('height-type') === 'fill'
+              )
+              if (listChildFillH.length > 0) {
+                if (listChildFillH[0].StyleItem) {
+                  for (let cWb of listChildFillH) {
+                    cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
+                    cWb.value.style.height = `${cWb.value.offsetHeight}px`
+                    cWb.value.removeAttribute('height-type')
+                  }
+                  listUpdate.push(...listChildFillH)
+                } else {
+                  cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+                  for (let cWb of listChildFillH) {
+                    StyleDA.docStyleSheets.find(rule => {
+                      let selector = [
+                        ...pWbComponent.querySelectorAll(rule.selectorText)
+                      ]
+                      let check = selector.includes(cWb.value)
+                      if (check) {
+                        rule.style.height = `${cWb.value.offsetHeight}px`
+                        selector.forEach(e => e.removeAttribute('height-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                          rule.cssText
+                        )
+                      }
+                      return check
+                    })
+                  }
+                }
+              }
+              wb.StyleItem.FrameItem.Height = null
+              wb.value.style.height = null
+              wb.value.setAttribute('height-type', 'fit')
+            } else if (wb.StyleItem.FrameItem.Width >= 0) {
+              wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
+              wb.value.style.height = `${wb.value.offsetHeight}px`
+              wb.value.removeAttribute('height-type')
+            }
+            wb.StyleItem.FrameItem.Width = -1
+            wb.value.style.width = '100%'
+            wb.value.setAttribute('width-type', 'fill')
+          }
+          $(wb.value).addClass('w-row')
+          $(wb.value).removeClass('w-col')
+          wb.value.style.setProperty(
+            '--main-axis-align',
+            wMainAxis(_layout.Alignment, true)
+          )
+          wb.value.style.setProperty(
+            '--cross-axis-align',
+            wCrossAxis(_layout.Alignment, true)
+          )
+        }
+        if (cssItem) StyleDA.editStyleSheet(cssItem)
+      } else {
+        let pWbComponent = listUpdate[0].value.closest(
+          `.wbaseItem-value[iswini="true"]`
+        )
+        let cssItem = StyleDA.cssStyleSheets.find(
+          e => e.GID === pWbComponent.id
+        )
+        for (let wb of listUpdate) {
+          wb.WAutolayoutItem.Direction = direction
+          let _layout = wb.WAutolayoutItem
+          // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
+          if (_layout.Alignment.includes('SpaceBetween')) {
+            // align SpaceBetweenLeft => TopSpaceBetween
+            if (_layout.Alignment.includes('Left'))
+              _layout.Alignment = 'TopSpaceBetween'
+            // align SpaceBetweenRight => BottomSpaceBetween
+            if (_layout.Alignment.includes('Right'))
+              _layout.Alignment = 'BottomSpaceBetween'
+          }
+          StyleDA.docStyleSheets.find(rule => {
+            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let check = selector.includes(wb.value)
+            if (check) {
+              //TH height của wbase item này đang hug contents thì width của wbase item này phải chuyển về dạng hug contents
+              if (wb.value.getAttribute('height-type') === 'fit') {
+                // TH width của wbase item này dạng fill container thì phải chuyển height của wbase item này về dạng fill container
+                if (wb.value.getAttribute('width-type') === 'fill') {
+                  //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
+                  if (pWb.value.getAttribute('height-type') === 'fit') {
+                    if (pWb.StyleItem) {
+                      pWb.StyleItem.FrameItem.Height = pWb.value.offsetHeight
+                      pWb.value.style.height = `${pWb.value.offsetHeight}px`
+                      pWb.value.removeAttribute('height-type')
+                      listUpdate.push(pWb)
+                    } else {
+                      StyleDA.docStyleSheets.find(pRule => {
+                        let selectorP = [
+                          ...pWbComponent.querySelectorAll(pRule.selectorText)
+                        ]
+                        let checkP = selectorP.includes(pWb.value)
+                        if (checkP) {
+                          pRule.style.height = `${pWb.value.offsetHeight}px`
+                          selectorP.forEach(e =>
+                            e.removeAttribute('height-type')
+                          )
+                          cssItem.Css = cssItem.Css.replace(
+                            new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
+                            pRule.cssText
+                          )
+                        }
+                        return checkP
+                      })
+                    }
+                  }
+                  rule.style.height = '100%'
+                  selector.forEach(e => e.setAttribute('height-type', 'fill'))
+                }
+                // TH width của wbase item này dạng fixed thì phải chuyển height của wbase item này về dạng fixed
+                else if (!wb.value.getAttribute('width-type')) {
+                  rule.style.height = `${wb.value.offsetHeight}px`
+                  selector.forEach(e => e.removeAttribute('height-type'))
+                }
+                //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
+                let listChildFillW = wb.value.querySelectorAll(
+                  `.wbaseItem-value[level="${wb.Level + 1}"][width-type="fill"]`
+                )
+                for (let cWbHTML of listChildFillW) {
+                  StyleDA.docStyleSheets.find(cRule => {
+                    let selectorC = [
+                      ...pWbComponent.querySelectorAll(cRule.selectorText)
+                    ]
+                    let checkC = selectorC.includes(cWbHTML)
+                    if (checkC) {
+                      cRule.style.width = `${cWbHTML.offsetWidth}px`
+                      selectorC.forEach(e => e.removeAttribute('width-type'))
+                      cssItem.Css = cssItem.Css.replace(
+                        new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
+                        cRule.cssText
+                      )
+                    }
+                    return checkC
+                  })
+                }
+                // gán width của wbase item này null để hug contents
+                rule.style.width = null
+                selector.forEach(e => e.setAttribute('width-type', 'fit'))
+              }
+              //TH height của wbase item này đang fill container thì width của wbase item này phải chuyển về dạng fill container
+              else if (wb.value.getAttribute('height-type') === 'fill') {
+                //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
+                if (pWb.value.getAttribute('width-type', 'fit')) {
+                  if (pWb.StyleItem) {
+                    pWb.StyleItem.FrameItem.Width = pWb.value.offsetWidth
+                    pWb.value.style.width = `${pWb.value.offsetWidth}px`
+                    pWb.value.removeAttribute('width-type')
+                    listUpdate.push(pWb)
+                  } else {
+                    StyleDA.docStyleSheets.find(pRule => {
+                      let selectorP = [
+                        ...pWbComponent.querySelectorAll(pRule.selectorText)
+                      ]
+                      let checkP = selectorP.includes(pWb.value)
+                      if (checkP) {
+                        pRule.style.width = `${pWb.value.offsetWidth}px`
+                        selectorP.forEach(e => e.removeAttribute('width-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
+                          pRule.cssText
+                        )
+                      }
+                      return checkP
+                    })
+                  }
+                }
+                // TH width của wbase item này dạng hug contents thì phải chuyển height của wbase item này về dạng hug contents
+                if (wb.value.getAttribute('width-type', 'fit')) {
+                  //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển height của nó về fixed
+                  let listChildFillH = wb.value.querySelectorAll(
+                    `.wbaseItem-value[level="${
+                      wb.Level + 1
+                    }"][height-type="fill"]`
+                  )
+                  for (let cWbHTML of listChildFillH) {
+                    StyleDA.docStyleSheets.find(cRule => {
+                      let selector = [
+                        ...pWbComponent.querySelectorAll(cRule.selectorText)
+                      ]
+                      let checkC = selector.includes(cWbHTML)
+                      if (checkC) {
+                        cRule.style.height = `${cWbHTML.offsetHeight}px`
+                        selector.forEach(e => e.removeAttribute('height-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
+                          cRule.cssText
+                        )
+                      }
+                      return checkC
+                    })
+                  }
+                  rule.style.height = null
+                  selector.forEach(e => e.setAttribute('height-type', 'fit'))
+                } else if (!wb.value.getAttribute('width-type')) {
+                  rule.style.height = `${wb.value.offsetHeight}px`
+                  selector.forEach(e => e.removeAttribute('height-type'))
+                }
+                rule.style.width = '100%'
+                selector.forEach(e => e.setAttribute('width-type', 'fill'))
+              }
+              selector.forEach(e => {
+                $(e).addClass('w-row')
+                $(e).removeClass('w-col')
+              })
+              rule.style.setProperty(
+                '--main-axis-align',
+                wMainAxis(_layout.Alignment, true)
+              )
+              rule.style.setProperty(
+                '--cross-axis-align',
+                wCrossAxis(_layout.Alignment, true)
+              )
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                rule.cssText
+              )
+            }
+            return check
+          })
+        }
+        StyleDA.editStyleSheet(cssItem)
       }
     }
+    WBaseDA.edit(listUpdate, EnumObj.autoLayoutFrame)
+  } else if (alignment) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.WAutolayoutItem.Alignment = alignment
+        wb.value.style.setProperty(
+          '--main-axis-align',
+          wMainAxis(
+            alignment,
+            wb.CateID === EnumCate.table
+              ? null
+              : wb.WAutolayoutItem.Direction === 'Horizontal'
+          )
+        )
+        wb.value.style.setProperty(
+          '--cross-axis-align',
+          wCrossAxis(
+            alignment,
+            wb.CateID === EnumCate.table
+              ? null
+              : wb.WAutolayoutItem.Direction === 'Horizontal'
+          )
+        )
+      }
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        wb.WAutolayoutItem.Alignment = alignment
+        cssRule.style.setProperty(
+          '--main-axis-align',
+          wMainAxis(
+            alignment,
+            wb.CateID === EnumCate.table
+              ? null
+              : wb.value.classList.contains('w-row')
+          )
+        )
+        cssRule.style.setProperty(
+          '--cross-axis-align',
+          wCrossAxis(
+            alignment,
+            wb.CateID === EnumCate.table
+              ? null
+              : wb.value.classList.contains('w-row')
+          )
+        )
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+    WBaseDA.edit(listUpdate, EnumObj.autoLayout)
+  } else if (childSpace !== undefined) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.WAutolayoutItem.ChildSpace = childSpace
+        let isRow = wb.WAutolayoutItem.Direction == 'Horizontal'
+        if (wb.WAutolayoutItem.Alignment.includes('SpaceBetween')) {
+          if (isRow) {
+            wb.WAutolayoutItem.Alignment = wb.WAutolayoutItem.Alignment.replace(
+              'SpaceBetween',
+              'Left'
+            )
+          } else {
+            wb.WAutolayoutItem.Alignment = wb.WAutolayoutItem.Alignment.replace(
+              'SpaceBetween',
+              'Top'
+            )
+          }
+          wb.value.style.setProperty(
+            '--main-axis-align',
+            wMainAxis(
+              wb.WAutolayoutItem.Alignment,
+              wb.CateID === EnumCate.table ? null : isRow
+            )
+          )
+          wb.value.style.setProperty(
+            '--cross-axis-align',
+            wCrossAxis(
+              wb.WAutolayoutItem.Alignment,
+              wb.CateID === EnumCate.table ? null : isRow
+            )
+          )
+        }
+        wb.value.style.setProperty('--child-space', `${childSpace}px`)
+        wb.value
+          .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
+          .forEach(cWbHTMl => {
+            cWbHTMl.style.setProperty('--gutter', `${childSpace}px`)
+          })
+      }
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.setProperty('--child-space', `${childSpace}px`)
+        wb.value
+          .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
+          .forEach(cWbHTMl => {
+            let cRule = StyleDA.docStyleSheets.find(e =>
+              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+                cWbHTMl
+              )
+            )
+            cRule.style.setProperty('--gutter', `${childSpace}px`)
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
+              cRule.cssText
+            )
+          })
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+    WBaseDA.edit(listUpdate, EnumObj.autoLayout)
+  } else if (runSpace !== undefined) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.WAutolayoutItem.RunSpace = runSpace
+        wb.value.style.setProperty('--run-space', `${runSpace}px`)
+      }
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        wb.WAutolayoutItem.RunSpace = runSpace
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.setProperty('--run-space', `${runSpace}px`)
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+    WBaseDA.edit(listUpdate, EnumObj.autoLayout)
+  } else if (isWrap !== undefined) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.WAutolayoutItem.IsWrap = isWrap
+        if (isWrap) {
+          if (wb.WAutolayoutItem.Direction === 'Vertical') {
+            let listChildFillW = wbase_list.filter(
+              e => e.ParentID === wb.GID && e.StyleItem.FrameItem.Width < 0
+            )
+            if (listChildFillW.length > 0) {
+              if (listChildFillW[0].StyleItem) {
+                for (let cWb of listChildFillW) {
+                  cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
+                  cWb.value.style.width = `${cWb.value.offsetWidth}px`
+                  cWb.value.removeAttribute('width-type')
+                }
+                listUpdate.push(...listChildFillW)
+              } else {
+                let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+                for (let cWb of listChildFillW) {
+                  StyleDA.docStyleSheets.find(rule => {
+                    let selector = [
+                      ...pWbComponent.querySelectorAll(rule.selectorText)
+                    ]
+                    let check = selector.includes(cWb.value)
+                    if (check) {
+                      rule.style.width = `${cWb.value.offsetWidth}px`
+                      selector.forEach(e => e.removeAttribute('width-type'))
+                      cssItem.Css = cssItem.Css.replace(
+                        new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                        rule.cssText
+                      )
+                    }
+                    return check
+                  })
+                }
+                StyleDA.editStyleSheet(cssItem)
+              }
+            }
+            if (wb.StyleItem.FrameItem.Height == null) {
+              wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
+              wb.value.style.height = wb.value.offsetHeight + 'px'
+              wb.value.removeAttribute('height-type')
+            }
+          } else {
+            let listChildFillH = wbase_list.filter(
+              e => e.ParentID === wb.GID && e.StyleItem.FrameItem.Height < 0
+            )
+            if (listChildFillH.length > 0) {
+              if (listChildFillH[0].StyleItem) {
+                for (let cWb of listChildFillH) {
+                  cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
+                  cWb.value.style.height = `${cWb.value.offsetHeight}px`
+                  cWb.value.removeAttribute('height-type')
+                }
+                listUpdate.push(...listChildFillH)
+              } else {
+                let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+                for (let cWb of listChildFillH) {
+                  StyleDA.docStyleSheets.find(rule => {
+                    let selector = [
+                      ...pWbComponent.querySelectorAll(rule.selectorText)
+                    ]
+                    let check = selector.includes(cWb.value)
+                    if (check) {
+                      rule.style.height = `${cWb.value.offsetHeight}px`
+                      selector.forEach(e => e.removeAttribute('height-type'))
+                      cssItem.Css = cssItem.Css.replace(
+                        new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                        rule.cssText
+                      )
+                    }
+                    return check
+                  })
+                }
+                StyleDA.editStyleSheet(cssItem)
+              }
+            }
+            if (wb.StyleItem.FrameItem.Width == null) {
+              wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
+              wb.value.style.width = wb.value.offsetWidth + 'px'
+              wb.value.removeAttribute('width-type')
+            }
+          }
+          wb.value.setAttribute('wrap', 'wrap')
+        } else wb.value.removeAttribute('wrap')
+      }
+      WBaseDA.edit(listUpdate, EnumObj.autoLayoutFrame)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        wb.WAutolayoutItem.IsWrap = isWrap
+        StyleDA.docStyleSheets.find(rule => {
+          let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+          let check = selector.includes(wb.value)
+          if (check) {
+            if (isWrap) {
+              if (wb.value.classList.contains('w-col')) {
+                let listChildFillW = wb.value.querySelectorAll(
+                  `.wbaseItem-value[level="${wb.Level + 1}"][width-type="fill"]`
+                )
+                if (listChildFillW.length > 0) {
+                  for (let cWb of listChildFillW) {
+                    StyleDA.docStyleSheets.find(cRule => {
+                      let selectorC = [
+                        ...pWbComponent.querySelectorAll(cRule.selectorText)
+                      ]
+                      let checkC = selectorC.includes(cWb.value)
+                      if (checkC) {
+                        cRule.style.width = `${cWb.value.offsetWidth}px`
+                        selectorC.forEach(e => e.removeAttribute('width-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
+                          cRule.cssText
+                        )
+                      }
+                      return checkC
+                    })
+                  }
+                }
+                if (wb.value.getAttribute('height-type') === 'fit') {
+                  rule.style.height = wb.value.offsetHeight + 'px'
+                  selector.forEach(e => e.removeAttribute('height-type'))
+                }
+              } else {
+                let listChildFillH = wb.value.querySelectorAll(
+                  `.wbaseItem-value[level="${
+                    wb.Level + 1
+                  }"][height-type="fill"]`
+                )
+                if (listChildFillH.length > 0) {
+                  for (let cWb of listChildFillH) {
+                    StyleDA.docStyleSheets.find(cRule => {
+                      let selectorC = [
+                        ...pWbComponent.querySelectorAll(cRule.selectorText)
+                      ]
+                      let checkC = selectorC.includes(cWb.value)
+                      if (checkC) {
+                        cRule.style.height = `${cWb.value.offsetHeight}px`
+                        selectorC.forEach(e => e.removeAttribute('height-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
+                          cRule.cssText
+                        )
+                      }
+                      return checkC
+                    })
+                  }
+                }
+                if (wb.value.getAttribute('width-type') === 'fit') {
+                  rule.style.width = wb.value.offsetWidth + 'px'
+                  selector.forEach(e => e.removeAttribute('width-type'))
+                }
+              }
+              selector.forEach(e => e.setAttribute('wrap', 'wrap'))
+            } else {
+              selector.forEach(e => e.removeAttribute('wrap'))
+            }
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+              rule.cssText
+            )
+          }
+          return check
+        })
+      }
+      StyleDA.editStyleSheet(cssItem)
+      WBaseDA.edit(listUpdate, EnumObj.autoLayout)
+    }
+  } else if (isScroll !== undefined) {
+    if (listUpdate[0].StyleItem) {
+      for (let wb of listUpdate) {
+        wb.WAutolayoutItem.IsScroll = isScroll
+        if (isScroll) wb.value.setAttribute('scroll', 'true')
+        else wb.value.removeAttribute('scroll')
+      }
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      for (let wb of listUpdate) {
+        wb.WAutolayoutItem.IsScroll = isScroll
+        StyleDA.docStyleSheets.find(rule => {
+          let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+          let check = selector.includes(wb.value)
+          if (check) {
+            selector.forEach(e => {
+              if (isScroll) e.setAttribute('scroll', 'true')
+              else e.removeAttribute('scroll')
+            })
+          }
+          return check
+        })
+      }
+    }
+    WBaseDA.edit(listUpdate, EnumObj.autoLayout)
   }
-  WBaseDA.edit(list_update, _enumObj)
   updateUISelectBox()
 }
 

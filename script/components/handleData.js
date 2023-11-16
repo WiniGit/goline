@@ -1135,7 +1135,7 @@ class enumTypeInput {
 }
 
 function wMainAxis (key, isHorizontal) {
-  if (isHorizontal == undefined) {
+  if (isHorizontal == null) {
     if (key.includes('Left')) {
       return '-webkit-left'
     } else if (key.includes('Right')) {

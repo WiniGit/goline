@@ -879,12 +879,12 @@ function createAutoLayout () {
     _row1.appendChild(group_btn_direction)
     if (isVertical) {
       group_btn_direction.lastChild.onclick = function () {
-        editLayoutStyle({ Direction: 'Horizontal' })
+        handleEditLayout({ direction: 'Horizontal' })
         updateUIAutoLayout()
       }
     } else {
       group_btn_direction.firstChild.onclick = function () {
-        editLayoutStyle({ Direction: 'Vertical' })
+        handleEditLayout({ direction: 'Vertical' })
         updateUIAutoLayout()
       }
     }
@@ -916,8 +916,8 @@ function createAutoLayout () {
         value: childSpaceValues.length == 1 ? childSpaceValues[0] : 'mixed',
         onBlur: function (ev) {
           let newValue = parseFloat(ev.target.value)
-          if (newValue != undefined) {
-            editLayoutStyle({ ChildSpace: newValue })
+          if (!isNaN(newValue)) {
+            handleEditLayout({ childSpace: newValue })
             updateUIAutoLayout()
           } else {
             ev.target.value =
@@ -944,7 +944,7 @@ function createAutoLayout () {
           isGridValues.every(checkVl => checkVl) ? ' checked' : ''
         } />Wrap content`
         btnIsWarp.firstChild.onchange = function (ev) {
-          editLayoutStyle({ IsWrap: ev.target.checked })
+          handleEditLayout({ isWrap: ev.target.checked })
         }
         let runSpaceValues = autoLayoutList.filterAndMap(wb =>
           window
@@ -959,8 +959,8 @@ function createAutoLayout () {
           value: runSpaceValues.length == 1 ? runSpaceValues[0] : 'mixed',
           onBlur: function (ev) {
             let newValue = parseFloat(ev.target.value)
-            if (newValue != undefined) {
-              editLayoutStyle({ RunSpace: newValue })
+            if (!isNaN(newValue)) {
+              handleEditLayout({ runSpace: newValue })
               updateUIAutoLayout()
             } else {
               ev.target.value =
@@ -989,7 +989,7 @@ function createAutoLayout () {
           btnIsScroll.setAttribute('disabled', 'true')
         } else {
           btnIsScroll.firstChild.onchange = function (ev) {
-            editLayoutStyle({ IsScroll: ev.checked })
+            handleEditLayout({ isScroll: ev.checked })
           }
         }
         editContainer.replaceChildren(
@@ -1698,7 +1698,7 @@ function _btnAlignType () {
       alignType.style.opacity = 0.05
     }
     this.style.opacity = 1
-    editLayoutStyle({ Alignment: this.id })
+    handleEditLayout({ alignment: this.id })
   }
   return img
 }
