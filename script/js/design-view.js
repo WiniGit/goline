@@ -2772,6 +2772,7 @@ function EditBorderBlock () {
       }
       header.appendChild(btnAdd)
     }
+    listBorderSkin = listBorderSkin.filter(e => e !== null)
     let borderColorValues = listBorderSkin.filterAndMap(e => e.ColorValue)
     if (borderColorValues.length == 1) {
       let colorValue = borderColorValues[0]
@@ -3153,6 +3154,7 @@ function EditEffectBlock () {
       }
       header.appendChild(btnAdd)
     }
+    listEffectSkin = listEffectSkin.filter(e => e !== null)
     let div_select_eType = document.createElement('div')
     div_select_eType.id = 'edit_effect_type_attribute'
     div_select_eType.className = 'row'

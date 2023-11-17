@@ -4180,8 +4180,10 @@ function handleEditBorder ({
   style,
   onSubmit = true
 }) {
-  let listUpdate = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+  let listUpdate = selected_list.filter(
+    wb =>
+      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
+      (borderSkin || window.getComputedStyle(wb.value).borderStyle !== 'none')
   )
   if (borderSkin) {
     if (listUpdate[0].StyleItem) {
@@ -7150,8 +7152,12 @@ function handleEditEffect ({
   type,
   onSubmit = true
 }) {
-  let listUpdate = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+  let listUpdate = selected_list.filter(
+    wb =>
+      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
+      (effectSkin ||
+        window.getComputedStyle(wb.value).boxShadow !== 'none' ||
+        window.getComputedStyle(wb.value).filter !== 'none')
   )
   if (effectSkin) {
     if (listUpdate[0].StyleItem) {
