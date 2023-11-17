@@ -5243,14 +5243,18 @@ function handleEditLayout ({
   runSpace,
   isScroll
 }) {
-  let listUpdate = []
+  let listUpdate = selected_list.filter(wb =>
+    window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
+  )
   if (direction) {
     // TH user muốn cập nhật layout từ dạng chiều ngang sang chiều dọc
     listUpdate = selected_list.filter(
       wb =>
         wb.value.classList.contains(
           direction === 'Vertical' ? 'w-row' : 'w-col'
-        ) && wb.CateID !== EnumCate.table
+        ) &&
+        wb.CateID !== EnumCate.table &&
+        wb.CateID !== EnumCate.textformfield
     )
     let pWb = wbase_list.find(e => e.GID === select_box_parentID)
     if (direction === 'Vertical') {

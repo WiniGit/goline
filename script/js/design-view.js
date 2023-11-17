@@ -94,7 +94,7 @@ function updateUIDesignView () {
         selected_list[0].StyleItem ||
         selected_list.every(wb => wb.WAutolayoutItem))
     ) {
-      let editAutoLayout = createAutoLayout()
+      let editAutoLayout = EditLayoutBlock()
       listEditContainer.appendChild(editAutoLayout)
     }
     //
@@ -818,7 +818,7 @@ function updateInputTLWH () {
 }
 
 // edit auto layout
-function createAutoLayout () {
+function EditLayoutBlock () {
   let autoLayoutList = selected_list.filter(wb =>
     EnumCate.no_child_component.every(ct => wb.CateID !== ct)
   )
@@ -846,7 +846,7 @@ function createAutoLayout () {
       icon_remove.className = 'fa-solid fa-minus fa-sm'
       icon_remove.onclick = function () {
         removeLayout()
-        updateUIAutoLayout()
+        reloadEditLayoutBlock()
       }
     }
     let auto_layout_details_div = document.createElement('div')
@@ -880,12 +880,12 @@ function createAutoLayout () {
     if (isVertical) {
       group_btn_direction.lastChild.onclick = function () {
         handleEditLayout({ direction: 'Horizontal' })
-        updateUIAutoLayout()
+        reloadEditLayoutBlock()
       }
     } else {
       group_btn_direction.firstChild.onclick = function () {
         handleEditLayout({ direction: 'Vertical' })
-        updateUIAutoLayout()
+        reloadEditLayoutBlock()
       }
     }
     // select alignment type
@@ -918,7 +918,7 @@ function createAutoLayout () {
           let newValue = parseFloat(ev.target.value)
           if (!isNaN(newValue)) {
             handleEditLayout({ childSpace: newValue })
-            updateUIAutoLayout()
+            reloadEditLayoutBlock()
           } else {
             ev.target.value =
               childSpaceValues.length == 1 ? childSpaceValues[0] : 'mixed'
@@ -961,7 +961,7 @@ function createAutoLayout () {
             let newValue = parseFloat(ev.target.value)
             if (!isNaN(newValue)) {
               handleEditLayout({ runSpace: newValue })
-              updateUIAutoLayout()
+              reloadEditLayoutBlock()
             } else {
               ev.target.value =
                 runSpaceValues.length == 1 ? runSpaceValues[0] : 'mixed'
@@ -1174,15 +1174,15 @@ function createAutoLayout () {
     icon_add.className = 'fa-solid fa-plus fa-sm'
     icon_add.onclick = function () {
       addAutoLayout()
-      updateUIAutoLayout()
+      reloadEditLayoutBlock()
     }
   }
   return editContainer
 }
 
 // update style HTML edit auto layout UI
-function updateUIAutoLayout () {
-  let newEditAutoLayout = createAutoLayout()
+function reloadEditLayoutBlock () {
+  let newEditAutoLayout = EditLayoutBlock()
   document.getElementById('edit_auto_layout_div').replaceWith(newEditAutoLayout)
 }
 
