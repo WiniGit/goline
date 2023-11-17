@@ -2762,7 +2762,7 @@ function EditBorderBlock () {
       reloadEditBorderBlock()
     }
     header.appendChild(btnAdd)
-  } else if (listBorderSkin.some(e => typeof e !== 'object')) {
+  } else if (listBorderSkin.some(e => e && typeof e !== 'object')) {
     header.appendChild(btnSelectSkin)
     let notiText = document.createElement('span')
     notiText.className = 'regular1'
@@ -3142,7 +3142,7 @@ function EditEffectBlock () {
       reloadEditEffectBlock()
     }
     header.appendChild(btnAdd)
-  } else if (listEffectSkin.some(e => typeof e !== 'object')) {
+  } else if (listEffectSkin.some(e => e && typeof e !== 'object')) {
     header.appendChild(btnSelectSkin)
     let notiText = document.createElement('span')
     notiText.className = 'regular1'
