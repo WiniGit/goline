@@ -4121,8 +4121,10 @@ function unlinkBorderSkin () {
 }
 
 function addBorder () {
-  let listUpdate = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+  let listUpdate = selected_list.filter(
+    wb =>
+      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
+      window.getComputedStyle(wb.value).borderStyle !== 'none'
   )
   let newBorderItem = {
     GID: uuidv4(),
@@ -7070,8 +7072,11 @@ function unlinkEffectSkin () {
 }
 
 function addEffect () {
-  let listUpdate = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+  let listUpdate = selected_list.filter(
+    wb =>
+      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
+      window.getComputedStyle(wb.value).boxShadow !== 'none' &&
+      window.getComputedStyle(wb.value).filter !== 'none'
   )
   let newEffectItem = {
     GID: uuidv4(),

@@ -2773,264 +2773,271 @@ function EditBorderBlock () {
       header.appendChild(btnAdd)
     }
     listBorderSkin = listBorderSkin.filter(e => e !== null)
-    let borderColorValues = listBorderSkin.filterAndMap(e => e.ColorValue)
-    if (borderColorValues.length == 1) {
-      let colorValue = borderColorValues[0]
-      function updateBorderColor (params, onSubmit = true) {
-        handleEditBorder({ color: params, onSubmit: onSubmit })
-        if (onSubmit) reloadEditBorderBlock()
+    if (listBorderSkin.length > 0) {
+      let borderColorValues = listBorderSkin.filterAndMap(e => e.ColorValue)
+      if (borderColorValues.length == 1) {
+        let colorValue = borderColorValues[0]
+        function updateBorderColor (params, onSubmit = true) {
+          handleEditBorder({ color: params, onSubmit: onSubmit })
+          if (onSubmit) reloadEditBorderBlock()
+        }
+        let formEditColor = createEditColorForm(
+          function (params) {
+            updateBorderColor(params, false)
+          },
+          updateBorderColor,
+          function () {
+            deleteBorder()
+            reloadEditBorderBlock()
+          }
+        )
+        editContainer.appendChild(formEditColor)
+        let paramForm = formEditColor.querySelector('.parameter-form')
+        // input type color & edit hex color
+        for (let parameterHTML of paramForm.childNodes) {
+          if (parameterHTML.className.includes('show-color-container')) {
+            parameterHTML.value = `#${colorValue.substring(0, 6)}`
+          } else if (parameterHTML.className.includes('edit-color-form')) {
+            parameterHTML.value = colorValue.substring(0, 6).toUpperCase()
+          } else if (parameterHTML.className.includes('edit-opacity-form')) {
+            parameterHTML.value =
+              Ultis.hexToPercent(colorValue.substring(6)) + '%'
+          }
+        }
       }
-      let formEditColor = createEditColorForm(
-        function (params) {
-          updateBorderColor(params, false)
+
+      let formEditLine = document.createElement('div')
+      formEditLine.id = 'form-edit-style'
+      formEditLine.className = 'row'
+      formEditLine.style.paddingLeft = '4px'
+      formEditLine.style.justifyContent = 'space-between'
+      editContainer.appendChild(formEditLine)
+      let borderStyles = listBorderSkin.filterAndMap(e => e.BorderStyle)
+      let btnSelectStyle = _btnDropDownSelect(
+        borderStyles.length === 1
+          ? list_border_style
+          : ['mixed', ...list_border_style],
+        function (options) {
+          let firstStyle = borderStyles[0]
+          for (let option of options) {
+            let style = option.getAttribute('value')
+            option.firstChild.style.opacity = style == firstStyle ? 1 : 0
+          }
         },
-        updateBorderColor,
-        function () {
-          deleteBorder()
+        function (value) {
+          handleEditBorder({ style: value })
           reloadEditBorderBlock()
         }
       )
-      editContainer.appendChild(formEditColor)
-      let paramForm = formEditColor.querySelector('.parameter-form')
-      // input type color & edit hex color
-      for (let parameterHTML of paramForm.childNodes) {
-        if (parameterHTML.className.includes('show-color-container')) {
-          parameterHTML.value = `#${colorValue.substring(0, 6)}`
-        } else if (parameterHTML.className.includes('edit-color-form')) {
-          parameterHTML.value = colorValue.substring(0, 6).toUpperCase()
-        } else if (parameterHTML.className.includes('edit-opacity-form')) {
-          parameterHTML.value =
-            Ultis.hexToPercent(colorValue.substring(6)) + '%'
-        }
-      }
-    }
-
-    let formEditLine = document.createElement('div')
-    formEditLine.id = 'form-edit-style'
-    formEditLine.className = 'row'
-    formEditLine.style.paddingLeft = '4px'
-    formEditLine.style.justifyContent = 'space-between'
-    editContainer.appendChild(formEditLine)
-    let borderStyles = listBorderSkin.filterAndMap(e => e.BorderStyle)
-    let btnSelectStyle = _btnDropDownSelect(
-      borderStyles.length === 1
-        ? list_border_style
-        : ['mixed', ...list_border_style],
-      function (options) {
-        let firstStyle = borderStyles[0]
-        for (let option of options) {
-          let style = option.getAttribute('value')
-          option.firstChild.style.opacity = style == firstStyle ? 1 : 0
-        }
-      },
-      function (value) {
-        handleEditBorder({ style: value })
-        reloadEditBorderBlock()
-      }
-    )
-    btnSelectStyle.firstChild.innerHTML =
-      borderStyles.length > 1 ? 'mixed' : borderStyles[0]
-    formEditLine.appendChild(btnSelectStyle)
-    //
-    let widthValues = listBorderSkin.filterAndMap(e => {
-      let eListWidth = e.Width.split(' ')
-      switch (e.BorderSide) {
-        case BorderSide.top:
-          return eListWidth[0]
-        case BorderSide.right:
-          return eListWidth[1]
-        case BorderSide.bottom:
-          return eListWidth[2]
-        case BorderSide.left:
-          return eListWidth[3]
-        default:
-          if (eListWidth.every(value => value == eListWidth[0])) {
+      btnSelectStyle.firstChild.innerHTML =
+        borderStyles.length > 1 ? 'mixed' : borderStyles[0]
+      formEditLine.appendChild(btnSelectStyle)
+      //
+      let widthValues = listBorderSkin.filterAndMap(e => {
+        let eListWidth = e.Width.split(' ')
+        switch (e.BorderSide) {
+          case BorderSide.top:
             return eListWidth[0]
+          case BorderSide.right:
+            return eListWidth[1]
+          case BorderSide.bottom:
+            return eListWidth[2]
+          case BorderSide.left:
+            return eListWidth[3]
+          default:
+            if (eListWidth.every(value => value == eListWidth[0])) {
+              return eListWidth[0]
+            } else {
+              return 'mixed'
+            }
+        }
+      })
+      let edit_stroke_width = _textField({
+        width: '60px',
+        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/stroke-width.svg',
+        value: widthValues.length > 1 ? 'mixed' : widthValues[0],
+        iconSize: '28px',
+        onBlur: function (ev) {
+          let newValue = parseFloat(ev.target.value)
+          let thisWidthValues = [
+            input_border_left,
+            input_border_top,
+            input_border_right,
+            input_border_bottom
+          ]
+          if (!isNaN(newValue)) {
+            switch (firstSideValue) {
+              case BorderSide.top:
+                handleEditBorder({ tWidth: ev.target.value })
+                input_border_top.value = ev.target.value
+                break
+              case BorderSide.right:
+                handleEditBorder({ rWidth: ev.target.value })
+                input_border_right.value = ev.target.value
+                break
+              case BorderSide.bottom:
+                handleEditBorder({ bWidth: ev.target.value })
+                input_border_bottom.value = ev.target.value
+                break
+              case BorderSide.left:
+                handleEditBorder({ lWidth: ev.target.value })
+                input_border_left.value = ev.target.value
+                break
+              default:
+                handleEditBorder({ width: ev.target.value })
+                thisWidthValues.forEach(i => (i.value = ev.target.value))
+                break
+            }
           } else {
-            return 'mixed'
+            thisWidthValues = thisWidthValues.filterAndMap(i => i.value)
+            ev.target.value =
+              thisWidthValues.length > 1 ? 'mixed' : thisWidthValues[0]
           }
-      }
-    })
-    let edit_stroke_width = _textField({
-      width: '60px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/stroke-width.svg',
-      value: widthValues.length > 1 ? 'mixed' : widthValues[0],
-      iconSize: '28px',
-      onBlur: function (ev) {
-        let newValue = parseFloat(ev.target.value)
-        let thisWidthValues = [
-          input_border_left,
-          input_border_top,
-          input_border_right,
-          input_border_bottom
-        ]
-        if (!isNaN(newValue)) {
-          switch (firstSideValue) {
-            case BorderSide.top:
-              handleEditBorder({ tWidth: ev.target.value })
-              input_border_top.value = ev.target.value
-              break
-            case BorderSide.right:
-              handleEditBorder({ rWidth: ev.target.value })
-              input_border_right.value = ev.target.value
-              break
-            case BorderSide.bottom:
-              handleEditBorder({ bWidth: ev.target.value })
-              input_border_bottom.value = ev.target.value
-              break
-            case BorderSide.left:
-              handleEditBorder({ lWidth: ev.target.value })
-              input_border_left.value = ev.target.value
-              break
-            default:
-              handleEditBorder({ width: ev.target.value })
-              thisWidthValues.forEach(i => (i.value = ev.target.value))
-              break
+        }
+      })
+      formEditLine.appendChild(edit_stroke_width)
+
+      let action_edit_line_container = document.createElement('div')
+      action_edit_line_container.className = 'action-container'
+      formEditLine.appendChild(action_edit_line_container)
+
+      let sideValues = listBorderSkin.filterAndMap(e => e.BorderSide)
+      let btnSelectBorderSide = selectBorderSide(
+        sideValues.length === 1 ? sideValues[0] : 'mixed',
+        function (value) {
+          if (selected_list.every(wb => wb.CateID !== EnumCate.checkbox)) {
+            handleEditBorder({ side: value })
+            reloadUIBySide(value)
+          }
+        }
+      )
+      action_edit_line_container.appendChild(btnSelectBorderSide)
+
+      let edit_line_action2 = createButtonAction(
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg',
+        null,
+        function () {}
+      )
+      action_edit_line_container.appendChild(edit_line_action2)
+
+      let group_custom_border_side = document.createElement('div')
+      editContainer.appendChild(group_custom_border_side)
+      group_custom_border_side.id = 'group_input_edit_border_side'
+      group_custom_border_side.className = 'group_input_border_side'
+      let input_border_left = _textField({
+        width: '88px',
+        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left-black.svg',
+        value: '0',
+        iconSize: '36px',
+        onBlur: function () {
+          let left_width_value = parseFloat(this.value)
+          if (!isNaN(left_width_value)) {
+            handleEditBorder({ lWidth: this.value })
+          }
+          reloadEditBorderBlock()
+        }
+      })
+      input_border_left.style.marginLeft = '8px'
+      let input_border_top = _textField({
+        width: '88px',
+        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top-black.svg',
+        value: '0',
+        iconSize: '36px',
+        onBlur: function () {
+          let top_width_value = parseFloat(this.value)
+          if (!isNaN(top_width_value)) {
+            handleEditBorder({ tWidth: this.value })
+          }
+          reloadEditBorderBlock()
+        }
+      })
+      input_border_top.style.marginRight = '35px'
+      let input_border_right = _textField({
+        width: '88px',
+        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right-black.svg',
+        value: '0',
+        iconSize: '36px',
+        onBlur: function () {
+          let right_width_value = parseFloat(this.value)
+          if (!isNaN(right_width_value)) {
+            handleEditBorder({ rWidth: this.value })
+          }
+          reloadEditBorderBlock()
+        }
+      })
+      input_border_right.style.marginLeft = '8px'
+      let input_border_bottom = _textField({
+        width: '88px',
+        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom-black.svg',
+        value: '0',
+        iconSize: '36px',
+        onBlur: function () {
+          let bottom_width_value = parseFloat(this.value)
+          if (!isNaN(bottom_width_value)) {
+            handleEditBorder({ bWidth: this.value })
+          }
+          reloadEditBorderBlock()
+        }
+      })
+      input_border_bottom.style.marginRight = '35px'
+      group_custom_border_side.replaceChildren(
+        input_border_left,
+        input_border_top,
+        input_border_right,
+        input_border_bottom
+      )
+      let firstSideValue = sideValues.length == 1 ? sideValues[0] : 'mixed'
+      function reloadUIBySide (changeSide) {
+        if (changeSide === BorderSide.custom) {
+          group_custom_border_side.style.display = 'flex'
+          btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg`
+          for (let j = 0; j < group_custom_border_side.childNodes.length; j++) {
+            switch (j) {
+              case 0:
+                // case edit left border width
+                var list_width = listBorderSkin.filterAndMap(e =>
+                  e.Width.split(' ').pop()
+                )
+                var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
+                break
+              case 1:
+                // case edit top border width
+                var list_width = listBorderSkin.filterAndMap(e =>
+                  e.Width.split(' ').shift()
+                )
+                var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
+                break
+              case 2:
+                // case edit right border width
+                var list_width = listBorderSkin.filterAndMap(
+                  e => e.Width.split(' ')[1]
+                )
+                var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
+                break
+              case 3:
+                // case edit bottom border width
+                var list_width = listBorderSkin.filterAndMap(
+                  e => e.Width.split(' ')[2]
+                )
+                var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
+                break
+              default:
+                break
+            }
+            let inputForm = group_custom_border_side.childNodes[j]
+            inputForm.lastChild.value = inputValue
           }
         } else {
-          thisWidthValues = thisWidthValues.filterAndMap(i => i.value)
-          ev.target.value = thisWidthValues.length > 1 ? 'mixed' : thisWidthValues[0]
+          group_custom_border_side.style.display = 'none'
+          btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-${
+            firstSideValue.toLowerCase() === 'mixed'
+              ? 'all'
+              : firstSideValue.toLowerCase()
+          }-black.svg`
         }
       }
-    })
-    formEditLine.appendChild(edit_stroke_width)
-
-    let action_edit_line_container = document.createElement('div')
-    action_edit_line_container.className = 'action-container'
-    formEditLine.appendChild(action_edit_line_container)
-
-    let sideValues = listBorderSkin.filterAndMap(e => e.BorderSide)
-    let btnSelectBorderSide = selectBorderSide(
-      sideValues.length === 1 ? sideValues[0] : 'mixed',
-      function (value) {
-        if (selected_list.every(wb => wb.CateID !== EnumCate.checkbox)) {
-          handleEditBorder({ side: value })
-          reloadUIBySide(value)
-        }
-      }
-    )
-    action_edit_line_container.appendChild(btnSelectBorderSide)
-
-    let edit_line_action2 = createButtonAction(
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg',
-      null,
-      function () {}
-    )
-    action_edit_line_container.appendChild(edit_line_action2)
-
-    let group_custom_border_side = document.createElement('div')
-    editContainer.appendChild(group_custom_border_side)
-    group_custom_border_side.id = 'group_input_edit_border_side'
-    group_custom_border_side.className = 'group_input_border_side'
-    let input_border_left = _textField({
-      width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left-black.svg',
-      value: '0',
-      iconSize: '36px',
-      onBlur: function () {
-        let left_width_value = parseFloat(this.value)
-        if (!isNaN(left_width_value)) {
-          handleEditBorder({ lWidth: this.value })
-        }
-        reloadEditBorderBlock()
-      }
-    })
-    input_border_left.style.marginLeft = '8px'
-    let input_border_top = _textField({
-      width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top-black.svg',
-      value: '0',
-      iconSize: '36px',
-      onBlur: function () {
-        let top_width_value = parseFloat(this.value)
-        if (!isNaN(top_width_value)) {
-          handleEditBorder({ tWidth: this.value })
-        }
-        reloadEditBorderBlock()
-      }
-    })
-    input_border_top.style.marginRight = '35px'
-    let input_border_right = _textField({
-      width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right-black.svg',
-      value: '0',
-      iconSize: '36px',
-      onBlur: function () {
-        let right_width_value = parseFloat(this.value)
-        if (!isNaN(right_width_value)) {
-          handleEditBorder({ rWidth: this.value })
-        }
-        reloadEditBorderBlock()
-      }
-    })
-    input_border_right.style.marginLeft = '8px'
-    let input_border_bottom = _textField({
-      width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom-black.svg',
-      value: '0',
-      iconSize: '36px',
-      onBlur: function () {
-        let bottom_width_value = parseFloat(this.value)
-        if (!isNaN(bottom_width_value)) {
-          handleEditBorder({ bWidth: this.value })
-        }
-        reloadEditBorderBlock()
-      }
-    })
-    input_border_bottom.style.marginRight = '35px'
-    group_custom_border_side.replaceChildren(
-      input_border_left,
-      input_border_top,
-      input_border_right,
-      input_border_bottom
-    )
-    let firstSideValue = sideValues.length == 1 ? sideValues[0] : 'mixed'
-    function reloadUIBySide (changeSide) {
-      if (changeSide === BorderSide.custom) {
-        group_custom_border_side.style.display = 'flex'
-        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg`
-        for (let j = 0; j < group_custom_border_side.childNodes.length; j++) {
-          switch (j) {
-            case 0:
-              // case edit left border width
-              var list_width = listBorderSkin.filterAndMap(e =>
-                e.Width.split(' ').pop()
-              )
-              var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-              break
-            case 1:
-              // case edit top border width
-              var list_width = listBorderSkin.filterAndMap(e =>
-                e.Width.split(' ').shift()
-              )
-              var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-              break
-            case 2:
-              // case edit right border width
-              var list_width = listBorderSkin.filterAndMap(
-                e => e.Width.split(' ')[1]
-              )
-              var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-              break
-            case 3:
-              // case edit bottom border width
-              var list_width = listBorderSkin.filterAndMap(
-                e => e.Width.split(' ')[2]
-              )
-              var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-              break
-            default:
-              break
-          }
-          let inputForm = group_custom_border_side.childNodes[j]
-          inputForm.lastChild.value = inputValue
-        }
-      } else {
-        group_custom_border_side.style.display = 'none'
-        btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-${firstSideValue.toLowerCase()}-black.svg`
-      }
+      reloadUIBySide(firstSideValue)
     }
-    reloadUIBySide(firstSideValue)
   }
   return editContainer
 }
@@ -3155,230 +3162,232 @@ function EditEffectBlock () {
       header.appendChild(btnAdd)
     }
     listEffectSkin = listEffectSkin.filter(e => e !== null)
-    let div_select_eType = document.createElement('div')
-    div_select_eType.id = 'edit_effect_type_attribute'
-    div_select_eType.className = 'row'
-    div_select_eType.style.width = '100%'
-    editContainer.appendChild(div_select_eType)
-    // popup edit effect type attribute
-    let effect_setting = createButtonAction(
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg',
-      null,
-      function () {
-        setTimeout(function () {
-          updateUIEffectAttribute()
-        }, 200)
-      }
-    )
-    function updateUIEffectAttribute () {
-      if (eTypeValues.length === 1) {
-        popup_edit_effect_style.style.display = 'flex'
-        popup_edit_effect_style.firstChild.innerHTML = eTypeValues[0]
-        for (
-          let i = 0;
-          i < popup_edit_effect_style.lastChild.childNodes.length;
-          i++
-        ) {
-          let eHTML = popup_edit_effect_style.lastChild.childNodes[i]
-          switch (i) {
-            // input offsetX
-            case 0:
-              if (eTypeValues[0] === ShadowType.layer_blur) {
-                eHTML.style.display = 'none'
-              } else {
-                eHTML.style.display = 'flex'
-                let list_offsetX = listEffectSkin.filterAndMap(e => e.OffsetX)
-                eHTML.lastChild.value =
-                  list_offsetX.length > 1 ? 'mixed' : list_offsetX[0]
-              }
-              break
-            // input blur
-            case 1:
-              eHTML.style.display = 'flex'
-              let list_blur = listEffectSkin.filterAndMap(e => e.BlurRadius)
-              eHTML.lastChild.value =
-                list_blur.length > 1 ? 'mixed' : list_blur[0]
-              break
-            // input offsetY
-            case 2:
-              if (eTypeValues[0] === ShadowType.layer_blur) {
-                eHTML.style.display = 'none'
-              } else {
-                eHTML.style.display = 'flex'
-                let list_offsetY = listEffectSkin.filterAndMap(e => e.OffsetY)
-                eHTML.lastChild.value =
-                  list_offsetY.length > 1 ? 'mixed' : list_offsetY[0]
-              }
-              break
-            // input spread
-            case 3:
-              if (eTypeValues[0] === ShadowType.layer_blur) {
-                eHTML.style.display = 'none'
-              } else {
-                eHTML.style.display = 'flex'
-                let list_spread = listEffectSkin.filterAndMap(
-                  e => e.SpreadRadius
-                )
-                eHTML.lastChild.value =
-                  list_spread.length > 1 ? 'mixed' : list_spread[0]
-              }
-              break
-            // input colorvalue
-            case 4:
-              let listEffectColor = listEffectSkin.filterAndMap(
-                e => e.ColorValue
-              )
-              if (listEffectColor.length === 1) {
-                eHTML.style.display = 'flex'
-                let color_value = listEffectColor[0]
-                for (let parameterHTML of eHTML.querySelector('.parameter-form')
-                  .childNodes) {
-                  // input type color & edit hex color
-                  if (
-                    parameterHTML.className.includes('show-color-container')
-                  ) {
-                    parameterHTML.value = `#${color_value.substring(0, 6)}`
-                  } else if (
-                    parameterHTML.className.includes('edit-color-form')
-                  ) {
-                    parameterHTML.value = color_value
-                      .substring(0, 6)
-                      .toUpperCase()
-                  } else if (
-                    parameterHTML.className.includes('edit-opacity-form')
-                  ) {
-                    parameterHTML.value =
-                      Ultis.hexToPercent(color_value.substring(6)) + '%'
-                  }
+    if(listEffectSkin.length > 0) {
+      let div_select_eType = document.createElement('div')
+      div_select_eType.id = 'edit_effect_type_attribute'
+      div_select_eType.className = 'row'
+      div_select_eType.style.width = '100%'
+      editContainer.appendChild(div_select_eType)
+      // popup edit effect type attribute
+      let effect_setting = createButtonAction(
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg',
+        null,
+        function () {
+          setTimeout(function () {
+            updateUIEffectAttribute()
+          }, 200)
+        }
+      )
+      function updateUIEffectAttribute () {
+        if (eTypeValues.length === 1) {
+          popup_edit_effect_style.style.display = 'flex'
+          popup_edit_effect_style.firstChild.innerHTML = eTypeValues[0]
+          for (
+            let i = 0;
+            i < popup_edit_effect_style.lastChild.childNodes.length;
+            i++
+          ) {
+            let eHTML = popup_edit_effect_style.lastChild.childNodes[i]
+            switch (i) {
+              // input offsetX
+              case 0:
+                if (eTypeValues[0] === ShadowType.layer_blur) {
+                  eHTML.style.display = 'none'
+                } else {
+                  eHTML.style.display = 'flex'
+                  let list_offsetX = listEffectSkin.filterAndMap(e => e.OffsetX)
+                  eHTML.lastChild.value =
+                    list_offsetX.length > 1 ? 'mixed' : list_offsetX[0]
                 }
-              } else {
-                eHTML.style.display = 'none'
-              }
-              break
-            default:
-              break
+                break
+              // input blur
+              case 1:
+                eHTML.style.display = 'flex'
+                let list_blur = listEffectSkin.filterAndMap(e => e.BlurRadius)
+                eHTML.lastChild.value =
+                  list_blur.length > 1 ? 'mixed' : list_blur[0]
+                break
+              // input offsetY
+              case 2:
+                if (eTypeValues[0] === ShadowType.layer_blur) {
+                  eHTML.style.display = 'none'
+                } else {
+                  eHTML.style.display = 'flex'
+                  let list_offsetY = listEffectSkin.filterAndMap(e => e.OffsetY)
+                  eHTML.lastChild.value =
+                    list_offsetY.length > 1 ? 'mixed' : list_offsetY[0]
+                }
+                break
+              // input spread
+              case 3:
+                if (eTypeValues[0] === ShadowType.layer_blur) {
+                  eHTML.style.display = 'none'
+                } else {
+                  eHTML.style.display = 'flex'
+                  let list_spread = listEffectSkin.filterAndMap(
+                    e => e.SpreadRadius
+                  )
+                  eHTML.lastChild.value =
+                    list_spread.length > 1 ? 'mixed' : list_spread[0]
+                }
+                break
+              // input colorvalue
+              case 4:
+                let listEffectColor = listEffectSkin.filterAndMap(
+                  e => e.ColorValue
+                )
+                if (listEffectColor.length === 1) {
+                  eHTML.style.display = 'flex'
+                  let color_value = listEffectColor[0]
+                  for (let parameterHTML of eHTML.querySelector('.parameter-form')
+                    .childNodes) {
+                    // input type color & edit hex color
+                    if (
+                      parameterHTML.className.includes('show-color-container')
+                    ) {
+                      parameterHTML.value = `#${color_value.substring(0, 6)}`
+                    } else if (
+                      parameterHTML.className.includes('edit-color-form')
+                    ) {
+                      parameterHTML.value = color_value
+                        .substring(0, 6)
+                        .toUpperCase()
+                    } else if (
+                      parameterHTML.className.includes('edit-opacity-form')
+                    ) {
+                      parameterHTML.value =
+                        Ultis.hexToPercent(color_value.substring(6)) + '%'
+                    }
+                  }
+                } else {
+                  eHTML.style.display = 'none'
+                }
+                break
+              default:
+                break
+            }
           }
         }
       }
-    }
-    effect_setting.style.overflow = 'visible'
-    effect_setting.style.position = 'relative'
-    div_select_eType.appendChild(effect_setting)
-    let popup_edit_effect_style = document.createElement('div')
-    popup_edit_effect_style.className =
-      'popup_edit_effect_attribute col wini_popup'
-    effect_setting.appendChild(popup_edit_effect_style)
-    let popup_title = document.createElement('span')
-    popup_title.innerHTML = 'Drop shadow'
-    popup_edit_effect_style.appendChild(popup_title)
-    let div_attribute = document.createElement('div')
-    popup_edit_effect_style.appendChild(div_attribute)
-    let input_offsetX = _textField({
-      id: 'edit_effect_offsetX',
-      width: '84px',
-      label: 'X',
-      value: '0',
-      onBlur: function () {
-        if (!isNaN(parseFloat(this.value))) {
-          handleEditEffect({ offX: parseFloat(this.value) })
-        }
-      }
-    })
-    let input_blur = _textField({
-      id: 'edit_effect_blur',
-      width: '84px',
-      label: 'Blur',
-      value: '0',
-      onBlur: function () {
-        if (!isNaN(parseFloat(this.value))) {
-          handleEditEffect({ blurRadius: parseFloat(this.value) })
-        }
-      }
-    })
-    let input_offsetY = _textField({
-      id: 'edit_effect_offsetY',
-      width: '84px',
-      label: 'Y',
-      value: '0',
-      onBlur: function () {
-        if (!isNaN(parseFloat(this.value))) {
-          handleEditEffect({ offY: parseFloat(this.value) })
-        }
-      }
-    })
-    let input_spread = _textField({
-      id: 'edit_effect_spread',
-      width: '84px',
-      label: 'Spread',
-      value: '0',
-      onBlur: function () {
-        if (!isNaN(parseFloat(this.value))) {
-          handleEditEffect({ spreadRadius: parseFloat(this.value) })
-        }
-      }
-    })
-    div_attribute.replaceChildren(
-      input_offsetX,
-      input_blur,
-      input_offsetY,
-      input_spread
-    )
-
-    function updateEffectColor (params, onSubmit = true) {
-      handleEditEffect({ color: params, onSubmit: onSubmit })
-      // if (onSubmit) updateUIEffectAttribute()
-    }
-    let select_effect_color = createEditColorForm(function (params) {
-      updateEffectColor(params, false)
-    }, updateEffectColor)
-    select_effect_color.style.margin = '4px'
-    select_effect_color.id = 'edit-effect-color'
-    div_attribute.appendChild(select_effect_color)
-    // select effect type
-    let eTypeValues = listEffectSkin.filterAndMap(e => e.Type)
-    let btn_select_eType = _btnDropDownSelect(
-      eTypeValues.length == 1
-        ? list_effect_type
-        : ['mixed', ...list_effect_type],
-      function (options) {
-        let firstEType = eTypeValues[0]
-        if (eTypeValues.length > 1) {
-          firstEType = 'mixed'
-        }
-        for (let option of options) {
-          if (option.getAttribute('value') == firstEType) {
-            option.firstChild.style.opacity = 1
-          } else {
-            option.firstChild.style.opacity = 0
+      effect_setting.style.overflow = 'visible'
+      effect_setting.style.position = 'relative'
+      div_select_eType.appendChild(effect_setting)
+      let popup_edit_effect_style = document.createElement('div')
+      popup_edit_effect_style.className =
+        'popup_edit_effect_attribute col wini_popup'
+      effect_setting.appendChild(popup_edit_effect_style)
+      let popup_title = document.createElement('span')
+      popup_title.innerHTML = 'Drop shadow'
+      popup_edit_effect_style.appendChild(popup_title)
+      let div_attribute = document.createElement('div')
+      popup_edit_effect_style.appendChild(div_attribute)
+      let input_offsetX = _textField({
+        id: 'edit_effect_offsetX',
+        width: '84px',
+        label: 'X',
+        value: '0',
+        onBlur: function () {
+          if (!isNaN(parseFloat(this.value))) {
+            handleEditEffect({ offX: parseFloat(this.value) })
           }
         }
-      },
-      function (option) {
-        handleEditEffect({ type: option })
-        reloadEditEffectBlock()
+      })
+      let input_blur = _textField({
+        id: 'edit_effect_blur',
+        width: '84px',
+        label: 'Blur',
+        value: '0',
+        onBlur: function () {
+          if (!isNaN(parseFloat(this.value))) {
+            handleEditEffect({ blurRadius: parseFloat(this.value) })
+          }
+        }
+      })
+      let input_offsetY = _textField({
+        id: 'edit_effect_offsetY',
+        width: '84px',
+        label: 'Y',
+        value: '0',
+        onBlur: function () {
+          if (!isNaN(parseFloat(this.value))) {
+            handleEditEffect({ offY: parseFloat(this.value) })
+          }
+        }
+      })
+      let input_spread = _textField({
+        id: 'edit_effect_spread',
+        width: '84px',
+        label: 'Spread',
+        value: '0',
+        onBlur: function () {
+          if (!isNaN(parseFloat(this.value))) {
+            handleEditEffect({ spreadRadius: parseFloat(this.value) })
+          }
+        }
+      })
+      div_attribute.replaceChildren(
+        input_offsetX,
+        input_blur,
+        input_offsetY,
+        input_spread
+      )
+  
+      function updateEffectColor (params, onSubmit = true) {
+        handleEditEffect({ color: params, onSubmit: onSubmit })
+        // if (onSubmit) updateUIEffectAttribute()
       }
-    )
-    btn_select_eType.id = 'btn_select_effect_type'
-    btn_select_eType.firstChild.innerHTML =
-      eTypeValues.length > 1 ? 'mixed' : eTypeValues[0]
-    div_select_eType.appendChild(btn_select_eType)
-
-    let btn_isShow = createButtonAction(
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg',
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg',
-      function () {}
-    )
-    div_select_eType.appendChild(btn_isShow)
-
-    let btn_delete = createButtonAction(
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg',
-      null,
-      function () {
-        deleteEffect()
-        reloadEditEffectBlock()
-      }
-    )
-    div_select_eType.appendChild(btn_delete)
+      let select_effect_color = createEditColorForm(function (params) {
+        updateEffectColor(params, false)
+      }, updateEffectColor)
+      select_effect_color.style.margin = '4px'
+      select_effect_color.id = 'edit-effect-color'
+      div_attribute.appendChild(select_effect_color)
+      // select effect type
+      let eTypeValues = listEffectSkin.filterAndMap(e => e.Type)
+      let btn_select_eType = _btnDropDownSelect(
+        eTypeValues.length == 1
+          ? list_effect_type
+          : ['mixed', ...list_effect_type],
+        function (options) {
+          let firstEType = eTypeValues[0]
+          if (eTypeValues.length > 1) {
+            firstEType = 'mixed'
+          }
+          for (let option of options) {
+            if (option.getAttribute('value') == firstEType) {
+              option.firstChild.style.opacity = 1
+            } else {
+              option.firstChild.style.opacity = 0
+            }
+          }
+        },
+        function (option) {
+          handleEditEffect({ type: option })
+          reloadEditEffectBlock()
+        }
+      )
+      btn_select_eType.id = 'btn_select_effect_type'
+      btn_select_eType.firstChild.innerHTML =
+        eTypeValues.length > 1 ? 'mixed' : eTypeValues[0]
+      div_select_eType.appendChild(btn_select_eType)
+  
+      let btn_isShow = createButtonAction(
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg',
+        function () {}
+      )
+      div_select_eType.appendChild(btn_isShow)
+  
+      let btn_delete = createButtonAction(
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg',
+        null,
+        function () {
+          deleteEffect()
+          reloadEditEffectBlock()
+        }
+      )
+      div_select_eType.appendChild(btn_delete)
+    }
   }
   // selected_wbase use effect skin
 
