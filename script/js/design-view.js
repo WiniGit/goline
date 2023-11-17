@@ -2754,15 +2754,7 @@ function EditBorderBlock () {
       }
     })
     editContainer.appendChild(skin_tile)
-  } else if (listBorderSkin.every(e => e == null)) {
-    let btnAdd = document.createElement('i')
-    btnAdd.className = 'fa-solid fa-plus fa-sm'
-    btnAdd.onclick = function () {
-      addBorder()
-      reloadEditBorderBlock()
-    }
-    header.appendChild(btnAdd)
-  } else if (listBorderSkin.some(e => e && typeof e !== 'object')) {
+  } else if (listBorderSkin.some(e => typeof e !== 'object')) {
     header.appendChild(btnSelectSkin)
     let notiText = document.createElement('span')
     notiText.className = 'regular1'
@@ -2771,6 +2763,15 @@ function EditBorderBlock () {
     editContainer.appendChild(notiText)
   } else {
     header.appendChild(btnSelectSkin)
+    if (listBorderSkin.some(e => e === null)) {
+      let btnAdd = document.createElement('i')
+      btnAdd.className = 'fa-solid fa-plus fa-sm'
+      btnAdd.onclick = function () {
+        addBorder()
+        reloadEditBorderBlock()
+      }
+      header.appendChild(btnAdd)
+    }
     let borderColorValues = listBorderSkin.filterAndMap(e => e.ColorValue)
     if (borderColorValues.length == 1) {
       let colorValue = borderColorValues[0]
@@ -2853,44 +2854,44 @@ function EditBorderBlock () {
       width: '60px',
       icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/stroke-width.svg',
       value: widthValues.length > 1 ? 'mixed' : widthValues[0],
-      iconSize: '28px'
-    })
-    edit_stroke_width.lastChild.onblur = function () {
-      let newValue = parseFloat(this.value)
-      let thisWidthValues = [
-        input_border_left,
-        input_border_top,
-        input_border_right,
-        input_border_bottom
-      ]
-      if (newValue != undefined) {
-        switch (firstSideValue) {
-          case BorderSide.top:
-            handleEditBorder({ tWidth: this.value })
-            input_border_top.value = this.value
-            break
-          case BorderSide.right:
-            handleEditBorder({ rWidth: this.value })
-            input_border_right.value = this.value
-            break
-          case BorderSide.bottom:
-            handleEditBorder({ bWidth: this.value })
-            input_border_bottom.value = this.value
-            break
-          case BorderSide.left:
-            handleEditBorder({ lWidth: this.value })
-            input_border_left.value = this.value
-            break
-          default:
-            handleEditBorder({ width: this.value })
-            thisWidthValues.forEach(i => (i.value = this.value))
-            break
+      iconSize: '28px',
+      onBlur: function (ev) {
+        let newValue = parseFloat(ev.target.value)
+        let thisWidthValues = [
+          input_border_left,
+          input_border_top,
+          input_border_right,
+          input_border_bottom
+        ]
+        if (!isNaN(newValue)) {
+          switch (firstSideValue) {
+            case BorderSide.top:
+              handleEditBorder({ tWidth: ev.target.value })
+              input_border_top.value = ev.target.value
+              break
+            case BorderSide.right:
+              handleEditBorder({ rWidth: ev.target.value })
+              input_border_right.value = ev.target.value
+              break
+            case BorderSide.bottom:
+              handleEditBorder({ bWidth: ev.target.value })
+              input_border_bottom.value = ev.target.value
+              break
+            case BorderSide.left:
+              handleEditBorder({ lWidth: ev.target.value })
+              input_border_left.value = ev.target.value
+              break
+            default:
+              handleEditBorder({ width: ev.target.value })
+              thisWidthValues.forEach(i => (i.value = ev.target.value))
+              break
+          }
+        } else {
+          thisWidthValues = thisWidthValues.filterAndMap(i => i.value)
+          ev.target.value = thisWidthValues.length > 1 ? 'mixed' : thisWidthValues[0]
         }
-      } else {
-        thisWidthValues = thisWidthValues.filterAndMap(i => i.value)
-        this.value = thisWidthValues.length > 1 ? 'mixed' : thisWidthValues[0]
       }
-    }
+    })
     formEditLine.appendChild(edit_stroke_width)
 
     let action_edit_line_container = document.createElement('div')
@@ -3134,15 +3135,7 @@ function EditEffectBlock () {
       }
     })
     editContainer.appendChild(skin_tile)
-  } else if (listEffectSkin.every(e => e == null)) {
-    let btnAdd = document.createElement('i')
-    btnAdd.className = 'fa-solid fa-plus fa-sm'
-    btnAdd.onclick = function () {
-      addEffect()
-      reloadEditEffectBlock()
-    }
-    header.appendChild(btnAdd)
-  } else if (listEffectSkin.some(e => e && typeof e !== 'object')) {
+  } else if (listEffectSkin.some(e => typeof e !== 'object')) {
     header.appendChild(btnSelectSkin)
     let notiText = document.createElement('span')
     notiText.className = 'regular1'
@@ -3151,6 +3144,15 @@ function EditEffectBlock () {
     editContainer.appendChild(notiText)
   } else {
     header.appendChild(btnSelectSkin)
+    if (listEffectSkin.some(e => e === null)) {
+      let btnAdd = document.createElement('i')
+      btnAdd.className = 'fa-solid fa-plus fa-sm'
+      btnAdd.onclick = function () {
+        addEffect()
+        reloadEditEffectBlock()
+      }
+      header.appendChild(btnAdd)
+    }
     let div_select_eType = document.createElement('div')
     div_select_eType.id = 'edit_effect_type_attribute'
     div_select_eType.className = 'row'
