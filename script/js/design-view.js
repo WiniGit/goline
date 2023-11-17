@@ -125,6 +125,9 @@ function updateUIDesignView () {
     // listEditContainer.appendChild(editVariants);
   }
   design_view.replaceChildren(listEditContainer)
+  if (selected_list.some(wb => wb.IsInstance && !wb.StyleItem)) {
+    design_view.querySelectorAll('input').forEach(e => (e.disabled = true))
+  }
   design_view.scrollTo({
     top: scrollY,
     behavior: 'smooth'
@@ -3162,7 +3165,7 @@ function EditEffectBlock () {
       header.appendChild(btnAdd)
     }
     listEffectSkin = listEffectSkin.filter(e => e !== null)
-    if(listEffectSkin.length > 0) {
+    if (listEffectSkin.length > 0) {
       let div_select_eType = document.createElement('div')
       div_select_eType.id = 'edit_effect_type_attribute'
       div_select_eType.className = 'row'
@@ -3239,8 +3242,9 @@ function EditEffectBlock () {
                 if (listEffectColor.length === 1) {
                   eHTML.style.display = 'flex'
                   let color_value = listEffectColor[0]
-                  for (let parameterHTML of eHTML.querySelector('.parameter-form')
-                    .childNodes) {
+                  for (let parameterHTML of eHTML.querySelector(
+                    '.parameter-form'
+                  ).childNodes) {
                     // input type color & edit hex color
                     if (
                       parameterHTML.className.includes('show-color-container')
@@ -3331,7 +3335,7 @@ function EditEffectBlock () {
         input_offsetY,
         input_spread
       )
-  
+
       function updateEffectColor (params, onSubmit = true) {
         handleEditEffect({ color: params, onSubmit: onSubmit })
         // if (onSubmit) updateUIEffectAttribute()
@@ -3370,14 +3374,14 @@ function EditEffectBlock () {
       btn_select_eType.firstChild.innerHTML =
         eTypeValues.length > 1 ? 'mixed' : eTypeValues[0]
       div_select_eType.appendChild(btn_select_eType)
-  
+
       let btn_isShow = createButtonAction(
         'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg',
         'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg',
         function () {}
       )
       div_select_eType.appendChild(btn_isShow)
-  
+
       let btn_delete = createButtonAction(
         'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg',
         null,

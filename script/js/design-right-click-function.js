@@ -63,7 +63,7 @@ let feature_list = [
     shortKey: 'Ctrl+Alt+K',
     onclick: createComponent,
     isShow: () =>
-      selected_list.some(e => !e.IsWini) &&
+      selected_list.some(e => !e.IsWini && e.CateID !== EnumCate.text) &&
       !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)
         .length
   },
@@ -429,7 +429,7 @@ function pasteWbase () {
 
 function createComponent () {
   let listUpdate = []
-  let un_component_list = selected_list.filter(e => !e.IsWini)
+  let un_component_list = selected_list.filter(e => !e.IsWini && e.CateID !== EnumCate.text)
   for (let wb of un_component_list) {
     wb.IsWini = true
     wb.CopyID = null
@@ -459,13 +459,13 @@ function createComponent () {
     }
     let newStyle = document.createElement('style')
     newStyle.id = `w-st-comp${wb.GID}`
-    // let wbCssText = wb.value.style.cssText.split(";");
+    let wbCssText = wb.value.style.cssText.split(";");
     let cssItem = {
       GID: wb.GID,
       Name: wbClassName,
       PageID: PageDA.obj.ID,
-      // Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
-      Css: ``
+      Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
+      // Css: ``
     }
     let children = []
     if (wb.CateID === EnumCate.svg) {

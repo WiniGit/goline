@@ -3535,6 +3535,18 @@ function addBackgroundColor () {
       }
       wb.StyleItem.DecorationItem.ColorValue = new_color_value
       wb.value.style.backgroundColor = `#${new_color_value}`
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.backgroundColor = `#${new_color_value}`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+      }
     }
     WBaseDA.edit(listUpdate, EnumObj.decoration)
   } else {
@@ -3583,6 +3595,18 @@ function unlinkColorSkin () {
       )
       wb.StyleItem.DecorationItem.ColorValue = backgroundColor.replace('#', '')
       wb.value.style.backgroundColor = backgroundColor
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.backgroundColor = backgroundColor
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+      }
     }
     WBaseDA.edit(listUpdate, EnumObj.decoration)
   } else {
@@ -3631,6 +3655,46 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
           default:
             wb.value.style.backgroundColor = `var(--background-color-${colorSkin.GID})`
             break
+        }
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.backgroundImage = null
+          switch (wb.CateID) {
+            // case EnumCate.svg:
+            //   getColorSvg(wb)
+            //   break
+            case EnumCate.radio_button:
+              cssRule.style.setProperty(
+                '--checked-color',
+                `#${colorSkin.Value}`
+              )
+              break
+            case EnumCate.w_switch:
+              cssRule.style.setProperty(
+                '--checked-color',
+                `#${colorSkin.Value}`
+              )
+              break
+            case EnumCate.checkbox:
+              cssRule.style.setProperty(
+                '--checked-color',
+                `#${colorSkin.Value}`
+              )
+              break
+            default:
+              cssRule.style.backgroundColor = `var(--background-color-${colorSkin.GID})`
+              break
+          }
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       WBaseDA.edit(listUpdate, EnumObj.decoration)
@@ -3692,6 +3756,38 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
               hexCode === null ? null : `#${hexCode}`
             break
         }
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.backgroundImage = null
+          switch (wb.CateID) {
+            // case EnumCate.svg:
+            //   getColorSvg(wb)
+            //   break
+            case EnumCate.radio_button:
+              cssRule.style.setProperty('--checked-color', `#${hexCode}`)
+              break
+            case EnumCate.w_switch:
+              cssRule.style.setProperty('--checked-color', `#${hexCode}`)
+              break
+            case EnumCate.checkbox:
+              cssRule.style.setProperty('--checked-color', `#${hexCode}`)
+              break
+            default:
+              cssRule.style.backgroundColor =
+                hexCode === null ? null : `#${hexCode}`
+              break
+          }
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
       if (onSubmit) WBaseDA.edit(listUpdate, EnumObj.decoration)
     } else {
@@ -3741,6 +3837,23 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
         wb.value.style.backgroundImage = `url(${
           urlImg + image.replaceAll(' ', '%20')
         })`
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.backgroundColor = null
+          cssRule.style.backgroundImage = `url(${
+            urlImg + image.replaceAll(' ', '%20')
+          })`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.decoration)
     } else {
@@ -4096,6 +4209,22 @@ function unlinkBorderSkin () {
         .join(' ')
       wb.value.style.borderStyle = newBorderItem.BorderStyle
       wb.value.style.borderColor = `#${newBorderItem.ColorValue}`
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderWidth = newBorderItem.Width.split(' ')
+          .map(e => `${e}px}`)
+          .join(' ')
+        cssRule.style.borderStyle = newBorderItem.BorderStyle
+        cssRule.style.borderColor = `#${newBorderItem.ColorValue}`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+      }
     }
     WBaseDA.addStyle(listBorder, EnumObj.border)
   } else {
@@ -4144,6 +4273,22 @@ function addBorder () {
         .join(' ')
       wb.value.style.borderStyle = newBorderItem.BorderStyle
       wb.value.style.borderColor = `#${newBorderItem.ColorValue}`
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderWidth = newBorderItem.Width.split(' ')
+          .map(e => `${e}px}`)
+          .join(' ')
+        cssRule.style.borderStyle = newBorderItem.BorderStyle
+        cssRule.style.borderColor = `#${newBorderItem.ColorValue}`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+      }
     }
     WBaseDA.edit(listUpdate, EnumObj.border)
   } else {
@@ -4195,6 +4340,22 @@ function handleEditBorder ({
         wb.value.style.borderWidth = `var(--border-width-${borderSkin.GID})`
         wb.value.style.borderStyle = `var(--border-style-${borderSkin.GID})`
         wb.value.style.borderColor = `var(--border-color-${borderSkin.GID})`
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.borderWidth = `var(--border-width-${borderSkin.GID})`
+          cssRule.style.borderStyle = `var(--border-style-${borderSkin.GID})`
+          cssRule.style.borderColor = `var(--border-color-${borderSkin.GID})`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.decoration)
     } else {
@@ -4221,6 +4382,20 @@ function handleEditBorder ({
       for (let wb of listUpdate) {
         wb.StyleItem.DecorationItem.BorderItem.ColorValue = color
         wb.value.style.borderColor = `#${color}`
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.borderColor = `#${color}`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
       if (onSubmit) WBaseDA.edit(listUpdate, EnumObj.border)
     } else {
@@ -4264,6 +4439,20 @@ function handleEditBorder ({
             wb.StyleItem.DecorationItem.BorderItem.Width = `${width} ${width} ${width} ${width}`
             wb.value.style.borderWidth = `${width}px ${width}px ${width}px ${width}px`
             break
+        }
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.borderWidth = wb.value.style.borderWidth
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       WBaseDA.edit(listUpdate, EnumObj.border)
@@ -4320,6 +4509,20 @@ function handleEditBorder ({
           default:
             break
         }
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.borderWidth = wb.value.style.borderWidth
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.border)
     } else {
@@ -4368,6 +4571,20 @@ function handleEditBorder ({
             break
           default:
             break
+        }
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.borderWidth = wb.value.style.borderWidth
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       WBaseDA.edit(listUpdate, EnumObj.border)
@@ -4418,6 +4635,20 @@ function handleEditBorder ({
           default:
             break
         }
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.borderWidth = wb.value.style.borderWidth
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.border)
     } else {
@@ -4466,6 +4697,20 @@ function handleEditBorder ({
             break
           default:
             break
+        }
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.borderWidth = wb.value.style.borderWidth
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
         }
       }
       WBaseDA.edit(listUpdate, EnumObj.border)
@@ -4526,6 +4771,20 @@ function handleEditBorder ({
         wb.StyleItem.DecorationItem.BorderItem.Width = widthList.join(' ')
         wb.StyleItem.DecorationItem.BorderItem.BorderSide = side
         wb.value.style.borderWidth = widthList.map(e => `${e}px`).join(' ')
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.borderWidth = wb.value.style.borderWidth
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.border)
     } else if (side !== BorderSide.custom) {
@@ -4576,6 +4835,20 @@ function handleEditBorder ({
       for (let wb of listUpdate) {
         wb.StyleItem.DecorationItem.BorderItem.BorderStyle = style
         wb.value.style.borderStyle = style
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              wb.value
+            )
+          )
+          cssRule.style.borderStyle = style
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.border)
     } else {
@@ -4609,6 +4882,20 @@ function deleteBorder () {
       wb.value.style.borderWidth = null
       wb.value.style.borderStyle = null
       wb.value.style.borderColor = null
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderWidth = null
+        cssRule.style.borderStyle = null
+        cssRule.style.borderColor = null
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+      }
     }
     WBaseDA.edit(listUpdate, EnumObj.decoration)
   } else {
@@ -5007,7 +5294,7 @@ async function addAutoLayout () {
     wb.WAutolayoutItem = newLayoutItem
     if (wb.StyleItem) {
       if (!wb.StyleItem.PaddingItem) {
-        wb.StyleItem.PaddingID = newPaddingItem.GID
+        wb.StyleItem.PaddingID = null
         wb.StyleItem.PaddingItem = newPaddingItem
       } else {
         wb.StyleItem.PaddingItem.Top = {
@@ -6608,82 +6895,6 @@ function editBorderSkin (border_item, thisSkin) {
   }
 }
 
-async function editBackground (decorationItem, onSubmit = true) {
-  let list_change_background = selected_list.filter(
-    e => e.StyleItem.DecorationItem
-  )
-  if (decorationItem.ColorItem) {
-    let new_color_value = decorationItem.ColorItem.Value
-    for (let wbaseItem of list_change_background) {
-      wbaseItem.StyleItem.DecorationItem.ColorID = decorationItem.ColorItem.GID
-      wbaseItem.StyleItem.DecorationItem.ColorValue = new_color_value
-      switch (wbaseItem.CateID) {
-        case EnumCate.svg:
-          await getColorSvg(wbaseItem)
-          break
-        case EnumCate.radio_button:
-          wbaseItem.value.style.setProperty(
-            '--checked-color',
-            `#${new_color_value}`
-          )
-          break
-        case EnumCate.w_switch:
-          wbaseItem.value.style.setProperty(
-            '--checked-color',
-            `#${new_color_value}`
-          )
-          break
-        case EnumCate.checkbox:
-          wbaseItem.value.style.setProperty(
-            '--checked-color',
-            `#${new_color_value}`
-          )
-          break
-        default:
-          wbaseItem.value.style.backgroundColor = `var(--background-color-${decorationItem.ColorItem.GID})`
-          break
-      }
-      wbaseItem.value.style.backgroundImage = null
-    }
-  } else {
-    if (decorationItem.ColorValue) {
-      let new_color_value = decorationItem.ColorValue
-      for (let wbaseItem of list_change_background) {
-        wbaseItem.StyleItem.DecorationItem.ColorValue = new_color_value
-        switch (wbaseItem.CateID) {
-          case EnumCate.svg:
-            await getColorSvg(wbaseItem)
-            break
-          case EnumCate.radio_button:
-            wbaseItem.value.style.setProperty(
-              '--checked-color',
-              `#${new_color_value}`
-            )
-            break
-          case EnumCate.w_switch:
-            wbaseItem.value.style.setProperty(
-              '--checked-color',
-              `#${new_color_value}`
-            )
-            break
-          case EnumCate.checkbox:
-            wbaseItem.value.style.setProperty(
-              '--checked-color',
-              `#${new_color_value}`
-            )
-            break
-          default:
-            wbaseItem.value.style.backgroundColor = `#${new_color_value}`
-            break
-        }
-      }
-    }
-  }
-  if (onSubmit) {
-    WBaseDA.edit(list_change_background, EnumObj.decoration)
-  }
-}
-
 function editColorSkin (color_item, thisSkin) {
   if (color_item.Name) {
     let listName = color_item.Name.replace('\\', '/').split('/')
@@ -6719,223 +6930,6 @@ function editColorSkin (color_item, thisSkin) {
       `#${thisSkin.Value}`
     )
   }
-}
-
-function editTextStyle (text_style_item, onSubmit = true) {
-  let list_text = selected_list.filter(e => e.StyleItem.TextStyleItem)
-  let _enumObj
-  if (text_style_item.IsStyle) {
-    _enumObj = EnumObj.style
-    for (let wb of list_text) {
-      wb.StyleItem.TextStyleID = text_style_item.GID
-      wb.StyleItem.TextStyleItem = text_style_item
-      wb.value.style.font = `var(--font-style-${text_style_item.GID})`
-      wb.value.style.color = `var(--font-color-${text_style_item.GID})`
-      if (text_style_item.LetterSpacing)
-        wb.value.style.letterSpacing = `${text_style_item.LetterSpacing}px`
-    }
-  } else {
-    _enumObj = EnumObj.textStyle
-    if (text_style_item.ColorValue) {
-      for (let wbaseItem of list_text) {
-        wbaseItem.StyleItem.TextStyleItem.ColorValue =
-          text_style_item.ColorValue
-        if (wbaseItem.CateID === EnumCate.chart) {
-          createChart(wbaseItem)
-        } else {
-          wbaseItem.value.style.color = `#${text_style_item.ColorValue}`
-        }
-      }
-    }
-    if (text_style_item.FontFamily) {
-      for (let wbaseItem of list_text) {
-        wbaseItem.StyleItem.TextStyleItem.FontFamily =
-          text_style_item.FontFamily
-        if (wbaseItem.CateID === EnumCate.chart) {
-          createChart(wbaseItem)
-        } else {
-          wbaseItem.value.style.fontFamily = text_style_item.FontFamily
-        }
-      }
-    }
-    if (text_style_item.FontSize != undefined) {
-      for (let wb of list_text) {
-        wb.StyleItem.TextStyleItem.FontSize = parseFloat(
-          text_style_item.FontSize
-        )
-        if (wb.CateID === EnumCate.chart) {
-          createChart(wb)
-        } else {
-          wb.value.style.fontSize = `${text_style_item.FontSize}px`
-        }
-      }
-    }
-    if (text_style_item.FontWeight != undefined) {
-      for (let wbaseItem of list_text) {
-        wbaseItem.StyleItem.TextStyleItem.FontWeight =
-          text_style_item.FontWeight.toString()
-        if (wbaseItem.CateID === EnumCate.chart) {
-          createChart(wbaseItem)
-        } else {
-          wbaseItem.value.style.fontWeight = text_style_item.FontWeight
-        }
-      }
-    }
-    if (text_style_item.Height != undefined) {
-      let lineHeightValue = text_style_item.Height.toString().toLowerCase()
-      for (let wbaseItem of list_text) {
-        wbaseItem.StyleItem.TextStyleItem.Height =
-          lineHeightValue == 'auto' ? undefined : parseFloat(lineHeightValue)
-        if (wbaseItem.CateID !== EnumCate.chart) {
-          wbaseItem.value.style.lineHeight =
-            lineHeightValue == 'auto' ? 'normal' : `${lineHeightValue}px`
-        }
-      }
-    }
-    if (text_style_item.LetterSpacing != undefined) {
-      for (let wbaseItem of list_text) {
-        wbaseItem.StyleItem.TextStyleItem.LetterSpacing = parseFloat(
-          text_style_item.LetterSpacing
-        )
-        if (wbaseItem.CateID !== EnumCate.chart) {
-          wbaseItem.value.style.letterSpacing = `${text_style_item.LetterSpacing}px`
-        }
-      }
-    }
-    if (text_style_item.AutoSize) {
-      _enumObj = EnumObj.frame
-      let checkConst = false
-      if (select_box_parentID !== wbase_parentID) {
-        checkConst = !window
-          .getComputedStyle(document.getElementById(select_box_parentID))
-          .display.match('flex')
-      }
-      for (let wbaseItem of list_text.filter(
-        e => e.CateID !== EnumCate.chart
-      )) {
-        switch (text_style_item.AutoSize) {
-          case TextAutoSize.autoWidth:
-            if (checkConst) {
-              if (
-                [Constraints.center, Constraints.scale].some(
-                  constX =>
-                    wbaseItem.StyleItem.PositionItem.ConstraintsX === constX
-                )
-              ) {
-                _enumObj = EnumObj.framePosition
-                wbaseItem.StyleItem.PositionItem.ConstraintsX = Constraints.left
-                wbaseItem.StyleItem.PositionItem.Left =
-                  wbaseItem.value.offsetLeft + 'px'
-                initPositionStyle(wbaseItem)
-              }
-            }
-            wbaseItem.value.style.width = 'max-content'
-            wbaseItem.StyleItem.FrameItem.Width = undefined
-            wbaseItem.value.style.height = 'fit-content'
-            wbaseItem.StyleItem.FrameItem.Height = undefined
-            break
-          case TextAutoSize.autoHeight:
-            if (checkConst) {
-              if (
-                [Constraints.center, Constraints.scale].some(
-                  constY =>
-                    wbaseItem.StyleItem.PositionItem.ConstraintsY === constY
-                )
-              ) {
-                _enumObj = EnumObj.framePosition
-                wbaseItem.StyleItem.PositionItem.ConstraintsY = Constraints.top
-                wbaseItem.StyleItem.PositionItem.Top =
-                  wbaseItem.value.offsetTop + 'px'
-                initPositionStyle(wbaseItem)
-              }
-            }
-            wbaseItem.value.style.height = 'fit-content'
-            wbaseItem.StyleItem.FrameItem.Height = undefined
-            if (wbaseItem.StyleItem.FrameItem.Width == undefined) {
-              wbaseItem.value.style.width = `${wbaseItem.value.offsetWidth}px`
-              wbaseItem.StyleItem.FrameItem.Width = wbaseItem.value.offsetWidth
-            }
-            break
-          case TextAutoSize.fixedSize:
-            if (wbaseItem.StyleItem.FrameItem.Width == undefined) {
-              wbaseItem.value.style.width = `${wbaseItem.value.offsetWidth}px`
-              wbaseItem.StyleItem.FrameItem.Width = wbaseItem.value.offsetWidth
-            }
-            if (wbaseItem.StyleItem.FrameItem.Height == undefined) {
-              wbaseItem.value.style.height = `${wbaseItem.value.offsetHeight}px`
-              wbaseItem.StyleItem.FrameItem.Height =
-                wbaseItem.value.offsetHeight
-            }
-            break
-          default:
-            break
-        }
-      }
-    }
-    if (text_style_item.TextAlign) {
-      _enumObj = EnumObj.typoStyleItem
-      for (let wbaseItem of list_text.filter(
-        e => e.CateID !== EnumCate.chart
-      )) {
-        wbaseItem.StyleItem.TypoStyleItem.TextAlign = text_style_item.TextAlign
-        switch (text_style_item.TextAlign) {
-          case TextAlign.left:
-            wbaseItem.value.style.alignItems = TextAlign.left
-            wbaseItem.value.style.textAlign = TextAlign.left
-            break
-          case TextAlign.center:
-            wbaseItem.value.style.alignItems = TextAlign.center
-            wbaseItem.value.style.textAlign = TextAlign.center
-            break
-          case TextAlign.right:
-            wbaseItem.value.style.alignItems = TextAlign.right
-            wbaseItem.value.style.textAlign = TextAlign.right
-            break
-          default:
-            break
-        }
-      }
-    }
-    if (text_style_item.TextAlignVertical) {
-      _enumObj = EnumObj.typoStyleItem
-      for (let wbaseItem of list_text.filter(
-        e => e.CateID !== EnumCate.chart
-      )) {
-        wbaseItem.StyleItem.TypoStyleItem.TextAlignVertical =
-          text_style_item.TextAlignVertical
-        switch (text_style_item.TextAlignVertical) {
-          case TextAlignVertical.top:
-            wbaseItem.value.style.justifyContent = TextAlignVertical.top
-            break
-          case TextAlignVertical.middle:
-            wbaseItem.value.style.justifyContent = TextAlignVertical.middle
-            break
-          case TextAlignVertical.bottom:
-            wbaseItem.value.style.justifyContent = TextAlignVertical.bottom
-            break
-          default:
-            break
-        }
-      }
-    }
-  }
-  if (onSubmit) {
-    if (
-      _enumObj === EnumObj.textStyle &&
-      list_text.some(e => e.StyleItem.TextStyleID === 0)
-    ) {
-      list_text
-        .filter(e => e.StyleItem.TextStyleID === 0)
-        .forEach(e => {
-          e.StyleItem.TextStyleID = uuidv4()
-          e.StyleItem.TextStyleItem.GID = e.StyleItem.TextStyleID
-        })
-      WBaseDA.addStyle(list_text, _enumObj)
-    } else {
-      WBaseDA.edit(list_text, _enumObj)
-    }
-  }
-  updateUISelectBox()
 }
 
 function editTypoSkin (text_style_item, thisSkin) {

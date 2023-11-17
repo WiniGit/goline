@@ -115,6 +115,7 @@ async function push_dataProject() {
       wbValue.removeAttribute("iswini");
       wbValue.removeAttribute("constX");
       wbValue.removeAttribute("constY");
+      wbValue.removeAttribute("name-field");
       let children = [...wbValue.querySelectorAll(`.wbaseItem-value[level${parseInt(wbValue.getAttribute("level")) + 1}]`)];
       if (children.length > 0) {
         children = children.sort((a, b) => window.getComputedStyle(a).zIndex - window.getComputedStyle(b).zIndex);
