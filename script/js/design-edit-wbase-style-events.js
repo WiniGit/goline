@@ -29,7 +29,7 @@ function handleEditAlign (newValue) {
             for (let cWbHTML of children) {
               let cssRule = StyleDA.docStyleSheets.find(rule => {
                 let selector = [
-                  ...pWbComponent.querySelectorAll(rule.selectorText)
+                  ...divSection.querySelectorAll(rule.selectorText)
                 ]
                 let check = selector.includes(cWbHTML)
                 if (check) {
@@ -123,7 +123,7 @@ function handleEditAlign (newValue) {
             e => e.GID === pWbComponent.id
           )
           let cssRule = StyleDA.docStyleSheets.find(rule => {
-            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('constx')) {
@@ -233,7 +233,7 @@ function handleEditAlign (newValue) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              [...divSection.querySelectorAll(e.selectorText)].includes(
                 wb.value
               )
             )
@@ -312,7 +312,7 @@ function handleEditAlign (newValue) {
             for (let cWbHTML of children) {
               let cssRule = StyleDA.docStyleSheets.find(rule => {
                 let selector = [
-                  ...pWbComponent.querySelectorAll(rule.selectorText)
+                  ...divSection.querySelectorAll(rule.selectorText)
                 ]
                 let check = selector.includes(cWbHTML)
                 if (check) {
@@ -406,7 +406,7 @@ function handleEditAlign (newValue) {
             e => e.GID === pWbComponent.id
           )
           let cssRule = StyleDA.docStyleSheets.find(rule => {
-            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('constx')) {
@@ -528,7 +528,7 @@ function handleEditAlign (newValue) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              [...divSection.querySelectorAll(e.selectorText)].includes(
                 wb.value
               )
             )
@@ -607,7 +607,7 @@ function handleEditAlign (newValue) {
             for (let cWbHTML of children) {
               let cssRule = StyleDA.docStyleSheets.find(rule => {
                 let selector = [
-                  ...pWbComponent.querySelectorAll(rule.selectorText)
+                  ...divSection.querySelectorAll(rule.selectorText)
                 ]
                 let check = selector.includes(cWbHTML)
                 if (check) {
@@ -702,7 +702,7 @@ function handleEditAlign (newValue) {
             e => e.GID === pWbComponent.id
           )
           let cssRule = StyleDA.docStyleSheets.find(rule => {
-            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('constx')) {
@@ -808,7 +808,7 @@ function handleEditAlign (newValue) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              [...divSection.querySelectorAll(e.selectorText)].includes(
                 wb.value
               )
             )
@@ -879,7 +879,7 @@ function handleEditAlign (newValue) {
             for (let cWbHTML of children) {
               let cssRule = StyleDA.docStyleSheets.find(rule => {
                 let selector = [
-                  ...pWbComponent.querySelectorAll(rule.selectorText)
+                  ...divSection.querySelectorAll(rule.selectorText)
                 ]
                 let check = selector.includes(cWbHTML)
                 if (check) {
@@ -972,7 +972,7 @@ function handleEditAlign (newValue) {
             e => e.GID === pWbComponent.id
           )
           let cssRule = StyleDA.docStyleSheets.find(rule => {
-            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('consty')) {
@@ -1085,7 +1085,7 @@ function handleEditAlign (newValue) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              [...divSection.querySelectorAll(e.selectorText)].includes(
                 wb.value
               )
             )
@@ -1165,7 +1165,7 @@ function handleEditAlign (newValue) {
             for (let cWbHTML of children) {
               let cssRule = StyleDA.docStyleSheets.find(rule => {
                 let selector = [
-                  ...pWbComponent.querySelectorAll(rule.selectorText)
+                  ...divSection.querySelectorAll(rule.selectorText)
                 ]
                 let check = selector.includes(cWbHTML)
                 if (check) {
@@ -1259,7 +1259,7 @@ function handleEditAlign (newValue) {
             e => e.GID === pWbComponent.id
           )
           let cssRule = StyleDA.docStyleSheets.find(rule => {
-            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('consty')) {
@@ -1380,7 +1380,7 @@ function handleEditAlign (newValue) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              [...divSection.querySelectorAll(e.selectorText)].includes(
                 wb.value
               )
             )
@@ -1458,7 +1458,7 @@ function handleEditAlign (newValue) {
             for (let cWbHTML of children) {
               let cssRule = StyleDA.docStyleSheets.find(rule => {
                 let selector = [
-                  ...pWbComponent.querySelectorAll(rule.selectorText)
+                  ...divSection.querySelectorAll(rule.selectorText)
                 ]
                 let check = selector.includes(cWbHTML)
                 if (check) {
@@ -1552,7 +1552,7 @@ function handleEditAlign (newValue) {
             e => e.GID === pWbComponent.id
           )
           let cssRule = StyleDA.docStyleSheets.find(rule => {
-            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('consty')) {
@@ -1661,7 +1661,7 @@ function handleEditAlign (newValue) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              [...divSection.querySelectorAll(e.selectorText)].includes(
                 wb.value
               )
             )
@@ -1889,7 +1889,7 @@ function handleEditOffset ({
         if (resizeFixedW) width = wb.value.offsetWidth
         if (resizeFixedH) height = wb.value.offsetHeight
         let cssRule = StyleDA.docStyleSheets.find(rule => {
-          let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+          let selector = [...divSection.querySelectorAll(rule.selectorText)]
           let check = selector.includes(wb.value)
           if (check)
             selector.forEach(e => {
@@ -2077,7 +2077,7 @@ function handleEditOffset ({
       for (let wb of selected_list) {
         if (resizeFixed) width = wb.value.offsetWidth
         let cssRule = StyleDA.docStyleSheets.find(rule => {
-          let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+          let selector = [...divSection.querySelectorAll(rule.selectorText)]
           let check = selector.includes(wb.value)
           if (check)
             selector.forEach(e => {
@@ -2221,7 +2221,7 @@ function handleEditOffset ({
       for (let wb of selected_list) {
         if (resizeFixed) height = wb.value.offsetHeight
         let cssRule = StyleDA.docStyleSheets.find(rule => {
-          let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+          let selector = [...divSection.querySelectorAll(rule.selectorText)]
           let check = selector.includes(wb.value)
           if (check)
             selector.forEach(e => {
@@ -2356,7 +2356,7 @@ function handleEditOffset ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         switch (wb.value.getAttribute('constx')) {
           case Constraints.right:
@@ -2486,7 +2486,7 @@ function handleEditOffset ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         switch (wb.value.getAttribute('consty')) {
           case Constraints.bottom:
@@ -2563,7 +2563,7 @@ function handleEditOffset ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderRadius = `${radius}px`
         cssItem.Css = cssItem.Css.replace(
@@ -2588,7 +2588,7 @@ function handleEditOffset ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderTopLeftRadius = `${radiusTL}px`
         cssItem.Css = cssItem.Css.replace(
@@ -2613,7 +2613,7 @@ function handleEditOffset ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderTopRightRadius = `${radiusTR}px`
         cssItem.Css = cssItem.Css.replace(
@@ -2638,7 +2638,7 @@ function handleEditOffset ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderBottomLeftRadius = `${radiusBL}px`
         cssItem.Css = cssItem.Css.replace(
@@ -2663,7 +2663,7 @@ function handleEditOffset ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderBottomRightRadius = `${radiusBR}px`
         cssItem.Css = cssItem.Css.replace(
@@ -2734,7 +2734,7 @@ function handleEditOffset ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.overflow = isClip ? 'hidden' : null
         cssItem.Css = cssItem.Css.replace(
@@ -2784,9 +2784,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check) {
                 switch (wb.value.getAttribute('constx')) {
@@ -2862,9 +2860,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check) {
                 switch (wb.value.getAttribute('constx')) {
@@ -2939,9 +2935,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check)
                 selector.forEach(e =>
@@ -3008,9 +3002,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check) {
                 switch (wb.value.getAttribute('constx')) {
@@ -3087,9 +3079,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check)
                 selector.forEach(e =>
@@ -3165,9 +3155,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check) {
                 switch (wb.value.getAttribute('consty')) {
@@ -3241,9 +3229,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check) {
                 switch (wb.value.getAttribute('consty')) {
@@ -3318,9 +3304,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check)
                 selector.forEach(e =>
@@ -3387,9 +3371,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check) {
                 switch (wb.value.getAttribute('consty')) {
@@ -3466,9 +3448,7 @@ function handleEditConstraints ({ constX, constY }) {
           )
           for (let wb of selected_list) {
             let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [
-                ...pWbComponent.querySelectorAll(rule.selectorText)
-              ]
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
               let check = selector.includes(wb.value)
               if (check)
                 selector.forEach(e =>
@@ -3538,7 +3518,7 @@ function addBackgroundColor () {
       if (wb.IsWini && wb.CateID !== EnumCate.variant) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.backgroundColor = `#${new_color_value}`
         cssItem.Css = cssItem.Css.replace(
@@ -3556,7 +3536,7 @@ function addBackgroundColor () {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       switch (wb.CateID) {
         case EnumCate.frame:
@@ -3598,7 +3578,7 @@ function unlinkColorSkin () {
       if (wb.IsWini && wb.CateID !== EnumCate.variant) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.backgroundColor = backgroundColor
         cssItem.Css = cssItem.Css.replace(
@@ -3616,7 +3596,7 @@ function unlinkColorSkin () {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       let backgroundColor = Ultis.rgbToHex(
         window.getComputedStyle(wb.value).backgroundColor
@@ -3659,9 +3639,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.backgroundImage = null
           switch (wb.CateID) {
@@ -3705,7 +3683,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.backgroundImage = null
         switch (wb.CateID) {
@@ -3759,9 +3737,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.backgroundImage = null
           switch (wb.CateID) {
@@ -3797,7 +3773,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.backgroundImage = null
         switch (wb.CateID) {
@@ -3840,9 +3816,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.backgroundColor = null
           cssRule.style.backgroundImage = `url(${
@@ -3863,7 +3837,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.backgroundColor = null
         cssRule.style.backgroundImage = `url(${
@@ -3917,7 +3891,7 @@ function unlinkTypoSkin () {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       let wbStyle =
         wb.CateID === EnumCate.text
@@ -3980,7 +3954,7 @@ function handleEditTypo ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.font = `var(--font-style-${typoSkin.GID})`
         cssRule.style.color = `var(--font-color-${typoSkin.GID})`
@@ -4005,7 +3979,7 @@ function handleEditTypo ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.color = `#${color}`
         cssItem.Css = cssItem.Css.replace(
@@ -4029,7 +4003,7 @@ function handleEditTypo ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.fontFamily = fontFamily
         cssItem.Css = cssItem.Css.replace(
@@ -4053,7 +4027,7 @@ function handleEditTypo ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.fontSize = `${fontSize}px`
         cssItem.Css = cssItem.Css.replace(
@@ -4077,7 +4051,7 @@ function handleEditTypo ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.fontWeight = fontWeight
         cssItem.Css = cssItem.Css.replace(
@@ -4101,7 +4075,7 @@ function handleEditTypo ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.height = height === null ? height : `${height}px`
         cssItem.Css = cssItem.Css.replace(
@@ -4125,7 +4099,7 @@ function handleEditTypo ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.letterSpacing = `${letterSpacing}px`
         cssItem.Css = cssItem.Css.replace(
@@ -4149,7 +4123,7 @@ function handleEditTypo ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.textAlign = textAlign
         cssItem.Css = cssItem.Css.replace(
@@ -4173,7 +4147,7 @@ function handleEditTypo ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.alignItems = alignVertical
         cssItem.Css = cssItem.Css.replace(
@@ -4212,7 +4186,7 @@ function unlinkBorderSkin () {
       if (wb.IsWini && wb.CateID !== EnumCate.variant) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderWidth = newBorderItem.Width.split(' ')
           .map(e => `${e}px}`)
@@ -4234,7 +4208,7 @@ function unlinkBorderSkin () {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       let wbStyle = window.getComputedStyle(wb.value)
       cssRule.style.borderWidth = wbStyle.borderWidth
@@ -4276,7 +4250,7 @@ function addBorder () {
       if (wb.IsWini && wb.CateID !== EnumCate.variant) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderWidth = newBorderItem.Width.split(' ')
           .map(e => `${e}px}`)
@@ -4298,7 +4272,7 @@ function addBorder () {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       cssRule.style.borderWidth = newBorderItem.Width.split(' ')
         .map(e => `${e}px`)
@@ -4343,9 +4317,7 @@ function handleEditBorder ({
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.borderWidth = `var(--border-width-${borderSkin.GID})`
           cssRule.style.borderStyle = `var(--border-style-${borderSkin.GID})`
@@ -4365,7 +4337,7 @@ function handleEditBorder ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderWidth = `var(--border-width-${borderSkin.GID})`
         cssRule.style.borderStyle = `var(--border-style-${borderSkin.GID})`
@@ -4385,9 +4357,7 @@ function handleEditBorder ({
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.borderColor = `#${color}`
           cssItem.Css = cssItem.Css.replace(
@@ -4405,7 +4375,7 @@ function handleEditBorder ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderColor = `#${color}`
         cssItem.Css = cssItem.Css.replace(
@@ -4443,9 +4413,7 @@ function handleEditBorder ({
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.borderWidth = wb.value.style.borderWidth
           cssItem.Css = cssItem.Css.replace(
@@ -4463,7 +4431,7 @@ function handleEditBorder ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         switch (wb.borderSide) {
           case BorderSide.top:
@@ -4512,9 +4480,7 @@ function handleEditBorder ({
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.borderWidth = wb.value.style.borderWidth
           cssItem.Css = cssItem.Css.replace(
@@ -4532,7 +4498,7 @@ function handleEditBorder ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         switch (wb.borderSide) {
           case BorderSide.left:
@@ -4575,9 +4541,7 @@ function handleEditBorder ({
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.borderWidth = wb.value.style.borderWidth
           cssItem.Css = cssItem.Css.replace(
@@ -4595,7 +4559,7 @@ function handleEditBorder ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         switch (wb.borderSide) {
           case BorderSide.right:
@@ -4638,9 +4602,7 @@ function handleEditBorder ({
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.borderWidth = wb.value.style.borderWidth
           cssItem.Css = cssItem.Css.replace(
@@ -4658,7 +4620,7 @@ function handleEditBorder ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         switch (wb.borderSide) {
           case BorderSide.top:
@@ -4701,9 +4663,7 @@ function handleEditBorder ({
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.borderWidth = wb.value.style.borderWidth
           cssItem.Css = cssItem.Css.replace(
@@ -4721,7 +4681,7 @@ function handleEditBorder ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         switch (wb.borderSide) {
           case BorderSide.bottom:
@@ -4774,9 +4734,7 @@ function handleEditBorder ({
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.borderWidth = wb.value.style.borderWidth
           cssItem.Css = cssItem.Css.replace(
@@ -4794,7 +4752,7 @@ function handleEditBorder ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         let widthList = cssRule.style.borderWidth
           .split(' ')
@@ -4838,9 +4796,7 @@ function handleEditBorder ({
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.borderStyle = style
           cssItem.Css = cssItem.Css.replace(
@@ -4858,7 +4814,7 @@ function handleEditBorder ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderStyle = style
         cssItem.Css = cssItem.Css.replace(
@@ -4885,7 +4841,7 @@ function deleteBorder () {
       if (wb.IsWini && wb.CateID !== EnumCate.variant) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.borderWidth = null
         cssRule.style.borderStyle = null
@@ -4905,7 +4861,7 @@ function deleteBorder () {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       cssRule.style.borderWidth = null
       cssRule.style.borderStyle = null
@@ -5352,7 +5308,7 @@ async function addAutoLayout () {
       let pWbComponent = wb.value.closest(`.wbaseItem-value[iswini="true"]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       let cssRule = StyleDA.docStyleSheets.find(rule => {
-        let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+        let selector = [...divSection.querySelectorAll(rule.selectorText)]
         let check = selector.includes(wb.value)
         if (check) {
           if (
@@ -5404,7 +5360,7 @@ async function addAutoLayout () {
         .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
         .forEach(cWbHTML => {
           let childRule = StyleDA.docStyleSheets.find(e =>
-            [...pWbComponent.querySelectorAll(e.selectorText)].includes(cWbHTML)
+            [...divSection.querySelectorAll(e.selectorText)].includes(cWbHTML)
           )
           childRule.style.setProperty(
             '--gutter',
@@ -5593,6 +5549,27 @@ function handleEditLayout ({
                   cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
                   cWb.value.style.height = `${cWb.value.offsetHeight}px`
                   cWb.value.removeAttribute('height-type')
+                  if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                    let childCss = StyleDA.cssStyleSheets.find(
+                      e => e.GID === cWb.GID
+                    )
+                    StyleDA.docStyleSheets.find(rule => {
+                      let selector = [
+                        ...divSection.querySelectorAll(rule.selectorText)
+                      ]
+                      let check = selector.includes(cWb.value)
+                      if (check) {
+                        rule.style.height = `${cWb.value.offsetHeight}px`
+                        selector.forEach(e => e.removeAttribute('height-type'))
+                        childCss.Css = childCss.Css.replace(
+                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                          rule.cssText
+                        )
+                      }
+                      return check
+                    })
+                    StyleDA.editStyleSheet(childCss)
+                  }
                 }
                 listUpdate.push(...listChildFillH)
               } else {
@@ -5600,7 +5577,7 @@ function handleEditLayout ({
                 for (let cWb of listChildFillH) {
                   StyleDA.docStyleSheets.find(rule => {
                     let selector = [
-                      ...pWbComponent.querySelectorAll(rule.selectorText)
+                      ...divSection.querySelectorAll(rule.selectorText)
                     ]
                     let check = selector.includes(cWb.value)
                     if (check) {
@@ -5643,6 +5620,27 @@ function handleEditLayout ({
                     cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
                     cWb.value.style.width = `${cWb.value.offsetWidth}px`
                     cWb.value.removeAttribute('width-type')
+                    if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                      let childCss = StyleDA.cssStyleSheets.find(
+                        e => e.GID === cWb.GID
+                      )
+                      StyleDA.docStyleSheets.find(rule => {
+                        let selector = [
+                          ...divSection.querySelectorAll(rule.selectorText)
+                        ]
+                        let check = selector.includes(cWb.value)
+                        if (check) {
+                          rule.style.width = `${cWb.value.offsetWidth}px`
+                          selector.forEach(e => e.removeAttribute('width-type'))
+                          childCss.Css = childCss.Css.replace(
+                            new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                            rule.cssText
+                          )
+                        }
+                        return check
+                      })
+                      StyleDA.editStyleSheet(childCss)
+                    }
                   }
                   listUpdate.push(...listChildFillW)
                 } else {
@@ -5650,7 +5648,7 @@ function handleEditLayout ({
                   for (let cWb of listChildFillW) {
                     StyleDA.docStyleSheets.find(rule => {
                       let selector = [
-                        ...pWbComponent.querySelectorAll(rule.selectorText)
+                        ...divSection.querySelectorAll(rule.selectorText)
                       ]
                       let check = selector.includes(cWb.value)
                       if (check) {
@@ -5688,6 +5686,54 @@ function handleEditLayout ({
             '--cross-axis-align',
             wCrossAxis(_layout.Alignment, false)
           )
+          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+            cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+            StyleDA.docStyleSheets.find(wbRule => {
+              let selector = [
+                ...divSection.querySelectorAll(wbRule.selectorText)
+              ]
+              let check = selector.includes(wb.value)
+              if (check) {
+                wbRule.style.width = wb.value.style.width
+                wbRule.style.height = wb.value.style.height
+                selector.forEach(e => {
+                  if (e !== wb.value) {
+                    $(e).removeClass('w-row')
+                    $(e).addClass('w-col')
+                    if (wb.value.getAttribute('width-type')) {
+                      e.setAttribute(
+                        'width-type',
+                        wb.value.getAttribute('width-type')
+                      )
+                    } else {
+                      e.removeAttribute('width-type')
+                    }
+                    if (wb.value.getAttribute('height-type')) {
+                      e.setAttribute(
+                        'height-type',
+                        wb.value.getAttribute('height-type')
+                      )
+                    } else {
+                      e.removeAttribute('height-type')
+                    }
+                    e.style.setProperty(
+                      '--main-axis-align',
+                      wMainAxis(_layout.Alignment, false)
+                    )
+                    e.style.setProperty(
+                      '--cross-axis-align',
+                      wCrossAxis(_layout.Alignment, false)
+                    )
+                  }
+                })
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${wbRule.selectorText} {[^}]*}`, 'g'),
+                  wbRule.cssText
+                )
+              }
+              return check
+            })
+          }
         }
         if (cssItem) StyleDA.editStyleSheet(cssItem)
       } else {
@@ -5710,7 +5756,7 @@ function handleEditLayout ({
               _layout.Alignment = 'SpaceBetweenRight'
           }
           StyleDA.docStyleSheets.find(rule => {
-            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(wb.value)
             if (check) {
               if (wb.value.getAttribute('width-type') === 'fit') {
@@ -5723,15 +5769,19 @@ function handleEditLayout ({
                       pWb.value.style.width = `${pWb.value.offsetWidth}px`
                       pWb.value.removeAttribute('width-type')
                       listUpdate.push(pWb)
-                    } else {
+                    }
+                    if (
+                      (pWb.IsWini && pWb.CateID !== EnumCate.variant) ||
+                      !pWb.StyleItem
+                    ) {
                       StyleDA.docStyleSheets.find(pRule => {
-                        let selectorP = [
-                          ...pWbComponent.querySelectorAll(pRule.selectorText)
+                        let pSelector = [
+                          ...divSection.querySelectorAll(pRule.selectorText)
                         ]
-                        let checkP = selectorP.includes(pWb.value)
-                        if (checkP) {
+                        let check = pSelector.includes(pWb.value)
+                        if (check) {
                           pRule.style.width = `${pWb.value.offsetWidth}px`
-                          selectorP.forEach(e =>
+                          pSelector.forEach(e =>
                             e.removeAttribute('width-type')
                           )
                           cssItem.Css = cssItem.Css.replace(
@@ -5739,7 +5789,7 @@ function handleEditLayout ({
                             pRule.cssText
                           )
                         }
-                        return checkP
+                        return check
                       })
                     }
                   }
@@ -5761,7 +5811,7 @@ function handleEditLayout ({
                 for (let cWbHTML of listChildFillH) {
                   StyleDA.docStyleSheets.find(cRule => {
                     let selectorC = [
-                      ...pWbComponent.querySelectorAll(cRule.selectorText)
+                      ...divSection.querySelectorAll(cRule.selectorText)
                     ]
                     let checkC = selectorC.includes(cWbHTML)
                     if (checkC) {
@@ -5787,10 +5837,14 @@ function handleEditLayout ({
                     pWb.value.style.height = `${pWb.value.offsetHeight}px`
                     pWb.value.removeAttribute('height-type')
                     listUpdate.push(pWb)
-                  } else {
+                  }
+                  if (
+                    (pWb.IsWini && pWb.CateID !== EnumCate.variant) ||
+                    !pWb.StyleItem
+                  ) {
                     StyleDA.docStyleSheets.find(pRule => {
                       let selectorP = [
-                        ...pWbComponent.querySelectorAll(pRule.selectorText)
+                        ...divSection.querySelectorAll(pRule.selectorText)
                       ]
                       let checkP = selectorP.includes(pWb.value)
                       if (checkP) {
@@ -5816,7 +5870,7 @@ function handleEditLayout ({
                   for (let cWbHTML of listChildFillW) {
                     StyleDA.docStyleSheets.find(cRule => {
                       let selectorC = [
-                        ...pWbComponent.querySelectorAll(cRule.selectorText)
+                        ...divSection.querySelectorAll(cRule.selectorText)
                       ]
                       let checkC = selectorC.includes(cWbHTML)
                       if (checkC) {
@@ -5908,6 +5962,27 @@ function handleEditLayout ({
                   cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
                   cWb.value.style.width = `${cWb.value.offsetWidth}px`
                   cWb.value.removeAttribute('width-type')
+                  if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                    let childCss = StyleDA.cssStyleSheets.find(
+                      e => e.GID === cWb.GID
+                    )
+                    StyleDA.docStyleSheets.find(rule => {
+                      let selector = [
+                        ...divSection.querySelectorAll(rule.selectorText)
+                      ]
+                      let check = selector.includes(cWb.value)
+                      if (check) {
+                        rule.style.width = `${cWb.value.offsetWidth}px`
+                        selector.forEach(e => e.removeAttribute('width-type'))
+                        childCss.Css = childCss.Css.replace(
+                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                          rule.cssText
+                        )
+                      }
+                      return check
+                    })
+                    StyleDA.editStyleSheet(childCss)
+                  }
                 }
                 listUpdate.push(...listChildFillW)
               } else {
@@ -5915,7 +5990,7 @@ function handleEditLayout ({
                 for (let cWb of listChildFillW) {
                   StyleDA.docStyleSheets.find(rule => {
                     let selector = [
-                      ...pWbComponent.querySelectorAll(rule.selectorText)
+                      ...divSection.querySelectorAll(rule.selectorText)
                     ]
                     let check = selector.includes(cWb.value)
                     if (check) {
@@ -5959,6 +6034,29 @@ function handleEditLayout ({
                     cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
                     cWb.value.style.height = `${cWb.value.offsetHeight}px`
                     cWb.value.removeAttribute('height-type')
+                    if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                      let childCss = StyleDA.cssStyleSheets.find(
+                        e => e.GID === cWb.GID
+                      )
+                      StyleDA.docStyleSheets.find(rule => {
+                        let selector = [
+                          ...divSection.querySelectorAll(rule.selectorText)
+                        ]
+                        let check = selector.includes(cWb.value)
+                        if (check) {
+                          rule.style.height = `${cWb.value.offsetHeight}px`
+                          selector.forEach(e =>
+                            e.removeAttribute('height-type')
+                          )
+                          childCss.Css = childCss.Css.replace(
+                            new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                            rule.cssText
+                          )
+                        }
+                        return check
+                      })
+                      StyleDA.editStyleSheet(childCss)
+                    }
                   }
                   listUpdate.push(...listChildFillH)
                 } else {
@@ -5966,7 +6064,7 @@ function handleEditLayout ({
                   for (let cWb of listChildFillH) {
                     StyleDA.docStyleSheets.find(rule => {
                       let selector = [
-                        ...pWbComponent.querySelectorAll(rule.selectorText)
+                        ...divSection.querySelectorAll(rule.selectorText)
                       ]
                       let check = selector.includes(cWb.value)
                       if (check) {
@@ -6004,6 +6102,54 @@ function handleEditLayout ({
             '--cross-axis-align',
             wCrossAxis(_layout.Alignment, true)
           )
+          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+            cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+            StyleDA.docStyleSheets.find(wbRule => {
+              let selector = [
+                ...divSection.querySelectorAll(wbRule.selectorText)
+              ]
+              let check = selector.includes(wb.value)
+              if (check) {
+                wbRule.style.width = wb.value.style.width
+                wbRule.style.height = wb.value.style.height
+                selector.forEach(e => {
+                  if (e !== wb.value) {
+                    $(e).addClass('w-row')
+                    $(e).removeClass('w-col')
+                    if (wb.value.getAttribute('width-type')) {
+                      e.setAttribute(
+                        'width-type',
+                        wb.value.getAttribute('width-type')
+                      )
+                    } else {
+                      e.removeAttribute('width-type')
+                    }
+                    if (wb.value.getAttribute('height-type')) {
+                      e.setAttribute(
+                        'height-type',
+                        wb.value.getAttribute('height-type')
+                      )
+                    } else {
+                      e.removeAttribute('height-type')
+                    }
+                    e.style.setProperty(
+                      '--main-axis-align',
+                      wMainAxis(_layout.Alignment, true)
+                    )
+                    e.style.setProperty(
+                      '--cross-axis-align',
+                      wCrossAxis(_layout.Alignment, true)
+                    )
+                  }
+                })
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${wbRule.selectorText} {[^}]*}`, 'g'),
+                  wbRule.cssText
+                )
+              }
+              return check
+            })
+          }
         }
         if (cssItem) StyleDA.editStyleSheet(cssItem)
       } else {
@@ -6026,7 +6172,7 @@ function handleEditLayout ({
               _layout.Alignment = 'BottomSpaceBetween'
           }
           StyleDA.docStyleSheets.find(rule => {
-            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(wb.value)
             if (check) {
               //TH height của wbase item này đang hug contents thì width của wbase item này phải chuyển về dạng hug contents
@@ -6040,24 +6186,28 @@ function handleEditLayout ({
                       pWb.value.style.height = `${pWb.value.offsetHeight}px`
                       pWb.value.removeAttribute('height-type')
                       listUpdate.push(pWb)
-                    } else {
+                    }
+                    if (
+                      (pWb.IsWini && pWb.CateID !== EnumCate.variant) ||
+                      !pWb.StyleItem
+                    ) {
                       StyleDA.docStyleSheets.find(pRule => {
-                        let selectorP = [
-                          ...pWbComponent.querySelectorAll(pRule.selectorText)
+                        let pSelector = [
+                          ...divSection.querySelectorAll(pRule.selectorText)
                         ]
-                        let checkP = selectorP.includes(pWb.value)
-                        if (checkP) {
+                        let check = pSelector.includes(pWb.value)
+                        if (check) {
                           pRule.style.height = `${pWb.value.offsetHeight}px`
-                          selectorP.forEach(e =>
+                          pSelector.forEach(e =>
                             e.removeAttribute('height-type')
                           )
-                          cssItem.Css = cssItem.Css.replace(
-                            new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
-                            pRule.cssText
-                          )
                         }
-                        return checkP
+                        return check
                       })
+                      cssItem.Css = cssItem.Css.replace(
+                        new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
+                        pRule.cssText
+                      )
                     }
                   }
                   rule.style.height = '100%'
@@ -6075,7 +6225,7 @@ function handleEditLayout ({
                 for (let cWbHTML of listChildFillW) {
                   StyleDA.docStyleSheets.find(cRule => {
                     let selectorC = [
-                      ...pWbComponent.querySelectorAll(cRule.selectorText)
+                      ...divSection.querySelectorAll(cRule.selectorText)
                     ]
                     let checkC = selectorC.includes(cWbHTML)
                     if (checkC) {
@@ -6105,7 +6255,7 @@ function handleEditLayout ({
                   } else {
                     StyleDA.docStyleSheets.find(pRule => {
                       let selectorP = [
-                        ...pWbComponent.querySelectorAll(pRule.selectorText)
+                        ...divSection.querySelectorAll(pRule.selectorText)
                       ]
                       let checkP = selectorP.includes(pWb.value)
                       if (checkP) {
@@ -6131,7 +6281,7 @@ function handleEditLayout ({
                   for (let cWbHTML of listChildFillH) {
                     StyleDA.docStyleSheets.find(cRule => {
                       let selector = [
-                        ...pWbComponent.querySelectorAll(cRule.selectorText)
+                        ...divSection.querySelectorAll(cRule.selectorText)
                       ]
                       let checkC = selector.includes(cWbHTML)
                       if (checkC) {
@@ -6200,6 +6350,35 @@ function handleEditLayout ({
               : wb.WAutolayoutItem.Direction === 'Horizontal'
           )
         )
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.setProperty(
+            '--main-axis-align',
+            wMainAxis(
+              alignment,
+              wb.CateID === EnumCate.table
+                ? null
+                : wb.WAutolayoutItem.Direction === 'Horizontal'
+            )
+          )
+          cssRule.style.setProperty(
+            '--cross-axis-align',
+            wCrossAxis(
+              alignment,
+              wb.CateID === EnumCate.table
+                ? null
+                : wb.WAutolayoutItem.Direction === 'Horizontal'
+            )
+          )
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
     } else {
       let pWbComponent = listUpdate[0].value.closest(
@@ -6208,7 +6387,7 @@ function handleEditLayout ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         wb.WAutolayoutItem.Alignment = alignment
         cssRule.style.setProperty(
@@ -6241,8 +6420,8 @@ function handleEditLayout ({
     if (listUpdate[0].StyleItem) {
       for (let wb of listUpdate) {
         wb.WAutolayoutItem.ChildSpace = childSpace
-        let isRow = wb.WAutolayoutItem.Direction == 'Horizontal'
         if (wb.WAutolayoutItem.Alignment.includes('SpaceBetween')) {
+          var isRow = wb.WAutolayoutItem.Direction == 'Horizontal'
           if (isRow) {
             wb.WAutolayoutItem.Alignment = wb.WAutolayoutItem.Alignment.replace(
               'SpaceBetween',
@@ -6270,11 +6449,40 @@ function handleEditLayout ({
           )
         }
         wb.value.style.setProperty('--child-space', `${childSpace}px`)
-        wb.value
-          .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
-          .forEach(cWbHTMl => {
-            cWbHTMl.style.setProperty('--gutter', `${childSpace}px`)
-          })
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          if (isRow != null) {
+            cssRule.style.setProperty(
+              '--main-axis-align',
+              wMainAxis(
+                wb.WAutolayoutItem.Alignment,
+                wb.CateID === EnumCate.table ? null : isRow
+              )
+            )
+            cssRule.style.setProperty(
+              '--cross-axis-align',
+              wCrossAxis(
+                wb.WAutolayoutItem.Alignment,
+                wb.CateID === EnumCate.table ? null : isRow
+              )
+            )
+          }
+          cssRule.style.setProperty('--child-space', `${childSpace}px`)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        } else {
+          wb.value
+            .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
+            .forEach(cWbHTMl => {
+              cWbHTMl.style.setProperty('--gutter', `${childSpace}px`)
+            })
+        }
       }
     } else {
       let pWbComponent = listUpdate[0].value.closest(
@@ -6283,16 +6491,14 @@ function handleEditLayout ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.setProperty('--child-space', `${childSpace}px`)
         wb.value
           .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
           .forEach(cWbHTMl => {
             let cRule = StyleDA.docStyleSheets.find(e =>
-              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
-                cWbHTMl
-              )
+              [...divSection.querySelectorAll(e.selectorText)].includes(cWbHTMl)
             )
             cRule.style.setProperty('--gutter', `${childSpace}px`)
             cssItem.Css = cssItem.Css.replace(
@@ -6313,6 +6519,18 @@ function handleEditLayout ({
       for (let wb of listUpdate) {
         wb.WAutolayoutItem.RunSpace = runSpace
         wb.value.style.setProperty('--run-space', `${runSpace}px`)
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.setProperty('--run-space', `${runSpace}px`)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        }
       }
     } else {
       let pWbComponent = listUpdate[0].value.closest(
@@ -6322,7 +6540,7 @@ function handleEditLayout ({
       for (let wb of listUpdate) {
         wb.WAutolayoutItem.RunSpace = runSpace
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.setProperty('--run-space', `${runSpace}px`)
         cssItem.Css = cssItem.Css.replace(
@@ -6348,6 +6566,27 @@ function handleEditLayout ({
                   cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
                   cWb.value.style.width = `${cWb.value.offsetWidth}px`
                   cWb.value.removeAttribute('width-type')
+                  if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                    let cssItem = StyleDA.cssStyleSheets.find(
+                      e => e.GID === cWb.GID
+                    )
+                    StyleDA.docStyleSheets.find(rule => {
+                      let selector = [
+                        ...divSection.querySelectorAll(rule.selectorText)
+                      ]
+                      let check = selector.includes(cWb.value)
+                      if (check) {
+                        rule.style.width = `${cWb.value.offsetWidth}px`
+                        selector.forEach(e => e.removeAttribute('width-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                          rule.cssText
+                        )
+                      }
+                      return check
+                    })
+                    StyleDA.editStyleSheet(cssItem)
+                  }
                 }
                 listUpdate.push(...listChildFillW)
               } else {
@@ -6355,7 +6594,7 @@ function handleEditLayout ({
                 for (let cWb of listChildFillW) {
                   StyleDA.docStyleSheets.find(rule => {
                     let selector = [
-                      ...pWbComponent.querySelectorAll(rule.selectorText)
+                      ...divSection.querySelectorAll(rule.selectorText)
                     ]
                     let check = selector.includes(cWb.value)
                     if (check) {
@@ -6387,6 +6626,27 @@ function handleEditLayout ({
                   cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
                   cWb.value.style.height = `${cWb.value.offsetHeight}px`
                   cWb.value.removeAttribute('height-type')
+                  if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                    let cssItem = StyleDA.cssStyleSheets.find(
+                      e => e.GID === cWb.GID
+                    )
+                    StyleDA.docStyleSheets.find(rule => {
+                      let selector = [
+                        ...divSection.querySelectorAll(rule.selectorText)
+                      ]
+                      let check = selector.includes(cWb.value)
+                      if (check) {
+                        rule.style.height = `${cWb.value.offsetHeight}px`
+                        selector.forEach(e => e.removeAttribute('height-type'))
+                        cssItem.Css = cssItem.Css.replace(
+                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                          rule.cssText
+                        )
+                      }
+                      return check
+                    })
+                    StyleDA.editStyleSheet(cssItem)
+                  }
                 }
                 listUpdate.push(...listChildFillH)
               } else {
@@ -6394,7 +6654,7 @@ function handleEditLayout ({
                 for (let cWb of listChildFillH) {
                   StyleDA.docStyleSheets.find(rule => {
                     let selector = [
-                      ...pWbComponent.querySelectorAll(rule.selectorText)
+                      ...divSection.querySelectorAll(rule.selectorText)
                     ]
                     let check = selector.includes(cWb.value)
                     if (check) {
@@ -6429,7 +6689,7 @@ function handleEditLayout ({
       for (let wb of listUpdate) {
         wb.WAutolayoutItem.IsWrap = isWrap
         StyleDA.docStyleSheets.find(rule => {
-          let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+          let selector = [...divSection.querySelectorAll(rule.selectorText)]
           let check = selector.includes(wb.value)
           if (check) {
             if (isWrap) {
@@ -6441,7 +6701,7 @@ function handleEditLayout ({
                   for (let cWb of listChildFillW) {
                     StyleDA.docStyleSheets.find(cRule => {
                       let selectorC = [
-                        ...pWbComponent.querySelectorAll(cRule.selectorText)
+                        ...divSection.querySelectorAll(cRule.selectorText)
                       ]
                       let checkC = selectorC.includes(cWb.value)
                       if (checkC) {
@@ -6470,7 +6730,7 @@ function handleEditLayout ({
                   for (let cWb of listChildFillH) {
                     StyleDA.docStyleSheets.find(cRule => {
                       let selectorC = [
-                        ...pWbComponent.querySelectorAll(cRule.selectorText)
+                        ...divSection.querySelectorAll(cRule.selectorText)
                       ]
                       let checkC = selectorC.includes(cWb.value)
                       if (checkC) {
@@ -6513,13 +6773,10 @@ function handleEditLayout ({
         else wb.value.removeAttribute('scroll')
       }
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini="true"]`
-      )
       for (let wb of listUpdate) {
         wb.WAutolayoutItem.IsScroll = isScroll
         StyleDA.docStyleSheets.find(rule => {
-          let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+          let selector = [...divSection.querySelectorAll(rule.selectorText)]
           let check = selector.includes(wb.value)
           if (check) {
             selector.forEach(e => {
@@ -6590,7 +6847,7 @@ function removeLayout () {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         for (let cWb of wbChildren) {
           let cssRule = StyleDA.docStyleSheets.find(rule => {
-            let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(cWb.value)
             if (check) {
               if (cWb.value.getAttribute('width-type') === 'fill') {
@@ -6644,7 +6901,7 @@ function removeLayout () {
       wb.AutoLayoutID = null
       wb.WAutolayoutItem = null
       let cssRule = StyleDA.docStyleSheets.find(rule => {
-        let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+        let selector = [...divSection.querySelectorAll(rule.selectorText)]
         let check = selector.includes(wb.value)
         if (check) {
           if (wb.value.getAttribute('width-type') === 'fit') {
@@ -6668,7 +6925,7 @@ function removeLayout () {
       )
       for (let cWbHTML of wbChildren) {
         let childRule = StyleDA.docStyleSheets.find(rule => {
-          let selector = [...pWbComponent.querySelectorAll(rule.selectorText)]
+          let selector = [...divSection.querySelectorAll(rule.selectorText)]
           let check = selector.includes(cWbHTML)
           if (check) {
             if (cWbHTML.getAttribute('width-type') === 'fill') {
@@ -6720,15 +6977,30 @@ function handleEditPadding ({ top, right, bottom, left }) {
   )
   if (listUpdate[0].StyleItem) {
     for (let wb of listUpdate) {
-      if (top != undefined) wb.StyleItem.PaddingItem.Top = top
-      if (right != undefined) wb.StyleItem.PaddingItem.Right = right
-      if (bottom != undefined) wb.StyleItem.PaddingItem.Bottom = bottom
+      if (top !== undefined) wb.StyleItem.PaddingItem.Top = top
+      if (right !== undefined) wb.StyleItem.PaddingItem.Right = right
+      if (bottom !== undefined) wb.StyleItem.PaddingItem.Bottom = bottom
       if (left !== undefined) wb.StyleItem.PaddingItem.Left = left
       //
       wb.value.style.setProperty(
         '--padding',
         `${wb.StyleItem.PaddingItem.Top}px ${wb.StyleItem.PaddingItem.Right}px ${wb.StyleItem.PaddingItem.Bottom}px ${wb.StyleItem.PaddingItem.Left}px`
       )
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.setProperty(
+          '--padding',
+          `${wb.StyleItem.PaddingItem.Top}px ${wb.StyleItem.PaddingItem.Right}px ${wb.StyleItem.PaddingItem.Bottom}px ${wb.StyleItem.PaddingItem.Left}px`
+        )
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+      }
     }
     WBaseDA.edit(selected_list, EnumObj.paddingPosition)
   } else {
@@ -6738,12 +7010,12 @@ function handleEditPadding ({ top, right, bottom, left }) {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       let paddingValues = cssRule.style.getPropertyValue('--padding').split(' ')
-      if (top != undefined) paddingValues[0] = top
-      if (right != undefined) paddingValues[1] = right
-      if (bottom != undefined) paddingValues[2] = bottom
+      if (top !== undefined) paddingValues[0] = top
+      if (right !== undefined) paddingValues[1] = right
+      if (bottom !== undefined) paddingValues[2] = bottom
       if (left !== undefined) paddingValues[3] = left
       cssRule.style.setProperty('--padding', paddingValues.join(' '))
       cssItem.Css = cssItem.Css.replace(
@@ -7055,7 +7327,7 @@ function unlinkEffectSkin () {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       let wbStyle = window.getComputedStyle(wb.value)
       cssRule.style.filter = wbStyle.filter
@@ -7101,7 +7373,7 @@ function addEffect () {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       cssRule.style.boxShadow = `${newEffectItem.OffsetX}px ${newEffectItem.OffsetY}px ${newEffectItem.BlurRadius}px ${newEffectItem.SpreadRadius}px #${newEffectItem.ColorValue}`
       cssItem.Css = cssItem.Css.replace(
@@ -7132,7 +7404,7 @@ function deleteEffect () {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+        [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       cssRule.style.boxShadow = null
       cssRule.style.filter = null
@@ -7181,7 +7453,7 @@ function handleEditEffect ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         if (effectSkin.Type == ShadowType.layer_blur) {
           cssRule.style.filter = `var(--effect-blur-${effectSkin.GID})`
@@ -7212,7 +7484,7 @@ function handleEditEffect ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.boxShadow = cssRule.style.boxShadow.replace(
           /(rgba|rgb)\(.*\)/g,
@@ -7244,7 +7516,7 @@ function handleEditEffect ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
         let props = cssRule.style.boxShadow
@@ -7279,7 +7551,7 @@ function handleEditEffect ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
         let props = cssRule.style.boxShadow
@@ -7314,7 +7586,7 @@ function handleEditEffect ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
         let props = cssRule.style.boxShadow
@@ -7353,7 +7625,7 @@ function handleEditEffect ({
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...pWbComponent.querySelectorAll(e.selectorText)].includes(wb.value)
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         if (cssRule.style.filter?.length > 0) {
           cssRule.style.filter = `blur(${blurRadius}px)`
@@ -7393,7 +7665,7 @@ function handleEditEffect ({
           )
           for (let wb of listUpdate) {
             let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              [...divSection.querySelectorAll(e.selectorText)].includes(
                 wb.value
               )
             )
@@ -7436,7 +7708,7 @@ function handleEditEffect ({
           )
           for (let wb of listUpdate) {
             let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...pWbComponent.querySelectorAll(e.selectorText)].includes(
+              [...divSection.querySelectorAll(e.selectorText)].includes(
                 wb.value
               )
             )
