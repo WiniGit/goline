@@ -648,8 +648,11 @@ function selectParent (event) {
         document.getElementById(e.GID).querySelectorAll('.w-variant').length > 0
     )
     let objp = list.filter(eHTML => {
+      let isComponent = eHTML.closest(`.wbaseItem-value[iswini="true"]`)
+      if (isComponent)
+        isComponent = eHTML.getAttribute('cateid') != EnumCate.variant
       if (
-        $(eHTML).parents(`.wbaseItem-value[iswini="true"]`).length ||
+        isComponent ||
         eHTML.getAttribute('isinstance') === 'true' ||
         parent_cate.every(cate => cate != eHTML.getAttribute('cateid')) || // eHTML ko đc xếp loại là wbaseItem có item con
         selected_list.some(

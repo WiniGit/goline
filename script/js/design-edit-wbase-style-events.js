@@ -4162,7 +4162,11 @@ function handleEditTypo ({
 
 function unlinkBorderSkin () {
   let listUpdate = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+    EnumCate.accept_border_effect.some(
+      ct =>
+        wb.CateID === ct &&
+        window.getComputedStyle(wb.value).borderStyle !== 'none'
+    )
   )
   if (listUpdate[0].StyleItem) {
     for (let wb of listUpdate) {
@@ -4227,7 +4231,7 @@ function addBorder () {
   let listUpdate = selected_list.filter(
     wb =>
       EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
-      window.getComputedStyle(wb.value).borderStyle !== 'none'
+      window.getComputedStyle(wb.value).borderStyle === 'none'
   )
   let newBorderItem = {
     GID: uuidv4(),
@@ -6841,6 +6845,37 @@ function removeLayout () {
           cWb.value.style.top = cWb.StyleItem.PositionItem.Top
           cWb.value.setAttribute('constx', Constraints.left)
           cWb.value.setAttribute('consty', Constraints.top)
+          if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+            let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === cWb.GID)
+            StyleDA.docStyleSheets.find(rule => {
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
+              let check = selector.includes(cWb.value)
+              if (check) {
+                if (cWb.value.getAttribute('width-type') === 'fill') {
+                  rule.style.width = cWb.value.offsetWidth + 'px'
+                  selector.forEach(e => {
+                    e.removeAttribute('width-type')
+                    e.setAttribute('constx', Constraints.left)
+                  })
+                }
+                if (cWb.value.getAttribute('height-type') === 'fill') {
+                  rule.style.height = cWb.value.offsetHeight + 'px'
+                  selector.forEach(e => {
+                    e.removeAttribute('height-type')
+                    e.setAttribute('consty', Constraints.top)
+                  })
+                }
+                rule.style.left = cWb.StyleItem.PositionItem.Left
+                rule.style.top = cWb.StyleItem.PositionItem.Top
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                  rule.cssText
+                )
+              }
+              return check
+            })
+            StyleDA.editStyleSheet(cssItem)
+          }
         }
         listUpdate.push(...wbChildren)
       } else {
@@ -6888,6 +6923,32 @@ function removeLayout () {
       $(wb.value).removeClass('w-row')
       $(wb.value).removeClass('w-col')
       $(wb.value).addClass('w-stack')
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        StyleDA.docStyleSheets.find(rule => {
+          let selector = [...divSection.querySelectorAll(rule.selectorText)]
+          let check = selector.includes(wb.value)
+          if (check) {
+            rule.cssText = wb.value.style.cssText
+              .split(';')
+              .filter(e =>
+                e.match(/(z-index|order|left|top|bottom|right|transform)/g)
+              )
+              .join(';')
+            selector.forEach(e => {
+              $(e).removeClass('w-row')
+              $(e).removeClass('w-col')
+              $(e).addClass('w-stack')
+            })
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+              rule.cssText
+            )
+          }
+          return check
+        })
+        StyleDA.editStyleSheet(cssItem)
+      }
     }
     WBaseDA.edit(listUpdate, EnumObj.basePositionFrame)
   } else {
@@ -7290,8 +7351,11 @@ function editTypoSkin (text_style_item, thisSkin) {
 }
 
 function unlinkEffectSkin () {
-  let listUpdate = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+  let listUpdate = selected_list.filter(
+    wb =>
+      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
+      (window.getComputedStyle(wb.value).boxShadow !== 'none' ||
+        window.getComputedStyle(wb.value).filter !== 'none')
   )
   if (listUpdate[0].StyleItem) {
     for (let wb of listUpdate) {
@@ -7345,8 +7409,8 @@ function addEffect () {
   let listUpdate = selected_list.filter(
     wb =>
       EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
-      window.getComputedStyle(wb.value).boxShadow !== 'none' &&
-      window.getComputedStyle(wb.value).filter !== 'none'
+      window.getComputedStyle(wb.value).boxShadow === 'none' &&
+      window.getComputedStyle(wb.value).filter === 'none'
   )
   let newEffectItem = {
     GID: uuidv4(),

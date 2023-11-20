@@ -429,7 +429,9 @@ function pasteWbase () {
 
 function createComponent () {
   let listUpdate = []
-  let un_component_list = selected_list.filter(e => !e.IsWini && e.CateID !== EnumCate.text)
+  let un_component_list = selected_list.filter(
+    e => !e.IsWini && e.CateID !== EnumCate.text
+  )
   for (let wb of un_component_list) {
     wb.IsWini = true
     wb.CopyID = null
@@ -459,17 +461,21 @@ function createComponent () {
     }
     let newStyle = document.createElement('style')
     newStyle.id = `w-st-comp${wb.GID}`
-    let wbCssText = wb.value.style.cssText.split(";");
+    let wbCssText = wb.value.style.cssText.split(';')
     let cssItem = {
       GID: wb.GID,
       Name: wbClassName,
       PageID: PageDA.obj.ID,
-      Css: `.${wbClassName} { ${wbCssText.filter((e) => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)).join(";")} }`,
+      Css: `.${wbClassName} { ${wbCssText
+        .filter(
+          e => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)
+        )
+        .join(';')} }`
       // Css: ``
     }
     let children = []
     if (wb.CateID === EnumCate.svg) {
-      ;[...wb.value.querySelector('svg').children].forEach(eHTML => {
+      [...wb.value.querySelector('svg').children].forEach(eHTML => {
         let styleCss = ''
         for (let prop of eHTML.attributes) {
           if (prop.localName === 'fill' || prop.localName === 'stroke') {
@@ -492,17 +498,17 @@ function createComponent () {
         childWb.ListClassName ??= ''
         let childClsList = childWb.ListClassName.split(' ')
         let childWbCssText = childWb.value.style.cssText.split(';')
-        if (
-          childWb.value.style.width == '100%' &&
-          childWb.value.parentElement.classList.contains('w-row')
-        ) {
-          childWbCssText.push(' flex: 1')
-        } else if (
-          childWb.value.style.height == '100%' &&
-          childWb.value.parentElement.classList.contains('w-col')
-        ) {
-          childWbCssText.push(' flex: 1')
-        }
+        // if (
+        //   childWb.value.style.width == '100%' &&
+        //   childWb.value.parentElement.classList.contains('w-row')
+        // ) {
+        //   childWbCssText.push(' flex: 1')
+        // } else if (
+        //   childWb.value.style.height == '100%' &&
+        //   childWb.value.parentElement.classList.contains('w-col')
+        // ) {
+        //   childWbCssText.push(' flex: 1')
+        // }
         if (childClsList.some(cCls => cCls.startsWith('w-st0'))) {
           childWbClassName = childClsList.find(cCls => cCls.startsWith('w-st0'))
           cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWbCssText
@@ -536,7 +542,7 @@ function createComponent () {
                     e => !e.match(/(z-index|left|top|bottom|right|transform)/g)
                   )
                   .join(';')
-              : childWbCssText.filter(e => e !== 'order').join(';')
+              : childWbCssText.filter(e => !e.match(/order/g)).join(';')
           } }`
         }
         if (childWb.CateID === EnumCate.svg) {
