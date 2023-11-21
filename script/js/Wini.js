@@ -24,7 +24,7 @@ document.onpaste = function (e) {
   if (
     document.activeElement.contentEditable == 'true' ||
     document.activeElement.localName == 'input' ||
-    document.activeElement.localName == 'p' ||
+    // document.activeElement.localName == 'p' ||
     copy_item
   )
     return
@@ -64,7 +64,7 @@ function keyUpEvent (event) {
   if (
     (document.activeElement.localName === 'input' &&
       !document.activeElement.readOnly) ||
-    document.activeElement.getAttribute('cateid') == EnumCate.text ||
+    document.activeElement.closest('.w-text') ||
     action_list[action_index]?.index != undefined
   )
     return
@@ -773,7 +773,7 @@ function downListener (event) {
   if (
     !document.getElementById('wini_features') &&
     event.target.localName != 'input' &&
-    event.target.querySelector(':scope > spane')?.contentEditable != 'true' &&
+    !document.activeElement.closest('.w-text') &&
     ToolState.create_new_type.every(ts => ts !== tool_state) &&
     document.body.contains(right_view)
   ) {
@@ -901,7 +901,7 @@ function centerViewInitListener () {
         window.getSelection().removeAllRanges()
       }
       return
-    } else if (document.activeElement.getAttribute('cateid') == EnumCate.text) {
+    } else if (document.activeElement.closest('.w-text')) {
       return
     } else if (event.key?.toLowerCase() === 'tab') {
       event.preventDefault()
@@ -1064,7 +1064,7 @@ var lstc = []
 var dragTime = 0
 function moveListener (event) {
   if (
-    event.target.contentEditable == 'true' ||
+    document.activeElement.closest('.w-text') ||
     (event.target.localName === 'input' && !event.target.readOnly)
   )
     return
@@ -2455,8 +2455,7 @@ function wdraw () {
   // draw select_box
   if (
     select_box &&
-    document.activeElement.querySelector(':scope > span')?.contentEditable !=
-      'true' &&
+    !document.activeElement.closest('.w-text') &&
     ((checkpad == 0 && tool_state == ToolState.move) ||
       ToolState.resize_type.some(tool => tool == tool_state))
   ) {
@@ -3165,7 +3164,7 @@ function clickEvent (event) {
 function upListener (event) {
   // updateUIF12();
   if (
-    event.target.contentEditable == 'true' ||
+    document.activeElement.closest('.w-text') ||
     (event.target.localName === 'input' && !event.target.readOnly)
   )
     return

@@ -130,7 +130,7 @@
   overflow-wrap: break-word;
 }
 
-.w-text > span[contentEditable="true"] {
+.w-text span[contentEditable="true"] {
   cursor: text !important;
   pointer-events: all !important;
 }
