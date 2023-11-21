@@ -473,7 +473,7 @@ function createComponent () {
     }
     let children = []
     if (wb.CateID === EnumCate.svg) {
-      [...wb.value.querySelector('svg').children].forEach(eHTML => {
+      ;[...wb.value.querySelector('svg').children].forEach(eHTML => {
         let styleCss = ''
         for (let prop of eHTML.attributes) {
           if (prop.localName === 'fill' || prop.localName === 'stroke') {
@@ -523,13 +523,15 @@ function createComponent () {
           ].join(' ')
           existNameList.push(childWbClassName)
           cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${
-            wb.WAutolayoutItem
-              ? childWbCssText
+            childWb.value
+              .closest(`.wbaseItem-value[level="${childWb.Level - 1}"]`)
+              .classList.contains('w-stack')
+              ? childWbCssText.filter(e => !e.match(/order/g)).join(';')
+              : childWbCssText
                   .filter(
                     e => !e.match(/(z-index|left|top|bottom|right|transform)/g)
                   )
                   .join(';')
-              : childWbCssText.filter(e => !e.match(/order/g)).join(';')
           } }`
         }
         if (childWb.CateID === EnumCate.svg) {
