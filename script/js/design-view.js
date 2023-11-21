@@ -75,16 +75,15 @@ function updateUIDesignView () {
           window.getComputedStyle(wb.value).position !== 'absolute'
       )
     ) {
-      //   let pageParent = $(selected_list[0].value).parents(".wbaseItem-value");
-      //   let framePage = pageParent[pageParent.length - 1];
-      //   if (framePage?.classList?.contains("w-variant")) framePage = pageParent[pageParent.length - 2];
-      //   if (framePage) {
-      //     let isPage = EnumCate.extend_frame.some((cate) => framePage.getAttribute("cateid") == cate);
-      //     if (isPage) {
-      //       let selectColByBrp = colNumberByBrp(framePage.style.width != "fit-content");
-      //       listEditContainer.appendChild(selectColByBrp);
-      //     }
-      //   }
+      let framePage = selected_list[0].value.closest(
+        `.w-form[level="1"], .w-frame[level="1"], w-variant > .w-form[level="2"], w-variant > .w-frame[level="2"]`
+      )
+      if (framePage) {
+        let selectColByBrp = colNumberByBrp(
+          framePage.getAttribute('width-type') !== 'fit'
+        )
+        listEditContainer.appendChild(selectColByBrp)
+      }
     }
     if (
       selected_list.some(wb =>
@@ -6808,44 +6807,27 @@ function colNumberByBrp (enable = true) {
   header.appendChild(title)
   if (
     selected_list.every(
-      wbaseItem =>
-        wbaseItem.ListClassName && wbaseItem.ListClassName.includes('col-')
+      wb => wb.ListClassName && wb.ListClassName.includes('col-')
     )
   ) {
     let icon_remove = document.createElement('i')
     header.appendChild(icon_remove)
     icon_remove.className = 'fa-solid fa-minus fa-sm'
     icon_remove.onclick = function () {
-      let eObj
-      for (let wbaseItem of selected_list) {
-        wbaseItem.ListClassName = wbaseItem.ListClassName.split(' ')
+      for (let wb of selected_list) {
+        wb.ListClassName = wb.ListClassName.split(' ')
           .filter(cls => !cls.includes('col-') && !cls.match(/col[0-9]{1,2}/g))
           .join(' ')
           .trim()
-        if (wbaseItem.ListClassName === '') {
-          wbaseItem.ListClassName = null
-        } else {
-          wbaseItem.ListClassName.split(' ').forEach(cls =>
-            $(wbaseItem.value).addClass(cls)
-          )
-        }
-        let oldClassList = [...wbaseItem.value.classList]
+        if (wb.ListClassName === '') wb.ListClassName = null
+        let oldClassList = [...wb.value.classList]
         oldClassList.forEach(cls => {
           if (cls.includes('col-') || cls.match(/col[0-9]{1,2}/g)) {
-            $(wbaseItem.value).removeClass(cls)
+            $(wb.value).removeClass(cls)
           }
         })
-        if (
-          wbaseItem.StyleItem.FrameItem.Width != null &&
-          wbaseItem.StyleItem.FrameItem.Width < 0
-        ) {
-          wbaseItem.value.style.width = wbaseItem.value.offsetWidth + 'px'
-          wbaseItem.value.style.minWidth = wbaseItem.value.offsetWidth + 'px'
-          wbaseItem.StyleItem.FrameItem.Width = wbaseItem.value.offsetWidth
-          eObj = EnumObj.baseFrame
-        }
       }
-      WBaseDA.edit(selected_list, eObj)
+      WBaseDA.edit(selected_list)
       reloadEditOffsetBlock()
       updateUIColNumber()
       updateUISelectBox()

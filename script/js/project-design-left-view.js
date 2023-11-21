@@ -1,29 +1,22 @@
 //setup left view
 function setupLeftView () {
-  // layer view HTML
-  left_view.style.width = `${left_view.offsetWidth}px`
-  // btn select page
-  let btn_select_page = document.getElementById('btn_select_page')
-  btn_select_page.firstChild.innerHTML = PageDA.obj.Name
-  btn_select_page.onclick = function () {
-    let btnIcon = [...btn_select_page.childNodes].find(e => e.localName == 'i')
-    if (div_list_page.style.display == 'none') {
-      btnIcon.className = btnIcon.className.replace(
-        'fa-chevron-down',
-        'fa-chevron-up'
-      )
-      div_list_page.style.display = 'inline-flex'
-      if (layer_view.style.display == 'none') {
+  document.querySelector('#btn_select_page > p').innerHTML = PageDA.obj.Name
+  $('body').on('click', '#btn_select_page', function (ev) {
+    if (div_list_page.style.display === 'none') {
+      ev.target.querySelector('i').className = ev.target
+        .querySelector('i')
+        .className.replace('fa-chevron-down', 'fa-chevron-up')
+      div_list_page.style.display = 'flex'
+      if (layer_view.style.display === 'none') {
         tabChange('Layer', 'left_tab_view')
       }
     } else {
-      btnIcon.className = btnIcon.className.replace(
-        'fa-chevron-up',
-        'fa-chevron-down'
-      )
+      ev.target.querySelector('i').className = ev.target
+        .querySelector('i')
+        .className.replace('fa-chevron-up', 'fa-chevron-down')
       div_list_page.style.display = 'none'
     }
-  }
+  })
   let div_list_page = document.createElement('div')
   div_list_page.id = 'div_list_page'
   observer_listPage.observe(div_list_page)

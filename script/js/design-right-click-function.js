@@ -471,7 +471,6 @@ function createComponent () {
           e => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)
         )
         .join(';')} }`
-      // Css: ``
     }
     let children = []
     if (wb.CateID === EnumCate.svg) {
@@ -498,17 +497,6 @@ function createComponent () {
         childWb.ListClassName ??= ''
         let childClsList = childWb.ListClassName.split(' ')
         let childWbCssText = childWb.value.style.cssText.split(';')
-        // if (
-        //   childWb.value.style.width == '100%' &&
-        //   childWb.value.parentElement.classList.contains('w-row')
-        // ) {
-        //   childWbCssText.push(' flex: 1')
-        // } else if (
-        //   childWb.value.style.height == '100%' &&
-        //   childWb.value.parentElement.classList.contains('w-col')
-        // ) {
-        //   childWbCssText.push(' flex: 1')
-        // }
         if (childClsList.some(cCls => cCls.startsWith('w-st0'))) {
           childWbClassName = childClsList.find(cCls => cCls.startsWith('w-st0'))
           cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWbCssText
