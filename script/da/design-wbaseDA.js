@@ -1,67 +1,89 @@
 class ToolState {
-  static move = "Move";
-  static frame = "Frame";
-  static rectangle = "Rectangle";
-  static circle = "Circle";
-  static base_component = "BaseComponent";
-  static text = "Text";
-  static hand_tool = "HandTool";
-  static resize_top_left = "ResizeTopLeft";
-  static resize_top_right = "ResizeTopRight";
-  static resize_bot_left = "ResizeBottomLeft";
-  static resize_bot_right = "ResizeBottomRight";
-  static resize_left = "ResizeLeft";
-  static resize_right = "ResizeRight";
-  static resize_top = "ResizeTop";
-  static resize_bot = "ResizeBottom";
+  static move = 'Move'
+  static frame = 'Frame'
+  static rectangle = 'Rectangle'
+  static circle = 'Circle'
+  static base_component = 'BaseComponent'
+  static text = 'Text'
+  static hand_tool = 'HandTool'
+  static resize_top_left = 'ResizeTopLeft'
+  static resize_top_right = 'ResizeTopRight'
+  static resize_bot_left = 'ResizeBottomLeft'
+  static resize_bot_right = 'ResizeBottomRight'
+  static resize_left = 'ResizeLeft'
+  static resize_right = 'ResizeRight'
+  static resize_top = 'ResizeTop'
+  static resize_bot = 'ResizeBottom'
 
-  static create_new_type = [this.frame, this.rectangle, this.circle, this.base_component, this.text];
+  static create_new_type = [
+    this.frame,
+    this.rectangle,
+    this.circle,
+    this.base_component,
+    this.text
+  ]
 
-  static resize_type = [this.resize_top, this.resize_left, this.resize_right, this.resize_bot, this.resize_top_left, this.resize_top_right, this.resize_bot_left, this.resize_bot_right];
+  static resize_type = [
+    this.resize_top,
+    this.resize_left,
+    this.resize_right,
+    this.resize_bot,
+    this.resize_top_left,
+    this.resize_top_right,
+    this.resize_bot_left,
+    this.resize_bot_right
+  ]
 }
 
 class EnumPermission {
-  static owner = 0;
-  static editer = 1;
-  static viewer = 2;
+  static owner = 0
+  static editer = 1
+  static viewer = 2
 
-  static get_namePermission(per) {
+  static get_namePermission (per) {
     switch (per) {
       case this.owner:
-        return "Owner";
+        return 'Owner'
       case this.editer:
-        return "Can edit";
+        return 'Can edit'
       case this.viewer:
-        return "Can view";
+        return 'Can view'
       default:
-        return "Can view";
+        return 'Can view'
     }
   }
 }
 
 class ComponentState {
-  static hover = "hover";
-  static disabled = "disabled";
-  static focus = "focus";
-  static error = "error";
-  static warning = "warning";
-  static success = "success";
+  static hover = 'hover'
+  static disabled = 'disabled'
+  static focus = 'focus'
+  static error = 'error'
+  static warning = 'warning'
+  static success = 'success'
 
-  static listState = [this.hover, this.disabled, this.focus, this.error, this.warning, this.success];
+  static listState = [
+    this.hover,
+    this.disabled,
+    this.focus,
+    this.error,
+    this.warning,
+    this.success
+  ]
 }
 
 class EnumCate {
   // Skin
-  static color = 2;
-  static style = 3;
-  static typography = 17;
-  static border = 361;
-  static effect = 360;
-  static style_class = 69;
+  static color = 2
+  static style = 3
+  static typography = 17
+  static border = 361
+  static effect = 360
+  static style_class = 69
   //
   // component
-  static datePicker = 24;
-  static button = 29;
+  static datePicker = 24
+  static button = 29
   // static ? = 67;
   // static ? = 68;
   // static ? = 70;
@@ -70,19 +92,19 @@ class EnumCate {
   // static ? = 75;
   // static ? = 76;
   // static ? = 78;
-  static checkbox = 79;
-  static w_switch = 81;
+  static checkbox = 79
+  static w_switch = 81
   // static ? = 84;
-  static textformfield = 85;
-  static textfield = 86;
+  static textformfield = 85
+  static textfield = 86
   // static ? = 89;
-  static radio_button = 90;
-  static tab = 91;
-  static tab_bar = 92;
-  static tab_view = 93;
+  static radio_button = 90
+  static tab = 91
+  static tab_bar = 92
+  static tab_view = 93
   // static ? = 94;
-  static progress_bar = 102;
-  static progress_circle = 104;
+  static progress_bar = 102
+  static progress_circle = 104
   // static ? = 105;
   // static ? = 106;
   // static ? = 107;
@@ -93,222 +115,289 @@ class EnumCate {
   // static ? = 112;
   // static ? = 113;
   // static ? = 114;
-  static svg = 115;
-  static table = 117;
+  static svg = 115
+  static table = 117
   // static ? = 118;
   // static ? = 119;
-  static toolbar = 120;
-  static form = 128;
+  static toolbar = 120
+  static form = 128
   // static ? = 129;
   // static ? = 363;
-  static view = 134;
-  static carousel = 136;
+  static view = 134
+  static carousel = 136
   // static ? = 135;
-  static rectangle = 138;
-  static text = 139;
-  static frame = 140;
+  static rectangle = 138
+  static text = 139
+  static frame = 140
   // static ? = 142;
-  static variant = 238;
+  static variant = 238
   // static ? = 239;
-  static chart = 240;
-  static tree = 241;
+  static chart = 240
+  static tree = 241
   // static tab_bar = 242;
 
-  static scale_size_component = [this.checkbox, this.w_switch, this.radio_button];
+  static scale_size_component = [
+    this.checkbox,
+    this.w_switch,
+    this.radio_button
+  ]
 
-  static baseComponent = [this.button, this.w_switch, this.checkbox, this.radio_button, this.textformfield, this.textfield, this.table, this.tree, this.chart, this.carousel];
+  static baseComponent = [
+    this.button,
+    this.w_switch,
+    this.checkbox,
+    this.radio_button,
+    this.textformfield,
+    this.textfield,
+    this.table,
+    this.tree,
+    this.chart,
+    this.carousel
+  ]
 
-  static extend_frame = [this.frame, this.form];
+  static extend_frame = [this.frame, this.form]
 
-  static output_cate = [this.radio_button, this.w_switch, this.checkbox, this.textformfield];
+  static output_cate = [
+    this.radio_button,
+    this.w_switch,
+    this.checkbox,
+    this.textformfield
+  ]
 
-  static parent_cate = [this.frame, this.form, this.textformfield, this.button, this.table, this.tree, this.carousel];
+  static parent_cate = [
+    this.frame,
+    this.form,
+    this.textformfield,
+    this.button,
+    this.table,
+    this.tree,
+    this.carousel
+  ]
 
-  static no_child_component = [this.rectangle, this.text, this.checkbox, this.progress_bar, this.progress_circle, this.radio_button, this.w_switch, this.svg];
+  static no_child_component = [
+    this.rectangle,
+    this.text,
+    this.checkbox,
+    this.progress_bar,
+    this.progress_circle,
+    this.radio_button,
+    this.w_switch,
+    this.svg
+  ]
 
-  static noImgBg = [this.svg, ...this.scale_size_component, this.table, this.tree, this.chart, this.carousel, this.text];
+  static noImgBg = [
+    this.svg,
+    ...this.scale_size_component,
+    this.table,
+    this.tree,
+    this.chart,
+    this.carousel,
+    this.text
+  ]
 
-  static show_name = [this.frame, this.form, this.variant];
+  static show_name = [this.frame, this.form, this.variant]
 
-  static data_component = [this.tree, this.chart, this.carousel, this.table];
+  static data_component = [this.tree, this.chart, this.carousel, this.table]
 
-  static accept_border_effect = [this.frame, this.form, this.rectangle, this.variant, this.table, this.button, this.textformfield, this.svg, this.checkbox]
+  static accept_border_effect = [
+    this.frame,
+    this.form,
+    this.rectangle,
+    this.variant,
+    this.table,
+    this.button,
+    this.textformfield,
+    this.svg,
+    this.checkbox
+  ]
 }
 
 class AlignmentType {
-  static top_left = "TopLeft";
-  static top_center = "TopCenter";
-  static top_right = "TopRight";
-  static left_center = "LeftCenter";
-  static center = "Center";
-  static right_center = "RightCenter";
-  static bottom_left = "BottomLeft";
-  static bottom_center = "BottomCenter";
-  static bottom_right = "BottomRight";
+  static top_left = 'TopLeft'
+  static top_center = 'TopCenter'
+  static top_right = 'TopRight'
+  static left_center = 'LeftCenter'
+  static center = 'Center'
+  static right_center = 'RightCenter'
+  static bottom_left = 'BottomLeft'
+  static bottom_center = 'BottomCenter'
+  static bottom_right = 'BottomRight'
 }
 
 class Constraints {
-  static top = "top";
-  static bottom = "bottom";
-  static left = "left";
-  static right = "right";
-  static top_bottom = "top_bottom";
-  static left_right = "left_right";
-  static center = "center";
-  static scale = "scale";
+  static top = 'top'
+  static bottom = 'bottom'
+  static left = 'left'
+  static right = 'right'
+  static top_bottom = 'top_bottom'
+  static left_right = 'left_right'
+  static center = 'center'
+  static scale = 'scale'
 }
 
 class BorderSide {
-  static all = "All";
-  static left = "Left";
-  static top = "Top";
-  static right = "Right";
-  static bottom = "Bottom";
-  static custom = "Custom";
+  static all = 'All'
+  static left = 'Left'
+  static top = 'Top'
+  static right = 'Right'
+  static bottom = 'Bottom'
+  static custom = 'Custom'
 }
 
 class BorderStyle {
-  static solid = "solid";
-  static dotted = "dotted";
-  static dashed = "dashed";
-  static double = "double";
-  static groove = "groove";
-  static inset = "inset";
-  static inset = "ridge";
+  static solid = 'solid'
+  static dotted = 'dotted'
+  static dashed = 'dashed'
+  static double = 'double'
+  static groove = 'groove'
+  static inset = 'inset'
+  static inset = 'ridge'
 }
 
 class TextAutoSize {
-  static autoWidth = "Auto Width";
-  static autoHeight = "Auto Height";
-  static fixedSize = "Fixed Size";
+  static autoWidth = 'Auto Width'
+  static autoHeight = 'Auto Height'
+  static fixedSize = 'Fixed Size'
 }
 
 class TextAlign {
-  static left = "start";
-  static center = "center";
-  static right = "end";
+  static left = 'start'
+  static center = 'center'
+  static right = 'end'
 }
 
 class TextAlignVertical {
-  static top = "start";
-  static middle = "center";
-  static bottom = "end";
+  static top = 'start'
+  static middle = 'center'
+  static bottom = 'end'
 }
 
 class ShadowType {
-  static dropdown = "Drop shadow";
-  static inner = "Inner shadow";
-  static layer_blur = "Layer blur";
+  static dropdown = 'Drop shadow'
+  static inner = 'Inner shadow'
+  static layer_blur = 'Layer blur'
 }
 
 class TableType {
-  static header = 0;
-  static only_body = 1;
-  static header_footer = 2;
-  static footer = 3;
+  static header = 0
+  static only_body = 1
+  static header_footer = 2
+  static footer = 3
 }
 
 class ChartType {
-  static bar = "bar";
-  static bubble = "bubble";
-  static line = "line";
-  static doughnut = "doughnut";
-  static pie = "pie";
-  static radar = "radar";
-  static polar = "polarArea";
+  static bar = 'bar'
+  static bubble = 'bubble'
+  static line = 'line'
+  static doughnut = 'doughnut'
+  static pie = 'pie'
+  static radar = 'radar'
+  static polar = 'polarArea'
 
-  static axes_chart = [this.bar, this.bubble, this.line];
-  static list = [...this.axes_chart, this.doughnut, this.pie, this.radar, this.polar];
+  static axes_chart = [this.bar, this.bubble, this.line]
+  static list = [
+    ...this.axes_chart,
+    this.doughnut,
+    this.pie,
+    this.radar,
+    this.polar
+  ]
 }
 
 class WTextFormFieldType {
-  static text = "text";
-  static obscureText = "obscure text";
-  static datePicker = "date";
-  static monthPicker = "month";
-  static yearPicker = "year";
+  static text = 'text'
+  static obscureText = 'obscure text'
+  static datePicker = 'date'
+  static monthPicker = 'month'
+  static yearPicker = 'year'
 
-  static list = [this.text, this.obscureText, this.datePicker, this.monthPicker, this.yearPicker];
+  static list = [
+    this.text,
+    this.obscureText,
+    this.datePicker,
+    this.monthPicker,
+    this.yearPicker
+  ]
 }
 
 class ValidateType {
-  static is_email = 0;
-  static maxCharacter = 1;
-  static minCharacter = 2;
-  static is_number = 3;
-  static is_phoneNumber = 4;
-  static contain_special_character = 5;
-  static contain_number = 6;
-  static contain_uppercase = 7;
-  static contain_lowercase = 8;
-  static only_text = 9;
-  static not_empty = 10;
+  static is_email = 0
+  static maxCharacter = 1
+  static minCharacter = 2
+  static is_number = 3
+  static is_phoneNumber = 4
+  static contain_special_character = 5
+  static contain_number = 6
+  static contain_uppercase = 7
+  static contain_lowercase = 8
+  static only_text = 9
+  static not_empty = 10
 
-  static typeName(typeNumber = 10) {
-    let _typeName;
+  static typeName (typeNumber = 10) {
+    let _typeName
     switch (typeNumber) {
       case this.is_email:
-        _typeName = "Email";
-        break;
+        _typeName = 'Email'
+        break
       case this.maxCharacter:
-        _typeName = "Max character";
-        break;
+        _typeName = 'Max character'
+        break
       case this.minCharacter:
-        _typeName = "Min character";
-        break;
+        _typeName = 'Min character'
+        break
       case this.is_number:
-        _typeName = "Only number";
-        break;
+        _typeName = 'Only number'
+        break
       case this.is_phoneNumber:
-        _typeName = "Phone number";
-        break;
+        _typeName = 'Phone number'
+        break
       case this.contain_special_character:
-        _typeName = "Contain special character";
-        break;
+        _typeName = 'Contain special character'
+        break
       case this.contain_number:
-        _typeName = "Contain number";
-        break;
+        _typeName = 'Contain number'
+        break
       case this.contain_lowercase:
-        _typeName = "Contain lowercase";
-        break;
+        _typeName = 'Contain lowercase'
+        break
       case this.contain_uppercase:
-        _typeName = "Contain uppercase";
-        break;
+        _typeName = 'Contain uppercase'
+        break
       case this.only_text:
-        _typeName = "Only text";
-        break;
+        _typeName = 'Only text'
+        break
       case this.not_empty:
-        _typeName = "Not empty";
-        break;
+        _typeName = 'Not empty'
+        break
       default:
-        break;
+        break
     }
-    return _typeName;
+    return _typeName
   }
 }
 
 class KeyboardType {
-  static datetime = "datetime";
-  static email = "email";
-  static multiline = "multiline";
-  static name = "name";
-  static none = "none";
-  static number = "number";
-  static phone = "phone";
-  static address = "address";
-  static text = "text";
-  static url = "url";
-  static visiblePassword = "visiblePassword";
+  static datetime = 'datetime'
+  static email = 'email'
+  static multiline = 'multiline'
+  static name = 'name'
+  static none = 'none'
+  static number = 'number'
+  static phone = 'phone'
+  static address = 'address'
+  static text = 'text'
+  static url = 'url'
+  static visiblePassword = 'visiblePassword'
 }
 
 class WDataType {
-  static string = "string";
-  static array = "array";
-  static object = "object";
-  static number = "number";
-  static boolean = "boolean";
-  static undefined = "undefined";
-  static null = "null";
+  static string = 'string'
+  static array = 'array'
+  static object = 'object'
+  static number = 'number'
+  static boolean = 'boolean'
+  static undefined = 'undefined'
+  static null = 'null'
 
   static list = [
     this.string,
@@ -316,168 +405,169 @@ class WDataType {
     this.object,
     this.number,
     this.boolean,
-    this.null,
+    this.null
     // this.undefined,
-  ];
+  ]
 }
 
 class WCarouselEffect {
-  static fade = "fade";
-  static easeInOut = "ease-in-out";
+  static fade = 'fade'
+  static easeInOut = 'ease-in-out'
 }
 
-const uuid4Regex = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/g;
-const hexRegex = /(#){0,1}[0-9A-Fa-f]{6,8}$/i;
-const svgRegex = /(fill|stroke)(="[^none](\w|\d|#){1,}"|:[^none](\w|\d|#){1,})/g;
-const brpRegex = /\(([^)-]+)\)/g;
-const spChaRegex = /[!@#\$%\^\&*\)\(+=._-]/g;
-const classRegex = /\.([^\s{}]+)/g;
-var wbase_list = [];
-var base_component_list = [];
-var cssStyleSheets = [];
-var assets_list = [];
-var selected_list = [];
-var alt_list = [];
-var copy_item = [];
-var drag_start_list = [];
-var action_list = [];
-var action_index = -1;
-var select_box;
-var hover_wbase;
-var hover_box;
+const uuid4Regex =
+  /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/g
+const hexRegex = /(#){0,1}[0-9A-Fa-f]{6,8}$/i
+const svgRegex = /(fill|stroke)(="[^none](\w|\d|#){1,}"|:[^none](\w|\d|#){1,})/g
+const brpRegex = /\(([^)-]+)\)/g
+const spChaRegex = /[!@#\$%\^\&*\)\(+=._-]/g
+const classRegex = /\.([^\s{}]+)/g
+var wbase_list = []
+var base_component_list = []
+var cssStyleSheets = []
+var assets_list = []
+var selected_list = []
+var alt_list = []
+var copy_item = []
+var drag_start_list = []
+var action_list = []
+var action_index = -1
+var select_box
+var hover_wbase
+var hover_box
 var current_page = {
   ID: 2400,
-  Name: "Page 1",
+  Name: 'Page 1',
   ProjectID: 1,
-  Permission: EnumPermission.owner,
-};
+  Permission: EnumPermission.owner
+}
 // var componentClss = ["w-col", "w-row", "w-stack", "wbaseItem-value", "fixed-position", "w-frame", "w-page","w-table","w-text","w-tree", "tile-item", ""];
-var wbase_parentID = "019cc638-18b3-434d-8c4a-973537cde698";
-var select_box_parentID = "019cc638-18b3-434d-8c4a-973537cde698";
-var tool_state = ToolState.move;
+var wbase_parentID = '019cc638-18b3-434d-8c4a-973537cde698'
+var select_box_parentID = '019cc638-18b3-434d-8c4a-973537cde698'
+var tool_state = ToolState.move
 var listDevice = [
   [
     {
-      Name: "Iphone 14",
+      Name: 'Iphone 14',
       Height: 844,
-      Width: 390,
+      Width: 390
     },
     {
-      Name: "Iphone 14 Pro",
+      Name: 'Iphone 14 Pro',
       Height: 852,
-      Width: 393,
+      Width: 393
     },
     {
-      Name: "Iphone 14 Plus",
+      Name: 'Iphone 14 Plus',
       Height: 926,
-      Width: 428,
+      Width: 428
     },
     {
-      Name: "Iphone 14 Pro Max",
+      Name: 'Iphone 14 Pro Max',
       Height: 932,
-      Width: 430,
+      Width: 430
     },
     {
-      Name: "Iphone 13",
+      Name: 'Iphone 13',
       Height: 844,
-      Width: 390,
+      Width: 390
     },
     {
-      Name: "Iphone 13 Pro",
+      Name: 'Iphone 13 Pro',
       Height: 844,
-      Width: 390,
+      Width: 390
     },
     {
-      Name: "Iphone 13 Pro Max",
+      Name: 'Iphone 13 Pro Max',
       Height: 926,
-      Width: 428,
+      Width: 428
     },
     {
-      Name: "Iphone 13 Mini",
+      Name: 'Iphone 13 Mini',
       Height: 812,
-      Width: 375,
+      Width: 375
     },
     {
-      Name: "Iphone SE",
+      Name: 'Iphone SE',
       Height: 568,
-      Width: 320,
+      Width: 320
     },
     {
-      Name: "Iphone 8 Plus",
+      Name: 'Iphone 8 Plus',
       Height: 736,
-      Width: 414,
+      Width: 414
     },
     {
-      Name: "Iphone 8 Plus",
+      Name: 'Iphone 8 Plus',
       Height: 667,
-      Width: 375,
+      Width: 375
     },
     {
-      Name: "Android Small",
+      Name: 'Android Small',
       Height: 640,
-      Width: 360,
+      Width: 360
     },
     {
-      Name: "Android Large",
+      Name: 'Android Large',
       Height: 800,
-      Width: 360,
-    },
+      Width: 360
+    }
   ],
   [
     {
-      Name: "Surface Pro 8",
+      Name: 'Surface Pro 8',
       Height: 960,
-      Width: 1440,
+      Width: 1440
     },
     {
-      Name: "Ipad Mini 8.3",
+      Name: 'Ipad Mini 8.3',
       Height: 1133,
-      Width: 744,
+      Width: 744
     },
     {
       Name: 'Ipad Pro 11"',
       Height: 1194,
-      Width: 834,
+      Width: 834
     },
     {
       Name: 'Ipad Pro 12.9"',
       Height: 1366,
-      Width: 1024,
-    },
+      Width: 1024
+    }
   ],
   [
     {
-      Name: "MacBook E",
+      Name: 'MacBook E',
       Height: 832,
-      Width: 1280,
+      Width: 1280
     },
     {
       Name: 'MacBook Pro 14"',
       Height: 982,
-      Width: 1512,
+      Width: 1512
     },
     {
       Name: 'MacBook Pro 16"',
       Height: 1117,
-      Width: 1728,
+      Width: 1728
     },
     {
-      Name: "Desktop",
+      Name: 'Desktop',
       Height: 1080,
-      Width: 1920,
+      Width: 1920
     },
     {
-      Name: "Wireframes",
+      Name: 'Wireframes',
       Height: 1024,
-      Width: 1440,
+      Width: 1440
     },
     {
-      Name: "TV",
+      Name: 'TV',
       Height: 720,
-      Width: 1280,
-    },
-  ],
-];
+      Width: 1280
+    }
+  ]
+]
 
 class WBaseDefault {
   static rectangle = {
@@ -492,7 +582,7 @@ class WBaseDefault {
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
-        ColorValue: "C4C4C4FF",
+        ColorValue: 'C4C4C4FF'
       },
       FrameItem: {
         Width: 512.0,
@@ -501,23 +591,23 @@ class WBaseDefault {
         TopRight: 0.0,
         BottomLeft: 0.0,
         BottomRight: 0.0,
-        IsClip: true,
+        IsClip: true
       },
       PositionItem: {
         Top: 222.0,
         Left: 110.0,
-        Constraints: "left",
-        ConstraintsY: "top",
-        FixPosition: false,
-      },
+        Constraints: 'left',
+        ConstraintsY: 'top',
+        FixPosition: false
+      }
     },
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: "",
-      Name: "Rectangle",
+      NameField: '',
+      Name: 'Rectangle'
     },
-    Name: "Rectangle",
-  };
+    Name: 'Rectangle'
+  }
 
   static imgSvg = {
     ListID: wbase_parentID,
@@ -538,24 +628,24 @@ class WBaseDefault {
         TopRight: 0.0,
         BottomLeft: 0.0,
         BottomRight: 0.0,
-        IsClip: true,
+        IsClip: true
       },
       PositionItem: {
         Top: 222.0,
         Left: 110.0,
-        ConstraintsX: "left",
-        ConstraintsY: "top",
-        FixPosition: false,
-      },
+        ConstraintsX: 'left',
+        ConstraintsY: 'top',
+        FixPosition: false
+      }
     },
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: "",
-      Name: "Svg Picture",
-      Content: "",
+      NameField: '',
+      Name: 'Svg Picture',
+      Content: ''
     },
-    Name: "Svg Picture",
-  };
+    Name: 'Svg Picture'
+  }
 
   static circle = {
     ListID: wbase_parentID,
@@ -569,28 +659,28 @@ class WBaseDefault {
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
-        ColorValue: "C4C4C4FF",
+        ColorValue: 'C4C4C4FF'
       },
       FrameItem: {
         Width: 512.0,
         Height: 451.0,
-        IsClip: true,
+        IsClip: true
       },
       PositionItem: {
         Top: 222.0,
         Left: 110.0,
-        Constraints: "left",
-        ConstraintsY: "top",
-        FixPosition: false,
-      },
+        Constraints: 'left',
+        ConstraintsY: 'top',
+        FixPosition: false
+      }
     },
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: "",
-      Name: "Circle",
+      NameField: '',
+      Name: 'Circle'
     },
-    Name: "Circle",
-  };
+    Name: 'Circle'
+  }
 
   static text = {
     ListID: wbase_parentID,
@@ -606,38 +696,38 @@ class WBaseDefault {
     StyleItem: {
       TextStyleItem: {
         FontSize: 24.0,
-        FontWeight: "400",
+        FontWeight: '400',
         CateID: EnumCate.typography,
         IsStyle: false,
-        ColorValue: "000000FF",
+        ColorValue: '000000FF',
         LetterSpacing: 0,
-        FontFamily: "Roboto",
-        Name: "default",
+        FontFamily: 'Roboto',
+        Name: 'default'
       },
       TypoStyleItem: {
         AutoSize: TextAutoSize.autoWidth,
         TextAlign: TextAlign.left,
-        TextAlignVertical: TextAlignVertical.middle,
+        TextAlignVertical: TextAlignVertical.middle
       },
       FrameItem: {
-        IsClip: true,
+        IsClip: true
       },
       PositionItem: {
         Top: 0,
         Left: 0,
-        ConstraintsX: "left",
-        ConstraintsY: "top",
-        FixPosition: false,
-      },
+        ConstraintsX: 'left',
+        ConstraintsY: 'top',
+        FixPosition: false
+      }
     },
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: "",
-      Content: "",
-      Name: "Text",
+      NameField: '',
+      Content: '',
+      Name: 'Text'
     },
-    Name: "Text",
-  };
+    Name: 'Text'
+  }
 
   static frame = {
     ListID: wbase_parentID,
@@ -651,7 +741,7 @@ class WBaseDefault {
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
-        ColorValue: "FFFFFFFF",
+        ColorValue: 'FFFFFFFF'
       },
       FrameItem: {
         Width: 414.0,
@@ -660,24 +750,24 @@ class WBaseDefault {
         TopRight: 0.0,
         BottomLeft: 0.0,
         BottomRight: 0.0,
-        IsClip: false,
+        IsClip: false
       },
       PositionItem: {
         Top: 0,
         Left: 0,
-        ConstraintsX: "left",
-        ConstraintsY: "top",
-        FixPosition: false,
-      },
+        ConstraintsX: 'left',
+        ConstraintsY: 'top',
+        FixPosition: false
+      }
     },
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: "",
-      Name: "Frame",
-      Content: "",
+      NameField: '',
+      Name: 'Frame',
+      Content: ''
     },
-    Name: "Frame",
-  };
+    Name: 'Frame'
+  }
 
   static variant = {
     ListID: wbase_parentID,
@@ -692,13 +782,13 @@ class WBaseDefault {
     StyleItem: {
       DecorationItem: {
         BorderItem: {
-          Name: "new border",
+          Name: 'new border',
           BorderStyle: BorderStyle.dotted,
           IsStyle: false,
-          ColorValue: "7B61FFFF",
+          ColorValue: '7B61FFFF',
           BorderSide: BorderSide.all,
-          Width: "2 2 2 2",
-        },
+          Width: '2 2 2 2'
+        }
       },
       FrameItem: {
         Width: 414.0,
@@ -707,23 +797,23 @@ class WBaseDefault {
         TopRight: 0.0,
         BottomLeft: 0.0,
         BottomRight: 0.0,
-        IsClip: true,
+        IsClip: true
       },
       PositionItem: {
         Top: 0,
         Left: 0,
-        ConstraintsX: "left",
-        ConstraintsY: "top",
-        FixPosition: false,
-      },
+        ConstraintsX: 'left',
+        ConstraintsY: 'top',
+        FixPosition: false
+      }
     },
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: "",
-      Name: "Variant",
+      NameField: '',
+      Name: 'Variant'
     },
-    Name: "Variant",
-  };
+    Name: 'Variant'
+  }
 
   static button = {
     ListID: wbase_parentID,
@@ -737,59 +827,59 @@ class WBaseDefault {
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
-        ColorValue: "366AE2FF",
+        ColorValue: '366AE2FF'
       },
       FrameItem: {
         TopLeft: 8.0,
         TopRight: 8.0,
         BottomLeft: 8.0,
         BottomRight: 8.0,
-        IsClip: true,
+        IsClip: true
       },
       PositionItem: {
         Top: 0.0,
         Left: 0.0,
-        ConstraintsX: "left",
-        ConstraintsY: "top",
-        FixPosition: false,
+        ConstraintsX: 'left',
+        ConstraintsY: 'top',
+        FixPosition: false
       },
       PaddingItem: {
         Left: 20,
         Right: 20,
         Top: 12,
-        Bottom: 12,
-      },
+        Bottom: 12
+      }
     },
     WAutolayoutItem: {
-      Name: "new layout",
-      Alignment: "Center",
-      Direction: "Horizontal",
+      Name: 'new layout',
+      Alignment: 'Center',
+      Direction: 'Horizontal',
       ChildSpace: 4.0,
       IsScroll: false,
       IsWrap: false,
       RunSpace: 0.0,
-      CountItem: 1,
+      CountItem: 1
     },
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: "Button",
-      Name: "Button",
+      NameField: 'Button',
+      Name: 'Button'
     },
-    Name: "Button",
+    Name: 'Button',
     JsonEventItem: [
       {
-        Name: "State",
+        Name: 'State',
         ListState: [
           {
             Type: ComponentState.hover,
-            ColorSkinID: "",
-            BorderSkinID: "",
-            EffectSkinID: "",
-          },
-        ],
-      },
-    ],
-  };
+            ColorSkinID: '',
+            BorderSkinID: '',
+            EffectSkinID: ''
+          }
+        ]
+      }
+    ]
+  }
 
   static switch = {
     ListID: wbase_parentID,
@@ -803,34 +893,34 @@ class WBaseDefault {
     ListChildID: [],
     StyleItem: {
       DecorationItem: {
-        ColorValue: "1890ffff",
+        ColorValue: '1890ffff'
       },
       FrameItem: {
         Width: 60.0,
         Height: 40.0,
-        IsClip: true,
+        IsClip: true
       },
       PositionItem: {
         Top: 0.0,
-        Left: 0.0,
-      },
+        Left: 0.0
+      }
     },
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: "Switch",
-      Name: "Switch",
-      Content: "true",
+      NameField: 'Switch',
+      Name: 'Switch',
+      Content: 'true'
     },
-    Name: "Switch",
+    Name: 'Switch',
     JsonItem: {
-      DotColor: "FFFFFFFF",
-      InactiveColor: "F2F5F8FF",
-      Enable: true,
-    },
-  };
+      DotColor: 'FFFFFFFF',
+      InactiveColor: 'F2F5F8FF',
+      Enable: true
+    }
+  }
 
   static checkbox = {
-    Name: "Checkbox",
+    Name: 'Checkbox',
     ParentID: wbase_parentID,
     Level: 1,
     IsShow: true,
@@ -844,7 +934,7 @@ class WBaseDefault {
       Name: null,
       PositionItem: {
         Right: 0,
-        Bottom: 0,
+        Bottom: 0
       },
       FrameItem: {
         Width: 20,
@@ -853,33 +943,33 @@ class WBaseDefault {
         TopLeft: 4,
         TopRight: 4,
         BottomLeft: 4,
-        BottomRight: 4,
+        BottomRight: 4
       },
       DecorationItem: {
-        ColorValue: "366AE2FF",
+        ColorValue: '366AE2FF',
         BorderItem: {
-          Width: "2 2 2 2",
+          Width: '2 2 2 2',
           BorderStyle: BorderStyle.solid,
-          ColorValue: "E5EAF0FF",
+          ColorValue: 'E5EAF0FF',
           IsStyle: false,
-          BorderSide: BorderSide.all,
-        },
-      },
+          BorderSide: BorderSide.all
+        }
+      }
     },
     AttributesItem: {
-      Name: "Checkbox",
-      NameField: "Checkbox",
-      Content: "true",
+      Name: 'Checkbox',
+      NameField: 'Checkbox',
+      Content: 'true'
     },
     JsonItem: {
-      CheckColor: "ffffffff",
+      CheckColor: 'ffffffff',
       Enable: true,
-      InactiveColor: "9e9e9eff",
-    },
-  };
+      InactiveColor: '9e9e9eff'
+    }
+  }
 
   static radio_button = {
-    Name: "RadioButton",
+    Name: 'RadioButton',
     ParentID: wbase_parentID,
     Level: 1,
     IsShow: true,
@@ -893,31 +983,31 @@ class WBaseDefault {
       PositionItem: {},
       FrameItem: {
         Width: 20,
-        Height: 20,
+        Height: 20
       },
       DecorationItem: {
-        ColorValue: "1890ffFF",
+        ColorValue: '1890ffFF',
         BorderItem: {
-          Width: "2 2 2 2",
+          Width: '2 2 2 2',
           BorderStyle: BorderStyle.solid,
-          ColorValue: "2196F3FF",
+          ColorValue: '2196F3FF',
           IsStyle: false,
-          BorderSide: BorderSide.all,
-        },
-      },
+          BorderSide: BorderSide.all
+        }
+      }
     },
     AttributesItem: {
-      Name: "Radio button",
-      NameField: "",
-      Content: "",
+      Name: 'Radio button',
+      NameField: '',
+      Content: ''
     },
     JsonItem: {
-      Enable: true,
-    },
-  };
+      Enable: true
+    }
+  }
 
   static textfield = {
-    Name: "Textfield",
+    Name: 'Textfield',
     ParentID: wbase_parentID,
     Level: 2,
     IsShow: true,
@@ -926,17 +1016,17 @@ class WBaseDefault {
     IsWini: false,
     CountChild: 0,
     StyleItem: {
-      ColorValue: "FFFFFF00",
+      ColorValue: 'FFFFFF00'
     },
     AttributesItem: {
-      Name: "Textfield",
-      NameField: "Textfield",
-      Content: "",
-    },
-  };
+      Name: 'Textfield',
+      NameField: 'Textfield',
+      Content: ''
+    }
+  }
 
   static textformfield = {
-    Name: "Textformfield",
+    Name: 'Textformfield',
     ParentID: wbase_parentID,
     Level: 1,
     IsShow: true,
@@ -949,7 +1039,7 @@ class WBaseDefault {
     StyleItem: {
       PositionItem: {
         Right: 0,
-        Bottom: 0,
+        Bottom: 0
       },
       FrameItem: {
         Width: 382,
@@ -957,87 +1047,87 @@ class WBaseDefault {
         TopLeft: 8,
         TopRight: 8,
         BottomLeft: 8,
-        BottomRight: 8,
+        BottomRight: 8
       },
       PaddingItem: {
         Top: 10,
         Left: 16,
         Bottom: 10,
-        Right: 16,
+        Right: 16
       },
       DecorationItem: {
-        ColorValue: "FFFFFFFF",
+        ColorValue: 'FFFFFFFF',
         BorderItem: {
-          Width: "1 1 1 1",
+          Width: '1 1 1 1',
           BorderStyle: BorderStyle.solid,
-          ColorValue: "E5EAF0FF",
+          ColorValue: 'E5EAF0FF',
           IsStyle: false,
-          BorderSide: BorderSide.all,
-        },
+          BorderSide: BorderSide.all
+        }
       },
       TextStyleItem: {
         FontSize: 16,
-        FontWeight: "400",
+        FontWeight: '400',
         CateID: EnumCate.typography,
         IsStyle: false,
-        ColorValue: "394960FF",
+        ColorValue: '394960FF',
         LetterSpacing: 0,
-        FontFamily: "Roboto",
-        Height: 24,
+        FontFamily: 'Roboto',
+        Height: 24
       },
       TypoStyleItem: {
         TextAlign: TextAlign.left,
-        TextAlignVertical: TextAlignVertical.middle,
-      },
+        TextAlignVertical: TextAlignVertical.middle
+      }
     },
     AttributesItem: {
-      Name: "Textformfield",
-      NameField: "Textformfield",
-      Content: "",
+      Name: 'Textformfield',
+      NameField: 'Textformfield',
+      Content: ''
     },
     WAutolayoutItem: {
-      Alignment: "Center",
-      Direction: "Horizontal",
+      Alignment: 'Center',
+      Direction: 'Horizontal',
       ChildSpace: 4.0,
       IsScroll: false,
       IsWrap: false,
       RunSpace: 0.0,
-      CountItem: 1,
+      CountItem: 1
     },
     JsonItem: {
-      LabelText: "Label",
+      LabelText: 'Label',
       AutoFocus: false,
       Enabled: true,
       ReadOnly: false,
       IsImportant: false,
       KeyboardType: null,
       Type: WTextFormFieldType.text,
-      ObscuringCharacter: "*",
+      ObscuringCharacter: '*',
       MaxLength: null,
-      HintText: "Placeholder",
+      HintText: 'Placeholder',
       MaxLines: 1,
       TextCapitalization: null,
       JsonVadidate: [],
       AutoValidate: false,
-      SuffixSize: 16,
+      SuffixSize: 16
     },
     JsonEventItem: [
       {
-        Name: "State",
+        Name: 'State',
         ListState: [
           {
             Type: ComponentState.focus,
-            ColorSkinID: "",
-            BorderSkinID: "",
-            EffectSkinID: "",
-          },
-        ],
-      },
-    ],
-  };
+            ColorSkinID: '',
+            BorderSkinID: '',
+            EffectSkinID: ''
+          }
+        ]
+      }
+    ]
+  }
 
   static table = {
-    Name: "Table",
+    Name: 'Table',
     ParentID: wbase_parentID,
     Level: 1,
     IsShow: true,
@@ -1050,7 +1140,7 @@ class WBaseDefault {
     StyleItem: {
       PositionItem: {
         Right: 0,
-        Bottom: 0,
+        Bottom: 0
       },
       FrameItem: {
         Height: 112,
@@ -1059,78 +1149,78 @@ class WBaseDefault {
         TopLeft: 8,
         TopRight: 8,
         BottomLeft: 8,
-        BottomRight: 8,
+        BottomRight: 8
       },
       DecorationItem: {
-        ColorValue: "FFFFFFFF",
+        ColorValue: 'FFFFFFFF',
         BorderItem: {
-          Width: "1 1 1 1",
+          Width: '1 1 1 1',
           BorderStyle: BorderStyle.solid,
-          ColorValue: "E5EAF0FF",
+          ColorValue: 'E5EAF0FF',
           IsStyle: false,
-          BorderSide: BorderSide.all,
-        },
+          BorderSide: BorderSide.all
+        }
       },
       PaddingItem: {
         Top: 8,
         Left: 8,
         Bottom: 8,
-        Right: 8,
-      },
+        Right: 8
+      }
     },
     WAutolayoutItem: {
-      Alignment: "Center",
-      Direction: "Vertical",
+      Alignment: 'Center',
+      Direction: 'Vertical',
       ChildSpace: 0.0,
       IsScroll: false,
       IsWrap: false,
       RunSpace: 0.0,
-      CountItem: 1,
+      CountItem: 1
     },
     AttributesItem: {
-      Name: "Table",
-      NameField: "Table",
-      Content: "",
+      Name: 'Table',
+      NameField: 'Table',
+      Content: ''
     },
     JsonItem: {
       ColBorderWidth: 1,
-      RowBorderWidth: 1,
+      RowBorderWidth: 1
     },
     JsonEventItem: [],
     TableRows: [
       [
         {
-          ID: "1x1",
-          contentid: "",
+          ID: '1x1',
+          contentid: '',
           RowSpan: 1,
-          ColSpan: 1,
+          ColSpan: 1
         },
         {
-          ID: "1x2",
-          contentid: "",
+          ID: '1x2',
+          contentid: '',
           RowSpan: 1,
-          ColSpan: 1,
-        },
+          ColSpan: 1
+        }
       ],
       [
         {
-          ID: "2x1",
-          contentid: "",
+          ID: '2x1',
+          contentid: '',
           RowSpan: 1,
-          ColSpan: 1,
+          ColSpan: 1
         },
         {
-          ID: "2x2",
-          contentid: "",
+          ID: '2x2',
+          contentid: '',
           RowSpan: 1,
-          ColSpan: 1,
-        },
-      ],
-    ],
-  };
+          ColSpan: 1
+        }
+      ]
+    ]
+  }
 
   static tree = {
-    Name: "Tree",
+    Name: 'Tree',
     ParentID: wbase_parentID,
     Level: 1,
     IsShow: true,
@@ -1143,7 +1233,7 @@ class WBaseDefault {
     StyleItem: {
       PositionItem: {
         Right: 0,
-        Bottom: 0,
+        Bottom: 0
       },
       FrameItem: {
         Width: 360,
@@ -1151,77 +1241,77 @@ class WBaseDefault {
         TopLeft: 0,
         TopRight: 0,
         BottomLeft: 0,
-        BottomRight: 0,
+        BottomRight: 0
       },
       DecorationItem: {
-        ColorValue: "FFFFFFFF",
+        ColorValue: 'FFFFFFFF'
       },
       PaddingItem: {
         Top: 10,
         Left: 24,
         Bottom: 10,
-        Right: 24,
-      },
+        Right: 24
+      }
     },
     WAutolayoutItem: {
-      Alignment: "Center",
-      Direction: "Horizontal",
+      Alignment: 'Center',
+      Direction: 'Horizontal',
       ChildSpace: 12.0,
       IsScroll: false,
       IsWrap: false,
       RunSpace: 0.0,
-      CountItem: 1,
+      CountItem: 1
     },
     AttributesItem: {
-      Name: "Tree",
-      NameField: "Tree",
-      Content: "",
+      Name: 'Tree',
+      NameField: 'Tree',
+      Content: ''
     },
     JsonItem: {
-      ActionPosition: "right",
-      ActionType: "chevron",
-      ActionColor: "1e3050FF",
+      ActionPosition: 'right',
+      ActionType: 'chevron',
+      ActionColor: '1e3050FF',
       ActionSize: 20,
-      IndentSpace: 16,
+      IndentSpace: 16
     },
     JsonEventItem: [],
     TreeData: {
       ID: 0,
       Level: 0,
-      Title: "Level 1",
+      Title: 'Level 1',
       IsSelect: true,
       ChildrenItem: [
         {
           ID: 1,
           Level: 1,
           ParentID: 0,
-          Title: "Level 2",
+          Title: 'Level 2',
           IsSelect: true,
-          ChildrenItem: [],
+          ChildrenItem: []
         },
         {
           ID: 2,
           Level: 1,
           ParentID: 0,
-          Title: "Level 2",
+          Title: 'Level 2',
           IsSelect: true,
           ChildrenItem: [
             {
               ID: 3,
               Level: 2,
               ParentID: 2,
-              Title: "Level 3",
+              Title: 'Level 3',
               IsSelect: true,
-              ChildrenItem: [],
-            },
-          ],
-        },
-      ],
-    },
-  };
+              ChildrenItem: []
+            }
+          ]
+        }
+      ]
+    }
+  }
 
   static chart = {
-    Name: "Chart",
+    Name: 'Chart',
     ParentID: wbase_parentID,
     Level: 1,
     IsShow: true,
@@ -1234,7 +1324,7 @@ class WBaseDefault {
     StyleItem: {
       PositionItem: {
         Right: 0,
-        Bottom: 0,
+        Bottom: 0
       },
       FrameItem: {
         Width: 400,
@@ -1243,53 +1333,53 @@ class WBaseDefault {
         TopLeft: 0,
         TopRight: 0,
         BottomLeft: 0,
-        BottomRight: 0,
+        BottomRight: 0
       },
       DecorationItem: {},
       TextStyleItem: {
         FontSize: 14,
-        FontWeight: "500",
+        FontWeight: '500',
         CateID: EnumCate.typography,
         IsStyle: false,
-        ColorValue: "394960FF",
-        FontFamily: "Roboto",
-      },
+        ColorValue: '394960FF',
+        FontFamily: 'Roboto'
+      }
     },
     AttributesItem: {
-      Name: "Chart",
-      NameField: "Chart",
-      Content: "",
+      Name: 'Chart',
+      NameField: 'Chart',
+      Content: ''
     },
     JsonItem: {
       Type: ChartType.bar,
       HoverOffset: 4,
       MaxValue: 5,
-      StepSize: 1,
+      StepSize: 1
     },
     JsonEventItem: [],
     ChartData: {
-      labels: ["A", "B", "C"],
+      labels: ['A', 'B', 'C'],
       datasets: [
         {
-          label: "Dataset 1",
+          label: 'Dataset 1',
           data: [1, 2, 3],
-          backgroundColor: ["#36a2ebff", "#ff6384ff", "#ffcd56ff"],
+          backgroundColor: ['#36a2ebff', '#ff6384ff', '#ffcd56ff'],
           borderColor: [],
-          borderWidth: [],
+          borderWidth: []
         },
         {
-          label: "Dataset 2",
+          label: 'Dataset 2',
           data: [2, 3, 4],
-          backgroundColor: ["#36a2ebff", "#ff6384ff", "#ffcd56ff"],
+          backgroundColor: ['#36a2ebff', '#ff6384ff', '#ffcd56ff'],
           borderColor: [],
-          borderWidth: [],
-        },
-      ],
-    },
-  };
+          borderWidth: []
+        }
+      ]
+    }
+  }
 
   static carousel = {
-    Name: "Carousel",
+    Name: 'Carousel',
     ParentID: wbase_parentID,
     Level: 1,
     IsShow: true,
@@ -1302,7 +1392,7 @@ class WBaseDefault {
     StyleItem: {
       PositionItem: {
         Right: 0,
-        Bottom: 0,
+        Bottom: 0
       },
       FrameItem: {
         Width: 200,
@@ -1311,286 +1401,343 @@ class WBaseDefault {
         TopLeft: 0,
         TopRight: 0,
         BottomLeft: 0,
-        BottomRight: 0,
+        BottomRight: 0
       },
       DecorationItem: {},
       PaddingItem: {
         Top: 8,
         Left: 8,
         Bottom: 8,
-        Right: 8,
-      },
+        Right: 8
+      }
     },
     WAutolayoutItem: {
-      Alignment: "Center",
-      Direction: "Horizontal",
+      Alignment: 'Center',
+      Direction: 'Horizontal',
       ChildSpace: 12.0,
       IsScroll: false,
       IsWrap: false,
       RunSpace: 0.0,
-      CountItem: 1,
+      CountItem: 1
     },
     AttributesItem: {
-      Name: "Carousel",
-      NameField: "Carousel",
-      Content: "",
+      Name: 'Carousel',
+      NameField: 'Carousel',
+      Content: ''
     },
     JsonItem: {
       Effect: WCarouselEffect.easeInOut,
-      ActionType: "chevron",
-      ActionColor: "1b1b1bff",
+      ActionType: 'chevron',
+      ActionColor: '1b1b1bff',
       ActionSize: 24,
-      ActionBackground: "f6f6f6bf",
+      ActionBackground: 'f6f6f6bf',
       TransitionTime: 3000,
       TransformTime: 500,
-      AutoPlay: true,
+      AutoPlay: true
     },
     JsonEventItem: [],
     CarouselData: {
       initSlide: 0,
       slides: [
         {
-          background: "https://images2.thanhnien.vn/Uploaded/dotuan/2022_07_04/1-7418.jpg",
-          title: "slide 1",
+          background:
+            'https://images2.thanhnien.vn/Uploaded/dotuan/2022_07_04/1-7418.jpg',
+          title: 'slide 1'
         },
         {
-          background: "https://s3.cloud.cmctelecom.vn/tinhte1/2014/11/2631443_despicable_me_2_minions-1920x1080_VVVaaa.png",
-          title: "slide 2",
+          background:
+            'https://s3.cloud.cmctelecom.vn/tinhte1/2014/11/2631443_despicable_me_2_minions-1920x1080_VVVaaa.png',
+          title: 'slide 2'
         },
         {
-          background: "https://images2.thanhnien.vn/Uploaded/quynhnhu/2015_07_13/watch-minions-trailer_HKTM.jpg?width=500",
-          title: "slide 3",
-        },
-      ],
-    },
-  };
+          background:
+            'https://images2.thanhnien.vn/Uploaded/quynhnhu/2015_07_13/watch-minions-trailer_HKTM.jpg?width=500',
+          title: 'slide 3'
+        }
+      ]
+    }
+  }
 }
 class WBaseDA {
-  static wbase_url = domainApi + "/WBase/ListItem";
-  static style_url = domainApi + "/Style/ListItemByPid";
-  static attribute_url = domainApi + "/Attribute/ListItemByPid";
-  static autoLayout_url = domainApi + "/WAutoLayout/ListItem";
-  static base_item_url = domainApi + "/WBase/listBaseitem";
-  static skin_url = domainApi + "/Style/ListCacheItem";
-  static enumEvent;
-  static listData = [];
-  static isCtrlZ = false;
+  static wbase_url = domainApi + '/WBase/ListItem'
+  static style_url = domainApi + '/Style/ListItemByPid'
+  static attribute_url = domainApi + '/Attribute/ListItemByPid'
+  static autoLayout_url = domainApi + '/WAutoLayout/ListItem'
+  static base_item_url = domainApi + '/WBase/listBaseitem'
+  static skin_url = domainApi + '/Style/ListCacheItem'
+  static enumEvent
+  static listData = []
+  static isCtrlZ = false
 
-  static async apiGetInitWbase() {
-    let attributeData = await $.get(this.attribute_url + `?pageid=${PageDA.obj.ID}`);
-    attributeData = attributeData.Data;
-    let autoLayoutData = await $.get(this.autoLayout_url + `?pageid=${PageDA.obj.ID}`);
-    autoLayoutData = autoLayoutData.Data;
-    let styleData = await $.get(this.style_url + `?pageid=${PageDA.obj.ID}`);
-    styleData = styleData.Data;
-    let WbData = await $.get(this.wbase_url + `?pageid=${PageDA.obj.ID}`);
-    let cssData = await StyleDA.initStyleSheets();
-    StyleDA.cssStyleSheets = cssData.Data;
-    StyleDA.cssStyleSheets.forEach((cssItem) => {
-      let styleTag = document.createElement("style");
-      styleTag.id = `w-st-comp${cssItem.GID}`;
-      styleTag.innerHTML = cssItem.Css;
-      document.head.appendChild(styleTag);
-    });
-    WbData = WbData.Data;
-    WbData.forEach((wb) => {
-      wb.AttributesItem = attributeData.find((e) => e.GID == wb.AttributeID);
-      wb.StyleItem = styleData.find((e) => e.GID == wb.StyleID);
-      wb.WAutolayoutItem = autoLayoutData.find((e) => e.GID == wb.AutoLayoutID);
-    });
-    StyleDA.docStyleSheets = [...document.styleSheets].map((e) => (e.href ? [] : [...e.cssRules])).filter((e) => e[0]?.selectorText && e[0].selectorText.startsWith(".w-st0-"));
-    if (StyleDA.docStyleSheets.length > 0) StyleDA.docStyleSheets = StyleDA.docStyleSheets.reduce((a, b) => a.concat(b));
-    return WbData;
+  static async apiGetInitWbase () {
+    let attributeData = await $.get(
+      this.attribute_url + `?pageid=${PageDA.obj.ID}`
+    )
+    attributeData = attributeData.Data
+    let autoLayoutData = await $.get(
+      this.autoLayout_url + `?pageid=${PageDA.obj.ID}`
+    )
+    autoLayoutData = autoLayoutData.Data
+    let styleData = await $.get(this.style_url + `?pageid=${PageDA.obj.ID}`)
+    styleData = styleData.Data
+    let WbData = await $.get(this.wbase_url + `?pageid=${PageDA.obj.ID}`)
+    let cssData = await StyleDA.initStyleSheets()
+    StyleDA.cssStyleSheets = cssData.Data
+    StyleDA.cssStyleSheets.forEach(cssItem => {
+      let styleTag = document.createElement('style')
+      styleTag.id = `w-st-comp${cssItem.GID}`
+      styleTag.innerHTML = cssItem.Css
+      document.head.appendChild(styleTag)
+    })
+    WbData = WbData.Data
+    WbData.forEach(wb => {
+      wb.AttributesItem = attributeData.find(e => e.GID == wb.AttributeID)
+      wb.StyleItem = styleData.find(e => e.GID == wb.StyleID)
+      wb.WAutolayoutItem = autoLayoutData.find(e => e.GID == wb.AutoLayoutID)
+    })
+    StyleDA.docStyleSheets = [...document.styleSheets]
+      .map(e => (e.href ? [] : [...e.cssRules]))
+      .filter(
+        e => e[0]?.selectorText && e[0].selectorText.startsWith('.w-st0-')
+      )
+    if (StyleDA.docStyleSheets.length > 0)
+      StyleDA.docStyleSheets = StyleDA.docStyleSheets.reduce((a, b) =>
+        a.concat(b)
+      )
+    return WbData
   }
 
-  static add(list_wbase_item, pageid, enumEvent = EnumEvent.add, enumObj = EnumObj.wBase) {
+  static add (
+    list_wbase_item,
+    pageid,
+    enumEvent = EnumEvent.add,
+    enumObj = EnumObj.wBase
+  ) {
     let data = {
       enumObj: enumObj,
       data: list_wbase_item,
       enumEvent: enumEvent,
-      pageid: pageid,
-    };
-    WiniIO.emitMain(data);
+      pageid: pageid
+    }
+    WiniIO.emitMain(data)
   }
 
-  static edit(list_wbase_item, enumObj, isEditText = false) {
+  static edit (list_wbase_item, enumObj, isEditText = false) {
     if (!WBaseDA.isCtrlZ && !isEditText) {
-      addAction();
+      addAction()
     }
-    if (selected_list.length > 0) reloadTree(selected_list[0].value);
+    if (selected_list.length > 0) reloadTree(selected_list[0].value)
     let data = {
       enumObj: enumObj ?? EnumObj.wBase,
       data: list_wbase_item,
-      enumEvent: EnumEvent.edit,
-    };
-    WiniIO.emitMain(data);
+      enumEvent: EnumEvent.edit
+    }
+    WiniIO.emitMain(data)
   }
 
-  static editListClassName(list_wbase_item) {
+  static editListClassName (list_wbase_item) {
     if (!WBaseDA.isCtrlZ) {
-      addAction();
+      addAction()
     }
     let data = {
       enumObj: EnumObj.css,
-      data: list_wbase_item.map((e) => {
+      data: list_wbase_item.map(e => {
         return {
           GID: e.GID,
           ListClassName: e.ListClassName,
           IsWini: e.IsWini,
-          CopyID: null,
-        };
+          CopyID: null
+        }
       }),
-      enumEvent: EnumEvent.edit,
-    };
-    WiniIO.emitMain(data);
+      enumEvent: EnumEvent.edit
+    }
+    WiniIO.emitMain(data)
   }
 
-  static editBaseComponent(list_wbase_item, enumObj) {
+  static editBaseComponent (list_wbase_item, enumObj) {
     let data = {
       enumObj: enumObj ?? EnumObj.wBase,
       data: list_wbase_item,
       enumEvent: EnumEvent.edit,
-      pageid: 0,
-    };
-    WiniIO.emitMain(data);
+      pageid: 0
+    }
+    WiniIO.emitMain(data)
   }
 
-  static unDelete(list_wbase_item) {
+  static unDelete (list_wbase_item) {
     let data = {
       enumObj: EnumObj.wBase,
       data: list_wbase_item,
-      enumEvent: EnumEvent.unDelete,
-    };
-    WiniIO.emitMain(data);
+      enumEvent: EnumEvent.unDelete
+    }
+    WiniIO.emitMain(data)
   }
 
-  static delete(delete_list) {
+  static delete (delete_list) {
     if (delete_list.length > 0) {
-      let offY = layer_view.lastChild.scrollTop;
-      let enumObj;
-      let parentWbase;
+      let offY = layer_view.lastChild.scrollTop
+      let enumObj
+      let parentWbase
       if (delete_list[0].ParentID != wbase_parentID) {
-        parentWbase = wbase_list.find((wbaseItem) => wbaseItem.GID == delete_list[0].ParentID);
+        parentWbase = wbase_list.find(
+          wbaseItem => wbaseItem.GID == delete_list[0].ParentID
+        )
         if (parentWbase) {
-          parentWbase.ListChildID = parentWbase.ListChildID.filter((id) => delete_list.every((deleteItem) => deleteItem.GID != id));
-          parentWbase.CountChild = parentWbase.ListChildID.length;
-          let parentHTML = parentWbase.value;
+          parentWbase.ListChildID = parentWbase.ListChildID.filter(id =>
+            delete_list.every(deleteItem => deleteItem.GID != id)
+          )
+          parentWbase.CountChild = parentWbase.ListChildID.length
+          let parentHTML = parentWbase.value
           if (parentWbase.CountChild == 0 && parentWbase.WAutolayoutItem) {
-            if (parentHTML.style.width == "fit-content") {
-              enumObj = EnumObj.frame;
-              parentHTML.style.width = parentHTML.offsetWidth + "px";
-              parentWbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth;
+            if (parentHTML.style.width == 'fit-content') {
+              enumObj = EnumObj.frame
+              parentHTML.style.width = parentHTML.offsetWidth + 'px'
+              parentWbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth
             }
-            if (parentHTML.style.height == "fit-content") {
-              enumObj = EnumObj.frame;
-              parentHTML.style.height = parentHTML.offsetHeight + "px";
-              parentWbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight;
+            if (parentHTML.style.height == 'fit-content') {
+              enumObj = EnumObj.frame
+              parentHTML.style.height = parentHTML.offsetHeight + 'px'
+              parentWbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight
             }
           }
         }
       }
-      wbase_list = wbase_list.filter((e) => !delete_list.some((delete_item) => delete_item.GID == e.GID || e.ListID.includes(delete_item.GID)));
+      wbase_list = wbase_list.filter(
+        e =>
+          !delete_list.some(
+            delete_item =>
+              delete_item.GID == e.GID || e.ListID.includes(delete_item.GID)
+          )
+      )
       switch (parentWbase?.CateID) {
         case EnumCate.tree:
-          reloadTree(delete_list[0].value);
-          break;
+          reloadTree(delete_list[0].value)
+          break
         case EnumCate.table:
           parentWbase.TableRows.reduce((a, b) => a.concat(b))
-            .filter((cell) => delete_list.some((deleteItem) => cell.contentid.includes(deleteItem.GID)))
-            .forEach((cell) => {
-              let newListContentID = cell.contentid.split(",").filter((id) => delete_list.every((deleteItem) => deleteItem.GID !== id));
-              cell.contentid = newListContentID.join(",");
-            });
-          enumObj = enumObj === EnumObj.frame ? EnumObj.attributeFrame : EnumObj.attribute;
-          break;
+            .filter(cell =>
+              delete_list.some(deleteItem =>
+                cell.contentid.includes(deleteItem.GID)
+              )
+            )
+            .forEach(cell => {
+              let newListContentID = cell.contentid
+                .split(',')
+                .filter(id =>
+                  delete_list.every(deleteItem => deleteItem.GID !== id)
+                )
+              cell.contentid = newListContentID.join(',')
+            })
+          enumObj =
+            enumObj === EnumObj.frame
+              ? EnumObj.attributeFrame
+              : EnumObj.attribute
+          break
         default:
-          break;
+          break
       }
       for (let wbaseItem of delete_list) {
-        wbaseItem.IsDeleted = true;
+        wbaseItem.IsDeleted = true
         if (wbaseItem.CateID == EnumCate.variant) {
-          PropertyDA.list = PropertyDA.list.filter((e) => e.BaseID != wbaseItem.GID);
+          PropertyDA.list = PropertyDA.list.filter(
+            e => e.BaseID != wbaseItem.GID
+          )
         }
-        if (wbaseItem.BasePropertyItems && wbaseItem.BasePropertyItems.length > 0) {
+        if (
+          wbaseItem.BasePropertyItems &&
+          wbaseItem.BasePropertyItems.length > 0
+        ) {
           for (let baseProperty of wbaseItem.BasePropertyItems) {
-            let propertyItem = PropertyDA.list.find((e) => e.GID == baseProperty.PropertyID);
-            propertyItem.BasePropertyItems = propertyItem.BasePropertyItems.filter((e) => e.GID != baseProperty.GID);
+            let propertyItem = PropertyDA.list.find(
+              e => e.GID == baseProperty.PropertyID
+            )
+            propertyItem.BasePropertyItems =
+              propertyItem.BasePropertyItems.filter(
+                e => e.GID != baseProperty.GID
+              )
           }
         }
-        document.getElementById(wbaseItem.GID)?.remove();
-        replaceAllLyerItemHTML();
+        document.getElementById(wbaseItem.GID)?.remove()
+        replaceAllLyerItemHTML()
       }
-      updateHoverWbase(parentWbase);
+      updateHoverWbase(parentWbase)
       if (delete_list[0].isNew) {
         if (action_index === action_list.length - 1) {
-          action_list[action_index].enumObj = EnumObj.wBase;
-          action_list[action_index].enumEvent = EnumEvent.delete;
+          action_list[action_index].enumObj = EnumObj.wBase
+          action_list[action_index].enumEvent = EnumEvent.delete
         }
-        addSelectList();
+        addSelectList()
       } else if (enumObj && parentWbase) {
-        WBaseDA.editAndDelete([...delete_list, parentWbase], enumObj);
+        WBaseDA.editAndDelete([...delete_list, parentWbase], enumObj)
       } else {
         let data = {
           enumObj: EnumObj.wBase,
           data: delete_list,
-          enumEvent: EnumEvent.delete,
-        };
-        addSelectList();
-        WiniIO.emitMain(data);
+          enumEvent: EnumEvent.delete
+        }
+        addSelectList()
+        WiniIO.emitMain(data)
       }
       layer_view.lastChild.scrollTo({
         top: offY,
-        behavior: "smooth",
-      });
+        behavior: 'smooth'
+      })
     }
   }
 
-  static parent(list_wbase_item) {
+  static parent (list_wbase_item) {
     if (!WBaseDA.isCtrlZ) {
-      clearActionListFrom(action_index);
-      addAction();
+      clearActionListFrom(action_index)
+      addAction()
     }
     let data = {
       enumObj: EnumObj.wBase,
       data: list_wbase_item,
-      enumEvent: EnumEvent.parent,
-    };
-    WiniIO.emitMain(data);
+      enumEvent: EnumEvent.parent
+    }
+    WiniIO.emitMain(data)
   }
 
-  static copy(list_wbase_item) {
+  static copy (list_wbase_item) {
     let data = {
       enumObj: EnumObj.wBase,
       enumEvent: EnumEvent.copy,
-      index: action_index,
-    };
-    let minLevel = Math.min(...list_wbase_item.map((e) => e.Level));
-    let minLevelWbase = list_wbase_item.find((e) => e.Level === minLevel);
+      index: action_index
+    }
+    let minLevel = Math.min(...list_wbase_item.map(e => e.Level))
+    let minLevelWbase = list_wbase_item.find(e => e.Level === minLevel)
     if (minLevelWbase.IsCopy) {
-      data.parentid = minLevelWbase.ParentID === wbase_parentID ? null : minLevelWbase.ParentID;
-      data.data = list_wbase_item.map((e) => {
+      data.parentid =
+        minLevelWbase.ParentID === wbase_parentID
+          ? null
+          : minLevelWbase.ParentID
+      data.data = list_wbase_item.map(e => {
         return {
           GID: e.ChildID,
           Sort: e.Sort,
           IsCopy: e.IsCopy ?? false,
           positionItem: e.StyleItem.PositionItem,
           frameItem: e.StyleItem.FrameItem,
-          AttributesItem: e.CateID === EnumCate.table && e.IsCopy ? e.AttributesItem : null,
-          ListChildID: e.IsCopy ? null : e.ListChildID,
-        };
-      });
+          AttributesItem:
+            e.CateID === EnumCate.table && e.IsCopy ? e.AttributesItem : null,
+          ListChildID: e.IsCopy ? null : e.ListChildID
+        }
+      })
     } else {
-      data.parentid = minLevelWbase.GID;
-      data.data = list_wbase_item.map((e) => {
-        let attrItem;
+      data.parentid = minLevelWbase.GID
+      data.data = list_wbase_item.map(e => {
+        let attrItem
         if (e.CateID === EnumCate.table && (minLevelWbase === e || e.IsCopy)) {
           if (!e.IsCopy) {
-            attrItem = JSON.parse(JSON.stringify(e.AttributesItem));
-            for (let altWb of list_wbase_item.filter((wb) => wb.IsCopy)) {
-              attrItem.Content = attrItem.Content.replace(altWb.GID, `iscopy-${altWb.ChildID}`);
+            attrItem = JSON.parse(JSON.stringify(e.AttributesItem))
+            for (let altWb of list_wbase_item.filter(wb => wb.IsCopy)) {
+              attrItem.Content = attrItem.Content.replace(
+                altWb.GID,
+                `iscopy-${altWb.ChildID}`
+              )
             }
           } else {
-            attrItem = e.AttributesItem;
+            attrItem = e.AttributesItem
           }
         }
         return {
@@ -1600,105 +1747,126 @@ class WBaseDA {
           positionItem: e.StyleItem.PositionItem,
           frameItem: e.StyleItem.FrameItem,
           AttributesItem: attrItem,
-          ListChildID: e.IsCopy ? null : e.ListChildID,
-        };
-      });
+          ListChildID: e.IsCopy ? null : e.ListChildID
+        }
+      })
     }
-    WiniIO.emitMain(data);
+    WiniIO.emitMain(data)
   }
 
-  static editAndDelete(list_wbase_item, enumObj = EnumObj.attribute) {
-    let deleteList = list_wbase_item.filter((e) => e.IsDeleted);
-    wbase_list = wbase_list.filter((e) => deleteList.every((deleteItem) => deleteItem.GID !== e.GID && !e.ListID.includes(deleteItem.GID)));
-    arrange();
+  static editAndDelete (list_wbase_item, enumObj = EnumObj.attribute) {
+    let deleteList = list_wbase_item.filter(e => e.IsDeleted)
+    wbase_list = wbase_list.filter(e =>
+      deleteList.every(
+        deleteItem =>
+          deleteItem.GID !== e.GID && !e.ListID.includes(deleteItem.GID)
+      )
+    )
+    arrange()
     if (!WBaseDA.isCtrlZ && !list_wbase_item[0].isEditting) {
-      clearActionListFrom(action_index);
-      addAction();
+      clearActionListFrom(action_index)
+      addAction()
     }
     let data = {
       enumObj: enumObj,
       data: list_wbase_item,
-      enumEvent: EnumEvent.edit_delete,
-    };
-    WiniIO.emitMain(data);
+      enumEvent: EnumEvent.edit_delete
+    }
+    WiniIO.emitMain(data)
   }
 
-  static addStyle(list_wbase_item, enumObj) {
+  static addStyle (list_wbase_item, enumObj) {
     if (!WBaseDA.isCtrlZ) {
-      clearActionListFrom(action_index);
-      addAction();
+      clearActionListFrom(action_index)
+      addAction()
     }
     let data = {
       enumObj: enumObj ?? EnumObj.style,
       data: list_wbase_item,
-      enumEvent: EnumEvent.add,
-    };
-    WiniIO.emitMain(data);
+      enumEvent: EnumEvent.add
+    }
+    WiniIO.emitMain(data)
   }
 
-  static changeProperty(list_wbase_item) {
+  static changeProperty (list_wbase_item) {
     let data = {
       enumObj: EnumObj.wBase,
       data: list_wbase_item,
-      enumEvent: EnumEvent.propertyBase,
-    };
-    WiniIO.emitMain(data);
+      enumEvent: EnumEvent.propertyBase
+    }
+    WiniIO.emitMain(data)
   }
 
-  static assetsLoading = false;
-  static getAssetsList(listId, keySearch = "") {
-    var url = `WBase/ListAssetsItem?listid=${listId}&keySearch=${keySearch}`;
-    WiniIO.emitGet(null, url, EnumObj.wBase, EnumEvent.get);
+  static assetsLoading = false
+  static getAssetsList (listId, keySearch = '') {
+    var url = `WBase/ListAssetsItem?listid=${listId}&keySearch=${keySearch}`
+    WiniIO.emitGet(null, url, EnumObj.wBase, EnumEvent.get)
   }
 
-  static reloadAssetsList() {
-    assets_list = assets_list.filter((e) => e.ProjectID && e.PageID !== PageDA.obj.ID);
-    let localAssets = wbase_list.filter((e) => e.IsWini).map((e) => e.GID);
-    localAssets = wbase_list
-      .filter((e) => localAssets.some((id) => id == e.GID || e.ListID.includes(id)))
-      .map((e) => {
-        let jsonE = JSON.parse(JSON.stringify(e));
-        jsonE.ProjectID = ProjectDA.obj.ID;
-        jsonE.PageID = PageDA.obj.ID;
-        return jsonE;
-      });
-    assets_list.push(...localAssets);
+  static reloadAssetsList () {
+    assets_list = assets_list.filter(
+      e => e.ProjectID && e.PageID !== PageDA.obj.ID
+    )
+    let localAssets = wbase_list
+      .filter(e => e.IsWini)
+      .map(e => {
+        let jsonE = JSON.parse(JSON.stringify(e))
+        jsonE.ProjectID = ProjectDA.obj.ID
+        jsonE.PageID = PageDA.obj.ID
+        if (jsonE !== EnumCate.variant) jsonE.value = e.value.cloneNode(true)
+        return jsonE
+      })
+    assets_list.push(...localAssets)
   }
 
-  static async getAssetChildren(parentid) {
-    let url = `WBase/GetListChild?listid=${parentid}`;
-    let result = await $.get(domainApi + url);
-    return result.Data;
+  static async getAssetChildren (parentid) {
+    let url = `WBase/GetListChild?listid=${parentid}`
+    let result = await $.get(domainApi + url)
+    return result.Data
   }
 }
 
-function addAction(enumEvent = EnumEvent.select, enumObj = EnumObj.wBase) {
-  clearActionListFrom(action_index);
-  let oldData = [];
+function addAction (enumEvent = EnumEvent.select, enumObj = EnumObj.wBase) {
+  clearActionListFrom(action_index)
+  let oldData = []
   if (select_box_parentID == wbase_parentID) {
     oldData.push({
       GID: wbase_parentID,
-      ListChildID: wbase_list.filter((e) => e.ParentID === wbase_parentID).map((e) => e.GID),
-      Level: 0,
-    });
+      ListChildID: wbase_list
+        .filter(e => e.ParentID === wbase_parentID)
+        .map(e => e.GID),
+      Level: 0
+    })
   }
-  oldData.push(...wbase_list.filter((wbaseItem) => wbaseItem.GID === select_box_parentID || selected_list.some((selectItem) => wbaseItem.ListID.includes(selectItem.GID))).map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))));
-  action_index++;
+  oldData.push(
+    ...wbase_list
+      .filter(
+        wbaseItem =>
+          wbaseItem.GID === select_box_parentID ||
+          selected_list.some(selectItem =>
+            wbaseItem.ListID.includes(selectItem.GID)
+          )
+      )
+      .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem)))
+  )
+  action_index++
   action_list.push({
     oldData: oldData,
-    selected: selected_list.map((wbaseItem) => JSON.parse(JSON.stringify(wbaseItem))),
+    selected: selected_list.map(wbaseItem =>
+      JSON.parse(JSON.stringify(wbaseItem))
+    ),
     enumObj: enumObj,
-    enumEvent: enumEvent,
-  });
+    enumEvent: enumEvent
+  })
   if (action_list.length > 50) {
-    action_list.shift();
-    action_index = action_list.length - 1;
+    action_list.shift()
+    action_index = action_list.length - 1
   }
-  console.log("actionList: ", action_index, action_list);
+  console.log('actionList: ', action_index, action_list)
 }
 
-function clearActionListFrom(index = -1) {
-  action_index = index;
-  if (index < 0) action_list = [];
-  else action_list = action_list.slice(0, index + 1);
+function clearActionListFrom (index = -1) {
+  action_index = index
+  if (index < 0) action_list = []
+  else action_list = action_list.slice(0, index + 1)
 }

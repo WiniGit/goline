@@ -123,16 +123,11 @@
   height: fit-content;
   padding: 0;
   display: block;
-  cursor: default;
+  cursor: text !important;
   text-overflow: ellipsis;
   overflow: hidden !important;
   outline: none;
   overflow-wrap: break-word;
-}
-
-.w-text span[contentEditable="true"] {
-  cursor: text !important;
-  pointer-events: all !important;
 }
 
 .w-text > span * {

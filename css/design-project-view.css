@@ -289,7 +289,8 @@ body:has(#history-view) :is(.btn-tool-state:nth-child(2), .btn-history) {
     tr:has(.wbaseItem-value),
     td:has(> .wbaseItem-value),
     .tile-item:has(.wbaseItem-value),
-    .children-value:has(> .wbaseItem-value)
+    .children-value:has(> .wbaseItem-value),
+    .w-text span[contentEditable="true"]
   ) {
   pointer-events: none !important;
 }

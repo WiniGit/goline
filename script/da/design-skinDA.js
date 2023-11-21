@@ -28,7 +28,7 @@ class StyleDA {
   }
 
   static async initStyleSheets() {
-    let result = await $.get(domainApi + "Css/ListItem" + `?pageid=${PageDA.obj.ID}`);
+    let result = await $.get(domainApi + "Css/ListItem" + `?pid=${ProjectDA.obj.ID}`);
     return result;
   }
 

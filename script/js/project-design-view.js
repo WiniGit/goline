@@ -776,7 +776,7 @@ function addSelectList (new_selected_list = []) {
     selected_list.sort((a, b) => a.Sort - b.Sort)
     select_box_parentID = selected_list[0].ParentID
     let layerSelect = document.getElementById(`wbaseID:${selected_list[0].GID}`)
-    let layerParentRect = layer_view.lastChild.getBoundingClientRect()
+    let layerParentRect = document.getElementById(`parentID:${wbase_parentID}`).getBoundingClientRect()
     if (
       layerSelect &&
       !isInRange(

@@ -2,32 +2,24 @@
 function setupLeftView () {
   document.querySelector('#btn_select_page > p').innerHTML = PageDA.obj.Name
   $('body').on('click', '#btn_select_page', function (ev) {
+    let suffixIcon = ev.target.querySelector('i')
     if (div_list_page.style.display === 'none') {
-      ev.target.querySelector('i').className = ev.target
-        .querySelector('i')
-        .className.replace('fa-chevron-down', 'fa-chevron-up')
+      suffixIcon.className = suffixIcon.className.replace(
+        'fa-chevron-down',
+        'fa-chevron-up'
+      )
       div_list_page.style.display = 'flex'
-      if (layer_view.style.display === 'none') {
-        tabChange('Layer', 'left_tab_view')
-      }
+      if (assets_view.offsetWidth > 0) tabChange('Layer', 'left_tab_view')
     } else {
-      ev.target.querySelector('i').className = ev.target
-        .querySelector('i')
-        .className.replace('fa-chevron-up', 'fa-chevron-down')
+      suffixIcon.className = suffixIcon.className.replace(
+        'fa-chevron-up',
+        'fa-chevron-down'
+      )
       div_list_page.style.display = 'none'
     }
   })
-  let div_list_page = document.createElement('div')
-  div_list_page.id = 'div_list_page'
-  observer_listPage.observe(div_list_page)
-  let header_page = document.createElement('div')
-  header_page.className = 'header row'
-  header_page.innerHTML = 'Pages'
-  let btn_add_page = document.createElement('i')
-  btn_add_page.className = 'fa-solid fa-plus'
-  btn_add_page.style.padding = '8px'
-  btn_add_page.style.borderRadius = '2px'
-  btn_add_page.onclick = function () {
+  let div_list_page = document.getElementById('div_list_page')
+  $(div_list_page).on('click', '.header > .fa-plus', function () {
     let newName = `Module ${PageDA.list.length + 1}`
     PageDA.list.forEach(e => {
       if (e.Name === newName) {
@@ -40,30 +32,19 @@ function setupLeftView () {
       ProjectID: ProjectDA.obj.ID
     }
     PageDA.add(newPage)
-  }
-  header_page.appendChild(btn_add_page)
-  let bodyPage = document.createElement('div')
-  bodyPage.className = 'col'
-  bodyPage.replaceChildren(
+  })
+  div_list_page.querySelector(":scope > .col").replaceChildren(
     ...PageDA.list.map(pageItem => createPageTile(pageItem))
   )
-  div_list_page.replaceChildren(header_page, bodyPage)
   // add event unfocus when click white space
   layer_view.onclick = function (event) {
-    if (event.target.readOnly == true) {
-      event.target.blur()
-    } else if (event.target.id == 'Layer') {
-      addSelectList()
-    }
+    if (event.target.readOnly) event.target.blur()
+    else if (event.target.id === 'Layer') addSelectList()
   }
   document.getElementById('layer-search').onclick = showSearchResult
   // div contain all wbase_item as list tile
-  let show_list_tile = document.createElement('div')
-  layer_view.replaceChildren(div_list_page, show_list_tile)
-  show_list_tile.id = `parentID:${wbase_parentID}`
-  show_list_tile.style.overflowY = 'scroll'
-  show_list_tile.style.height = '100%'
   replaceAllLyerItemHTML()
+  observer_listPage.observe(div_list_page)
 }
 
 $('body').on('click', '.tab_left', function () {
@@ -654,17 +635,16 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
 }
 
 var select_component
-async function initUIAssetView (reloadComponent = false) {
+async function initUIAssetView (loading = false) {
   let children = []
   let scrollView = assets_view.querySelector(':scope > .col > .col')
   let scrollY = scrollView?.scrollTop ?? 0
-  if (reloadComponent) {
+  if (loading) {
     assets_view.replaceChildren(...children)
     let loader = document.createElement('div')
     loader.style.setProperty('--border-width', '3px')
     loader.style.height = '20px'
     loader.style.width = '20px'
-    loader.style.flex = 'none'
     loader.style.margin = '12px'
     loader.className = 'data-loader'
     assets_view.replaceChildren(loader)

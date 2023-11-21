@@ -3171,7 +3171,6 @@ function upListener (event) {
   left_view.resizing = false
   console.log('up ', checkpad, action_list)
   event.preventDefault()
-  let target_view
   if (event.target?.className == 'header_popup_skin') {
     event.target.parentElement.removeAttribute('startOffset')
     return
@@ -3187,7 +3186,7 @@ function upListener (event) {
     ) {
       break
     } else if (thisElement.id == 'canvas_view') {
-      target_view = thisElement
+      var target_view = thisElement
       break
     }
   }
