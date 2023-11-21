@@ -27,6 +27,11 @@ class StyleDA {
     }
   }
 
+  static async getById(id) {
+    let result = await $.get(domainApi + "Css/GetListByID" + `?id=${id}`);
+    return result;
+  }
+
   static async initStyleSheets() {
     let result = await $.get(domainApi + "Css/ListItem" + `?pid=${ProjectDA.obj.ID}`);
     return result;
