@@ -7447,7 +7447,7 @@ function addEffect () {
       wb.StyleItem.DecorationItem.EffectItem = newEffectItem
       wb.value.style.boxShadow = `${newEffectItem.OffsetX}px ${newEffectItem.OffsetY}px ${newEffectItem.BlurRadius}px ${newEffectItem.SpreadRadius}px #${newEffectItem.ColorValue}`
     }
-    WBaseDA.edit(listUpdate, EnumObj.border)
+    WBaseDA.edit(listUpdate, EnumObj.effect)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
@@ -7478,7 +7478,7 @@ function deleteEffect () {
       wb.value.style.boxShadow = null
       wb.value.style.filter = null
     }
-    WBaseDA.edit(listUpdate, EnumObj.border)
+    WBaseDA.edit(listUpdate, EnumObj.effect)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
