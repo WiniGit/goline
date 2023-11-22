@@ -1942,7 +1942,8 @@ function handleEditOffset ({
               )
             }
           }
-          cssRule.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
+          cssRule.style.width =
+            wb.CateID === EnumCate.text ? 'max-content' : null
           wb.value.setAttribute('width-type', 'fit')
         } else if (width < 0) {
           cssRule.style.width = '100%'
@@ -2056,7 +2057,8 @@ function handleEditOffset ({
             }
           }
           wb.StyleItem.FrameItem.Width = null
-          wb.value.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
+          wb.value.style.width =
+            wb.CateID === EnumCate.text ? 'max-content' : null
           wb.value.setAttribute('width-type', 'fit')
         } else if (width < 0) {
           wb.StyleItem.FrameItem.Width = width
@@ -2126,7 +2128,8 @@ function handleEditOffset ({
               )
             }
           }
-          cssRule.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
+          cssRule.style.width =
+            wb.CateID === EnumCate.text ? 'max-content' : null
           wb.value.setAttribute('width-type', 'fit')
         } else if (width < 0) {
           cssRule.style.width = '100%'
@@ -3873,7 +3876,7 @@ function unlinkTypoSkin () {
         FontFamily: skinTypo.FontFamily,
         Height: skinTypo.Height
       }
-      wb.StyleItem.TextStyleID = newTextStyleItem.GID
+      wb.StyleItem.TextStyleID = null
       wb.StyleItem.TextStyleItem = newTextStyleItem
       wb.value.style.font = null
       wb.value.style.fontFamily = newTextStyleItem.FontFamily
@@ -3885,6 +3888,9 @@ function unlinkTypoSkin () {
         wb.value.style.lineHeight = `${newTextStyleItem.Height}px`
     }
     WBaseDA.addStyle(listUpdate, EnumObj.textStyle)
+    listUpdate.forEach(
+      wb => (wb.StyleItem.TextStyleID = wb.StyleItem.TextStyleItem.GID)
+    )
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
@@ -4181,7 +4187,7 @@ function unlinkBorderSkin () {
         BorderSide: currentBorder.BorderSide,
         Width: currentBorder.Width
       }
-      wb.StyleItem.DecorationItem.BorderID = newBorderItem.GID
+      wb.StyleItem.DecorationItem.BorderID = null
       wb.StyleItem.DecorationItem.BorderItem = newBorderItem
       wb.value.style.borderWidth = newBorderItem.Width.split(' ')
         .map(e => `${e}px}`)
@@ -4205,7 +4211,12 @@ function unlinkBorderSkin () {
         StyleDA.editStyleSheet(cssItem)
       }
     }
-    WBaseDA.addStyle(listBorder, EnumObj.border)
+    WBaseDA.addStyle(listUpdate, EnumObj.border)
+    listUpdate.forEach(
+      wb =>
+        (wb.StyleItem.DecorationItem.BorderID =
+          wb.StyleItem.DecorationItem.BorderItem.GID)
+    )
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
@@ -7385,7 +7396,12 @@ function unlinkEffectSkin () {
         } ${newEffectItem.Type == ShadowType.inner ? 'inset' : ''}`
       }
     }
-    WBaseDA.addStyle(listEffect, EnumObj.effect)
+    WBaseDA.addStyle(listUpdate, EnumObj.effect)
+    listUpdate.forEach(
+      wb =>
+        (wb.StyleItem.DecorationItem.EffectID =
+          wb.StyleItem.DecorationItem.EffectItem.GID)
+    )
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
