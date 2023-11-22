@@ -1678,7 +1678,7 @@ class WBaseDA {
         addSelectList()
         WiniIO.emitMain(data)
       }
-      layer_view.lastChild.scrollTo({
+      document.getElementById(`parentID:${wbase_parentID}`).scrollTo({
         top: offY,
         behavior: 'smooth'
       })
@@ -1813,7 +1813,10 @@ class WBaseDA {
         let jsonE = JSON.parse(JSON.stringify(e))
         jsonE.ProjectID = ProjectDA.obj.ID
         jsonE.PageID = PageDA.obj.ID
-        if (jsonE !== EnumCate.variant) jsonE.value = e.value.cloneNode(true)
+        if (jsonE.CateID !== EnumCate.variant) {
+          jsonE.value = e.value.cloneNode(true)
+          jsonE.value.style = null
+        }
         return jsonE
       })
     assets_list.push(...localAssets)

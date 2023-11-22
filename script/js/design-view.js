@@ -125,7 +125,14 @@ function updateUIDesignView () {
   }
   design_view.replaceChildren(listEditContainer)
   if (selected_list.some(wb => wb.IsInstance && !wb.StyleItem)) {
-    design_view.querySelectorAll('input').forEach(e => (e.disabled = true))
+    design_view
+      .querySelectorAll(
+        'input, button, i, .btn_resize, img, .constraint-selector-outerVertical, .constraint-selector-outerHorizontal, .btn_dropdown_select'
+      )
+      .forEach(e => {
+        e.style.pointerEvents = 'none'
+        e.disabled = true
+      })
   }
   design_view.scrollTo({
     top: scrollY,

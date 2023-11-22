@@ -956,11 +956,11 @@ function initWbaseStyle (item) {
 }
 
 function handleStyleSize (item) {
-  if (isNaN(item.StyleItem.FrameItem.Width)) {
+  if (item.StyleItem.FrameItem.Width == null) {
     if (item.CateID === EnumCate.text) {
       item.value.style.width = 'max-content'
     } else {
-      item.value.style.width = 'fit-content'
+      item.value.style.width = null
     }
     item.value.setAttribute('width-type', 'fit')
   } else if (item.StyleItem.FrameItem.Width < 0) {
@@ -976,8 +976,8 @@ function handleStyleSize (item) {
       item.value.removeAttribute('width-type')
     }
   }
-  if (isNaN(item.StyleItem.FrameItem.Height)) {
-    item.value.style.height = 'fit-content'
+  if (item.StyleItem.FrameItem.Height == null) {
+    item.value.style.height = null
     item.value.setAttribute('height-type', 'fit')
   } else if (item.StyleItem.FrameItem.Height < 0) {
     item.value.setAttribute('height-type', 'fill')

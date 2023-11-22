@@ -1807,7 +1807,8 @@ function handleEditOffset ({
             }
           }
           wb.StyleItem.FrameItem.Width = null
-          wb.value.style.width = null
+          wb.value.style.width =
+            wb.CateID === EnumCate.text ? 'max-content' : null
           wb.value.setAttribute('width-type', 'fit')
         } else if (width < 0) {
           wb.StyleItem.FrameItem.Width = width
@@ -1941,7 +1942,7 @@ function handleEditOffset ({
               )
             }
           }
-          cssRule.style.width = null
+          cssRule.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
           wb.value.setAttribute('width-type', 'fit')
         } else if (width < 0) {
           cssRule.style.width = '100%'
@@ -2055,7 +2056,7 @@ function handleEditOffset ({
             }
           }
           wb.StyleItem.FrameItem.Width = null
-          wb.value.style.width = null
+          wb.value.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
           wb.value.setAttribute('width-type', 'fit')
         } else if (width < 0) {
           wb.StyleItem.FrameItem.Width = width
@@ -2125,7 +2126,7 @@ function handleEditOffset ({
               )
             }
           }
-          cssRule.style.width = null
+          cssRule.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
           wb.value.setAttribute('width-type', 'fit')
         } else if (width < 0) {
           cssRule.style.width = '100%'
@@ -5308,6 +5309,7 @@ async function addAutoLayout () {
         })
       WBaseDA.edit(selected_list, EnumObj.padddingWbaseFrame)
       addSelectList(selected_list)
+      wb.StyleItem.PaddingID = wb.StyleItem.PaddingItem.GID
     } else {
       let pWbComponent = wb.value.closest(`.wbaseItem-value[iswini="true"]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
@@ -5535,7 +5537,7 @@ function handleEditLayout ({
               wb.value.setAttribute('width-type', 'fill')
             }
             // TH height của wbase item này dạng fixed thì phải chuyển width của wbase item này về dạng fixed
-            else if (wb.StyleItem.FrameItem.Height >= 0) {
+            else if (wb.StyleItem.FrameItem.Height != null) {
               wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
               wb.value.style.width = `${wb.value.offsetWidth}px`
               cWb.value.removeAttribute('width-type')
@@ -5949,7 +5951,7 @@ function handleEditLayout ({
               wb.value.setAttribute('height-type', 'fill')
             }
             // TH width của wbase item này dạng fixed thì phải chuyển height của wbase item này về dạng fixed
-            else if (wb.StyleItem.FrameItem.Width >= 0) {
+            else if (wb.StyleItem.FrameItem.Width != null) {
               wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
               wb.value.style.height = `${wb.value.offsetHeight}px`
               wb.value.removeAttribute('height-type')

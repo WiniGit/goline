@@ -755,11 +755,8 @@ function addSelectList (new_selected_list = []) {
       let layerHTML = document.getElementById(`wbaseID:${wb.GID}`)
       if (layerHTML)
         layerHTML.style.backgroundColor =
-          wb.IsWini ||
-          wb.IsInstance ||
-          $(layerHTML).parents(
-            `.col:has(> .layer_wbase_tile[iswini="true"], .layer_wbase_tile[isinstance="true"])`
-          ).length
+          wb.value.closest(`.wbaseItem-value[iswini="true"]`) ||
+          wb.value.closest(`.wbaseItem-value[isinstance="true"]`)
             ? '#ebe6ff'
             : '#e6f7ff'
     }
@@ -776,7 +773,9 @@ function addSelectList (new_selected_list = []) {
     selected_list.sort((a, b) => a.Sort - b.Sort)
     select_box_parentID = selected_list[0].ParentID
     let layerSelect = document.getElementById(`wbaseID:${selected_list[0].GID}`)
-    let layerParentRect = document.getElementById(`parentID:${wbase_parentID}`).getBoundingClientRect()
+    let layerParentRect = document
+      .getElementById(`parentID:${wbase_parentID}`)
+      .getBoundingClientRect()
     if (
       layerSelect &&
       !isInRange(
@@ -804,14 +803,9 @@ function addSelectList (new_selected_list = []) {
       if (!WBaseDA.isCtrlZ) {
         addAction()
       }
-      if (
-        window.getComputedStyle(assets_view).display != 'none' &&
-        tool_state === ToolState.move
-      ) {
-        if (select_component && select_component.ProjectID !== 0) {
-          select_component = null
-        }
-        initUIAssetView()
+      if (assets_view.offsetWidth > 0 && tool_state === ToolState.move) {
+        if (!(select_component?.ProjectID === 0)) select_component = null
+        updateListComponentByProject({ ID: 0 })
       }
       f12_update_selectWbase()
       $('.wbaseItem-value').removeClass('selected')

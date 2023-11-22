@@ -424,6 +424,17 @@ socket.on('server-get', data => {
             assets_list = assets_list.filter(
               wb => wb.PageID !== listAssets[0].PageID
             )
+            if (listAssets[0].PageID === PageDA.obj.ID) {
+              listAssets = listAssets.map(e => {
+                if (e.CateID !== EnumCate.variant) {
+                  e.value = divSection
+                    .querySelector(`.wbaseItem-value[id="${e.GID}"]`)
+                    .cloneNode(true)
+                  e.value.style = null
+                }
+                return e
+              })
+            }
             assets_list.push(...listAssets)
             let listProjectID = listAssets.filterAndMap(e => e.ProjectID)
             ;[...ProjectDA.assetsList, ProjectDA.obj]
@@ -790,8 +801,9 @@ socket.on('server-main', async data => {
       data.token === UserService.getToken() ||
       data.token === UserService.getRefreshToken()
     ) {
+      if (data.enumEvent === EnumEvent.edit) return
       thisAction = action_list[data.index]
-      if (thisAction.tmpHTML) {
+      if (thisAction?.tmpHTML) {
         wbase_list = wbase_list.filter(e => {
           let check = thisAction.tmpHTML.every(eHTML => eHTML.id !== e.GID)
           if (!check) {

@@ -33,9 +33,9 @@ function setupLeftView () {
     }
     PageDA.add(newPage)
   })
-  div_list_page.querySelector(":scope > .col").replaceChildren(
-    ...PageDA.list.map(pageItem => createPageTile(pageItem))
-  )
+  div_list_page
+    .querySelector(':scope > .col')
+    .replaceChildren(...PageDA.list.map(pageItem => createPageTile(pageItem)))
   // add event unfocus when click white space
   layer_view.onclick = function (event) {
     if (event.target.readOnly) event.target.blur()
@@ -654,7 +654,7 @@ async function initUIAssetView (loading = false) {
       StyleDA.getSkinsByListId(ProjectDA.obj.ListID)
     }
   } else {
-    WBaseDA.reloadAssetsList()
+    // WBaseDA.reloadAssetsList()
     let component_div = document.createElement('div')
     component_div.className = 'col'
     let scroll_div = document.createElement('div')
@@ -777,7 +777,6 @@ async function initUIAssetView (loading = false) {
     scroll_div.replaceChildren(fragment)
     component_div.replaceChildren(search_container, scroll_div)
     children.push(component_div)
-    // list component
     if (select_component) {
       children.push(instance_div)
       if (left_view.offsetWidth < 320) {
@@ -785,47 +784,19 @@ async function initUIAssetView (loading = false) {
       }
       let instance_demo = document.createElement('div')
       instance_demo.className = 'instance_demo'
-      let list_relative_instance = []
-      list_relative_instance = [...select_component.children, select_component]
-      list_relative_instance = list_relative_instance.map(e => {
-        let fakeItem = JSON.parse(JSON.stringify(e))
-        fakeItem.value = null
-        fakeItem.ProjectID = select_component.ProjectID
-        return fakeItem
-      })
-      let div_instance_value = document.createElement('div')
-      div_instance_value.setAttribute(
-        'iswini',
-        select_component.ProjectID !== 0 ? 'true' : false
-      )
-      for (let inst of list_relative_instance) {
-        await initComponents(
-          inst,
-          list_relative_instance.filter(e => e.ParentID === inst.GID),
-          false
-        )
-        if (inst.StyleItem.FrameItem) {
-          if (
-            inst.value.style.width != '100%' &&
-            inst.value.style.width != 'fit-content'
+      if (!select_component.value) {
+        for (let wb of [...select_component.children, select_component]) {
+          await initComponents(
+            wb,
+            select_component.children.filter(e => e.ParentID === wb.GID),
+            false
           )
-            inst.value.style.minWidth = inst.StyleItem.FrameItem.Width + 'px'
-          if (
-            inst.value.style.height != '100%' &&
-            inst.value.style.height != 'fit-content'
-          )
-            inst.value.style.minHeight = inst.StyleItem.FrameItem.Height + 'px'
-        }
-        if (inst.GID === select_component.GID) {
-          div_instance_value.setAttribute('componentid', inst.GID)
-          div_instance_value.appendChild(inst.value)
-          instance_demo.appendChild(div_instance_value)
         }
       }
-      if (instance_demo) {
-        instance_div.replaceChildren(instance_demo)
-        observer_instance.observe(instance_demo)
-      }
+      select_component.value.setAttribute('componentid', select_component.GID)
+      instance_demo.appendChild(select_component.value)
+      instance_div.replaceChildren(instance_demo)
+      observer_instance.observe(instance_demo)
     }
     assets_view.replaceChildren(...children)
     scroll_div.scrollTo({
@@ -841,7 +812,7 @@ function createListComponent (projectItem, isShowContent) {
     `component projectID:${projectItem.ID}`
   )
   let isShow = false
-  if (isShowContent) {
+  if (isShowContent != null) {
     isShow = isShowContent
   } else if (currentListTile) {
     isShow =
@@ -875,6 +846,7 @@ function createListComponent (projectItem, isShowContent) {
       list_component_parent = selected_list.map(e => {
         let jsonE = JSON.parse(JSON.stringify(e))
         jsonE.ProjectID = 0
+        jsonE.value = e.value.cloneNode(true)
         return jsonE
       })
       container_child.replaceChildren(
@@ -883,27 +855,17 @@ function createListComponent (projectItem, isShowContent) {
     } else if (projectItem.ID === ProjectDA.obj.ID) {
       container_child.replaceChildren(
         ...PageDA.list.map(page => {
-          let listPageComp = assets_list.filter(
-            e =>
-              e.PageID === page.ID &&
-              assets_list.every(el => !e.ListID.includes(el.GID))
-          )
+          let listPageComp = assets_list.filter(e => e.PageID === page.ID)
           let showPageCom =
             isShowContent ||
-            (select_component &&
-              listPageComp.some(e => e.GID === select_component.GID))
+            listPageComp.some(e => e.GID === select_component?.GID)
           let pageTileContainer = document.createElement('div')
           pageTileContainer.className = 'col page-comp-container'
           let pageTile = document.createElement('div')
           pageTile.className = 'row list_tile'
-          let prefix = document.createElement('i')
-          prefix.className = `fa-solid fa-caret-${
+          pageTile.innerHTML = `<i class="fa-solid fa-caret-${
             showPageCom ? 'down' : 'right'
-          } fa-xs`
-          let t = document.createElement('p')
-          t.className = 'semibold1 title'
-          t.innerHTML = page.Name
-          pageTile.replaceChildren(prefix, t)
+          } fa-xs"></i><p class="semibold1 title">${page.Name}</p>`
           let listComp = document.createElement('div')
           listComp.className = 'col'
           if (showPageCom) {
@@ -1045,9 +1007,7 @@ function createComponentTile (item, space = 0) {
       if (item.ProjectID === 0) {
         select_component = JSON.parse(JSON.stringify(item))
         if (item.ProjectID === 0) {
-          select_component.children = wbase_list
-            .filter(e => e.ListID.includes(item.GID))
-            .map(e => JSON.parse(JSON.stringify(e)))
+          select_component = item
         } else {
           select_component.children = assets_list
             .filter(e => e.ListID.includes(item.GID))
@@ -1061,16 +1021,28 @@ function createComponentTile (item, space = 0) {
         loader.style.margin = '0 4px'
         loader.className = 'data-loader'
         prefix_action.replaceWith(loader)
-        WBaseDA.getAssetChildren(item.GID).then(result => {
-          let relativeList = initDOM([
-            ...result,
-            JSON.parse(JSON.stringify(item))
-          ])
-          arrange(relativeList)
-          select_component = relativeList.pop()
-          select_component.children = relativeList
+        if (item.PageID === PageDA.obj.ID) {
+          select_component = item
           initUIAssetView()
-        })
+        } else {
+          WBaseDA.getAssetChildren(item.GID).then(async result => {
+            if (item.ProjectID !== ProjectDA.obj.ID) {
+              let cssRule = await StyleDA.getById(item.GID)
+              let styleTag = document.createElement('style')
+              styleTag.id = `w-st-comp${cssRule.GID}`
+              styleTag.innerHTML = cssRule.Css
+              document.head.appendChild(styleTag)
+            }
+            let relativeList = initDOM([...result, item]).map(e => {
+              delete e.value
+              return e
+            })
+            arrange(relativeList)
+            select_component = relativeList.pop()
+            select_component.children = relativeList
+            initUIAssetView()
+          })
+        }
       }
     }
   }
@@ -1080,25 +1052,15 @@ function createComponentTile (item, space = 0) {
 const observer_instance = new ResizeObserver(entries => {
   entries.forEach(entry => {
     let instance_demo = entry.target
-    let instance_value = instance_demo.firstChild?.firstChild
+    let instance_value = instance_demo.firstChild
     if (instance_value) {
-      instance_demo.style.height = entry.contentRect.width + 'px'
-      let scale = entry.contentRect.width - 16
-      scale =
+      let scale =
         instance_value.offsetHeight > instance_value.offsetWidth
-          ? scale / instance_value.offsetHeight
-          : scale / instance_value.offsetWidth
-      instance_value.style.transform = `scale(${scale})`
+          ? (entry.contentRect.width - 16) / instance_value.offsetHeight
+          : (entry.contentRect.width - 16) / instance_value.offsetWidth
+      instance_value.style.transform = `scale(${scale}) translate(calc(-50% / ${scale}),calc(-50% / ${scale}))`
       instance_value.style.position = 'absolute'
-      let rectBox = instance_value.getBoundingClientRect()
-      instance_value.style.left = `-${
-        (instance_value.offsetWidth - rectBox.width) / 2
-      }px`
-      instance_value.style.top = `-${
-        (instance_value.offsetHeight - rectBox.height) / 2
-      }px`
-      instance_demo.firstChild.style.width = rectBox.width + 'px'
-      instance_demo.firstChild.style.height = rectBox.height + 'px'
+      instance_demo.style.height = entry.contentRect.width + 'px'
     }
   })
 })
