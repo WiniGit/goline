@@ -7478,7 +7478,7 @@ function deleteEffect () {
       wb.value.style.boxShadow = null
       wb.value.style.filter = null
     }
-    WBaseDA.edit(listUpdate, EnumObj.effect)
+    WBaseDA.edit(listUpdate, EnumObj.decoration)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
