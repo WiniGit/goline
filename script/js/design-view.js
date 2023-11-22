@@ -12,7 +12,11 @@ function setupRightView () {
 $('body').on('click', '.tab_right', function () {
   if (design_view_index != $(this).data('index')) {
     design_view_index = $(this).data('index')
-    tabChange(this.innerHTML, 'right_tab_view')
+    let x = document.getElementsByClassName('right_tab_view')
+    for (let i = 0; i < x.length; i++) {
+      x[i].style.display = 'none'
+    }
+    document.getElementById(this.innerHTML.trim()).style.display = 'block'
     wdraw()
     let list_tab_view = document.getElementsByClassName('tab_right')
     for (let i = 0; i < list_tab_view.length; i++) {

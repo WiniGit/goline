@@ -9,7 +9,7 @@ function setupLeftView () {
         'fa-chevron-up'
       )
       div_list_page.style.display = 'flex'
-      if (assets_view.offsetWidth > 0) tabChange('Layer', 'left_tab_view')
+      if (assets_view.offsetWidth > 0) leftTabChange('Layer')
     } else {
       suffixIcon.className = suffixIcon.className.replace(
         'fa-chevron-up',
@@ -45,26 +45,13 @@ function setupLeftView () {
   // div contain all wbase_item as list tile
   replaceAllLyerItemHTML()
   observer_listPage.observe(div_list_page)
+  $('body').on('click', '.tab_left', function () {
+    leftTabChange(this.innerHTML)
+  })
 }
 
-$('body').on('click', '.tab_left', function () {
-  tabChange(this.innerHTML, 'left_tab_view')
-  if (this.innerHTML === 'Assets') {
-    assets_view.style.display = 'flex'
-    let btn_select_page = document.getElementById('btn_select_page')
-    let btnIcon = btn_select_page.querySelector(':scope > i')
-    btnIcon.className = btnIcon.className.replace(
-      'fa-chevron-up',
-      'fa-chevron-down'
-    )
-    document.getElementById('div_list_page').style.display = 'none'
-    select_component = undefined
-    initUIAssetView(true)
-  }
-})
-
 function showSearchResult () {
-  tabChange('Layer', 'left_tab_view')
+  leftTabChange('Layer')
   let searchFilter = 0
   let filterBy = [
     0, // all
@@ -354,20 +341,30 @@ function replaceAllLyerItemHTML () {
 }
 
 // handle tab change
-function tabChange (tabName, leftOrRight) {
+function leftTabChange (tabName) {
   tabName = tabName.trim()
-  let x = document.getElementsByClassName(leftOrRight)
+  let x = document.getElementsByClassName('left_tab_view')
   for (let i = 0; i < x.length; i++) {
     x[i].style.display = 'none'
   }
   document.getElementById(tabName).style.display = 'block'
   let list_tab_view = document.getElementsByClassName('tab_left')
-  for (let j = 0; j < list_tab_view.length; j++) {
-    if (list_tab_view[j].innerHTML == tabName) {
-      list_tab_view[j].style.opacity = 1
-    } else {
-      list_tab_view[j].style.opacity = 0.7
-    }
+  for (let tab of list_tab_view) {
+    tab.style.opacity = tab.innerHTML == tabName ? 1 : 0.7
+  }
+  if (tabName === 'Layer') {
+    document.querySelectorAll(`style[export="true"]`).forEach(e => e.remove())
+  } else {
+    assets_view.style.display = 'flex'
+    let btn_select_page = document.getElementById('btn_select_page')
+    let btnIcon = btn_select_page.querySelector(':scope > i')
+    btnIcon.className = btnIcon.className.replace(
+      'fa-chevron-up',
+      'fa-chevron-down'
+    )
+    document.getElementById('div_list_page').style.display = 'none'
+    select_component = null
+    initUIAssetView(true)
   }
 }
 
@@ -1031,6 +1028,7 @@ function createComponentTile (item, space = 0) {
               let styleTag = document.createElement('style')
               styleTag.id = `w-st-comp${cssRule.GID}`
               styleTag.innerHTML = cssRule.Css
+              styleTag.setAttribute('export', true)
               document.head.appendChild(styleTag)
             }
             let relativeList = initDOM([...result, item]).map(e => {

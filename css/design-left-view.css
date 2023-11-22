@@ -253,7 +253,7 @@
   box-sizing: border-box;
 }
 
-#Assets > div {
+#Assets > div:not(.data-loader) {
   flex: 1;
   width: 100%;
 }

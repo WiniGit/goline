@@ -7051,6 +7051,13 @@ function handleEditPadding ({ top, right, bottom, left }) {
   )
   if (listUpdate[0].StyleItem) {
     for (let wb of [...listUpdate]) {
+      wb.StyleItem.PaddingItem ??= {
+        GID: uuidv4(),
+        Top: 0,
+        Right: 0,
+        Bottom: 0,
+        Left: 0
+      }
       if (top !== undefined) wb.StyleItem.PaddingItem.Top = top
       if (right !== undefined) wb.StyleItem.PaddingItem.Right = right
       if (bottom !== undefined) wb.StyleItem.PaddingItem.Bottom = bottom
@@ -7076,7 +7083,10 @@ function handleEditPadding ({ top, right, bottom, left }) {
         StyleDA.editStyleSheet(cssItem)
       }
     }
-    WBaseDA.edit(selected_list, EnumObj.paddingPosition)
+    WBaseDA.edit(listUpdate, EnumObj.padding)
+    listUpdate.forEach(
+      wb => (wb.StyleItem.PaddingID = wb.StyleItem.PaddingItem.GID)
+    )
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`

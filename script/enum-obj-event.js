@@ -17,7 +17,7 @@ class EnumObj {
     static decoration = 13;
     static effect = 14;
     static wBaseAttribute = 15;
-    static paddingPosition = 17;
+    static padding = 17;
     static position = 19;
     static color = 20;
     static team = 21;

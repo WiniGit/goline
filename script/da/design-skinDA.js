@@ -29,7 +29,7 @@ class StyleDA {
 
   static async getById(id) {
     let result = await $.get(domainApi + "Css/GetListByID" + `?id=${id}`);
-    return result;
+    return result.Data;
   }
 
   static async initStyleSheets() {

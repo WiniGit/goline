@@ -1079,7 +1079,7 @@ function moveListener (event) {
       if (document.body.style.cursor === 'e-resize') {
         left_view.style.width = event.pageX + 'px'
       } else {
-        layer_view.firstChild.style.height =
+        document.getElementById('div_list_page').style.height =
           event.pageY - (pageContainerY.bottom - pageContainerY.height) + 'px'
       }
       return
@@ -1108,7 +1108,7 @@ function moveListener (event) {
       document.body.style.cursor = 'n-resize'
       if (event.buttons == 1) {
         left_view.resizing = true
-        layer_view.firstChild.style.height =
+        document.getElementById('div_list_page').style.height =
           event.pageY - (pageContainerY.bottom - pageContainerY.height) + 'px'
         return
       }
