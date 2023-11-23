@@ -829,23 +829,19 @@ function createListComponent (projectItem, isShowContent) {
   container.className = 'col'
   let list_tile = document.createElement('div')
   list_tile.className = 'list_tile row'
-  let prefix_action = document.createElement('i')
-  prefix_action.className = `fa-solid fa-caret-${
+  list_tile.innerHTML = `<i class="fa-solid fa-caret-${
     isShow ? 'down' : 'right'
-  } fa-xs`
-  let title = document.createElement('p')
-  title.className = 'title'
-  list_tile.replaceChildren(prefix_action, title)
+  } fa-xs"></i><p class="title">${
+    projectItem.ID === 0
+      ? 'Selected objects'
+      : projectItem.ID === ProjectDA.obj.ID
+      ? 'Local components'
+      : projectItem.Name
+  }</p>`
+  let prefix_action = list_tile.querySelector('i')
   let container_child = document.createElement('div')
   container_child.className = 'col'
   container.replaceChildren(list_tile, container_child)
-  if (projectItem.ID === 0) {
-    title.innerHTML = 'Selected objects'
-  } else if (projectItem.ID === ProjectDA.obj.ID) {
-    title.innerHTML = 'Local components'
-  } else {
-    title.innerHTML = projectItem.Name
-  }
   if (projectItem.ID === 0 || isShow) {
     let list_component_parent = []
     if (projectItem.ID === 0) {
@@ -913,24 +909,7 @@ function createListComponent (projectItem, isShowContent) {
       if (isShow) {
         if (projectItem.ID === 0) {
           prefix_action.className = 'fa-solid fa-caret-down fa-xs'
-        }
-        // else if (
-        //   projectItem.ID === ProjectDA.obj.ID &&
-        //   PageDA.list.length === 1
-        // ) {
-        //   let list_component_parent = assets_list.filter(
-        //     e =>
-        //       e.ProjectID === projectItem.ID &&
-        //       assets_list.every(el => !e.ListID.includes(el.GID))
-        //   )
-        //   container_child.replaceChildren(
-        //     ...list_component_parent.map(comItem =>
-        //       createComponentTile(comItem)
-        //     )
-        //   )
-        //   prefix_action.className = 'fa-solid fa-caret-down fa-xs'
-        // }
-        else {
+        } else {
           WBaseDA.assetsLoading = true
           let loader = document.createElement('div')
           loader.style.setProperty('--border-width', '3px')
@@ -2237,7 +2216,6 @@ function dragInstanceUpdate (event) {
 
 function dragInstanceEnd (event) {
   WBaseDA.enumEvent = EnumEvent.copy
-  select_component.children = null
   let newParent = parent
   let parent_wbase
   let isTableParent = newParent.localName === 'table'
@@ -2245,6 +2223,7 @@ function dragInstanceEnd (event) {
     parent_wbase = wbase_list.find(e => e.GID === newParent.id)
   let drag_to_layout = window.getComputedStyle(newParent).display.match('flex')
   let newWb = JSON.parse(JSON.stringify(select_component))
+  newWb.children = null
   newWb.GID = uuidv4()
   newWb.value = instance_drag.firstChild
   newWb.value.id = newWb.GID
