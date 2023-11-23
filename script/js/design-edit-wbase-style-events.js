@@ -6607,7 +6607,7 @@ function handleEditLayout ({
                 }
                 listUpdate.push(...listChildFillW)
               } else {
-                let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+                var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
                 for (let cWb of listChildFillW) {
                   StyleDA.docStyleSheets.find(rule => {
                     let selector = [
@@ -6625,7 +6625,6 @@ function handleEditLayout ({
                     return check
                   })
                 }
-                StyleDA.editStyleSheet(cssItem)
               }
             }
             if (wb.StyleItem.FrameItem.Height == null) {
@@ -6667,7 +6666,7 @@ function handleEditLayout ({
                 }
                 listUpdate.push(...listChildFillH)
               } else {
-                let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+                cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
                 for (let cWb of listChildFillH) {
                   StyleDA.docStyleSheets.find(rule => {
                     let selector = [
@@ -6685,7 +6684,6 @@ function handleEditLayout ({
                     return check
                   })
                 }
-                StyleDA.editStyleSheet(cssItem)
               }
             }
             if (wb.StyleItem.FrameItem.Width == null) {
@@ -6696,6 +6694,18 @@ function handleEditLayout ({
           }
           wb.value.setAttribute('wrap', 'wrap')
         } else wb.value.removeAttribute('wrap')
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.flexWrap = isWrap ? 'wrap' : null
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+        }
+        if (cssItem) StyleDA.editStyleSheet(cssItem)
       }
       WBaseDA.edit(listUpdate, EnumObj.autoLayoutFrame)
     } else {
@@ -6771,6 +6781,7 @@ function handleEditLayout ({
             } else {
               selector.forEach(e => e.removeAttribute('wrap'))
             }
+            rule.style.flexWrap = isWrap ? 'wrap' : null
             cssItem.Css = cssItem.Css.replace(
               new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
               rule.cssText
@@ -6788,22 +6799,49 @@ function handleEditLayout ({
         wb.WAutolayoutItem.IsScroll = isScroll
         if (isScroll) wb.value.setAttribute('scroll', 'true')
         else wb.value.removeAttribute('scroll')
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.id)
+          let cssRule = StyleDA.docStyleSheets.find(e => {
+            let selector = [...divSection.querySelectorAll(e.selectorText)]
+            let check = selector.includes(wb.value)
+            if (check)
+              selector.forEach(el => {
+                if (isScroll) el.setAttribute('scroll', 'true')
+                else el.removeAttribute('scroll')
+              })
+            return check
+          })
+          cssRule.style.overflow = isScroll ? 'scroll' : 'hidden'
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+        }
       }
     } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         wb.WAutolayoutItem.IsScroll = isScroll
-        StyleDA.docStyleSheets.find(rule => {
+        let cssRule = StyleDA.docStyleSheets.find(rule => {
           let selector = [...divSection.querySelectorAll(rule.selectorText)]
           let check = selector.includes(wb.value)
-          if (check) {
+          if (check)
             selector.forEach(e => {
               if (isScroll) e.setAttribute('scroll', 'true')
               else e.removeAttribute('scroll')
             })
-          }
           return check
         })
+        cssRule.style.overflow = isScroll ? 'scroll' : 'hidden'
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
       }
+      StyleDA.editStyleSheet(cssItem)
     }
     WBaseDA.edit(listUpdate, EnumObj.autoLayout)
   }

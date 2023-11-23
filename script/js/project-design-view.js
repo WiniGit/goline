@@ -180,6 +180,11 @@ async function initData () {
                 wbHTML.setAttribute('wrap', 'wrap')
               }
               break
+            case 'overflow':
+              if (cssRuleItem.style[stProp] === 'scroll') {
+                wbHTML.setAttribute('scroll', 'true')
+              }
+              break
             default:
               break
           }
