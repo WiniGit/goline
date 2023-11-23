@@ -790,7 +790,7 @@ function addSelectList (new_selected_list = []) {
         layerSelect.offsetHeight -
         document.getElementById('div_list_page').offsetHeight -
         8
-      layer_view.lastChild.scrollTo({
+        document.getElementById(`parentID:${wbase_parentID}`).scrollTo({
         top: scrollToY,
         behavior: 'smooth'
       })
