@@ -1521,6 +1521,11 @@ class WbaseIO {
                   wb.value.setAttribute('constY', Constraints.bottom)
                 }
                 break
+              case 'flex-wrap':
+                if (cssRuleItem.style[stProp] === 'wrap') {
+                  wbHTML.setAttribute('wrap', 'wrap')
+                }
+                break
               default:
                 break
             }

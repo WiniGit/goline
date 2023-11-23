@@ -175,6 +175,11 @@ async function initData () {
                 wbHTML.setAttribute('constY', Constraints.bottom)
               }
               break
+            case 'flex-wrap':
+              if (cssRuleItem.style[stProp] === 'wrap') {
+                wbHTML.setAttribute('wrap', 'wrap')
+              }
+              break
             default:
               break
           }
@@ -790,7 +795,7 @@ function addSelectList (new_selected_list = []) {
         layerSelect.offsetHeight -
         document.getElementById('div_list_page').offsetHeight -
         8
-        document.getElementById(`parentID:${wbase_parentID}`).scrollTo({
+      document.getElementById(`parentID:${wbase_parentID}`).scrollTo({
         top: scrollToY,
         behavior: 'smooth'
       })

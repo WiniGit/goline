@@ -460,6 +460,8 @@ function createComponent () {
       wb.ListClassName = wbClassName
     }
     let newStyle = document.createElement('style')
+    if (wb.value.getAttribute('wrap') === 'wrap')
+      wb.value.style.flexWrap = 'wrap'
     newStyle.id = `w-st-comp${wb.GID}`
     let wbCssText = wb.value.style.cssText.split(';')
     let cssItem = {
@@ -495,6 +497,8 @@ function createComponent () {
           Ultis.toSlug(childWb.Name.toLowerCase().trim())
         childWb.ListClassName ??= ''
         let childClsList = childWb.ListClassName.split(' ')
+        if (childWb.value.getAttribute('wrap') === 'wrap')
+          childWb.value.style.flexWrap = 'wrap'
         let childWbCssText = childWb.value.style.cssText.split(';')
         if (childClsList.some(cCls => cCls.startsWith('w-st0'))) {
           childWbClassName = childClsList.find(cCls => cCls.startsWith('w-st0'))
