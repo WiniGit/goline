@@ -1450,6 +1450,88 @@ class WbaseIO {
       }
       wb.value.id = wb.GID
     }
+    for (let wb of list) {
+      StyleDA.docStyleSheets.forEach(cssRuleItem => {
+        if (
+          cssRuleItem.style.length > 0 &&
+          [...divSection.querySelectorAll(cssRuleItem.selectorText)].includes(
+            wb.value
+          )
+        ) {
+          for (let stProp of cssRuleItem.style) {
+            switch (stProp) {
+              case 'width':
+                switch (cssRuleItem.style[stProp]) {
+                  case '100%':
+                    wb.value.setAttribute('width-type', 'fill')
+                    break
+                  case 'fit-content':
+                    wb.value.setAttribute('width-type', 'fit')
+                    break
+                  case 'max-content':
+                    wb.value.setAttribute('width-type', 'fit')
+                    break
+                  default:
+                    wb.value.removeAttribute('width-type')
+                    break
+                }
+                break
+              case 'height':
+                switch (cssRuleItem.style[stProp]) {
+                  case '100%':
+                    wb.value.setAttribute('height-type', 'fill')
+                    break
+                  case 'fit-content':
+                    wb.value.setAttribute('height-type', 'fit')
+                    break
+                  default:
+                    wb.value.removeAttribute('height-type')
+                    break
+                }
+                break
+              case 'left':
+                if (cssRuleItem.style[stProp].includes('calc')) {
+                  wb.value.setAttribute('constX', Constraints.center)
+                } else if (cssRuleItem.style[stProp].includes('%')) {
+                  wb.value.setAttribute('constX', Constraints.scale)
+                } else if (cssRuleItem.style['right']) {
+                  wb.value.setAttribute('constX', Constraints.left_right)
+                } else {
+                  wb.value.setAttribute('constX', Constraints.left)
+                }
+                break
+              case 'right':
+                if (!cssRuleItem.style['left']) {
+                  wb.value.setAttribute('constX', Constraints.right)
+                }
+                break
+              case 'top':
+                if (cssRuleItem.style[stProp].includes('calc')) {
+                  wb.value.setAttribute('constY', Constraints.center)
+                } else if (cssRuleItem.style[stProp].includes('%')) {
+                  wb.value.setAttribute('constY', Constraints.scale)
+                } else if (cssRuleItem.style['bottom']) {
+                  wb.value.setAttribute('constY', Constraints.top_bottom)
+                } else {
+                  wb.value.setAttribute('constY', Constraints.top)
+                }
+                break
+              case 'bottom':
+                if (!cssRuleItem.style['top']) {
+                  wb.value.setAttribute('constY', Constraints.bottom)
+                }
+                break
+              default:
+                break
+            }
+          }
+          if (cssRuleItem.style.width === '')
+            wb.value.setAttribute('width-type', 'fit')
+          if (cssRuleItem.style.height === '')
+            wb.value.setAttribute('height-type', 'fit')
+        }
+      })
+    }
     if (list.some(e => e.GID === hover_wbase?.GID)) {
       updateHoverWbase()
     }

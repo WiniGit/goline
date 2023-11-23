@@ -790,6 +790,15 @@ async function initUIAssetView (loading = false) {
           )
         }
       }
+      if(select_component.IsWini) {
+        select_component.value.style = null
+      } else {
+        select_component.value.style.left = null
+        select_component.value.style.top = null
+        select_component.value.style.right = null
+        select_component.value.style.bottom = null
+        select_component.value.style.transform = null
+      }
       select_component.value.setAttribute('componentid', select_component.GID)
       instance_demo.appendChild(select_component.value)
       instance_div.replaceChildren(instance_demo)
@@ -902,22 +911,24 @@ function createListComponent (projectItem, isShowContent) {
       if (isShow) {
         if (projectItem.ID === 0) {
           prefix_action.className = 'fa-solid fa-caret-down fa-xs'
-        } else if (
-          projectItem.ID === ProjectDA.obj.ID &&
-          PageDA.list.length === 1
-        ) {
-          let list_component_parent = assets_list.filter(
-            e =>
-              e.ProjectID === projectItem.ID &&
-              assets_list.every(el => !e.ListID.includes(el.GID))
-          )
-          container_child.replaceChildren(
-            ...list_component_parent.map(comItem =>
-              createComponentTile(comItem)
-            )
-          )
-          prefix_action.className = 'fa-solid fa-caret-down fa-xs'
-        } else {
+        } 
+        // else if (
+        //   projectItem.ID === ProjectDA.obj.ID &&
+        //   PageDA.list.length === 1
+        // ) {
+        //   let list_component_parent = assets_list.filter(
+        //     e =>
+        //       e.ProjectID === projectItem.ID &&
+        //       assets_list.every(el => !e.ListID.includes(el.GID))
+        //   )
+        //   container_child.replaceChildren(
+        //     ...list_component_parent.map(comItem =>
+        //       createComponentTile(comItem)
+        //     )
+        //   )
+        //   prefix_action.className = 'fa-solid fa-caret-down fa-xs'
+        // } 
+        else {
           WBaseDA.assetsLoading = true
           let loader = document.createElement('div')
           loader.style.setProperty('--border-width', '3px')
