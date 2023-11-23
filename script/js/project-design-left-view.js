@@ -790,7 +790,7 @@ async function initUIAssetView (loading = false) {
           )
         }
       }
-      if(select_component.IsWini) {
+      if (select_component.IsWini) {
         select_component.value.style = null
       } else {
         select_component.value.style.left = null
@@ -883,12 +883,14 @@ function createListComponent (projectItem, isShowContent) {
           pageTile.onclick = function () {
             showPageCom = !showPageCom
             if (showPageCom) {
-              prefix.className = 'fa-solid fa-caret-down fa-xs'
+              pageTile.querySelector('i').className =
+                'fa-solid fa-caret-down fa-xs'
               listComp.replaceChildren(
                 ...listPageComp.map(comItem => createComponentTile(comItem))
               )
             } else {
-              prefix.className = 'fa-solid fa-caret-right fa-xs'
+              pageTile.querySelector('i').className =
+                'fa-solid fa-caret-right fa-xs'
             }
           }
           return pageTileContainer
@@ -911,7 +913,7 @@ function createListComponent (projectItem, isShowContent) {
       if (isShow) {
         if (projectItem.ID === 0) {
           prefix_action.className = 'fa-solid fa-caret-down fa-xs'
-        } 
+        }
         // else if (
         //   projectItem.ID === ProjectDA.obj.ID &&
         //   PageDA.list.length === 1
@@ -927,7 +929,7 @@ function createListComponent (projectItem, isShowContent) {
         //     )
         //   )
         //   prefix_action.className = 'fa-solid fa-caret-down fa-xs'
-        // } 
+        // }
         else {
           WBaseDA.assetsLoading = true
           let loader = document.createElement('div')
