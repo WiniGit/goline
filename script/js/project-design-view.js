@@ -81,12 +81,6 @@ async function initData () {
   selected_list = []
   updateHoverWbase()
   arrange()
-  assets_list = wbase_list.filter(wbaseItem => wbaseItem.IsWini)
-  assets_list.push(
-    ...wbase_list.filter(wb =>
-      assets_list.some(wbComp => wb.ListID.includes(wbComp.GID))
-    )
-  )
   $.get(WBaseDA.base_item_url, function (baseComponentResponse) {
     base_component_list = baseComponentResponse.Data
     console.log('base component:', base_component_list)
@@ -94,18 +88,16 @@ async function initData () {
   })
   console.log('in handle data: ', Date.now())
   let fragment = document.createDocumentFragment()
-  for (let item of wbase_list) {
-    item.value = null
-    let children = []
-    if (
-      [EnumCate.variant, ...EnumCate.parent_cate].some(ct => ct == item.CateID)
-    )
-      children = wbase_list.filter(e => e.ParentID === item.GID)
-    await initComponents(item, children, false)
-    item.value.id = item.GID
-    if (item.ParentID === wbase_parentID) {
-      initPositionStyle(item)
-      fragment.appendChild(item.value)
+  for (let wb of wbase_list) {
+    wb.value = null
+    if (EnumCate.no_child_component.every(ct => ct !== wb.CateID)) {
+      var children = wbase_list.filter(e => e.ParentID === wb.GID)
+    }
+    await initComponents(wb, children, false)
+    wb.value.id = wb.GID
+    if (wb.ParentID === wbase_parentID) {
+      initPositionStyle(wb)
+      fragment.appendChild(wb.value)
     }
   }
   divSection.replaceChildren(fragment)
@@ -225,6 +217,186 @@ async function initData () {
   setTimeout(function () {
     toolStateChange(ToolState.move)
   }, 80)
+}
+
+function convertStyleItem (wb) {
+  let cssText = ``
+  if (wb.StyleItem.FrameItem.Width == null) {
+    if (wb.CateID === EnumCate.text) cssText += 'width: max-content;'
+    wb.value.setAttribute('width-type', 'fit')
+  } else if (wb.StyleItem.FrameItem.Width < 0) {
+    cssText += 'width: 100%;'
+    wb.value.setAttribute('width-type', 'fill')
+  } else {
+    cssText += `width: ${wb.StyleItem.FrameItem.Width}px;`
+  }
+  if (wb.StyleItem.FrameItem.Height == null) {
+    wb.value.setAttribute('height-type', 'fit')
+  } else if (wb.StyleItem.FrameItem.Height < 0) {
+    cssText += 'height: 100%;'
+    wb.value.setAttribute('height-type', 'fill')
+  } else {
+    cssText += `height: ${wb.StyleItem.FrameItem.Height}px;`
+  }
+  if (
+    wb.Level === 1 ||
+    wb.value.classList.contains('fixed-position') ||
+    wb.value.closest(`.wbaseItem-value.w-stack[level="${wb.Level - 1}"]`)
+  ) {
+    wb.value.setAttribute('constx', wb.StyleItem.PositionItem.ConstraintsX)
+    wb.value.setAttribute('consty', wb.StyleItem.PositionItem.ConstraintsY)
+    switch (wb.StyleItem.PositionItem.ConstraintsX) {
+      case Constraints.left:
+        cssText += `left: ${wb.StyleItem.PositionItem.Left};`
+        break
+      case Constraints.right:
+        cssText += `right: ${wb.StyleItem.PositionItem.Right};`
+        break
+      case Constraints.center:
+        cssText += `left: calc(50% + ${wb.StyleItem.PositionItem.Right});transform: translateX(-50%);`
+        break
+      default: // Constraints.left_right && scale
+        cssText = cssText
+          .split(';')
+          .filter(e => !e.includes('width'))
+          .join(';')
+        cssText += `left: ${wb.StyleItem.PositionItem.Left};right: ${wb.StyleItem.PositionItem.Right};`
+        break
+    }
+    switch (wb.StyleItem.PositionItem.ConstraintsY) {
+      case Constraints.top:
+        cssText += `top: ${wb.StyleItem.PositionItem.Top};`
+        break
+      case Constraints.bottom:
+        cssText += `bottom: ${wb.StyleItem.PositionItem.Bottom};`
+        break
+      case Constraints.center:
+        cssText += `top: calc(50% + ${
+          wb.StyleItem.PositionItem.Bottom
+        });transform: ${
+          wb.StyleItem.PositionItem.ConstraintsX === Constraints.center
+            ? 'translateX(-50%)'
+            : 'translate(-50%,-50%)'
+        };`
+        break
+      default: // Constraints.top_bottom && scale
+        cssText = cssText
+          .split(';')
+          .filter(e => !e.includes('height'))
+          .join(';')
+        cssText += `top: ${wb.StyleItem.PositionItem.Top};bottom: ${wb.StyleItem.PositionItem.Bottom};`
+        break
+    }
+  }
+  if (wb.StyleItem.FrameItem.TopLeft == null) {
+    cssText += 'border-radius: 50%'
+  } else {
+    cssText += `border-radius: ${wb.StyleItem.FrameItem.TopLeft}px ${item.StyleItem.FrameItem.TopRight}px ${item.StyleItem.FrameItem.BottomRight}px ${item.StyleItem.FrameItem.BottomLeft}px;`
+  }
+  if (
+    EnumCate.no_child_component.every(cate => item.CateID != cate) &&
+    wb.StyleItem.FrameItem.IsClip
+  )
+    cssText += 'overflow: hidden;'
+  //
+  if (wb.StyleItem.DecorationItem) {
+    if (wb.StyleItem.DecorationItem.ColorValue) {
+      let background = wb.StyleItem.DecorationItem.ColorValue
+      if (background.match(hexRegex) && wb.CateID !== EnumCate.svg) {
+        if (wb.StyleItem.DecorationItem.ColorID) {
+          switch (wb.CateID) {
+            case EnumCate.w_switch:
+              cssText += `--checked-color: var(--background-color-${wb.StyleItem.DecorationItem.ColorID});`
+              break
+            case EnumCate.checkbox:
+              cssText += `--checked-color: var(--background-color-${wb.StyleItem.DecorationItem.ColorID});`
+              break
+            default:
+              cssText += `background-color: var(--background-color-${wb.StyleItem.DecorationItem.ColorID});`
+              break
+          }
+        } else {
+          switch (wb.CateID) {
+            case EnumCate.w_switch:
+              cssText += `--checked-color: #${background};`
+              break
+            case EnumCate.checkbox:
+              cssText += `--checked-color: #${background};`
+              break
+            default:
+              cssText += `background-color: #${background};`
+              break
+          }
+        }
+      } else if (EnumCate.noImgBg.every(cate => wb.CateID != cate)) {
+        cssText += `background-image: url(${
+          urlImg + background.replaceAll(' ', '%20')
+        });`
+      }
+    }
+    if (wb.StyleItem.DecorationItem.BorderItem) {
+      if (wb.StyleItem.DecorationItem.BorderItem.IsStyle) {
+        cssText += `border-width: var(--border-width-${wb.StyleItem.DecorationItem.BorderID});border-style: var(--border-style-${wb.StyleItem.DecorationItem.BorderID});border-color: var(--border-color-${wb.StyleItem.DecorationItem.BorderID});`
+      } else if (wb.StyleItem.DecorationItem.BorderItem.BorderStyle) {
+        cssText += `border-width: ${wb.StyleItem.DecorationItem.BorderItem.Width.split(
+          ' '
+        )
+          .map(e => `${e}px`)
+          .join(' ')};border-style: ${
+          wb.StyleItem.DecorationItem.BorderItem.BorderStyle
+        };border-color: #${wb.StyleItem.DecorationItem.BorderItem.ColorValue};`
+      }
+    }
+    if (wb.StyleItem.DecorationItem.EffectItem) {
+      if (wb.StyleItem.DecorationItem.EffectItem.IsStyle) {
+        switch (wb.StyleItem.DecorationItem.EffectItem.Type) {
+          case ShadowType.layer_blur:
+            cssText += `filter: var(--effect-blur-${wb.StyleItem.DecorationItem.EffectID});`
+            break
+          default:
+            cssText += `box-shadow: var(--effect-shadow-${wb.StyleItem.DecorationItem.EffectID});`
+            break
+        }
+      } else {
+        switch (wb.StyleItem.DecorationItem.EffectItem.Type) {
+          case ShadowType.layer_blur:
+            cssText += `filter: blur(${wb.StyleItem.DecorationItem.EffectItem.BlurRadius}px);`
+            break
+          default:
+            cssText += `box-shadow: ${
+              wb.StyleItem.DecorationItem.EffectItem.OffsetX
+            }px ${wb.StyleItem.DecorationItem.EffectItem.OffsetY}px ${
+              wb.StyleItem.DecorationItem.EffectItem.BlurRadius
+            }px ${wb.StyleItem.DecorationItem.EffectItem.SpreadRadius}px #${
+              wb.StyleItem.DecorationItem.EffectItem.ColorValue
+            }${
+              wb.StyleItem.DecorationItem.EffectItem.Type == ShadowType.inner
+                ? ' inset'
+                : ''
+            };`
+            break
+        }
+      }
+    }
+  }
+  if (wb.StyleItem.TextStyleItem) {
+    if (wb.StyleItem.TextStyleItem.IsStyle) {
+      cssText += `font: var(--font-style-${wb.StyleItem.TextStyleID});color: var(--font-color-${wb.StyleItem.TextStyleID});`
+      if (wb.StyleItem.TextStyleItem.LetterSpacing)
+        cssText += `letter-spacing: ${wb.StyleItem.TextStyleItem.LetterSpacing}px;`
+    } else {
+      cssText += `font-family: ${wb.StyleItem.TextStyleItem.FontFamily};font-size: ${wb.StyleItem.TextStyleItem.FontSize}px;font-weight: ${wb.StyleItem.TextStyleItem.FontWeight};color: #${wb.StyleItem.TextStyleItem.ColorValue}`
+      if (wb.StyleItem.TextStyleItem.LetterSpacing)
+        cssText += `letter-spacing: ${wb.StyleItem.TextStyleItem.LetterSpacing}px;`
+      if (wb.StyleItem.TextStyleItem.Height != null) {
+        cssText += `line-height: ${wb.StyleItem.TextStyleItem.Height}px;`
+      }
+    }
+  }
+  if (wb.StyleItem.TypoStyleItem && wb.CateID != EnumCate.textformfield)
+    cssText += `text-align: ${wb.StyleItem.TypoStyleItem.TextAlign};align-items: ${wb.StyleItem.TypoStyleItem.TextAlignVertical}`
+  wb.StyleItem = cssText
+  wb.value.style.cssText = cssText
 }
 
 function input_scale_set (value) {

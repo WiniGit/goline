@@ -189,6 +189,7 @@
 
 /*checkbox*/
 .w-check-box {
+  --check-color: #ffffff;
   position: relative;
   width: 24px;
   aspect-ratio: 1 / 1 !important;
@@ -216,6 +217,10 @@
   top: 0;
   display: none;
   transition: 0.4s;
+}
+
+.w-check-box > svg {
+  stroke: var(--check-color) !important;
 }
 
 /* w-textformfield */

@@ -175,7 +175,7 @@ async function initComponents (item, list, initListener = true) {
     item.AttributesItem.NameField.trim() != ''
   )
     $(item.value).attr('name-field', item.AttributesItem.NameField)
-  item.value.setAttribute('Level', item.Level)
+  item.value.setAttribute('level', item.Level)
   item.value.setAttribute('cateid', item.CateID)
   //
   if (item.ListClassName) {

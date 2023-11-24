@@ -3,9 +3,7 @@ function createCheckBoxHTML (item) {
 }
 const checkboxSize = 24
 function createCheckbox (initValue = false, wbaseItem) {
-  let toggle = document.createElement(
-    !wbaseItem || wbaseItem.build ? 'label' : 'div'
-  )
+  let toggle = document.createElement('label')
   $(toggle).addClass('w-check-box')
   toggle.setAttribute('value', initValue)
   toggle.innerHTML = `<input type="checkbox"${
@@ -19,24 +17,23 @@ function createCheckbox (initValue = false, wbaseItem) {
   ).toFixed(1)} ${(checkboxSize * 0.3).toFixed(
     1
   )}" fill="none" stroke-linecap="round" stroke="#${
-    wbaseItem.JsonItem?.CheckColor
-      ? wbaseItem.JsonItem.CheckColor
-      : 'ffffff'
+    wbaseItem.JsonItem?.CheckColor ? wbaseItem.JsonItem.CheckColor : 'ffffff'
   }"/></svg>`
+  toggle.onclick = function (ev) {
+    ev.stopImmediatePropagation()
+    ev.stopPropagation()
+    ev.preventDefault()
+  }
   if (wbaseItem) {
     toggle.style.setProperty(
       '--unchecked-bg',
-      `#${
-        wbaseItem.JsonItem.InactiveColor
-      }`
+      `#${wbaseItem.JsonItem.InactiveColor}`
     )
-  }
-  toggle.firstChild.onchange = function (ev) {
-    ev.stopImmediatePropagation()
-    ev.stopPropagation()
-    if (wbaseItem) {
-      wbaseItem.AttributesItem.Content = `${ev.target.checked}`
-    }
+    if (wbaseItem.JsonItem?.CheckColor)
+      toggle.style.setProperty(
+        '--check-color',
+        `#${wbaseItem.JsonItem.CheckColor}`
+      )
   }
   return toggle
 }

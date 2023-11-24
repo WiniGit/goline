@@ -7,9 +7,9 @@ function createTextFormFieldHTML(item, data) {
   $(item.value).addClass("w-textformfield");
   let fragment = document.createDocumentFragment();
   fragment.replaceChildren(
-    ...data.map((child) => {
-      if (child.CateID === EnumCate.textfield) createTextFieldHTML(child, item);
-      return child.value;
+    ...data.map((cWb) => {
+      if (cWb.CateID === EnumCate.textfield) createTextFieldHTML(cWb, item);
+      return cWb.value;
     }),
   );
   item.value.replaceChildren(fragment);
@@ -26,7 +26,7 @@ function createTextFieldHTML(item, parent) {
   input.autocomplete = "off";
   children.push(input);
   if (parent) {
-    if (parent.AttributesItem.NameField !== "") input.name = parent.AttributesItem.NameField;
+    // if (parent.AttributesItem.NameField !== "") input.name = parent.AttributesItem.NameField;
     input.readOnly = parent.JsonItem.ReadOnly;
     input.disabled = !parent.JsonItem.Enabled;
     input.value = parent.AttributesItem.Content ?? "";
