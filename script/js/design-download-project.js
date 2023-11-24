@@ -143,10 +143,27 @@ async function push_dataProject () {
         wbValue.removeAttribute('constX')
         wbValue.removeAttribute('constY')
         wbValue.removeAttribute('name-field')
-        if (wbValue.getAttribute('width-type') !== 'fill')
-          wbValue.removeAttribute('width-type')
-        if (wbValue.getAttribute('height-type') !== 'fill')
-          wbValue.removeAttribute('height-type')
+        if (
+          wbValue.getAttribute('width-type') === 'fill' &&
+          wb.value.closest(
+            `.wbaseItem-value.w-row[level="${
+              parseInt(wbValue.getAttribute('level')) - 1
+            }"]`
+          )
+        ) {
+          wbValue.style.flex = 1
+        } else if (
+          wbValue.getAttribute('height-type') === 'fill' &&
+          wb.value.closest(
+            `.wbaseItem-value.w-col[level="${
+              parseInt(wbValue.getAttribute('level')) - 1
+            }"]`
+          )
+        ) {
+          wbValue.style.flex = 1
+        }
+        wbValue.removeAttribute('width-type')
+        wbValue.removeAttribute('height-type')
         let children = [
           ...wbValue.querySelectorAll(
             `.wbaseItem-value[level${
@@ -270,13 +287,16 @@ async function push_dataProject () {
         wbValue.className += ` ${wbValue.getAttribute('id')}`
         wbValue.removeAttribute('id')
         wbValue.removeAttribute('cateid')
-        wbValue.removeAttribute('level')
       }
     )
     cloneValue.cssString = cssString
     $(cloneValue).addClass('w-page')
     cloneValue.Name = Ultis.toSlug(wb.Name)
     return cloneValue
+  })
+  list_page.forEach(e => {
+    e.querySelectorAll('.wbaseItem-value').forEach(el => el.removeAttribute('level'))
+    e.removeAttribute('level')
   })
 
   await $.post(
