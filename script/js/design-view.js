@@ -1782,7 +1782,7 @@ function EditBackgroundBlock () {
             cate: EnumCate.color,
             prefixValue: `#${colorSkin.Value}`,
             title: (cateItem ? `${cateItem.Name}/` : '') + colorSkin.Name,
-            onclick: function () {
+            onClick: function () {
               let offset = header.getBoundingClientRect()
               createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID)
             },
