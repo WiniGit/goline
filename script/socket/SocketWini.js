@@ -1523,12 +1523,12 @@ class WbaseIO {
                 break
               case 'flex-wrap':
                 if (cssRuleItem.style[stProp] === 'wrap') {
-                  wbHTML.setAttribute('wrap', 'wrap')
+                  wb.value.setAttribute('wrap', 'wrap')
                 }
                 break
               case 'overflow':
                 if (cssRuleItem.style[stProp] === 'scroll') {
-                  wbHTML.setAttribute('scroll', 'true')
+                  wb.value.setAttribute('scroll', 'true')
                 }
                 break
               default:
