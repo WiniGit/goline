@@ -164,17 +164,17 @@ async function initComponents (item, list, initListener = true) {
       break
   }
   $(item.value).addClass('wbaseItem-value')
-  if (item.WAutolayoutItem) handleStyleLayout(item)
-  if (item.StyleItem) {
-    initWbaseStyle(item)
-    item.value.style.zIndex = item.Sort
-    item.value.style.order = item.Sort
-  }
-  if (
-    item.AttributesItem.NameField &&
-    item.AttributesItem.NameField.trim() != ''
-  )
-    $(item.value).attr('name-field', item.AttributesItem.NameField)
+  // if (item.WAutolayoutItem) handleStyleLayout(item)
+  // if (item.StyleItem) {
+  //   initWbaseStyle(item)
+  //   item.value.style.zIndex = item.Sort
+  //   item.value.style.order = item.Sort
+  // }
+  // if (
+  //   item.AttributesItem.NameField &&
+  //   item.AttributesItem.NameField.trim() != ''
+  // )
+  // $(item.value).attr('name-field', item.AttributesItem.NameField)
   item.value.setAttribute('level', item.Level)
   item.value.setAttribute('cateid', item.CateID)
   //
@@ -197,14 +197,19 @@ async function initComponents (item, list, initListener = true) {
         item.IsInstance = true
       }
     }
-    setSizeObserver.observe(item.value, {
-      attributeOldValue: true,
-      attributes: true,
-      childList: EnumCate.parent_cate.some(cate => item.CateID === cate)
-    })
+    // setSizeObserver.observe(item.value, {
+    //   attributeOldValue: true,
+    //   attributes: true,
+    //   childList: EnumCate.parent_cate.some(cate => item.CateID === cate)
+    // })
   }
   if (initListener) {
-    addListenFromSection(item)
+    item.value.id = item.GID
+    if (item.Level === 1) {
+      debugger
+      divSection.appendChild(item.value)
+    }
+    // addListenFromSection(item)
   }
 }
 
@@ -1079,11 +1084,11 @@ function handleStyleLayout (wbaseItem, onlyPadding = false) {
       if (wbaseItem.WAutolayoutItem.IsScroll)
         wbaseItem.value.setAttribute('scroll', 'true')
     }
-    if(wbaseItem.StyleItem.PaddingItem)
-    wbaseItem.value.style.setProperty(
-      '--padding',
-      `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`
-    )
+    if (wbaseItem.StyleItem.PaddingItem)
+      wbaseItem.value.style.setProperty(
+        '--padding',
+        `${wbaseItem.StyleItem.PaddingItem.Top}px ${wbaseItem.StyleItem.PaddingItem.Right}px ${wbaseItem.StyleItem.PaddingItem.Bottom}px ${wbaseItem.StyleItem.PaddingItem.Left}px`
+      )
   } else if (
     wbaseItem.CateID !== EnumCate.table &&
     wbaseItem.CateID !== EnumCate.carousel

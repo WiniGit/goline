@@ -93,13 +93,12 @@ async function initData () {
     if (EnumCate.no_child_component.every(ct => ct !== wb.CateID)) {
       var children = wbase_list.filter(e => e.ParentID === wb.GID)
     }
-    await initComponents(wb, children, false)
-    wb.value.id = wb.GID
-    if (wb.ParentID === wbase_parentID) {
-      initPositionStyle(wb)
-      fragment.appendChild(wb.value)
-    }
+    await initComponents(wb, children)
   }
+  debugger
+  wbase_list.forEach(wb => {
+    if (wb.StyleItem) convertStyleItem(wb)
+  })
   divSection.replaceChildren(fragment)
   StyleDA.docStyleSheets.forEach(cssRuleItem => {
     if (cssRuleItem.style.length > 0) {
@@ -243,6 +242,7 @@ function convertStyleItem (wb) {
     wb.value.classList.contains('fixed-position') ||
     wb.value.closest(`.wbaseItem-value.w-stack[level="${wb.Level - 1}"]`)
   ) {
+    cssText += `z-index: $${wb.Sort}`
     wb.value.setAttribute('constx', wb.StyleItem.PositionItem.ConstraintsX)
     wb.value.setAttribute('consty', wb.StyleItem.PositionItem.ConstraintsY)
     switch (wb.StyleItem.PositionItem.ConstraintsX) {
@@ -287,14 +287,16 @@ function convertStyleItem (wb) {
         cssText += `top: ${wb.StyleItem.PositionItem.Top};bottom: ${wb.StyleItem.PositionItem.Bottom};`
         break
     }
+  } else {
+    cssText += `order: $${wb.Sort}`
   }
   if (wb.StyleItem.FrameItem.TopLeft == null) {
     cssText += 'border-radius: 50%'
   } else {
-    cssText += `border-radius: ${wb.StyleItem.FrameItem.TopLeft}px ${item.StyleItem.FrameItem.TopRight}px ${item.StyleItem.FrameItem.BottomRight}px ${item.StyleItem.FrameItem.BottomLeft}px;`
+    cssText += `border-radius: ${wb.StyleItem.FrameItem.TopLeft}px ${wb.StyleItem.FrameItem.TopRight}px ${wb.StyleItem.FrameItem.BottomRight}px ${wb.StyleItem.FrameItem.BottomLeft}px;`
   }
   if (
-    EnumCate.no_child_component.every(cate => item.CateID != cate) &&
+    EnumCate.no_child_component.every(ct => wb.CateID != ct) &&
     wb.StyleItem.FrameItem.IsClip
   )
     cssText += 'overflow: hidden;'

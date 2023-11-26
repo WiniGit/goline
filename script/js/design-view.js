@@ -18,9 +18,8 @@ $('body').on('click', '.tab_right', function () {
     }
     document.getElementById(this.innerHTML.trim()).style.display = 'block'
     wdraw()
-    let list_tab_view = document.getElementsByClassName('tab_right')
-    for (let i = 0; i < list_tab_view.length; i++) {
-      list_tab_view[i].style.opacity = 0.7
+    for (let tab of document.getElementsByClassName('tab_right')) {
+      tab.style.opacity = 0.7
     }
     this.style.opacity = 1
     switch (design_view_index) {
@@ -300,12 +299,10 @@ function EditOffsetBlock () {
       }
     }
     let listSize = selected_list
-      .filter(e => EnumCate.extend_frame.some(ct => e.CateID === ct))
+      .filter(wb => EnumCate.extend_frame.some(ct => wb.CateID === ct))
       .filterAndMap(
-        e =>
-          `${parseInt(e.StyleItem.FrameItem.Width)}x${parseInt(
-            e.StyleItem.FrameItem.Height
-          )}`
+        wb =>
+          `${parseInt(wb.value.offsetWidth)}x${parseInt(wb.value.offsetHeight)}`
       )
     btn_select_frame_size.innerHTML = `<p class="semibold1">${
       listSize.length === 1
@@ -701,8 +698,10 @@ function EditOffsetBlock () {
 
 // update style HTML edit position UI
 function reloadEditOffsetBlock () {
-  // let newEditSizePositionForm = EditOffsetBlock();
-  // document.getElementById("edit_size_position_div").replaceWith(newEditSizePositionForm);
+  let newEditSizePositionForm = EditOffsetBlock()
+  document
+    .getElementById('edit_size_position_div')
+    .replaceWith(newEditSizePositionForm)
 }
 
 // update input top,left,width,height
@@ -740,7 +739,7 @@ function updateInputTLWH () {
     if (
       parentHTML &&
       window.getComputedStyle(parentHTML).display.match(/(flex|table)/g) &&
-      selected_list.some(e => !e.StyleItem.PositionItem.FixPosition)
+      selected_list.some(e => !e.value.classList.contains('fixed-position'))
     ) {
       edit_left.lastChild.disabled = true
       edit_top.lastChild.disabled = true
@@ -802,7 +801,7 @@ function updateInputTLWH () {
           selected_list.every(
             e =>
               e.WAutolayoutItem ||
-              (!e.StyleItem.PositionItem.FixPosition &&
+              (!e.value.classList.contains('fixed-position') &&
                 window
                   .getComputedStyle(parentHTML)
                   .display.match(/(flex|table)/g))
