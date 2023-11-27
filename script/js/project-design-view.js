@@ -87,7 +87,6 @@ async function initData () {
     base_component_list = initDOM(base_component_list)
   })
   console.log('in handle data: ', Date.now())
-  let fragment = document.createDocumentFragment()
   for (let wb of wbase_list) {
     wb.value = null
     if (EnumCate.no_child_component.every(ct => ct !== wb.CateID)) {
@@ -95,11 +94,10 @@ async function initData () {
     }
     await initComponents(wb, children)
   }
-  debugger
   wbase_list.forEach(wb => {
     if (wb.StyleItem) convertStyleItem(wb)
+    delete wb.WAutolayoutItem
   })
-  divSection.replaceChildren(fragment)
   StyleDA.docStyleSheets.forEach(cssRuleItem => {
     if (cssRuleItem.style.length > 0) {
       divSection.querySelectorAll(cssRuleItem.selectorText).forEach(wbHTML => {
@@ -242,7 +240,7 @@ function convertStyleItem (wb) {
     wb.value.classList.contains('fixed-position') ||
     wb.value.closest(`.wbaseItem-value.w-stack[level="${wb.Level - 1}"]`)
   ) {
-    cssText += `z-index: $${wb.Sort}`
+    cssText += `z-index: $${wb.Sort};`
     wb.value.setAttribute('constx', wb.StyleItem.PositionItem.ConstraintsX)
     wb.value.setAttribute('consty', wb.StyleItem.PositionItem.ConstraintsY)
     switch (wb.StyleItem.PositionItem.ConstraintsX) {
@@ -288,10 +286,49 @@ function convertStyleItem (wb) {
         break
     }
   } else {
-    cssText += `order: $${wb.Sort}`
+    cssText += `order: $${wb.Sort};`
+  }
+  if (wb.WAutolayoutItem) {
+    if (wb.CateID === EnumCate.table) {
+      cssText += `--text-align: ${wMainAxis(
+        wb.WAutolayoutItem.Alignment
+      )};--vertical-align: ${wCrossAxis(wb.WAutolayoutItem.Alignment)};`
+    } else {
+      let isRow = wb.WAutolayoutItem.Direction === 'Horizontal'
+      if (wb.WAutolayoutItem.IsWrap) {
+        cssText += `flex-wrap: wrap;`
+        wb.value.setAttribute('wrap', 'wrap')
+      }
+      cssText += `--child-space: ${
+        wb.WAutolayoutItem.ChildSpace
+      }px;--run-space: ${
+        wb.WAutolayoutItem.RunSpace
+      }px;--main-axis-align: ${wMainAxis(
+        wb.WAutolayoutItem.Alignment,
+        isRow
+      )};--cross-axis-align: ${wCrossAxis(
+        wb.WAutolayoutItem.Alignment,
+        isRow
+      )};`
+      wb.value
+        .querySelectorAll(`.wbaseItem-value[level="${wb.Level + 1}"]`)
+        .forEach(childCol => {
+          childCol.style.setProperty(
+            '--gutter',
+            `${wb.WAutolayoutItem.ChildSpace}px`
+          )
+        })
+      if (wb.WAutolayoutItem.IsScroll) {
+        cssText += `overflow: scroll;`
+        wb.value.setAttribute('scroll', 'true')
+      }
+    }
+    if (wb.StyleItem.PaddingItem) {
+      cssText += `--padding: ${wb.StyleItem.PaddingItem.Top}px ${wb.StyleItem.PaddingItem.Right}px ${wb.StyleItem.PaddingItem.Bottom}px ${wb.StyleItem.PaddingItem.Left}px;`
+    }
   }
   if (wb.StyleItem.FrameItem.TopLeft == null) {
-    cssText += 'border-radius: 50%'
+    cssText += 'border-radius: 50%;'
   } else {
     cssText += `border-radius: ${wb.StyleItem.FrameItem.TopLeft}px ${wb.StyleItem.FrameItem.TopRight}px ${wb.StyleItem.FrameItem.BottomRight}px ${wb.StyleItem.FrameItem.BottomLeft}px;`
   }
@@ -390,9 +427,8 @@ function convertStyleItem (wb) {
       cssText += `font-family: ${wb.StyleItem.TextStyleItem.FontFamily};font-size: ${wb.StyleItem.TextStyleItem.FontSize}px;font-weight: ${wb.StyleItem.TextStyleItem.FontWeight};color: #${wb.StyleItem.TextStyleItem.ColorValue}`
       if (wb.StyleItem.TextStyleItem.LetterSpacing)
         cssText += `letter-spacing: ${wb.StyleItem.TextStyleItem.LetterSpacing}px;`
-      if (wb.StyleItem.TextStyleItem.Height != null) {
+      if (wb.StyleItem.TextStyleItem.Height != null)
         cssText += `line-height: ${wb.StyleItem.TextStyleItem.Height}px;`
-      }
     }
   }
   if (wb.StyleItem.TypoStyleItem && wb.CateID != EnumCate.textformfield)
@@ -513,70 +549,70 @@ function createNewWbase (dataJson, list_contain_child = [], listId, sort) {
     new_wbase_item.Level = new_listID.length
   }
   // tạo GuiID mới cho styleItem nếu khác null
-  if (new_wbase_item.StyleItem) {
-    let newStyleId = uuidv4()
-    new_wbase_item.StyleID = newStyleId
-    new_wbase_item.StyleItem.GID = newStyleId
-    // tạo GuiID mới cho frameItem nếu khác null
-    if (new_wbase_item.StyleItem.FrameItem) {
-      let newFrameId = uuidv4()
-      new_wbase_item.StyleItem.FrameID = newFrameId
-      new_wbase_item.StyleItem.FrameItem.GID = newFrameId
-    }
-    // tạo GuiID mới cho positionItem nếu khác null
-    if (new_wbase_item.StyleItem.PositionItem) {
-      let newPositionId = uuidv4()
-      new_wbase_item.StyleItem.PositionID = newPositionId
-      new_wbase_item.StyleItem.PositionItem.GID = newPositionId
-      new_wbase_item.StyleItem.PositionItem.ConstraintsX ??= Constraints.left
-      new_wbase_item.StyleItem.PositionItem.ConstraintsY ??= Constraints.top
-    }
-    // tạo GuiID mới cho paddingItem nếu khác null
-    if (new_wbase_item.StyleItem.PaddingItem) {
-      let newPaddingId = uuidv4()
-      new_wbase_item.StyleItem.PaddingID = newPaddingId
-      new_wbase_item.StyleItem.PaddingItem.GID = newPaddingId
-    }
-    // tạo GuiID mới cho decorationItem nếu khác null
-    if (new_wbase_item.StyleItem.DecorationItem) {
-      let newDecoId = uuidv4()
-      new_wbase_item.StyleItem.DecorationID = newDecoId
-      new_wbase_item.StyleItem.DecorationItem.GID = newDecoId
-      // tạo GuiID mới cho borderItem nếu khác null và wbase này ko có border từ bộ skin
-      if (
-        new_wbase_item.StyleItem.DecorationItem.BorderItem &&
-        new_wbase_item.StyleItem.DecorationItem.BorderItem.IsStyle != true
-      ) {
-        let newBorderId = uuidv4()
-        new_wbase_item.StyleItem.DecorationItem.BorderID = newBorderId
-        new_wbase_item.StyleItem.DecorationItem.BorderItem.GID = newBorderId
-      }
-      // tạo GuiID mới cho effectItem nếu khác null và wbase này ko có effect từ bộ skin
-      if (
-        new_wbase_item.StyleItem.DecorationItem.EffectItem &&
-        new_wbase_item.StyleItem.DecorationItem.EffectItem.IsStyle != true
-      ) {
-        let newEffectId = uuidv4()
-        new_wbase_item.StyleItem.DecorationItem.EffectID = newEffectId
-        new_wbase_item.StyleItem.DecorationItem.EffectItem.GID = newEffectId
-      }
-    }
-    // tạo GuiID mới cho textStyleItem nếu khác null và wbase này ko có textStyle từ bộ skin
-    if (
-      new_wbase_item.StyleItem.TextStyleItem &&
-      new_wbase_item.StyleItem.TextStyleItem.IsStyle != true
-    ) {
-      let newTextStyleId = uuidv4()
-      new_wbase_item.StyleItem.TextStyleID = newTextStyleId
-      new_wbase_item.StyleItem.TextStyleItem.GID = newTextStyleId
-    }
-    // tạo GuiID mới cho extenTyoStyle nếu khác null
-    if (new_wbase_item.StyleItem.TypoStyleItem) {
-      let newExtenTypoStyleId = uuidv4()
-      new_wbase_item.StyleItem.TypoStyleID = newExtenTypoStyleId
-      new_wbase_item.StyleItem.TypoStyleItem.GID = newExtenTypoStyleId
-    }
-  }
+  // if (new_wbase_item.StyleItem) {
+  //   let newStyleId = uuidv4()
+  //   new_wbase_item.StyleID = newStyleId
+  //   new_wbase_item.StyleItem.GID = newStyleId
+  //   // tạo GuiID mới cho frameItem nếu khác null
+  //   if (new_wbase_item.StyleItem.FrameItem) {
+  //     let newFrameId = uuidv4()
+  //     new_wbase_item.StyleItem.FrameID = newFrameId
+  //     new_wbase_item.StyleItem.FrameItem.GID = newFrameId
+  //   }
+  //   // tạo GuiID mới cho positionItem nếu khác null
+  //   if (new_wbase_item.StyleItem.PositionItem) {
+  //     let newPositionId = uuidv4()
+  //     new_wbase_item.StyleItem.PositionID = newPositionId
+  //     new_wbase_item.StyleItem.PositionItem.GID = newPositionId
+  //     new_wbase_item.StyleItem.PositionItem.ConstraintsX ??= Constraints.left
+  //     new_wbase_item.StyleItem.PositionItem.ConstraintsY ??= Constraints.top
+  //   }
+  //   // tạo GuiID mới cho paddingItem nếu khác null
+  //   if (new_wbase_item.StyleItem.PaddingItem) {
+  //     let newPaddingId = uuidv4()
+  //     new_wbase_item.StyleItem.PaddingID = newPaddingId
+  //     new_wbase_item.StyleItem.PaddingItem.GID = newPaddingId
+  //   }
+  //   // tạo GuiID mới cho decorationItem nếu khác null
+  //   if (new_wbase_item.StyleItem.DecorationItem) {
+  //     let newDecoId = uuidv4()
+  //     new_wbase_item.StyleItem.DecorationID = newDecoId
+  //     new_wbase_item.StyleItem.DecorationItem.GID = newDecoId
+  //     // tạo GuiID mới cho borderItem nếu khác null và wbase này ko có border từ bộ skin
+  //     if (
+  //       new_wbase_item.StyleItem.DecorationItem.BorderItem &&
+  //       new_wbase_item.StyleItem.DecorationItem.BorderItem.IsStyle != true
+  //     ) {
+  //       let newBorderId = uuidv4()
+  //       new_wbase_item.StyleItem.DecorationItem.BorderID = newBorderId
+  //       new_wbase_item.StyleItem.DecorationItem.BorderItem.GID = newBorderId
+  //     }
+  //     // tạo GuiID mới cho effectItem nếu khác null và wbase này ko có effect từ bộ skin
+  //     if (
+  //       new_wbase_item.StyleItem.DecorationItem.EffectItem &&
+  //       new_wbase_item.StyleItem.DecorationItem.EffectItem.IsStyle != true
+  //     ) {
+  //       let newEffectId = uuidv4()
+  //       new_wbase_item.StyleItem.DecorationItem.EffectID = newEffectId
+  //       new_wbase_item.StyleItem.DecorationItem.EffectItem.GID = newEffectId
+  //     }
+  //   }
+  //   // tạo GuiID mới cho textStyleItem nếu khác null và wbase này ko có textStyle từ bộ skin
+  //   if (
+  //     new_wbase_item.StyleItem.TextStyleItem &&
+  //     new_wbase_item.StyleItem.TextStyleItem.IsStyle != true
+  //   ) {
+  //     let newTextStyleId = uuidv4()
+  //     new_wbase_item.StyleItem.TextStyleID = newTextStyleId
+  //     new_wbase_item.StyleItem.TextStyleItem.GID = newTextStyleId
+  //   }
+  //   // tạo GuiID mới cho extenTyoStyle nếu khác null
+  //   if (new_wbase_item.StyleItem.TypoStyleItem) {
+  //     let newExtenTypoStyleId = uuidv4()
+  //     new_wbase_item.StyleItem.TypoStyleID = newExtenTypoStyleId
+  //     new_wbase_item.StyleItem.TypoStyleItem.GID = newExtenTypoStyleId
+  //   }
+  // }
   // tạo GuiID mới cho AttributesItem nếu khác null
   if (new_wbase_item.AttributesItem) {
     let newAttributeId = uuidv4()
@@ -588,11 +624,11 @@ function createNewWbase (dataJson, list_contain_child = [], listId, sort) {
       )
   }
   // tạo GuiID mới cho layoutItem nếu khác null
-  if (new_wbase_item.WAutolayoutItem) {
-    let newLayoutId = uuidv4()
-    new_wbase_item.AutoLayoutID = newLayoutId
-    new_wbase_item.WAutolayoutItem.GID = newLayoutId
-  }
+  // if (new_wbase_item.WAutolayoutItem) {
+  //   let newLayoutId = uuidv4()
+  //   new_wbase_item.AutoLayoutID = newLayoutId
+  //   new_wbase_item.WAutolayoutItem.GID = newLayoutId
+  // }
   if (new_wbase_item.ListChildID.length > 0) {
     let list_child = []
     list_child = list_contain_child.filter(e =>
@@ -639,17 +675,12 @@ function createNewWbase (dataJson, list_contain_child = [], listId, sort) {
 
 //! .................................................................................................
 function createWbaseHTML (rect_box, newObj) {
-  let new_obj
   if (newObj) {
-    new_obj = newObj
+    var new_obj = newObj
   } else {
     switch (tool_state) {
       case ToolState.rectangle:
         new_obj = WBaseDefault.rectangle
-        new_obj.AttributesItem.Content = ''
-        break
-      case ToolState.circle:
-        new_obj = WBaseDefault.circle
         new_obj.AttributesItem.Content = ''
         break
       case ToolState.frame:
@@ -657,7 +688,6 @@ function createWbaseHTML (rect_box, newObj) {
         break
       case ToolState.text:
         new_obj = WBaseDefault.text
-        new_obj.StyleItem.TypoStyleItem.AutoSize = 'Fixed Size'
         break
       case ToolState.base_component:
         let thisBaseComponent = base_component_list.find(
@@ -678,10 +708,6 @@ function createWbaseHTML (rect_box, newObj) {
   }
   if (new_obj) {
     new_obj.ParentID = rect_box.parentID
-    new_obj.StyleItem.PositionItem.Top = rect_box.y + 'px'
-    new_obj.StyleItem.PositionItem.Left = rect_box.x + 'px'
-    new_obj.StyleItem.PositionItem.ConstraintsX = Constraints.left
-    new_obj.StyleItem.PositionItem.ConstraintsY = Constraints.top
     if (tool_state === ToolState.base_component) {
       let relativeWbase = base_component_list.filter(baseCom =>
         baseCom.ListID.includes(new_obj.GID)
@@ -712,155 +738,148 @@ function createWbaseHTML (rect_box, newObj) {
       new_obj = listNewWbase.pop()
       wbase_list.push(...listNewWbase)
     } else {
-      if (!rect_box.w && tool_state === ToolState.text) {
-        new_obj.StyleItem.FrameItem.Width = null
-        new_obj.StyleItem.FrameItem.Height = null
-        new_obj.StyleItem.TypoStyleItem.AutoSize = 'Auto Width'
-      } else {
-        new_obj.StyleItem.FrameItem.Width = rect_box.w ?? 100
-        new_obj.StyleItem.FrameItem.Height = rect_box.h ?? 100
-      }
       new_obj = createNewWbase(new_obj).pop()
+      initComponents(new_obj, [])
+      if (!rect_box.w && tool_state === ToolState.text) {
+        new_obj.StyleItem += `width: max-content;`
+        new_obj.value.setAttribute('width', 'fit')
+      } else {
+        new_obj.StyleItem += `width: ${rect_box.w ?? 100}px;height: ${
+          rect_box.h ?? 100
+        }px;`
+      }
 
       //? push data to HTML
-      initComponents(new_obj, [])
     }
 
-    if (rect_box.parentID != wbase_parentID) {
-      let parentHTML = document.getElementById(rect_box.parentID)
-      let parentRect = parentHTML.getBoundingClientRect()
-      let parent_wbase = wbase_list.find(e => e.GID == rect_box.parentID)
-      new_obj.StyleItem.PositionItem.Top = `${
-        rect_box.y - offsetScale(0, parentRect.y).y
-      }px`
-      new_obj.StyleItem.PositionItem.Left = `${
-        rect_box.x - offsetScale(parentRect.x, 0).x
-      }px`
-      if (parent_wbase.CateID === EnumCate.table) {
-        let availableCell = findCell(parentHTML, {
-          pageX: offsetConvertScale(rect_box.x, 0).x,
-          pageY: offsetConvertScale(0, rect_box.y).y
-        })
-        availableCell.appendChild(new_obj.value)
-        parent_wbase.TableRows.reduce((a, b) => a.concat(b)).find(
-          cell => cell.id === availableCell.id
-        ).contentid = [...availableCell.childNodes].map(e => e.id).join(',')
-      } else if (window.getComputedStyle(parentHTML).display.match('flex')) {
-        new_obj.value.style.left = null
-        new_obj.value.style.top = null
-        new_obj.value.style.right = null
-        new_obj.value.style.bottom = null
-        new_obj.value.style.transform = null
-        let children = [
-          ...parentHTML.querySelectorAll(
-            `.wbaseItem-value[level="${
-              parseInt(parentHTML.getAttribute('level') ?? '0') + 1
-            }"]`
-          )
-        ]
-        if (parentHTML.classList.contains('w-col')) {
-          let zIndex = 0
-          if (children.length > 0) {
-            children.sort((aHTML, bHTML) => {
-              let aHTMLRect = aHTML.getBoundingClientRect()
-              let bHTMLRect = bHTML.getBoundingClientRect()
-              let a_center_oy = Math.abs(
-                rect_box.y -
-                  offsetScale(0, aHTMLRect.y + aHTMLRect.height / 2).y
-              )
-              let b_center_oy = Math.abs(
-                rect_box.y -
-                  offsetScale(0, bHTMLRect.y + bHTMLRect.height / 2).y
-              )
-              return a_center_oy - b_center_oy
-            })
-            let closestHTML = children[0]
-            let closestHTMLRect = closestHTML.getBoundingClientRect()
-            zIndex = parseInt(window.getComputedStyle(closestHTML).order)
-            let distance =
-              rect_box.y -
-              offsetScale(0, closestHTMLRect.y + closestHTMLRect.height / 2).y
-            if (distance >= 0) {
-              zIndex++
-            }
-          }
-          new_obj.Sort = zIndex
-          new_obj.value.style.zIndex = zIndex
-          new_obj.value.style.order = zIndex
-          let sort_children = children.filter(
-            eHTML => eHTML.style.zIndex >= zIndex
-          )
-          let wbase_children = wbase_list.filter(
-            e => e.ParentID === rect_box.parentID && e.Sort >= zIndex
-          )
-          for (let i = 0; i < wbase_children.length; i++) {
-            wbase_children[i].Sort++
-            sort_children[i].style.zIndex =
-              parseInt(sort_children[i].style.zIndex) + 1
-            sort_children[i].style.order =
-              parseInt(sort_children[i].style.order) + 1
-          }
-        } else {
-          let zIndex = 0
-          if (children.length > 0) {
-            children.sort((aHTML, bHTML) => {
-              let aHTMLRect = aHTML.getBoundingClientRect()
-              let bHTMLRect = bHTML.getBoundingClientRect()
-              let a_center_ox = Math.abs(
-                rect_box.x - offsetScale(aHTMLRect.x + aHTMLRect.width / 2, 0).x
-              )
-              let b_center_ox = Math.abs(
-                rect_box.x - offsetScale(bHTMLRect.x + bHTMLRect.width / 2, 0).x
-              )
-              return a_center_ox - b_center_ox
-            })
-            let closestHTML = children[0]
-            let closestHTMLRect = closestHTML.getBoundingClientRect()
-            zIndex = parseInt(window.getComputedStyle(closestHTML).order)
-            let distance =
-              rect_box.x -
-              offsetScale(closestHTMLRect.x + closestHTMLRect.width / 2, 0).x
-            if (distance >= 0) {
-              zIndex++
-            }
-          }
-          new_obj.Sort = zIndex
-          new_obj.value.style.zIndex = zIndex
-          new_obj.value.style.order = zIndex
-          let sort_children = children.filter(
-            eHTML => eHTML.style.order >= zIndex
-          )
-          let wbase_children = wbase_list.filter(
-            e => e.ParentID === rect_box.parentID && e.Sort >= zIndex
-          )
-          for (let i = 0; i < wbase_children.length; i++) {
-            wbase_children[i].Sort++
-            sort_children[i].style.zIndex =
-              parseInt(sort_children[i].style.zIndex) + 1
-            sort_children[i].style.order =
-              parseInt(sort_children[i].style.order) + 1
+    let pWbHTML = document.getElementById(rect_box.parentID)
+    if (
+      rect_box.parentID === wbase_parentID ||
+      pWbHTML?.classList?.contains('w-stack')
+    ) {
+      if (pWbHTML) {
+        var pWb = wbase_list.find(wb => wb.GID === new_obj.ParentID)
+        let pRect = pWbHTML.getBoundingClientRect()
+        new_obj.StyleItem += `left: ${
+          rect_box.x - offsetScale(pRect.x, 0).x
+        }px;top: ${rect_box.y - offsetScale(0, pRect.y).y}px;`
+      } else {
+        pWbHTML = divSection
+        new_obj.StyleItem += `left: ${rect_box.x}px;top: ${rect_box.y}px;`
+      }
+      new_obj.Sort = [
+        ...pWbHTML.querySelectorAll(
+          `.wbaseItem-value[level="${new_obj.Level}"]`
+        )
+      ].sort(
+        (a, b) =>
+          parseFloat(b.style.zIndex ?? 0) - parseFloat(a.style.zIndex ?? 0)
+      )[0]
+      new_obj.value.style.zIndex = new_obj.Sort
+    } else if (pWbHTML.getAttribute('cateid') == EnumCate.table) {
+      pWb = wbase_list.find(wb => wb.GID === new_obj.ParentID)
+      let availableCell = findCell(pWbHTML, {
+        pageX: offsetConvertScale(rect_box.x, 0).x,
+        pageY: offsetConvertScale(0, rect_box.y).y
+      })
+      availableCell.appendChild(new_obj.value)
+      pWb.TableRows.reduce((a, b) => a.concat(b)).find(
+        cell => cell.id === availableCell.id
+      ).contentid = [...availableCell.childNodes].map(e => e.id).join(',')
+    } else {
+      let children = [
+        ...pWbHTML.querySelectorAll(
+          `.wbaseItem-value[level="${
+            parseInt(pWbHTML.getAttribute('level') ?? '0') + 1
+          }"]`
+        )
+      ]
+      if (pWbHTML.classList.contains('w-col')) {
+        let zIndex = 0
+        if (children.length > 0) {
+          children.sort((aHTML, bHTML) => {
+            let aHTMLRect = aHTML.getBoundingClientRect()
+            let bHTMLRect = bHTML.getBoundingClientRect()
+            let a_center_oy = Math.abs(
+              rect_box.y - offsetScale(0, aHTMLRect.y + aHTMLRect.height / 2).y
+            )
+            let b_center_oy = Math.abs(
+              rect_box.y - offsetScale(0, bHTMLRect.y + bHTMLRect.height / 2).y
+            )
+            return a_center_oy - b_center_oy
+          })
+          let closestHTML = children[0]
+          let closestHTMLRect = closestHTML.getBoundingClientRect()
+          zIndex = parseInt(window.getComputedStyle(closestHTML).order)
+          let distance =
+            rect_box.y -
+            offsetScale(0, closestHTMLRect.y + closestHTMLRect.height / 2).y
+          if (distance >= 0) {
+            zIndex++
           }
         }
-        parentHTML.appendChild(new_obj.value)
+        new_obj.Sort = zIndex
+        new_obj.value.style.order = zIndex
+        let wbase_children = wbase_list.filter(
+          wb => wb.ParentID === rect_box.parentID && wb.Sort >= zIndex
+        )
+        for (let cWb of wbase_children) {
+          cWb.Sort++
+          cWb.value.style.order = cWb.Sort
+        }
       } else {
-        initPositionStyle(new_obj)
-        parentHTML.appendChild(new_obj.value)
+        let zIndex = 0
+        if (children.length > 0) {
+          children.sort((aHTML, bHTML) => {
+            let aHTMLRect = aHTML.getBoundingClientRect()
+            let bHTMLRect = bHTML.getBoundingClientRect()
+            let a_center_ox = Math.abs(
+              rect_box.x - offsetScale(aHTMLRect.x + aHTMLRect.width / 2, 0).x
+            )
+            let b_center_ox = Math.abs(
+              rect_box.x - offsetScale(bHTMLRect.x + bHTMLRect.width / 2, 0).x
+            )
+            return a_center_ox - b_center_ox
+          })
+          let closestHTML = children[0]
+          let closestHTMLRect = closestHTML.getBoundingClientRect()
+          zIndex = parseInt(window.getComputedStyle(closestHTML).order)
+          let distance =
+            rect_box.x -
+            offsetScale(closestHTMLRect.x + closestHTMLRect.width / 2, 0).x
+          if (distance >= 0) {
+            zIndex++
+          }
+        }
+        new_obj.Sort = zIndex
+        new_obj.value.style.order = zIndex
+        let wbase_children = wbase_list.filter(
+          wb => wb.ParentID === rect_box.parentID && wb.Sort >= zIndex
+        )
+        for (let cWb of wbase_children) {
+          cWb.Sort++
+          cWb.value.style.order = cWb.Sort
+        }
       }
-      parent_wbase.CountChild++
+      parentHTML.appendChild(new_obj.value)
+    }
+    if (pWb) {
+      pWb.CountChild++
       let list_childID = [
         ...parentHTML.querySelectorAll(
           `:scope ${
-            parent_wbase.CateID === EnumCate.table
-              ? '> .table-row > .table-cell '
-              : ''
+            pWb.CateID === EnumCate.table ? '> .table-row > .table-cell ' : ''
           }> .wbaseItem-value`
         )
       ]
       list_childID.sort(
-        (a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex)
+        (a, b) =>
+          parseInt(a.style.zIndex ?? a.style.order) -
+          parseInt(b.style.zIndex ?? b.style.order)
       )
-      parent_wbase.ListChildID = list_childID.map(eHTML => eHTML.id)
+      pWb.ListChildID = list_childID.map(eHTML => eHTML.id)
     }
+    new_obj.value.style.cssText = new_obj.StyleItem
     wbase_list.push(new_obj)
     arrange()
     replaceAllLyerItemHTML()

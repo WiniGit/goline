@@ -206,7 +206,6 @@ async function initComponents (item, list, initListener = true) {
   if (initListener) {
     item.value.id = item.GID
     if (item.Level === 1) {
-      debugger
       divSection.appendChild(item.value)
     }
     // addListenFromSection(item)
@@ -596,20 +595,10 @@ function getWBaseOffset (wb) {
   let topValue
   if (wb.ParentID === wbase_parentID) {
     leftValue = Math.round(
-      parseFloat(
-        `${wb.value.style?.left ?? wb.StyleItem.PositionItem.Left}`.replace(
-          'px',
-          ''
-        )
-      ).toFixed(2)
+      parseFloat(`${wb.value.style.left}`.replace('px', '')).toFixed(2)
     )
     topValue = Math.round(
-      parseFloat(
-        `${wb.value.style?.top ?? wb.StyleItem.PositionItem.Top}`.replace(
-          'px',
-          ''
-        )
-      ).toFixed(2)
+      parseFloat(`${wb.value.style.top}`.replace('px', '')).toFixed(2)
     )
   } else {
     leftValue = Math.round(
@@ -1196,6 +1185,72 @@ function wCrossAxis (key, isHorizontal) {
       return 'flex-end'
     } else {
       return 'center'
+    }
+  }
+}
+
+function mainAxisToAlign (key, isHorizontal) {
+  if (isHorizontal == null) {
+    switch (key) {
+      case '-webkit-left':
+        return 'Left'
+      case '-webkit-right':
+        return 'Right'
+      default: // '-webkit-center'
+        return 'Center'
+    }
+  } else if (isHorizontal) {
+    switch (key) {
+      case 'flex-start':
+        return 'Left'
+      case 'flex-end':
+        return 'Right'
+      case 'space-between':
+        return 'SpaceBetween'
+      default:
+        return 'Center'
+    }
+  } else {
+    switch (key) {
+      case 'flex-start':
+        return 'Top'
+      case 'flex-end':
+        return 'Bottom'
+      case 'space-between':
+        return 'SpaceBetween'
+      default:
+        return 'Center'
+    }
+  }
+}
+
+function crossAxisToAlign (key, isHorizontal) {
+  if (isHorizontal == undefined) {
+    switch (key) {
+      case 'top':
+        return 'Top'
+      case 'bottom':
+        return 'Bottom'
+      default: // 'middle'
+        return 'Center'
+    }
+  } else if (isHorizontal) {
+    switch (key) {
+      case 'flex-start':
+        return 'Top'
+      case 'flex-end':
+        return 'Bottom'
+      default:
+        return 'Center'
+    }
+  } else {
+    switch (key) {
+      case 'flex-start':
+        return 'Left'
+      case 'flex-end':
+        return 'Right'
+      default:
+        return 'Center'
     }
   }
 }

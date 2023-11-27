@@ -67,7 +67,7 @@
 }
 
 .wbaseItem-value.w-col[scroll="true"] {
-  overflow: hidden scroll !important;
+  overflow: hidden auto !important;
   justify-content: flex-start !important;
 }
 
@@ -472,7 +472,7 @@ body:has(> .w-date-picker-popup) {
   aspect-ratio: 1 / 1 !important;
   border-radius: 50%;
   box-sizing: border-box;
-  border: 2px solid var(--unchecked-border);
+  border: 2px solid #2196f3ff;
   background-color: transparent !important;
 }
 

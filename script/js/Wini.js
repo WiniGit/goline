@@ -1307,58 +1307,48 @@ function moveListener (event) {
                 }
                 switch (tool_state) {
                   case ToolState.resize_left:
-                    for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = selected_list[i].value
-                      eHTML.style.minWidth = null
+                    for (let wb of selected_list) {
                       let scaleComponent = EnumCate.scale_size_component.some(
-                        cate => selected_list[i].CateID === cate
+                        ct => wb.CateID === ct
                       )
-                      if (checkpad == i) {
+                      if (checkpad < selected_list.length) {
                         if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(selected_list[i])
-                          selected_list[i].StyleItem.PositionItem.Left =
-                            thisOffset.x + 'px'
+                          let thisOffset = getWBaseOffset(wb)
+                          wb.value.style.left = `${thisOffset.x}px`
+                          wb.tmpX = thisOffset.x
                           if (
-                            selected_list[i].StyleItem.PositionItem
-                              .ConstraintsX == Constraints.center
-                          )
-                            eHTML.style.transform =
-                              eHTML.style.transform.replace(
-                                'translateX(-50%)',
-                                ''
-                              )
+                            wb.value.getAttribute('consty') ===
+                            Constraints.center
+                          ) {
+                            wb.value.style.transform = 'translateY(-50%)'
+                          } else {
+                            wb.value.style.transform = null
+                          }
                           if (scaleComponent) {
-                            eHTML.style.top = thisOffset.y + 'px'
-                            eHTML.style.bottom = null
-                            eHTML.style.transform = null
+                            wb.value.style.top = `${thisOffset.y}px`
+                            wb.value.style.bottom = null
+                            wb.value.style.transform = null
                           }
                         } else if (parentHTML.classList.contains('w-row')) {
-                          eHTML.style.flex = null
+                          wb.value.style.width = `${wb.value.offsetWidth}px`
+                          wb.value.style.flex = null
+                          wb.value.removeAttribute('width-type')
                         }
-                        selected_list[i].StyleItem.FrameItem.Width =
-                          eHTML.offsetWidth
+                        wb.tmpW = wb.value.offsetWidth
                       }
-                      if (scaleComponent)
-                        scaleComponent = eHTML.offsetHeight / eHTML.offsetWidth
-                      if (!isInFlex)
-                        eHTML.style.left = `${
-                          parseFloat(
-                            `${selected_list[i].StyleItem.PositionItem.Left}`.replace(
-                              'px',
-                              ''
-                            )
-                          ) +
-                          xp / scale
+                      if (scaleComponent) {
+                        scaleComponent =
+                          wb.value.offsetHeight / wb.value.offsetWidth
+                      }
+                      if (!isInFlex) {
+                        wb.value.style.left = `${wb.tmpX + xp / scale}px`
+                      }
+                      wb.value.style.width = `${wb.tmpW - xp / scale}px`
+                      if (scaleComponent) {
+                        wb.value.style.height = `${
+                          (wb.tmpW - xp / scale) * scaleComponent
                         }px`
-                      eHTML.style.width = `${
-                        selected_list[i].StyleItem.FrameItem.Width - xp / scale
-                      }px`
-                      if (scaleComponent)
-                        eHTML.style.height = `${
-                          (selected_list[i].StyleItem.FrameItem.Width -
-                            xp / scale) *
-                          scaleComponent
-                        }px`
+                      }
                       checkpad++
                     }
                     break
@@ -3357,111 +3347,111 @@ function upListener (event) {
   }
   hidePopup(event)
   //
-  switch (WBaseDA.enumEvent) {
-    case EnumEvent.copy:
-      WBaseDA.copy(WBaseDA.listData)
-      if (window.getComputedStyle(assets_view).display != 'none') {
-        initUIAssetView()
-      }
-      break
-    case EnumEvent.add:
-      let list_add = []
-      if (WBaseDA.listData.length > 0) {
-        list_add = WBaseDA.listData
-      } else {
-        list_add = selected_list.filter(e => e.CateID !== EnumCate.text)
-      }
-      // ! add wbase thường
-      if (!event.altKey) {
-        for (let addItem of list_add) {
-          let eHTML = document.getElementById(addItem.GID)
-          if (
-            addItem.StyleItem.FrameItem?.Width != undefined &&
-            addItem.StyleItem.FrameItem.Width > 0
-          ) {
-            addItem.StyleItem.FrameItem.Width =
-              eHTML?.offsetWidth ?? addItem.StyleItem.FrameItem.Width
-          }
-          if (
-            addItem.StyleItem.FrameItem?.Height != undefined &&
-            addItem.StyleItem.FrameItem.Height > 0
-          ) {
-            addItem.StyleItem.FrameItem.Height =
-              eHTML?.offsetHeight ?? addItem.StyleItem.FrameItem.Height
-          }
-        }
-      }
-      action_list[action_index].selected = [
-        ...list_add
-          .filter(e => e.ParentID === selected_list[0].ParentID)
-          .map(wbasItem => JSON.parse(JSON.stringify(wbasItem)))
-      ]
-      if (list_add.length > 0) {
-        let isUpdateTable = list_add.some(e => e.CateID === EnumCate.table)
-        WBaseDA.add(
-          list_add,
-          undefined,
-          isUpdateTable ? EnumEvent.edit : EnumEvent.add,
-          isUpdateTable ? EnumObj.wBaseAttribute : EnumObj.wBase
-        )
-      }
-      reloadTree(selected_list[0].value)
-      break
-    case EnumEvent.edit:
-      let enumObj = EnumObj.framePosition
-      let isInFlex = false
-      if (select_box_parentID != wbase_parentID)
-        isInFlex = window
-          .getComputedStyle(document.getElementById(select_box_parentID))
-          .display.match('flex')
-      for (let wbaseItem of selected_list) {
-        let eHTML = wbaseItem.value
-        if (wbaseItem.CateID == EnumCate.text) {
-          enumObj = EnumObj.typoStyleFramePosition
-        }
-        if (wbaseItem.StyleItem.FrameItem.Width != undefined) {
-          wbaseItem.StyleItem.FrameItem.Width =
-            wbaseItem.StyleItem.FrameItem.Width < 0
-              ? -eHTML.offsetWidth
-              : eHTML.offsetWidth
-        }
-        if (wbaseItem.StyleItem.FrameItem.Height != undefined) {
-          if (wbaseItem.CateID === EnumCate.tree) {
-            wbaseItem.StyleItem.FrameItem.Height =
-              eHTML.offsetHeight /
-              ([...wbaseItem.value.querySelectorAll('.w-tree')].filter(
-                wtree => wtree.offsetHeight > 0
-              ).length +
-                1)
-          } else {
-            wbaseItem.StyleItem.FrameItem.Height =
-              wbaseItem.StyleItem.FrameItem.Height < 0
-                ? -eHTML.offsetHeight
-                : eHTML.offsetHeight
-          }
-        }
-        handleStyleSize(wbaseItem)
-        if (!isInFlex) updateConstraints(wbaseItem)
-      }
-      WBaseDA.edit(selected_list, enumObj)
-      break
-    case EnumEvent.parent:
-      let list_update = []
-      if (WBaseDA.listData.length == 0) {
-        if (selected_list[0].ParentID != wbase_parentID) {
-          list_update.push(
-            wbase_list.find(e => e.GID == selected_list[0].ParentID)
-          )
-        }
-        list_update.push(...selected_list)
-      } else {
-        list_update = WBaseDA.listData
-      }
-      WBaseDA.parent(list_update)
-      break
-    default:
-      break
-  }
+  // switch (WBaseDA.enumEvent) {
+  //   case EnumEvent.copy:
+  //     WBaseDA.copy(WBaseDA.listData)
+  //     if (window.getComputedStyle(assets_view).display != 'none') {
+  //       initUIAssetView()
+  //     }
+  //     break
+  //   case EnumEvent.add:
+  //     let list_add = []
+  //     if (WBaseDA.listData.length > 0) {
+  //       list_add = WBaseDA.listData
+  //     } else {
+  //       list_add = selected_list.filter(e => e.CateID !== EnumCate.text)
+  //     }
+  //     // ! add wbase thường
+  //     if (!event.altKey) {
+  //       for (let addItem of list_add) {
+  //         let eHTML = document.getElementById(addItem.GID)
+  //         if (
+  //           addItem.StyleItem.FrameItem?.Width != undefined &&
+  //           addItem.StyleItem.FrameItem.Width > 0
+  //         ) {
+  //           addItem.StyleItem.FrameItem.Width =
+  //             eHTML?.offsetWidth ?? addItem.StyleItem.FrameItem.Width
+  //         }
+  //         if (
+  //           addItem.StyleItem.FrameItem?.Height != undefined &&
+  //           addItem.StyleItem.FrameItem.Height > 0
+  //         ) {
+  //           addItem.StyleItem.FrameItem.Height =
+  //             eHTML?.offsetHeight ?? addItem.StyleItem.FrameItem.Height
+  //         }
+  //       }
+  //     }
+  //     action_list[action_index].selected = [
+  //       ...list_add
+  //         .filter(e => e.ParentID === selected_list[0].ParentID)
+  //         .map(wbasItem => JSON.parse(JSON.stringify(wbasItem)))
+  //     ]
+  //     if (list_add.length > 0) {
+  //       let isUpdateTable = list_add.some(e => e.CateID === EnumCate.table)
+  //       WBaseDA.add(
+  //         list_add,
+  //         undefined,
+  //         isUpdateTable ? EnumEvent.edit : EnumEvent.add,
+  //         isUpdateTable ? EnumObj.wBaseAttribute : EnumObj.wBase
+  //       )
+  //     }
+  //     reloadTree(selected_list[0].value)
+  //     break
+  //   case EnumEvent.edit:
+  //     let enumObj = EnumObj.framePosition
+  //     let isInFlex = false
+  //     if (select_box_parentID != wbase_parentID)
+  //       isInFlex = window
+  //         .getComputedStyle(document.getElementById(select_box_parentID))
+  //         .display.match('flex')
+  //     for (let wbaseItem of selected_list) {
+  //       let eHTML = wbaseItem.value
+  //       if (wbaseItem.CateID == EnumCate.text) {
+  //         enumObj = EnumObj.typoStyleFramePosition
+  //       }
+  //       if (wbaseItem.StyleItem.FrameItem.Width != undefined) {
+  //         wbaseItem.StyleItem.FrameItem.Width =
+  //           wbaseItem.StyleItem.FrameItem.Width < 0
+  //             ? -eHTML.offsetWidth
+  //             : eHTML.offsetWidth
+  //       }
+  //       if (wbaseItem.StyleItem.FrameItem.Height != undefined) {
+  //         if (wbaseItem.CateID === EnumCate.tree) {
+  //           wbaseItem.StyleItem.FrameItem.Height =
+  //             eHTML.offsetHeight /
+  //             ([...wbaseItem.value.querySelectorAll('.w-tree')].filter(
+  //               wtree => wtree.offsetHeight > 0
+  //             ).length +
+  //               1)
+  //         } else {
+  //           wbaseItem.StyleItem.FrameItem.Height =
+  //             wbaseItem.StyleItem.FrameItem.Height < 0
+  //               ? -eHTML.offsetHeight
+  //               : eHTML.offsetHeight
+  //         }
+  //       }
+  //       handleStyleSize(wbaseItem)
+  //       if (!isInFlex) updateConstraints(wbaseItem)
+  //     }
+  //     WBaseDA.edit(selected_list, enumObj)
+  //     break
+  //   case EnumEvent.parent:
+  //     let list_update = []
+  //     if (WBaseDA.listData.length == 0) {
+  //       if (selected_list[0].ParentID != wbase_parentID) {
+  //         list_update.push(
+  //           wbase_list.find(e => e.GID == selected_list[0].ParentID)
+  //         )
+  //       }
+  //       list_update.push(...selected_list)
+  //     } else {
+  //       list_update = WBaseDA.listData
+  //     }
+  //     WBaseDA.parent(list_update)
+  //     break
+  //   default:
+  //     break
+  // }
   WBaseDA.enumEvent = null
   WBaseDA.listData = []
   drag_start_list = []

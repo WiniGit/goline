@@ -580,30 +580,9 @@ class WBaseDefault {
     IsWini: false,
     PageID: current_page,
     ListChildID: [],
-    StyleItem: {
-      DecorationItem: {
-        ColorValue: 'C4C4C4FF'
-      },
-      FrameItem: {
-        Width: 512.0,
-        Height: 451.0,
-        TopLeft: 0.0,
-        TopRight: 0.0,
-        BottomLeft: 0.0,
-        BottomRight: 0.0,
-        IsClip: true
-      },
-      PositionItem: {
-        Top: 222.0,
-        Left: 110.0,
-        Constraints: 'left',
-        ConstraintsY: 'top',
-        FixPosition: false
-      }
-    },
+    StyleItem: 'background-color: #C4C4C4FF;',
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: '',
       Name: 'Rectangle'
     },
     Name: 'Rectangle'
@@ -619,67 +598,13 @@ class WBaseDefault {
     IsWini: false,
     PageID: current_page,
     ListChildID: [],
-    StyleItem: {
-      DecorationItem: {},
-      FrameItem: {
-        Width: 100.0,
-        Height: 100.0,
-        TopLeft: 0.0,
-        TopRight: 0.0,
-        BottomLeft: 0.0,
-        BottomRight: 0.0,
-        IsClip: true
-      },
-      PositionItem: {
-        Top: 222.0,
-        Left: 110.0,
-        ConstraintsX: 'left',
-        ConstraintsY: 'top',
-        FixPosition: false
-      }
-    },
+    StyleItem: '',
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: '',
       Name: 'Svg Picture',
       Content: ''
     },
     Name: 'Svg Picture'
-  }
-
-  static circle = {
-    ListID: wbase_parentID,
-    Level: 1,
-    ParentID: wbase_parentID,
-    IsShow: true,
-    CateID: EnumCate.rectangle,
-    CountChild: 0,
-    IsWini: false,
-    PageID: current_page,
-    ListChildID: [],
-    StyleItem: {
-      DecorationItem: {
-        ColorValue: 'C4C4C4FF'
-      },
-      FrameItem: {
-        Width: 512.0,
-        Height: 451.0,
-        IsClip: true
-      },
-      PositionItem: {
-        Top: 222.0,
-        Left: 110.0,
-        Constraints: 'left',
-        ConstraintsY: 'top',
-        FixPosition: false
-      }
-    },
-    BasePropertyItems: [],
-    AttributesItem: {
-      NameField: '',
-      Name: 'Circle'
-    },
-    Name: 'Circle'
   }
 
   static text = {
@@ -693,36 +618,10 @@ class WBaseDefault {
     IsWini: false,
     PageID: current_page.ID,
     ListChildID: [],
-    StyleItem: {
-      TextStyleItem: {
-        FontSize: 24.0,
-        FontWeight: '400',
-        CateID: EnumCate.typography,
-        IsStyle: false,
-        ColorValue: '000000FF',
-        LetterSpacing: 0,
-        FontFamily: 'Roboto',
-        Name: 'default'
-      },
-      TypoStyleItem: {
-        AutoSize: TextAutoSize.autoWidth,
-        TextAlign: TextAlign.left,
-        TextAlignVertical: TextAlignVertical.middle
-      },
-      FrameItem: {
-        IsClip: true
-      },
-      PositionItem: {
-        Top: 0,
-        Left: 0,
-        ConstraintsX: 'left',
-        ConstraintsY: 'top',
-        FixPosition: false
-      }
-    },
+    StyleItem:
+      'font-size: 24px;font-weight: 400;color: #000000FF;font-family: Roboto;text-align: start;align-items: center;',
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: '',
       Content: '',
       Name: 'Text'
     },
@@ -739,32 +638,10 @@ class WBaseDefault {
     IsWini: false,
     PageID: current_page.ID,
     ListChildID: [],
-    StyleItem: {
-      DecorationItem: {
-        ColorValue: 'FFFFFFFF'
-      },
-      FrameItem: {
-        Width: 414.0,
-        Height: 896.0,
-        TopLeft: 0.0,
-        TopRight: 0.0,
-        BottomLeft: 0.0,
-        BottomRight: 0.0,
-        IsClip: false
-      },
-      PositionItem: {
-        Top: 0,
-        Left: 0,
-        ConstraintsX: 'left',
-        ConstraintsY: 'top',
-        FixPosition: false
-      }
-    },
+    StyleItem: 'background-color: #FFFFFFFF;',
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: '',
-      Name: 'Frame',
-      Content: ''
+      Name: 'Frame'
     },
     Name: 'Frame'
   }
@@ -825,44 +702,11 @@ class WBaseDefault {
     IsWini: false,
     PageID: current_page,
     ListChildID: [],
-    StyleItem: {
-      DecorationItem: {
-        ColorValue: '366AE2FF'
-      },
-      FrameItem: {
-        TopLeft: 8.0,
-        TopRight: 8.0,
-        BottomLeft: 8.0,
-        BottomRight: 8.0,
-        IsClip: true
-      },
-      PositionItem: {
-        Top: 0.0,
-        Left: 0.0,
-        ConstraintsX: 'left',
-        ConstraintsY: 'top',
-        FixPosition: false
-      },
-      PaddingItem: {
-        Left: 20,
-        Right: 20,
-        Top: 12,
-        Bottom: 12
-      }
-    },
-    WAutolayoutItem: {
-      Name: 'new layout',
-      Alignment: 'Center',
-      Direction: 'Horizontal',
-      ChildSpace: 4.0,
-      IsScroll: false,
-      IsWrap: false,
-      RunSpace: 0.0,
-      CountItem: 1
-    },
+    ListClassName: 'w-row',
+    StyleItem:
+      'background-color: #366AE2FF;border-radius: 8px;--padding: 12px 20px;--main-axis-align: center;--cross-axis-align: center;--child-space: 4px;--run-space: 0px;',
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: 'Button',
       Name: 'Button'
     },
     Name: 'Button',
@@ -882,6 +726,7 @@ class WBaseDefault {
   }
 
   static switch = {
+    Name: 'Switch',
     ListID: wbase_parentID,
     Level: 1,
     ParentID: wbase_parentID,
@@ -891,32 +736,14 @@ class WBaseDefault {
     IsWini: false,
     PageID: current_page,
     ListChildID: [],
-    StyleItem: {
-      DecorationItem: {
-        ColorValue: '1890ffff'
-      },
-      FrameItem: {
-        Width: 60.0,
-        Height: 40.0,
-        IsClip: true
-      },
-      PositionItem: {
-        Top: 0.0,
-        Left: 0.0
-      }
-    },
+    StyleItem:
+      '--dot-color: #ffffffff;--unchecked-bg: #f2f5f8ff;--checked-color: #1890ffff;width: 60px;height: 40px;',
     BasePropertyItems: [],
     AttributesItem: {
-      NameField: 'Switch',
       Name: 'Switch',
       Content: 'true'
     },
-    Name: 'Switch',
-    JsonItem: {
-      DotColor: 'FFFFFFFF',
-      InactiveColor: 'F2F5F8FF',
-      Enable: true
-    }
+    JsonItem: {}
   }
 
   static checkbox = {
@@ -930,42 +757,13 @@ class WBaseDefault {
     ListChildID: [],
     IsWini: false,
     CountChild: 0,
-    StyleItem: {
-      Name: null,
-      PositionItem: {
-        Right: 0,
-        Bottom: 0
-      },
-      FrameItem: {
-        Width: 20,
-        Height: 20,
-        IsClip: true,
-        TopLeft: 4,
-        TopRight: 4,
-        BottomLeft: 4,
-        BottomRight: 4
-      },
-      DecorationItem: {
-        ColorValue: '366AE2FF',
-        BorderItem: {
-          Width: '2 2 2 2',
-          BorderStyle: BorderStyle.solid,
-          ColorValue: 'E5EAF0FF',
-          IsStyle: false,
-          BorderSide: BorderSide.all
-        }
-      }
-    },
+    StyleItem:
+      '--check-color: #ffffffff;--unchecked-bg: #9e9e9eff;--checked-color: #366ae2ff;width: 20px;height: 20px;border-width: 2px;border-color: #e5eaf0ff;border-style: solid;',
     AttributesItem: {
       Name: 'Checkbox',
-      NameField: 'Checkbox',
       Content: 'true'
     },
-    JsonItem: {
-      CheckColor: 'ffffffff',
-      Enable: true,
-      InactiveColor: '9e9e9eff'
-    }
+    JsonItem: {}
   }
 
   static radio_button = {
@@ -979,50 +777,13 @@ class WBaseDefault {
     ListChildID: [],
     IsWini: false,
     CountChild: 0,
-    StyleItem: {
-      PositionItem: {},
-      FrameItem: {
-        Width: 20,
-        Height: 20
-      },
-      DecorationItem: {
-        ColorValue: '1890ffFF',
-        BorderItem: {
-          Width: '2 2 2 2',
-          BorderStyle: BorderStyle.solid,
-          ColorValue: '2196F3FF',
-          IsStyle: false,
-          BorderSide: BorderSide.all
-        }
-      }
-    },
+    StyleItem:
+      '--checked-color: #1890ffff;width: 20px;height: 20px;border-width: 2px;border-color: #2196f3ff;border-style: solid;',
     AttributesItem: {
       Name: 'Radio button',
-      NameField: '',
       Content: ''
     },
-    JsonItem: {
-      Enable: true
-    }
-  }
-
-  static textfield = {
-    Name: 'Textfield',
-    ParentID: wbase_parentID,
-    Level: 2,
-    IsShow: true,
-    CateID: EnumCate.textfield,
-    ListChildID: [],
-    IsWini: false,
-    CountChild: 0,
-    StyleItem: {
-      ColorValue: 'FFFFFF00'
-    },
-    AttributesItem: {
-      Name: 'Textfield',
-      NameField: 'Textfield',
-      Content: ''
-    }
+    JsonItem: {}
   }
 
   static textformfield = {
@@ -1036,63 +797,12 @@ class WBaseDefault {
     ListChildID: [],
     IsWini: false,
     CountChild: 0,
-    StyleItem: {
-      PositionItem: {
-        Right: 0,
-        Bottom: 0
-      },
-      FrameItem: {
-        Width: 382,
-        IsClip: true,
-        TopLeft: 8,
-        TopRight: 8,
-        BottomLeft: 8,
-        BottomRight: 8
-      },
-      PaddingItem: {
-        Top: 10,
-        Left: 16,
-        Bottom: 10,
-        Right: 16
-      },
-      DecorationItem: {
-        ColorValue: 'FFFFFFFF',
-        BorderItem: {
-          Width: '1 1 1 1',
-          BorderStyle: BorderStyle.solid,
-          ColorValue: 'E5EAF0FF',
-          IsStyle: false,
-          BorderSide: BorderSide.all
-        }
-      },
-      TextStyleItem: {
-        FontSize: 16,
-        FontWeight: '400',
-        CateID: EnumCate.typography,
-        IsStyle: false,
-        ColorValue: '394960FF',
-        LetterSpacing: 0,
-        FontFamily: 'Roboto',
-        Height: 24
-      },
-      TypoStyleItem: {
-        TextAlign: TextAlign.left,
-        TextAlignVertical: TextAlignVertical.middle
-      }
-    },
+    ListClassName: 'w-row',
+    StyleItem:
+      'width: 382px;background-color: #ffffffff;border-radius: 8px;--padding: 10px 16px;--main-axis-align: flex-start;--cross-axis-align: center;--child-space: 4px;--run-space: 0px;border-width: 1px;border-color: #e5eaf0ff;border-style: solid;font-size: 16px;line-height: 24px;font-weight: 400;color: #394960ff;font-family: Roboto;',
     AttributesItem: {
       Name: 'Textformfield',
-      NameField: 'Textformfield',
       Content: ''
-    },
-    WAutolayoutItem: {
-      Alignment: 'Center',
-      Direction: 'Horizontal',
-      ChildSpace: 4.0,
-      IsScroll: false,
-      IsWrap: false,
-      RunSpace: 0.0,
-      CountItem: 1
     },
     JsonItem: {
       LabelText: 'Label',
@@ -1108,8 +818,7 @@ class WBaseDefault {
       MaxLines: 1,
       TextCapitalization: null,
       JsonVadidate: [],
-      AutoValidate: false,
-      SuffixSize: 16
+      AutoValidate: false
     },
     JsonEventItem: [
       {
@@ -1124,6 +833,22 @@ class WBaseDefault {
         ]
       }
     ]
+  }
+
+  static textfield = {
+    ParentID: this.textformfield.GID,
+    Name: 'Textfield',
+    Level: 2,
+    IsShow: true,
+    CateID: EnumCate.textfield,
+    ListChildID: [],
+    IsWini: false,
+    CountChild: 0,
+    StyleItem: 'background-color: #00000000',
+    AttributesItem: {
+      Name: 'Textfield',
+      Content: ''
+    }
   }
 
   static table = {

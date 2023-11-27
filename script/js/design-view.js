@@ -94,7 +94,9 @@ function updateUIDesignView () {
       ) &&
       (selected_list.length === 1 ||
         selected_list[0].StyleItem ||
-        selected_list.every(wb => wb.WAutolayoutItem))
+        selected_list.every(wb =>
+          window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
+        ))
     ) {
       let editAutoLayout = EditLayoutBlock()
       listEditContainer.appendChild(editAutoLayout)
@@ -831,10 +833,10 @@ function updateInputTLWH () {
 
 // edit auto layout
 function EditLayoutBlock () {
-  let autoLayoutList = selected_list.filter(wb =>
+  let wbList = selected_list.filter(wb =>
     EnumCate.no_child_component.every(ct => wb.CateID !== ct)
   )
-  let isEditTable = autoLayoutList.every(wb => wb.CateID === EnumCate.table)
+  let isEditTable = wbList.every(wb => wb.CateID === EnumCate.table)
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_auto_layout_div'
   editContainer.className = 'edit-container'
@@ -846,21 +848,6 @@ function EditLayoutBlock () {
     window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
   )
   if (showDetails) {
-    if (
-      autoLayoutList.every(
-        wb =>
-          wb.CateID !== EnumCate.textformfield && wb.CateID != EnumCate.table
-      )
-    ) {
-      let icon_remove = document.createElement('i')
-      icon_remove.id = 'btn_remove_auto_layout'
-      header.appendChild(icon_remove)
-      icon_remove.className = 'fa-solid fa-minus fa-sm'
-      icon_remove.onclick = function () {
-        removeLayout()
-        reloadEditLayoutBlock()
-      }
-    }
     let auto_layout_details_div = document.createElement('div')
     editContainer.appendChild(auto_layout_details_div)
     auto_layout_details_div.className = 'col'
@@ -870,13 +857,44 @@ function EditLayoutBlock () {
     _row1.style.display = 'flex'
     _row1.style.position = 'relative'
     //
-    let isVertical = autoLayoutList.every(
-      wb => window.getComputedStyle(wb.value).flexDirection === 'column'
+    let isVertical = wbList.every(
+      wb => wb.value.classList.contains('w-col') || wb.CateID === EnumCate.table
     )
+    let cssList = wbList.filterAndMap(wb => {
+      if (wb.StyleItem) {
+        return wb.value.style
+      } else {
+        return StyleDA.docStyleSheets.find(cssRule =>
+          [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+            wb.value
+          )
+        )?.style
+      }
+    })
+    let layoutItem = {
+      Direction: isVertical ? 'Vertical' : 'Horizontal',
+      Alignment:
+        mainAxisToAlign(cssList[0].getPropertyValue('--main-axis-align')) +
+        crossAxisToAlign(cssList[0].getPropertyValue('--cross-axis-align')),
+      ChildSpace: cssList.filterAndMap(st =>
+        parseFloat(st.getPropertyValue('--child-space').replace('px', ''))
+      ),
+      RunSpace: cssList.filterAndMap(st =>
+        parseFloat(st.getPropertyValue('--run-space').replace('px', ''))
+      ),
+      IsWrap: wbList
+        .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
+        .every(e => e === 'wrap'),
+      IsScroll: wbList
+        .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
+        .every(e => e.includes('scroll'))
+    }
+    layoutItem.Alignment =
+      layoutItem.Alignment === 'CenterCenter' ? 'Center' : layoutItem.Alignment
     // group btn edit auto layout direction
     let group_btn_direction = document.createElement('div')
     group_btn_direction.className = 'group_btn_direction'
-    group_btn_direction.style.pointerEvents = autoLayoutList.every(wb =>
+    group_btn_direction.style.pointerEvents = wbList.every(wb =>
       [EnumCate.textformfield, ...EnumCate.data_component].every(
         ct => wb.CateID !== ct
       )
@@ -889,36 +907,45 @@ function EditLayoutBlock () {
       isVertical ? 'transparent' : '#e5e5e5'
     }"></i>`
     _row1.appendChild(group_btn_direction)
-    if (isVertical) {
-      group_btn_direction.lastChild.onclick = function () {
-        handleEditLayout({ direction: 'Horizontal' })
+    if (
+      wbList.every(
+        wb =>
+          wb.CateID !== EnumCate.textformfield && wb.CateID != EnumCate.table
+      )
+    ) {
+      let icon_remove = document.createElement('i')
+      icon_remove.id = 'btn_remove_auto_layout'
+      header.appendChild(icon_remove)
+      icon_remove.className = 'fa-solid fa-minus fa-sm'
+      icon_remove.onclick = function () {
+        removeLayout()
         reloadEditLayoutBlock()
       }
     } else {
-      group_btn_direction.firstChild.onclick = function () {
-        handleEditLayout({ direction: 'Vertical' })
-        reloadEditLayoutBlock()
+      if (isVertical) {
+        group_btn_direction.lastChild.onclick = function () {
+          handleEditLayout({ direction: 'Horizontal' })
+          reloadEditLayoutBlock()
+        }
+      } else {
+        group_btn_direction.firstChild.onclick = function () {
+          handleEditLayout({ direction: 'Vertical' })
+          reloadEditLayoutBlock()
+        }
       }
     }
     // select alignment type
-    let alignment_type = _alignTable(
-      isVertical,
-      autoLayoutList[0].WAutolayoutItem.Alignment
-    )
+    let alignment_type = _alignTable(isVertical, layoutItem.Alignment)
     _row1.appendChild(alignment_type)
     // extension auto layout
     let btn_extension = document.createElement('i')
     _row1.appendChild(btn_extension)
     btn_extension.className = 'fa-solid fa-ellipsis icon_btn_default_style'
-    btn_extension.onclick = function () {
-      setTimeout(function () {}, 200)
-    }
+    // btn_extension.onclick = function () {
+    //   setTimeout(function () {}, 200)
+    // }
     // input edit child space
-    let childSpaceValues = autoLayoutList.filterAndMap(wb =>
-      window
-        .getComputedStyle(wb.value)
-        [isVertical ? 'rowGap' : 'columnGap'].replace('px', '')
-    )
+    let childSpaceValues = layoutItem.ChildSpace
     if (!isEditTable) {
       let inputChildSpace = _textField({
         width: '88px',
@@ -939,30 +966,19 @@ function EditLayoutBlock () {
       })
       $(inputChildSpace).css({ position: 'absolute', left: '0', bottom: '0' })
       _row1.appendChild(inputChildSpace)
-      if (
-        autoLayoutList.every(wb =>
-          EnumCate.extend_frame.some(ct => wb.CateID === ct)
-        )
-      ) {
-        let isGridValues = autoLayoutList.filterAndMap(
-          e => e.WAutolayoutItem.IsWrap
-        )
+      if (wbList.every(wb => wb.CateID !== EnumCate.textformfield)) {
         let isWrapRow = document.createElement('div')
         isWrapRow.className = 'row'
         isWrapRow.style.width = '100%'
         let btnIsWarp = document.createElement('label')
         btnIsWarp.className = 'row regular1 check-box-label'
         btnIsWarp.innerHTML = `<input type="checkbox"${
-          isGridValues.every(checkVl => checkVl) ? ' checked' : ''
+          layoutItem.IsWrap ? ' checked' : ''
         } />Wrap content`
         btnIsWarp.firstChild.onchange = function (ev) {
           handleEditLayout({ isWrap: ev.target.checked })
         }
-        let runSpaceValues = autoLayoutList.filterAndMap(wb =>
-          window
-            .getComputedStyle(wb.value)
-            [isVertical ? 'columnGap' : 'rowGap'].replace('px', '')
-        )
+        let runSpaceValues = layoutItem.RunSpace
         let inputRunSpace = _textField({
           width: '88px',
           icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
@@ -981,16 +997,13 @@ function EditLayoutBlock () {
           }
         })
         isWrapRow.replaceChildren(btnIsWarp, inputRunSpace)
-        let isScrollValues = autoLayoutList.filterAndMap(
-          wb => wb.value.getAttribute('scroll') === 'true'
-        )
         let btnIsScroll = document.createElement('label')
         btnIsScroll.className = 'row regular1 check-box-label'
         btnIsScroll.innerHTML = `<input type="checkbox"${
-          isScrollValues.every(checkVl => checkVl) ? ' checked' : ''
+          layoutItem.IsScroll ? ' checked' : ''
         }/>Overflow scroll`
         if (
-          autoLayoutList.some(
+          wbList.some(
             wb =>
               (wb.value.classList.contains('w-col') &&
                 wb.value.getAttribute('height-type') === 'fit') ||
@@ -1014,19 +1027,19 @@ function EditLayoutBlock () {
 
     // input padding
     let isShowPadDetails = false
-    let paddingLefts = autoLayoutList.filterAndMap(e =>
+    let paddingLefts = wbList.filterAndMap(e =>
       window.getComputedStyle(e.value).paddingLeft.replace('px', '')
     )
     let padLeftValue = paddingLefts.length == 1 ? paddingLefts[0] : 'mixed'
-    let paddingTops = autoLayoutList.filterAndMap(e =>
+    let paddingTops = wbList.filterAndMap(e =>
       window.getComputedStyle(e.value).paddingTop.replace('px', '')
     )
     let padTopValue = paddingTops.length == 1 ? paddingTops[0] : 'mixed'
-    let paddingRights = autoLayoutList.filterAndMap(e =>
+    let paddingRights = wbList.filterAndMap(e =>
       window.getComputedStyle(e.value).paddingRight.replace('px', '')
     )
     let padRightValue = paddingRights.length == 1 ? paddingRights[0] : 'mixed'
-    let paddingBots = autoLayoutList.filterAndMap(e =>
+    let paddingBots = wbList.filterAndMap(e =>
       window.getComputedStyle(e.value).paddingBottom.replace('px', '')
     )
     let padBotValue = paddingBots.length == 1 ? paddingBots[0] : 'mixed'
@@ -1751,21 +1764,19 @@ function EditBackgroundBlock () {
     )
   ) {
     header.appendChild(btnSelectImg)
-    let listColorID = selected_list.filterAndMap(wb =>
-      wb.StyleItem
-        ? wb.StyleItem.DecorationItem?.ColorID ??
-          wb.StyleItem.DecorationItem?.ColorValue
-        : StyleDA.docStyleSheets
-            .find(cssRule =>
-              [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                wb.value
-              )
+    let listColorID = selected_list.filterAndMap(wb => {
+      let wbSt = wb.StyleItem
+        ? wb.value.style
+        : StyleDA.docStyleSheets.find(cssRule =>
+            [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+              wb.value
             )
-            ?.style?.backgroundColor?.replace(
-              /(var\(--background-color-|\))/g,
-              ''
-            )
-    )
+          )?.style
+      return wbSt?.backgroundColor?.replace(
+        /(var\(--background-color-|\))/g,
+        ''
+      )
+    })
 
     if (listColorID.length === 1) {
       if (listColorID[0]?.length === 36) {
@@ -2021,8 +2032,9 @@ function EditBackgroundBlock () {
   ) {
     header.appendChild(btnSelectSkin)
     if (
-      selected_list.filterAndMap(wb => wb.StyleItem.DecorationItem.ColorValue)
-        .length === 1
+      selected_list.filterAndMap(
+        wb => window.getComputedStyle(wb.value).backgroundImage
+      ).length === 1
     ) {
       let editImgTile = document.createElement('div')
       editImgTile.id = 'select_img_tile'
@@ -2131,47 +2143,41 @@ function EditTypoBlock () {
   btnSelectSkin.className = 'action-button'
 
   let listTypoSkin = listTextStyle.filterAndMap(wb => {
-    if (wb.StyleItem?.TextStyleItem) {
-      return wb.StyleItem.TextStyleItem.IsStyle
-        ? wb.StyleItem.TextStyleID
-        : {
-            ...wb.StyleItem.TextStyleItem,
-            TextAlign: wb.StyleItem.TypoStyleItem.TextAlign,
-            TextAlignVertical: wb.StyleItem.TypoStyleItem.TextAlignVertical
-          }
+    if (wb.StyleItem) {
+      var rule = wb.value.style
     } else {
-      let rule = StyleDA.docStyleSheets.find(cssRule =>
+      rule = StyleDA.docStyleSheets.find(cssRule =>
         [...divSection.querySelectorAll(cssRule.selectorText)].includes(
           wb.value
         )
       )?.style
-      if (rule) {
-        if (rule.font) {
-          return rule.font.replace('var(--font-style-', '').replace(')', '')
-        } else {
-          return {
-            FontSize: parseFloat(rule.fontSize.replace('px', '')),
-            FontWeight: rule.fontWeight,
-            CateID: EnumCate.typography,
-            IsStyle: false,
-            ColorValue: Ultis.rgbToHex(rule.color).replace('#', ''),
-            LetterSpacing: parseFloat(
-              rule.letterSpacing.length > 0
-                ? rule.letterSpacing.replace('px', '')
-                : '0'
-            ),
-            FontFamily: rule.fontFamily,
-            Height:
-              rule.lineHeight.length > 0
-                ? parseFloat(rule.lineHeight.replace('px', ''))
-                : null,
-            TextAlign: rule.textAlign,
-            TextAlignVertical: rule.alignItems
-          }
+    }
+    if (rule) {
+      if (rule.font) {
+        return rule.font.replace('var(--font-style-', '').replace(')', '')
+      } else {
+        return {
+          FontSize: parseFloat(rule.fontSize.replace('px', '')),
+          FontWeight: rule.fontWeight,
+          CateID: EnumCate.typography,
+          IsStyle: false,
+          ColorValue: Ultis.rgbToHex(rule.color).replace('#', ''),
+          LetterSpacing: parseFloat(
+            rule.letterSpacing.length > 0
+              ? rule.letterSpacing.replace('px', '')
+              : '0'
+          ),
+          FontFamily: rule.fontFamily,
+          Height:
+            rule.lineHeight.length > 0
+              ? parseFloat(rule.lineHeight.replace('px', ''))
+              : null,
+          TextAlign: rule.textAlign,
+          TextAlignVertical: rule.alignItems
         }
       }
-      return null
     }
+    return null
   })
 
   if (listTypoSkin.length === 1 && typeof listTypoSkin[0] === 'string') {
@@ -2684,70 +2690,66 @@ function EditBorderBlock () {
   //
   let listBorderSkin = listBorder.filterAndMap(wb => {
     if (wb.StyleItem) {
-      return wb.StyleItem.DecorationItem.BorderItem
-        ? wb.StyleItem.DecorationItem.BorderItem.IsStyle
-          ? wb.StyleItem.DecorationItem.BorderID
-          : wb.StyleItem.DecorationItem.BorderItem
-        : null
+      var rule = wb.value.style
     } else {
-      let rule = StyleDA.docStyleSheets.find(cssRule =>
+      rule = StyleDA.docStyleSheets.find(cssRule =>
         [...divSection.querySelectorAll(cssRule.selectorText)].includes(
           wb.value
         )
       )?.style
-      if (rule && rule.borderStyle.length > 0) {
-        if (rule.borderStyle.includes('var')) {
-          return rule.borderStyle
-            .replace('var(--border-style-', '')
-            .replace(')', '')
-        } else {
-          let borderWidth = rule.borderWidth.replaceAll('px', '').split(' ')
-          let borderSide = BorderSide.custom
-          switch (borderWidth.length) {
-            case 1:
-              borderWidth = `${borderWidth} ${borderWidth} ${borderWidth} ${borderWidth}`
-              borderSide = BorderSide.all
-              break
-            case 2:
-              borderWidth = [...borderWidth, ...borderWidth].join(' ')
-              break
-            case 3:
-              if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
-                if (borderWidth[0] > 0) {
-                  borderSide = BorderSide.top
-                } else {
-                  borderSide = BorderSide.bottom
-                }
+    }
+    if (rule && rule.borderStyle.length > 0) {
+      if (rule.borderStyle.includes('var')) {
+        return rule.borderStyle
+          .replace('var(--border-style-', '')
+          .replace(')', '')
+      } else {
+        let borderWidth = rule.borderWidth.replaceAll('px', '').split(' ')
+        let borderSide = BorderSide.custom
+        switch (borderWidth.length) {
+          case 1:
+            borderWidth = `${borderWidth} ${borderWidth} ${borderWidth} ${borderWidth}`
+            borderSide = BorderSide.all
+            break
+          case 2:
+            borderWidth = [...borderWidth, ...borderWidth].join(' ')
+            break
+          case 3:
+            if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
+              if (borderWidth[0] > 0) {
+                borderSide = BorderSide.top
+              } else {
+                borderSide = BorderSide.bottom
               }
-              borderWidth = [...borderWidth, borderWidth[1]].join(' ')
-              break
-            default: // 4
-              if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
-                if (borderWidth[0] > 0) {
-                  borderSide = BorderSide.top
-                } else if (borderWidth[1] > 0) {
-                  borderSide = BorderSide.right
-                } else if (borderWidth[2] > 0) {
-                  borderSide = BorderSide.bottom
-                } else {
-                  borderSide = BorderSide.left
-                }
+            }
+            borderWidth = [...borderWidth, borderWidth[1]].join(' ')
+            break
+          default: // 4
+            if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
+              if (borderWidth[0] > 0) {
+                borderSide = BorderSide.top
+              } else if (borderWidth[1] > 0) {
+                borderSide = BorderSide.right
+              } else if (borderWidth[2] > 0) {
+                borderSide = BorderSide.bottom
+              } else {
+                borderSide = BorderSide.left
               }
-              borderWidth = borderWidth.join(' ')
-              break
-          }
-          wb.borderSide = borderSide
-          return {
-            Width: borderWidth,
-            BorderStyle: rule.borderStyle,
-            ColorValue: Ultis.rgbToHex(rule.borderColor).replace('#', ''),
-            IsStyle: false,
-            BorderSide: borderSide
-          }
+            }
+            borderWidth = borderWidth.join(' ')
+            break
+        }
+        wb.borderSide = borderSide
+        return {
+          Width: borderWidth,
+          BorderStyle: rule.borderStyle,
+          ColorValue: Ultis.rgbToHex(rule.borderColor).replace('#', ''),
+          IsStyle: false,
+          BorderSide: borderSide
         }
       }
-      return null
     }
+    return null
   })
   if (listBorderSkin.length === 1 && typeof listBorderSkin[0] === 'string') {
     let borderItem = BorderDA.list.find(skin => listBorderSkin[0] === skin.GID)
@@ -3091,53 +3093,46 @@ function EditEffectBlock () {
   )
   //
   let listEffectSkin = listEffect.filterAndMap(wb => {
-    if (wb.StyleItem?.DecorationItem) {
-      return wb.StyleItem.DecorationItem.EffectItem
-        ? wb.StyleItem.DecorationItem.EffectItem.IsStyle
-          ? wb.StyleItem.DecorationItem.EffectID
-          : wb.StyleItem.DecorationItem.EffectItem
-        : null
+    if (wb.StyleItem) {
+      var rule = wb.value.style
     } else {
-      let rule = StyleDA.docStyleSheets.find(cssRule =>
+      rule = StyleDA.docStyleSheets.find(cssRule =>
         [...divSection.querySelectorAll(cssRule.selectorText)].includes(
           wb.value
         )
       )?.style
-      if (rule && (rule.boxShadow.length > 0 || rule.filter.length > 0)) {
-        if (rule.boxShadow.includes('var') || rule.filter.includes('var')) {
-          return (
-            rule.boxShadow.length > 0
-              ? rule.boxShadow.replace('var(--effect-shadow-', '')
-              : rule.filter.replace('var(--effect-blur-', '')
-          ).replace(')', '')
-        } else {
-          let effectItem = { IsStyle: false }
-          if (rule.filter?.length > 0) {
-            effectItem['Type'] = ShadowType.layer_blur
-            effectItem['BlurRadius'] = rule.filter.replace(/(blur\(|px\))/g, '')
-          } else {
-            let effectColor = rule.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-            let props = rule.boxShadow
-              .replace(effectColor, '')
-              .trim()
-              .split(' ')
-            effectItem['Type'] = props.includes('inset')
-              ? ShadowType.inner
-              : ShadowType.dropdown
-            effectItem['OffsetX'] = parseFloat(props[0].replace('px'))
-            effectItem['OffsetY'] = parseFloat(props[1].replace('px'))
-            effectItem['BlurRadius'] = parseFloat(props[2].replace('px'))
-            effectItem['SpreadRadius'] = parseFloat(props[3].replace('px'))
-            effectItem['ColorValue'] = Ultis.rgbToHex(effectColor).replace(
-              '#',
-              ''
-            )
-          }
-          return effectItem
-        }
-      }
-      return null
     }
+    if (rule && (rule.boxShadow.length > 0 || rule.filter.length > 0)) {
+      if (rule.boxShadow.includes('var') || rule.filter.includes('var')) {
+        return (
+          rule.boxShadow.length > 0
+            ? rule.boxShadow.replace('var(--effect-shadow-', '')
+            : rule.filter.replace('var(--effect-blur-', '')
+        ).replace(')', '')
+      } else {
+        let effectItem = { IsStyle: false }
+        if (rule.filter?.length > 0) {
+          effectItem['Type'] = ShadowType.layer_blur
+          effectItem['BlurRadius'] = rule.filter.replace(/(blur\(|px\))/g, '')
+        } else {
+          let effectColor = rule.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+          let props = rule.boxShadow.replace(effectColor, '').trim().split(' ')
+          effectItem['Type'] = props.includes('inset')
+            ? ShadowType.inner
+            : ShadowType.dropdown
+          effectItem['OffsetX'] = parseFloat(props[0].replace('px'))
+          effectItem['OffsetY'] = parseFloat(props[1].replace('px'))
+          effectItem['BlurRadius'] = parseFloat(props[2].replace('px'))
+          effectItem['SpreadRadius'] = parseFloat(props[3].replace('px'))
+          effectItem['ColorValue'] = Ultis.rgbToHex(effectColor).replace(
+            '#',
+            ''
+          )
+        }
+        return effectItem
+      }
+    }
+    return null
   })
   if (listEffectSkin.length === 1 && typeof listEffectSkin[0] === 'string') {
     let effectItem = EffectDA.list.find(skin => listEffectSkin[0] === skin.GID)
