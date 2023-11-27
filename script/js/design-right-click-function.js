@@ -467,6 +467,7 @@ function createComponent () {
     let cssItem = {
       GID: wb.GID,
       Name: wbClassName,
+      ProjectID: ProjectDA.obj.ID, 
       Css: `.${wbClassName} { ${wbCssText
         .filter(
           e => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)
