@@ -1308,7 +1308,7 @@ function moveListener (event) {
                 switch (tool_state) {
                   case ToolState.resize_left:
                     for (let wb of selected_list) {
-                      let scaleComponent = EnumCate.scale_size_component.some(
+                      let scaleWb = EnumCate.scale_size_component.some(
                         ct => wb.CateID === ct
                       )
                       if (checkpad < selected_list.length) {
@@ -1324,7 +1324,7 @@ function moveListener (event) {
                           } else {
                             wb.value.style.transform = null
                           }
-                          if (scaleComponent) {
+                          if (scaleWb) {
                             wb.value.style.top = `${thisOffset.y}px`
                             wb.value.style.bottom = null
                             wb.value.style.transform = null
@@ -1336,446 +1336,309 @@ function moveListener (event) {
                         }
                         wb.tmpW = wb.value.offsetWidth
                       }
-                      if (scaleComponent) {
-                        scaleComponent =
-                          wb.value.offsetHeight / wb.value.offsetWidth
+                      if (scaleWb) {
+                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
                       }
                       if (!isInFlex) {
                         wb.value.style.left = `${wb.tmpX + xp / scale}px`
                       }
                       wb.value.style.width = `${wb.tmpW - xp / scale}px`
-                      if (scaleComponent) {
+                      if (scaleWb) {
                         wb.value.style.height = `${
-                          (wb.tmpW - xp / scale) * scaleComponent
+                          (wb.tmpW - xp / scale) * scaleWb
                         }px`
                       }
                       checkpad++
                     }
                     break
                   case ToolState.resize_right:
-                    for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = selected_list[i].value
-                      eHTML.style.minWidth = null
-                      let scaleComponent = EnumCate.scale_size_component.some(
-                        cate => selected_list[i].CateID === cate
+                    for (let wb of selected_list) {
+                      let scaleWb = EnumCate.scale_size_component.some(
+                        ct => wb.CateID === ct
                       )
-                      if (checkpad == i) {
-                        selected_list[i].StyleItem.FrameItem.Width =
-                          eHTML.offsetWidth
+                      if (checkpad < selected_list.length) {
+                        wb.tmpW = wb.value.offsetWidth
                         if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(selected_list[i])
-                          eHTML.style.left = thisOffset.x + 'px'
-                          eHTML.style.right = null
+                          let thisOffset = getWBaseOffset(wb)
+                          wb.value.style.left = `${thisOffset.x}px`
+                          wb.value.style.right = null
                           if (
-                            selected_list[i].StyleItem.PositionItem
-                              .ConstraintsX == Constraints.center
-                          )
-                            eHTML.style.transform =
-                              eHTML.style.transform.replace(
-                                'translateX(-50%)',
-                                ''
-                              )
-                          if (scaleComponent) {
-                            eHTML.style.top = thisOffset.y + 'px'
-                            eHTML.style.bottom = null
-                            eHTML.style.transform = null
+                            wb.value.getAttribute('consty') ===
+                            Constraints.center
+                          ) {
+                            wb.value.style.transform = 'translateY(-50%)'
+                          } else {
+                            wb.value.style.transform = null
+                          }
+                          if (scaleWb) {
+                            wb.value.style.top = `${thisOffset.y}px`
+                            wb.value.style.bottom = null
+                            wb.value.style.transform = null
                           }
                         } else if (parentHTML.classList.contains('w-row')) {
-                          eHTML.style.flex = null
+                          wb.value.style.width = `${wb.value.offsetWidth}px`
+                          wb.value.style.flex = null
+                          wb.value.removeAttribute('width-type')
                         }
                       }
-                      if (scaleComponent)
-                        scaleComponent = eHTML.offsetHeight / eHTML.offsetWidth
-                      eHTML.style.width = `${
-                        selected_list[i].StyleItem.FrameItem.Width + xp / scale
-                      }px`
-                      if (scaleComponent)
-                        eHTML.style.height = `${
-                          (selected_list[i].StyleItem.FrameItem.Width +
-                            xp / scale) *
-                          scaleComponent
+                      if (scaleWb) {
+                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
+                      }
+                      wb.value.style.width = `${wb.tmpW + xp / scale}px`
+                      if (scaleWb) {
+                        wb.value.style.height = `${
+                          (wb.tmpW + xp / scale) * scaleWb
                         }px`
+                      }
                       checkpad++
                     }
                     break
                   case ToolState.resize_top:
-                    for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = selected_list[i].value
-                      eHTML.style.minHeight = null
-                      let scaleComponent = EnumCate.scale_size_component.some(
-                        cate => selected_list[i].CateID === cate
+                    for (let wb of selected_list) {
+                      let scaleWb = EnumCate.scale_size_component.some(
+                        ct => wb.CateID === ct
                       )
-                      if (checkpad == i) {
+                      if (checkpad < selected_list.length) {
                         if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(selected_list[i])
-                          selected_list[i].StyleItem.PositionItem.Top =
-                            thisOffset.y + 'px'
+                          let thisOffset = getWBaseOffset(wb)
+                          wb.tmpY = thisOffset.y
                           if (
-                            selected_list[i].StyleItem.PositionItem
-                              .ConstraintsY == Constraints.center
-                          )
-                            eHTML.style.transform =
-                              eHTML.style.transform.replace(
-                                'translateY(-50%)',
-                                ''
-                              )
-                          if (scaleComponent) {
-                            eHTML.style.left = thisOffset.x + 'px'
-                            eHTML.style.right = null
-                            eHTML.style.transform = null
+                            wb.value.getAttribute('constx') ===
+                            Constraints.center
+                          ) {
+                            wb.value.style.transform = 'translateX(-50%)'
+                          } else {
+                            wb.value.style.transform = null
+                          }
+                          if (scaleWb) {
+                            wb.value.style.left = `${thisOffset.x}px`
+                            wb.value.style.right = null
+                            wb.value.style.transform = null
                           }
                         } else if (parentHTML.classList.contains('w-col')) {
-                          eHTML.style.flex = null
+                          wb.value.style.height = `${wb.value.offsetHeight}px`
+                          wb.value.style.flex = null
+                          wb.value.removeAttribute('height-type')
                         }
-                        selected_list[i].StyleItem.FrameItem.Height =
-                          eHTML.offsetHeight
+                        wb.tmpH = wb.value.offsetHeight
                       }
-                      if (scaleComponent)
-                        scaleComponent = eHTML.offsetWidth / eHTML.offsetHeight
-                      if (!isInFlex)
-                        eHTML.style.top = `${
-                          parseFloat(
-                            `${selected_list[i].StyleItem.PositionItem.Top}`.replace(
-                              'px',
-                              ''
-                            )
-                          ) +
-                          yp / scale
+                      if (scaleWb) {
+                        scaleWb = wb.value.offsetWidth / wb.value.offsetHeight
+                      }
+                      if (!isInFlex) {
+                        wb.value.style.top = `${wb.tmpY + yp / scale}px`
+                      }
+                      wb.value.style.height = `${wb.tmpH - yp / scale}px`
+                      if (scaleWb) {
+                        wb.value.style.width = `${
+                          (wb.tmpH - yp / scale) * scaleWb
                         }px`
-                      eHTML.style.height = `${
-                        selected_list[i].StyleItem.FrameItem.Height - yp / scale
-                      }px`
-                      if (scaleComponent)
-                        eHTML.style.width = `${
-                          (selected_list[i].StyleItem.FrameItem.Height -
-                            yp / scale) *
-                          scaleComponent
-                        }px`
+                      }
                       checkpad++
                     }
                     break
                   case ToolState.resize_bot:
-                    for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = selected_list[i].value
-                      eHTML.style.minHeight = null
-                      let scaleComponent = EnumCate.scale_size_component.some(
-                        cate => selected_list[i].CateID === cate
+                    for (let wb of selected_list) {
+                      let scaleWb = EnumCate.scale_size_component.some(
+                        ct => wb.CateID === ct
                       )
-                      if (checkpad == i) {
-                        selected_list[i].StyleItem.FrameItem.Height =
-                          eHTML.offsetHeight
+                      if (checkpad < selected_list.length) {
+                        wb.tmpH = wb.value.offsetHeight
                         if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(selected_list[i])
-                          eHTML.style.top = thisOffset.y + 'px'
-                          eHTML.style.bottom = null
+                          let thisOffset = getWBaseOffset(wb)
+                          wb.value.style.top = thisOffset.y + 'px'
+                          wb.value.style.bottom = null
                           if (
-                            selected_list[i].StyleItem.PositionItem
-                              .ConstraintsY == Constraints.center
-                          )
-                            eHTML.style.transform =
-                              eHTML.style.transform.replace(
-                                'translateY(-50%)',
-                                ''
-                              )
-                          if (scaleComponent) {
-                            eHTML.style.left = thisOffset.x + 'px'
-                            eHTML.style.right = null
-                            eHTML.style.transform = null
+                            wb.value.getAttribute('constx') ===
+                            Constraints.center
+                          ) {
+                            wb.value.style.transform = 'translateX(-50%)'
+                          } else {
+                            wb.value.style.transform = null
+                          }
+                          if (scaleWb) {
+                            wb.value.style.left = `${thisOffset.x}px`
+                            wb.value.style.right = null
+                            wb.value.style.transform = null
                           }
                         } else if (parentHTML.classList.contains('w-col')) {
-                          eHTML.style.flex = null
+                          wb.value.style.height = `${wb.value.offsetHeight}px`
+                          wb.value.style.flex = null
+                          wb.value.removeAttribute('height-type')
                         }
                       }
-                      if (scaleComponent)
-                        scaleComponent = eHTML.offsetWidth / eHTML.offsetHeight
-                      eHTML.style.height = `${
-                        selected_list[i].StyleItem.FrameItem.Height + yp / scale
-                      }px`
-                      if (scaleComponent)
-                        eHTML.style.width = `${
-                          (selected_list[i].StyleItem.FrameItem.Height +
-                            yp / scale) *
-                          scaleComponent
+                      if (scaleWb) {
+                        scaleWb = wb.value.offsetWidth / wb.value.offsetHeight
+                      }
+                      wb.value.style.height = `${wb.tmpH + yp / scale}px`
+                      if (scaleWb) {
+                        wb.value.style.width = `${
+                          (wb.tmpH + yp / scale) * scaleWb
                         }px`
+                      }
                       checkpad++
                     }
                     break
                   case ToolState.resize_top_left:
-                    for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = selected_list[i].value
-                      eHTML.style.minWidth = null
-                      eHTML.style.minHeight = null
-                      let scaleComponent = EnumCate.scale_size_component.some(
-                        cate => selected_list[i].CateID === cate
+                    for (let wb of selected_list) {
+                      let scaleWb = EnumCate.scale_size_component.some(
+                        ct => wb.CateID === ct
                       )
-                      if (checkpad == i) {
+                      if (checkpad < selected_list.length) {
                         if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(selected_list[i])
-                          selected_list[i].StyleItem.PositionItem.Left =
-                            thisOffset.x + 'px'
-                          selected_list[i].StyleItem.PositionItem.Top =
-                            thisOffset.y + 'px'
-                          eHTML.style.transform = null
+                          let thisOffset = getWBaseOffset(wb)
+                          wb.tmpX = thisOffset.x
+                          wb.tmpY = thisOffset.y + 'px'
+                          wb.value.style.transform = null
                         }
-                        eHTML.style.flex = null
-                        selected_list[i].StyleItem.FrameItem.Height =
-                          eHTML.offsetHeight
-                        selected_list[i].StyleItem.FrameItem.Width =
-                          eHTML.offsetWidth
+                        wb.value.style.flex = null
+                        wb.tmpH = wb.value.offsetHeight
+                        wb.tmpW = wb.value.offsetWidth
                       }
-                      if (scaleComponent)
-                        scaleComponent = eHTML.offsetHeight / eHTML.offsetWidth
+                      if (scaleWb) {
+                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
+                      }
                       if (!isInFlex) {
-                        eHTML.style.top = `${
-                          parseFloat(
-                            `${selected_list[i].StyleItem.PositionItem.Top}`.replace(
-                              'px',
-                              ''
-                            )
-                          ) +
-                          yp / scale
-                        }px`
-                        eHTML.style.left = `${
-                          parseFloat(
-                            `${selected_list[i].StyleItem.PositionItem.Left}`.replace(
-                              'px',
-                              ''
-                            )
-                          ) +
-                          xp / scale
-                        }px`
+                        wb.value.style.top = `${wb.tmpY + yp / scale}px`
+                        wb.value.style.left = `${wb.tmpX + xp / scale}px`
                       }
-                      if (scaleComponent) {
+                      if (scaleWb) {
                         if (Math.abs(xp) > Math.abs(yp)) {
-                          eHTML.style.width = `${
-                            selected_list[i].StyleItem.FrameItem.Width -
-                            xp / scale
-                          }px`
-                          eHTML.style.height = `${
-                            (selected_list[i].StyleItem.FrameItem.Width -
-                              xp / scale) *
-                            scaleComponent
+                          wb.value.style.width = `${wb.tmpW - xp / scale}px`
+                          wb.value.style.height = `${
+                            (wb.tmpW - xp / scale) * scaleWb
                           }px`
                         } else {
-                          eHTML.style.height = `${
-                            selected_list[i].StyleItem.FrameItem.Height -
-                            yp / scale
-                          }px`
-                          eHTML.style.width = `${
-                            (selected_list[i].StyleItem.FrameItem.Height -
-                              yp / scale) /
-                            scaleComponent
+                          wb.value.style.height = `${wb.tmpH - yp / scale}px`
+                          wb.value.style.width = `${
+                            (wb.tmpH - yp / scale) / scaleWb
                           }px`
                         }
                       } else {
-                        eHTML.style.width = `${
-                          selected_list[i].StyleItem.FrameItem.Width -
-                          xp / scale
-                        }px`
-                        eHTML.style.height = `${
-                          selected_list[i].StyleItem.FrameItem.Height -
-                          yp / scale
-                        }px`
+                        wb.value.style.width = `${wb.tmpW - xp / scale}px`
+                        wb.value.style.height = `${wb.tmpH - yp / scale}px`
                       }
                       checkpad++
                     }
                     break
                   case ToolState.resize_top_right:
-                    for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = selected_list[i].value
-                      eHTML.style.minWidth = null
-                      eHTML.style.minHeight = null
-                      let scaleComponent = EnumCate.scale_size_component.some(
-                        cate => selected_list[i].CateID === cate
+                    for (let wb of selected_list) {
+                      let scaleWb = EnumCate.scale_size_component.some(
+                        ct => wb.CateID === ct
                       )
-                      if (checkpad == i) {
+                      if (checkpad < selected_list.length) {
                         if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(selected_list[i])
-                          eHTML.style.left = thisOffset.x + 'px'
-                          eHTML.style.right = null
-                          selected_list[i].StyleItem.PositionItem.Top =
-                            thisOffset.y + 'px'
-                          eHTML.style.transform = null
+                          let thisOffset = getWBaseOffset(wb)
+                          wb.value.style.left = thisOffset.x + 'px'
+                          wb.value.style.right = null
+                          wb.tmpY = thisOffset.y
+                          wb.value.style.transform = null
                         }
-                        eHTML.style.flex = null
-                        selected_list[i].StyleItem.FrameItem.Height =
-                          eHTML.offsetHeight
-                        selected_list[i].StyleItem.FrameItem.Width =
-                          eHTML.offsetWidth
+                        wb.value.style.flex = null
+                        wb.tmpH = wb.value.offsetHeight
+                        wb.tmpW = wb.value.offsetWidth
                       }
-                      if (scaleComponent)
-                        scaleComponent = eHTML.offsetHeight / eHTML.offsetWidth
+                      if (scaleWb) {
+                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
+                      }
                       if (!isInFlex)
-                        eHTML.style.top = `${
-                          parseFloat(
-                            `${selected_list[i].StyleItem.PositionItem.Top}`.replace(
-                              'px',
-                              ''
-                            )
-                          ) +
-                          yp / scale
-                        }px`
-                      if (scaleComponent) {
+                        wb.value.style.top = `${wb.tmpY + yp / scale}px`
+                      if (scaleWb) {
                         if (Math.abs(xp) > Math.abs(yp)) {
-                          eHTML.style.width = `${
-                            selected_list[i].StyleItem.FrameItem.Width +
-                            xp / scale
-                          }px`
-                          eHTML.style.height = `${
-                            (selected_list[i].StyleItem.FrameItem.Width +
-                              xp / scale) *
-                            scaleComponent
+                          wb.value.style.width = `${wb.tmpW + xp / scale}px`
+                          wb.value.style.height = `${
+                            (wb.tmpW + xp / scale) * scaleWb
                           }px`
                         } else {
-                          eHTML.style.height = `${
-                            selected_list[i].StyleItem.FrameItem.Height -
-                            yp / scale
-                          }px`
-                          eHTML.style.width = `${
-                            (selected_list[i].StyleItem.FrameItem.Height -
-                              yp / scale) /
-                            scaleComponent
+                          wb.value.style.height = `${wb.tmpH - yp / scale}px`
+                          wb.value.style.width = `${
+                            (wb.tmpH - yp / scale) / scaleWb
                           }px`
                         }
                       } else {
-                        eHTML.style.width = `${
-                          selected_list[i].StyleItem.FrameItem.Width +
-                          xp / scale
-                        }px`
-                        eHTML.style.height = `${
-                          selected_list[i].StyleItem.FrameItem.Height -
-                          yp / scale
-                        }px`
+                        wb.value.style.width = `${wb.tmpW + xp / scale}px`
+                        wb.value.style.height = `${wb.tmpH - yp / scale}px`
                       }
                       checkpad++
                     }
                     break
                   case ToolState.resize_bot_left:
-                    for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = selected_list[i].value
-                      eHTML.style.minWidth = null
-                      eHTML.style.minHeight = null
-                      let scaleComponent = EnumCate.scale_size_component.some(
-                        cate => selected_list[i].CateID === cate
+                    for (let wb of selected_list) {
+                      let scaleWb = EnumCate.scale_size_component.some(
+                        ct => wb.CateID === ct
                       )
-                      if (checkpad == i) {
+                      if (checkpad < selected_list.length) {
                         if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(selected_list[i])
-                          eHTML.style.top = thisOffset.y + 'px'
-                          eHTML.style.bottom = null
-                          selected_list[i].StyleItem.PositionItem.Left =
-                            thisOffset.x + 'px'
-                          eHTML.style.transform = null
+                          let thisOffset = getWBaseOffset(wb)
+                          wb.value.style.top = thisOffset.y + 'px'
+                          wb.value.style.bottom = null
+                          wb.tmpX = thisOffset.x
+                          wb.value.style.transform = null
                         }
-                        eHTML.style.flex = null
-                        selected_list[i].StyleItem.FrameItem.Height =
-                          eHTML.offsetHeight
-                        selected_list[i].StyleItem.FrameItem.Width =
-                          eHTML.offsetWidth
+                        wb.value.style.flex = null
+                        wb.tmpH = wb.value.offsetHeight
+                        wb.tmpW = wb.value.offsetWidth
                       }
-                      if (scaleComponent)
-                        scaleComponent = eHTML.offsetHeight / eHTML.offsetWidth
+                      if (scaleWb)
+                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
                       if (!isInFlex)
-                        eHTML.style.left = `${
-                          parseFloat(
-                            `${selected_list[i].StyleItem.PositionItem.Left}`.replace(
-                              'px',
-                              ''
-                            )
-                          ) +
-                          xp / scale
-                        }px`
-                      if (scaleComponent) {
+                        wb.value.style.left = `${wb.tmpX + xp / scale}px`
+                      if (scaleWb) {
                         if (Math.abs(xp) > Math.abs(yp)) {
-                          eHTML.style.width = `${
-                            selected_list[i].StyleItem.FrameItem.Width -
-                            xp / scale
-                          }px`
-                          eHTML.style.height = `${
-                            (selected_list[i].StyleItem.FrameItem.Width -
-                              xp / scale) *
-                            scaleComponent
+                          wb.value.style.width = `${wb.tmpW - xp / scale}px`
+                          wb.value.style.height = `${
+                            (wb.tmpW - xp / scale) * scaleWb
                           }px`
                         } else {
-                          eHTML.style.height = `${
-                            selected_list[i].StyleItem.FrameItem.Height +
-                            yp / scale
-                          }px`
-                          eHTML.style.width = `${
-                            (selected_list[i].StyleItem.FrameItem.Height +
-                              yp / scale) /
-                            scaleComponent
+                          wb.value.style.height = `${wb.tmpH + yp / scale}px`
+                          wb.value.style.width = `${
+                            (wb.tmpH + yp / scale) / scaleWb
                           }px`
                         }
                       } else {
-                        eHTML.style.width = `${
-                          selected_list[i].StyleItem.FrameItem.Width -
-                          xp / scale
-                        }px`
-                        eHTML.style.height = `${
-                          selected_list[i].StyleItem.FrameItem.Height +
-                          yp / scale
-                        }px`
+                        wb.value.style.width = `${wb.tmpW - xp / scale}px`
+                        wb.value.style.height = `${wb.tmpH + yp / scale}px`
                       }
                       checkpad++
                     }
                     break
                   case ToolState.resize_bot_right:
-                    for (let i = 0; i < selected_list.length; i++) {
-                      let eHTML = selected_list[i].value
-                      eHTML.style.minWidth = null
-                      eHTML.style.minHeight = null
+                    for (let wb of selected_list) {
                       let scaleComponent = EnumCate.scale_size_component.some(
-                        cate => selected_list[i].CateID === cate
+                        ct => wb.CateID === ct
                       )
-                      if (checkpad == i) {
+                      if (checkpad < selected_list.length) {
                         if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(selected_list[i])
-                          eHTML.style.left = thisOffset.x + 'px'
-                          eHTML.style.right = null
-                          eHTML.style.top = thisOffset.y + 'px'
-                          eHTML.style.bottom = null
-                          eHTML.style.transform = null
+                          let thisOffset = getWBaseOffset(wb)
+                          wb.value.style.left = thisOffset.x + 'px'
+                          wb.value.style.right = null
+                          wb.value.style.top = thisOffset.y + 'px'
+                          wb.value.style.bottom = null
+                          wb.value.style.transform = null
                         }
-                        eHTML.style.flex = null
-                        selected_list[i].StyleItem.FrameItem.Height =
-                          eHTML.offsetHeight
-                        selected_list[i].StyleItem.FrameItem.Width =
-                          eHTML.offsetWidth
+                        wb.value.style.flex = null
+                        wb.tmpH = wb.value.offsetHeight
+                        wb.tmpW = wb.value.offsetWidth
                       }
-                      if (scaleComponent)
-                        scaleComponent = eHTML.offsetHeight / eHTML.offsetWidth
+                      if (scaleComponent) {
+                        scaleComponent =
+                          wb.value.offsetHeight / wb.value.offsetWidth
+                      }
                       if (scaleComponent) {
                         if (Math.abs(xp) > Math.abs(yp)) {
-                          eHTML.style.width = `${
-                            selected_list[i].StyleItem.FrameItem.Width +
-                            xp / scale
-                          }px`
-                          eHTML.style.height = `${
-                            (selected_list[i].StyleItem.FrameItem.Width +
-                              xp / scale) *
-                            scaleComponent
+                          wb.value.style.width = `${wb.tmpW + xp / scale}px`
+                          wb.value.style.height = `${
+                            (wb.tmpW + xp / scale) * scaleComponent
                           }px`
                         } else {
-                          eHTML.style.height = `${
-                            selected_list[i].StyleItem.FrameItem.Height +
-                            yp / scale
-                          }px`
-                          eHTML.style.width = `${
-                            (selected_list[i].StyleItem.FrameItem.Height +
-                              yp / scale) /
-                            scaleComponent
+                          wb.value.style.height = `${wb.tmpH + yp / scale}px`
+                          wb.value.style.width = `${
+                            (wb.tmpH + yp / scale) / scaleComponent
                           }px`
                         }
                       } else {
-                        eHTML.style.width = `${
-                          selected_list[i].StyleItem.FrameItem.Width +
-                          xp / scale
-                        }px`
-                        eHTML.style.height = `${
-                          selected_list[i].StyleItem.FrameItem.Height +
-                          yp / scale
-                        }px`
+                        wb.value.style.width = `${wb.tmpW + xp / scale}px`
+                        wb.value.style.height = `${wb.tmpH + yp / scale}px`
                       }
                       checkpad++
                     }
