@@ -7139,7 +7139,7 @@ function handleEditPadding ({ top, right, bottom, left }) {
       if (right !== undefined) paddingValues[1] = right
       if (bottom !== undefined) paddingValues[2] = bottom
       if (left !== undefined) paddingValues[3] = left
-      cssRule.style.setProperty('--padding', paddingValues.join(' '))
+      cssRule.style.setProperty('--padding', `${paddingValues[0]}px ${paddingValues[1]}px ${paddingValues[2]}px ${paddingValues[3]}px`)
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
