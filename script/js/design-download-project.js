@@ -295,7 +295,9 @@ async function push_dataProject () {
     return cloneValue
   })
   list_page.forEach(e => {
-    e.querySelectorAll('.wbaseItem-value').forEach(el => el.removeAttribute('level'))
+    e.querySelectorAll('.wbaseItem-value').forEach(el =>
+      el.removeAttribute('level')
+    )
     e.removeAttribute('level')
   })
 
@@ -318,10 +320,13 @@ async function push_dataProject () {
     )}
   } 
   /*  */
-  ${StyleDA.cssStyleSheets.map(e => e.Css).join(`
-  /*  */
-  `)}
-  `
+  ${StyleDA.cssStyleSheets
+    .map(e => e.Css)
+    .join(``)
+    .replace(
+      uuid4Regex,
+      match => replaceSkinRoot.find(skin => skin.GID === match)?.Name ?? match
+    )}`
   await $.post(
     '/view/build',
     {
