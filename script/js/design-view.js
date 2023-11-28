@@ -1014,7 +1014,7 @@ function EditLayoutBlock () {
           btnIsScroll.setAttribute('disabled', 'true')
         } else {
           btnIsScroll.firstChild.onchange = function (ev) {
-            handleEditLayout({ isScroll: ev.checked })
+            handleEditLayout({ isScroll: ev.target.checked })
           }
         }
         editContainer.replaceChildren(
