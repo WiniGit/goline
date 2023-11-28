@@ -1876,7 +1876,7 @@ function handleEditOffset ({
           wb.value.style.height = height + 'px'
           wb.value.removeAttribute('height-type')
         }
-        if (cssItem) {
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(wb.value)
@@ -2095,7 +2095,7 @@ function handleEditOffset ({
           wb.value.style.width = width + 'px'
           wb.value.removeAttribute('width-type')
         }
-        if (cssItem) {
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(wb.value)
@@ -2262,7 +2262,7 @@ function handleEditOffset ({
           wb.value.style.height = height + 'px'
           wb.value.removeAttribute('height-type')
         }
-        if (cssItem) {
+        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(wb.value)
