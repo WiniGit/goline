@@ -145,7 +145,7 @@ async function push_dataProject () {
         wbValue.removeAttribute('name-field')
         if (
           wbValue.getAttribute('width-type') === 'fill' &&
-          wb.value.closest(
+          wbValue.closest(
             `.wbaseItem-value.w-row[level="${
               parseInt(wbValue.getAttribute('level')) - 1
             }"]`
@@ -154,7 +154,7 @@ async function push_dataProject () {
           wbValue.style.flex = 1
         } else if (
           wbValue.getAttribute('height-type') === 'fill' &&
-          wb.value.closest(
+          wbValue.closest(
             `.wbaseItem-value.w-col[level="${
               parseInt(wbValue.getAttribute('level')) - 1
             }"]`
