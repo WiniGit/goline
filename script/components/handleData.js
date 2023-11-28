@@ -191,7 +191,7 @@ async function initComponents (item, list, initListener = true) {
     item.value.setAttribute('listid', item.ListID)
     if (item.IsWini) {
       item.value.setAttribute('iswini', item.IsWini)
-    } else if ([...item.value.classList].some(cls => cls.startsWith('w-st'))) {
+    } else if ([...item.value.classList].some(cls => cls.startsWith('w-st') && cls !== 'w-stack')) {
       if (item.CopyID) {
         item.value.setAttribute('isinstance', true)
         item.IsInstance = true
