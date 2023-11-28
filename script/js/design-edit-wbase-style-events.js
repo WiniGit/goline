@@ -6836,10 +6836,10 @@ function handleEditLayout ({
           return check
         })
         cssRule.style.overflow = isScroll ? 'scroll' : 'hidden'
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-            cssRule.cssText
-          )
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
       }
       StyleDA.editStyleSheet(cssItem)
     }
@@ -7135,11 +7135,11 @@ function handleEditPadding ({ top, right, bottom, left }) {
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
       let paddingValues = cssRule.style.getPropertyValue('--padding').split(' ')
-      if (top !== undefined) paddingValues[0] = top
-      if (right !== undefined) paddingValues[1] = right
-      if (bottom !== undefined) paddingValues[2] = bottom
-      if (left !== undefined) paddingValues[3] = left
-      cssRule.style.setProperty('--padding', `${paddingValues[0]}px ${paddingValues[1]}px ${paddingValues[2]}px ${paddingValues[3]}px`)
+      if (top !== undefined) paddingValues[0] = top + 'px'
+      if (right !== undefined) paddingValues[1] = right + 'px'
+      if (bottom !== undefined) paddingValues[2] = bottom + 'px'
+      if (left !== undefined) paddingValues[3] = left + 'px'
+      cssRule.style.setProperty('--padding', paddingValues.join(' '))
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
