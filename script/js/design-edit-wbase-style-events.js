@@ -1362,622 +1362,372 @@ function handleEditOffset ({
   if ((width !== undefined && height !== undefined) || ratioWH) {
     let resizeFixedW = width === 'fixed'
     let resizeFixedH = height === 'fixed'
-    if (selected_list[0].StyleItem) {
-      for (let wb of selected_list) {
-        let children = [
-          ...wb.value.querySelectorAll(
-            `.wbaseItem-value[level="${wb.Level + 1}"]`
-          )
-        ]
-        if (resizeFixedW) width = wb.value.offsetWidth
-        if (resizeFixedH) height = wb.value.offsetHeight
-        if (ratioWH) {
-          if (width !== undefined) {
-            height = (width * wb.value.offsetHeight) / wb.value.offsetWidth
-          } else {
-            width = (height * wb.value.offsetWidth) / wb.value.offsetHeight
-          }
-        }
-        if (width === null) {
-          if (wb.value.classList.contains('w-row')) {
-            children = children.filter(
-              e => e.getAttribute('width-type') === 'fill'
-            )
-          } else if (
-            children.every(e => e.getAttribute('width-type') === 'fill')
-          ) {
-            children = children
-              .sort((a, b) => a.offsetWidth - b.offsetWidth)
-              .slice(0, 1)
-          } else {
-            children = []
-          }
-          if (children.length > 0) {
-            if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-              var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-              for (let cWbHTML of children) {
-                StyleDA.docStyleSheets.find(rule => {
-                  let selector = [
-                    ...wb.value.querySelectorAll(rule.selectorText)
-                  ]
-                  let check = selector.includes(cWbHTML)
-                  if (check) {
-                    rule.style.width = cWbHTML.offsetWidth + 'px'
-                    selector.forEach(e => e.removeAttribute('width-type'))
-                    cssItem.Css = cssItem.Css.replace(
-                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                      rule.cssText
-                    )
-                  }
-                  return check
-                })
-              }
-            } else {
-              children = wbase_list.filter(wb =>
-                children.some(wbHTML => wb.GID === wbHTML)
-              )
-              for (let cWb of children) {
-                cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
-                cWb.value.style.width = cWb.value.offsetWidth + 'px'
-                cWb.value.removeAttribute('width-type')
-              }
-              listUpdate.push(...children)
-            }
-          }
-          wb.StyleItem.FrameItem.Width = null
-          wb.value.style.width =
-            wb.CateID === EnumCate.text ? 'max-content' : null
-          wb.value.setAttribute('width-type', 'fit')
-        } else if (width < 0) {
-          wb.StyleItem.FrameItem.Width = width
-          wb.value.style.width = '100%'
-          wb.value.setAttribute('width-type', 'fill')
-        } else {
-          wb.StyleItem.FrameItem.Width = width
-          wb.value.style.width = width + 'px'
-          wb.value.removeAttribute('width-type')
-        }
-        if (height === null) {
-          if (wb.value.classList.contains('w-col')) {
-            children = children.filter(
-              e => e.getAttribute('height-type') === 'fill'
-            )
-          } else if (
-            children.every(e => e.getAttribute('height-type') === 'fill')
-          ) {
-            children = children
-              .sort((a, b) => (a.offsetHeight = b.offsetHeight))
-              .slice(0, 1)
-          } else {
-            children = []
-          }
-          if (children.length > 0) {
-            if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-              cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-              for (let cWbHTML of children) {
-                StyleDA.docStyleSheets.find(rule => {
-                  let selector = [
-                    ...wb.value.querySelectorAll(rule.selectorText)
-                  ]
-                  let check = selector.includes(cWbHTML)
-                  if (check) {
-                    rule.style.height = cWbHTML.offsetHeight + 'px'
-                    selector.forEach(e => e.removeAttribute('height-type'))
-                    cssItem.Css = cssItem.Css.replace(
-                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                      rule.cssText
-                    )
-                  }
-                  return check
-                })
-              }
-            } else {
-              children = wbase_list.filter(wb =>
-                children.some(wbHTML => wb.GID === wbHTML)
-              )
-              for (let cWb of children) {
-                cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
-                cWb.value.style.height = cWb.value.offsetHeight + 'px'
-                cWb.value.removeAttribute('height-type')
-              }
-              listUpdate.push(...children)
-            }
-          }
-          wb.StyleItem.FrameItem.Height = null
-          wb.value.style.height = null
-          wb.value.setAttribute('height-type', 'fit')
-        } else if (height < 0) {
-          wb.StyleItem.FrameItem.Height = height
-          wb.value.style.height = '100%'
-          wb.value.setAttribute('height-type', 'fill')
-        } else {
-          wb.StyleItem.FrameItem.Height = height
-          wb.value.style.height = height + 'px'
-          wb.value.removeAttribute('height-type')
-        }
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-          StyleDA.docStyleSheets.find(rule => {
-            let selector = [...divSection.querySelectorAll(rule.selectorText)]
-            let check = selector.includes(wb.value)
-            if (check) {
-              rule.style.width = wb.value.style.width
-              rule.style.height = wb.value.style.height
-              selector.forEach(e => {
-                if (wb.value.getAttribute('width-type'))
-                  e.setAttribute(
-                    'width-type',
-                    wb.value.getAttribute('width-type')
-                  )
-                if (wb.value.getAttribute('height-type'))
-                  e.setAttribute(
-                    'height-type',
-                    wb.value.getAttribute('height-type')
-                  )
-              })
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                rule.cssText
-              )
-            }
-            return check
-          })
-          StyleDA.editStyleSheet(cssItem)
-        }
-      }
-      listUpdate.push(...selected_list)
-      WBaseDA.edit(listUpdate, EnumObj.frame)
-    } else {
+    if (!selected_list[0].StyleItem) {
       let pWbComponent = selected_list[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of selected_list) {
-        if (resizeFixedW) width = wb.value.offsetWidth
-        if (resizeFixedH) height = wb.value.offsetHeight
-        let cssRule = StyleDA.docStyleSheets.find(rule => {
-          let selector = [...divSection.querySelectorAll(rule.selectorText)]
-          let check = selector.includes(wb.value)
-          if (check)
-            selector.forEach(e => {
-              if (e !== wb.value) {
-                if (width === null) e.setAttribute('width-type', 'fit')
-                else if (width < 0) e.setAttribute('width-type', 'fill')
-                else e.removeAttribute('width-type')
-                //
-                if (height === null) e.setAttribute('height-type', 'fit')
-                else if (height < 0) e.setAttribute('height-type', 'fill')
-                else e.removeAttribute('height-type')
-              }
-            })
-          return check
-        })
-        let children = [
-          ...wb.value.querySelectorAll(
-            `.wbaseItem-value[level="${wb.Level + 1}"]`
+      var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+    }
+    for (let wb of selected_list) {
+      if (resizeFixedW) width = wb.value.offsetWidth
+      if (resizeFixedH) height = wb.value.offsetHeight
+      if (ratioWH) {
+        if (width !== undefined) {
+          height = (width * wb.value.offsetHeight) / wb.value.offsetWidth
+        } else {
+          width = (height * wb.value.offsetWidth) / wb.value.offsetHeight
+        }
+      }
+      let cssRule = cssItem
+        ? StyleDA.docStyleSheets.find(rule => {
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
+            let check = selector.includes(wb.value)
+            if (check)
+              selector.forEach(e => {
+                if (e !== wb.value) {
+                  if (width === null) e.setAttribute('width-type', 'fit')
+                  else if (width < 0) e.setAttribute('width-type', 'fill')
+                  else e.removeAttribute('width-type')
+                  //
+                  if (height === null) e.setAttribute('height-type', 'fit')
+                  else if (height < 0) e.setAttribute('height-type', 'fill')
+                  else e.removeAttribute('height-type')
+                }
+              })
+            return check
+          })
+        : wb.value
+      let children = [
+        ...wb.value.querySelectorAll(
+          `.wbaseItem-value[level="${wb.Level + 1}"]`
+        )
+      ]
+      if (width === null) {
+        if (wb.value.classList.contains('w-row')) {
+          var fillWChildren = children.filter(
+            e => e.getAttribute('width-type') === 'fill'
           )
-        ]
-        if (width === null) {
-          if (wb.value.classList.contains('w-row')) {
-            children = children.filter(
-              e => e.getAttribute('width-type') === 'fill'
-            )
-          } else if (
-            children.every(e => e.getAttribute('width-type') === 'fill')
-          ) {
-            children = children
-              .sort((a, b) => (a.offsetWidth = b.offsetWidth))
-              .slice(0, 1)
-          } else {
-            children = []
-          }
-          if (children.length > 0) {
-            for (let cWbHTML of children) {
-              let cCssRule = StyleDA.docStyleSheets.find(rule => {
+        } else if (
+          children.every(e => e.getAttribute('width-type') === 'fill')
+        ) {
+          fillWChildren = children
+            .sort((a, b) => a.offsetWidth - b.offsetWidth)
+            .slice(0, 1)
+        }
+        if (fillWChildren?.length > 0) {
+          fillWChildren = wbase_list.filter(wb =>
+            fillWChildren.some(wbHTML => wb.GID === wbHTML.id)
+          )
+          for (let cWb of fillWChildren) {
+            if (cWb.StyleItem) {
+              cWb.value.style.width = cWb.value.offsetWidth + 'px'
+              cWb.value.removeAttribute('width-type')
+              listUpdate.push(cWb)
+            }
+            if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
+              StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
-                let check = selector.includes(cWbHTML)
+                let check = selector.includes(cWb.value)
                 if (check) {
-                  rule.style.width = cWbHTML.offsetWidth + 'px'
+                  rule.style.width = cWb.value.offsetWidth + 'px'
                   selector.forEach(e => e.removeAttribute('width-type'))
+                  if (cssItem) {
+                    cssItem.Css = cssItem.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
+                  } else {
+                    let cWbCss = StyleDA.cssStyleSheets.find(
+                      e => e.GID === cWb.GID
+                    )
+                    cWbCss.Css = cWbCss.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
+                    StyleDA.editStyleSheet(cWbCss)
+                  }
                 }
                 return check
               })
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cCssRule.selectorText} {[^}]*}`, 'g'),
-                cCssRule.cssText
-              )
             }
           }
-          cssRule.style.width =
-            wb.CateID === EnumCate.text ? 'max-content' : null
-          wb.value.setAttribute('width-type', 'fit')
-        } else if (width < 0) {
-          cssRule.style.width = '100%'
-          wb.value.setAttribute('width-type', 'fill')
-        } else {
-          cssRule.style.width = width + 'px'
-          wb.value.removeAttribute('width-type')
         }
-        if (height === null) {
-          if (wb.value.classList.contains('w-col')) {
-            children = children.filter(
-              e => e.getAttribute('height-type') === 'fill'
-            )
-          } else if (
-            children.every(e => e.getAttribute('height-type') === 'fill')
-          ) {
-            children = children
-              .sort((a, b) => a.offsetHeight - b.offsetHeight)
-              .slice(0, 1)
-          } else {
-            children = []
-          }
-          if (children.length > 0) {
-            for (let cWbHTML of children) {
-              let cCssRule = StyleDA.docStyleSheets.find(rule => {
+        cssRule.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
+        wb.value.setAttribute('width-type', 'fit')
+      } else if (width < 0) {
+        cssRule.style.width = '100%'
+        wb.value.setAttribute('width-type', 'fill')
+      } else {
+        cssRule.style.width = width + 'px'
+        wb.value.removeAttribute('width-type')
+      }
+      if (height === null) {
+        if (wb.value.classList.contains('w-col')) {
+          var fillHChildren = children.filter(
+            e => e.getAttribute('height-type') === 'fill'
+          )
+        } else if (
+          children.every(e => e.getAttribute('height-type') === 'fill')
+        ) {
+          fillHChildren = children
+            .sort((a, b) => a.offsetHeight - b.offsetHeight)
+            .slice(0, 1)
+        }
+        if (fillHChildren?.length > 0) {
+          fillHChildren = wbase_list.filter(wb =>
+            fillHChildren.some(wbHTML => wb.GID === wbHTML.id)
+          )
+          for (let cWb of fillHChildren) {
+            if (cWb.StyleItem) {
+              cWb.value.style.height = cWb.value.offsetHeight + 'px'
+              cWb.value.removeAttribute('height-type')
+              listUpdate.push(cWb)
+            }
+            if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
+              StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
-                let check = selector.includes(cWbHTML)
+                let check = selector.includes(cWb.value)
                 if (check) {
-                  rule.style.height = cWbHTML.offsetHeight + 'px'
+                  rule.style.height = cWb.value.offsetHeight + 'px'
                   selector.forEach(e => e.removeAttribute('height-type'))
+                  if (cssItem) {
+                    cssItem.Css = cssItem.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
+                  } else {
+                    let cWbCss = StyleDA.cssStyleSheets.find(
+                      e => e.GID === cWb.GID
+                    )
+                    cWbCss.Css = cWbCss.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
+                    StyleDA.editStyleSheet(cWbCss)
+                  }
                 }
                 return check
               })
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cCssRule.selectorText} {[^}]*}`, 'g'),
-                cCssRule.cssText
-              )
             }
           }
-          cssRule.style.height = null
-          wb.value.setAttribute('height-type', 'fit')
-        } else if (height < 0) {
-          cssRule.style.height = '100%'
-          wb.value.setAttribute('height-type', 'fill')
-        } else {
-          cssRule.style.height = height + 'px'
-          wb.value.removeAttribute('height-type')
         }
+        cssRule.style.height = null
+        wb.value.setAttribute('height-type', 'fit')
+      } else if (height < 0) {
+        cssRule.style.height = '100%'
+        wb.value.setAttribute('height-type', 'fill')
+      } else {
+        cssRule.style.height = height + 'px'
+        wb.value.removeAttribute('height-type')
+      }
+      if (cssItem) {
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
-        StyleDA.editStyleSheet(cssItem)
+      } else {
+        listUpdate.push(wb)
       }
     }
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.frame)
   } else if (width !== undefined) {
     let resizeFixed = width === 'fixed'
-    if (selected_list[0].StyleItem) {
-      for (let wb of selected_list) {
-        let children = [
-          ...wb.value.querySelectorAll(
-            `.wbaseItem-value[level="${wb.Level + 1}"]`
-          )
-        ]
-        if (resizeFixed) width = wb.value.offsetWidth
-        if (width === null) {
-          if (wb.value.classList.contains('w-row')) {
-            children = children.filter(
-              e => e.getAttribute('width-type') === 'fill'
-            )
-          } else if (
-            children.every(e => e.getAttribute('width-type') === 'fill')
-          ) {
-            children = children
-              .sort((a, b) => a.offsetWidth - b.offsetWidth)
-              .slice(0, 1)
-          } else {
-            children = []
-          }
-          if (children.length > 0) {
-            if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-              var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-              for (let cWbHTML of children) {
-                let cssRule = StyleDA.docStyleSheets.find(rule => {
-                  let selector = [
-                    ...wb.value.querySelectorAll(rule.selectorText)
-                  ]
-                  let check = selector.includes(cWbHTML)
-                  if (check) {
-                    rule.style.width = cWbHTML.offsetWidth + 'px'
-                    selector.forEach(e => e.removeAttribute('width-type'))
-                  }
-                  return check
-                })
-                cssItem.Css = cssItem.Css.replace(
-                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-                  cssRule.cssText
-                )
-              }
-              StyleDA.editStyleSheet(cssItem)
-            } else {
-              children = wbase_list.filter(wb =>
-                children.some(wbHTML => wb.GID === wbHTML)
-              )
-              for (let cWb of children) {
-                cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
-                cWb.value.style.width = cWb.value.offsetWidth + 'px'
-                cWb.value.removeAttribute('width-type')
-              }
-              listUpdate.push(...children)
-            }
-          }
-          wb.StyleItem.FrameItem.Width = null
-          wb.value.style.width =
-            wb.CateID === EnumCate.text ? 'max-content' : null
-          wb.value.setAttribute('width-type', 'fit')
-        } else if (width < 0) {
-          wb.StyleItem.FrameItem.Width = width
-          wb.value.style.width = '100%'
-          wb.value.setAttribute('width-type', 'fill')
-        } else {
-          wb.StyleItem.FrameItem.Width = width
-          wb.value.style.width = width + 'px'
-          wb.value.removeAttribute('width-type')
-        }
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-          StyleDA.docStyleSheets.find(rule => {
-            let selector = [...divSection.querySelectorAll(rule.selectorText)]
-            let check = selector.includes(wb.value)
-            if (check) {
-              rule.style.width = wb.value.style.width
-              selector.forEach(e => {
-                if (wb.value.getAttribute('width-type'))
-                  e.setAttribute(
-                    'width-type',
-                    wb.value.getAttribute('width-type')
-                  )
-              })
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                rule.cssText
-              )
-            }
-            return check
-          })
-          StyleDA.editStyleSheet(cssItem)
-        }
-      }
-      listUpdate.push(...selected_list)
-      WBaseDA.edit(listUpdate, EnumObj.frame)
-    } else {
+    if (!selected_list[0].StyleItem) {
       let pWbComponent = selected_list[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of selected_list) {
-        if (resizeFixed) width = wb.value.offsetWidth
-        let cssRule = StyleDA.docStyleSheets.find(rule => {
-          let selector = [...divSection.querySelectorAll(rule.selectorText)]
-          let check = selector.includes(wb.value)
-          if (check)
-            selector.forEach(e => {
-              if (e !== wb.value) {
-                if (width === null) e.setAttribute('width-type', 'fit')
-                else if (width < 0) e.setAttribute('width-type', 'fill')
-                else e.removeAttribute('width-type')
-              }
-            })
-          return check
-        })
-        let children = [
-          ...wb.value.querySelectorAll(
-            `.wbaseItem-value[level="${wb.Level + 1}"]`
+      var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+    }
+    for (let wb of selected_list) {
+      if (resizeFixed) width = wb.value.offsetWidth
+      let cssRule = cssItem
+        ? StyleDA.docStyleSheets.find(rule => {
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
+            let check = selector.includes(wb.value)
+            if (check)
+              selector.forEach(e => {
+                if (e !== wb.value) {
+                  if (width === null) e.setAttribute('width-type', 'fit')
+                  else if (width < 0) e.setAttribute('width-type', 'fill')
+                  else e.removeAttribute('width-type')
+                }
+              })
+            return check
+          })
+        : wb.value
+      let children = [
+        ...wb.value.querySelectorAll(
+          `.wbaseItem-value[level="${wb.Level + 1}"]`
+        )
+      ]
+      if (width === null) {
+        if (wb.value.classList.contains('w-row')) {
+          var fillWChildren = children.filter(
+            e => e.getAttribute('width-type') === 'fill'
           )
-        ]
-        if (width === null) {
-          if (wb.value.classList.contains('w-row')) {
-            children = children.filter(
-              e => e.getAttribute('width-type') === 'fill'
-            )
-          } else if (
-            children.every(e => e.getAttribute('width-type') === 'fill')
-          ) {
-            children = children
-              .sort((a, b) => (a.offsetWidth = b.offsetWidth))
-              .slice(0, 1)
-          } else {
-            children = []
-          }
-          if (children.length > 0) {
-            for (let cWbHTML of children) {
-              let cCssRule = StyleDA.docStyleSheets.find(rule => {
+        } else if (
+          children.every(e => e.getAttribute('width-type') === 'fill')
+        ) {
+          fillWChildren = children
+            .sort((a, b) => a.offsetWidth - b.offsetWidth)
+            .slice(0, 1)
+        }
+        if (fillWChildren?.length > 0) {
+          fillWChildren = wbase_list.filter(wb =>
+            fillWChildren.some(wbHTML => wb.GID === wbHTML.id)
+          )
+          for (let cWb of fillWChildren) {
+            if (cWb.StyleItem) {
+              cWb.value.style.width = cWb.value.offsetWidth + 'px'
+              cWb.value.removeAttribute('width-type')
+              listUpdate.push(cWb)
+            }
+            if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
+              StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
-                let check = selector.includes(cWbHTML)
+                let check = selector.includes(cWb.value)
                 if (check) {
-                  rule.style.width = cWbHTML.offsetWidth + 'px'
+                  rule.style.width = cWb.value.offsetWidth + 'px'
                   selector.forEach(e => e.removeAttribute('width-type'))
+                  if (cssItem) {
+                    cssItem.Css = cssItem.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
+                  } else {
+                    let cWbCss = StyleDA.cssStyleSheets.find(
+                      e => e.GID === cWb.GID
+                    )
+                    cWbCss.Css = cWbCss.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
+                    StyleDA.editStyleSheet(cWbCss)
+                  }
                 }
                 return check
               })
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cCssRule.selectorText} {[^}]*}`, 'g'),
-                cCssRule.cssText
-              )
             }
           }
-          cssRule.style.width =
-            wb.CateID === EnumCate.text ? 'max-content' : null
-          wb.value.setAttribute('width-type', 'fit')
-        } else if (width < 0) {
-          cssRule.style.width = '100%'
-          wb.value.setAttribute('width-type', 'fill')
-        } else {
-          cssRule.style.width = width + 'px'
-          wb.value.removeAttribute('width-type')
         }
+        cssRule.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
+        wb.value.setAttribute('width-type', 'fit')
+      } else if (width < 0) {
+        cssRule.style.width = '100%'
+        wb.value.setAttribute('width-type', 'fill')
+      } else {
+        cssRule.style.width = width + 'px'
+        wb.value.removeAttribute('width-type')
+      }
+      if (cssItem) {
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
-        StyleDA.editStyleSheet(cssItem)
+      } else {
+        listUpdate.push(wb)
       }
     }
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.frame)
   } else if (height !== undefined) {
     let resizeFixed = height === 'fixed'
-    if (selected_list[0].StyleItem) {
-      for (let wb of selected_list) {
-        let children = [
-          ...wb.value.querySelectorAll(
-            `.wbaseItem-value[level="${wb.Level + 1}"]`
-          )
-        ]
-        if (resizeFixed) height = wb.value.offsetHeight
-        if (height === null) {
-          if (wb.value.classList.contains('w-col')) {
-            children = children.filter(
-              e => e.getAttribute('height-type') === 'fill'
-            )
-          } else if (
-            children.every(e => e.getAttribute('height-type') === 'fill')
-          ) {
-            children = children
-              .sort((a, b) => (a.offsetHeight = b.offsetHeight))
-              .slice(0, 1)
-          } else {
-            children = []
-          }
-          if (children.length > 0) {
-            if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-              var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-              for (let cWbHTML of children) {
-                let cssRule = StyleDA.docStyleSheets.find(rule => {
-                  let selector = [
-                    ...wb.value.querySelectorAll(rule.selectorText)
-                  ]
-                  let check = selector.includes(cWbHTML)
-                  if (check) {
-                    rule.style.height = cWbHTML.offsetHeight + 'px'
-                    selector.forEach(e => e.removeAttribute('height-type'))
-                  }
-                  return check
-                })
-                cssItem.Css = cssItem.Css.replace(
-                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-                  cssRule.cssText
-                )
-              }
-              StyleDA.editStyleSheet(cssItem)
-            } else {
-              children = wbase_list.filter(wb =>
-                children.some(wbHTML => wb.GID === wbHTML)
-              )
-              for (let cWb of children) {
-                cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
-                cWb.value.style.height = cWb.value.offsetHeight + 'px'
-                cWb.value.removeAttribute('height-type')
-              }
-              listUpdate.push(...children)
-            }
-          }
-          wb.StyleItem.FrameItem.Height = null
-          wb.value.style.height = null
-          wb.value.setAttribute('height-type', 'fit')
-        } else if (height < 0) {
-          wb.StyleItem.FrameItem.Height = height
-          wb.value.style.height = '100%'
-          wb.value.setAttribute('height-type', 'fill')
-        } else {
-          wb.StyleItem.FrameItem.Height = height
-          wb.value.style.height = height + 'px'
-          wb.value.removeAttribute('height-type')
-        }
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-          StyleDA.docStyleSheets.find(rule => {
-            let selector = [...divSection.querySelectorAll(rule.selectorText)]
-            let check = selector.includes(wb.value)
-            if (check) {
-              rule.style.height = wb.value.style.height
-              selector.forEach(e => {
-                if (wb.value.getAttribute('height-type'))
-                  e.setAttribute(
-                    'height-type',
-                    wb.value.getAttribute('height-type')
-                  )
-              })
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                rule.cssText
-              )
-            }
-            return check
-          })
-          StyleDA.editStyleSheet(cssItem)
-        }
-      }
-      listUpdate.push(...selected_list)
-      WBaseDA.edit(listUpdate, EnumObj.frame)
-    } else {
+    if (!selected_list[0].StyleItem) {
       let pWbComponent = selected_list[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of selected_list) {
-        if (resizeFixed) height = wb.value.offsetHeight
-        let cssRule = StyleDA.docStyleSheets.find(rule => {
-          let selector = [...divSection.querySelectorAll(rule.selectorText)]
-          let check = selector.includes(wb.value)
-          if (check)
-            selector.forEach(e => {
-              if (e !== wb.value) {
-                if (height === null) e.setAttribute('height-type', 'fit')
-                else if (height < 0) e.setAttribute('height-type', 'fill')
-                else e.removeAttribute('height-type')
-              }
-            })
-          return check
-        })
-        let children = [
-          ...wb.value.querySelectorAll(
-            `.wbaseItem-value[level="${wb.Level + 1}"]`
+      var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+    }
+    for (let wb of selected_list) {
+      if (resizeFixed) height = wb.value.offsetHeight
+      let cssRule = cssItem
+        ? StyleDA.docStyleSheets.find(rule => {
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
+            let check = selector.includes(wb.value)
+            if (check)
+              selector.forEach(e => {
+                if (e !== wb.value) {
+                  if (height === null) e.setAttribute('height-type', 'fit')
+                  else if (height < 0) e.setAttribute('height-type', 'fill')
+                  else e.removeAttribute('height-type')
+                }
+              })
+            return check
+          })
+        : wb.value
+      let children = [
+        ...wb.value.querySelectorAll(
+          `.wbaseItem-value[level="${wb.Level + 1}"]`
+        )
+      ]
+      if (height === null) {
+        if (wb.value.classList.contains('w-col')) {
+          var fillHChildren = children.filter(
+            e => e.getAttribute('height-type') === 'fill'
           )
-        ]
-        if (height === null) {
-          if (wb.value.classList.contains('w-col')) {
-            children = children.filter(
-              e => e.getAttribute('height-type') === 'fill'
-            )
-          } else if (
-            children.every(e => e.getAttribute('height-type') === 'fill')
-          ) {
-            children = children
-              .sort((a, b) => a.offsetHeight - b.offsetHeight)
-              .slice(0, 1)
-          } else {
-            children = []
-          }
-          if (children.length > 0) {
-            for (let cWbHTML of children) {
-              let cCssRule = StyleDA.docStyleSheets.find(rule => {
+        } else if (
+          children.every(e => e.getAttribute('height-type') === 'fill')
+        ) {
+          fillHChildren = children
+            .sort((a, b) => a.offsetHeight - b.offsetHeight)
+            .slice(0, 1)
+        }
+        if (fillHChildren?.length > 0) {
+          fillHChildren = wbase_list.filter(wb =>
+            fillHChildren.some(wbHTML => wb.GID === wbHTML.id)
+          )
+          for (let cWb of fillHChildren) {
+            if (cWb.StyleItem) {
+              cWb.value.style.height = cWb.value.offsetHeight + 'px'
+              cWb.value.removeAttribute('height-type')
+              listUpdate.push(cWb)
+            }
+            if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
+              StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
-                let check = selector.includes(cWbHTML)
+                let check = selector.includes(cWb.value)
                 if (check) {
-                  rule.style.height = cWbHTML.offsetHeight + 'px'
+                  rule.style.height = cWb.value.offsetHeight + 'px'
                   selector.forEach(e => e.removeAttribute('height-type'))
+                  if (cssItem) {
+                    cssItem.Css = cssItem.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
+                  } else {
+                    let cWbCss = StyleDA.cssStyleSheets.find(
+                      e => e.GID === cWb.GID
+                    )
+                    cWbCss.Css = cWbCss.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
+                    StyleDA.editStyleSheet(cWbCss)
+                  }
                 }
                 return check
               })
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cCssRule.selectorText} {[^}]*}`, 'g'),
-                cCssRule.cssText
-              )
             }
           }
-          cssRule.style.height = null
-          wb.value.setAttribute('height-type', 'fit')
-        } else if (height < 0) {
-          cssRule.style.height = '100%'
-          wb.value.setAttribute('height-type', 'fill')
-        } else {
-          cssRule.style.height = height + 'px'
-          wb.value.removeAttribute('height-type')
         }
+        cssRule.style.height = null
+        wb.value.setAttribute('height-type', 'fit')
+      } else if (height < 0) {
+        cssRule.style.height = '100%'
+        wb.value.setAttribute('height-type', 'fill')
+      } else {
+        cssRule.style.height = height + 'px'
+        wb.value.removeAttribute('height-type')
+      }
+      if (cssItem) {
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
-        StyleDA.editStyleSheet(cssItem)
+      } else {
+        listUpdate.push(wb)
       }
     }
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.frame)
   } else if (x !== undefined) {
     let pStyle = window.getComputedStyle(selected_list[0].value.parentElement)
     if (selected_list[0].StyleItem) {
