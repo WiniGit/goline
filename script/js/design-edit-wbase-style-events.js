@@ -38,14 +38,14 @@ function handleEditAlign (newValue) {
                   let selector = [
                     ...divSection.querySelectorAll(rule.selectorText)
                   ]
-                  let check = selector.includes(cWbHTML)
+                  let check = selector.includes(cWb.value)
                   if (check) {
-                    switch (cWbHTML.getAttribute('constx')) {
+                    switch (cWb.value.getAttribute('constx')) {
                       case Constraints.left_right:
-                        rule.style.width = cWbHTML.offsetWidth + 'px'
+                        rule.style.width = cWb.value.offsetWidth + 'px'
                         break
                       case Constraints.scale:
-                        rule.style.width = cWbHTML.offsetWidth + 'px'
+                        rule.style.width = cWb.value.offsetWidth + 'px'
                         break
                       default:
                         break
@@ -99,6 +99,7 @@ function handleEditAlign (newValue) {
             default:
               break
           }
+          selected_list[0].value.setAttribute('constx', Constraints.left)
         } else {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
@@ -250,14 +251,14 @@ function handleEditAlign (newValue) {
                   let selector = [
                     ...divSection.querySelectorAll(rule.selectorText)
                   ]
-                  let check = selector.includes(cWbHTML)
+                  let check = selector.includes(cWb.value)
                   if (check) {
-                    switch (cWbHTML.getAttribute('constx')) {
+                    switch (cWb.value.getAttribute('constx')) {
                       case Constraints.left_right:
-                        rule.style.width = cWbHTML.offsetWidth + 'px'
+                        rule.style.width = cWb.value.offsetWidth + 'px'
                         break
                       case Constraints.scale:
-                        rule.style.width = cWbHTML.offsetWidth + 'px'
+                        rule.style.width = cWb.value.offsetWidth + 'px'
                         break
                       default:
                         break
@@ -311,37 +312,24 @@ function handleEditAlign (newValue) {
             default:
               break
           }
-          if (
-            selected_list[0].value.getAttribute('consty') === Constraints.center
-          ) {
-            selected_list[0].value.style.transform = 'translate(-50%,-50%)'
-          } else selected_list[0].value.style.transform = 'translateX(-50%)'
-          selected_list[0].value.style.left = 'calc(50% + 0px)'
-          selected_list[0].value.style.right = null
           selected_list[0].value.setAttribute('constx', Constraints.center)
-          selected_list[0].StyleItem.PositionItem.Right = '0px'
-          selected_list[0].StyleItem.PositionItem.ConstraintsX =
-            Constraints.center
-          listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          let cssRule = StyleDA.docStyleSheets.find(rule => {
+          var cssRule = StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('constx')) {
                 case Constraints.left_right:
-                  cssRule.style.width =
-                    selected_list[0].value.offsetWidth + 'px'
+                  rule.style.width = selected_list[0].value.offsetWidth + 'px'
                   break
                 case Constraints.scale:
-                  cssRule.style.width =
-                    selected_list[0].value.offsetWidth + 'px'
+                  rule.style.width = selected_list[0].value.offsetWidth + 'px'
                   break
                 default:
                   break
@@ -352,19 +340,22 @@ function handleEditAlign (newValue) {
             }
             return check
           })
-          if (
-            selected_list[0].value.getAttribute('consty') === Constraints.center
-          ) {
-            cssRule.style.transform = 'translate(-50%,-50%)'
-          } else cssRule.style.transform = 'translateX(-50%)'
-          cssRule.style.left = 'calc(50% + 0px)'
-          cssRule.style.right = null
+        }
+        cssRule ??= selected_list[0].value
+        if (
+          selected_list[0].value.getAttribute('consty') === Constraints.center
+        ) {
+          cssRule.style.transform = 'translate(-50%,-50%)'
+        } else cssRule.style.transform = 'translateX(-50%)'
+        cssRule.style.left = 'calc(50% + 0px)'
+        cssRule.style.right = null
+        if (cssItem) {
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
-        }
+        } else listUpdate.push(...selected_list)
       } else {
         let pStyle = window.getComputedStyle(
           selected_list[0].value.parentElement
@@ -382,139 +373,81 @@ function handleEditAlign (newValue) {
           )
         )
         let newOffX = minX + (maxX - minX) / 2
-        if (selected_list[0].StyleItem) {
-          for (let wb of selected_list) {
-            switch (wb.value.getAttribute('constx')) {
-              case Constraints.right:
-                wb.value.style.right = `${Math.round(
-                  parseFloat(pStyle.width.replace('px')) -
-                    parseFloat(pStyle.borderRightWidth.replace('px')) -
-                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    newOffX -
-                    wb.value.offsetWidth
-                )}px`
-                wb.StyleItem.PositionItem.Right = wb.value.style.right
-                break
-              case Constraints.left_right:
-                wb.value.style.right = `${Math.round(
-                  parseFloat(pStyle.width.replace('px')) -
-                    parseFloat(pStyle.borderRightWidth.replace('px')) -
-                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    newOffX -
-                    wb.value.offsetWidth
-                )}px`
-                wb.value.style.left = newOffX + 'px'
-                wb.StyleItem.PositionItem.Left = wb.value.style.left
-                wb.StyleItem.PositionItem.Right = wb.value.style.right
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  newOffX +
-                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
-                    2
-                }px`
-                wb.value.style.left = `calc(50% + ${centerValue})`
-                wb.StyleItem.PositionItem.Right = centerValue
-                break
-              case Constraints.scale:
-                let leftValue = `${(
-                  (newOffX * 100) /
-                  wb.value.parentElement.offsetWidth
-                ).toFixed(2)}%`
-                let rightValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.width.replace('px')) -
-                      parseFloat(pStyle.borderRightWidth.replace('px')) -
-                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                      newOffX -
-                      wb.value.offsetWidth
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetWidth
-                ).toFixed(2)}%`
-                wb.value.style.left = leftValue
-                wb.value.style.right = rightValue
-                wb.StyleItem.PositionItem.Left = leftValue
-                wb.StyleItem.PositionItem.Right = rightValue
-                break
-              default:
-                wb.value.style.left = newOffX + 'px'
-                wb.StyleItem.PositionItem.Left = newOffX + 'px'
-                break
-            }
-          }
-          listUpdate.push(...selected_list)
-        } else {
+        if (!selected_list[0].StyleItem) {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          for (let wb of selected_list) {
-            let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(
-                wb.value
+        }
+        for (let wb of selected_list) {
+          let cssRule = cssItem
+            ? StyleDA.docStyleSheets.find(e =>
+                [...divSection.querySelectorAll(e.selectorText)].includes(
+                  wb.value
+                )
               )
-            )
-            switch (wb.value.getAttribute('constx')) {
-              case Constraints.right:
-                cssRule.style.right = `${Math.round(
+            : wb.value
+          switch (wb.value.getAttribute('constx')) {
+            case Constraints.right:
+              cssRule.style.right = `${Math.round(
+                parseFloat(pStyle.width.replace('px')) -
+                  parseFloat(pStyle.borderRightWidth.replace('px')) -
+                  parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                  newOffX -
+                  wb.value.offsetWidth
+              )}px`
+              break
+            case Constraints.left_right:
+              cssRule.style.right = `${Math.round(
+                parseFloat(pStyle.width.replace('px')) -
+                  parseFloat(pStyle.borderRightWidth.replace('px')) -
+                  parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                  newOffX -
+                  wb.value.offsetWidth
+              )}px`
+              cssRule.style.left = newOffX + 'px'
+              break
+            case Constraints.center:
+              let centerValue = `${
+                newOffX +
+                (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
+              }px`
+              cssRule.style.left = `calc(50% + ${centerValue})`
+              break
+            case Constraints.scale:
+              let leftValue = `${(
+                (newOffX * 100) /
+                wb.value.parentElement.offsetWidth
+              ).toFixed(2)}%`
+              let rightValue = `${(
+                (Math.round(
                   parseFloat(pStyle.width.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
                     newOffX -
                     wb.value.offsetWidth
-                )}px`
-                break
-              case Constraints.left_right:
-                cssRule.style.right = `${Math.round(
-                  parseFloat(pStyle.width.replace('px')) -
-                    parseFloat(pStyle.borderRightWidth.replace('px')) -
-                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    newOffX -
-                    wb.value.offsetWidth
-                )}px`
-                cssRule.style.left = newOffX + 'px'
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  newOffX +
-                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
-                    2
-                }px`
-                cssRule.style.left = `calc(50% + ${centerValue})`
-                break
-              case Constraints.scale:
-                let leftValue = `${(
-                  (newOffX * 100) /
-                  wb.value.parentElement.offsetWidth
-                ).toFixed(2)}%`
-                let rightValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.width.replace('px')) -
-                      parseFloat(pStyle.borderRightWidth.replace('px')) -
-                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                      newOffX -
-                      wb.value.offsetWidth
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetWidth
-                ).toFixed(2)}%`
-                cssRule.style.left = leftValue
-                cssRule.style.right = rightValue
-                break
-              default:
-                cssRule.style.left = newOffX + 'px'
-                break
-            }
+                ) *
+                  100) /
+                wb.value.parentElement.offsetWidth
+              ).toFixed(2)}%`
+              cssRule.style.left = leftValue
+              cssRule.style.right = rightValue
+              break
+            default:
+              cssRule.style.left = newOffX + 'px'
+              break
+          }
+          if (cssItem) {
             cssItem.Css = cssItem.Css.replace(
               new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
               cssRule.cssText
             )
           }
-          StyleDA.editStyleSheet(cssItem)
         }
+        if (cssItem) StyleDA.editStyleSheet(cssItem)
+        else listUpdate.push(...selected_list)
       }
       break
     case 'align right':
@@ -528,48 +461,38 @@ function handleEditAlign (newValue) {
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
           if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-            let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            for (let cWbHTML of children) {
-              let cssRule = StyleDA.docStyleSheets.find(rule => {
-                let selector = [
-                  ...divSection.querySelectorAll(rule.selectorText)
-                ]
-                let check = selector.includes(cWbHTML)
-                if (check) {
-                  switch (cWbHTML.getAttribute('constx')) {
-                    case Constraints.left_right:
-                      cssRule.style.width = cWbHTML.offsetWidth + 'px'
-                      break
-                    case Constraints.scale:
-                      cssRule.style.width = cWbHTML.offsetWidth + 'px'
-                      break
-                    default:
-                      break
+            var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          }
+          if (children.length > 0) {
+            children = wbase_list.filter(e =>
+              children.some(cWbHTML => e.GID === cWbHTML.id)
+            )
+            for (let cWb of children) {
+              let cssRule = cWb.value
+              if (cssItem) {
+                cssRule = StyleDA.docStyleSheets.find(rule => {
+                  let selector = [
+                    ...divSection.querySelectorAll(rule.selectorText)
+                  ]
+                  let check = selector.includes(cWb.value)
+                  if (check) {
+                    switch (cWb.value.getAttribute('constx')) {
+                      case Constraints.left_right:
+                        rule.style.width = cWb.value.offsetWidth + 'px'
+                        break
+                      case Constraints.scale:
+                        rule.style.width = cWb.value.offsetWidth + 'px'
+                        break
+                      default:
+                        break
+                    }
+                    selector.forEach(e =>
+                      e.setAttribute('constx', Constraints.right)
+                    )
                   }
-                  selector.forEach(e =>
-                    e.setAttribute('constx', Constraints.right)
-                  )
-                }
-                return check
-              })
-
-              if (cWbHTML.getAttribute('consty') === Constraints.center) {
-                cssRule.style.transform = 'translateY(-50%)'
-              } else cssRule.style.transform = null
-              cssRule.style.left = ''
-              cssRule.style.right = '0px'
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-                cssRule.cssText
-              )
-            }
-            StyleDA.editStyleSheet(cssItem)
-          } else {
-            if (children.length > 0) {
-              children = wbase_list.filter(e =>
-                children.some(cWbHTML => e.GID === cWbHTML.id)
-              )
-              for (let cWb of children) {
+                  return check
+                })
+              } else {
                 switch (cWb.value.getAttribute('constx')) {
                   case Constraints.left_right:
                     cWb.value.style.width = cWb.value.offsetWidth + 'px'
@@ -580,17 +503,22 @@ function handleEditAlign (newValue) {
                   default:
                     break
                 }
-                if (cWb.value.getAttribute('consty') === Constraints.center) {
-                  cWb.value.style.transform = 'translateY(-50%)'
-                } else cWb.value.style.transform = null
-                cWb.value.style.left = ''
-                cWb.value.style.right = '0px'
                 cWb.value.setAttribute('constx', Constraints.right)
-                cWb.StyleItem.PositionItem.Right = '0px'
-                cWb.StyleItem.PositionItem.ConstraintsX = Constraints.right
               }
-              listUpdate.push(...children)
+              if (cWb.value.getAttribute('consty') === Constraints.center) {
+                cssRule.style.transform = 'translateY(-50%)'
+              } else cssRule.style.transform = null
+              cssRule.style.left = ''
+              cssRule.style.right = '0px'
+              if (cssItem) {
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                  cssRule.cssText
+                )
+              }
             }
+            if (cssItem) StyleDA.editStyleSheet(cssItem)
+            else listUpdate.push(...children)
           }
         }
       } else if (selected_list.length === 1) {
@@ -607,37 +535,24 @@ function handleEditAlign (newValue) {
             default:
               break
           }
-          if (
-            selected_list[0].value.getAttribute('consty') === Constraints.center
-          ) {
-            selected_list[0].value.style.transform = 'translateY(-50%)'
-          } else selected_list[0].value.style.transform = null
-          selected_list[0].value.style.left = ''
-          selected_list[0].value.style.right = '0px'
           selected_list[0].value.setAttribute('constx', Constraints.right)
-          selected_list[0].StyleItem.PositionItem.Right = '0px'
-          selected_list[0].StyleItem.PositionItem.ConstraintsX =
-            Constraints.right
-          listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          let cssRule = StyleDA.docStyleSheets.find(rule => {
+          var cssRule = StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('constx')) {
                 case Constraints.left_right:
-                  cssRule.style.width =
-                    selected_list[0].value.offsetWidth + 'px'
+                  rule.style.width = selected_list[0].value.offsetWidth + 'px'
                   break
                 case Constraints.scale:
-                  cssRule.style.width =
-                    selected_list[0].value.offsetWidth + 'px'
+                  rule.style.width = selected_list[0].value.offsetWidth + 'px'
                   break
                 default:
                   break
@@ -646,19 +561,22 @@ function handleEditAlign (newValue) {
             }
             return check
           })
-          if (
-            selected_list[0].value.getAttribute('consty') === Constraints.center
-          ) {
-            cssRule.style.transform = 'translateY(-50%)'
-          } else cssRule.style.transform = null
-          cssRule.style.left = null
-          cssRule.style.right = '0px'
+        }
+        cssRule ??= selected_list[0].value
+        if (
+          selected_list[0].value.getAttribute('consty') === Constraints.center
+        ) {
+          cssRule.style.transform = 'translateY(-50%)'
+        } else cssRule.style.transform = null
+        cssRule.style.left = null
+        cssRule.style.right = '0px'
+        if (cssItem) {
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
-        }
+        } else listUpdate.push(...selected_list)
       } else {
         let maxX = Math.max(
           ...selected_list.map(
@@ -670,123 +588,73 @@ function handleEditAlign (newValue) {
         let pStyle = window.getComputedStyle(
           selected_list[0].value.parentElement
         )
-        if (selected_list[0].StyleItem) {
-          for (let wb of selected_list) {
-            switch (wb.value.getAttribute('constx')) {
-              case Constraints.left:
-                wb.value.style.left = `${Math.round(
-                  maxX - wb.value.offsetWidth
-                )}px`
-                wb.StyleItem.PositionItem.Left = wb.value.style.left
-                break
-              case Constraints.left_right:
-                wb.value.style.left = `${Math.round(
-                  maxX - wb.value.offsetWidth
-                )}px`
-                wb.value.style.right = maxX + 'px'
-                wb.StyleItem.PositionItem.Left = wb.value.style.left
-                wb.StyleItem.PositionItem.Right = wb.value.style.right
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  maxX -
-                  wb.value.offsetWidth +
-                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
-                    2
-                }px`
-                wb.value.style.left = `calc(50% + ${centerValue})`
-                wb.StyleItem.PositionItem.Right = centerValue
-                break
-              case Constraints.scale:
-                let leftValue = `${(
-                  ((maxX - wb.value.offsetWidth) * 100) /
-                  wb.value.parentElement.offsetWidth
-                ).toFixed(2)}%`
-                let rightValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.width.replace('px')) -
-                      parseFloat(pStyle.borderRightWidth.replace('px')) -
-                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                      (maxX - wb.value.offsetWidth)
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetWidth
-                ).toFixed(2)}%`
-                wb.value.style.left = leftValue
-                wb.value.style.right = rightValue
-                wb.StyleItem.PositionItem.Left = leftValue
-                wb.StyleItem.PositionItem.Right = rightValue
-                break
-              default:
-                wb.value.style.right = maxX + 'px'
-                wb.StyleItem.PositionItem.Right = maxX + 'px'
-                break
-            }
-          }
-          listUpdate.push(...selected_list)
-        } else {
+        if (!selected_list[0].StyleItem) {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          for (let wb of selected_list) {
-            let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(
-                wb.value
+        }
+        for (let wb of selected_list) {
+          let cssRule = cssItem
+            ? StyleDA.docStyleSheets.find(e =>
+                [...divSection.querySelectorAll(e.selectorText)].includes(
+                  wb.value
+                )
               )
-            )
-            switch (wb.value.getAttribute('constx')) {
-              case Constraints.left:
-                cssRule.style.left = `${Math.round(
-                  maxX - wb.value.offsetWidth
-                )}px`
-                break
-              case Constraints.left_right:
-                cssRule.style.left = `${Math.round(
-                  maxX - wb.value.offsetWidth
-                )}px`
-                cssRule.style.right = maxX + 'px'
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  maxX -
-                  wb.value.offsetWidth +
-                  (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) /
-                    2
-                }px`
-                cssRule.style.left = `calc(50% + ${centerValue})`
-                break
-              case Constraints.scale:
-                let leftValue = `${(
-                  ((maxX - wb.value.offsetWidth) * 100) /
-                  wb.value.parentElement.offsetWidth
-                ).toFixed(2)}%`
-                let rightValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.width.replace('px')) -
-                      parseFloat(pStyle.borderRightWidth.replace('px')) -
-                      parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                      (maxX - wb.value.offsetWidth)
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetWidth
-                ).toFixed(2)}%`
-                cssRule.style.left = leftValue
-                cssRule.style.right = rightValue
-                break
-              default:
-                cssRule.style.right = maxX + 'px'
-                break
-            }
+            : wb.value
+          switch (wb.value.getAttribute('constx')) {
+            case Constraints.left:
+              cssRule.style.left = `${Math.round(
+                maxX - wb.value.offsetWidth
+              )}px`
+              break
+            case Constraints.left_right:
+              cssRule.style.left = `${Math.round(
+                maxX - wb.value.offsetWidth
+              )}px`
+              cssRule.style.right = maxX + 'px'
+              break
+            case Constraints.center:
+              let centerValue = `${
+                maxX -
+                wb.value.offsetWidth +
+                (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
+              }px`
+              cssRule.style.left = `calc(50% + ${centerValue})`
+              break
+            case Constraints.scale:
+              let leftValue = `${(
+                ((maxX - wb.value.offsetWidth) * 100) /
+                wb.value.parentElement.offsetWidth
+              ).toFixed(2)}%`
+              let rightValue = `${(
+                (Math.round(
+                  parseFloat(pStyle.width.replace('px')) -
+                    parseFloat(pStyle.borderRightWidth.replace('px')) -
+                    parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                    (maxX - wb.value.offsetWidth)
+                ) *
+                  100) /
+                wb.value.parentElement.offsetWidth
+              ).toFixed(2)}%`
+              cssRule.style.left = leftValue
+              cssRule.style.right = rightValue
+              break
+            default:
+              cssRule.style.right = maxX + 'px'
+              break
+          }
+          if (cssItem) {
             cssItem.Css = cssItem.Css.replace(
               new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
               cssRule.cssText
             )
           }
-          StyleDA.editStyleSheet(cssItem)
         }
+        if (cssItem) StyleDA.editStyleSheet(cssItem)
+        else listUpdate.push(...selected_list)
       }
       break
     case 'align top':
@@ -800,47 +668,38 @@ function handleEditAlign (newValue) {
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
           if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-            let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            for (let cWbHTML of children) {
-              let cssRule = StyleDA.docStyleSheets.find(rule => {
-                let selector = [
-                  ...divSection.querySelectorAll(rule.selectorText)
-                ]
-                let check = selector.includes(cWbHTML)
-                if (check) {
-                  switch (cWbHTML.getAttribute('consty')) {
-                    case Constraints.top_bottom:
-                      cssRule.style.height = cWbHTML.offsetHeight + 'px'
-                      break
-                    case Constraints.scale:
-                      cssRule.style.height = cWbHTML.offsetHeight + 'px'
-                      break
-                    default:
-                      break
+            var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          }
+          if (children.length > 0) {
+            children = wbase_list.filter(e =>
+              children.some(cWbHTML => e.GID === cWbHTML.id)
+            )
+            for (let cWb of children) {
+              let cssRule = cWb.value
+              if (cssItem) {
+                cssRule = StyleDA.docStyleSheets.find(rule => {
+                  let selector = [
+                    ...divSection.querySelectorAll(rule.selectorText)
+                  ]
+                  let check = selector.includes(cWb.value)
+                  if (check) {
+                    switch (cWb.value.getAttribute('consty')) {
+                      case Constraints.top_bottom:
+                        rule.style.height = cWb.value.offsetHeight + 'px'
+                        break
+                      case Constraints.scale:
+                        rule.style.height = cWb.value.offsetHeight + 'px'
+                        break
+                      default:
+                        break
+                    }
+                    selector.forEach(e =>
+                      e.setAttribute('consty', Constraints.top)
+                    )
                   }
-                  selector.forEach(e =>
-                    e.setAttribute('consty', Constraints.top)
-                  )
-                }
-                return check
-              })
-              if (cWbHTML.getAttribute('constx') === Constraints.center) {
-                cssRule.style.transform = 'translateX(-50%)'
-              } else cssRule.style.transform = null
-              cssRule.style.top = '0px'
-              cssRule.style.bottom = null
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-                cssRule.cssText
-              )
-            }
-            StyleDA.editStyleSheet(cssItem)
-          } else {
-            if (children.length > 0) {
-              children = wbase_list.filter(e =>
-                children.some(cWbHTML => e.GID === cWbHTML.id)
-              )
-              for (let cWb of children) {
+                  return check
+                })
+              } else {
                 switch (cWb.value.getAttribute('consty')) {
                   case Constraints.top_bottom:
                     cWb.value.style.height = cWb.value.offsetHeight + 'px'
@@ -851,17 +710,22 @@ function handleEditAlign (newValue) {
                   default:
                     break
                 }
-                if (cWb.value.getAttribute('constx') === Constraints.center) {
-                  cWb.value.style.transform = 'translateX(-50%)'
-                } else cWb.value.style.transform = null
-                cWb.value.style.top = '0px'
-                cWb.value.style.bottom = null
                 cWb.value.setAttribute('consty', Constraints.top)
-                cWb.StyleItem.PositionItem.Top = '0px'
-                cWb.StyleItem.PositionItem.ConstraintsY = Constraints.top
               }
-              listUpdate.push(...children)
+              if (cWbHTML.getAttribute('constx') === Constraints.center) {
+                cssRule.style.transform = 'translateX(-50%)'
+              } else cssRule.style.transform = null
+              cssRule.style.top = '0px'
+              cssRule.style.bottom = null
+              if (cssItem) {
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                  cssRule.cssText
+                )
+              }
             }
+            if (cssItem) StyleDA.editStyleSheet(cssItem)
+            else listUpdate.push(...children)
           }
         }
       } else if (selected_list.length === 1) {
@@ -878,36 +742,24 @@ function handleEditAlign (newValue) {
             default:
               break
           }
-          if (
-            selected_list[0].value.getAttribute('constx') === Constraints.center
-          ) {
-            selected_list[0].value.style.transform = 'translateX(-50%)'
-          } else selected_list[0].value.style.transform = null
-          selected_list[0].value.style.top = '0px'
-          selected_list[0].value.style.bottom = null
           selected_list[0].value.setAttribute('consty', Constraints.top)
-          selected_list[0].StyleItem.PositionItem.Top = '0px'
-          selected_list[0].StyleItem.PositionItem.ConstraintsY = Constraints.top
-          listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          let cssRule = StyleDA.docStyleSheets.find(rule => {
+          var cssRule = StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('consty')) {
                 case Constraints.top_bottom:
-                  cssRule.style.height =
-                    selected_list[0].value.offsetHeight + 'px'
+                  rule.style.height = selected_list[0].value.offsetHeight + 'px'
                   break
                 case Constraints.scale:
-                  cssRule.style.height =
-                    selected_list[0].value.offsetHeight + 'px'
+                  rule.style.height = selected_list[0].value.offsetHeight + 'px'
                   break
                 default:
                   break
@@ -916,19 +768,22 @@ function handleEditAlign (newValue) {
             }
             return check
           })
-          if (
-            selected_list[0].value.getAttribute('constx') === Constraints.center
-          ) {
-            cssRule.style.transform = 'translateX(-50%)'
-          } else cssRule.style.transform = null
-          cssRule.style.top = '0px'
-          cssRule.style.bottom = null
+        }
+        cssRule ??= selected_list[0].value
+        if (
+          selected_list[0].value.getAttribute('constx') === Constraints.center
+        ) {
+          cssRule.style.transform = 'translateX(-50%)'
+        } else cssRule.style.transform = null
+        cssRule.style.top = '0px'
+        cssRule.style.bottom = null
+        if (cssItem) {
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
-        }
+        } else listUpdate.push(...selected_list)
       } else {
         let minY = Math.min(
           ...selected_list.map(wb =>
@@ -938,141 +793,82 @@ function handleEditAlign (newValue) {
         let pStyle = window.getComputedStyle(
           selected_list[0].value.parentElement
         )
-        if (selected_list[0].StyleItem) {
-          for (let wb of selected_list) {
-            switch (wb.value.getAttribute('consty')) {
-              case Constraints.bottom:
-                wb.value.style.bottom = `${Math.round(
-                  parseFloat(pStyle.height.replace('px')) -
-                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                    parseFloat(pStyle.borderTopWidth.replace('px')) -
-                    minY -
-                    wb.value.offsetHeight
-                )}px`
-                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
-                break
-              case Constraints.top_bottom:
-                wb.value.style.bottom = `${Math.round(
-                  parseFloat(pStyle.height.replace('px')) -
-                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                    parseFloat(pStyle.borderTopWidth.replace('px')) -
-                    minY -
-                    wb.value.offsetHeight
-                )}px`
-                wb.value.style.top = minY + 'px'
-                wb.StyleItem.PositionItem.Top = wb.value.style.top
-                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  minY +
-                  (wb.value.offsetHeight -
-                    wb.value.parentElement.offsetHeight) /
-                    2
-                }px`
-                wb.value.style.top = `calc(50% + ${centerValue})`
-                wb.StyleItem.PositionItem.Bottom = centerValue
-                break
-              case Constraints.scale:
-                let topValue = `${(
-                  (minY * 100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                let botValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.height.replace('px')) -
-                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                      parseFloat(pStyle.borderRightWidth.replace('px')) -
-                      minY -
-                      wb.value.offsetHeight
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                wb.value.style.top = topValue
-                wb.value.style.bottom = botValue
-                wb.StyleItem.PositionItem.Top = topValue
-                wb.StyleItem.PositionItem.Bottom = botValue
-                break
-              default:
-                wb.value.style.top = minY + 'px'
-                wb.StyleItem.PositionItem.Top = minY + 'px'
-                break
-            }
-          }
-          listUpdate.push(...selected_list)
-        } else {
+        if (!selected_list[0].StyleItem) {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          for (let wb of selected_list) {
-            let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(
-                wb.value
+        }
+        for (let wb of selected_list) {
+          let cssRule = cssItem
+            ? StyleDA.docStyleSheets.find(e =>
+                [...divSection.querySelectorAll(e.selectorText)].includes(
+                  wb.value
+                )
               )
-            )
-            switch (wb.value.getAttribute('consty')) {
-              case Constraints.bottom:
-                cssRule.style.bottom = `${Math.round(
+            : wb.value
+          switch (wb.value.getAttribute('consty')) {
+            case Constraints.bottom:
+              cssRule.style.bottom = `${Math.round(
+                parseFloat(pStyle.height.replace('px')) -
+                  parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                  parseFloat(pStyle.borderTopWidth.replace('px')) -
+                  minY -
+                  wb.value.offsetHeight
+              )}px`
+              break
+            case Constraints.top_bottom:
+              cssRule.style.bottom = `${Math.round(
+                parseFloat(pStyle.height.replace('px')) -
+                  parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                  parseFloat(pStyle.borderTopWidth.replace('px')) -
+                  minY -
+                  wb.value.offsetHeight
+              )}px`
+              cssRule.style.top = minY + 'px'
+              break
+            case Constraints.center:
+              let centerValue = `${
+                minY +
+                (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) /
+                  2
+              }px`
+              cssRule.style.top = `calc(50% + ${centerValue})`
+              break
+            case Constraints.scale:
+              let topValue = `${(
+                (minY * 100) /
+                wb.value.parentElement.offsetHeight
+              ).toFixed(2)}%`
+              let botValue = `${(
+                (Math.round(
                   parseFloat(pStyle.height.replace('px')) -
                     parseFloat(pStyle.borderBottomWidth.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
                     minY -
                     wb.value.offsetHeight
-                )}px`
-                break
-              case Constraints.top_bottom:
-                cssRule.style.bottom = `${Math.round(
-                  parseFloat(pStyle.height.replace('px')) -
-                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                    parseFloat(pStyle.borderRightWidth.replace('px')) -
-                    minY -
-                    wb.value.offsetHeight
-                )}px`
-                cssRule.style.top = minY + 'px'
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  minY +
-                  (wb.value.offsetHeight -
-                    wb.value.parentElement.offsetHeight) /
-                    2
-                }px`
-                cssRule.style.top = `calc(50% + ${centerValue})`
-                break
-              case Constraints.scale:
-                let topValue = `${(
-                  (minY * 100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                let botValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.height.replace('px')) -
-                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                      parseFloat(pStyle.borderTopWidth.replace('px')) -
-                      minY -
-                      wb.value.offsetHeight
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                cssRule.style.top = topValue
-                cssRule.style.bottom = botValue
-                break
-              default:
-                cssRule.style.top = minY + 'px'
-                break
-            }
+                ) *
+                  100) /
+                wb.value.parentElement.offsetHeight
+              ).toFixed(2)}%`
+              cssRule.style.top = topValue
+              cssRule.style.bottom = botValue
+              break
+            default:
+              cssRule.style.top = minY + 'px'
+              break
+          }
+          if (cssItem) {
             cssItem.Css = cssItem.Css.replace(
               new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
               cssRule.cssText
             )
           }
-          StyleDA.editStyleSheet(cssItem)
         }
+        if (cssItem) StyleDA.editStyleSheet(cssItem)
+        else listUpdate.push(...selected_list)
       }
       break
     case 'align vertical center':
@@ -1086,47 +882,38 @@ function handleEditAlign (newValue) {
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
           if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-            let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            for (let cWbHTML of children) {
-              let cssRule = StyleDA.docStyleSheets.find(rule => {
-                let selector = [
-                  ...divSection.querySelectorAll(rule.selectorText)
-                ]
-                let check = selector.includes(cWbHTML)
-                if (check) {
-                  switch (cWbHTML.getAttribute('consty')) {
-                    case Constraints.top_bottom:
-                      cssRule.style.height = cWbHTML.offsetHeight + 'px'
-                      break
-                    case Constraints.scale:
-                      cssRule.style.height = cWbHTML.offsetHeight + 'px'
-                      break
-                    default:
-                      break
+            var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          }
+          if (children.length > 0) {
+            children = wbase_list.filter(e =>
+              children.some(cWbHTML => e.GID === cWbHTML.id)
+            )
+            for (let cWb of children) {
+              let cssRule = cWb.value
+              if (cssItem) {
+                cssRule = StyleDA.docStyleSheets.find(rule => {
+                  let selector = [
+                    ...divSection.querySelectorAll(rule.selectorText)
+                  ]
+                  let check = selector.includes(cWb.value)
+                  if (check) {
+                    switch (cWb.value.getAttribute('consty')) {
+                      case Constraints.top_bottom:
+                        rule.style.height = cWb.value.offsetHeight + 'px'
+                        break
+                      case Constraints.scale:
+                        rule.style.height = cWb.value.offsetHeight + 'px'
+                        break
+                      default:
+                        break
+                    }
+                    selector.forEach(e =>
+                      e.setAttribute('consty', Constraints.center)
+                    )
                   }
-                  selector.forEach(e =>
-                    e.setAttribute('consty', Constraints.center)
-                  )
-                }
-                return check
-              })
-              if (cWbHTML.getAttribute('constx') === Constraints.center) {
-                cssRule.style.transform = 'translate(-50%,-50%)'
-              } else cssRule.style.transform = 'translateY(-50%)'
-              cssRule.style.top = `calc(50% + 0px)`
-              cssRule.style.bottom = null
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-                cssRule.cssText
-              )
-            }
-            StyleDA.editStyleSheet(cssItem)
-          } else {
-            if (children.length > 0) {
-              children = wbase_list.filter(e =>
-                children.some(cWbHTML => e.GID === cWbHTML.id)
-              )
-              for (let cWb of children) {
+                  return check
+                })
+              } else {
                 switch (cWb.value.getAttribute('consty')) {
                   case Constraints.top_bottom:
                     cWb.value.style.height = cWb.value.offsetHeight + 'px'
@@ -1137,17 +924,22 @@ function handleEditAlign (newValue) {
                   default:
                     break
                 }
-                if (cWb.value.getAttribute('constx') === Constraints.center) {
-                  cWb.value.style.transform = 'translate(-50%,-50%)'
-                } else cWb.value.style.transform = 'translateY(-50%)'
-                wb.value.style.top = `calc(50% + 0px)`
-                cWb.value.style.bottom = null
                 cWb.value.setAttribute('consty', Constraints.center)
-                cWb.StyleItem.PositionItem.Right = '0px'
-                cWb.StyleItem.PositionItem.ConstraintsY = Constraints.center
               }
-              listUpdate.push(...children)
+              if (cWbHTML.getAttribute('constx') === Constraints.center) {
+                cssRule.style.transform = 'translate(-50%,-50%)'
+              } else cssRule.style.transform = 'translateY(-50%)'
+              cssRule.style.top = `calc(50% + 0px)`
+              cssRule.style.bottom = null
+              if (cssItem) {
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                  cssRule.cssText
+                )
+              }
             }
+            if (cssItem) StyleDA.editStyleSheet(cssItem)
+            else listUpdate.push(...children)
           }
         }
       } else if (selected_list.length === 1) {
@@ -1164,37 +956,24 @@ function handleEditAlign (newValue) {
             default:
               break
           }
-          if (
-            selected_list[0].value.getAttribute('constx') === Constraints.center
-          ) {
-            selected_list[0].value.style.transform = 'translate(-50%,-50%)'
-          } else selected_list[0].value.style.transform = 'translateY(-50%)'
-          selected_list[0].value.style.top = 'calc(50% + 0px)'
-          selected_list[0].value.style.bottom = null
           selected_list[0].value.setAttribute('consty', Constraints.center)
-          selected_list[0].StyleItem.PositionItem.Bottom = '0px'
-          selected_list[0].StyleItem.PositionItem.ConstraintsY =
-            Constraints.center
-          listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          let cssRule = StyleDA.docStyleSheets.find(rule => {
+          var cssRule = StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('consty')) {
                 case Constraints.top_bottom:
-                  cssRule.style.height =
-                    selected_list[0].value.offsetHeight + 'px'
+                  rule.style.height = selected_list[0].value.offsetHeight + 'px'
                   break
                 case Constraints.scale:
-                  cssRule.style.height =
-                    selected_list[0].value.offsetHeight + 'px'
+                  rule.style.height = selected_list[0].value.offsetHeight + 'px'
                   break
                 default:
                   break
@@ -1205,19 +984,22 @@ function handleEditAlign (newValue) {
             }
             return check
           })
-          if (
-            selected_list[0].value.getAttribute('constx') === Constraints.center
-          ) {
-            cssRule.style.transform = 'translate(-50%,-50%)'
-          } else cssRule.style.transform = 'translateY(-50%)'
-          cssRule.style.top = 'calc(50% + 0px)'
-          cssRule.style.bottom = null
+        }
+        cssRule ??= selected_list[0].value
+        if (
+          selected_list[0].value.getAttribute('constx') === Constraints.center
+        ) {
+          cssRule.style.transform = 'translate(-50%,-50%)'
+        } else cssRule.style.transform = 'translateY(-50%)'
+        cssRule.style.top = 'calc(50% + 0px)'
+        cssRule.style.bottom = null
+        if (cssItem) {
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
-        }
+        } else listUpdate.push(...selected_list)
       } else {
         let pStyle = window.getComputedStyle(
           selected_list[0].value.parentElement
@@ -1235,137 +1017,80 @@ function handleEditAlign (newValue) {
           )
         )
         let newOffY = minY + (maxY - minY) / 2
-        if (selected_list[0].StyleItem) {
-          for (let wb of selected_list) {
-            switch (wb.value.getAttribute('consty')) {
-              case Constraints.bottom:
-                wb.value.style.bottom = `${Math.round(
-                  parseFloat(pStyle.height.replace('px')) -
-                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                    parseFloat(pStyle.borderTopWidth.replace('px')) -
-                    newOffY
-                )}px`
-                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
-                break
-              case Constraints.top_bottom:
-                wb.value.style.bottom = `${Math.round(
-                  parseFloat(pStyle.height.replace('px')) -
-                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                    parseFloat(pStyle.borderTopWidth.replace('px')) -
-                    newOffY
-                )}px`
-                wb.value.style.top = newOffY + 'px'
-                wb.StyleItem.PositionItem.Top = wb.value.style.top
-                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  newOffY +
-                  (wb.value.offsetHeight -
-                    wb.value.parentElement.offsetHeight) /
-                    2
-                }px`
-                wb.value.style.top = `calc(50% + ${centerValue})`
-                wb.StyleItem.PositionItem.Bottom = wb.value.style.centerValue
-                break
-              case Constraints.scale:
-                let topValue = `${(
-                  (newOffY * 100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                let botValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.height.replace('px')) -
-                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                      parseFloat(pStyle.borderTopWidth.replace('px')) -
-                      newOffY -
-                      wb.value.offsetHeight
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                wb.value.style.top = topValue
-                wb.value.style.bottom = botValue
-                wb.StyleItem.PositionItem.Top = topValue
-                wb.StyleItem.PositionItem.Bottom = botValue
-                break
-              default:
-                wb.value.style.top = newOffY + 'px'
-                wb.StyleItem.PositionItem.Top = newOffY + 'px'
-                break
-            }
-          }
-          listUpdate.push(...selected_list)
-        } else {
+        if (!selected_list[0].StyleItem) {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          for (let wb of selected_list) {
-            let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(
-                wb.value
+        }
+        for (let wb of selected_list) {
+          let cssRule = cssItem
+            ? StyleDA.docStyleSheets.find(e =>
+                [...divSection.querySelectorAll(e.selectorText)].includes(
+                  wb.value
+                )
               )
-            )
-            switch (wb.value.getAttribute('consty')) {
-              case Constraints.bottom:
-                cssRule.style.bottom = `${Math.round(
+            : wb.value
+          switch (wb.value.getAttribute('consty')) {
+            case Constraints.bottom:
+              cssRule.style.bottom = `${Math.round(
+                parseFloat(pStyle.height.replace('px')) -
+                  parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                  parseFloat(pStyle.borderTopWidth.replace('px')) -
+                  newOffY
+              )}px`
+              break
+            case Constraints.top_bottom:
+              cssRule.style.bottom = `${Math.round(
+                parseFloat(pStyle.height.replace('px')) -
+                  parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                  parseFloat(pStyle.borderTopWidth.replace('px')) -
+                  newOffY
+              )}px`
+              cssRule.style.top = newOffY + 'px'
+              break
+            case Constraints.center:
+              let centerValue = `${
+                newOffY +
+                (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) /
+                  2
+              }px`
+              cssRule.style.top = `calc(50% + ${centerValue})`
+              break
+            case Constraints.scale:
+              let topValue = `${(
+                (newOffY * 100) /
+                wb.value.parentElement.offsetHeight
+              ).toFixed(2)}%`
+              let botValue = `${(
+                (Math.round(
                   parseFloat(pStyle.height.replace('px')) -
                     parseFloat(pStyle.borderBottomWidth.replace('px')) -
                     parseFloat(pStyle.borderTopWidth.replace('px')) -
-                    newOffY
-                )}px`
-                break
-              case Constraints.top_bottom:
-                cssRule.style.bottom = `${Math.round(
-                  parseFloat(pStyle.height.replace('px')) -
-                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                    parseFloat(pStyle.borderTopWidth.replace('px')) -
-                    newOffY
-                )}px`
-                cssRule.style.top = newOffY + 'px'
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  newOffY +
-                  (wb.value.offsetHeight -
-                    wb.value.parentElement.offsetHeight) /
-                    2
-                }px`
-                cssRule.style.top = `calc(50% + ${centerValue})`
-                break
-              case Constraints.scale:
-                let topValue = `${(
-                  (newOffY * 100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                let botValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.height.replace('px')) -
-                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                      parseFloat(pStyle.borderTopWidth.replace('px')) -
-                      newOffY -
-                      wb.value.offsetHeight
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                cssRule.style.top = topValue
-                cssRule.style.bottom = botValue
-                break
-              default:
-                cssRule.style.top = newOffY + 'px'
-                break
-            }
+                    newOffY -
+                    wb.value.offsetHeight
+                ) *
+                  100) /
+                wb.value.parentElement.offsetHeight
+              ).toFixed(2)}%`
+              cssRule.style.top = topValue
+              cssRule.style.bottom = botValue
+              break
+            default:
+              cssRule.style.top = newOffY + 'px'
+              break
+          }
+          if (cssItem) {
             cssItem.Css = cssItem.Css.replace(
               new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
               cssRule.cssText
             )
           }
-          StyleDA.editStyleSheet(cssItem)
         }
+        if (cssItem) StyleDA.editStyleSheet(cssItem)
+        else listUpdate.push(...selected_list)
       }
       break
     case 'align bottom':
@@ -1379,47 +1104,38 @@ function handleEditAlign (newValue) {
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
           if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-            let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            for (let cWbHTML of children) {
-              let cssRule = StyleDA.docStyleSheets.find(rule => {
-                let selector = [
-                  ...divSection.querySelectorAll(rule.selectorText)
-                ]
-                let check = selector.includes(cWbHTML)
-                if (check) {
-                  switch (cWbHTML.getAttribute('consty')) {
-                    case Constraints.top_bottom:
-                      cssRule.style.height = cWbHTML.offsetHeight + 'px'
-                      break
-                    case Constraints.scale:
-                      cssRule.style.height = cWbHTML.offsetHeight + 'px'
-                      break
-                    default:
-                      break
+            var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          }
+          if (children.length > 0) {
+            children = wbase_list.filter(e =>
+              children.some(cWbHTML => e.GID === cWbHTML.id)
+            )
+            for (let cWb of children) {
+              let cssRule = cWb.value
+              if (cssItem) {
+                cssRule = StyleDA.docStyleSheets.find(rule => {
+                  let selector = [
+                    ...divSection.querySelectorAll(rule.selectorText)
+                  ]
+                  let check = selector.includes(cWb.value)
+                  if (check) {
+                    switch (cWb.value.getAttribute('consty')) {
+                      case Constraints.top_bottom:
+                        rule.style.height = cWb.value.offsetHeight + 'px'
+                        break
+                      case Constraints.scale:
+                        rule.style.height = cWb.value.offsetHeight + 'px'
+                        break
+                      default:
+                        break
+                    }
+                    selector.forEach(e =>
+                      e.setAttribute('consty', Constraints.bottom)
+                    )
                   }
-                  selector.forEach(e =>
-                    e.setAttribute('consty', Constraints.bottom)
-                  )
-                }
-                return check
-              })
-              if (cWbHTML.getAttribute('constx') === Constraints.center) {
-                cssRule.style.transform = 'translateX(-50%)'
-              } else cssRule.style.transform = null
-              cssRule.style.top = null
-              cssRule.style.bottom = '0px'
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-                cssRule.cssText
-              )
-            }
-            StyleDA.editStyleSheet(cssItem)
-          } else {
-            if (children.length > 0) {
-              children = wbase_list.filter(e =>
-                children.some(cWbHTML => e.GID === cWbHTML.id)
-              )
-              for (let cWb of children) {
+                  return check
+                })
+              } else {
                 switch (cWb.value.getAttribute('consty')) {
                   case Constraints.top_bottom:
                     cWb.value.style.height = cWb.value.offsetHeight + 'px'
@@ -1430,17 +1146,22 @@ function handleEditAlign (newValue) {
                   default:
                     break
                 }
-                if (cWb.value.getAttribute('constx') === Constraints.center) {
-                  cWb.value.style.transform = 'translateX(-50%)'
-                } else cWb.value.style.transform = null
-                cWb.value.style.top = null
-                cWb.value.style.bottom = '0px'
                 cWb.value.setAttribute('consty', Constraints.bottom)
-                wb.StyleItem.PositionItem.Bottom = '0px'
-                wb.StyleItem.PositionItem.ConstraintsY = Constraints.bottom
               }
-              listUpdate.push(...children)
+              if (cWbHTML.getAttribute('constx') === Constraints.center) {
+                cssRule.style.transform = 'translateX(-50%)'
+              } else cssRule.style.transform = null
+              cssRule.style.top = null
+              cssRule.style.bottom = '0px'
+              if (cssItem) {
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                  cssRule.cssText
+                )
+              }
             }
+            if (cssItem) StyleDA.editStyleSheet(cssItem)
+            else listUpdate.push(...children)
           }
         }
       } else if (selected_list.length === 1) {
@@ -1457,37 +1178,24 @@ function handleEditAlign (newValue) {
             default:
               break
           }
-          if (
-            selected_list[0].value.getAttribute('constx') === Constraints.center
-          ) {
-            selected_list[0].value.style.transform = 'translateX(-50%)'
-          } else selected_list[0].value.style.transform = null
-          selected_list[0].value.style.top = null
-          selected_list[0].value.style.bottom = '0px'
           selected_list[0].value.setAttribute('consty', Constraints.bottom)
-          selected_list[0].StyleItem.PositionItem.Bottom = '0px'
-          selected_list[0].StyleItem.PositionItem.ConstraintsY =
-            Constraints.bottom
-          listUpdate.push(...selected_list)
         } else {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          let cssRule = StyleDA.docStyleSheets.find(rule => {
+          var cssRule = StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
             let check = selector.includes(selected_list[0].value)
             if (check) {
               switch (selected_list[0].value.getAttribute('consty')) {
                 case Constraints.top_bottom:
-                  cssRule.style.height =
-                    selected_list[0].value.offsetHeight + 'px'
+                  rule.style.height = selected_list[0].value.offsetHeight + 'px'
                   break
                 case Constraints.scale:
-                  cssRule.style.height =
-                    selected_list[0].value.offsetHeight + 'px'
+                  rule.style.height = selected_list[0].value.offsetHeight + 'px'
                   break
                 default:
                   break
@@ -1498,19 +1206,22 @@ function handleEditAlign (newValue) {
             }
             return check
           })
-          if (
-            selected_list[0].value.getAttribute('constx') === Constraints.center
-          ) {
-            cssRule.style.transform = 'translateX(-50%)'
-          } else cssRule.style.transform = null
-          cssRule.style.top = null
-          cssRule.style.bottom = '0px'
+        }
+        cssRule ??= selected_list[0].value
+        if (
+          selected_list[0].value.getAttribute('constx') === Constraints.center
+        ) {
+          cssRule.style.transform = 'translateX(-50%)'
+        } else cssRule.style.transform = null
+        cssRule.style.top = null
+        cssRule.style.bottom = '0px'
+        if (cssItem) {
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
-        }
+        } else listUpdate.push(...selected_list)
       } else {
         let maxY = Math.max(
           ...selected_list.map(
@@ -1522,125 +1233,74 @@ function handleEditAlign (newValue) {
         let pStyle = window.getComputedStyle(
           selected_list[0].value.parentElement
         )
-        if (selected_list[0].StyleItem) {
-          for (let wb of selected_list) {
-            switch (wb.value.getAttribute('consty')) {
-              case Constraints.top:
-                wb.value.style.top = `${Math.round(
-                  maxY - wb.value.offsetHeight
-                )}px`
-                wb.StyleItem.PositionItem.Top = wb.value.style.top
-                break
-              case Constraints.top_bottom:
-                wb.value.style.top = `${Math.round(
-                  maxY - wb.value.offsetHeight
-                )}px`
-                wb.value.style.bottom = maxY + 'px'
-                wb.StyleItem.PositionItem.Top = wb.value.style.top
-                wb.StyleItem.PositionItem.Bottom = wb.value.style.bottom
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  maxY -
-                  wb.value.offsetHeight +
-                  (wb.value.offsetHeight -
-                    wb.value.parentElement.offsetHeight) /
-                    2
-                }px`
-                wb.value.style.top = `calc(50% + ${centerValue})`
-                wb.StyleItem.PositionItem.Bottom = centerValue
-                break
-              case Constraints.scale:
-                let topValue = `${(
-                  ((maxY - wb.value.offsetHeight) * 100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                let botValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.height.replace('px')) -
-                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                      parseFloat(pStyle.borderTopWidth.replace('px')) -
-                      (maxY - wb.value.offsetHeight)
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                wb.value.style.top = topValue
-                wb.value.style.bottom = botValue
-                wb.StyleItem.PositionItem.Top = topValue
-                wb.StyleItem.PositionItem.Bottom = botValue
-                break
-              default:
-                wb.value.style.bottom = maxY + 'px'
-                wb.StyleItem.PositionItem.Bottom = maxY + 'px'
-                break
-            }
-          }
-          listUpdate.push(...selected_list)
-        } else {
+        if (!selected_list[0].StyleItem) {
           let pWbComponent = selected_list[0].value.closest(
             `.wbaseItem-value[iswini="true"]`
           )
-          let cssItem = StyleDA.cssStyleSheets.find(
+          var cssItem = StyleDA.cssStyleSheets.find(
             e => e.GID === pWbComponent.id
           )
-          for (let wb of selected_list) {
-            let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(
-                wb.value
+        }
+        for (let wb of selected_list) {
+          let cssRule = cssItem
+            ? StyleDA.docStyleSheets.find(e =>
+                [...divSection.querySelectorAll(e.selectorText)].includes(
+                  wb.value
+                )
               )
-            )
-            switch (wb.value.getAttribute('consty')) {
-              case Constraints.top:
-                cssRule.style.top = `${Math.round(
-                  maxY - wb.value.offsetHeight
-                )}px`
-                break
-              case Constraints.top_bottom:
-                cssRule.style.top = `${Math.round(
-                  maxY - wb.value.offsetHeight
-                )}px`
-                cssRule.style.bottom = maxY + 'px'
-                break
-              case Constraints.center:
-                let centerValue = `${
-                  maxY -
-                  wb.value.offsetHeight +
-                  (wb.value.offsetHeight -
-                    wb.value.parentElement.offsetHeight) /
-                    2
-                }px`
-                cssRule.style.top = `calc(50% + ${centerValue})`
-                break
-              case Constraints.scale:
-                let topValue = `${(
-                  ((maxY - wb.value.offsetHeight) * 100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                let botValue = `${(
-                  (Math.round(
-                    parseFloat(pStyle.height.replace('px')) -
-                      parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                      parseFloat(pStyle.borderTopWidth.replace('px')) -
-                      (maxY - wb.value.offsetHeight)
-                  ) *
-                    100) /
-                  wb.value.parentElement.offsetHeight
-                ).toFixed(2)}%`
-                cssRule.style.top = topValue
-                cssRule.style.bottom = botValue
-                break
-              default:
-                cssRule.style.bottom = maxY + 'px'
-                break
-            }
+            : wb.value
+          switch (wb.value.getAttribute('consty')) {
+            case Constraints.top:
+              cssRule.style.top = `${Math.round(
+                maxY - wb.value.offsetHeight
+              )}px`
+              break
+            case Constraints.top_bottom:
+              cssRule.style.top = `${Math.round(
+                maxY - wb.value.offsetHeight
+              )}px`
+              cssRule.style.bottom = maxY + 'px'
+              break
+            case Constraints.center:
+              let centerValue = `${
+                maxY -
+                wb.value.offsetHeight +
+                (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) /
+                  2
+              }px`
+              cssRule.style.top = `calc(50% + ${centerValue})`
+              break
+            case Constraints.scale:
+              let topValue = `${(
+                ((maxY - wb.value.offsetHeight) * 100) /
+                wb.value.parentElement.offsetHeight
+              ).toFixed(2)}%`
+              let botValue = `${(
+                (Math.round(
+                  parseFloat(pStyle.height.replace('px')) -
+                    parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                    parseFloat(pStyle.borderTopWidth.replace('px')) -
+                    (maxY - wb.value.offsetHeight)
+                ) *
+                  100) /
+                wb.value.parentElement.offsetHeight
+              ).toFixed(2)}%`
+              cssRule.style.top = topValue
+              cssRule.style.bottom = botValue
+              break
+            default:
+              cssRule.style.bottom = maxY + 'px'
+              break
+          }
+          if (cssItem) {
             cssItem.Css = cssItem.Css.replace(
               new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
               cssRule.cssText
             )
           }
-          StyleDA.editStyleSheet(cssItem)
         }
+        if (cssItem) StyleDA.editStyleSheet(cssItem)
+        else listUpdate.push(...selected_list)
       }
       break
     default:
