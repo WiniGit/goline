@@ -143,8 +143,13 @@ function handleEditAlign (newValue) {
         } else listUpdate.push(...selected_list)
       } else {
         let minX = Math.min(
-          ...selected_list.map(wb =>
-            parseFloat(window.getComputedStyle(wb.value).left.replace('px'))
+          ...selected_list.map(
+            wb =>
+              parseFloat(window.getComputedStyle(wb.value).left.replace('px')) -
+              (wb.value.getAttribute('constx') === Constraints.center
+                ? wb.value.offsetWidth
+                : 0) /
+                2
           )
         )
         let pStyle = window.getComputedStyle(
@@ -282,7 +287,7 @@ function handleEditAlign (newValue) {
                 }
                 cWb.value.setAttribute('constx', Constraints.center)
               }
-              if (cWbHTML.getAttribute('consty') === Constraints.center) {
+              if (cWb.value.getAttribute('consty') === Constraints.center) {
                 cssRule.style.transform = 'translate(-50%,-50%)'
               } else cssRule.style.transform = 'translateX(-50%)'
               cssRule.style.left = `calc(50% + 0px)`
@@ -361,15 +366,21 @@ function handleEditAlign (newValue) {
           selected_list[0].value.parentElement
         )
         let minX = Math.min(
-          ...selected_list.map(wb =>
-            parseFloat(window.getComputedStyle(wb.value).left.replace('px'))
+          ...selected_list.map(
+            wb =>
+              parseFloat(window.getComputedStyle(wb.value).left.replace('px')) -
+              (wb.value.getAttribute('constx') === Constraints.center
+                ? wb.value.offsetWidth
+                : 0) /
+                2
           )
         )
         let maxX = Math.max(
           ...selected_list.map(
             wb =>
               parseFloat(window.getComputedStyle(wb.value).left.replace('px')) +
-              wb.value.offsetWidth
+              wb.value.offsetWidth /
+                (wb.value.getAttribute('constx') === Constraints.center ? 2 : 1)
           )
         )
         let newOffX = minX + (maxX - minX) / 2
@@ -582,7 +593,8 @@ function handleEditAlign (newValue) {
           ...selected_list.map(
             wb =>
               parseFloat(window.getComputedStyle(wb.value).left.replace('px')) +
-              wb.value.offsetWidth
+              wb.value.offsetWidth /
+                (wb.value.getAttribute('constx') === Constraints.center ? 2 : 1)
           )
         )
         let pStyle = window.getComputedStyle(
@@ -634,7 +646,7 @@ function handleEditAlign (newValue) {
                   parseFloat(pStyle.width.replace('px')) -
                     parseFloat(pStyle.borderRightWidth.replace('px')) -
                     parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                    (maxX - wb.value.offsetWidth)
+                    maxX
                 ) *
                   100) /
                 wb.value.parentElement.offsetWidth
@@ -643,7 +655,12 @@ function handleEditAlign (newValue) {
               cssRule.style.right = rightValue
               break
             default:
-              cssRule.style.right = maxX + 'px'
+              cssRule.style.right = `${Math.round(
+                parseFloat(pStyle.width.replace('px')) -
+                  parseFloat(pStyle.borderRightWidth.replace('px')) -
+                  parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                  maxX
+              )}px`
               break
           }
           if (cssItem) {
@@ -712,7 +729,7 @@ function handleEditAlign (newValue) {
                 }
                 cWb.value.setAttribute('consty', Constraints.top)
               }
-              if (cWbHTML.getAttribute('constx') === Constraints.center) {
+              if (cWb.value.getAttribute('constx') === Constraints.center) {
                 cssRule.style.transform = 'translateX(-50%)'
               } else cssRule.style.transform = null
               cssRule.style.top = '0px'
@@ -786,8 +803,13 @@ function handleEditAlign (newValue) {
         } else listUpdate.push(...selected_list)
       } else {
         let minY = Math.min(
-          ...selected_list.map(wb =>
-            parseFloat(window.getComputedStyle(wb.value).top.replace('px'))
+          ...selected_list.map(
+            wb =>
+              parseFloat(window.getComputedStyle(wb.value).top.replace('px')) -
+              (wb.value.getAttribute('consty') === Constraints.center
+                ? wb.value.offsetHeight
+                : 0) /
+                2
           )
         )
         let pStyle = window.getComputedStyle(
@@ -926,7 +948,7 @@ function handleEditAlign (newValue) {
                 }
                 cWb.value.setAttribute('consty', Constraints.center)
               }
-              if (cWbHTML.getAttribute('constx') === Constraints.center) {
+              if (cWb.value.getAttribute('constx') === Constraints.center) {
                 cssRule.style.transform = 'translate(-50%,-50%)'
               } else cssRule.style.transform = 'translateY(-50%)'
               cssRule.style.top = `calc(50% + 0px)`
@@ -1005,15 +1027,21 @@ function handleEditAlign (newValue) {
           selected_list[0].value.parentElement
         )
         let minY = Math.min(
-          ...selected_list.map(wb =>
-            parseFloat(window.getComputedStyle(wb.value).top.replace('px'))
+          ...selected_list.map(
+            wb =>
+              parseFloat(window.getComputedStyle(wb.value).top.replace('px')) -
+              (wb.value.getAttribute('consty') === Constraints.center
+                ? wb.value.offsetHeight
+                : 0) /
+                2
           )
         )
         let maxY = Math.max(
           ...selected_list.map(
             wb =>
               parseFloat(window.getComputedStyle(wb.value).top.replace('px')) +
-              wb.value.offsetHeight
+              wb.value.offsetHeight /
+                (wb.value.getAttribute('consty') === Constraints.center ? 2 : 1)
           )
         )
         let newOffY = minY + (maxY - minY) / 2
@@ -1148,7 +1176,7 @@ function handleEditAlign (newValue) {
                 }
                 cWb.value.setAttribute('consty', Constraints.bottom)
               }
-              if (cWbHTML.getAttribute('constx') === Constraints.center) {
+              if (cWb.value.getAttribute('constx') === Constraints.center) {
                 cssRule.style.transform = 'translateX(-50%)'
               } else cssRule.style.transform = null
               cssRule.style.top = null
@@ -1227,7 +1255,8 @@ function handleEditAlign (newValue) {
           ...selected_list.map(
             wb =>
               parseFloat(window.getComputedStyle(wb.value).top.replace('px')) +
-              wb.value.offsetHeight
+              wb.value.offsetHeight /
+                (wb.value.getAttribute('consty') === Constraints.center ? 2 : 1)
           )
         )
         let pStyle = window.getComputedStyle(
@@ -1289,7 +1318,12 @@ function handleEditAlign (newValue) {
               cssRule.style.bottom = botValue
               break
             default:
-              cssRule.style.bottom = maxY + 'px'
+              cssRule.style.bottom = `${Math.round(
+                parseFloat(pStyle.height.replace('px')) -
+                  parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                  parseFloat(pStyle.borderTopWidth.replace('px')) -
+                  maxY
+              )}px`
               break
           }
           if (cssItem) {
@@ -1306,7 +1340,7 @@ function handleEditAlign (newValue) {
     default:
       break
   }
-  if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.position)
+  // if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.position)
   updateUISelectBox()
 }
 
