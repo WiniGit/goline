@@ -150,7 +150,6 @@ class StyleDA {
     }
   }
 }
-
 class ColorDA {
   static list = [];
   static listAssets = [];

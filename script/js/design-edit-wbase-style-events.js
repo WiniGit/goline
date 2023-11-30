@@ -1378,6 +1378,9 @@ function handleEditOffset ({
           width = (height * wb.value.offsetWidth) / wb.value.offsetHeight
         }
       }
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+      }
       let cssRule = cssItem
         ? StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
@@ -1419,17 +1422,15 @@ function handleEditOffset ({
             fillWChildren.some(wbHTML => wb.GID === wbHTML.id)
           )
           for (let cWb of fillWChildren) {
-            if (cWb.StyleItem) {
-              cWb.value.style.width = cWb.value.offsetWidth + 'px'
-              cWb.value.removeAttribute('width-type')
-              listUpdate.push(cWb)
-            }
             if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
               StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
                 let check = selector.includes(cWb.value)
                 if (check) {
                   rule.style.width = cWb.value.offsetWidth + 'px'
+                  if (wb.value.classList.contains('w-row')) {
+                    rule.style.flex = null
+                  }
                   selector.forEach(e => e.removeAttribute('width-type'))
                   if (cssItem) {
                     cssItem.Css = cssItem.Css.replace(
@@ -1449,6 +1450,10 @@ function handleEditOffset ({
                 }
                 return check
               })
+            } else if (cWb.StyleItem) {
+              cWb.value.style.width = cWb.value.offsetWidth + 'px'
+              cWb.value.removeAttribute('width-type')
+              listUpdate.push(cWb)
             }
           }
         }
@@ -1456,6 +1461,9 @@ function handleEditOffset ({
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
+        if (cssItem && wb.value.parentElement.classList.contains('w-row')) {
+          cssRule.style.flex = 1
+        }
         wb.value.setAttribute('width-type', 'fill')
       } else {
         cssRule.style.width = width + 'px'
@@ -1478,17 +1486,15 @@ function handleEditOffset ({
             fillHChildren.some(wbHTML => wb.GID === wbHTML.id)
           )
           for (let cWb of fillHChildren) {
-            if (cWb.StyleItem) {
-              cWb.value.style.height = cWb.value.offsetHeight + 'px'
-              cWb.value.removeAttribute('height-type')
-              listUpdate.push(cWb)
-            }
             if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
               StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
                 let check = selector.includes(cWb.value)
                 if (check) {
                   rule.style.height = cWb.value.offsetHeight + 'px'
+                  if (wb.value.classList.contains('w-col')) {
+                    rule.style.flex = null
+                  }
                   selector.forEach(e => e.removeAttribute('height-type'))
                   if (cssItem) {
                     cssItem.Css = cssItem.Css.replace(
@@ -1508,6 +1514,10 @@ function handleEditOffset ({
                 }
                 return check
               })
+            } else if (cWb.StyleItem) {
+              cWb.value.style.height = cWb.value.offsetHeight + 'px'
+              cWb.value.removeAttribute('height-type')
+              listUpdate.push(cWb)
             }
           }
         }
@@ -1515,6 +1525,9 @@ function handleEditOffset ({
         wb.value.setAttribute('height-type', 'fit')
       } else if (height < 0) {
         cssRule.style.height = '100%'
+        if (cssItem && wb.value.parentElement.classList.contains('w-col')) {
+          cssRule.style.flex = 1
+        }
         wb.value.setAttribute('height-type', 'fill')
       } else {
         cssRule.style.height = height + 'px'
@@ -1525,11 +1538,16 @@ function handleEditOffset ({
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
+        if (cssItem.GID === wb.GID) {
+          StyleDA.editStyleSheet(cssItem)
+          cssItem = null
+        }
       } else {
         listUpdate.push(wb)
       }
     }
-    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.frame)
+    if (cssItem) StyleDA.editStyleSheet(cssItem)
+    else if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.frame)
   } else if (width !== undefined) {
     let resizeFixed = width === 'fixed'
     if (!selected_list[0].StyleItem) {
@@ -1540,6 +1558,9 @@ function handleEditOffset ({
     }
     for (let wb of selected_list) {
       if (resizeFixed) width = wb.value.offsetWidth
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+      }
       let cssRule = cssItem
         ? StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
@@ -1588,6 +1609,9 @@ function handleEditOffset ({
                 let check = selector.includes(cWb.value)
                 if (check) {
                   rule.style.width = cWb.value.offsetWidth + 'px'
+                  if (wb.value.classList.contains('w-row')) {
+                    rule.style.flex = null
+                  }
                   selector.forEach(e => e.removeAttribute('width-type'))
                   if (cssItem) {
                     cssItem.Css = cssItem.Css.replace(
@@ -1614,6 +1638,9 @@ function handleEditOffset ({
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
+        if (cssItem && wb.value.parentElement.classList.contains('w-row')) {
+          cssRule.style.flex = 1
+        }
         wb.value.setAttribute('width-type', 'fill')
       } else {
         cssRule.style.width = width + 'px'
@@ -1624,11 +1651,16 @@ function handleEditOffset ({
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
+        if (cssItem.GID === wb.GID) {
+          StyleDA.editStyleSheet(cssItem)
+          cssItem = null
+        }
       } else {
         listUpdate.push(wb)
       }
     }
-    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.frame)
+    if (cssItem) StyleDA.editStyleSheet(cssItem)
+    else if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.frame)
   } else if (height !== undefined) {
     let resizeFixed = height === 'fixed'
     if (!selected_list[0].StyleItem) {
@@ -1639,6 +1671,9 @@ function handleEditOffset ({
     }
     for (let wb of selected_list) {
       if (resizeFixed) height = wb.value.offsetHeight
+      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+      }
       let cssRule = cssItem
         ? StyleDA.docStyleSheets.find(rule => {
             let selector = [...divSection.querySelectorAll(rule.selectorText)]
@@ -1687,6 +1722,9 @@ function handleEditOffset ({
                 let check = selector.includes(cWb.value)
                 if (check) {
                   rule.style.height = cWb.value.offsetHeight + 'px'
+                  if (wb.value.classList.contains('w-col')) {
+                    rule.style.flex = null
+                  }
                   selector.forEach(e => e.removeAttribute('height-type'))
                   if (cssItem) {
                     cssItem.Css = cssItem.Css.replace(
@@ -1713,6 +1751,9 @@ function handleEditOffset ({
         wb.value.setAttribute('height-type', 'fit')
       } else if (height < 0) {
         cssRule.style.height = '100%'
+        if (cssItem && wb.value.parentElement.classList.contains('w-col')) {
+          cssRule.style.flex = 1
+        }
         wb.value.setAttribute('height-type', 'fill')
       } else {
         cssRule.style.height = height + 'px'
@@ -1723,11 +1764,16 @@ function handleEditOffset ({
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
+        if (cssItem.GID === wb.GID) {
+          StyleDA.editStyleSheet(cssItem)
+          cssItem = null
+        }
       } else {
         listUpdate.push(wb)
       }
     }
-    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.frame)
+    if (cssItem) StyleDA.editStyleSheet(cssItem)
+    else if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.frame)
   } else if (x !== undefined) {
     let pStyle = window.getComputedStyle(selected_list[0].value.parentElement)
     if (selected_list[0].StyleItem) {
