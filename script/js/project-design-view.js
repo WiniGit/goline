@@ -90,7 +90,8 @@ async function initData () {
   for (let wb of wbase_list) {
     wb.value = null
     initComponents(wb)
-  }
+  if (wb.Level === 1) divSection.appendChild(wb.value)
+}
   StyleDA.docStyleSheets.forEach(cssRuleItem => {
     if (cssRuleItem.style.length > 0) {
       divSection

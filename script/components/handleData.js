@@ -177,15 +177,8 @@ function initComponents (wb, children) {
       wb.IsInstance = true
     }
   }
-  // setSizeObserver.observe(item.value, {
-  //   attributeOldValue: true,
-  //   attributes: true,
-  //   childList: EnumCate.parent_cate.some(cate => item.CateID === cate)
-  // })
-  if (item.Level === 1) {
-    divSection.appendChild(item.value)
-  }
-  // addListenFromSection(item)
+  wb.value.style = wb.Css
+  if (wb.Css?.length > 0) setAttributeByStyle(wb.value)
 }
 
 function setAttributeByStyle (wbHTML, cssRule) {
