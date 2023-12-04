@@ -90,8 +90,8 @@ async function initData () {
   for (let wb of wbase_list) {
     wb.value = null
     initComponents(wb)
-  if (wb.Level === 1) divSection.appendChild(wb.value)
-}
+    if (wb.Level === 1) divSection.appendChild(wb.value)
+  }
   StyleDA.docStyleSheets.forEach(cssRuleItem => {
     if (cssRuleItem.style.length > 0) {
       divSection
@@ -136,69 +136,67 @@ function input_scale_set (value) {
 }
 
 function toolStateChange (toolState) {
-  if (document.body.contains(right_view)) {
-    if (tool_state != toolState) {
-      if (
-        ToolState.resize_type.every(
-          tool => tool !== toolState && tool_state !== tool
-        )
-      ) {
-        let current_tool_state = document.getElementById(`${tool_state}`)
-        $(current_tool_state).removeClass('on-select')
-        let new_tool_state = document.getElementById(`${toolState}`)
-        $(new_tool_state).addClass('on-select')
-      }
-      tool_state = toolState
-      switch (tool_state) {
-        case ToolState.move:
-          document.getElementById('canvas_view').style.cursor = 'context-menu'
-          break
-        case ToolState.hand_tool:
-          document.getElementById('canvas_view').style.cursor = 'grab'
-          break
-        case ToolState.resize_left:
-          document.getElementById('canvas_view').style.cursor = 'e-resize'
-          break
-        case ToolState.resize_right:
-          document.getElementById('canvas_view').style.cursor = 'e-resize'
-          break
-        case ToolState.resize_top:
-          document.getElementById('canvas_view').style.cursor = 'n-resize'
-          break
-        case ToolState.resize_bot:
-          document.getElementById('canvas_view').style.cursor = 'n-resize'
-          break
-        case ToolState.resize_top_left:
-          document.getElementById('canvas_view').style.cursor = 'nw-resize'
-          break
-        case ToolState.resize_top_right:
-          document.getElementById('canvas_view').style.cursor = 'ne-resize'
-          break
-        case ToolState.resize_bot_left:
-          document.getElementById('canvas_view').style.cursor = 'ne-resize'
-          break
-        case ToolState.resize_bot_right:
-          document.getElementById('canvas_view').style.cursor = 'nw-resize'
-          break
-        default:
-          if (ToolState.create_new_type.some(tool => tool_state === tool)) {
-            document.getElementById('canvas_view').style.cursor = 'cell'
-          } else {
-            document.getElementById('canvas_view').style.cursor = 'context-menu'
-          }
-          break
-      }
-    }
+  if (tool_state != toolState) {
     if (
-      [ToolState.hand_tool, ...ToolState.create_new_type].some(
-        tool => tool_state == tool
+      ToolState.resize_type.every(
+        tool => tool !== toolState && tool_state !== tool
       )
     ) {
-      addSelectList()
-      listLine = []
-      listText = []
-      updateHoverWbase()
+      let current_tool_state = document.getElementById(`${tool_state}`)
+      $(current_tool_state).removeClass('on-select')
+      let new_tool_state = document.getElementById(`${toolState}`)
+      $(new_tool_state).addClass('on-select')
     }
+    tool_state = toolState
+    switch (tool_state) {
+      case ToolState.move:
+        document.getElementById('canvas_view').style.cursor = 'context-menu'
+        break
+      case ToolState.hand_tool:
+        document.getElementById('canvas_view').style.cursor = 'grab'
+        break
+      case ToolState.resize_left:
+        document.getElementById('canvas_view').style.cursor = 'e-resize'
+        break
+      case ToolState.resize_right:
+        document.getElementById('canvas_view').style.cursor = 'e-resize'
+        break
+      case ToolState.resize_top:
+        document.getElementById('canvas_view').style.cursor = 'n-resize'
+        break
+      case ToolState.resize_bot:
+        document.getElementById('canvas_view').style.cursor = 'n-resize'
+        break
+      case ToolState.resize_top_left:
+        document.getElementById('canvas_view').style.cursor = 'nw-resize'
+        break
+      case ToolState.resize_top_right:
+        document.getElementById('canvas_view').style.cursor = 'ne-resize'
+        break
+      case ToolState.resize_bot_left:
+        document.getElementById('canvas_view').style.cursor = 'ne-resize'
+        break
+      case ToolState.resize_bot_right:
+        document.getElementById('canvas_view').style.cursor = 'nw-resize'
+        break
+      default:
+        if (ToolState.create_new_type.some(tool => tool_state === tool)) {
+          document.getElementById('canvas_view').style.cursor = 'cell'
+        } else {
+          document.getElementById('canvas_view').style.cursor = 'context-menu'
+        }
+        break
+    }
+  }
+  if (
+    [ToolState.hand_tool, ...ToolState.create_new_type].some(
+      tool => tool_state == tool
+    )
+  ) {
+    addSelectList()
+    listLine = []
+    listText = []
+    updateHoverWbase()
   }
 }
 

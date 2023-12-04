@@ -109,14 +109,6 @@ function keyUpEvent (event) {
       case 'k': // k
         if (isCtrlKey && event.altKey) {
           if (selected_list.some(e => !e.IsWini)) createComponent()
-        } else if (event.altKey) {
-          if (
-            selected_list.some(e => e.IsWini) &&
-            document
-              .getElementById(select_box_parentID)
-              ?.getAttribute('cateid') != EnumCate.variant
-          )
-            unComponent()
         }
         break
       case '/': // /
@@ -631,50 +623,43 @@ function selectParent (event) {
         document.getElementById(select_box_parentID)?.getAttribute('level') ??
           '0'
       ) + 1
-    if (checkpad == 0) {
+    if (checkpad === 0) {
       listWbOnScreen = []
       lstc.forEach(e => {
-        listWbOnScreen.push(e, ...e.querySelectorAll('.wbaseItem-value'))
+        listWbOnScreen.push(
+          e,
+          ...e.querySelectorAll(
+            `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${
+              selected_list.every(
+                wb => wb.IsWini && !wb.value.classList.contains('w-variant')
+              )
+                ? ',.w-variant'
+                : ''
+            }):not(*[isinstance="true"])`
+          )
+        )
       })
     }
     let list = listWbOnScreen
-    let parent_cate = [...EnumCate.parent_cate]
-    if (selected_list.every(e => e.CateID != EnumCate.variant && e.IsWini)) {
-      parent_cate.push(EnumCate.variant)
-    }
     let containVariant = selected_list.some(
-      e =>
-        e.CateID === EnumCate.variant ||
-        document.getElementById(e.GID).querySelectorAll('.w-variant').length > 0
+      wb =>
+        wb.value.classList.contains('w-variant') ||
+        wb.value.querySelector('.w-variant')
     )
     let objp = list.filter(eHTML => {
       let isComponent = eHTML.closest(`.wbaseItem-value[iswini="true"]`)
-      if (isComponent)
-        isComponent = eHTML.getAttribute('cateid') != EnumCate.variant
+      if (isComponent) isComponent = !eHTML.classList.contains('w-variant')
       if (
         isComponent ||
-        eHTML.getAttribute('isinstance') === 'true' ||
-        parent_cate.every(cate => cate != eHTML.getAttribute('cateid')) || // eHTML ko đc xếp loại là wbaseItem có item con
         selected_list.some(
-          wb => wb.GID == eHTML.id || wb.value.contains(eHTML)
+          wb => wb.GID === eHTML.id || wb.value.contains(eHTML)
         ) || // eHTML ko thể là chính nó hoặc element con của nó
-        alt_list.some(wb => wb.GID == eHTML.id || wb.value?.contains(eHTML)) // eHTML ko thể là chính nó hoặc element con của nó
+        alt_list.some(wb => wb.GID === eHTML.id || wb.value?.contains(eHTML)) // eHTML ko thể là chính nó hoặc element con của nó
       ) {
         return false
       }
       //
-      if (
-        containVariant &&
-        eHTML
-          .getAttribute('listid')
-          .split(',')
-          .filter(id => id != wbase_parentID)
-          .some(
-            id =>
-              document.getElementById(id).getAttribute('cateid') ==
-              EnumCate.variant
-          )
-      ) {
+      if (containVariant && eHTML.closest('.wbaseItem-value.w-variant')) {
         return false
       }
       if (event.metaKey || (!isMac && event.ctrlKey)) return true
@@ -682,13 +667,14 @@ function selectParent (event) {
       let is_enable = false
       let target_level = parseInt(eHTML.getAttribute('level'))
       if (
-        target_level <= current_level ||
-        (target_level == 2 &&
-          parent_cate.some(
-            cate =>
-              cate != EnumCate.textformfield &&
-              eHTML.parentElement.getAttribute('cateid') == cate
-          ))
+        target_level <= current_level
+        // ||
+        // (target_level == 2 &&
+        //   parent_cate.some(
+        //     cate =>
+        //       cate != EnumCate.textformfield &&
+        //       eHTML.parentElement.getAttribute('cateid') == cate
+        //   ))
       ) {
         is_enable = true
       }
@@ -699,8 +685,8 @@ function selectParent (event) {
         parseInt(b.getAttribute('level')) - parseInt(a.getAttribute('level'))
       if (value == 0) {
         return (
-          parseInt(window.getComputedStyle(b).zIndex) -
-          parseInt(window.getComputedStyle(a).zIndex)
+          parseInt(window.getComputedStyle(b).zIndex ?? '0') -
+          parseInt(window.getComputedStyle(a).zIndex ?? '0')
         )
       } else {
         return value
@@ -945,30 +931,21 @@ function centerViewInitListener () {
     }
   )
   ;[
+    ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-container`),
     ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value[cateid="${EnumCate.frame}"]`
+      `:scope > .wbaseItem-value.w-variant > .wbaseItem-value.w-container`
     ),
     ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value[cateid="${EnumCate.form}"]`
-    ),
-    ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.frame}"]`
-    ),
-    ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value.w-variant > .wbaseItem-value[cateid="${EnumCate.form}"]`
+      `:scope > .wbaseItem-value.w-variant > .wbaseItem-value.w-container`
     )
   ].forEach(page => {
     resizeWbase.observe(page)
   })
   listShowName = [
     ...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`),
-    ...EnumCate.show_name
-      .map(ct => [
-        ...divSection.querySelectorAll(
-          `:scope > .wbaseItem-value[cateid="${ct}"]:not(*[isinstance="true"])`
-        )
-      ])
-      .reduce((a, b) => a.concat(b))
+    ...divSection.querySelectorAll(
+      `:scope > .wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance="true"])`
+    )
   ].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex))
 }
 
@@ -982,31 +959,25 @@ const childObserver = new MutationObserver(mutationList => {
         listBrpKey.every(brpKey => brpKey != wbClass)
       )
       wbaseValue.className = listClass.join(' ')
-      if (wbaseValue.getAttribute('cateid') == EnumCate.variant) {
+      if (wbaseValue.classList.contains('w-variant')) {
         childObserver.disconnect(wbaseValue, {
           childList: true
         })
-        wbaseValue.childNodes.forEach(childHTML => {
-          if (
-            EnumCate.extend_frame.some(
-              ct => childHTML.getAttribute('cateid') == ct
-            )
-          ) {
+        wbaseValue
+          .querySelectorAll(':scope > .w-container')
+          .forEach(childHTML => {
             let listClass = ['min-brp', ...childHTML.classList].filter(
               wbClass => listBrpKey.every(brpKey => brpKey != wbClass)
             )
             childHTML.className = listClass.join(' ')
             resizeWbase.disconnect(childHTML)
-          }
-        })
+          })
       }
     })
     mutation.addedNodes.forEach(wbaseValue => {
       if (
-        EnumCate.extend_frame.some(
-          cate => wbaseValue.getAttribute('cateid') == cate
-        ) &&
-        wbaseValue.style.width != 'fit-content'
+        wbaseValue.classList.contains('w-container') &&
+        wbaseValue.getAttribute('width-type') === 'fit'
       ) {
         let localResponsive =
           ProjectDA.obj.ResponsiveJson ?? ProjectDA.responsiveJson
@@ -1029,18 +1000,13 @@ const childObserver = new MutationObserver(mutationList => {
           wbaseValue.className += ` ${closestBrp}`
         }
         resizeWbase.observe(wbaseValue)
-      } else if (wbaseValue.getAttribute('cateid') == EnumCate.variant) {
+      } else if (wbaseValue.classList.contains('w-variant')) {
         childObserver.observe(wbaseValue, {
           childList: true
         })
-        wbaseValue.childNodes.forEach(childHTML => {
-          if (
-            EnumCate.extend_frame.some(
-              ct => childHTML.getAttribute('cateid') == ct
-            )
-          )
-            resizeWbase.observe(childHTML)
-        })
+        wbaseValue
+          .querySelectorAll(':scope > .w-container')
+          .forEach(childHTML => resizeWbase.observe(childHTML))
       }
     })
     if (mutation.target === divSection) {
@@ -1048,13 +1014,9 @@ const childObserver = new MutationObserver(mutationList => {
         ...divSection.querySelectorAll(
           `:scope > .wbaseItem-value[iswini="true"]`
         ),
-        ...EnumCate.show_name
-          .map(ct => [
-            ...divSection.querySelectorAll(
-              `:scope > .wbaseItem-value[cateid="${ct}"]:not(*[isinstance="true"])`
-            )
-          ])
-          .reduce((a, b) => a.concat(b))
+        ...divSection.querySelectorAll(
+          `:scope > .wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance="true"])`
+        )
       ].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex))
     }
   })
