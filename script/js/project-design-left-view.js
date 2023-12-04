@@ -1635,45 +1635,33 @@ function createProjectTile (projectItem, suffixOnclick) {
   let projectTile = document.createElement('div')
   projectTile.id = `projectID:${projectItem.ID}`
   projectTile.className = 'project_tile'
-  let toggle = createSwitch(
+  projectTile.innerHTML = `<label class="w-switch toggle_ptoject_tile" style="--checked-color: #1890ff;--unchecked-bg: #ccc;scale: 0.75;${
+    projectItem.Permission === EnumPermission.view ? 'pointer-events: none' : ''
+  }"><input type="checkbox" ${
     ProjectDA.obj.ListID?.split(',')?.includes(projectItem.ID.toString())
-  )
-  $(toggle).addClass(' toggle_ptoject_tile')
-  toggle.style.setProperty('--unchecked-bg', '#ccc')
-  toggle.style.setProperty('--checked-color', '#1890ff')
-  if (projectItem.Permission === EnumPermission.view) {
-    toggle.style.pointerEvents = 'none'
-  }
-  toggle.style.scale = 24 / 32
-  projectTile.appendChild(toggle)
-  let projectName = document.createElement('p')
-  projectName.innerHTML = projectItem.Name
-  projectTile.appendChild(projectName)
-  let countComponent = document.createElement('p')
-  countComponent.innerHTML = projectItem.CountComponent + ' components'
-  projectTile.appendChild(countComponent)
-  let suffixAction = document.createElement('i')
-  suffixAction.className = 'fa-solid fa-chevron-right fa-sm'
-  suffixAction.style.color = '#262626'
-  suffixAction.style.padding = '10px'
+      ? 'checked'
+      : ''
+  }/><span class="slider"></span></label>
+  <p>${projectItem.Name}</p>
+  <p>${projectItem.CountComponent} components</p>
+  <i class="fa-solid fa-chevron-right fa-sm" style="color: #262626;padding: 10px;"></i>`
   if (suffixOnclick) {
-    suffixAction.onclick = function () {
+    $(projectTile).on('click', '.fa-chevron-right', function (ev) {
       if (!StyleDA.skinProjectID) {
         let loader = document.createElement('div')
         loader.style.setProperty('--border-width', '4px')
         loader.style.width = '16px'
         loader.style.margin = '0 3px'
         loader.className = 'data-loader'
-        suffixAction.replaceWith(loader)
+        ev.target.replaceWith(loader)
         suffixOnclick(
           ProjectDA.list.find(
             e => e.ID == projectTile.id.replace('projectID:', '')
           )
         )
       }
-    }
+    })
   }
-  projectTile.appendChild(suffixAction)
   return projectTile
 }
 

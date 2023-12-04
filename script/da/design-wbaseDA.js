@@ -72,146 +72,6 @@ class ComponentState {
   ]
 }
 
-class EnumCate {
-  // Skin
-  static color = 2
-  static style = 3
-  static typography = 17
-  static border = 361
-  static effect = 360
-  static style_class = 69
-  //
-  // component
-  static datePicker = 24
-  static button = 29
-  // static ? = 67;
-  // static ? = 68;
-  // static ? = 70;
-  // static ? = 72;
-  // static ? = 73;
-  // static ? = 75;
-  // static ? = 76;
-  // static ? = 78;
-  static checkbox = 79
-  static w_switch = 81
-  // static ? = 84;
-  static textformfield = 85
-  static textfield = 86
-  // static ? = 89;
-  static radio_button = 90
-  static tab = 91
-  static tab_bar = 92
-  static tab_view = 93
-  // static ? = 94;
-  static progress_bar = 102
-  static progress_circle = 104
-  // static ? = 105;
-  // static ? = 106;
-  // static ? = 107;
-  // static ? = 108;
-  // static ? = 109;
-  // static ? = 110;
-  // static ? = 111;
-  // static ? = 112;
-  // static ? = 113;
-  // static ? = 114;
-  static svg = 115
-  static table = 117
-  // static ? = 118;
-  // static ? = 119;
-  static toolbar = 120
-  static form = 128
-  // static ? = 129;
-  // static ? = 363;
-  static view = 134
-  static carousel = 136
-  // static ? = 135;
-  static rectangle = 138
-  static text = 139
-  static frame = 140
-  // static ? = 142;
-  static variant = 238
-  // static ? = 239;
-  static chart = 240
-  static tree = 241
-  // static tab_bar = 242;
-
-  static scale_size_component = [
-    this.checkbox,
-    this.w_switch,
-    this.radio_button
-  ]
-
-  static baseComponent = [
-    this.button,
-    this.w_switch,
-    this.checkbox,
-    this.radio_button,
-    this.textformfield,
-    this.textfield,
-    this.table,
-    this.tree,
-    this.chart,
-    this.carousel
-  ]
-
-  static extend_frame = [this.frame, this.form]
-
-  static output_cate = [
-    this.radio_button,
-    this.w_switch,
-    this.checkbox,
-    this.textformfield
-  ]
-
-  static parent_cate = [
-    this.frame,
-    this.form,
-    this.textformfield,
-    this.button,
-    this.table,
-    this.tree,
-    this.carousel
-  ]
-
-  static no_child_component = [
-    this.rectangle,
-    this.text,
-    this.checkbox,
-    this.progress_bar,
-    this.progress_circle,
-    this.radio_button,
-    this.w_switch,
-    this.svg
-  ]
-
-  static noImgBg = [
-    this.svg,
-    ...this.scale_size_component,
-    this.table,
-    this.tree,
-    this.chart,
-    this.carousel,
-    this.text
-  ]
-
-  static show_name = [this.frame, this.form, this.variant]
-
-  static data_component = [this.tree, this.chart, this.carousel, this.table]
-
-  static accept_border_effect = [
-    this.frame,
-    this.form,
-    this.rectangle,
-    this.variant,
-    this.table,
-    this.button,
-    this.textformfield,
-    this.svg,
-    this.checkbox
-  ]
-}
-
 class AlignmentType {
   static top_left = 'TopLeft'
   static top_center = 'TopCenter'
@@ -435,13 +295,6 @@ var action_index = -1
 var select_box
 var hover_wbase
 var hover_box
-var current_page = {
-  ID: 2400,
-  Name: 'Page 1',
-  ProjectID: 1,
-  Permission: EnumPermission.owner
-}
-// var componentClss = ["w-col", "w-row", "w-stack", "wbaseItem-value", "fixed-position", "w-frame", "w-page","w-table","w-text","w-tree", "tile-item", ""];
 var wbase_parentID = '019cc638-18b3-434d-8c4a-973537cde698'
 var select_box_parentID = '019cc638-18b3-434d-8c4a-973537cde698'
 var tool_state = ToolState.move
@@ -572,15 +425,10 @@ var listDevice = [
 class WBaseDefault {
   static rectangle = {
     ListID: wbase_parentID,
-    Level: 1,
     ParentID: wbase_parentID,
-    IsShow: true,
-    CateID: EnumCate.rectangle,
-    CountChild: 0,
+    ListClassName: 'wbaseItem-value w-rect',
     IsWini: false,
-    PageID: current_page,
-    ListChildID: [],
-    StyleItem: 'background-color: #C4C4C4FF;',
+    Css: 'background-color: #C4C4C4FF;',
     BasePropertyItems: [],
     AttributesItem: {
       Name: 'Rectangle'
@@ -590,15 +438,9 @@ class WBaseDefault {
 
   static imgSvg = {
     ListID: wbase_parentID,
-    Level: 1,
     ParentID: wbase_parentID,
-    IsShow: true,
-    CateID: EnumCate.svg,
-    CountChild: 0,
+    ListClassName: 'wbaseItem-value w-svg',
     IsWini: false,
-    PageID: current_page,
-    ListChildID: [],
-    StyleItem: '',
     BasePropertyItems: [],
     AttributesItem: {
       Name: 'Svg Picture',
@@ -609,17 +451,10 @@ class WBaseDefault {
 
   static text = {
     ListID: wbase_parentID,
-    Level: 1,
     ParentID: wbase_parentID,
-    IsShow: true,
-    CateID: EnumCate.text,
-    Sort: 1,
-    CountChild: 0,
+    ListClassName: 'wbaseItem-value w-text',
     IsWini: false,
-    PageID: current_page.ID,
-    ListChildID: [],
-    StyleItem:
-      'font-size: 24px;font-weight: 400;color: #000000FF;font-family: Roboto;text-align: start;align-items: center;',
+    Css: 'font-size: 24px;font-weight: 400;font-family: Roboto;text-align: start;align-items: center;color: #000000FF;',
     BasePropertyItems: [],
     AttributesItem: {
       Content: '',
@@ -628,60 +463,39 @@ class WBaseDefault {
     Name: 'Text'
   }
 
-  static frame = {
+  static container = {
     ListID: wbase_parentID,
-    Level: 1,
     ParentID: wbase_parentID,
-    IsShow: true,
-    CateID: EnumCate.frame,
-    CountChild: 0,
+    ListClassName: 'wbaseItem-value w-container w-stack',
     IsWini: false,
     PageID: current_page.ID,
     ListChildID: [],
-    StyleItem: 'background-color: #FFFFFFFF;',
+    Css: 'background-color: #FFFFFFFF;',
     BasePropertyItems: [],
     AttributesItem: {
-      Name: 'Frame'
+      Name: 'Container'
     },
-    Name: 'Frame'
+    Name: 'Container'
   }
 
   static variant = {
     ListID: wbase_parentID,
-    Level: 1,
     ParentID: wbase_parentID,
-    IsShow: true,
     CateID: EnumCate.variant,
-    CountChild: 0,
     IsWini: true,
-    PageID: current_page.ID,
     ListChildID: [],
+    ListClassName: 'wbaseItem-value w-variant w-stack',
+    Css: 'border-width: 2px;border-color: #7b61ffff;border-style: dotted;overflow: hidden;',
     StyleItem: {
       DecorationItem: {
         BorderItem: {
           Name: 'new border',
           BorderStyle: BorderStyle.dotted,
           IsStyle: false,
-          ColorValue: '7B61FFFF',
+          ColorValue: '',
           BorderSide: BorderSide.all,
           Width: '2 2 2 2'
         }
-      },
-      FrameItem: {
-        Width: 414.0,
-        Height: 896.0,
-        TopLeft: 0.0,
-        TopRight: 0.0,
-        BottomLeft: 0.0,
-        BottomRight: 0.0,
-        IsClip: true
-      },
-      PositionItem: {
-        Top: 0,
-        Left: 0,
-        ConstraintsX: 'left',
-        ConstraintsY: 'top',
-        FixPosition: false
       }
     },
     BasePropertyItems: [],
@@ -694,50 +508,26 @@ class WBaseDefault {
 
   static button = {
     ListID: wbase_parentID,
-    Level: 1,
     ParentID: wbase_parentID,
-    IsShow: true,
-    CateID: EnumCate.button,
-    CountChild: 0,
     IsWini: false,
-    PageID: current_page,
     ListChildID: [],
-    ListClassName: 'w-row',
-    StyleItem:
-      'background-color: #366AE2FF;border-radius: 8px;--padding: 12px 20px;--main-axis-align: center;--cross-axis-align: center;--child-space: 4px;--run-space: 0px;',
+    ListClassName: 'wbaseItem-value w-button w-row',
+    Css: 'background-color: #366AE2FF;border-radius: 8px;--padding: 12px 20px;--main-axis-align: center;--cross-axis-align: center;--child-space: 4px;--run-space: 0px;',
     BasePropertyItems: [],
     AttributesItem: {
       Name: 'Button'
     },
     Name: 'Button',
-    JsonEventItem: [
-      {
-        Name: 'State',
-        ListState: [
-          {
-            Type: ComponentState.hover,
-            ColorSkinID: '',
-            BorderSkinID: '',
-            EffectSkinID: ''
-          }
-        ]
-      }
-    ]
+    JsonEventItem: []
   }
 
   static switch = {
     Name: 'Switch',
     ListID: wbase_parentID,
-    Level: 1,
     ParentID: wbase_parentID,
-    IsShow: true,
-    CateID: EnumCate.w_switch,
-    CountChild: 0,
+    ListClassName: 'wbaseItem-value w-switch',
     IsWini: false,
-    PageID: current_page,
-    ListChildID: [],
-    StyleItem:
-      '--dot-color: #ffffffff;--unchecked-bg: #f2f5f8ff;--checked-color: #1890ffff;width: 60px;height: 40px;',
+    Css: '--dot-color: #ffffffff;--unchecked-bg: #f2f5f8ff;--checked-color: #1890ffff;width: 60px;height: 40px;',
     BasePropertyItems: [],
     AttributesItem: {
       Name: 'Switch',
@@ -749,16 +539,10 @@ class WBaseDefault {
   static checkbox = {
     Name: 'Checkbox',
     ParentID: wbase_parentID,
-    Level: 1,
-    IsShow: true,
-    PageID: current_page,
     ListID: wbase_parentID,
-    CateID: EnumCate.checkbox,
-    ListChildID: [],
+    ListClassName: 'wbaseItem-value w-checkbox',
     IsWini: false,
-    CountChild: 0,
-    StyleItem:
-      '--check-color: #ffffffff;--unchecked-bg: #9e9e9eff;--checked-color: #366ae2ff;width: 20px;height: 20px;border-width: 2px;border-color: #e5eaf0ff;border-style: solid;',
+    Css: '--check-color: #ffffffff;--unchecked-bg: #9e9e9eff;--checked-color: #366ae2ff;width: 20px;height: 20px;border-width: 2px;border-color: #e5eaf0ff;border-style: solid;',
     AttributesItem: {
       Name: 'Checkbox',
       Content: 'true'
@@ -769,16 +553,10 @@ class WBaseDefault {
   static radio_button = {
     Name: 'RadioButton',
     ParentID: wbase_parentID,
-    Level: 1,
-    IsShow: true,
-    PageID: current_page,
     ListID: wbase_parentID,
-    CateID: EnumCate.radio_button,
-    ListChildID: [],
+    ListClassName: 'wbaseItem-value w-radio',
     IsWini: false,
-    CountChild: 0,
-    StyleItem:
-      '--checked-color: #1890ffff;width: 20px;height: 20px;border-width: 2px;border-color: #2196f3ff;border-style: solid;',
+    Css: '--checked-color: #1890ffff;width: 20px;height: 20px;border-width: 2px;border-color: #2196f3ff;border-style: solid;',
     AttributesItem: {
       Name: 'Radio button',
       Content: ''
@@ -789,65 +567,37 @@ class WBaseDefault {
   static textformfield = {
     Name: 'Textformfield',
     ParentID: wbase_parentID,
-    Level: 1,
-    IsShow: true,
-    PageID: current_page,
     ListID: wbase_parentID,
-    CateID: EnumCate.textformfield,
+    ListClassName: 'wbaseItem-value w-textformfield w-row',
     ListChildID: [],
     IsWini: false,
-    CountChild: 0,
-    ListClassName: 'w-row',
-    StyleItem:
-      'width: 382px;background-color: #ffffffff;border-radius: 8px;--padding: 10px 16px;--main-axis-align: flex-start;--cross-axis-align: center;--child-space: 4px;--run-space: 0px;border-width: 1px;border-color: #e5eaf0ff;border-style: solid;font-size: 16px;line-height: 24px;font-weight: 400;color: #394960ff;font-family: Roboto;',
+    Css: 'width: 382px;background-color: #ffffffff;border-radius: 8px;--padding: 10px 16px;--main-axis-align: flex-start;--cross-axis-align: center;--child-space: 4px;--run-space: 0px;border-width: 1px;border-color: #e5eaf0ff;border-style: solid;font-size: 16px;line-height: 24px;font-weight: 400;color: #394960ff;font-family: Roboto;',
     AttributesItem: {
       Name: 'Textformfield',
       Content: ''
     },
-    JsonItem: {
-      LabelText: 'Label',
-      AutoFocus: false,
-      Enabled: true,
-      ReadOnly: false,
-      IsImportant: false,
-      KeyboardType: null,
-      Type: WTextFormFieldType.text,
-      ObscuringCharacter: '*',
-      MaxLength: null,
-      HintText: 'Placeholder',
-      MaxLines: 1,
-      TextCapitalization: null,
-      JsonVadidate: [],
-      AutoValidate: false
-    },
-    JsonEventItem: [
-      {
-        Name: 'State',
-        ListState: [
-          {
-            Type: ComponentState.focus,
-            ColorSkinID: '',
-            BorderSkinID: '',
-            EffectSkinID: ''
-          }
-        ]
-      }
-    ]
+    JsonEventItem: []
   }
 
   static textfield = {
     ParentID: this.textformfield.GID,
     Name: 'Textfield',
-    Level: 2,
-    IsShow: true,
-    CateID: EnumCate.textfield,
-    ListChildID: [],
+    ListClassName: 'wbaseItem-value w-textfield',
     IsWini: false,
-    CountChild: 0,
-    StyleItem: 'background-color: #00000000',
+    Css: 'background-color: #00000000;--suffix-size: 16px;--suffix-icon-color: #00204D',
     AttributesItem: {
       Name: 'Textfield',
       Content: ''
+    },
+    JsonItem: {
+      Label: 'Label',
+      AutoFocus: false,
+      IsImportant: false,
+      Enabled: true,
+      ReadOnly: false,
+      Type: WTextFormFieldType.text,
+      // ObscuringCharacter: '*',
+      HintText: 'Placeholder'
     }
   }
 
@@ -855,7 +605,6 @@ class WBaseDefault {
     Name: 'Table',
     ParentID: wbase_parentID,
     Level: 1,
-    IsShow: true,
     PageID: current_page,
     ListID: wbase_parentID,
     CateID: EnumCate.table,
@@ -944,102 +693,10 @@ class WBaseDefault {
     ]
   }
 
-  static tree = {
-    Name: 'Tree',
-    ParentID: wbase_parentID,
-    Level: 1,
-    IsShow: true,
-    PageID: current_page,
-    ListID: wbase_parentID,
-    CateID: EnumCate.tree,
-    ListChildID: [],
-    IsWini: false,
-    CountChild: 0,
-    StyleItem: {
-      PositionItem: {
-        Right: 0,
-        Bottom: 0
-      },
-      FrameItem: {
-        Width: 360,
-        IsClip: true,
-        TopLeft: 0,
-        TopRight: 0,
-        BottomLeft: 0,
-        BottomRight: 0
-      },
-      DecorationItem: {
-        ColorValue: 'FFFFFFFF'
-      },
-      PaddingItem: {
-        Top: 10,
-        Left: 24,
-        Bottom: 10,
-        Right: 24
-      }
-    },
-    WAutolayoutItem: {
-      Alignment: 'Center',
-      Direction: 'Horizontal',
-      ChildSpace: 12.0,
-      IsScroll: false,
-      IsWrap: false,
-      RunSpace: 0.0,
-      CountItem: 1
-    },
-    AttributesItem: {
-      Name: 'Tree',
-      NameField: 'Tree',
-      Content: ''
-    },
-    JsonItem: {
-      ActionPosition: 'right',
-      ActionType: 'chevron',
-      ActionColor: '1e3050FF',
-      ActionSize: 20,
-      IndentSpace: 16
-    },
-    JsonEventItem: [],
-    TreeData: {
-      ID: 0,
-      Level: 0,
-      Title: 'Level 1',
-      IsSelect: true,
-      ChildrenItem: [
-        {
-          ID: 1,
-          Level: 1,
-          ParentID: 0,
-          Title: 'Level 2',
-          IsSelect: true,
-          ChildrenItem: []
-        },
-        {
-          ID: 2,
-          Level: 1,
-          ParentID: 0,
-          Title: 'Level 2',
-          IsSelect: true,
-          ChildrenItem: [
-            {
-              ID: 3,
-              Level: 2,
-              ParentID: 2,
-              Title: 'Level 3',
-              IsSelect: true,
-              ChildrenItem: []
-            }
-          ]
-        }
-      ]
-    }
-  }
-
   static chart = {
     Name: 'Chart',
     ParentID: wbase_parentID,
     Level: 1,
-    IsShow: true,
     PageID: current_page,
     ListID: wbase_parentID,
     CateID: EnumCate.chart,
@@ -1102,92 +759,10 @@ class WBaseDefault {
       ]
     }
   }
-
-  static carousel = {
-    Name: 'Carousel',
-    ParentID: wbase_parentID,
-    Level: 1,
-    IsShow: true,
-    PageID: current_page,
-    ListID: wbase_parentID,
-    CateID: EnumCate.carousel,
-    ListChildID: [],
-    IsWini: false,
-    CountChild: 0,
-    StyleItem: {
-      PositionItem: {
-        Right: 0,
-        Bottom: 0
-      },
-      FrameItem: {
-        Width: 200,
-        Height: 100,
-        IsClip: true,
-        TopLeft: 0,
-        TopRight: 0,
-        BottomLeft: 0,
-        BottomRight: 0
-      },
-      DecorationItem: {},
-      PaddingItem: {
-        Top: 8,
-        Left: 8,
-        Bottom: 8,
-        Right: 8
-      }
-    },
-    WAutolayoutItem: {
-      Alignment: 'Center',
-      Direction: 'Horizontal',
-      ChildSpace: 12.0,
-      IsScroll: false,
-      IsWrap: false,
-      RunSpace: 0.0,
-      CountItem: 1
-    },
-    AttributesItem: {
-      Name: 'Carousel',
-      NameField: 'Carousel',
-      Content: ''
-    },
-    JsonItem: {
-      Effect: WCarouselEffect.easeInOut,
-      ActionType: 'chevron',
-      ActionColor: '1b1b1bff',
-      ActionSize: 24,
-      ActionBackground: 'f6f6f6bf',
-      TransitionTime: 3000,
-      TransformTime: 500,
-      AutoPlay: true
-    },
-    JsonEventItem: [],
-    CarouselData: {
-      initSlide: 0,
-      slides: [
-        {
-          background:
-            'https://images2.thanhnien.vn/Uploaded/dotuan/2022_07_04/1-7418.jpg',
-          title: 'slide 1'
-        },
-        {
-          background:
-            'https://s3.cloud.cmctelecom.vn/tinhte1/2014/11/2631443_despicable_me_2_minions-1920x1080_VVVaaa.png',
-          title: 'slide 2'
-        },
-        {
-          background:
-            'https://images2.thanhnien.vn/Uploaded/quynhnhu/2015_07_13/watch-minions-trailer_HKTM.jpg?width=500',
-          title: 'slide 3'
-        }
-      ]
-    }
-  }
 }
+
 class WBaseDA {
   static wbase_url = domainApi + '/WBase/ListItem'
-  static style_url = domainApi + '/Style/ListItemByPid'
-  static attribute_url = domainApi + '/Attribute/ListItemByPid'
-  static autoLayout_url = domainApi + '/WAutoLayout/ListItem'
   static base_item_url = domainApi + '/WBase/listBaseitem'
   static skin_url = domainApi + '/Style/ListCacheItem'
   static enumEvent
@@ -1199,12 +774,6 @@ class WBaseDA {
       this.attribute_url + `?pageid=${PageDA.obj.ID}`
     )
     attributeData = attributeData.Data
-    let autoLayoutData = await $.get(
-      this.autoLayout_url + `?pageid=${PageDA.obj.ID}`
-    )
-    autoLayoutData = autoLayoutData.Data
-    let styleData = await $.get(this.style_url + `?pageid=${PageDA.obj.ID}`)
-    styleData = styleData.Data
     let WbData = await $.get(this.wbase_url + `?pageid=${PageDA.obj.ID}`)
     let cssData = await StyleDA.initStyleSheets()
     StyleDA.cssStyleSheets = cssData.Data
@@ -1215,11 +784,10 @@ class WBaseDA {
       document.head.appendChild(styleTag)
     })
     WbData = WbData.Data
-    WbData.forEach(wb => {
-      wb.AttributesItem = attributeData.find(e => e.GID == wb.AttributeID)
-      wb.StyleItem = styleData.find(e => e.GID == wb.StyleID)
-      wb.WAutolayoutItem = autoLayoutData.find(e => e.GID == wb.AutoLayoutID)
-    })
+    WbData.forEach(
+      wb =>
+        (wb.AttributesItem = attributeData.find(e => e.GID === wb.AttributeID))
+    )
     StyleDA.docStyleSheets = [...document.styleSheets]
       .map(e => (e.href ? [] : [...e.cssRules]))
       .filter(

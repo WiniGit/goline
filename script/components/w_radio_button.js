@@ -1,26 +1,13 @@
-function createRadioHTML(item) {
-  item.value = createRadioButton(item);
-}
-
-function createRadioButton(wbaseItem) {
-  let toggle = wbaseItem.value ?? document.createElement("label");
-  $(toggle).addClass("w-radio-btn");
-  let input = document.createElement("input");
-  input.type = "radio";
-  // if (wbaseItem.AttributesItem.NameField !== "") input.name = wbaseItem.AttributesItem.NameField;
-  input.defaultChecked = wbaseItem.JsonItem.Checked ?? false;
-  input.value = wbaseItem.AttributesItem.Content;
-  let checkmark = document.createElement("span");
-  checkmark.className = "checkmark";
-  toggle.replaceChildren(input, checkmark);
-  toggle.onclick = function (ev) {
+function createRadioHTML(wb) {
+  wb.value = document.createElement("label")
+  wb.value.innerHTML = `<input type="radio" ${
+    wb.JsonItem.Checked === 'true' ? 'checked' : ''
+  } value="${wb.AttributesItem.Content}"/><span class="checkmark"></span>`
+  wb.value.onclick = function (ev) {
     ev.stopImmediatePropagation()
     ev.stopPropagation()
     ev.preventDefault()
   }
-  toggle.style.setProperty("--checked-color", `#${wbaseItem.StyleItem.DecorationItem.ColorValue}`);
-  toggle.style.setProperty("--unchecked-border", `#${wbaseItem.StyleItem.DecorationItem.BorderItem?.ColorValue}`);
-  return toggle;
 }
 
 // input.onchange = function (e) {

@@ -1,41 +1,11 @@
-function createSwitchHTML (item) {
-  item.value = createSwitch(item.AttributesItem.Content === 'true', item)
-}
-
-function createSwitch (initValue = false, wbaseItem) {
-  let toggle = document.createElement('label')
-  $(toggle).addClass('w-switch')
-  toggle.setAttribute('value', initValue)
-  let input = document.createElement('input')
-  input.type = 'checkbox'
-  input.defaultChecked = initValue
-  let slider = document.createElement('span')
-  slider.className = 'slider'
-  toggle.replaceChildren(input, slider)
-  if (wbaseItem) {
-//     if (wbaseItem.AttributesItem.NameField !== '')
-//       input.name = wbaseItem.AttributesItem.NameField
-    toggle.style.setProperty('--dot-color', `#${wbaseItem.JsonItem.DotColor}`)
-    toggle.style.setProperty(
-      '--unchecked-bg',
-      `#${wbaseItem.JsonItem.InactiveColor}`
-    )
-    toggle.click = function (e) {
-      e.stopImmediatePropagation()
-      e.stopPropagation()
-      e.preventDefault()
-    }
+function createSwitchHTML (wb) {
+  wb.value = document.createElement('label')
+  wb.value.innerHTML = `<input type="checkbox" ${
+    wb.AttributesItem.Content === 'true' ? 'checked' : ''
+  }/><span class="slider"></span>`
+  wb.value.onclick = function (ev) {
+    ev.stopImmediatePropagation()
+    ev.stopPropagation()
+    ev.preventDefault()
   }
-  input.onchange = function (e) {
-    e.stopImmediatePropagation()
-    e.stopPropagation()
-    if (wbaseItem) {
-      wbaseItem.AttributesItem.Content = `${this.checked}`
-      toggle.style.setProperty(
-        '--unchecked-bg',
-        `#${wbaseItem.JsonItem.InactiveColor}`
-      )
-    }
-  }
-  return toggle
 }

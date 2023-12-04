@@ -79,7 +79,7 @@ function updateUIDesignView () {
       )
     ) {
       let framePage = selected_list[0].value.closest(
-        `.w-form[level="1"], .w-frame[level="1"], w-variant > .w-form[level="2"], w-variant > .w-frame[level="2"]`
+        `.w-form[level="1"], .w-container[level="1"], w-variant > .w-form[level="2"], w-variant > .w-container[level="2"]`
       )
       if (framePage) {
         let selectColByBrp = colNumberByBrp(

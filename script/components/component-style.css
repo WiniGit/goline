@@ -94,7 +94,7 @@
   transform: unset !important;
 }
 
-.w-frame.w-page {
+.w-container.w-page {
   width: 100% !important;
   min-width: 100% !important;
 }
@@ -103,7 +103,7 @@
   position: absolute !important;
 }
 
-.w-frame.w-page > .fixed-position {
+.w-container.w-page > .fixed-position {
   position: fixed !important;
 }
 
@@ -188,8 +188,7 @@
 }
 
 /*checkbox*/
-.w-check-box {
-  --check-color: #ffffff;
+.w-checkbox {
   position: relative;
   width: 24px;
   aspect-ratio: 1 / 1 !important;
@@ -198,7 +197,7 @@
   display: inline-block;
 }
 
-.w-check-box > input {
+.w-checkbox > input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -206,11 +205,11 @@
   width: 0;
 }
 
-.w-check-box > input:checked ~ svg {
+.w-checkbox > input:checked ~ svg {
   display: block;
 }
 
-.w-check-box > svg {
+.w-checkbox > svg {
   width: 100%;
   height: 100%;
   left: 0;
@@ -219,7 +218,7 @@
   transition: 0.4s;
 }
 
-.w-check-box > svg {
+.w-checkbox > svg > path {
   stroke: var(--check-color) !important;
 }
 
@@ -237,7 +236,7 @@
   box-sizing: border-box;
 }
 
-.wbaseItem-value.w-textformfield .wbaseItem-value:has(> .textfield) {
+.wbaseItem-value.w-textformfield .wbaseItem-value:has(> .input-container) {
   width: 100% !important;
   flex: 1;
   align-items: center;
@@ -266,7 +265,7 @@
   transform: translate(-7.5%, 92.5%) scale(0.85);
 }
 
-.w-textformfield .textfield {
+.w-textformfield .input-container {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -277,7 +276,7 @@
   background-color: transparent !important;
 }
 
-.w-textformfield .textfield > input,
+.w-textformfield .input-container > input,
 label {
   border: none;
   outline: none;
@@ -287,7 +286,7 @@ label {
   transition: 0.4s;
 }
 
-.w-textformfield .textfield > input {
+.w-textformfield .input-container > input {
   min-width: 0;
   width: 100%;
   background-color: transparent;
@@ -296,47 +295,47 @@ label {
   order: 1;
 }
 
-.w-textformfield .textfield > input::placeholder {
+.w-textformfield .input-container > input::placeholder {
   color: inherit;
 }
 
-.w-textformfield .textfield:has(> label) > input {
+.w-textformfield .input-container:has(> label) > input {
   transform: translateY(-50%);
 }
 
-.textfield > label {
+.input-container > label {
   transform: translateY(calc(50% + 4px + (0.25 * 100%)));
   order: 0;
   line-height: 0.8;
 }
 
-.w-textformfield .textfield.content > label {
+.w-textformfield .input-container.content > label {
   transform: scale(0.75) translate(-12.5%, -12.5%);
   text-align: start;
 }
 
-.textfield > input:focus ~ label {
+.input-container > input:focus ~ label {
   transform: scale(0.75) translate(-12.5%, -12.5%);
   text-align: start;
   color: var(--focus-color);
 }
 
-.w-textformfield .textfield:has(> label) > input:focus {
+.w-textformfield .input-container:has(> label) > input:focus {
   transform: none;
 }
 
-.w-textformfield .textfield.content:has(> label) > input {
+.w-textformfield .input-container.content:has(> label) > input {
   transform: none;
 }
 
-.w-textformfield .textfield + .suffix-btn-txtfd {
+.w-textformfield .input-container + .suffix-btn-txtfd {
   width: var(--suffix-size);
   position: relative;
   box-sizing: border-box;
   aspect-ratio: 1 / 1;
 }
 
-.w-textformfield .textfield + .suffix-btn-txtfd > svg {
+.w-textformfield .input-container + .suffix-btn-txtfd > svg {
   position: absolute;
   box-sizing: border-box;
   top: 50%;
@@ -344,7 +343,7 @@ label {
   transform: translate(-50%, -50%);
 }
 
-.w-textformfield .textfield + .suffix-btn-txtfd > svg > path {
+.w-textformfield .input-container + .suffix-btn-txtfd > svg > path {
   fill: var(--suffix-icon-color);
 }
 
@@ -465,7 +464,7 @@ body:has(> .w-date-picker-popup) {
 }
 
 /* radio */
-.w-radio-btn {
+.w-radio {
   display: block;
   position: relative;
   width: 20px;
@@ -476,13 +475,13 @@ body:has(> .w-date-picker-popup) {
   background-color: transparent !important;
 }
 
-.w-radio-btn > input {
+.w-radio > input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
 }
 
-.w-radio-btn > .checkmark {
+.w-radio > .checkmark {
   display: none;
   position: absolute;
   top: 50%;
@@ -723,15 +722,15 @@ body:has(> .w-date-picker-popup) {
 .w-switch:has(> input:checked) {
   background-color: var(--checked-color) !important;
 }
-.w-radio-btn:has(> input[type="radio"]:checked) {
+.w-radio:has(> input[type="radio"]:checked) {
   border-color: var(--checked-color) !important;
 }
 
-.w-radio-btn > input[type="radio"]:checked ~ .checkmark {
+.w-radio > input[type="radio"]:checked ~ .checkmark {
   display: block !important;
   background-color: var(--checked-color);
 }
-.w-check-box:has(> input:checked) {
+.w-checkbox:has(> input:checked) {
   background-color: var(--checked-color) !important;
   border: none !important;
 }

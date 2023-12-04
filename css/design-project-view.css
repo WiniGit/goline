@@ -283,19 +283,11 @@ body:has(#history-view) :is(.btn-tool-state:nth-child(2), .btn-history) {
   display: none !important;
 }
 
-#divSection
-  *:not(
-    .wbaseItem-value,
-    tr:has(.wbaseItem-value),
-    td:has(> .wbaseItem-value),
-    .tile-item:has(.wbaseItem-value),
-    .children-value:has(> .wbaseItem-value),
-    .w-text span[contentEditable="true"]
-  ) {
+#divSection *:not(.wbaseItem-value, tr:has(.wbaseItem-value), td:has(> .wbaseItem-value), .tile-item:has(.wbaseItem-value), .children-value:has(> .wbaseItem-value), .w-text span[contentEditable="true"]) {
   pointer-events: none !important;
 }
 
-#divSection .wbaseItem-value:has(> div.textfield) {
+#divSection .wbaseItem-value.w-textfield {
   pointer-events: none !important;
 }
 
@@ -686,11 +678,7 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   box-sizing: border-box;
 }
 
-.setting-state-container
-  .list-field-setting
-  .field-setting
-  .field-header
-  .field-name {
+.setting-state-container .list-field-setting .field-setting .field-header .field-name {
   flex: 1;
 }
 
@@ -699,11 +687,7 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   height: 32px;
 }
 
-.setting-state-container
-  .list-field-setting
-  .field-setting
-  .field-value
-  .skin-container {
+.setting-state-container .list-field-setting .field-setting .field-value .skin-container {
   flex: 1;
   height: 32px;
   padding-left: 16px;
@@ -711,20 +695,11 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   box-sizing: border-box;
 }
 
-.setting-state-container
-  .list-field-setting
-  .field-setting
-  .field-value
-  .skin-container:hover {
+.setting-state-container .list-field-setting .field-setting .field-value .skin-container:hover {
   background-color: rgba(0, 53, 128, 0.04);
 }
 
-.setting-state-container
-  .list-field-setting
-  .field-setting
-  .field-value
-  .skin-container
-  .skin-color {
+.setting-state-container .list-field-setting .field-setting .field-value .skin-container .skin-color {
   padding: 0;
   overflow: hidden;
   border-radius: 50%;
@@ -732,12 +707,7 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   border: 1px solid rgba(0, 53, 128, 0.18);
 }
 
-.setting-state-container
-  .list-field-setting
-  .field-setting
-  .field-value
-  .skin-container
-  .skin-name {
+.setting-state-container .list-field-setting .field-setting .field-value .skin-container .skin-name {
   flex: 1;
   margin-left: 8px;
 }
