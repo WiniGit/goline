@@ -164,7 +164,8 @@ function initComponents (wb, children) {
   wb.value.className = wb.ListClassName
   wb.value.setAttribute('level', wb.Level)
   //
-  wb.value.setAttribute('listid', wb.ListID)
+  // wb.value.setAttribute('listid', wb.ListID)
+  wb.value.setAttribute('parentid', wb.ParentID)
   if (wb.IsWini) {
     wb.value.setAttribute('iswini', wb.IsWini)
   } else if (
@@ -177,8 +178,10 @@ function initComponents (wb, children) {
       wb.IsInstance = true
     }
   }
-  wb.value.style = wb.Css
-  if (wb.Css?.length > 0) setAttributeByStyle(wb.value)
+  if (wb.Css?.length > 0) {
+    wb.value.style = wb.Css
+    setAttributeByStyle(wb.value)
+  }
 }
 
 function setAttributeByStyle (wbHTML, cssRule) {

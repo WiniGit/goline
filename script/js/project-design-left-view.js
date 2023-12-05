@@ -39,7 +39,7 @@ function setupLeftView () {
   // add event unfocus when click white space
   layer_view.onclick = function (event) {
     if (event.target.readOnly) event.target.blur()
-    else if (event.target.id === 'Layer') addSelectList()
+    else if (event.target.id === 'Layer') handleWbSelectedList()
   }
   document.getElementById('layer-search').onclick = showSearchResult
   // div contain all wbase_item as list tile
@@ -205,9 +205,9 @@ function showSearchResult () {
           updateHoverWbase()
           PageDA.saveSettingsPage()
           if (wb.CateID === EnumCate.textfield) {
-            addSelectList([wbase_list.find(ele => ele.GID === wb.ParentID)])
+            handleWbSelectedList([wbase_list.find(ele => ele.GID === wb.ParentID)])
           } else {
-            addSelectList([wb])
+            handleWbSelectedList([wb])
           }
           searchBody
             .querySelectorAll('.layer-search-result')
@@ -457,7 +457,6 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
   let wbase_tile = document.createElement('div')
   wbase_tile.id = `wbaseID:${wbaseItem.GID}`
   wbase_tile.className = 'layer_wbase_tile'
-  wbase_tile.setAttribute('cateid', wbaseItem.CateID)
   if (wbaseItem.IsWini) {
     wbase_tile.setAttribute('iswini', wbaseItem.IsWini)
   } else if (wbaseItem.IsInstance) {
@@ -501,7 +500,7 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
     divSection.style.transition = null
     updateHoverWbase()
     PageDA.saveSettingsPage()
-    if (wbaseItem.CateID !== EnumCate.textfield) addSelectList([wbaseItem])
+    if (wbaseItem.CateID !== EnumCate.textfield) handleWbSelectedList([wbaseItem])
   }
   let inputWBaseName = document.createElement('input')
   inputWBaseName.id = `inputName:${wbaseItem.GID}`
@@ -555,7 +554,7 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
     }
     wbase_tile.onclick = function () {
       if (!sortLayer && !left_view.resizing) {
-        addSelectList([wbaseItem])
+        handleWbSelectedList([wbaseItem])
       }
     }
     icon_lock.onclick = function () {
@@ -1485,7 +1484,7 @@ function endDragSortLayer () {
       }
       arrange()
       replaceAllLyerItemHTML()
-      addSelectList([thisWbaseItem])
+      handleWbSelectedList([thisWbaseItem])
     }
   }
   sortLayer?.remove()
@@ -2362,7 +2361,7 @@ function dragInstanceEnd (event) {
   }
   replaceAllLyerItemHTML()
   parent = divSection
-  addSelectList([newWb])
+  handleWbSelectedList([newWb])
   newWb.value.setAttribute('loading', 'true')
   action_list[action_index].tmpHTML = [newWb.value]
 }

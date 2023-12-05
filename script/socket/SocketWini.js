@@ -887,7 +887,7 @@ socket.on('server-main', async data => {
         replaceAllLyerItemHTML()
         if (action_index === data.index) {
           clearActionListFrom(action_index - 1)
-          addSelectList(
+          handleWbSelectedList(
             listData.filter(e =>
               copyList.some(copyE => copyE.Level === e.Level)
             )

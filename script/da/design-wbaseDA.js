@@ -1,6 +1,6 @@
 class ToolState {
   static move = 'Move'
-  static frame = 'Frame'
+  static container = 'Container'
   static rectangle = 'Rectangle'
   static circle = 'Circle'
   static base_component = 'BaseComponent'
@@ -16,7 +16,7 @@ class ToolState {
   static resize_bot = 'ResizeBottom'
 
   static create_new_type = [
-    this.frame,
+    this.container,
     this.rectangle,
     this.circle,
     this.base_component,
@@ -959,7 +959,7 @@ class WBaseDA {
           action_list[action_index].enumObj = EnumObj.wBase
           action_list[action_index].enumEvent = EnumEvent.delete
         }
-        addSelectList()
+        handleWbSelectedList()
       } else if (enumObj && parentWbase) {
         WBaseDA.editAndDelete([...delete_list, parentWbase], enumObj)
       } else {
@@ -968,7 +968,7 @@ class WBaseDA {
           data: delete_list,
           enumEvent: EnumEvent.delete
         }
-        addSelectList()
+        handleWbSelectedList()
         WiniIO.emitMain(data)
       }
       document.getElementById(`parentID:${wbase_parentID}`).scrollTo({

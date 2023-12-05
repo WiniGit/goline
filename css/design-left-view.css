@@ -167,19 +167,19 @@
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/base_component_black.svg);
 }
 
-:is(.layer_wbase_tile[cateid="140"], .layer_wbase_tile[cateid="128"]) > img {
+.layer_wbase_tile.w-container > img {
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame_black.svg) !important;
 }
-.layer_wbase_tile[cateid="138"] > img {
+.layer_wbase_tile.w-rect > img {
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle_black.svg) !important;
 }
-.layer_wbase_tile[cateid="139"] > img {
+.layer_wbase_tile.w-text > img {
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text_black.svg) !important;
 }
-.layer_wbase_tile[cateid="238"] > img {
+.layer_wbase_tile.w-variant > img {
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/multiple_component.svg) !important;
 }
-.layer_wbase_tile[iswini="true"]:not(.layer_wbase_tile[cateid="238"]) > img {
+.layer_wbase_tile[iswini="true"]:not(.w-variant) > img {
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/component.svg) !important;
 }
 
@@ -190,6 +190,24 @@
 .col:has(> .col:not(:empty)) > .layer_wbase_tile > .prefix-btn {
   pointer-events: auto !important;
   visibility: visible !important;
+}
+
+.layer_wbase_tile.selected {
+  background-color: #e6f7ff;
+}
+
+.layer_wbase_tile.selected + .col .layer_wbase_tile {
+  background-color: #e6f7ff;
+}
+
+.layer_wbase_tile.selected[iswini="true"],
+.layer_wbase_tile.selected[isinstance="true"] {
+  background-color: #ebe6ff;
+}
+
+.layer_wbase_tile.selected[iswini="true"],
+.layer_wbase_tile.selected[isinstance="true"] + .col .layer_wbase_tile {
+  background-color: #ebe6ff;
 }
 
 #Assets > .col > .col {

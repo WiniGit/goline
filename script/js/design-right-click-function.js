@@ -418,7 +418,7 @@ function pasteWbase () {
       listWb.push(parent_wbase)
     }
     replaceAllLyerItemHTML()
-    addSelectList(list_new_wbase)
+    handleWbSelectedList(list_new_wbase)
     action_list[action_index].tmpHTML = [...tmpAltHTML]
     tmpAltHTML = []
     WBaseDA.copy(listWb)
@@ -1002,7 +1002,7 @@ async function handleImportFile (event) {
       )
       listAdd.push(newObj)
     }
-    addSelectList(listAdd)
+    handleWbSelectedList(listAdd)
     WBaseDA.add(listAdd)
   }
 }
@@ -1046,7 +1046,7 @@ function bringToFront () {
   replaceAllLyerItemHTML()
   WBaseDA.parent([parentWbase, ...selected_list])
   updateHoverWbase()
-  addSelectList(selected_list)
+  handleWbSelectedList(selected_list)
 }
 
 function bringFrontward () {
@@ -1112,7 +1112,7 @@ function bringFrontward () {
   replaceAllLyerItemHTML()
   WBaseDA.parent([parentWbase, ...selected_list])
   updateHoverWbase()
-  addSelectList(selected_list)
+  handleWbSelectedList(selected_list)
 }
 
 function sendToBack () {
@@ -1154,7 +1154,7 @@ function sendToBack () {
   replaceAllLyerItemHTML()
   WBaseDA.parent([parentWbase, ...selected_list])
   updateHoverWbase()
-  addSelectList(selected_list)
+  handleWbSelectedList(selected_list)
 }
 
 function sendBackward () {
@@ -1220,5 +1220,5 @@ function sendBackward () {
   replaceAllLyerItemHTML()
   WBaseDA.parent([parentWbase, ...selected_list])
   updateHoverWbase()
-  addSelectList(selected_list)
+  handleWbSelectedList(selected_list)
 }

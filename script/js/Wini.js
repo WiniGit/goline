@@ -172,7 +172,7 @@ function keyUpEvent (event) {
         toolStateChange(ToolState.text)
         break
       case 'f': // f
-        toolStateChange(ToolState.frame)
+        toolStateChange(ToolState.container)
         break
       case 'c': // c
         if (selected_list.length > 0 && isCtrlKey) {
@@ -1084,12 +1084,10 @@ function moveListener (event) {
   if (event.buttons == 1 && PageDA.enableEdit) {
     dragTime++
     if (dragTime < 4 && design_view_index !== 1) return
+    let divImgDoc = document.getElementById('popup_img_document')
     if (instance_drag) {
       target_view = 'left_view'
-    } else if (
-      document.getElementById('popup_img_document')?.getAttribute('offset')
-    ) {
-      let divImgDoc = document.getElementById('popup_img_document')
+    } else if (divImgDoc?.getAttribute('offset')) {
       let oldOffset = JSON.parse(divImgDoc.getAttribute('offset')) ?? {
         x: event.clientX,
         y: event.clientY
@@ -1105,11 +1103,9 @@ function moveListener (event) {
         JSON.stringify({ x: event.clientX, y: event.clientY })
       )
     } else if (
-      (sortLayer ||
-        event.target.className == 'layer_wbase_tile' ||
-        event.target.parentElement?.className == 'layer_wbase_tile') &&
+      (sortLayer || event.target.closest('.layer_wbase_tile')) &&
       [ToolState.hand_tool, ...ToolState.resize_type].every(
-        toolState => tool_state != toolState
+        ts => tool_state != ts
       ) &&
       drag_start_list.length === 0
     ) {
@@ -1121,7 +1117,9 @@ function moveListener (event) {
         !sortLayer
       ) {
         let listLayer = [
-          ...document.getElementsByClassName('layer_wbase_tile')
+          ...left_view.querySelectorAll(
+            '.layer_wbase_tile:is(.w-container, .w-textformfield, .w-button, .w-table, .w-variant):not(*[isinstance="true"])'
+          )
         ].filter(eLayer => eLayer.offsetHeight > 0)
         listLayer.forEach(eLayer => {
           if (eLayer.id.includes(selected_list[0].GID)) {
@@ -1132,25 +1130,10 @@ function moveListener (event) {
                 'caret-right'
               )
             }
-          } else {
-            if (eLayer.getAttribute('cateid') == EnumCate.variant) {
-              if (
-                selected_list[0].CateID === EnumCate.variant ||
-                !selected_list[0].IsWini
-              ) {
-                let preAction = eLayer.querySelector(`.prefix-btn`)
-                if (preAction) {
-                  preAction.className = preAction.className.replace(
-                    'caret-right',
-                    'caret-down'
-                  )
-                }
-              }
-            } else if (
-              EnumCate.parent_cate.some(
-                cate => cate == eLayer.getAttribute('cateid')
-              ) &&
-              eLayer.id.includes(selected_list[0].GID)
+          } else if (eLayer.classList.contains('w-variant')) {
+            if (
+              selected_list[0].value.classList.contains('w-variant') ||
+              !selected_list[0].IsWini
             ) {
               let preAction = eLayer.querySelector(`.prefix-btn`)
               if (preAction) {
@@ -1168,26 +1151,31 @@ function moveListener (event) {
     } else if (sortSkin || event.target.className == 'skin_tile_option') {
       target_view = 'right_view'
     } else {
-      for (let thisElement of event.composedPath()) {
-        if (
-          typeof thisElement.className === 'string' &&
-          thisElement.className?.includes('wini_popup')
-        ) {
-          break
-        } else if (thisElement.id == 'popup_img_document') {
-          target_view = thisElement.id
-          break
-        } else if (thisElement.id == 'canvas_view') {
-          target_view = thisElement.id
-          break
-        } else if (thisElement.id == 'left_view') {
-          target_view = thisElement.id
-          break
-        } else if (thisElement.id == 'right_view') {
-          target_view = thisElement.id
-          break
-        }
-      }
+      target_view = event.target.closest(
+        `.wini_popup, div[id="popup_img_document"], div[id="canvas_view"], div[id="left_view"], div[id="right_view"]`
+      )
+      if (target_view.classList.contains('wini_popup')) target_view = null
+      else target_view = target_view.id
+      // for (let thisElement of event.composedPath()) {
+      //   if (
+      //     typeof thisElement.className === 'string' &&
+      //     thisElement.className?.includes('wini_popup')
+      //   ) {
+      //     break
+      //   } else if (thisElement.id == '') {
+      //     target_view = thisElement.id
+      //     break
+      //   } else if (thisElement.id == '') {
+      //     target_view = thisElement.id
+      //     break
+      //   } else if (thisElement.id == '') {
+      //     target_view = thisElement.id
+      //     break
+      //   } else if (thisElement.id == '') {
+      //     target_view = thisElement.id
+      //     break
+      //   }
+      // }
     }
   }
   switch (target_view) {
@@ -1236,15 +1224,11 @@ function moveListener (event) {
                 Math.min(minx, event.pageX),
                 Math.min(miny, event.pageY)
               )
-              let parentHTML = [...event.composedPath()].find(
-                eHTML =>
-                  eHTML.classList?.contains('wbaseItem-value') &&
-                  EnumCate.parent_cate.some(
-                    cate => cate == $(eHTML).attr('cateid')
-                  )
+              let parentHTML = $(event.target).closest(
+                `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table):not(*[isinstance="true"])`
               )
               createWbaseHTML({
-                parentID: parentHTML?.id ?? wbase_parentID,
+                parentid: parentHTML?.id ?? wbase_parentID,
                 x: Math.round(offset_convert.x),
                 y: Math.round(offset_convert.y),
                 w: 10,
@@ -1270,8 +1254,8 @@ function moveListener (event) {
                 switch (tool_state) {
                   case ToolState.resize_left:
                     for (let wb of selected_list) {
-                      let scaleWb = EnumCate.scale_size_component.some(
-                        ct => wb.CateID === ct
+                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
+                        e => wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1315,8 +1299,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_right:
                     for (let wb of selected_list) {
-                      let scaleWb = EnumCate.scale_size_component.some(
-                        ct => wb.CateID === ct
+                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
+                        e => wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         wb.tmpW = wb.value.offsetWidth
@@ -1357,8 +1341,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_top:
                     for (let wb of selected_list) {
-                      let scaleWb = EnumCate.scale_size_component.some(
-                        ct => wb.CateID === ct
+                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
+                        e => wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1401,8 +1385,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_bot:
                     for (let wb of selected_list) {
-                      let scaleWb = EnumCate.scale_size_component.some(
-                        ct => wb.CateID === ct
+                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
+                        e => wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         wb.tmpH = wb.value.offsetHeight
@@ -1443,8 +1427,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_top_left:
                     for (let wb of selected_list) {
-                      let scaleWb = EnumCate.scale_size_component.some(
-                        ct => wb.CateID === ct
+                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
+                        e => wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1485,8 +1469,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_top_right:
                     for (let wb of selected_list) {
-                      let scaleWb = EnumCate.scale_size_component.some(
-                        ct => wb.CateID === ct
+                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
+                        e => wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1526,8 +1510,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_bot_left:
                     for (let wb of selected_list) {
-                      let scaleWb = EnumCate.scale_size_component.some(
-                        ct => wb.CateID === ct
+                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
+                        e => wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1566,8 +1550,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_bot_right:
                     for (let wb of selected_list) {
-                      let scaleComponent = EnumCate.scale_size_component.some(
-                        ct => wb.CateID === ct
+                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
+                        e => wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1612,7 +1596,7 @@ function moveListener (event) {
                 updateInputTLWH()
               } else {
                 if (!selected_list.length) {
-                  addSelectList([hover_wbase])
+                  handleWbSelectedList([hover_wbase])
                 }
                 if (select_box && !objr) {
                   if (checkpad == 0)
@@ -1692,7 +1676,7 @@ function moveListener (event) {
                       }
                     }
                   } else {
-                    addSelectList()
+                    handleWbSelectedList()
                     removeAllRectselects()
                   }
                 } else {
@@ -1936,32 +1920,23 @@ function scanSelectList (event) {
       return false
     }
 
-    let parentElement = $(eHTML).parent(`.wbaseItem-value[level="1"]`)[0]
+    let parentElement = $(eHTML).parents(
+      `.wbaseItem-value.w-container[level="1"], .wbaseItem-value.w-variant[level="1"]`
+    )[0]
 
-    if (
-      parentElement &&
-      EnumCate.show_name.every(
-        cate => parentElement.getAttribute('cateid') != cate
-      )
-    ) {
-      return false
-    }
+    if (parentElement) return false
+
     return elementIsInRange(
       eHTML,
       _range,
-      EnumCate.show_name.some(cate => eHTML.getAttribute('cateid') == cate) &&
-        !parentElement
+      ['w-container', 'w-variant'].some(e => eHTML.classList.contains(e))
     )
   })
   let checkList = [...newList]
-  newList = newList.filter(e =>
-    checkList.every(
-      item => e.getAttribute('listid').split(',').pop() !== item.id
-    )
-  )
+  newList = newList.filter(e => checkList.every(item => !item.contains(e)))
   if (selected_list.length > 0) {
     newList = newList.filter(
-      e => e.getAttribute('listid').split(',').pop() === select_box_parentID
+      wbHTML => wbHTML.getAttribute('parentid') === select_box_parentID
     )
   }
   selected_list = []
@@ -1970,7 +1945,7 @@ function scanSelectList (event) {
       window.getComputedStyle(e.value).pointerEvents !== 'none' &&
       newList.some(eHTML => e.GID == eHTML.id)
   )
-  addSelectList(newListWBase)
+  handleWbSelectedList(newListWBase)
 }
 
 function checkHoverElement (event) {
@@ -1997,24 +1972,25 @@ function checkHoverElement (event) {
           ...$(selected_list[0].value).parents(`.wbaseItem-value`)
         ]
     }
-    let _target = [...event.composedPath()].find(eHTML => {
-      if (!eHTML.classList?.contains('wbaseItem-value')) {
+    let _target = [
+      event.target,
+      ...$(event.target).parents('.wbaseItem-value')
+    ].find(wbHTML => {
+      if (!wbHTML.classList.contains('wbaseItem-value')) {
         return false
       }
       let is_enable = false
-      let target_level = parseInt(eHTML.getAttribute('level'))
-      let target_cate = parseInt(eHTML.getAttribute('cateid'))
-      if (target_cate === EnumCate.textfield) return false
+      let target_level = parseInt(wbHTML.getAttribute('level'))
       switch (target_level) {
         case 1:
           is_enable =
             EnumCate.show_name.every(ct => ct !== target_cate) ||
-            eHTML.children.length === 0 ||
-            eHTML.getAttribute('isinstance') === 'true' // || event.altKey
+            wbHTML.children.length === 0 ||
+            wbHTML.getAttribute('isinstance') === 'true' // || event.altKey
           break
         default:
-          let parentPage = $(eHTML).parents(`.wbaseItem-value`)[0]
-          let listid = eHTML.getAttribute('listid').split(',')
+          let parentPage = $(wbHTML).parents(`.wbaseItem-value`)[0]
+          let listid = wbHTML.getAttribute('listid').split(',')
           let eParentId = listid.pop()
           if (
             target_level === 2 &&
@@ -2856,7 +2832,7 @@ function doubleClickEvent (event) {
             )
               target_element = target_element.parentElement
             if (clearAction) clearActionListFrom(action_index - 1)
-            addSelectList(
+            handleWbSelectedList(
               wbase_list.filter(element => element.GID === target_element?.id)
             )
           }
@@ -2873,7 +2849,7 @@ function doubleClickEvent (event) {
         )
           target_element = target_element.parentElement
         if (clearAction) clearActionListFrom(action_index - 1)
-        addSelectList(
+        handleWbSelectedList(
           wbase_list.filter(element => element.GID == target_element?.id)
         )
       }
@@ -2891,7 +2867,7 @@ function clickEvent (event) {
     if (event.button == 2) {
       let popup_function = document.getElementById('wini_features')
       if (hover_wbase && selected_list.length == 0) {
-        addSelectList([hover_wbase])
+        handleWbSelectedList([hover_wbase])
       }
       if (popup_function) {
         popup_function.remove()
@@ -2910,19 +2886,19 @@ function clickEvent (event) {
             if (selectedPrototype) {
               ctxr.strokeStyle = '#1890FF'
               ctxr.stroke(selectedPrototype.curveValue)
-              addSelectList([selectedPrototype.startPage])
+              handleWbSelectedList([selectedPrototype.startPage])
             } else {
               if (
                 event.shiftKey &&
                 hover_wbase.ParentID === select_box_parentID
               )
-                addSelectList([...selected_list, hover_wbase])
-              else addSelectList([hover_wbase])
+                handleWbSelectedList([...selected_list, hover_wbase])
+              else handleWbSelectedList([hover_wbase])
             }
           } else {
             if (event.shiftKey && hover_wbase?.ParentID === select_box_parentID)
-              addSelectList([...selected_list, hover_wbase])
-            else addSelectList([hover_wbase])
+              handleWbSelectedList([...selected_list, hover_wbase])
+            else handleWbSelectedList([hover_wbase])
           }
           if (
             event.target.localName == 'path' &&
@@ -3135,7 +3111,7 @@ function upListener (event) {
       listRect = []
       let selectItems = [...selected_list]
       selected_list = []
-      addSelectList(selectItems)
+      handleWbSelectedList(selectItems)
     } else {
       if (
         ToolState.create_new_type.some(e => e === tool_state) &&
@@ -3163,7 +3139,7 @@ function upListener (event) {
             dragAltEnd()
           } else {
             dragWbaseEnd()
-            addSelectList(selected_list)
+            handleWbSelectedList(selected_list)
           }
           checkpad = 0
         }

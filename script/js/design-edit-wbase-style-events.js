@@ -4872,7 +4872,7 @@ async function addAutoLayout () {
           cWbHTML.style.setProperty('--gutter', `${newLayoutItem.ChildSpace}px`)
         })
       WBaseDA.edit(selected_list, EnumObj.padddingWbaseFrame)
-      addSelectList(selected_list)
+      handleWbSelectedList(selected_list)
       wb.StyleItem.PaddingID = wb.StyleItem.PaddingItem.GID
     } else {
       let pWbComponent = wb.value.closest(`.wbaseItem-value[iswini="true"]`)
@@ -4948,7 +4948,7 @@ async function addAutoLayout () {
     let newWb = JSON.parse(JSON.stringify(WBaseDefault.frame))
     newWb.WAutolayoutItem = newLayoutItem
     newWb.StyleItem.PaddingItem = newPaddingItem
-    newWb = createNewWbase(newWb)[0]
+    newWb = createNewWbase({ wb: newWb })[0]
     newWb.StyleItem.PositionItem.Left = `${Math.min(
       ...selected_list.map(e => getWBaseOffset(e).x)
     ).toFixed(2)}px`
@@ -5043,7 +5043,7 @@ async function addAutoLayout () {
     }
     arrange()
     replaceAllLyerItemHTML()
-    addSelectList([newWb])
+    handleWbSelectedList([newWb])
     WBaseDA.add(list_update, null, EnumEvent.parent, EnumObj.wBase)
   }
 }
@@ -7551,7 +7551,7 @@ function editEffectSkin (effect_item, thisSkin) {
 function combineAsVariant () {
   let list_update = [...selected_list]
   let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.variant))
-  new_wbase_item = createNewWbase(new_wbase_item).pop()
+  new_wbase_item = createNewWbase({ wb: new_wbase_item }).pop()
   new_wbase_item.IsWini = true
   new_wbase_item.StyleItem.PositionItem.Left = `${
     Math.min(
@@ -7662,7 +7662,7 @@ function combineAsVariant () {
   }
   arrange()
   replaceAllLyerItemHTML()
-  addSelectList([new_wbase_item])
+  handleWbSelectedList([new_wbase_item])
   WBaseDA.add(list_update, null, EnumEvent.parent, EnumObj.wBase)
 }
 
@@ -7689,12 +7689,12 @@ function changeProperty (variantID) {
       copy.AttributesItem = selectedWbase.AttributesItem
       copy.AttributesItem.Content = wbaseVariant.AttributesItem.Content
       copy.StyleItem.PositionItem = selectedWbase.StyleItem.PositionItem
-      let newWbaseList = createNewWbase(
-        copy,
-        assets_list,
-        selectedWbase.ListID,
-        selectedWbase.Sort
-      )
+      let newWbaseList = createNewWbase({
+        wb: copy,
+        relativeWbs: assets_list,
+        listId: selectedWbase.ListID,
+        sort: selectedWbase.Sort
+      })
       listUpdate.push(...newWbaseList)
       let newWbaseSelect = newWbaseList.pop()
       newSelectedList.push(newWbaseSelect)
@@ -7720,7 +7720,7 @@ function changeProperty (variantID) {
     }
     selected_list = []
     WBaseDA.changeProperty(listUpdate)
-    addSelectList(newSelectedList)
+    handleWbSelectedList(newSelectedList)
   }
 }
 
@@ -8111,8 +8111,8 @@ function editJsonItem (jsonItem, onSubmit = true) {
 function createForm () {
   if (selected_list.length > 1) {
     let list_update = [...selected_list]
-    let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.frame))
-    new_wbase_item = createNewWbase(new_wbase_item).pop()
+    let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.container))
+    new_wbase_item = createNewWbase({wb: new_wbase_item}).pop()
     new_wbase_item.Name = 'Form'
     new_wbase_item.AttributesItem.Name = 'Form'
     new_wbase_item.CateID = EnumCate.form
@@ -8208,7 +8208,7 @@ function createForm () {
     }
     arrange()
     replaceAllLyerItemHTML()
-    addSelectList([new_wbase_item])
+    handleWbSelectedList([new_wbase_item])
     WBaseDA.add(list_update)
   } else {
     selected_list[0].Name = 'Form'

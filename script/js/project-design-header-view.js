@@ -211,7 +211,7 @@ let list_tool = [
     scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/move.svg'
   },
   {
-    message: ToolState.frame,
+    message: ToolState.container,
     expand: function () {
       console.log('frame')
     },
