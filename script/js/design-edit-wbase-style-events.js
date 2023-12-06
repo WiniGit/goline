@@ -4561,7 +4561,7 @@ function updateConstraints (wbHTML) {
         parseFloat(
           window
             .getComputedStyle(wbHTML.parentElement)
-            .borderLeftWidth.replace('px','')
+            .borderLeftWidth.replace('px', '')
         )
       }px`
       wbHTML.style.left = leftValue
@@ -4576,7 +4576,7 @@ function updateConstraints (wbHTML) {
         parseFloat(
           window
             .getComputedStyle(wbHTML.parentElement)
-            .borderRightWidth.replace('px','')
+            .borderRightWidth.replace('px', '')
         )
       }px`
       wbHTML.style.right = rightValue
@@ -4591,7 +4591,7 @@ function updateConstraints (wbHTML) {
         parseFloat(
           window
             .getComputedStyle(wbHTML.parentElement)
-            .borderLeftWidth.replace('px','')
+            .borderLeftWidth.replace('px', '')
         )
       }px`
       var rightValue = `${
@@ -4603,7 +4603,7 @@ function updateConstraints (wbHTML) {
         parseFloat(
           window
             .getComputedStyle(wbHTML.parentElement)
-            .borderRightWidth.replace('px','')
+            .borderRightWidth.replace('px', '')
         )
       }px`
       wbHTML.style.left = leftValue
@@ -4619,7 +4619,7 @@ function updateConstraints (wbHTML) {
         parseFloat(
           window
             .getComputedStyle(wbHTML.parentElement)
-            .borderLeftWidth.replace('px','')
+            .borderLeftWidth.replace('px', '')
         )
       var centerValue = `${
         leftValue + (wbHTML.offsetWidth - wbHTML.parentElement.offsetWidth) / 2
@@ -4629,152 +4629,149 @@ function updateConstraints (wbHTML) {
     case Constraints.scale:
       var leftValue = `${(
         ((Math.round(
-          (wbaseHTML.getBoundingClientRect().x -
-            wbaseHTML.parentElement.getBoundingClientRect().x) /
+          (wbHTML.getBoundingClientRect().x -
+            wbHTML.parentElement.getBoundingClientRect().x) /
             scale
         ) -
           parseFloat(
             window
-              .getComputedStyle(wbaseHTML.parentElement)
-              .borderLeftWidth?.replace('px') ?? '0'
+              .getComputedStyle(wbHTML.parentElement)
+              .borderLeftWidth?.replace('px', '')
           )) *
           100) /
-        wbaseHTML.parentElement.offsetWidth
+        wbHTML.parentElement.offsetWidth
       ).toFixed(2)}%`
       var rightValue = `${(
         ((Math.round(
-          (wbaseHTML.parentElement.getBoundingClientRect().right -
-            wbaseHTML.getBoundingClientRect().right) /
+          (wbHTML.parentElement.getBoundingClientRect().right -
+            wbHTML.getBoundingClientRect().right) /
             scale
         ) -
           parseFloat(
             window
-              .getComputedStyle(wbaseHTML.parentElement)
-              .borderRightWidth?.replace('px') ?? '0'
+              .getComputedStyle(wbHTML.parentElement)
+              .borderRightWidth?.replace('px', '')
           )) *
           100) /
-        wbaseHTML.parentElement.offsetWidth
+        wbHTML.parentElement.offsetWidth
       ).toFixed(2)}%`
-      wbaseItem.StyleItem.PositionItem.Left = leftValue
-      wbaseItem.StyleItem.PositionItem.Right = rightValue
+      wbHTML.style.left = leftValue
+      wbHTML.style.right = rightValue
       break
     default:
       break
   }
-  switch (constY) {
+  switch (wbHTML.getAttribute('consty')) {
     case Constraints.top:
       var topValue = `${
         Math.round(
-          (wbaseHTML.getBoundingClientRect().y -
-            wbaseHTML.parentElement.getBoundingClientRect().y) /
+          (wbHTML.getBoundingClientRect().y -
+            wbHTML.parentElement.getBoundingClientRect().y) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderTopWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderTopWidth.replace('px', '')
         )
       }px`
-      wbaseItem.StyleItem.PositionItem.Top = topValue
+      wbHTML.style.top = topValue
       break
     case Constraints.bottom:
       var bottomValue = `${
         Math.round(
-          (wbaseHTML.parentElement.getBoundingClientRect().bottom -
-            wbaseHTML.getBoundingClientRect().bottom) /
+          (wbHTML.parentElement.getBoundingClientRect().bottom -
+            wbHTML.getBoundingClientRect().bottom) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderBottomWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderBottomWidth.replace('px', '')
         )
       }px`
-      wbaseItem.StyleItem.PositionItem.Bottom = bottomValue
+      wbHTML.style.bottom = bottomValue
       break
     case Constraints.top_bottom:
       var topValue = `${
         Math.round(
-          (wbaseHTML.getBoundingClientRect().y -
-            wbaseHTML.parentElement.getBoundingClientRect().y) /
+          (wbHTML.getBoundingClientRect().y -
+            wbHTML.parentElement.getBoundingClientRect().y) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderTopWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderTopWidth?.replace('px', '')
         )
       }px`
-      wbaseItem.StyleItem.PositionItem.Top = topValue
       var bottomValue = `${
         Math.round(
-          (wbaseHTML.parentElement.getBoundingClientRect().bottom -
-            wbaseHTML.getBoundingClientRect().bottom) /
+          (wbHTML.parentElement.getBoundingClientRect().bottom -
+            wbHTML.getBoundingClientRect().bottom) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderBottomWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderBottomWidth.replace('px', '')
         )
       }px`
-      wbaseItem.StyleItem.PositionItem.Bottom = bottomValue
+      wbHTML.style.top = topValue
+      wbHTML.style.bottom = bottomValue
       break
     case Constraints.center:
       var topValue =
         Math.round(
-          (wbaseHTML.getBoundingClientRect().y -
-            wbaseHTML.parentElement.getBoundingClientRect().y) /
+          (wbHTML.getBoundingClientRect().y -
+            wbHTML.parentElement.getBoundingClientRect().y) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderTopWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderTopWidth.replace('px', '')
         )
       var centerValue = `${
-        topValue +
-        (wbaseHTML.offsetHeight - wbaseHTML.parentElement.offsetHeight) / 2
+        topValue + (wbHTML.offsetHeight - wbHTML.parentElement.offsetHeight) / 2
       }px`
-      wbaseItem.StyleItem.PositionItem.Top = `${topValue}px`
-      wbaseItem.StyleItem.PositionItem.Bottom = centerValue
+      cssRule.style.top = `calc(50% + ${centerValue})`
       break
     case Constraints.scale:
       var topValue = `${(
         ((Math.round(
-          (wbaseHTML.getBoundingClientRect().y -
-            wbaseHTML.parentElement.getBoundingClientRect().y) /
+          (wbHTML.getBoundingClientRect().y -
+            wbHTML.parentElement.getBoundingClientRect().y) /
             scale
         ) -
           parseFloat(
             window
-              .getComputedStyle(wbaseHTML.parentElement)
-              .borderTopWidth?.replace('px') ?? '0'
+              .getComputedStyle(wbHTML.parentElement)
+              .borderTopWidth?.replace('px', '')
           )) *
           100) /
-        wbaseHTML.parentElement.offsetHeight
+        wbHTML.parentElement.offsetHeight
       ).toFixed(2)}%`
       var rightValue = `${(
         ((Math.round(
-          (wbaseHTML.parentElement.getBoundingClientRect().bottom -
-            wbaseHTML.getBoundingClientRect().bottom) /
+          (wbHTML.parentElement.getBoundingClientRect().bottom -
+            wbHTML.getBoundingClientRect().bottom) /
             scale
         ) -
           parseFloat(
             window
-              .getComputedStyle(wbaseHTML.parentElement)
-              .borderBottomWidth?.replace('px') ?? '0'
+              .getComputedStyle(wbHTML.parentElement)
+              .borderBottomWidth?.replace('px', '')
           )) *
           100) /
-        wbaseHTML.parentElement.offsetHeight
+        wbHTML.parentElement.offsetHeight
       ).toFixed(2)}%`
-      wbaseItem.StyleItem.PositionItem.Top = topValue
-      wbaseItem.StyleItem.PositionItem.Bottom = rightValue
+      wbHTML.style.top = topValue
+      wbHTML.style.bottom = bottomValue
       break
     default:
       break
   }
-  initPositionStyle(wbaseItem)
 }
 
 async function addAutoLayout () {

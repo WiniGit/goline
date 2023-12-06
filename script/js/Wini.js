@@ -3119,12 +3119,10 @@ function upListener (event) {
       if (WBaseDA.listData.length > 0) {
         list_add = WBaseDA.listData
       } else {
-        list_add = selected_list.filter(
-          wb => {
-            wb.Css = wb.value.style.cssText
-            return !wb.value.classList.contains('w-text')
-          }
-        )
+        list_add = selected_list.filter(wb => {
+          wb.Css = wb.value.style.cssText
+          return !wb.value.classList.contains('w-text')
+        })
       }
       // ! add wbase thường
       // action_list[action_index].selected = [
@@ -3151,8 +3149,11 @@ function upListener (event) {
         isInFlex = window
           .getComputedStyle(document.getElementById(select_box_parentID))
           .display.match('flex')
-      for (let wbaseItem of selected_list) {
-        if (!isInFlex) updateConstraints(wbaseItem)
+      if (!isInFlex) {
+        for (let wb of selected_list) {
+          updateConstraints(wb.value)
+          wb.Css = wb.value.cssText
+        }
       }
       WBaseDA.edit(selected_list, enumObj)
       break
