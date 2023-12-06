@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="/css/styles.css" />
+
+    <link rel="stylesheet" href="./left-view-module.css">
+
+    <script src="https://kit.fontawesome.com/bd12e96ffa.js" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="left-view-container row">
+        <!-- searching -->
+        <div class="left-view col ">
+            <div class="tabbar">
+                <div class="search-container row">
+                    <button class="search-icon">
+                        <i class="fa-solid fa-search fa-sm text-label"></i>
+                    </button>
+                    <input class="find-value regular11 text-body" placeholder="Find..." value="" />
+                    <button class="option-search">
+                        <i class="fa-solid fa-sliders text-label"></i>
+                    </button>
+                    <button class="close-search">
+                        <i class="fa-solid fa-close text-label"></i>
+                    </button>
+                </div>
+                <div class="list-tab-container row">
+                    <button class="search-button">
+                        <i class="fa-solid fa-search fa-sm text-label"></i>
+                    </button>
+                    <div class="list-tab row">
+                        <button data-index="1" class="layers-tab semibold11 selected">Layers</button>
+                        <button data-index="2" class="assets-tab semibold11 ">Assets</button>
+                    </div>
+                    <div class="page-selected-container row">
+                        <div class="page-selected text-label row">
+                            <div class="semibold11 show">Pages</div>
+                            <div class="regular11 ">Page/ module name 12 2313</div>
+                        </div>
+                        <button class="action-button">
+                            <i class="fa-solid fa-chevron-down fa-xs text-label"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="tabbar-view">
+                <div class="list-page-container col">
+                    <div class="add-page-container row">
+                        <div class="label semibold11 text-label">Modules</div>
+                        <button class="add-page-button">
+                            <i class="fa-solid fa-plus fa-sm text-label"></i>
+                        </button>
+                    </div>
+                    <div class="list-page">
+                        <button class="page-card row selected">
+                            <div class="selected-icon">
+                                <i class="fa-solid fa-check fa-sm text-label"></i>
+                            </div>
+                            <div class="label regular11 text-label">Modules name 1</div>
+                        </button>
+                        <button class="page-card row">
+                            <div class="selected-icon">
+                                <i class="fa-solid fa-check fa-sm text-label"></i>
+                            </div>
+                            <div class="label regular11 text-label">Modules name 2</div>
+                        </button>
+                        <button class="page-card row">
+                            <div class="selected-icon">
+                                <i class="fa-solid fa-check fa-sm text-label"></i>
+                            </div>
+                            <div class="label regular11 text-label">Modules name 2</div>
+                        </button>
+                        <button class="page-card row">
+                            <div class="selected-icon">
+                                <i class="fa-solid fa-check fa-sm text-label"></i>
+                            </div>
+                            <div class="label regular11 text-label">Modules name 2</div>
+                        </button>
+                        <button class="page-card row">
+                            <div class="selected-icon">
+                                <i class="fa-solid fa-check fa-sm text-label"></i>
+                            </div>
+                            <div class="label regular11 text-label">Modules name 2</div>
+                        </button>
+                        <button class="page-card row">
+                            <div class="selected-icon">
+                                <i class="fa-solid fa-check fa-sm text-label"></i>
+                            </div>
+                            <div class="label regular11 text-label">Modules name 2</div>
+                        </button>
+                    </div>
+                    <div class="resize-pages-line"></div>
+                </div>
+                <div data-index="0" class="search-view col">0</div>
+                <div data-index="1" class="layers-view col selected">
+                    <div class="layers-card row selected">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                    <div class="layers-card row">
+                        <button class="show-children">
+                            <i class="fa-solid fa-caret-right fa-xs text-label"></i>
+                        </button>
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-star fa-xs text-label"></i>
+                        </button>
+                        <input class="regular11 text-body" value="item name" placeholder=null readonly />
+                        <button class="layer-type-image">
+                            <i class="fa-solid fa-lock fa-xs text-label"></i>
+                        </button>
+                    </div>
+                </div>
+                <div data-index="2" class="assets-view col">2</div>
+            </div>
+
+        </div>
+
+        <div class="resize-line"></div>
+    </div>
+
+
+    <script>
+        var tabSelected = 1;
+
+        var resizing = false;
+        var resizingPages = false;
+
+        // resize view
+        $(`body`).on("mousemove", function (ev) {
+            if (resizing) {
+                $(`.left-view-container`).css({ "width": ev.pageX })
+            }
+            else if (resizingPages) {
+                $(`.list-page-container`).css({ "height": ev.pageY - 32 })
+
+                $('.left-view .tabbar-view>*[class*="-view"]').css({ "height": `calc(100% -${$('.list-page-container').width()}px)` });
+            }
+        });
+        $(`body`).on("mouseup", function (ev) {
+            resizing = false;
+            resizingPages = false;
+        });
+        $(`.resize-line`).on("mousedown", function (ev) {
+            resizing = true;
+        });
+        $(`.resize-pages-line`).on("mousedown", function (ev) {
+            resizingPages = true;
+        });
+
+        // chuyển tab && tab view
+        $(`body`).on("click", ".list-tab>*", function (ev) {
+            $(`.list-tab>*`).removeClass("selected");
+            $(this).addClass("selected");
+
+            tabSelected = $(this).data("index");
+
+            changeTab();
+        });
+
+        // search
+        $(`body`).on("click", ".search-button", function (ev) {
+            $(`.left-view`).addClass("searching");
+
+            changeTab(0);
+        });
+        $(`body`).on("click", ".search-container .close-search", function (ev) {
+            $(`.left-view`).removeClass("searching");
+
+            changeTab();
+        });
+
+        // show list pages
+        $(`body`).on(`click`, `.page-selected-container .action-button`, function (ev) {
+            $(this).children("i").toggleClass("fa-chevron-down fa-chevron-up");
+
+            $('.page-selected>*').removeClass("show");
+
+            if ($(this).children("i").hasClass("fa-chevron-down")) {
+                $('.page-selected>*:nth-child(1)').addClass("show");
+                $('.list-page-container').css({ "display": "flex" });
+                $('.left-view .tabbar-view>*[class*="-view"]').css({ "height": `calc(100% -${$('.list-page-container').width()}px)` });
+            } else {
+                $('.page-selected>*:nth-child(2)').addClass("show");
+                $('.list-page-container').css({ "display": "none" });
+                $('.left-view .tabbar-view>*[class*="-view"]').css({ "height": "100%" })
+            }
+        });
+
+        const changeTab = (index) => {
+            $(`.tabbar-view>*`).removeClass("selected");
+            $(`.tabbar-view>*[data-index=${index != undefined ? index : tabSelected}]`).addClass("selected");
+
+            // thêm function cập nhật UI vào đây
+        }
+    </script>
+</body>
+
+</html>
