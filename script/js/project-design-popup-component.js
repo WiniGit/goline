@@ -1,42 +1,42 @@
 // inport popup to screen
 let popup_component =
     '<div id="choose-component-popup" class = "choose-component-popup wini_popup col">' +
-    '   <div data-cateid="' + `${EnumCate.button}` + '" class="component-option row regular1">' +
+    '   <div data-cateid="w-button" class="component-option row regular1">' +
     '       <i class="fa-solid fa-circle"></i>' +
     '       <span class="title">Button</span>' +
     '   </div>' +
-    '   <div data-cateid="' + `${EnumCate.w_switch}` + '" class="component-option row regular1">' +
+    '   <div data-cateid="w-switch" class="component-option row regular1">' +
     '       <i class="fa-solid fa-circle"></i>' +
     '       <span class="title">Switch</span>' +
     '   </div>' +
-    '   <div data-cateid="' + `${EnumCate.checkbox}` + '" class="component-option row regular1">' +
+    '   <div data-cateid="w-checkbox" class="component-option row regular1">' +
     '       <i class="fa-solid fa-circle"></i>' +
     '       <span class="title">Checkbox</span>' +
     '   </div>' +
-    '   <div data-cateid="' + `${EnumCate.radio_button}` + '" class="component-option row regular1">' +
+    '   <div data-cateid="w-button" class="component-option row regular1">' +
     '       <i class="fa-solid fa-circle"></i>' +
     '       <span class="title">Radio button</span>' +
     '   </div>' +
-    '   <div data-cateid="' + `${EnumCate.textformfield}` + '" class="component-option row regular1">' +
+    '   <div data-cateid="w-textformfield" class="component-option row regular1">' +
     '       <i class="fa-solid fa-circle"></i>' +
     '       <span class="title">Textformfield</span>' +
     '   </div>' +
-    '   <div data-cateid="' + `${EnumCate.table}` + '" class="component-option row regular1">' +
+    '   <div data-cateid="w-table" class="component-option row regular1">' +
     '       <i class="fa-solid fa-circle"></i>' +
     '       <span class="title">Table</span>' +
     '   </div>' +
-    '   <div data-cateid="' + `${EnumCate.tree}` + '" class="component-option row regular1">' +
-    '       <i class="fa-solid fa-circle"></i>' +
-    '       <span class="title">Tree</span>' +
-    '   </div>' +
-    '   <div data-cateid="' + `${EnumCate.chart}` + '" class="component-option row regular1">' +
-    '       <i class="fa-solid fa-circle"></i>' +
-    '       <span class="title">Chart</span>' +
-    '   </div>' +
-    '   <div data-cateid="' + `${EnumCate.carousel}` + '" class="component-option row regular1">' +
-    '       <i class="fa-solid fa-circle"></i>' +
-    '       <span class="title">Carousel</span>' +
-    '   </div>' +
+    // '   <div data-cateid="' + `${EnumCate.tree}` + '" class="component-option row regular1">' +
+    // '       <i class="fa-solid fa-circle"></i>' +
+    // '       <span class="title">Tree</span>' +
+    // '   </div>' +
+    // '   <div data-cateid="' + `${EnumCate.chart}` + '" class="component-option row regular1">' +
+    // '       <i class="fa-solid fa-circle"></i>' +
+    // '       <span class="title">Chart</span>' +
+    // '   </div>' +
+    // '   <div data-cateid="' + `${EnumCate.carousel}` + '" class="component-option row regular1">' +
+    // '       <i class="fa-solid fa-circle"></i>' +
+    // '       <span class="title">Carousel</span>' +
+    // '   </div>' +
     '</div>'
 $('body').append(popup_component);
 

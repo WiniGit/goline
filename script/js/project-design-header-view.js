@@ -160,33 +160,27 @@ function createNewSkin () {
     parseInt(popup_cate)
   )
 }
-let list_cate = [
-  EnumCate.color,
-  EnumCate.typography,
-  EnumCate.border,
-  EnumCate.effect
-]
-for (let i = 0; i < list_cate.length; i++) {
+for (let i = 1; i <=4; i++) {
   let demo_skin
-  switch (list_cate[i]) {
-    case EnumCate.color:
+  switch (i) {
+    case 1: // type color
       demo_skin = document.createElement('div')
       demo_skin.className = 'box20'
       demo_skin.style.backgroundColor = '#e5e5e5'
       demo_skin.style.borderRadius = '50%'
       break
-    case EnumCate.typography:
+    case 2: // type typo
       demo_skin = document.createElement('p')
       demo_skin.innerHTML = 'T'
       demo_skin.className = 'semibold4'
       break
-    case EnumCate.border:
+    case 3: // type border
       demo_skin = document.createElement('div')
       demo_skin.className = 'box20'
       demo_skin.style.backgroundColor = '#000000'
       demo_skin.style.borderRadius = '50%'
       break
-    case EnumCate.effect:
+    case 4: // type effect
       demo_skin = document.createElement('img')
       demo_skin.className = 'box20'
       demo_skin.src =
@@ -197,7 +191,7 @@ for (let i = 0; i < list_cate.length; i++) {
   }
   demo_skin.style.order = -1
   demo_skin.style.marginRight = '16px'
-  demo_skin.setAttribute('cate', list_cate[i])
+  demo_skin.setAttribute('cate', i)
   document.getElementById('input_new_skin_name').appendChild(demo_skin)
 }
 // setup create obj tool

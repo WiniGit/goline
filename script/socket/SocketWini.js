@@ -671,14 +671,14 @@ socket.on('server-post', data => {
               .getElementById('dialog_link_component_skin')
               .parentElement.remove()
             ProjectDA.obj.EditListID = null
-            $.get(WBaseDA.skin_url + `?pid=${ProjectDA.obj.ID}`).then(res => {
-              ColorDA.list = res.Data.ColorItems
-              TypoDA.list = res.Data.TextStyleItems
-              EffectDA.list = res.Data.EffectItems
-              BorderDA.list = res.Data.BorderItems
-              PropertyDA.list = res.Data.WPropertyItems
-              CateDA.initCate()
-            })
+            // $.get(WBaseDA.skin_url + `?pid=${ProjectDA.obj.ID}`).then(res => {
+            //   ColorDA.list = res.Data.ColorItems
+            //   TypoDA.list = res.Data.TextStyleItems
+            //   EffectDA.list = res.Data.EffectItems
+            //   BorderDA.list = res.Data.BorderItems
+            //   PropertyDA.list = res.Data.WPropertyItems
+            //   CateDA.initCate()
+            // })
             initUIAssetView(true)
           }
           break

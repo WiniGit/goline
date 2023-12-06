@@ -1989,22 +1989,18 @@ function checkHoverElement (event) {
             wbHTML.getAttribute('isinstance') === 'true' // || event.altKey
           break
         default:
-          let parentPage = $(wbHTML).parents(`.wbaseItem-value`)[0]
-          let listid = wbHTML.getAttribute('listid').split(',')
-          let eParentId = listid.pop()
-          if (
-            target_level === 2 &&
-            parentPage.getAttribute('isinstance') !== 'true' &&
-            EnumCate.show_name.some(
-              ct => ct == parentPage?.getAttribute('cateid')
-            )
-          ) {
+          let parentPage = $(wbHTML).parents(
+            `.wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance="true"])`
+          )[0]
+          if (target_level === 2 && parentPage) {
             is_enable = true
           } else if (event.metaKey || (!isMac && event.ctrlKey)) {
             is_enable = true
           } else if (
             target_level <= currentLevel &&
-            currentListPPage.some(pPage => pPage.id === eParentId)
+            currentListPPage.some(
+              pPage => pPage.id === wbHTML.getAttribute('parentid')
+            )
           ) {
             is_enable = true
           }
@@ -2779,7 +2775,7 @@ function doubleClickEvent (event) {
         selected_list.length == 1 &&
         target_element?.id == selected_list[0].GID
       ) {
-        if (target_element.getAttribute('cateid') == EnumCate.text) {
+        if (target_element.classList.contains('w-text')) {
           target_element.querySelector('span').contentEditable = true
           target_element.querySelector('span').focus()
         } else if (event.target.localName == 'path') {
@@ -3121,10 +3117,8 @@ function upListener (event) {
           Math.min(minx, event.pageX),
           Math.min(miny, event.pageY)
         )
-        let parentHTML = [...event.composedPath()].find(
-          eHTML =>
-            eHTML.classList?.contains('wbaseItem-value') &&
-            EnumCate.parent_cate.some(cate => cate == $(eHTML).attr('cateid'))
+        let parentHTML = event.target.closest(
+          '.wbaseItem-value:is(.w-container,.w-textformfield,.w-button,.w-table)'
         )
         createWbaseHTML({
           parentID: parentHTML?.id ?? wbase_parentID,

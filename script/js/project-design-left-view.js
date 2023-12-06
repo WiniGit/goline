@@ -205,7 +205,9 @@ function showSearchResult () {
           updateHoverWbase()
           PageDA.saveSettingsPage()
           if (wb.CateID === EnumCate.textfield) {
-            handleWbSelectedList([wbase_list.find(ele => ele.GID === wb.ParentID)])
+            handleWbSelectedList([
+              wbase_list.find(ele => ele.GID === wb.ParentID)
+            ])
           } else {
             handleWbSelectedList([wb])
           }
@@ -456,22 +458,23 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
   layerContainer.className = 'col'
   let wbase_tile = document.createElement('div')
   wbase_tile.id = `wbaseID:${wbaseItem.GID}`
-  wbase_tile.className = 'layer_wbase_tile'
+  wbase_tile.className =
+    'layer_wbase_tile ' + wbaseItem.ListClassName.split(' ')[1]
   if (wbaseItem.IsWini) {
     wbase_tile.setAttribute('iswini', wbaseItem.IsWini)
   } else if (wbaseItem.IsInstance) {
     wbase_tile.setAttribute('isinstance', wbaseItem.IsInstance)
   }
+  let isShowListChid = isShowChildren
+  wbase_tile.innerHTML = `<i class="fa-solid fa-caret-${
+    isShowListChid ? 'down' : 'right'
+  } fa-xs prefix-btn" style="margin-left: ${(wbaseItem.Level - 1) * 16}px"></i>
+  <img/><input id="inputName:${wbaseItem.GID}" readonly value="${
+    wbaseItem.Name
+  }"/><i class="fa-solid fa-lock fa-xs is-lock"></i>`
   layerContainer.appendChild(wbase_tile)
 
-  let isShowListChid = isShowChildren
-  let icon_caret_right = document.createElement('i')
-  icon_caret_right.id = `pefixAction:${wbaseItem.GID}`
-  icon_caret_right.className = `fa-solid fa-caret-${
-    isShowListChid ? 'down' : 'right'
-  } fa-xs prefix-btn`
-  icon_caret_right.style.marginLeft = `${(wbaseItem.Level - 1) * 16}px`
-  icon_caret_right.addEventListener('click', function () {
+  $(wbase_tile).on('click', '.prefix-btn', function () {
     isShowListChid = !this.className.includes('caret-down')
     if (isShowListChid) {
       this.className = this.className.replace('caret-right', 'caret-down')
@@ -479,10 +482,8 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
       this.className = this.className.replace('caret-down', 'caret-right')
     }
   })
-  wbase_tile.appendChild(icon_caret_right)
-  let icon_wbase = document.createElement('img')
-  wbase_tile.appendChild(icon_wbase)
-  icon_wbase.ondblclick = function (e) {
+
+  $(wbase_tile).on('dblclick', 'img', function (e) {
     e.stopPropagation()
     let objCenter = document.getElementById(wbaseItem.GID)
     let centerRect = objCenter.getBoundingClientRect()
@@ -500,30 +501,26 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
     divSection.style.transition = null
     updateHoverWbase()
     PageDA.saveSettingsPage()
-    if (wbaseItem.CateID !== EnumCate.textfield) handleWbSelectedList([wbaseItem])
-  }
-  let inputWBaseName = document.createElement('input')
-  inputWBaseName.id = `inputName:${wbaseItem.GID}`
-  wbase_tile.appendChild(inputWBaseName)
-  inputWBaseName.readOnly = true
-  inputWBaseName.value = wbaseItem.Name
-  //
-  let icon_lock = document.createElement('i')
-  icon_lock.className = 'fa-solid fa-lock fa-xs is-lock'
-  wbase_tile.appendChild(icon_lock)
+    if (!wbase_tile.classList.contains('w-textfield'))
+      handleWbSelectedList([wbaseItem])
+  })
   //
   let wbaseChildren = []
-  if (
-    [EnumCate.variant, ...EnumCate.parent_cate].some(
-      cate => wbaseItem.CateID === cate
-    )
-  ) {
+  const parentCls = [
+    'w-conatiner',
+    'w-form',
+    'w-textformfield',
+    'w-button',
+    'w-table',
+    'w-variant'
+  ]
+  if (parentCls.some(e => wbase_tile.classList.contains(e))) {
     let childrenLayer = document.createElement('div')
     layerContainer.appendChild(childrenLayer)
     childrenLayer.id = `parentID:${wbaseItem.GID}`
     childrenLayer.className = 'col'
     wbaseChildren = wbase_list
-      .filter(e => e.ParentID == wbaseItem.GID)
+      .filter(e => e.ParentID === wbaseItem.GID)
       .reverse()
     let fragment = document.createDocumentFragment()
     fragment.replaceChildren(
@@ -532,38 +529,33 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
     childrenLayer.replaceChildren(fragment)
   }
   wbase_tile.onmouseover = function () {
-    if (!sortLayer && !left_view.resizing) {
-      updateHoverWbase(wbaseItem)
-    }
+    if (!sortLayer && !left_view.resizing) updateHoverWbase(wbaseItem)
   }
   wbase_tile.onmouseout = function () {
-    if (!sortLayer && !left_view.resizing) {
-      updateHoverWbase()
-    }
+    if (!sortLayer && !left_view.resizing) updateHoverWbase()
   }
-  if (wbaseItem.CateID !== EnumCate.textfield) {
+  if (!wbase_tile.classList.contains('w-textfield')) {
     if (wbaseItem.IsShow) {
-      icon_lock.className = 'fa-solid fa-lock-open fa-xs is-lock'
+      wbase_tile.querySelector('.is-lock').className =
+        'fa-solid fa-lock-open fa-xs is-lock'
     } else {
       layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
-        if (lockBtn !== icon_lock) {
+        if (lockBtn !== wbase_tile.querySelector('.is-lock')) {
           lockBtn.className = 'fa-solid fa-lock fa-xs is-lock'
           lockBtn.style.pointerEvents = 'none'
         }
       })
     }
     wbase_tile.onclick = function () {
-      if (!sortLayer && !left_view.resizing) {
-        handleWbSelectedList([wbaseItem])
-      }
+      if (!sortLayer && !left_view.resizing) handleWbSelectedList([wbaseItem])
     }
-    icon_lock.onclick = function () {
+    $(wbase_tile).on('click', '.is-lock', function () {
       if (!sortLayer && !left_view.resizing) {
         let listUpdate = []
         wbaseItem.IsShow = !wbaseItem.IsShow
         if (wbaseItem.IsShow) {
           wbaseItem.value.removeAttribute('lock')
-          icon_lock.className = 'fa-solid fa-lock-open fa-xs is-lock'
+          this.className = 'fa-solid fa-lock-open fa-xs is-lock'
           layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
             if (
               lockBtn.parentElement.getAttribute('cateid') != EnumCate.textfield
@@ -584,9 +576,9 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
           })
         } else {
           wbaseItem.value.setAttribute('lock', 'true')
-          icon_lock.className = 'fa-solid fa-lock fa-xs is-lock'
+          this.className = 'fa-solid fa-lock fa-xs is-lock'
           layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
-            if (lockBtn !== icon_lock) {
+            if (lockBtn !== this) {
               lockBtn.className = 'fa-solid fa-lock fa-xs is-lock'
               lockBtn.style.pointerEvents = 'none'
             }
@@ -595,9 +587,9 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
         listUpdate.push(wbaseItem)
         WBaseDA.edit(listUpdate, EnumObj.wBase)
       }
-    }
+    })
   }
-  inputWBaseName.ondblclick = function () {
+  $(wbase_tile).on('dblclick', 'input', function () {
     if (PageDA.enableEdit) {
       this.style.cursor = 'text'
       this.style.outline = `1.5px solid ${
@@ -613,8 +605,8 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
       this.setSelectionRange(0, this.value.length)
       this.focus()
     } else return
-  }
-  inputWBaseName.onblur = function () {
+  })
+  $(wbase_tile).on('blur', 'input', function () {
     if (!sortLayer && !this.readOnly) {
       this.style.cursor = 'auto'
       this.style.outline = 'none'
@@ -625,7 +617,7 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
         WBaseDA.edit([wbaseItem], EnumObj.wBase)
       }
     }
-  }
+  })
 
   return layerContainer
 }

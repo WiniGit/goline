@@ -468,7 +468,6 @@ class WBaseDefault {
     ParentID: wbase_parentID,
     ListClassName: 'wbaseItem-value w-container w-stack',
     IsWini: false,
-    PageID: current_page.ID,
     ListChildID: [],
     Css: 'background-color: #FFFFFFFF;',
     BasePropertyItems: [],
@@ -481,7 +480,6 @@ class WBaseDefault {
   static variant = {
     ListID: wbase_parentID,
     ParentID: wbase_parentID,
-    CateID: EnumCate.variant,
     IsWini: true,
     ListChildID: [],
     ListClassName: 'wbaseItem-value w-variant w-stack',
@@ -605,9 +603,7 @@ class WBaseDefault {
     Name: 'Table',
     ParentID: wbase_parentID,
     Level: 1,
-    PageID: current_page,
     ListID: wbase_parentID,
-    CateID: EnumCate.table,
     ListChildID: [],
     IsWini: false,
     CountChild: 0,
@@ -693,78 +689,11 @@ class WBaseDefault {
     ]
   }
 
-  static chart = {
-    Name: 'Chart',
-    ParentID: wbase_parentID,
-    Level: 1,
-    PageID: current_page,
-    ListID: wbase_parentID,
-    CateID: EnumCate.chart,
-    ListChildID: [],
-    IsWini: false,
-    CountChild: 0,
-    StyleItem: {
-      PositionItem: {
-        Right: 0,
-        Bottom: 0
-      },
-      FrameItem: {
-        Width: 400,
-        Height: 200,
-        IsClip: true,
-        TopLeft: 0,
-        TopRight: 0,
-        BottomLeft: 0,
-        BottomRight: 0
-      },
-      DecorationItem: {},
-      TextStyleItem: {
-        FontSize: 14,
-        FontWeight: '500',
-        CateID: EnumCate.typography,
-        IsStyle: false,
-        ColorValue: '394960FF',
-        FontFamily: 'Roboto'
-      }
-    },
-    AttributesItem: {
-      Name: 'Chart',
-      NameField: 'Chart',
-      Content: ''
-    },
-    JsonItem: {
-      Type: ChartType.bar,
-      HoverOffset: 4,
-      MaxValue: 5,
-      StepSize: 1
-    },
-    JsonEventItem: [],
-    ChartData: {
-      labels: ['A', 'B', 'C'],
-      datasets: [
-        {
-          label: 'Dataset 1',
-          data: [1, 2, 3],
-          backgroundColor: ['#36a2ebff', '#ff6384ff', '#ffcd56ff'],
-          borderColor: [],
-          borderWidth: []
-        },
-        {
-          label: 'Dataset 2',
-          data: [2, 3, 4],
-          backgroundColor: ['#36a2ebff', '#ff6384ff', '#ffcd56ff'],
-          borderColor: [],
-          borderWidth: []
-        }
-      ]
-    }
-  }
 }
 
 class WBaseDA {
   static wbase_url = domainApi + '/WBase/ListItem'
   static base_item_url = domainApi + '/WBase/listBaseitem'
-  static skin_url = domainApi + '/Style/ListCacheItem'
   static enumEvent
   static listData = []
   static isCtrlZ = false
