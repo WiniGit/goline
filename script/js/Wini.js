@@ -1152,30 +1152,8 @@ function moveListener (event) {
       target_view = 'right_view'
     } else {
       target_view = event.target.closest(
-        `.wini_popup, div[id="popup_img_document"], div[id="canvas_view"], div[id="left_view"], div[id="right_view"]`
-      )
-      if (target_view.classList.contains('wini_popup')) target_view = null
-      else target_view = target_view.id
-      // for (let thisElement of event.composedPath()) {
-      //   if (
-      //     typeof thisElement.className === 'string' &&
-      //     thisElement.className?.includes('wini_popup')
-      //   ) {
-      //     break
-      //   } else if (thisElement.id == '') {
-      //     target_view = thisElement.id
-      //     break
-      //   } else if (thisElement.id == '') {
-      //     target_view = thisElement.id
-      //     break
-      //   } else if (thisElement.id == '') {
-      //     target_view = thisElement.id
-      //     break
-      //   } else if (thisElement.id == '') {
-      //     target_view = thisElement.id
-      //     break
-      //   }
-      // }
+        `div[id="popup_img_document"], div[id="canvas_view"], div[id="left_view"], div[id="right_view"]`
+      )?.id
     }
   }
   switch (target_view) {
@@ -1239,7 +1217,7 @@ function moveListener (event) {
                 isCreate = true
               }
             }
-            if (!isCreate && selected_list.every(wb => wb.StyleItem)) {
+            if (!isCreate) {
               if (ToolState.resize_type.some(tool => tool_state == tool)) {
                 if (WBaseDA.enumEvent == null) {
                   WBaseDA.enumEvent = EnumEvent.edit
@@ -1566,20 +1544,19 @@ function moveListener (event) {
                         wb.tmpH = wb.value.offsetHeight
                         wb.tmpW = wb.value.offsetWidth
                       }
-                      if (scaleComponent) {
-                        scaleComponent =
-                          wb.value.offsetHeight / wb.value.offsetWidth
+                      if (scaleWb) {
+                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
                       }
-                      if (scaleComponent) {
+                      if (scaleWb) {
                         if (Math.abs(xp) > Math.abs(yp)) {
                           wb.value.style.width = `${wb.tmpW + xp / scale}px`
                           wb.value.style.height = `${
-                            (wb.tmpW + xp / scale) * scaleComponent
+                            (wb.tmpW + xp / scale) * scaleWb
                           }px`
                         } else {
                           wb.value.style.height = `${wb.tmpH + yp / scale}px`
                           wb.value.style.width = `${
-                            (wb.tmpH + yp / scale) / scaleComponent
+                            (wb.tmpH + yp / scale) / scaleWb
                           }px`
                         }
                       } else {
@@ -1984,7 +1961,9 @@ function checkHoverElement (event) {
       switch (target_level) {
         case 1:
           is_enable =
-            EnumCate.show_name.every(ct => ct !== target_cate) ||
+            ['w-container', 'w-variant'].some(e =>
+              wbHTML.classList.contains(e)
+            ) ||
             wbHTML.children.length === 0 ||
             wbHTML.getAttribute('isinstance') === 'true' // || event.altKey
           break
@@ -3145,38 +3124,22 @@ function upListener (event) {
         )
       }
       // ! add wbase thường
-      if (!event.altKey) {
-        for (let addItem of list_add) {
-          let eHTML = document.getElementById(addItem.GID)
-          if (
-            addItem.StyleItem.FrameItem?.Width != undefined &&
-            addItem.StyleItem.FrameItem.Width > 0
-          ) {
-            addItem.StyleItem.FrameItem.Width =
-              eHTML?.offsetWidth ?? addItem.StyleItem.FrameItem.Width
-          }
-          if (
-            addItem.StyleItem.FrameItem?.Height != undefined &&
-            addItem.StyleItem.FrameItem.Height > 0
-          ) {
-            addItem.StyleItem.FrameItem.Height =
-              eHTML?.offsetHeight ?? addItem.StyleItem.FrameItem.Height
-          }
-        }
-      }
-      action_list[action_index].selected = [
-        ...list_add
-          .filter(e => e.ParentID === selected_list[0].ParentID)
-          .map(wbasItem => JSON.parse(JSON.stringify(wbasItem)))
-      ]
+      // action_list[action_index].selected = [
+      //   ...list_add
+      //     .filter(e => e.ParentID === selected_list[0].ParentID)
+      //     .map(wbasItem => JSON.parse(JSON.stringify(wbasItem)))
+      // ]
       if (list_add.length > 0) {
-        let isUpdateTable = list_add.some(e => e.CateID === EnumCate.table)
-        WBaseDA.add(
-          list_add,
-          undefined,
-          isUpdateTable ? EnumEvent.edit : EnumEvent.add,
-          isUpdateTable ? EnumObj.wBaseAttribute : EnumObj.wBase
-        )
+        // let isUpdateTable = list_add.some(e => e.CateID === EnumCate.table)
+        // WBaseDA.add(
+        //   list_add,
+        //   undefined,
+        //   isUpdateTable ? EnumEvent.edit : EnumEvent.add,
+        //   isUpdateTable ? EnumObj.wBaseAttribute : EnumObj.wBase
+        // )
+        WBaseDA.add({
+          listWb: list_add
+        })
       }
       break
     case EnumEvent.edit:

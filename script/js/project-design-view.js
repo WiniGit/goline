@@ -246,7 +246,7 @@ function createNewWbase ({ wb, relativeWbs = [], listId, sort }) {
         new_wbase_item.JsonEventItem
       )
   }
-  if (new_wbase_item.ListChildID.length > 0) {
+  if (new_wbase_item.ListChildID?.length > 0) {
     let list_child = []
     list_child = list_contain_child.filter(e =>
       wb.ListChildID.some(id => e.GID == id)
@@ -379,13 +379,13 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
         ...pWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${new_obj.Level}"]`
         )
-      ].sort(
-        (a, b) =>
-          parseFloat(b.style.zIndex ?? 0) - parseFloat(a.style.zIndex ?? 0)
-      )[0]
+      ]
+        .map(e => e.style.zIndex ?? 0)
+        .sort((a, b) => parseFloat(b) - parseFloat(a))[0]
       new_obj.value.style.zIndex = new_obj.Sort
       new_obj.value.setAttribute('constx', Constraints.left)
       new_obj.value.setAttribute('consty', Constraints.top)
+      pWbHTML.appendChild(new_obj.value)
     } else if (pWbHTML.classList.contains('w-table')) {
       var pWb = wbase_list.find(wb => wb.GID === parentid)
       let availableCell = findCell(pWbHTML, {
