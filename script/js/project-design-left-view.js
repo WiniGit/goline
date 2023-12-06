@@ -366,7 +366,8 @@ function leftTabChange (tabName) {
     )
     document.getElementById('div_list_page').style.display = 'none'
     select_component = null
-    initUIAssetView(true)
+    // initUIAssetView(true)
+    initUIAssetView()
   }
 }
 

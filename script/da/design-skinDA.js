@@ -1,3 +1,12 @@
+class EnumCate {
+  static color = 2
+  static style = 3
+  static typography = 17
+  static border = 361
+  static effect = 360
+  static style_class = 69
+}
+
 class StyleDA {
   static cssStyleSheets = [];
   static docStyleSheets = [];
