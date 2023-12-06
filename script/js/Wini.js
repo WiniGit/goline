@@ -3120,7 +3120,10 @@ function upListener (event) {
         list_add = WBaseDA.listData
       } else {
         list_add = selected_list.filter(
-          e => !e.value.classList.contains('w-text')
+          wb => {
+            wb.Css = wb.value.style.cssText
+            return !wb.value.classList.contains('w-text')
+          }
         )
       }
       // ! add wbase thường
@@ -3143,39 +3146,12 @@ function upListener (event) {
       }
       break
     case EnumEvent.edit:
-      let enumObj = EnumObj.framePosition
       let isInFlex = false
       if (select_box_parentID != wbase_parentID)
         isInFlex = window
           .getComputedStyle(document.getElementById(select_box_parentID))
           .display.match('flex')
       for (let wbaseItem of selected_list) {
-        let eHTML = wbaseItem.value
-        if (wbaseItem.CateID == EnumCate.text) {
-          enumObj = EnumObj.typoStyleFramePosition
-        }
-        if (wbaseItem.StyleItem.FrameItem.Width != undefined) {
-          wbaseItem.StyleItem.FrameItem.Width =
-            wbaseItem.StyleItem.FrameItem.Width < 0
-              ? -eHTML.offsetWidth
-              : eHTML.offsetWidth
-        }
-        if (wbaseItem.StyleItem.FrameItem.Height != undefined) {
-          if (wbaseItem.CateID === EnumCate.tree) {
-            wbaseItem.StyleItem.FrameItem.Height =
-              eHTML.offsetHeight /
-              ([...wbaseItem.value.querySelectorAll('.w-tree')].filter(
-                wtree => wtree.offsetHeight > 0
-              ).length +
-                1)
-          } else {
-            wbaseItem.StyleItem.FrameItem.Height =
-              wbaseItem.StyleItem.FrameItem.Height < 0
-                ? -eHTML.offsetHeight
-                : eHTML.offsetHeight
-          }
-        }
-        handleStyleSize(wbaseItem)
         if (!isInFlex) updateConstraints(wbaseItem)
       }
       WBaseDA.edit(selected_list, enumObj)

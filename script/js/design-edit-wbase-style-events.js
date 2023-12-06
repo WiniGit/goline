@@ -4549,95 +4549,82 @@ function updatePosition (position_item, wbaseItem) {
   }
 }
 
-function updateConstraints (wbaseItem) {
-  let constX = Constraints.left
-  let constY = Constraints.top
-  if (wbaseItem.ParentID != wbase_parentID) {
-    wbaseItem.StyleItem.PositionItem.ConstraintsX ??=
-      wbaseItem.value.getAttribute('constX')
-    wbaseItem.StyleItem.PositionItem.ConstraintsY ??=
-      wbaseItem.value.getAttribute('constY')
-    constX = wbaseItem.StyleItem.PositionItem.ConstraintsX
-    constY = wbaseItem.StyleItem.PositionItem.ConstraintsY
-  }
-  let wbaseHTML = wbaseItem.value
-  switch (constX) {
+function updateConstraints (wbHTML) {
+  switch (wbHTML.getAttribute('constx')) {
     case Constraints.left:
       var leftValue = `${
         Math.round(
-          (wbaseHTML.getBoundingClientRect().x -
-            wbaseHTML.parentElement.getBoundingClientRect().x) /
+          (wbHTML.getBoundingClientRect().x -
+            wbHTML.parentElement.getBoundingClientRect().x) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderLeftWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderLeftWidth.replace('px','')
         )
       }px`
-      wbaseItem.StyleItem.PositionItem.Left = leftValue
+      wbHTML.style.left = leftValue
       break
     case Constraints.right:
       var rightValue = `${
         Math.round(
-          (wbaseHTML.parentElement.getBoundingClientRect().right -
-            wbaseHTML.getBoundingClientRect().right) /
+          (wbHTML.parentElement.getBoundingClientRect().right -
+            wbHTML.getBoundingClientRect().right) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderRightWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderRightWidth.replace('px','')
         )
       }px`
-      wbaseItem.StyleItem.PositionItem.Right = rightValue
+      wbHTML.style.right = rightValue
       break
     case Constraints.left_right:
       var leftValue = `${
         Math.round(
-          (wbaseHTML.getBoundingClientRect().x -
-            wbaseHTML.parentElement.getBoundingClientRect().x) /
+          (wbHTML.getBoundingClientRect().x -
+            wbHTML.parentElement.getBoundingClientRect().x) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderLeftWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderLeftWidth.replace('px','')
         )
       }px`
-      wbaseItem.StyleItem.PositionItem.Left = leftValue
       var rightValue = `${
         Math.round(
-          (wbaseHTML.parentElement.getBoundingClientRect().right -
-            wbaseHTML.getBoundingClientRect().right) /
+          (wbHTML.parentElement.getBoundingClientRect().right -
+            wbHTML.getBoundingClientRect().right) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderRightWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderRightWidth.replace('px','')
         )
       }px`
-      wbaseItem.StyleItem.PositionItem.Right = rightValue
+      wbHTML.style.left = leftValue
+      wbHTML.style.right = rightValue
       break
     case Constraints.center:
       var leftValue =
         Math.round(
-          (wbaseHTML.getBoundingClientRect().x -
-            wbaseHTML.parentElement.getBoundingClientRect().x) /
+          (wbHTML.getBoundingClientRect().x -
+            wbHTML.parentElement.getBoundingClientRect().x) /
             scale
         ) -
         parseFloat(
           window
-            .getComputedStyle(wbaseHTML.parentElement)
-            .borderLeftWidth?.replace('px') ?? '0'
+            .getComputedStyle(wbHTML.parentElement)
+            .borderLeftWidth.replace('px','')
         )
       var centerValue = `${
-        leftValue +
-        (wbaseHTML.offsetWidth - wbaseHTML.parentElement.offsetWidth) / 2
+        leftValue + (wbHTML.offsetWidth - wbHTML.parentElement.offsetWidth) / 2
       }px`
-      wbaseItem.StyleItem.PositionItem.Left = `${leftValue}px`
-      wbaseItem.StyleItem.PositionItem.Right = centerValue
+      wbHTML.style.left = `calc(50% + ${centerValue})`
       break
     case Constraints.scale:
       var leftValue = `${(
@@ -8112,7 +8099,7 @@ function createForm () {
   if (selected_list.length > 1) {
     let list_update = [...selected_list]
     let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.container))
-    new_wbase_item = createNewWbase({wb: new_wbase_item}).pop()
+    new_wbase_item = createNewWbase({ wb: new_wbase_item }).pop()
     new_wbase_item.Name = 'Form'
     new_wbase_item.AttributesItem.Name = 'Form'
     new_wbase_item.CateID = EnumCate.form
