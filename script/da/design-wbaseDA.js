@@ -694,6 +694,7 @@ class WBaseDefault {
 class WBaseDA {
   static wbase_url = domainApi + '/WBase/ListItem'
   static base_item_url = domainApi + '/WBase/listBaseitem'
+  static attribute_url = domainApi + '/Attribute/ListItemByPid'
   static enumEvent
   static listData = []
   static isCtrlZ = false
