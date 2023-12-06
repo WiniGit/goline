@@ -790,152 +790,152 @@ socket.on('server-post', data => {
 socket.on('server-main', async data => {
   console.log('server-main')
   console.log(data)
-  if (
-    !document.getElementById('body').querySelector('.loading-view') &&
-    data.pageid === PageDA.obj.ID
-  ) {
-    let copyList = []
-    let initskin = false
-    let thisAction
-    if (
-      data.token === UserService.getToken() ||
-      data.token === UserService.getRefreshToken()
-    ) {
-      if (data.enumEvent === EnumEvent.edit) return
-      thisAction = action_list[data.index]
-      if (thisAction?.tmpHTML) {
-        wbase_list = wbase_list.filter(e => {
-          let check = thisAction.tmpHTML.every(eHTML => eHTML.id !== e.GID)
-          if (!check) {
-            copyList.push(e)
-            if (e.ProjectID !== data.pid) initskin = true
-          }
-          return check
-        })
-      }
-    }
-    let importColor = []
-    let importTypo = []
-    let importBorder = []
-    let importEffect = []
-    let listData = initskin
-      ? data.data.filter(e => {
-          if (e.GID !== wbase_parentID) {
-            if (e.StyleItem?.DecorationItem?.ColorID)
-              importColor.push(e.StyleItem.DecorationItem.ColorID)
-            if (e.StyleItem?.DecorationItem?.BorderID)
-              importBorder.push(e.StyleItem.DecorationItem.BorderID)
-            if (e.StyleItem?.DecorationItem?.EffectID)
-              importEffect.push(e.StyleItem.DecorationItem.EffectID)
-            if (e.StyleItem?.TextStyleID)
-              importTypo.push(e.StyleItem.TextStyleID)
-            return true
-          }
-          return false
-        })
-      : data.data.filter(e => e.GID !== wbase_parentID)
-    listData = initDOM(listData)
-    arrange(listData)
-    if (data.enumEvent === EnumEvent.delete) {
-      WbaseIO.delete(listData)
-    } else {
-      if (initskin) {
-        ColorDA.list.push(
-          ...ColorDA.listAssets.filter(skin =>
-            importColor.some(
-              id =>
-                skin.GID === id &&
-                ColorDA.list.every(localSkin => localSkin.GID !== id)
-            )
-          )
-        )
-        TypoDA.list.push(
-          ...TypoDA.listAssets.filter(skin =>
-            importTypo.some(
-              id =>
-                skin.GID === id &&
-                TypoDA.list.every(localSkin => localSkin.GID !== id)
-            )
-          )
-        )
-        BorderDA.list.push(
-          ...BorderDA.listAssets.filter(skin =>
-            importBorder.some(
-              id =>
-                skin.GID === id &&
-                BorderDA.list.every(localSkin => localSkin.GID !== id)
-            )
-          )
-        )
-        EffectDA.list.push(
-          ...EffectDA.listAssets.filter(skin =>
-            importEffect.some(
-              id =>
-                skin.GID === id &&
-                EffectDA.list.every(localSkin => localSkin.GID !== id)
-            )
-          )
-        )
-        CateDA.initCate()
-      }
-      await WbaseIO.addOrUpdate(listData, data.enumEvent)
-      if (thisAction?.tmpHTML) {
-        thisAction.tmpHTML.forEach(e => e.remove())
-        thisAction.tmpHTML = null
-      }
-      if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
-        replaceAllLyerItemHTML()
-        if (action_index === data.index) {
-          clearActionListFrom(action_index - 1)
-          handleWbSelectedList(
-            listData.filter(e =>
-              copyList.some(copyE => copyE.Level === e.Level)
-            )
-          )
-          action_list[action_index].enumEvent = EnumEvent.add
-        } else {
-          let oldData = []
-          if (!data.parentid) {
-            oldData.push({
-              GID: wbase_parentID,
-              ListChildID: wbase_list
-                .filter(e => e.ParentID === wbase_parentID)
-                .map(e => e.GID),
-              Level: 0
-            })
-          }
-          action_list[data.index] = {
-            oldData: oldData,
-            selected: listData
-              .filter(e => copyList.some(copyE => copyE.Level === e.Level))
-              .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem))),
-            enumObj: EnumObj.wBase,
-            enumEvent: EnumEvent.add
-          }
-          oldData.push(
-            ...wbase_list
-              .filter(
-                wbaseItem =>
-                  wbaseItem.GID === data.parentid ||
-                  action_list[data.index].selected.some(selectItem =>
-                    wbaseItem.ListID.includes(selectItem.GID)
-                  )
-              )
-              .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem)))
-          )
-        }
-      }
-    }
-    // else {
-    //   if (data.enumEvent === EnumEvent.delete) {
-    //     WbaseIO.delete(listData);
-    //   } else {
-    //     await WbaseIO.addOrUpdate(listData, data.enumEvent);
-    //   }
-    //   replaceAllLyerItemHTML();
-    //   wdraw();
-    // }
-  }
+  // if (
+  //   !document.getElementById('body').querySelector('.loading-view') &&
+  //   data.pageid === PageDA.obj.ID
+  // ) {
+  //   let copyList = []
+  //   let initskin = false
+  //   let thisAction
+  //   if (
+  //     data.token === UserService.getToken() ||
+  //     data.token === UserService.getRefreshToken()
+  //   ) {
+  //     if (data.enumEvent === EnumEvent.edit) return
+  //     thisAction = action_list[data.index]
+  //     if (thisAction?.tmpHTML) {
+  //       wbase_list = wbase_list.filter(e => {
+  //         let check = thisAction.tmpHTML.every(eHTML => eHTML.id !== e.GID)
+  //         if (!check) {
+  //           copyList.push(e)
+  //           if (e.ProjectID !== data.pid) initskin = true
+  //         }
+  //         return check
+  //       })
+  //     }
+  //   }
+  //   let importColor = []
+  //   let importTypo = []
+  //   let importBorder = []
+  //   let importEffect = []
+  //   let listData = initskin
+  //     ? data.data.filter(e => {
+  //         if (e.GID !== wbase_parentID) {
+  //           if (e.StyleItem?.DecorationItem?.ColorID)
+  //             importColor.push(e.StyleItem.DecorationItem.ColorID)
+  //           if (e.StyleItem?.DecorationItem?.BorderID)
+  //             importBorder.push(e.StyleItem.DecorationItem.BorderID)
+  //           if (e.StyleItem?.DecorationItem?.EffectID)
+  //             importEffect.push(e.StyleItem.DecorationItem.EffectID)
+  //           if (e.StyleItem?.TextStyleID)
+  //             importTypo.push(e.StyleItem.TextStyleID)
+  //           return true
+  //         }
+  //         return false
+  //       })
+  //     : data.data.filter(e => e.GID !== wbase_parentID)
+  //   listData = initDOM(listData)
+  //   arrange(listData)
+  //   if (data.enumEvent === EnumEvent.delete) {
+  //     WbaseIO.delete(listData)
+  //   } else {
+  //     if (initskin) {
+  //       ColorDA.list.push(
+  //         ...ColorDA.listAssets.filter(skin =>
+  //           importColor.some(
+  //             id =>
+  //               skin.GID === id &&
+  //               ColorDA.list.every(localSkin => localSkin.GID !== id)
+  //           )
+  //         )
+  //       )
+  //       TypoDA.list.push(
+  //         ...TypoDA.listAssets.filter(skin =>
+  //           importTypo.some(
+  //             id =>
+  //               skin.GID === id &&
+  //               TypoDA.list.every(localSkin => localSkin.GID !== id)
+  //           )
+  //         )
+  //       )
+  //       BorderDA.list.push(
+  //         ...BorderDA.listAssets.filter(skin =>
+  //           importBorder.some(
+  //             id =>
+  //               skin.GID === id &&
+  //               BorderDA.list.every(localSkin => localSkin.GID !== id)
+  //           )
+  //         )
+  //       )
+  //       EffectDA.list.push(
+  //         ...EffectDA.listAssets.filter(skin =>
+  //           importEffect.some(
+  //             id =>
+  //               skin.GID === id &&
+  //               EffectDA.list.every(localSkin => localSkin.GID !== id)
+  //           )
+  //         )
+  //       )
+  //       CateDA.initCate()
+  //     }
+  //     await WbaseIO.addOrUpdate(listData, data.enumEvent)
+  //     if (thisAction?.tmpHTML) {
+  //       thisAction.tmpHTML.forEach(e => e.remove())
+  //       thisAction.tmpHTML = null
+  //     }
+  //     if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
+  //       replaceAllLyerItemHTML()
+  //       if (action_index === data.index) {
+  //         clearActionListFrom(action_index - 1)
+  //         handleWbSelectedList(
+  //           listData.filter(e =>
+  //             copyList.some(copyE => copyE.Level === e.Level)
+  //           )
+  //         )
+  //         action_list[action_index].enumEvent = EnumEvent.add
+  //       } else {
+  //         let oldData = []
+  //         if (!data.parentid) {
+  //           oldData.push({
+  //             GID: wbase_parentID,
+  //             ListChildID: wbase_list
+  //               .filter(e => e.ParentID === wbase_parentID)
+  //               .map(e => e.GID),
+  //             Level: 0
+  //           })
+  //         }
+  //         action_list[data.index] = {
+  //           oldData: oldData,
+  //           selected: listData
+  //             .filter(e => copyList.some(copyE => copyE.Level === e.Level))
+  //             .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem))),
+  //           enumObj: EnumObj.wBase,
+  //           enumEvent: EnumEvent.add
+  //         }
+  //         oldData.push(
+  //           ...wbase_list
+  //             .filter(
+  //               wbaseItem =>
+  //                 wbaseItem.GID === data.parentid ||
+  //                 action_list[data.index].selected.some(selectItem =>
+  //                   wbaseItem.ListID.includes(selectItem.GID)
+  //                 )
+  //             )
+  //             .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem)))
+  //         )
+  //       }
+  //     }
+  //   }
+  //   // else {
+  //   //   if (data.enumEvent === EnumEvent.delete) {
+  //   //     WbaseIO.delete(listData);
+  //   //   } else {
+  //   //     await WbaseIO.addOrUpdate(listData, data.enumEvent);
+  //   //   }
+  //   //   replaceAllLyerItemHTML();
+  //   //   wdraw();
+  //   // }
+  // }
 })
 socket.on('server-mouse', data => {
   if (data.data.ID !== UserService.getUser().ID) {
@@ -979,75 +979,74 @@ class WiniIO {
         let dtItem = JSON.parse(JSON.stringify(e))
         delete dtItem.ListID
         delete dtItem.Level
+        delete dtItem.tmpW
+        delete dtItem.tmpH
+        delete dtItem.tmpX
+        delete dtItem.tmpY
         return dtItem
       })
     ]
-    if (obj.enumEvent !== EnumEvent.add)
-      obj.data = obj.data.filter(e => e.CateID !== EnumCate.textfield)
-    if (
-      obj.pageid === PageDA.obj.ID &&
-      action_index >= 0 &&
-      action_index === action_list.length - 1
-    ) {
-      action_list[action_index].enumObj = obj.enumObj
-      action_list[action_index].enumEvent = obj.enumEvent
-    }
-    if (
-      obj.data.some(
-        wbaseItem =>
-          wbaseItem.VariablesData ||
-          wbaseItem.JsonItem ||
-          wbaseItem.JsonEventItem ||
-          wbaseItem.TableRows ||
-          wbaseItem.TreeData
-      )
-    ) {
-      for (let wbaseItem of obj.data) {
-        if (wbaseItem.JsonItem) {
-          wbaseItem.AttributesItem.Json = JSON.stringify(wbaseItem.JsonItem)
-        }
-        if (wbaseItem.JsonEventItem) {
-          wbaseItem.AttributesItem.JsonEvent = JSON.stringify(
-            wbaseItem.JsonEventItem
-          )
-        }
-        if (wbaseItem.VariablesData) {
-          wbaseItem.AttributesItem.Variables = JSON.stringify(
-            wbaseItem.VariablesData
-          )
-        }
-        if (wbaseItem.TableRows) {
-          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.TableRows)
-        } else if (wbaseItem.TreeData) {
-          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.TreeData)
-        } else if (wbaseItem.ChartData) {
-          wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.ChartData)
-        } else if (wbaseItem.CarouselData) {
-          wbaseItem.AttributesItem.Content = JSON.stringify(
-            wbaseItem.CarouselData
-          )
-        }
-      }
-    }
-    if (obj.enumEvent < 0) {
-      let updateList = obj.data.filter(e => !e.IsDeleted)
-      let deleteList = obj.data.filter(e => e.IsDeleted)
-      obj.enumEvent = EnumEvent.edit
-      obj.data = updateList
-      socket.emit('client-main', obj)
-      if (deleteList.length > 0) {
-        obj.enumEvent = EnumEvent.delete
-        obj.enumObj = EnumObj.wBase
-        obj.data = deleteList
-        socket.emit('client-main', obj)
-      }
-      return
-    }
-    if (obj.data.some(e => e.GID === wbase_parentID)) {
-      toastr['warning'](
-        'Nhớ thao tác này để báo Thuno nếu load lại có mất hết sorry ace!!!!!!!'
-      )
-    }
+    // if (obj.enumEvent !== EnumEvent.add)
+    //   obj.data = obj.data.filter(e => e.CateID !== EnumCate.textfield)
+    // if (
+    //   obj.pageid === PageDA.obj.ID &&
+    //   action_index >= 0 &&
+    //   action_index === action_list.length - 1
+    // ) {
+    //   action_list[action_index].enumObj = obj.enumObj
+    //   action_list[action_index].enumEvent = obj.enumEvent
+    // }
+    // if (
+    //   obj.data.some(
+    //     wbaseItem =>
+    //       wbaseItem.VariablesData ||
+    //       wbaseItem.JsonItem ||
+    //       wbaseItem.JsonEventItem ||
+    //       wbaseItem.TableRows ||
+    //       wbaseItem.TreeData
+    //   )
+    // ) {
+    //   for (let wbaseItem of obj.data) {
+    //     if (wbaseItem.JsonItem) {
+    //       wbaseItem.AttributesItem.Json = JSON.stringify(wbaseItem.JsonItem)
+    //     }
+    //     if (wbaseItem.JsonEventItem) {
+    //       wbaseItem.AttributesItem.JsonEvent = JSON.stringify(
+    //         wbaseItem.JsonEventItem
+    //       )
+    //     }
+    //     if (wbaseItem.VariablesData) {
+    //       wbaseItem.AttributesItem.Variables = JSON.stringify(
+    //         wbaseItem.VariablesData
+    //       )
+    //     }
+    //     if (wbaseItem.TableRows) {
+    //       wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.TableRows)
+    //     } else if (wbaseItem.TreeData) {
+    //       wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.TreeData)
+    //     } else if (wbaseItem.ChartData) {
+    //       wbaseItem.AttributesItem.Content = JSON.stringify(wbaseItem.ChartData)
+    //     } else if (wbaseItem.CarouselData) {
+    //       wbaseItem.AttributesItem.Content = JSON.stringify(
+    //         wbaseItem.CarouselData
+    //       )
+    //     }
+    //   }
+    // }
+    // if (obj.enumEvent < 0) {
+    //   let updateList = obj.data.filter(e => !e.IsDeleted)
+    //   let deleteList = obj.data.filter(e => e.IsDeleted)
+    //   obj.enumEvent = EnumEvent.edit
+    //   obj.data = updateList
+    //   socket.emit('client-main', obj)
+    //   if (deleteList.length > 0) {
+    //     obj.enumEvent = EnumEvent.delete
+    //     obj.enumObj = EnumObj.wBase
+    //     obj.data = deleteList
+    //     socket.emit('client-main', obj)
+    //   }
+    //   return
+    // }
     socket.emit('client-main', obj)
   }
 
@@ -1399,7 +1398,7 @@ class WbaseIO {
       ...wbase_list.filter(e => parentList.some(id => e.GID === id))
     ]
     for (let wb of parentList) {
-      await initComponents(
+      initComponents(
         wb,
         wbase_list.filter(el => el.ParentID === wb.GID),
         false

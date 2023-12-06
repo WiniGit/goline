@@ -688,7 +688,6 @@ class WBaseDefault {
       ]
     ]
   }
-
 }
 
 class WBaseDA {
@@ -730,15 +729,15 @@ class WBaseDA {
     return WbData
   }
 
-  static add (
-    list_wbase_item,
+  static add ({
+    listWb,
     pageid,
     enumEvent = EnumEvent.add,
     enumObj = EnumObj.wBase
-  ) {
+  }) {
     let data = {
       enumObj: enumObj,
-      data: list_wbase_item,
+      data: listWb,
       enumEvent: enumEvent,
       pageid: pageid
     }
@@ -798,113 +797,20 @@ class WBaseDA {
 
   static delete (delete_list) {
     if (delete_list.length > 0) {
-      let offY = document.getElementById(`parentID:${wbase_parentID}`).scrollTop
-      let enumObj
-      let parentWbase
-      if (delete_list[0].ParentID != wbase_parentID) {
-        parentWbase = wbase_list.find(
-          wbaseItem => wbaseItem.GID == delete_list[0].ParentID
+      for (let wb of delete_list) {
+        let layerCotainer = left_view.querySelector(
+          `.col > .layer_wbase_tile[id="wbaseID:${wb.GID}"]`
         )
-        if (parentWbase) {
-          parentWbase.ListChildID = parentWbase.ListChildID.filter(id =>
-            delete_list.every(deleteItem => deleteItem.GID != id)
-          )
-          parentWbase.CountChild = parentWbase.ListChildID.length
-          let parentHTML = parentWbase.value
-          if (parentWbase.CountChild == 0 && parentWbase.WAutolayoutItem) {
-            if (parentHTML.style.width == 'fit-content') {
-              enumObj = EnumObj.frame
-              parentHTML.style.width = parentHTML.offsetWidth + 'px'
-              parentWbase.StyleItem.FrameItem.Width = parentHTML.offsetWidth
-            }
-            if (parentHTML.style.height == 'fit-content') {
-              enumObj = EnumObj.frame
-              parentHTML.style.height = parentHTML.offsetHeight + 'px'
-              parentWbase.StyleItem.FrameItem.Height = parentHTML.offsetHeight
-            }
-          }
-        }
+        layerCotainer.remove()
+        wb.value.remove()
       }
-      wbase_list = wbase_list.filter(
-        e =>
-          !delete_list.some(
-            delete_item =>
-              delete_item.GID == e.GID || e.ListID.includes(delete_item.GID)
-          )
-      )
-      switch (parentWbase?.CateID) {
-        case EnumCate.tree:
-          reloadTree(delete_list[0].value)
-          break
-        case EnumCate.table:
-          parentWbase.TableRows.reduce((a, b) => a.concat(b))
-            .filter(cell =>
-              delete_list.some(deleteItem =>
-                cell.contentid.includes(deleteItem.GID)
-              )
-            )
-            .forEach(cell => {
-              let newListContentID = cell.contentid
-                .split(',')
-                .filter(id =>
-                  delete_list.every(deleteItem => deleteItem.GID !== id)
-                )
-              cell.contentid = newListContentID.join(',')
-            })
-          enumObj =
-            enumObj === EnumObj.frame
-              ? EnumObj.attributeFrame
-              : EnumObj.attribute
-          break
-        default:
-          break
+      let data = {
+        enumObj: EnumObj.wBase,
+        data: delete_list,
+        enumEvent: EnumEvent.delete
       }
-      for (let wbaseItem of delete_list) {
-        wbaseItem.IsDeleted = true
-        if (wbaseItem.CateID == EnumCate.variant) {
-          PropertyDA.list = PropertyDA.list.filter(
-            e => e.BaseID != wbaseItem.GID
-          )
-        }
-        if (
-          wbaseItem.BasePropertyItems &&
-          wbaseItem.BasePropertyItems.length > 0
-        ) {
-          for (let baseProperty of wbaseItem.BasePropertyItems) {
-            let propertyItem = PropertyDA.list.find(
-              e => e.GID == baseProperty.PropertyID
-            )
-            propertyItem.BasePropertyItems =
-              propertyItem.BasePropertyItems.filter(
-                e => e.GID != baseProperty.GID
-              )
-          }
-        }
-        document.getElementById(wbaseItem.GID)?.remove()
-        replaceAllLyerItemHTML()
-      }
-      updateHoverWbase(parentWbase)
-      if (delete_list[0].isNew) {
-        if (action_index === action_list.length - 1) {
-          action_list[action_index].enumObj = EnumObj.wBase
-          action_list[action_index].enumEvent = EnumEvent.delete
-        }
-        handleWbSelectedList()
-      } else if (enumObj && parentWbase) {
-        WBaseDA.editAndDelete([...delete_list, parentWbase], enumObj)
-      } else {
-        let data = {
-          enumObj: EnumObj.wBase,
-          data: delete_list,
-          enumEvent: EnumEvent.delete
-        }
-        handleWbSelectedList()
-        WiniIO.emitMain(data)
-      }
-      document.getElementById(`parentID:${wbase_parentID}`).scrollTo({
-        top: offY,
-        behavior: 'smooth'
-      })
+      handleWbSelectedList()
+      WiniIO.emitMain(data)
     }
   }
 
