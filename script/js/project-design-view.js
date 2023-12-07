@@ -580,33 +580,33 @@ function handleWbSelectedList (newlist = []) {
     }
   }
   console.log('isChange: ', isChange)
-  // if (!objr && tool_state === ToolState.move) {
-  //   if (isChange) {
-  //     console.log('selected_list:', selected_list)
-  //     if (!WBaseDA.isCtrlZ) {
-  //       addAction()
-  //     }
-  //     if (assets_view.offsetWidth > 0 && tool_state === ToolState.move) {
-  //       if (!(select_component?.ProjectID === 0)) select_component = null
-  //       updateListComponentByProject({ ID: 0 })
-  //     }
-  //     f12_update_selectWbase()
-  //     $('.wbaseItem-value').removeClass('selected')
-  //   }
-  //   switch (design_view_index) {
-  //     case 0:
-  //       updateUIDesignView()
-  //       break
-  //     case 1:
-  //       update_UI_prototypeView()
-  //       break
-  //     case 2:
-  //       create_stateContainer()
-  //       break
-  //     default:
-  //       break
-  //   }
-  // }
+  if (!objr && tool_state === ToolState.move) {
+    if (isChange) {
+      console.log('selected_list:', selected_list)
+      // if (!WBaseDA.isCtrlZ) {
+      //   addAction()
+      // }
+      // if (assets_view.offsetWidth > 0 && tool_state === ToolState.move) {
+      //   if (!(select_component?.ProjectID === 0)) select_component = null
+      //   updateListComponentByProject({ ID: 0 })
+      // }
+      f12_update_selectWbase()
+      $('.wbaseItem-value').removeClass('selected')
+    }
+    switch (design_view_index) {
+      case 0:
+        updateUIDesignView()
+        break
+      case 1:
+        update_UI_prototypeView()
+        break
+      case 2:
+        create_stateContainer()
+        break
+      default:
+        break
+    }
+  }
   updateUISelectBox()
 }
 

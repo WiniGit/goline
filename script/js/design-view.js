@@ -88,28 +88,28 @@ function updateUIDesignView () {
         listEditContainer.appendChild(selectColByBrp)
       }
     }
+    const parentCls = [
+      'w-container',
+      'w-button',
+      'w-textformfield',
+      'w-variant',
+      'w-table'
+    ]
     if (
       selected_list.some(wb =>
-        EnumCate.no_child_component.every(ct => wb.CateID !== ct)
-      ) &&
-      (selected_list.length === 1 ||
-        selected_list[0].StyleItem ||
-        selected_list.every(wb =>
-          window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
-        ))
+        parentCls.some(e => wb.value.classList.contains(e))
+      ) ||
+      selected_list.length > 1
     ) {
       let editAutoLayout = EditLayoutBlock()
       listEditContainer.appendChild(editAutoLayout)
     }
     //
-    if (selected_list.every(wb => wb.CateID !== EnumCate.text)) {
-      let editBackground = EditBackgroundBlock()
-      listEditContainer.appendChild(editBackground)
-    }
+    let editBackground = EditBackgroundBlock()
+    listEditContainer.appendChild(editBackground)
     if (
-      selected_list.some(
-        wb =>
-          wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
+      selected_list.some(wb =>
+        ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
       )
     ) {
       let editTextStyle = EditTypoBlock()
@@ -255,7 +255,7 @@ function EditOffsetBlock () {
   if (
     select_box_parentID === wbase_parentID &&
     selected_list.every(
-      e => !e.IsInstance && EnumCate.extend_frame.some(ct => e.CateID === ct)
+      e => !e.IsInstance && e.value.classList.contains('w-container')
     )
   ) {
     let pageDeviceContainer = document.createElement('div')
@@ -353,13 +353,10 @@ function EditOffsetBlock () {
     }
   })
   editXYContainer.replaceChildren(edit_left, edit_top)
-  let parentHTML = document.getElementById(select_box_parentID)
-  if (
-    EnumCate.extend_frame.some(
-      ct => parentHTML?.getAttribute('cateid') == ct
-    ) &&
-    window.getComputedStyle(parentHTML).display.match('flex')
-  ) {
+  let parentHTML = divSection.querySelector(
+    `.wbaseItem-value.w-container[id="${select_box_parentID}"]`
+  )
+  if (parentHTML && window.getComputedStyle(parentHTML).display.match('flex')) {
     let isFixPos = selected_list.every(e =>
       e.value.classList.contains('fixed-position')
     )
@@ -414,8 +411,9 @@ function EditOffsetBlock () {
       updateInputTLWH()
     }
   })
+  const scaleCls = ['w-checkbox', 'w-switch', 'w-radio']
   let isRatio = selected_list.some(wb =>
-    EnumCate.scale_size_component.some(ct => wb.CateID === ct)
+    scaleCls.some(e => wb.value.classList.contains(e))
   )
   let icon_ratioWH = document.createElement('img')
   icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
@@ -437,12 +435,14 @@ function EditOffsetBlock () {
   edit_size_position_div.appendChild(editWHContainer)
 
   if (
-    selected_list.every(
-      wb =>
-        EnumCate.scale_size_component.every(ct => wb.CateID !== ct) &&
-        (window.getComputedStyle(wb.value).display.match(/(flex|table)/g) ||
-          window.getComputedStyle(wb.value).position !== 'absolute')
-    )
+    selected_list.every(wb => {
+      let computeSt = window.getComputedStyle(wb.value)
+      return (
+        scaleCls.every(e => !wb.value.classList.contains(e)) &&
+        (computeSt.display.match(/(flex|table)/g) ||
+          computeSt.position !== 'absolute')
+      )
+    })
   ) {
     let resizeContainer = document.createElement('div')
     resizeContainer.className = 'row'
@@ -671,10 +671,10 @@ function EditOffsetBlock () {
     edit_size_position_div.appendChild(_row_radius_detail)
   }
   if (
-    selected_list.filter(
-      wb =>
-        wb !== EnumCate.table &&
-        EnumCate.no_child_component.every(ct => wb.CateID != ct)
+    selected_list.filter(wb =>
+      ['w-container', 'w-button', 'w-textformfield', 'w-variant'].some(e =>
+        wb.value.classList.contains(e)
+      )
     ).length > 0
   ) {
     // sixth line is btn checkboc clip content (overflow)
@@ -683,16 +683,20 @@ function EditOffsetBlock () {
     btn_clip_content.style.margin = '4px 0 0 16px'
     btn_clip_content.innerHTML = `<input type="checkbox"${
       selected_list
-        .filter(wb => wb.CateID !== EnumCate.table)
+        .filter(wb =>
+          ['w-container', 'w-button', 'w-textformfield', 'w-variant'].some(e =>
+            wb.value.classList.contains(e)
+          )
+        )
         .every(wb =>
           window.getComputedStyle(wb.value).overflow.includes('hidden')
         )
         ? ' checked'
         : ''
     } style="margin-right: 8px; width: fit-content" />Clip content`
-    btn_clip_content.firstChild.onchange = function (ev) {
+    $(btn_clip_content).on('change', 'input', function (ev) {
       handleEditOffset({ isClip: ev.target.checked })
-    }
+    })
     edit_size_position_div.appendChild(btn_clip_content)
   }
   return edit_size_position_div
