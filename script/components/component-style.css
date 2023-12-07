@@ -24,6 +24,14 @@
   position: absolute !important;
 }
 
+.wbaseItem-value.w-stack > .wbaseItem-value:is(*[constx="left_right"], *[constx="scale"]) {
+  width: auto !important;
+}
+
+.wbaseItem-value.w-stack > .wbaseItem-value:is(*[consty="top_bottom"], *[consty="scale"]) {
+  height: auto !important;
+}
+
 .wbaseItem-value.w-col[wrap="wrap"] {
   flex-wrap: wrap !important;
   align-content: var(--cross-axis-align);

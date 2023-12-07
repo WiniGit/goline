@@ -283,9 +283,95 @@ function textNodesUnder (node) {
   return all
 }
 
-function createTextHTML(wb) {
+function createTextHTML (wb) {
   wb.value = document.createElement('div')
   wb.value.innerHTML = `<span>${wb.AttributesItem.Content}</span>`
-  $(wb.value).on('focus', 'span' , function(ev) {})
-  $(wb.value).on('blur', 'span' , function(ev) {})
+  $(wb.value).on('focus', 'span', function () {
+    if (window.getComputedStyle(wb.value).position == 'absolute') {
+      let transformX = '0'
+      switch (window.getComputedStyle(wb.value).textAlign) {
+        case TextAlign.center:
+          transformX = '-50%'
+          var thisComputeStyle = window.getComputedStyle(wb.value)
+          wb.value.style.left =
+            parseFloat(thisComputeStyle.left.replace('px')) +
+            wb.value.offsetWidth / 2 +
+            'px'
+          wb.value.style.right = null
+          break
+        case TextAlign.right:
+          transformX = '-100%'
+          thisComputeStyle ??= window.getComputedStyle(wb.value)
+          wb.value.style.left =
+            parseFloat(thisComputeStyle.left.replace('px')) +
+            wb.value.offsetWidth +
+            'px'
+          wb.value.style.right = null
+          break
+        default:
+          break
+      }
+      let transformY = '0'
+      switch (window.getComputedStyle(wb.value).alignItems) {
+        case TextAlignVertical.center:
+          transformY = '-50%'
+          thisComputeStyle ??= window.getComputedStyle(wb.value)
+          wb.value.style.top =
+            parseFloat(thisComputeStyle.top.replace('px')) +
+            wb.value.offsetHeight / 2 +
+            'px'
+          wb.value.style.bottom = null
+          break
+        case TextAlignVertical.bottom:
+          transformY = '-100%'
+          thisComputeStyle ??= window.getComputedStyle(wb.value)
+          wb.value.style.top =
+            parseFloat(thisComputeStyle.top.replace('px')) +
+            wb.value.offsetHeight +
+            'px'
+          wb.value.style.bottom = null
+          break
+        default:
+          break
+      }
+      wb.value.style.transform = `translate(${transformX},${transformY})`
+    }
+    let range = document.createRange()
+    range.selectNodeContents(this)
+    let sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+  })
+  $(wb.value).on('blur', 'span', function () {
+    this.contentEditable = false
+    let selection = window.getSelection()
+    selection.removeAllRanges()
+    if (this.innerText.length > 0) {
+      if (window.getComputedStyle(wb.value).position == 'absolute')
+        updateConstraints(wb.value)
+      wb.AttributesItem.Content = this.innerText
+      wb.Css = wb.value.style.cssText
+      if (wb.isNew) {
+        WBaseDA.add({
+          listWb: [wb]
+        })
+      } else {
+        WBaseDA.edit([wb], EnumObj.attribute)
+      }
+    } else if (wb.isNew) {
+      wbase_list = wbase_list.filter(e => e.GID !== wb.GID)
+      if (wb.ParentID !== wbase_parentID) {
+        let pWb = wbase_list.find(e => e.GID === wb.ParentID)
+        pWb.ListChildID = pWb.ListChildID.filter(id => id !== wb.GID)
+      }
+      let layerCotainer = left_view.querySelector(
+        `.col > .layer_wbase_tile[id="wbaseID:${wb.GID}"]`
+      )
+      layerCotainer.remove()
+      wb.value.remove()
+      handleWbSelectedList()
+    } else {
+      WBaseDA.delete([wb])
+    }
+  })
 }

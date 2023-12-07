@@ -996,7 +996,7 @@ async function handleImportFile (event) {
           h: imgSize.h,
           x: offset.x - imgSize.w / 2,
           y: offset.y - imgSize.h / 2,
-          parentID: parent.id?.length == 36 ? parent.id : wbase_parentID
+          parentid: parent.id?.length == 36 ? parent.id : wbase_parentID
         },
         newRect
       )

@@ -1965,7 +1965,8 @@ function checkHoverElement (event) {
               wbHTML.classList.contains(e)
             ) ||
             wbHTML.children.length === 0 ||
-            wbHTML.getAttribute('isinstance') === 'true' // || event.altKey
+            wbHTML.getAttribute('isinstance') === 'true' ||
+            currentLevel === 1 // || event.altKey
           break
         default:
           let parentPage = $(wbHTML).parents(
@@ -2853,7 +2854,7 @@ function clickEvent (event) {
       }
     } else if (keyid != 'z') {
       if (checkpad == 0) {
-        if ([...event.path].some(e => e.id == 'canvas_view')) {
+        if (event.target.closest('div[id="canvas_view"]')) {
           if (listCurve.length > 0) {
             let selectedPrototype = listCurve.find(_curve =>
               ctxr.isPointInStroke(_curve.curveValue, event.pageX, event.pageY)
@@ -3086,7 +3087,7 @@ function upListener (event) {
           '.wbaseItem-value:is(.w-container,.w-textformfield,.w-button,.w-table)'
         )
         createWbaseHTML({
-          parentID: parentHTML?.id ?? wbase_parentID,
+          parentid: parentHTML?.id ?? wbase_parentID,
           x: offset_convert.x,
           y: offset_convert.y
         })

@@ -762,10 +762,9 @@ class WBaseDA {
   }
 
   static edit (list_wbase_item, enumObj, isEditText = false) {
-    if (!WBaseDA.isCtrlZ && !isEditText) {
-      addAction()
-    }
-    if (selected_list.length > 0) reloadTree(selected_list[0].value)
+    // if (!WBaseDA.isCtrlZ && !isEditText) {
+    //   addAction()
+    // }
     let data = {
       enumObj: enumObj ?? EnumObj.wBase,
       data: list_wbase_item,
@@ -775,9 +774,9 @@ class WBaseDA {
   }
 
   static editListClassName (list_wbase_item) {
-    if (!WBaseDA.isCtrlZ) {
-      addAction()
-    }
+    // if (!WBaseDA.isCtrlZ) {
+    //   addAction()
+    // }
     let data = {
       enumObj: EnumObj.css,
       data: list_wbase_item.map(e => {

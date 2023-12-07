@@ -578,6 +578,8 @@ function handleWbSelectedList (newlist = []) {
         behavior: 'smooth'
       })
     }
+  } else {
+    selected_list = []
   }
   console.log('isChange: ', isChange)
   if (!objr && tool_state === ToolState.move) {

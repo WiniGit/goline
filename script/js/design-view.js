@@ -98,16 +98,18 @@ function updateUIDesignView () {
       listEditContainer.appendChild(editAutoLayout)
     }
     //
-    let editBackground = EditBackgroundBlock()
-    listEditContainer.appendChild(editBackground)
-    if (
-      selected_list.some(wb =>
-        ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
-      )
-    ) {
-      let editTextStyle = EditTypoBlock()
-      listEditContainer.appendChild(editTextStyle)
+    if (selected_list.some(wb => !wb.value.classList.contains('w-text'))) {
+      let editBackground = EditBackgroundBlock()
+      listEditContainer.appendChild(editBackground)
     }
+    // if (
+    //   selected_list.some(wb =>
+    //     ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
+    //   )
+    // ) {
+    //   let editTextStyle = EditTypoBlock()
+    //   listEditContainer.appendChild(editTextStyle)
+    // }
     if (
       selected_list.some(wb =>
         ['w-checkbox', ...WbClass.borderEffect].some(e =>
@@ -302,7 +304,7 @@ function EditOffsetBlock () {
       }
     }
     let listSize = selected_list
-      .filter(wb => EnumCate.extend_frame.some(ct => wb.CateID === ct))
+      .filter(wb => wb.value.classList.contains('w-container'))
       .filterAndMap(
         wb =>
           `${parseInt(wb.value.offsetWidth)}x${parseInt(wb.value.offsetHeight)}`
@@ -1741,7 +1743,7 @@ function EditBackgroundBlock () {
   let header = document.createElement('div')
   header.className = 'header_design_style'
   let checkedComponent = selected_list.every(wb =>
-    [''].some(ct => wb.CateID === ct)
+    WbClass.scale.some(e => wb.value.classList.contains(e))
   )
   header.innerHTML = `<p>${
     checkedComponent ? 'Checked primary color' : 'Background'
@@ -1769,17 +1771,14 @@ function EditBackgroundBlock () {
   ) {
     header.appendChild(btnSelectImg)
     let listColorID = selected_list.filterAndMap(wb => {
-      let wbSt = wb.StyleItem
-        ? wb.value.style
-        : StyleDA.docStyleSheets.find(cssRule =>
-            [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-              wb.value
-            )
-          )?.style
-      return wbSt?.backgroundColor?.replace(
-        /(var\(--background-color-|\))/g,
-        ''
-      )
+      let bgColor =
+        wb.value.style?.backgroundColor ??
+        StyleDA.docStyleSheets.find(cssRule =>
+          [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+            wb.value
+          )
+        )?.style?.backgroundColor
+      return bgColor?.replace(/(var\(|\))/g, '')
     })
 
     if (listColorID.length === 1) {

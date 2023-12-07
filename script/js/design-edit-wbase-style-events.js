@@ -4550,109 +4550,122 @@ function updatePosition (position_item, wbaseItem) {
 }
 
 function updateConstraints (wbHTML) {
+  let wbComputeSt = window.getComputedStyle(wbHTML)
   switch (wbHTML.getAttribute('constx')) {
     case Constraints.left:
-      var leftValue = `${
-        Math.round(
-          (wbHTML.getBoundingClientRect().x -
-            wbHTML.parentElement.getBoundingClientRect().x) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderLeftWidth.replace('px', '')
-        )
-      }px`
-      wbHTML.style.left = leftValue
+      // var leftValue = `${
+      //   Math.round(
+      //     (wbHTML.getBoundingClientRect().x -
+      //       wbHTML.parentElement.getBoundingClientRect().x) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderLeftWidth.replace('px', '')
+      //   )
+      // }px`
+      wbHTML.style.left = wbComputeSt.left
       break
     case Constraints.right:
-      var rightValue = `${
-        Math.round(
-          (wbHTML.parentElement.getBoundingClientRect().right -
-            wbHTML.getBoundingClientRect().right) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderRightWidth.replace('px', '')
-        )
-      }px`
-      wbHTML.style.right = rightValue
+      // var rightValue = `${
+      //   Math.round(
+      //     (wbHTML.parentElement.getBoundingClientRect().right -
+      //       wbHTML.getBoundingClientRect().right) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderRightWidth.replace('px', '')
+      //   )
+      // }px`
+      wbHTML.style.right = wbComputeSt.right
       break
     case Constraints.left_right:
-      var leftValue = `${
-        Math.round(
-          (wbHTML.getBoundingClientRect().x -
-            wbHTML.parentElement.getBoundingClientRect().x) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderLeftWidth.replace('px', '')
-        )
-      }px`
-      var rightValue = `${
-        Math.round(
-          (wbHTML.parentElement.getBoundingClientRect().right -
-            wbHTML.getBoundingClientRect().right) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderRightWidth.replace('px', '')
-        )
-      }px`
-      wbHTML.style.left = leftValue
-      wbHTML.style.right = rightValue
+      // var leftValue = `${
+      //   Math.round(
+      //     (wbHTML.getBoundingClientRect().x -
+      //       wbHTML.parentElement.getBoundingClientRect().x) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderLeftWidth.replace('px', '')
+      //   )
+      // }px`
+      // var rightValue = `${
+      //   Math.round(
+      //     (wbHTML.parentElement.getBoundingClientRect().right -
+      //       wbHTML.getBoundingClientRect().right) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderRightWidth.replace('px', '')
+      //   )
+      // }px`
+      wbHTML.style.left = wbComputeSt.left
+      wbHTML.style.right = wbComputeSt.right
       break
     case Constraints.center:
-      var leftValue =
-        Math.round(
-          (wbHTML.getBoundingClientRect().x -
-            wbHTML.parentElement.getBoundingClientRect().x) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderLeftWidth.replace('px', '')
-        )
+      // var leftValue =
+      //   Math.round(
+      //     (wbHTML.getBoundingClientRect().x -
+      //       wbHTML.parentElement.getBoundingClientRect().x) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderLeftWidth.replace('px', '')
+      //   )
+      var leftValue = parseFloat(wbComputeSt.left.replace('px', ''))
       var centerValue = `${
         leftValue + (wbHTML.offsetWidth - wbHTML.parentElement.offsetWidth) / 2
       }px`
       wbHTML.style.left = `calc(50% + ${centerValue})`
+      var centerX = true
+      wbHTML.style.transform = 'translateX(-50%)'
       break
     case Constraints.scale:
+      // var leftValue = `${(
+      //   ((Math.round(
+      //     (wbHTML.getBoundingClientRect().x -
+      //       wbHTML.parentElement.getBoundingClientRect().x) /
+      //       scale
+      //   ) -
+      //     parseFloat(
+      //       window
+      //         .getComputedStyle(wbHTML.parentElement)
+      //         .borderLeftWidth?.replace('px', '')
+      //     ))
+      //      *
+      //     100) /
+      //   wbHTML.parentElement.offsetWidth
+      // ).toFixed(2)}%`
       var leftValue = `${(
-        ((Math.round(
-          (wbHTML.getBoundingClientRect().x -
-            wbHTML.parentElement.getBoundingClientRect().x) /
-            scale
-        ) -
-          parseFloat(
-            window
-              .getComputedStyle(wbHTML.parentElement)
-              .borderLeftWidth?.replace('px', '')
-          )) *
-          100) /
+        (parseFloat(wbComputeSt.left.replace('px', '')) * 100) /
         wbHTML.parentElement.offsetWidth
       ).toFixed(2)}%`
+      // var rightValue = `${(
+      //   ((Math.round(
+      //     (wbHTML.parentElement.getBoundingClientRect().right -
+      //       wbHTML.getBoundingClientRect().right) /
+      //       scale
+      //   ) -
+      //     parseFloat(
+      //       window
+      //         .getComputedStyle(wbHTML.parentElement)
+      //         .borderRightWidth?.replace('px', '')
+      //     )) *
+      //     100) /
+      //   wbHTML.parentElement.offsetWidth
+      // ).toFixed(2)}%`
       var rightValue = `${(
-        ((Math.round(
-          (wbHTML.parentElement.getBoundingClientRect().right -
-            wbHTML.getBoundingClientRect().right) /
-            scale
-        ) -
-          parseFloat(
-            window
-              .getComputedStyle(wbHTML.parentElement)
-              .borderRightWidth?.replace('px', '')
-          )) *
-          100) /
+        (parseFloat(wbComputeSt.right.replace('px', '')) * 100) /
         wbHTML.parentElement.offsetWidth
       ).toFixed(2)}%`
       wbHTML.style.left = leftValue
@@ -4663,107 +4676,118 @@ function updateConstraints (wbHTML) {
   }
   switch (wbHTML.getAttribute('consty')) {
     case Constraints.top:
-      var topValue = `${
-        Math.round(
-          (wbHTML.getBoundingClientRect().y -
-            wbHTML.parentElement.getBoundingClientRect().y) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderTopWidth.replace('px', '')
-        )
-      }px`
-      wbHTML.style.top = topValue
+      // var topValue = `${
+      //   Math.round(
+      //     (wbHTML.getBoundingClientRect().y -
+      //       wbHTML.parentElement.getBoundingClientRect().y) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderTopWidth.replace('px', '')
+      //   )
+      // }px`
+      wbHTML.style.top = wbComputeSt.top
       break
     case Constraints.bottom:
-      var bottomValue = `${
-        Math.round(
-          (wbHTML.parentElement.getBoundingClientRect().bottom -
-            wbHTML.getBoundingClientRect().bottom) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderBottomWidth.replace('px', '')
-        )
-      }px`
-      wbHTML.style.bottom = bottomValue
+      // var bottomValue = `${
+      //   Math.round(
+      //     (wbHTML.parentElement.getBoundingClientRect().bottom -
+      //       wbHTML.getBoundingClientRect().bottom) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderBottomWidth.replace('px', '')
+      //   )
+      // }px`
+      wbHTML.style.bottom = wbComputeSt.bottom
       break
     case Constraints.top_bottom:
-      var topValue = `${
-        Math.round(
-          (wbHTML.getBoundingClientRect().y -
-            wbHTML.parentElement.getBoundingClientRect().y) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderTopWidth?.replace('px', '')
-        )
-      }px`
-      var bottomValue = `${
-        Math.round(
-          (wbHTML.parentElement.getBoundingClientRect().bottom -
-            wbHTML.getBoundingClientRect().bottom) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderBottomWidth.replace('px', '')
-        )
-      }px`
-      wbHTML.style.top = topValue
-      wbHTML.style.bottom = bottomValue
+      // var topValue = `${
+      //   Math.round(
+      //     (wbHTML.getBoundingClientRect().y -
+      //       wbHTML.parentElement.getBoundingClientRect().y) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderTopWidth?.replace('px', '')
+      //   )
+      // }px`
+      // var bottomValue = `${
+      //   Math.round(
+      //     (wbHTML.parentElement.getBoundingClientRect().bottom -
+      //       wbHTML.getBoundingClientRect().bottom) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderBottomWidth.replace('px', '')
+      //   )
+      // }px`
+      wbHTML.style.top = wbComputeSt.top
+      wbHTML.style.bottom = wbComputeSt.bottom
       break
     case Constraints.center:
-      var topValue =
-        Math.round(
-          (wbHTML.getBoundingClientRect().y -
-            wbHTML.parentElement.getBoundingClientRect().y) /
-            scale
-        ) -
-        parseFloat(
-          window
-            .getComputedStyle(wbHTML.parentElement)
-            .borderTopWidth.replace('px', '')
-        )
+      // var topValue =
+      //   Math.round(
+      //     (wbHTML.getBoundingClientRect().y -
+      //       wbHTML.parentElement.getBoundingClientRect().y) /
+      //       scale
+      //   ) -
+      //   parseFloat(
+      //     window
+      //       .getComputedStyle(wbHTML.parentElement)
+      //       .borderTopWidth.replace('px', '')
+      //   )
+      var topValue = parseFloat(wbComputeSt.top.replace('px', ''))
       var centerValue = `${
         topValue + (wbHTML.offsetHeight - wbHTML.parentElement.offsetHeight) / 2
       }px`
-      cssRule.style.top = `calc(50% + ${centerValue})`
+      wbHTML.style.top = `calc(50% + ${centerValue})`
+      if (centerX) wbHTML.style.transform = 'translate(-50%,-50%)'
+      else wbHTML.style.transform = 'translateY(-50%)'
       break
     case Constraints.scale:
+      // var topValue = `${(
+      //   ((Math.round(
+      //     (wbHTML.getBoundingClientRect().y -
+      //       wbHTML.parentElement.getBoundingClientRect().y) /
+      //       scale
+      //   ) -
+      //     parseFloat(
+      //       window
+      //         .getComputedStyle(wbHTML.parentElement)
+      //         .borderTopWidth?.replace('px', '')
+      //     )) *
+      //     100) /
+      //   wbHTML.parentElement.offsetHeight
+      // ).toFixed(2)}%`
       var topValue = `${(
-        ((Math.round(
-          (wbHTML.getBoundingClientRect().y -
-            wbHTML.parentElement.getBoundingClientRect().y) /
-            scale
-        ) -
-          parseFloat(
-            window
-              .getComputedStyle(wbHTML.parentElement)
-              .borderTopWidth?.replace('px', '')
-          )) *
-          100) /
+        (parseFloat(wbComputeSt.top.replace('px', '')) * 100) /
         wbHTML.parentElement.offsetHeight
       ).toFixed(2)}%`
-      var rightValue = `${(
-        ((Math.round(
-          (wbHTML.parentElement.getBoundingClientRect().bottom -
-            wbHTML.getBoundingClientRect().bottom) /
-            scale
-        ) -
-          parseFloat(
-            window
-              .getComputedStyle(wbHTML.parentElement)
-              .borderBottomWidth?.replace('px', '')
-          )) *
-          100) /
+      // var bottomValue = `${(
+      //   ((Math.round(
+      //     (wbHTML.parentElement.getBoundingClientRect().bottom -
+      //       wbHTML.getBoundingClientRect().bottom) /
+      //       scale
+      //   ) -
+      //     parseFloat(
+      //       window
+      //         .getComputedStyle(wbHTML.parentElement)
+      //         .borderBottomWidth?.replace('px', '')
+      //     )) *
+      //     100) /
+      //   wbHTML.parentElement.offsetHeight
+      // ).toFixed(2)}%`
+      var bottomValue = `${(
+        (parseFloat(wbComputeSt.bottom.replace('px', '')) * 100) /
         wbHTML.parentElement.offsetHeight
       ).toFixed(2)}%`
       wbHTML.style.top = topValue
