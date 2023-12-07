@@ -102,14 +102,14 @@ function updateUIDesignView () {
       let editBackground = EditBackgroundBlock()
       listEditContainer.appendChild(editBackground)
     }
-    // if (
-    //   selected_list.some(wb =>
-    //     ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
-    //   )
-    // ) {
-    //   let editTextStyle = EditTypoBlock()
-    //   listEditContainer.appendChild(editTextStyle)
-    // }
+    if (
+      selected_list.some(wb =>
+        ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
+      )
+    ) {
+      let editTextStyle = EditTypoBlock()
+      listEditContainer.appendChild(editTextStyle)
+    }
     if (
       selected_list.some(wb =>
         ['w-checkbox', ...WbClass.borderEffect].some(e =>
@@ -1877,7 +1877,7 @@ function EditBackgroundBlock () {
             // input type color & edit hex color
             if (eHTML.className.includes('parameter-form')) {
               for (let parameterHTML of eHTML.childNodes) {
-                if (parameterHTML.className.includes('show-color-container')) {
+                if (parameterHTML.className.includes('color-picker')) {
                   parameterHTML.value = `#${selectColorValue.substring(0, 6)}`
                 } else if (
                   parameterHTML.className.includes('edit-color-form')
@@ -1992,7 +1992,7 @@ function EditBackgroundBlock () {
           // input type color & edit hex color
           if (eHTML.className.includes('parameter-form')) {
             for (let parameterHTML of eHTML.childNodes) {
-              if (parameterHTML.className.includes('show-color-container')) {
+              if (parameterHTML.className.includes('color-picker')) {
                 parameterHTML.value = `#${selectColorValue.substring(0, 6)}`
               } else if (parameterHTML.className.includes('edit-color-form')) {
                 parameterHTML.value = selectColorValue
@@ -2121,8 +2121,8 @@ let list_font_weight = ['200', '300', '400', '500', '600', '700', '800', '900']
 
 // ! textStyle
 function EditTypoBlock () {
-  let listTextStyle = selected_list.filter(
-    wb => wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
+  let listTextStyle = selected_list.filter(wb =>
+    ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
   )
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_text_style'
@@ -2143,47 +2143,19 @@ function EditTypoBlock () {
       createDropdownTableSkin(EnumCate.typography, offset)
     }
   )
-  btnSelectSkin.className = 'action-button'
 
   let listTypoSkin = listTextStyle.filterAndMap(wb => {
-    if (wb.StyleItem) {
-      var rule = wb.value.style
-    } else {
-      rule = StyleDA.docStyleSheets.find(cssRule =>
+    let fontSt =
+      wb.value.style.font ??
+      StyleDA.docStyleSheets.find(cssRule =>
         [...divSection.querySelectorAll(cssRule.selectorText)].includes(
           wb.value
         )
-      )?.style
-    }
-    if (rule) {
-      if (rule.font) {
-        return rule.font.replace('var(--font-style-', '').replace(')', '')
-      } else {
-        return {
-          FontSize: parseFloat(rule.fontSize.replace('px', '')),
-          FontWeight: rule.fontWeight,
-          CateID: EnumCate.typography,
-          IsStyle: false,
-          ColorValue: Ultis.rgbToHex(rule.color).replace('#', ''),
-          LetterSpacing: parseFloat(
-            rule.letterSpacing.length > 0
-              ? rule.letterSpacing.replace('px', '')
-              : '0'
-          ),
-          FontFamily: rule.fontFamily,
-          Height:
-            rule.lineHeight.length > 0
-              ? parseFloat(rule.lineHeight.replace('px', ''))
-              : null,
-          TextAlign: rule.textAlign,
-          TextAlignVertical: rule.alignItems
-        }
-      }
-    }
-    return null
+      )?.style?.font
+    return fontSt?.replace(/(var\(|\))/g, '')
   })
 
-  if (listTypoSkin.length === 1 && typeof listTypoSkin[0] === 'string') {
+  if (listTypoSkin.length === 1 && listTypoSkin[0]?.length === 36) {
     let typoSkin = TypoDA.list.find(skin => listTypoSkin[0] == skin.GID)
     let cateItem = CateDA.list_typo_cate.find(e => e.ID == typoSkin.CateID)
     let skin_tile = wbaseSkinTile({
@@ -2197,7 +2169,7 @@ function EditTypoBlock () {
     })
     skin_tile.firstChild.firstChild.style.fontWeight = typoSkin.FontWeight
     editContainer.appendChild(skin_tile)
-  } else if (listTypoSkin.some(e => typeof e !== 'object')) {
+  } else if (listTypoSkin.some(vl => vl.length === 36)) {
     header.appendChild(btnSelectSkin)
     let notiText = document.createElement('p')
     notiText.className = 'regular1'
@@ -2220,7 +2192,7 @@ function EditTypoBlock () {
     let colorParamForm = edit_text_color.querySelector('.parameter-form')
     for (let elementHTML of colorParamForm.childNodes) {
       let color_value = listTypoSkin[0].ColorValue
-      if (elementHTML.className?.includes('show-color-container')) {
+      if (elementHTML.className?.includes('color-picker')) {
         elementHTML.value = `#${color_value.substring(0, 6)}`
       } else if (elementHTML.className?.includes('edit-color-form')) {
         elementHTML.value = color_value.substring(0, 6)
@@ -2814,7 +2786,7 @@ function EditBorderBlock () {
         let paramForm = formEditColor.querySelector('.parameter-form')
         // input type color & edit hex color
         for (let parameterHTML of paramForm.childNodes) {
-          if (parameterHTML.className.includes('show-color-container')) {
+          if (parameterHTML.className.includes('color-picker')) {
             parameterHTML.value = `#${colorValue.substring(0, 6)}`
           } else if (parameterHTML.className.includes('edit-color-form')) {
             parameterHTML.value = colorValue.substring(0, 6).toUpperCase()
@@ -3255,9 +3227,7 @@ function EditEffectBlock () {
                     '.parameter-form'
                   ).childNodes) {
                     // input type color & edit hex color
-                    if (
-                      parameterHTML.className.includes('show-color-container')
-                    ) {
+                    if (parameterHTML.className.includes('color-picker')) {
                       parameterHTML.value = `#${color_value.substring(0, 6)}`
                     } else if (
                       parameterHTML.className.includes('edit-color-form')
@@ -3412,7 +3382,12 @@ function reloadEditEffectBlock () {
   document.getElementById('edit-effect').replaceWith(newEditEffect)
 }
 
-function createEditColorForm (funcEdit, funcSubmit, funcDelete) {
+function createEditColorForm ({
+  value = '#000000ff',
+  onchange,
+  onsubmit,
+  ondelete
+}) {
   let visible = true
   let isFocus = false
 
@@ -3420,45 +3395,48 @@ function createEditColorForm (funcEdit, funcSubmit, funcDelete) {
   editColorTile.className = 'container-edit-tile'
   editColorTile.style.padding = '0 4px'
 
-  let containerInput = document.createElement('div')
-  containerInput.className = 'parameter-form'
-  editColorTile.appendChild(containerInput)
+  editColorTile.innerHTML = `<div class="parameter-form">
+  <input type="color" value=${value} class="color-picker"/>
+  <input value="${value
+    .replace('#', '')
+    .substring(0, 6)
+    .toUpperCase()}" class="edit-color-form"/><div class="ver-line"></div><input value="${Ultis.hexToPercent(
+    value.replace('#', '').substring(6)
+  )}" class="edit-opacity-form"/>
+  </div>
+  <div></div>`
 
-  let colorSelected = document.createElement('input')
-  colorSelected.className = 'show-color-container'
-  colorSelected.type = 'color'
-  colorSelected.oninput = function () {
-    editColorForm.value = this.value.replace('#', '').toUpperCase()
-    funcEdit(
-      this.value.replace('#', '') +
-        Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', '')))
-    )
-  }
-  colorSelected.onblur = function () {
-    funcSubmit(
-      this.value.replace('#', '') +
-        Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', '')))
-    )
-  }
+  $(editColorTile).on('input', '.color-picker', function () {
+    editColorTile.querySelector('.edit-color-form').value = this.value
+      .replace('#', '')
+      .toUpperCase()
+    value = this.value + value.substring(7)
+    onchange(value)
+  })
+  $(editColorTile).on('blur', '.color-picker', () => onsubmit(value))
+  $(editColorTile).on('blur', '.edit-color-form', function () {
+    if (this.value.match(hexRegex)) {
+      value =
+        this.value.match(hexRegex).input.replace('#', '').substring(0, 6) +
+        value.substring(7)
+      editColorTile.querySelector('.color-picker').value = `#${value}`
+      this.value = value.toUpperCase()
+      onsubmit(`#${value}`)
+    } else {
+      this.value = value.replace('#', '').substring(0, 6).toUpperCase()
+    }
+  })
+  $(editColorTile).on('blur', '.edit-opacity-form', function () {
+    if (!isNaN(parseInt(this.value.replace('%', '')))) {
+      onsubmit(
+        value.substring(7) +
+          Ultis.percentToHex(parseInt(this.value.replace('%', '')))
+      )
+    } else {
+      this.value = Ultis.hexToPercent(value.replace('#', '').substring(6))
+    }
+  })
 
-  containerInput.appendChild(colorSelected)
-
-  let editColorForm = document.createElement('input')
-  editColorForm.className = 'edit-color-form'
-  editColorForm.value = '000000'
-
-  containerInput.appendChild(editColorForm)
-
-  let divider = document.createElement('div')
-  divider.className = 'ver-line'
-
-  containerInput.appendChild(divider)
-
-  let editOpacity = document.createElement('input')
-  editOpacity.className = 'edit-opacity-form'
-  editOpacity.value = '100%'
-
-  containerInput.appendChild(editOpacity)
 
   let containerAction = document.createElement('div')
   containerAction.style.display = 'flex'
@@ -4390,7 +4368,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       )
       formEditColor.childNodes.forEach(e => {
         switch (e.className) {
-          case 'show-color-container':
+          case 'color-picker':
             e.value = `#${jsonSkin.Value.substring(0, 6)}`
             break
           case 'edit-color-form':
@@ -4454,7 +4432,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       )
       formEditColor.childNodes.forEach(e => {
         switch (e.className) {
-          case 'show-color-container':
+          case 'color-picker':
             e.value = `#${jsonSkin.ColorValue.substring(0, 6)}`
             break
           case 'edit-color-form':
@@ -4640,7 +4618,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       )
       formEditColor.childNodes.forEach(e => {
         switch (e.className) {
-          case 'show-color-container':
+          case 'color-picker':
             e.value = `#${jsonSkin.ColorValue.substring(0, 6)}`
             break
           case 'edit-color-form':
@@ -5054,7 +5032,7 @@ function popupEditSkin (enumCate, jsonSkin) {
             )
             formEditColor.childNodes.forEach(e => {
               switch (e.className) {
-                case 'show-color-container':
+                case 'color-picker':
                   e.value = `#${thisSkin.ColorValue.substring(0, 6)}`
                   break
                 case 'edit-color-form':

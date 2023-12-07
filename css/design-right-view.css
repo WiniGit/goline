@@ -155,7 +155,7 @@ input[type="color"]::-webkit-color-swatch {
   border-radius: 2px;
 }
 
-.show-color-container {
+.color-picker {
   border: 0.5px solid #e5e5e5;
   width: 16px;
   height: 16px;
