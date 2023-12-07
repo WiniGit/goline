@@ -4929,7 +4929,7 @@ async function addAutoLayout () {
     }
   } else {
     let list_update = [...selected_list]
-    let newWb = JSON.parse(JSON.stringify(WBaseDefault.frame))
+    let newWb = JSON.parse(JSON.stringify(WbClass.frame))
     newWb.WAutolayoutItem = newLayoutItem
     newWb.StyleItem.PaddingItem = newPaddingItem
     newWb = createNewWbase({ wb: newWb })[0]
@@ -7534,7 +7534,7 @@ function editEffectSkin (effect_item, thisSkin) {
 
 function combineAsVariant () {
   let list_update = [...selected_list]
-  let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.variant))
+  let new_wbase_item = JSON.parse(JSON.stringify(WbClass.variant))
   new_wbase_item = createNewWbase({ wb: new_wbase_item }).pop()
   new_wbase_item.IsWini = true
   new_wbase_item.StyleItem.PositionItem.Left = `${
@@ -8095,7 +8095,7 @@ function editJsonItem (jsonItem, onSubmit = true) {
 function createForm () {
   if (selected_list.length > 1) {
     let list_update = [...selected_list]
-    let new_wbase_item = JSON.parse(JSON.stringify(WBaseDefault.container))
+    let new_wbase_item = JSON.parse(JSON.stringify(WbClass.container))
     new_wbase_item = createNewWbase({ wb: new_wbase_item }).pop()
     new_wbase_item.Name = 'Form'
     new_wbase_item.AttributesItem.Name = 'Form'

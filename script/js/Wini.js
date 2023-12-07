@@ -1232,8 +1232,8 @@ function moveListener (event) {
                 switch (tool_state) {
                   case ToolState.resize_left:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1277,8 +1277,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_right:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         wb.tmpW = wb.value.offsetWidth
@@ -1319,8 +1319,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_top:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1363,8 +1363,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_bot:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         wb.tmpH = wb.value.offsetHeight
@@ -1405,8 +1405,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_top_left:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1447,8 +1447,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_top_right:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1488,8 +1488,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_bot_left:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1528,8 +1528,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_bot_right:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -2953,11 +2953,11 @@ function upListener (event) {
         let isSvgImg = url.endsWith('.svg')
         let newRect
         if (isSvgImg) {
-          newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg))
+          newRect = JSON.parse(JSON.stringify(WbClass.imgSvg))
           newRect.Name = url.split('/').pop().replace('.svg', '')
           newRect.AttributesItem.Content = url.replace(urlImg, '')
         } else {
-          newRect = JSON.parse(JSON.stringify(WBaseDefault.rectangle))
+          newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
           newRect.Name = 'new rectangle'
           newRect.Css = `background-image: url(${url});`
         }

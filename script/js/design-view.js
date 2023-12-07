@@ -88,16 +88,9 @@ function updateUIDesignView () {
         listEditContainer.appendChild(selectColByBrp)
       }
     }
-    const parentCls = [
-      'w-container',
-      'w-button',
-      'w-textformfield',
-      'w-variant',
-      'w-table'
-    ]
     if (
       selected_list.some(wb =>
-        parentCls.some(e => wb.value.classList.contains(e))
+        WbClass.parent.some(e => wb.value.classList.contains(e))
       ) ||
       selected_list.length > 1
     ) {
@@ -117,11 +110,19 @@ function updateUIDesignView () {
     }
     if (
       selected_list.some(wb =>
-        EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+        ['w-checkbox', ...WbClass.borderEffect].some(e =>
+          wb.value.classList.contains(e)
+        )
       )
     ) {
       let editBorder = EditBorderBlock()
       listEditContainer.appendChild(editBorder)
+    }
+    if (
+      selected_list.some(wb =>
+        WbClass.borderEffect.some(e => wb.value.classList.contains(e))
+      )
+    ) {
       let editEffect = EditEffectBlock()
       listEditContainer.appendChild(editEffect)
     }
@@ -411,9 +412,8 @@ function EditOffsetBlock () {
       updateInputTLWH()
     }
   })
-  const scaleCls = ['w-checkbox', 'w-switch', 'w-radio']
   let isRatio = selected_list.some(wb =>
-    scaleCls.some(e => wb.value.classList.contains(e))
+    WbClass.scale.some(e => wb.value.classList.contains(e))
   )
   let icon_ratioWH = document.createElement('img')
   icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
@@ -438,7 +438,7 @@ function EditOffsetBlock () {
     selected_list.every(wb => {
       let computeSt = window.getComputedStyle(wb.value)
       return (
-        scaleCls.every(e => !wb.value.classList.contains(e)) &&
+        WbClass.scale.every(e => !wb.value.classList.contains(e)) &&
         (computeSt.display.match(/(flex|table)/g) ||
           computeSt.position !== 'absolute')
       )
@@ -1741,7 +1741,7 @@ function EditBackgroundBlock () {
   let header = document.createElement('div')
   header.className = 'header_design_style'
   let checkedComponent = selected_list.every(wb =>
-    EnumCate.scale_size_component.some(ct => wb.CateID === ct)
+    [''].some(ct => wb.CateID === ct)
   )
   header.innerHTML = `<p>${
     checkedComponent ? 'Checked primary color' : 'Background'
@@ -2669,7 +2669,9 @@ let list_border_style = [
 //! border
 function EditBorderBlock () {
   let listBorder = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+    ['w-checkbox', ...WbClass.borderEffect].some(e =>
+      wb.value.classList.contains(e)
+    )
   )
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-border'
@@ -3073,7 +3075,7 @@ let list_effect_type = [
 // ! effect
 function EditEffectBlock () {
   let listEffect = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+    WbClass.borderEffect.some(e => wb.value.classList.contains(e))
   )
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-effect'

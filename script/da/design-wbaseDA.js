@@ -422,7 +422,24 @@ var listDevice = [
   ]
 ]
 
-class WBaseDefault {
+class WbClass {
+  static scale = ['w-checkbox', 'w-switch', 'w-radio']
+  static parent = [
+    'w-conatiner',
+    'w-form',
+    'w-textformfield',
+    'w-button',
+    'w-table',
+    'w-variant'
+  ]
+  static borderEffect = [
+    'w-container',
+    'w-rect',
+    'w-variant',
+    'w-table',
+    'w-textformfield'
+  ]
+
   static rectangle = {
     ListID: wbase_parentID,
     ParentID: wbase_parentID,

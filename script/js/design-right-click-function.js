@@ -983,10 +983,10 @@ async function handleImportFile (event) {
     for (let fileItem of result) {
       let newRect
       if (fileItem.Name.endsWith('.svg')) {
-        newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg))
+        newRect = JSON.parse(JSON.stringify(WbClass.imgSvg))
         newRect.AttributesItem.Content = fileItem.Url
       } else {
-        newRect = JSON.parse(JSON.stringify(WBaseDefault.rectangle))
+        newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
         newRect.StyleItem.DecorationItem.ColorValue = fileItem.Url
       }
       let imgSize = await FileDA.getImageSize(urlImg + fileItem.Url)

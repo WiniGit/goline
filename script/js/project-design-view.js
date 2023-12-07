@@ -298,13 +298,13 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
   } else {
     switch (tool_state) {
       case ToolState.rectangle:
-        new_obj = WBaseDefault.rectangle
+        new_obj = WbClass.rectangle
         break
       case ToolState.container:
-        new_obj = WBaseDefault.container
+        new_obj = WbClass.container
         break
       case ToolState.text:
-        new_obj = WBaseDefault.text
+        new_obj = WbClass.text
         break
       case ToolState.base_component:
         let thisBaseComponent = base_component_list.find(

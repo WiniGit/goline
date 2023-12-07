@@ -46,23 +46,23 @@ $('body').on('click', '#choose-component-popup .component-option', function (ev)
 
     // ! create baseComponent data on server
     // toolStateChange(ToolState.move);
-    // let component = createNewWbase(WBaseDefault.carousel).pop();
+    // let component = createNewWbase(WbClass.carousel).pop();
     // component.PageID = 0;
     // component.Sort = 9;
-    // let text1 = createNewWbase(WBaseDefault.checkbox, [], component.ListID + `,${component.GID}`, 1).pop();
+    // let text1 = createNewWbase(WbClass.checkbox, [], component.ListID + `,${component.GID}`, 1).pop();
     // text1.Sort = 0;
     // text1.PageID = 0;
     // text1.AttributesItem.NameField = "IsSelect";
-    // let text2 = createNewWbase(WBaseDefault.text, [], component.ListID + `,${component.GID}`, 1).pop();
+    // let text2 = createNewWbase(WbClass.text, [], component.ListID + `,${component.GID}`, 1).pop();
     // text2.Sort = 1;
     // text2.PageID = 0;
     // text2.AttributesItem.Content = "Slide";
     // text2.AttributesItem.NameField = "title";
-    // let text3 = createNewWbase(WBaseDefault.text, [], component.ListID + `,${component.GID}`, 1).pop();
+    // let text3 = createNewWbase(WbClass.text, [], component.ListID + `,${component.GID}`, 1).pop();
     // text3.Sort = 2;
     // text3.PageID = 0;
     // text3.AttributesItem.Content = "Content";
-    // let text4 = createNewWbase(WBaseDefault.text, [], component.ListID + `,${component.GID}`, 1).pop();
+    // let text4 = createNewWbase(WbClass.text, [], component.ListID + `,${component.GID}`, 1).pop();
     // text4.Sort = 3;
     // text4.PageID = 0;
     // text4.AttributesItem.Content = "Content";
