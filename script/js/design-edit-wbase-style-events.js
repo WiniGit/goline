@@ -24,7 +24,7 @@ function handleEditAlign (newValue) {
           ].filter(
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           }
           if (children.length > 0) {

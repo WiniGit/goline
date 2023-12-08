@@ -287,7 +287,7 @@ function createTextHTML (wb) {
   wb.value = document.createElement('div')
   wb.value.innerHTML = `<span>${wb.AttributesItem.Content}</span>`
   $(wb.value).on('focus', 'span', function () {
-    if (window.getComputedStyle(wb.value).position == 'absolute') {
+    if (window.getComputedStyle(wb.value).position === 'absolute') {
       let transformX = '0'
       switch (window.getComputedStyle(wb.value).textAlign) {
         case TextAlign.center:
@@ -347,7 +347,7 @@ function createTextHTML (wb) {
     let selection = window.getSelection()
     selection.removeAllRanges()
     if (this.innerText.length > 0) {
-      if (window.getComputedStyle(wb.value).position == 'absolute')
+      if (window.getComputedStyle(wb.value).position === 'absolute')
         updateConstraints(wb.value)
       wb.AttributesItem.Content = this.innerText
       wb.Css = wb.value.style.cssText
