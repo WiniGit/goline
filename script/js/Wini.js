@@ -1970,7 +1970,7 @@ function checkHoverElement (event) {
           break
         default:
           let parentPage = $(wbHTML).parents(
-            `.wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance="true"])`
+            `.w-container:not(*[isinstance="true"]), .w-variant:not(*[isinstance="true"])`
           )[0]
           if (target_level === 2 && parentPage) {
             is_enable = true

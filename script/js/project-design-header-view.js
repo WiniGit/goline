@@ -11,144 +11,66 @@ projectHeader.onkeydown = function (e) {
 }
 
 let create_skin_popup = document.getElementById('create_skin_popup')
-function closePopupSkin () {
+$(create_skin_popup).on('click', '.popup-close', function closePopupSkin () {
   create_skin_popup.style.display = 'none'
-}
-function createNewSkin () {
+})
+function createNewSkin (skinType) {
   let input_new_skin_name = document.getElementById('input_new_skin_name')
-  let popup_cate = [...input_new_skin_name.childNodes]
-    .find(
-      e =>
-        e.nodeName != '#text' &&
-        e.style.display != 'none' &&
-        e.getAttribute('cate')
-    )
-    ?.getAttribute('cate')
-  let input_value = [...input_new_skin_name.childNodes].find(
-    e => e.localName === 'input'
-  ).value
-  switch (parseInt(popup_cate)) {
+  let input_value = input_new_skin_name.querySelector('input').value
+  switch (skinType) {
     case EnumCate.color:
       var new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
-        Value: Ultis.rgbToHex(
+        Css: Ultis.rgbToHex(
           window.getComputedStyle(selected_list[0].value).backgroundColor
-        )
+        ),
+        Type: SkinType.color
       }
       break
     case EnumCate.typography:
       let select_typo = selected_list.find(
         wb =>
-          wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
+          wb.value.classList.contains('w-text') ||
+          wb.value.classList.contains('w-textformfield')
       )
-      select_typo =
-        select_typo.CateID === EnumCate.text
-          ? window.getComputedStyle(select_typo.value)
-          : window.getComputedStyle(select_typo.value.querySelector('input'))
-      var new_skin = {
+      new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
-        IsStyle: true,
-        FontSize: parseFloat(select_typo.fontSize.replace('px', '')),
-        FontWeight: select_typo.fontWeight,
-        ColorValue: Ultis.rgbToHex(select_typo.color).replace('#', ''),
-        LetterSpacing: parseFloat(
-          select_typo.letterSpacing.length > 0
-            ? parseFloat(select_typo.letterSpacing.replace('px', ''))
-            : '0'
-        ),
-        FontFamily: select_typo.fontFamily,
-        Height:
-          select_typo.lineHeight.length > 0
-            ? parseFloat(select_typo.lineHeight.replace('px', ''))
-            : null
+        Css: window.getComputedStyle(select_typo.value).font,
+        Type: SkinType.typo
       }
       break
     case EnumCate.border:
       let select_border = window.getComputedStyle(
         selected_list.find(wb =>
-          EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+          WbClass.borderEffect.some(e => wb.value.classList.contains(e))
         ).value
       )
-      let borderWidth = select_border.borderWidth
-        .replaceAll('px', '')
-        .split(' ')
-      let borderSide = BorderSide.custom
-      switch (borderWidth.length) {
-        case 1:
-          borderWidth = `${borderWidth} ${borderWidth} ${borderWidth} ${borderWidth}`
-          borderSide = BorderSide.all
-          break
-        case 2:
-          borderWidth = [...borderWidth, ...borderWidth].join(' ')
-          break
-        case 3:
-          if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
-            if (borderWidth[0] > 0) {
-              borderSide = BorderSide.top
-            } else {
-              borderSide = BorderSide.bottom
-            }
-          }
-          borderWidth = [...borderWidth, borderWidth[1]].join(' ')
-          break
-        default: // 4
-          if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
-            if (borderWidth[0] > 0) {
-              borderSide = BorderSide.top
-            } else if (borderWidth[1] > 0) {
-              borderSide = BorderSide.right
-            } else if (borderWidth[2] > 0) {
-              borderSide = BorderSide.bottom
-            } else {
-              borderSide = BorderSide.left
-            }
-          }
-          borderWidth = borderWidth.join(' ')
-          break
-      }
-      var new_skin = {
+      let borderWidth = [
+        parseFloat(select_border.borderTopWidth.replace('px', '')),
+        parseFloat(select_border.borderRightWidth.replace('px', '')),
+        parseFloat(select_border.borderBottomWidth.replace('px', '')),
+        parseFloat(select_border.borderLeftWidth.replace('px', ''))
+      ].sort((a, b) => b - a)[0]
+      new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
-        Width: borderWidth,
-        BorderStyle: select_border.borderStyle,
-        ColorValue: Ultis.rgbToHex(select_border.borderColor).replace('#', ''),
-        IsStyle: false,
-        BorderSide: borderSide
+        Css: `${borderWidth} ${select_border.borderStyle} ${select_border.borderColor}`,
+        Type: SkinType.border
       }
       break
     case EnumCate.effect:
       let select_effect = window.getComputedStyle(
         selected_list.find(wb =>
-          EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+          WbClass.borderEffect.some(e => wb.value.classList.contains(e))
         ).value
       )
       var new_skin = {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
-        IsStyle: true
-      }
-      if (select_effect.filter !== 'none') {
-        new_skin['Type'] = ShadowType.layer_blur
-        new_skin['BlurRadius'] = select_effect.filter.replace(
-          /(blur\(|px\))/g,
-          ''
-        )
-      } else {
-        let effectColor = select_effect.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = select_effect.boxShadow
-          .replace(effectColor, '')
-          .trim()
-          .split(' ')
-        new_skin['Type'] = props.includes('inset')
-          ? ShadowType.inner
-          : ShadowType.dropdown
-        new_skin['OffsetX'] = parseFloat(props[0].replace('px'))
-        new_skin['OffsetY'] = parseFloat(props[1].replace('px'))
-        new_skin['BlurRadius'] = parseFloat(props[2].replace('px'))
-        new_skin['SpreadRadius'] = parseFloat(props[3].replace('px'))
-        new_skin['ColorValue'] = Ultis.rgbToHex(effectColor).replace('#', '')
+        Css: select_effect.boxShadow,
+        Type: SkinType.effect
       }
       break
     default:
@@ -157,42 +79,8 @@ function createNewSkin () {
   CateDA.createSkin(
     new_skin,
     input_value.replace('\\', '/').split('/'),
-    parseInt(popup_cate)
+    skinType
   )
-}
-for (let i = 1; i <=4; i++) {
-  let demo_skin
-  switch (i) {
-    case 1: // type color
-      demo_skin = document.createElement('div')
-      demo_skin.className = 'box20'
-      demo_skin.style.backgroundColor = '#e5e5e5'
-      demo_skin.style.borderRadius = '50%'
-      break
-    case 2: // type typo
-      demo_skin = document.createElement('p')
-      demo_skin.innerHTML = 'T'
-      demo_skin.className = 'semibold4'
-      break
-    case 3: // type border
-      demo_skin = document.createElement('div')
-      demo_skin.className = 'box20'
-      demo_skin.style.backgroundColor = '#000000'
-      demo_skin.style.borderRadius = '50%'
-      break
-    case 4: // type effect
-      demo_skin = document.createElement('img')
-      demo_skin.className = 'box20'
-      demo_skin.src =
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg'
-      break
-    default:
-      break
-  }
-  demo_skin.style.order = -1
-  demo_skin.style.marginRight = '16px'
-  demo_skin.setAttribute('cate', i)
-  document.getElementById('input_new_skin_name').appendChild(demo_skin)
 }
 // setup create obj tool
 let create_obj_tool = document.getElementById('create_tool')
@@ -696,7 +584,7 @@ $('body').on('click', '.btn-history', function () {
   historyView.id = 'history-view'
   historyView.className = 'edit-container'
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   header.style.justifyContent = 'space-between'
   let title = document.createElement('p')
   title.innerHTML = 'Version history'

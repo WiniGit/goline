@@ -90,22 +90,22 @@ input[type="color"]::-webkit-color-swatch {
   justify-content: space-between;
 }
 
-.header_design_style {
+.ds-block-header {
   width: 100%;
   display: flex;
   box-sizing: border-box;
   align-items: center;
 }
 
-.header_design_style > .action-button {
+.ds-block-header > .action-button {
   display: none;
 }
 
-.header_design_style:hover > .action-button {
+.ds-block-header:hover > .action-button {
   display: flex;
 }
 
-.header_design_style > *:first-child {
+.ds-block-header > *:first-child {
   font-size: 12px;
   line-height: 16px;
   font-weight: 600;
@@ -116,24 +116,24 @@ input[type="color"]::-webkit-color-swatch {
   text-align: left;
 }
 
-.header_design_style i {
+.ds-block-header i {
   padding: 14px 8px;
   border-radius: 2px;
 }
 
-.header_design_style i:hover {
+.ds-block-header i:hover {
   background-color: #f1f1f1;
 }
 
-.header_design_style.disable {
+.ds-block-header.disable {
   position: relative;
 }
 
-.header_design_style.disable > * {
+.ds-block-header.disable > * {
   color: #c4c4c4;
 }
 
-.header_design_style.disable:hover:after {
+.ds-block-header.disable:hover:after {
   content: "can't use breakpoints in fit-content page";
   position: absolute;
   left: 50%;
@@ -558,7 +558,7 @@ input[type="color"]::-webkit-color-swatch {
   background-color: unset !important;
 }
 
-.header_popup_skin > .row:first-child {
+.header_popup_skin > .row.title {
   height: 36px;
   width: 100%;
   font-size: 12px;
@@ -569,9 +569,21 @@ input[type="color"]::-webkit-color-swatch {
   box-sizing: border-box;
 }
 
-.header_popup_skin > .row:first-child > span {
+.header_popup_skin > .row.title > span {
   flex: 1;
   pointer-events: none;
+}
+
+.header_popup_skin > .row.title > .sort-btn {
+  background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/library-black.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.header_popup_skin > .row.title > .add-skin-btn {
+  background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/add2.svg);
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .edit_skin_name {
@@ -2917,12 +2929,18 @@ div:has(> .edit-color-container) {
   margin-left: 4px;
 }
 
-#edit-background > .header_design_style:hover > .bg-header-action:not(.fa-plus) {
+#edit-background > .ds-block-header:hover > .bg-header-action:not(.fa-plus) {
   display: none;
 }
 
-#edit-background > .header_design_style:hover > .bg-header-action {
+#edit-background > .ds-block-header:hover > .bg-header-action {
   display: block !important;
+}
+
+.ds-block-header > .skin-btn {
+  background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg);
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 #edit-variables > .col {

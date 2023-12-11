@@ -111,10 +111,6 @@
   position: absolute !important;
 }
 
-.w-container.w-page > .fixed-position {
-  position: fixed !important;
-}
-
 .w-text {
   display: flex;
 }
