@@ -283,8 +283,8 @@ class CateDA {
     if (jsonData != null) {
       this.list = jsonData
       //
-      this.list_color_cate = ColorDA.list
-        .filter(e => e.CateID != EnumCate.color)
+      this.list_color_cate = StyleDA.cssStyleSheets
+        .filter(e => e.Type === SkinType.color && e.CateID != EnumCate.color)
         .filterAndMap(e => e.CateID)
       this.list_color_cate = this.list.filter(e =>
         this.list_color_cate.some(id => {
@@ -296,8 +296,10 @@ class CateDA {
         })
       )
       //
-      this.list_typo_cate = TypoDA.list
-        .filter(e => e.CateID != EnumCate.typography)
+      this.list_typo_cate = StyleDA.cssStyleSheets
+        .filter(
+          e => e.Type === SkinType.typo && e.CateID != EnumCate.typography
+        )
         .filterAndMap(e => e.CateID)
       this.list_typo_cate = this.list.filter(e =>
         this.list_typo_cate.some(id => {
@@ -309,8 +311,8 @@ class CateDA {
         })
       )
       //
-      this.list_border_cate = BorderDA.list
-        .filter(e => e.CateID != EnumCate.border)
+      this.list_border_cate = StyleDA.cssStyleSheets
+        .filter(e => e.Type === SkinType.border && e.CateID != EnumCate.border)
         .filterAndMap(e => e.CateID)
       this.list_border_cate = this.list.filter(e =>
         this.list_border_cate.some(id => {
@@ -322,8 +324,8 @@ class CateDA {
         })
       )
       //
-      this.list_effect_cate = EffectDA.list
-        .filter(e => e.CateID != EnumCate.effect)
+      this.list_effect_cate = StyleDA.cssStyleSheets
+        .filter(e => e.Type === SkinType.effect && e.CateID != EnumCate.effect)
         .filterAndMap(e => e.CateID)
       this.list_effect_cate = this.list.filter(e =>
         this.list_effect_cate.some(id => {

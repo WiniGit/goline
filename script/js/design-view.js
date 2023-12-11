@@ -3335,7 +3335,8 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
             'Create new effect skin'
           popupAddSkin.querySelector(
             '.popup-body .box20.semibold4'
-          ).style.backgroundImage = 'url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg)'
+          ).style.backgroundImage =
+            'url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg)'
           break
         default:
           break
@@ -3532,90 +3533,38 @@ function createCateSkinHTML (cateItem, currentSkinID) {
     }
   }
   let enumCate = cateItem.ParentID ?? cateItem.ID
-  switch (enumCate) {
-    case EnumCate.color:
-      let color_list = ColorDA.list
-        .filter(e => {
-          if (selected_list.length == 0) {
-            return e.CateID == cateItem.ID
-          } else {
-            return e.CateID == cateItem.ID && e.ProjectID == ProjectDA.obj.ID
-          }
-        })
-        .sort((a, b) => a.Name - b.Name)
-      childrenHTML.push(
-        ...color_list.map(colorItem => {
-          let skin_tile = createSkinTileHTML(enumCate, colorItem)
-          if (colorItem.GID == currentSkinID) {
-            skin_tile.style.backgroundColor = '#E6F7FF'
-          }
-          return skin_tile
-        })
-      )
-      break
-    case EnumCate.typography:
-      let typo_list = TypoDA.list
-        .filter(e => {
-          if (selected_list.length == 0) {
-            return e.CateID == cateItem.ID
-          } else {
-            return e.CateID == cateItem.ID && e.ProjectID == ProjectDA.obj.ID
-          }
-        })
-        .sort((a, b) => a.Name - b.Name)
-      childrenHTML.push(
-        ...typo_list.map(typoItem => {
-          let skin_tile = createSkinTileHTML(enumCate, typoItem)
-          if (typoItem.GID == currentSkinID) {
-            skin_tile.style.backgroundColor = '#E6F7FF'
-          }
-          return skin_tile
-        })
-      )
-      break
-    case EnumCate.border:
-      let border_list = BorderDA.list
-        .filter(e => {
-          if (selected_list.length == 0) {
-            return e.CateID == cateItem.ID
-          } else {
-            return e.CateID == cateItem.ID && e.ProjectID == ProjectDA.obj.ID
-          }
-        })
-        .sort((a, b) => a.Name - b.Name)
-      childrenHTML.push(
-        ...border_list.map(borderItem => {
-          let skin_tile = createSkinTileHTML(enumCate, borderItem)
-          if (borderItem.GID == currentSkinID) {
-            skin_tile.style.backgroundColor = '#E6F7FF'
-          }
-          return skin_tile
-        })
-      )
-      break
-    case EnumCate.effect:
-      let effect_list = EffectDA.list
-        .filter(e => {
-          if (selected_list.length == 0) {
-            return e.CateID == cateItem.ID
-          } else {
-            return e.CateID == cateItem.ID && e.ProjectID == ProjectDA.obj.ID
-          }
-        })
-        .sort((a, b) => a.Name - b.Name)
-      childrenHTML.push(
-        ...effect_list.map(effectItem => {
-          let skin_tile = createSkinTileHTML(enumCate, effectItem)
-          if (effectItem.GID == currentSkinID) {
-            skin_tile.style.backgroundColor = '#E6F7FF'
-          }
-          return skin_tile
-        })
-      )
-      break
-    default:
-      break
-  }
+  let skin_list = StyleDA.cssStyleSheets.filter(e => {
+    switch (enumCate) {
+      case EnumCate.color:
+        if (e.Type !== SkinType.color) return false
+        break
+      case EnumCate.typography:
+        if (e.Type !== SkinType.typo) return false
+        break
+      case EnumCate.border:
+        if (e.Type !== SkinType.border) return false
+        break
+      case EnumCate.effect:
+        if (e.Type !== SkinType.effect) return false
+        break
+      default:
+        return false
+    }
+    // if (selected_list.length === 0) {
+    //   return e.CateID === cateItem.ID
+    // } else {
+    return e.CateID === cateItem.ID && e.ProjectID === ProjectDA.obj.ID
+    // }
+  })
+  childrenHTML.push(
+    ...skin_list.map(skin => {
+      let skin_tile = createSkinTileHTML(enumCate, skin)
+      if (skin.GID == currentSkinID) {
+        skin_tile.style.backgroundColor = '#E6F7FF'
+      }
+      return skin_tile
+    })
+  )
   if (
     cateContainer.querySelectorAll(':scope > .skin_tile_option').length &&
     [
@@ -3680,22 +3629,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
         title: 'Delete',
         click: function (e) {
           e.stopPropagation()
-          switch (enumCate) {
-            case EnumCate.color:
-              ColorDA.delete(jsonSkin)
-              break
-            case EnumCate.typography:
-              TypoDA.delete(jsonSkin)
-              break
-            case EnumCate.border:
-              BorderDA.delete(jsonSkin)
-              break
-            case EnumCate.effect:
-              EffectDA.delete(jsonSkin)
-              break
-            default:
-              break
-          }
+          StyleDA.deleteStyleSheet(jsonSkin)
           skin_tile.remove()
         }
       }
@@ -3732,22 +3666,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditBackgroundBlock()
         }
       }
-      let demo_color = document.createElement('div')
-      demo_color.style.width = '15px'
-      demo_color.style.height = '15px'
-      demo_color.style.borderRadius = '50%'
-      demo_color.style.pointerEvents = 'none'
-      demo_color.style.border = '0.5px solid #c4c4c4'
-      demo_color.style.backgroundColor = `#${jsonSkin.Value}`
-      skin_tile.appendChild(demo_color)
-      let color_name = document.createElement('p')
-      color_name.className = 'skin-name'
-      color_name.innerHTML = jsonSkin.Name
-      color_name.style.margin = '0 8px'
-      color_name.style.flex = 1
-      color_name.style.textAlign = 'left'
-      color_name.style.pointerEvents = 'none'
-      skin_tile.appendChild(color_name)
+      skin_tile.innerHTML = `<div style="width: 15px;height: 15px;border-radius: 50%;border: 0.5px solid #c4c4c4;background-color: ${jsonSkin.Css}"></div><p class="skin-name" style="margin: 0 8px;flex: 1;text-align: left">${jsonSkin.Name}</p>`
       break
     case EnumCate.typography:
       skin_tile.onclick = function (e) {
