@@ -2355,10 +2355,14 @@ function EditBorderBlock () {
 
   let header = document.createElement('div')
   header.className = 'ds-block-header'
+  header.innerHTML = `<p>Border</p>
+  <button class="action-button skin-btn bg-header-action"></button>
+  <i class="fa-regular fa-image fa-sm bg-header-action"></i>
+  <i class="fa-solid fa-plus fa-sm bg-header-action"></i>`
   editContainer.appendChild(header)
 
   let title = document.createElement('p')
-  title.innerHTML = 'Border'
+  title.innerHTML = ''
   header.appendChild(title)
 
   let btnSelectSkin = createButtonAction(
