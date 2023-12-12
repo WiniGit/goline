@@ -383,6 +383,7 @@ class CateDA {
           ParentID: enumCate
         }
         CateDA.add(newCate)
+        return null
       }
     }
   }

@@ -720,6 +720,7 @@ socket.on('server-post', data => {
             break
         }
         StyleDA.newSkin = null
+        document.querySelectorAll('.popup_remove').forEach(e => e.remove())
         create_skin_popup.style.display = 'none'
       })
       CateDA.convertData(CateDA.list)

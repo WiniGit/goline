@@ -81,23 +81,24 @@ function createNewSkin (skinType) {
     input_value.replace('\\', '/').split('/'),
     skinType
   ).then(skin => {
-    if(skin) {
+    if (skin) {
       switch (skinType) {
         case EnumCate.color:
-          handleEditBackground({colorSkin: skin})
-          break;
+          handleEditBackground({ colorSkin: skin })
+          break
         case EnumCate.typography:
-          handleEditTypo({typoSkin: skin})
-          break;
+          handleEditTypo({ typoSkin: skin })
+          break
         case EnumCate.border:
-          handleEditBorder({borderSkin: skin})
-          break;
+          handleEditBorder({ borderSkin: skin })
+          break
         case EnumCate.effect:
-          handleEditEffect({effectSkin: skin})
-          break;
+          handleEditEffect({ effectSkin: skin })
+          break
         default:
-          break;
+          break
       }
+      document.querySelectorAll('.popup_remove').forEach(e => e.remove())
       create_skin_popup.style.display = 'none'
     }
   })

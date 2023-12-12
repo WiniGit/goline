@@ -1749,7 +1749,7 @@ function EditBackgroundBlock () {
               wb.value
             )
           )?.style?.backgroundColor
-        return bgColor?.replace(/(var\(|\))/g, '')
+        return bgColor?.replace(/(var\(--|\))/g, '')
       })
       if (wbBg.length === 1 && wbBg[0]?.length > 0) {
         header.querySelector('.fa-plus').remove()
@@ -1773,7 +1773,7 @@ function EditBackgroundBlock () {
               onRemove: function () {
                 handleEditBackground({ hexCode: null })
                 reloadEditBackgroundBlock()
-              }
+              },
             })
             editContainer.appendChild(skin_tile)
             if (scaleWb) skin_tile.lastChild.style.display = 'none'
@@ -1914,7 +1914,7 @@ function EditTypoBlock () {
           wb.value
         )
       )?.style?.font
-    return fontSt?.replace(/(var\(|\))/g, '')
+    return fontSt?.replace(/(var\(--|\))/g, '')
   })
 
   if (listTypoSkin.length === 1 && listTypoSkin[0]?.length === 36) {
@@ -1929,7 +1929,7 @@ function EditTypoBlock () {
         createDropdownTableSkin(EnumCate.typography, offset, typoSkin.GID)
       }
     })
-    skin_tile.firstChild.firstChild.style.fontWeight = typoSkin.FontWeight
+    skin_tile.querySelector().style.fontWeight = typoSkin.FontWeight
     editContainer.appendChild(skin_tile)
   } else if (listTypoSkin.some(vl => vl.length === 36)) {
     header.appendChild(btnSelectSkin)
@@ -3140,7 +3140,7 @@ function createEditColorForm ({
   })
   if (ondelete) $(editColorTile).on('click', '.fa-minus', ondelete)
   else if (suffixAction)
-    $(editColorTile).on('click', 'parameter-form + img', suffixAction)
+    $(editColorTile).on('click', '.parameter-form + img', suffixAction)
   else editColorTile.querySelector('.fa-minus').style.display = 'none'
   //? </function>
   return editColorTile
@@ -4502,15 +4502,13 @@ function popupEditSkin (enumCate, jsonSkin) {
 
 function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
   let wbase_skin_tile = document.createElement('div')
-  wbase_skin_tile.className = 'wbase_skin_tile'
+  wbase_skin_tile.className = 'wbase_skin_tile row'
   let btn_table_skin = document.createElement('div')
   btn_table_skin.onclick = function () {
     setTimeout(onClick, 200)
   }
-  wbase_skin_tile.appendChild(btn_table_skin)
-  let btn_unLink = document.createElement('img')
-  btn_unLink.src =
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg'
+  let btn_unLink = document.createElement('div')
+  btn_unLink.className = 'unlink-skin-btn'
   switch (cate) {
     case EnumCate.color:
       btn_table_skin.innerHTML = `<div style="width: 15px;height: 15px;border-radius: 50%;border: 0.5px solid #c4c4c4; background-color: ${prefixValue}"></div><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
@@ -4543,13 +4541,12 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
     default:
       break
   }
-  wbase_skin_tile.appendChild(btn_unLink)
+  wbase_skin_tile.replaceChildren(btn_table_skin, btn_unLink)
   if (onRemove) {
-    let btn_remove_color = document.createElement('img')
-    btn_remove_color.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg'
-    wbase_skin_tile.appendChild(btn_remove_color)
-    btn_remove_color.onclick = onRemove
+    let btnRemoveColor = document.createElement('i')
+    btnRemoveColor.className = 'fa-solid fa-minus fa-xs'
+    wbase_skin_tile.appendChild(btnRemoveColor)
+    btnRemoveColor.onclick = onRemove
   }
   return wbase_skin_tile
 }

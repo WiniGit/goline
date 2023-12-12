@@ -3270,10 +3270,10 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
           ) {
             cssRule.style.setProperty(
               '--checked-color',
-              `var(${colorSkin.GID})`
+              `var(--${colorSkin.GID})`
             )
           } else {
-            cssRule.style.backgroundColor = `var(${colorSkin.GID})`
+            cssRule.style.backgroundColor = `var(--${colorSkin.GID})`
           }
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -3292,10 +3292,10 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
           ) {
             wb.value.style.setProperty(
               '--checked-color',
-              `var(${colorSkin.GID})`
+              `var(--${colorSkin.GID})`
             )
           } else {
-            wb.value.style.backgroundColor = `var(${colorSkin.GID})`
+            wb.value.style.backgroundColor = `var(--${colorSkin.GID})`
           }
           wb.Css = wb.value.style.cssText
         }
@@ -3318,9 +3318,9 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
             cssRule.classList.contains(e)
           )
         ) {
-          cssRule.style.setProperty('--checked-color', `var(${colorSkin.GID})`)
+          cssRule.style.setProperty('--checked-color', `var(--${colorSkin.GID})`)
         } else {
-          cssRule.style.backgroundColor = `var(${colorSkin.GID})`
+          cssRule.style.backgroundColor = `var(--${colorSkin.GID})`
         }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -3549,7 +3549,7 @@ function handleEditTypo ({
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.font = `var(${typoSkin.GID})`
+          cssRule.style.font = `var(--${typoSkin.GID})`
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
@@ -3557,7 +3557,7 @@ function handleEditTypo ({
           StyleDA.editStyleSheet(cssItem)
           listUpdate = listUpdate.filter(e => e !== wb)
         } else {
-          wb.value.style.font = `var(${typoSkin.GID})`
+          wb.value.style.font = `var(--${typoSkin.GID})`
           wb.Css = wb.value.style.cssText
         }
       }
@@ -3571,7 +3571,7 @@ function handleEditTypo ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.font = `var(${typoSkin.GID})`
+        cssRule.style.font = `var(--${typoSkin.GID})`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3587,7 +3587,7 @@ function handleEditTypo ({
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.color = `var(${colorSkin.GID})`
+          cssRule.style.color = `var(--${colorSkin.GID})`
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
@@ -3595,7 +3595,7 @@ function handleEditTypo ({
           StyleDA.editStyleSheet(cssItem)
           listUpdate = listUpdate.filter(e => e !== wb)
         } else {
-          wb.value.style.color = `var(${colorSkin.GID})`
+          wb.value.style.color = `var(--${colorSkin.GID})`
           wb.Css = wb.value.style.cssText
         }
       }
@@ -3609,7 +3609,7 @@ function handleEditTypo ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.color = `var(${colorSkin.GID})`
+        cssRule.style.color = `var(--${colorSkin.GID})`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText

@@ -17,13 +17,13 @@ async function initData () {
   divSection.replaceChildren()
   let wbaseResponse = await WBaseDA.apiGetInitWbase()
   StyleDA.initSkin(ProjectDA.obj.ID).then(skinResponse => {
+    CateDA.initCate()
     StyleDA.listSkin = skinResponse
     StyleDA.listSkin.forEach(skin => {
-      document.documentElement.style.setProperty(skin.GID, skin.Css)
+      document.documentElement.style.setProperty(`--${skin.GID}`, skin.Css)
     })
   })
   // PropertyDA.list = skinResponse.Data.WPropertyItems
-  CateDA.initCate()
   console.log('get server done: ', Date.now())
   wbase_list = []
   wbase_list = initDOM(wbaseResponse)
