@@ -3405,7 +3405,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
   switch (enumCate) {
     case EnumCate.color:
-      if (ColorDA.list.length == 0) {
+      if (StyleDA.cssStyleSheets.filter(e => e.Type === SkinType.color).length == 0) {
         noti_empty_skin.innerHTML = 'No color skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3422,7 +3422,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
       break
     case EnumCate.typography:
-      if (TypoDA.list.length == 0) {
+      if (StyleDA.cssStyleSheets.filter(e => e.Type === SkinType.typo).length == 0) {
         noti_empty_skin.innerHTML = 'No typography skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3439,7 +3439,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
       break
     case EnumCate.border:
-      if (BorderDA.list.length == 0) {
+      if (StyleDA.cssStyleSheets.filter(e => e.Type === SkinType.border).length == 0) {
         noti_empty_skin.innerHTML = 'No border skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3456,7 +3456,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
       break
     case EnumCate.effect:
-      if (EffectDA.list.length == 0) {
+      if (StyleDA.cssStyleSheets.filter(e => e.Type === SkinType.effect).length == 0) {
         noti_empty_skin.innerHTML = 'No effect skins.'
         body.replaceChildren(noti_empty_skin)
       } else {

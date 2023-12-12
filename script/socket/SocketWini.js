@@ -701,9 +701,6 @@ socket.on('server-post', data => {
     case EnumObj.cate:
       let newId = data.data
       CateDA.list[CateDA.list.length - 1].ID = newId
-      let is_show_popup_create =
-        window.getComputedStyle(document.getElementById('create_skin_popup'))
-          .display != 'none'
       StyleDA.newSkin.CateID = newId
       CateDA.convertData(CateDA.list)
       break
