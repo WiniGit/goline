@@ -96,12 +96,13 @@ class Constraints {
 }
 
 class BorderSide {
-  static all = 'All'
-  static left = 'Left'
-  static top = 'Top'
-  static right = 'Right'
-  static bottom = 'Bottom'
-  static custom = 'Custom'
+  static all = 'all'
+  static left = 'left'
+  static top = 'top'
+  static right = 'right'
+  static bottom = 'bottom'
+  static top_bottom = 'top_bottom'
+  static left_right = 'left_right'
 }
 
 class BorderStyle {
