@@ -86,6 +86,15 @@ function createNewSkin (skinType) {
         case EnumCate.color:
           handleEditBackground({colorSkin: skin})
           break;
+        case EnumCate.typography:
+          handleEditTypo({typoSkin: skin})
+          break;
+        case EnumCate.border:
+          handleEditBorder({borderSkin: skin})
+          break;
+        case EnumCate.effect:
+          handleEditEffect({effectSkin: skin})
+          break;
         default:
           break;
       }

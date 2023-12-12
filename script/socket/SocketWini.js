@@ -702,6 +702,26 @@ socket.on('server-post', data => {
       let newId = data.data
       CateDA.list[CateDA.list.length - 1].ID = newId
       StyleDA.newSkin.CateID = newId
+      StyleDA.addStyleSheet(StyleDA.newSkin).then(() => {
+        switch (StyleDA.newSkin.Type) {
+          case EnumCate.color:
+            handleEditBackground({ colorSkin: skin })
+            break
+          case EnumCate.typography:
+            handleEditTypo({ typoSkin: skin })
+            break
+          case EnumCate.border:
+            handleEditBorder({ borderSkin: skin })
+            break
+          case EnumCate.effect:
+            handleEditEffect({ effectSkin: skin })
+            break
+          default:
+            break
+        }
+        StyleDA.newSkin = null
+        create_skin_popup.style.display = 'none'
+      })
       CateDA.convertData(CateDA.list)
       break
     // !POST collection

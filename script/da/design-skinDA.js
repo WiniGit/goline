@@ -339,33 +339,32 @@ class CateDA {
   }
 
   static async createSkin (jsonSkin, listName, enumCate) {
-    StyleDA.newSkin = jsonSkin
     if (listName.length <= 1) {
       if (listName.length == 1 && listName[0].trim() != '') {
-        StyleDA.newSkin.Name = listName[0]
+        jsonSkin.Name = listName[0]
       } else {
         switch (enumCate) {
           case EnumCate.color:
-            StyleDA.newSkin.Name = StyleDA.newSkin.Css
+            jsonSkin.Name = jsonSkin.Css
             break
           case EnumCate.typography:
-            StyleDA.newSkin.Name = StyleDA.newSkin.Css
+            jsonSkin.Name = jsonSkin.Css
             break
           case EnumCate.border:
-            StyleDA.newSkin.Name = StyleDA.newSkin.Css
+            jsonSkin.Name = jsonSkin.Css
             break
           case EnumCate.effect:
-            StyleDA.newSkin.Name = StyleDA.newSkin.Css
+            jsonSkin.Name = jsonSkin.Css
             break
           default:
             break
         }
       }
-      StyleDA.newSkin.CateID = enumCate
-      await StyleDA.addStyleSheet(StyleDA.newSkin)
-      debugger
+      jsonSkin.CateID = enumCate
+      await StyleDA.addStyleSheet(jsonSkin)
+      return jsonSkin
     } else {
-      StyleDA.newSkin.Name = listName.pop()
+      jsonSkin.Name = listName.pop()
       let nameCate = listName.join(' ')
       let cateItem = this.list.find(
         e =>
@@ -373,10 +372,11 @@ class CateDA {
           e.Name.toLowerCase() == nameCate.toLowerCase()
       )
       if (cateItem) {
-        StyleDA.newSkin.CateID = cateItem.ID
-        await StyleDA.addStyleSheet(StyleDA.newSkin)
-        debugger
+        jsonSkin.CateID = cateItem.ID
+        await StyleDA.addStyleSheet(jsonSkin)
+        return jsonSkin
       } else {
+        StyleDA.newSkin = jsonSkin
         let newCate = {
           ID: 0,
           Name: nameCate,
