@@ -2357,87 +2357,35 @@ function EditBorderBlock () {
   header.className = 'ds-block-header'
   header.innerHTML = `<p>Border</p>
   <button class="action-button skin-btn bg-header-action"></button>
-  <i class="fa-regular fa-image fa-sm bg-header-action"></i>
   <i class="fa-solid fa-plus fa-sm bg-header-action"></i>`
   editContainer.appendChild(header)
 
-  let title = document.createElement('p')
-  title.innerHTML = ''
-  header.appendChild(title)
-
-  let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
-    null,
-    function () {
-      let offset = header.getBoundingClientRect()
-      createDropdownTableSkin(EnumCate.border, offset)
-    }
-  )
   //
+  const borderSide = [
+    'border',
+    'border-top',
+    'border-right',
+    'border-bottom',
+    'border-left'
+  ]
   let listBorderSkin = listBorder.filterAndMap(wb => {
-    if (wb.StyleItem) {
-      var rule = wb.value.style
-    } else {
-      rule = StyleDA.docStyleSheets.find(cssRule =>
-        [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-          wb.value
-        )
-      )?.style
-    }
-    if (rule && rule.borderStyle.length > 0) {
-      if (rule.borderStyle.includes('var')) {
-        return rule.borderStyle
-          .replace('var(--border-style-', '')
-          .replace(')', '')
-      } else {
-        let borderWidth = rule.borderWidth.replaceAll('px', '').split(' ')
-        let borderSide = BorderSide.custom
-        switch (borderWidth.length) {
-          case 1:
-            borderWidth = `${borderWidth} ${borderWidth} ${borderWidth} ${borderWidth}`
-            borderSide = BorderSide.all
-            break
-          case 2:
-            borderWidth = [...borderWidth, ...borderWidth].join(' ')
-            break
-          case 3:
-            if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
-              if (borderWidth[0] > 0) {
-                borderSide = BorderSide.top
-              } else {
-                borderSide = BorderSide.bottom
-              }
-            }
-            borderWidth = [...borderWidth, borderWidth[1]].join(' ')
-            break
-          default: // 4
-            if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
-              if (borderWidth[0] > 0) {
-                borderSide = BorderSide.top
-              } else if (borderWidth[1] > 0) {
-                borderSide = BorderSide.right
-              } else if (borderWidth[2] > 0) {
-                borderSide = BorderSide.bottom
-              } else {
-                borderSide = BorderSide.left
-              }
-            }
-            borderWidth = borderWidth.join(' ')
-            break
-        }
-        wb.borderSide = borderSide
-        return {
-          Width: borderWidth,
-          BorderStyle: rule.borderStyle,
-          ColorValue: Ultis.rgbToHex(rule.borderColor).replace('#', ''),
-          IsStyle: false,
-          BorderSide: borderSide
-        }
+    for (let side of borderSide) {
+      if (wb.value.style[side]) {
+        return wb.value.style[side].replace(/(var\(--|\))/g, '')
       }
     }
+    let rule = StyleDA.docStyleSheets.find(cssRule =>
+      [...divSection.querySelectorAll(cssRule.selectorText)].includes(wb.value)
+    )
+    if (rule)
+      for (let side of borderSide) {
+        if (rule.style[side]) {
+          return rule.style[side].replace(/(var\(--|\))/g, '')
+        }
+      }
     return null
   })
-  if (listBorderSkin.length === 1 && typeof listBorderSkin[0] === 'string') {
+  if (listBorderSkin.length === 1 && listBorderSkin[0]?.length === 36) {
     let borderItem = BorderDA.list.find(skin => listBorderSkin[0] === skin.GID)
     let cateItem = CateDA.list_border_cate.find(e => e.ID == borderItem.CateID)
     let skin_tile = wbaseSkinTile({
@@ -2454,7 +2402,7 @@ function EditBorderBlock () {
       }
     })
     editContainer.appendChild(skin_tile)
-  } else if (listBorderSkin.some(e => typeof e !== 'object')) {
+  } else if (listBorderSkin.some(vl => vl.length === 36)) {
     header.appendChild(btnSelectSkin)
     let notiText = document.createElement('span')
     notiText.className = 'regular1'
@@ -2728,6 +2676,10 @@ function EditBorderBlock () {
       reloadUIBySide(firstSideValue)
     }
   }
+  $(header).on('click', '.skin-btn', function () {
+    let offset = header.getBoundingClientRect()
+    createDropdownTableSkin(EnumCate.border, offset)
+  })
   return editContainer
 }
 
