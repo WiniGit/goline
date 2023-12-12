@@ -507,15 +507,8 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
   })
   //
   let wbaseChildren = []
-  const parentCls = [
-    'w-conatiner',
-    'w-form',
-    'w-textformfield',
-    'w-button',
-    'w-table',
-    'w-variant'
-  ]
-  if (parentCls.some(e => wbase_tile.classList.contains(e))) {
+  
+  if (WbClass.parent.some(e => wbase_tile.classList.contains(e))) {
     let childrenLayer = document.createElement('div')
     layerContainer.appendChild(childrenLayer)
     childrenLayer.id = `parentID:${wbaseItem.GID}`

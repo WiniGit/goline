@@ -1232,8 +1232,8 @@ function moveListener (event) {
                 switch (tool_state) {
                   case ToolState.resize_left:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1277,8 +1277,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_right:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         wb.tmpW = wb.value.offsetWidth
@@ -1319,8 +1319,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_top:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1363,8 +1363,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_bot:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         wb.tmpH = wb.value.offsetHeight
@@ -1405,8 +1405,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_top_left:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1447,8 +1447,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_top_right:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1488,8 +1488,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_bot_left:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1528,8 +1528,8 @@ function moveListener (event) {
                     break
                   case ToolState.resize_bot_right:
                     for (let wb of selected_list) {
-                      let scaleWb = ['w-checkbox', 'w-switch', 'w-radio'].some(
-                        e => wb.value.classList.contains(e)
+                      let scaleWb = WbClass.scale.some(e =>
+                        wb.value.classList.contains(e)
                       )
                       if (checkpad < selected_list.length) {
                         if (!isInFlex) {
@@ -1965,11 +1965,12 @@ function checkHoverElement (event) {
               wbHTML.classList.contains(e)
             ) ||
             wbHTML.children.length === 0 ||
-            wbHTML.getAttribute('isinstance') === 'true' // || event.altKey
+            wbHTML.getAttribute('isinstance') === 'true' ||
+            currentLevel === 1 // || event.altKey
           break
         default:
           let parentPage = $(wbHTML).parents(
-            `.wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance="true"])`
+            `.w-container:not(*[isinstance="true"]), .w-variant:not(*[isinstance="true"])`
           )[0]
           if (target_level === 2 && parentPage) {
             is_enable = true
@@ -2853,7 +2854,7 @@ function clickEvent (event) {
       }
     } else if (keyid != 'z') {
       if (checkpad == 0) {
-        if ([...event.path].some(e => e.id == 'canvas_view')) {
+        if (event.target.closest('div[id="canvas_view"]')) {
           if (listCurve.length > 0) {
             let selectedPrototype = listCurve.find(_curve =>
               ctxr.isPointInStroke(_curve.curveValue, event.pageX, event.pageY)
@@ -2953,11 +2954,11 @@ function upListener (event) {
         let isSvgImg = url.endsWith('.svg')
         let newRect
         if (isSvgImg) {
-          newRect = JSON.parse(JSON.stringify(WBaseDefault.imgSvg))
+          newRect = JSON.parse(JSON.stringify(WbClass.imgSvg))
           newRect.Name = url.split('/').pop().replace('.svg', '')
           newRect.AttributesItem.Content = url.replace(urlImg, '')
         } else {
-          newRect = JSON.parse(JSON.stringify(WBaseDefault.rectangle))
+          newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
           newRect.Name = 'new rectangle'
           newRect.Css = `background-image: url(${url});`
         }
@@ -3086,7 +3087,7 @@ function upListener (event) {
           '.wbaseItem-value:is(.w-container,.w-textformfield,.w-button,.w-table)'
         )
         createWbaseHTML({
-          parentID: parentHTML?.id ?? wbase_parentID,
+          parentid: parentHTML?.id ?? wbase_parentID,
           x: offset_convert.x,
           y: offset_convert.y
         })
@@ -3119,9 +3120,10 @@ function upListener (event) {
       if (WBaseDA.listData.length > 0) {
         list_add = WBaseDA.listData
       } else {
-        list_add = selected_list.filter(
-          e => !e.value.classList.contains('w-text')
-        )
+        list_add = selected_list.filter(wb => {
+          wb.Css = wb.value.style.cssText
+          return !wb.value.classList.contains('w-text')
+        })
       }
       // ! add wbase thường
       // action_list[action_index].selected = [
@@ -3143,40 +3145,16 @@ function upListener (event) {
       }
       break
     case EnumEvent.edit:
-      let enumObj = EnumObj.framePosition
       let isInFlex = false
       if (select_box_parentID != wbase_parentID)
         isInFlex = window
           .getComputedStyle(document.getElementById(select_box_parentID))
           .display.match('flex')
-      for (let wbaseItem of selected_list) {
-        let eHTML = wbaseItem.value
-        if (wbaseItem.CateID == EnumCate.text) {
-          enumObj = EnumObj.typoStyleFramePosition
+      if (!isInFlex) {
+        for (let wb of selected_list) {
+          updateConstraints(wb.value)
+          wb.Css = wb.value.cssText
         }
-        if (wbaseItem.StyleItem.FrameItem.Width != undefined) {
-          wbaseItem.StyleItem.FrameItem.Width =
-            wbaseItem.StyleItem.FrameItem.Width < 0
-              ? -eHTML.offsetWidth
-              : eHTML.offsetWidth
-        }
-        if (wbaseItem.StyleItem.FrameItem.Height != undefined) {
-          if (wbaseItem.CateID === EnumCate.tree) {
-            wbaseItem.StyleItem.FrameItem.Height =
-              eHTML.offsetHeight /
-              ([...wbaseItem.value.querySelectorAll('.w-tree')].filter(
-                wtree => wtree.offsetHeight > 0
-              ).length +
-                1)
-          } else {
-            wbaseItem.StyleItem.FrameItem.Height =
-              wbaseItem.StyleItem.FrameItem.Height < 0
-                ? -eHTML.offsetHeight
-                : eHTML.offsetHeight
-          }
-        }
-        handleStyleSize(wbaseItem)
-        if (!isInFlex) updateConstraints(wbaseItem)
       }
       WBaseDA.edit(selected_list, enumObj)
       break

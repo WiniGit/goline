@@ -88,28 +88,23 @@ function updateUIDesignView () {
         listEditContainer.appendChild(selectColByBrp)
       }
     }
-    if (
-      selected_list.some(wb =>
-        EnumCate.no_child_component.every(ct => wb.CateID !== ct)
-      ) &&
-      (selected_list.length === 1 ||
-        selected_list[0].StyleItem ||
-        selected_list.every(wb =>
-          window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
-        ))
-    ) {
-      let editAutoLayout = EditLayoutBlock()
-      listEditContainer.appendChild(editAutoLayout)
-    }
+    // if (
+    //   selected_list.some(wb =>
+    //     WbClass.parent.some(e => wb.value.classList.contains(e))
+    //   ) ||
+    //   selected_list.length > 1
+    // ) {
+    //   let editAutoLayout = EditLayoutBlock()
+    //   listEditContainer.appendChild(editAutoLayout)
+    // }
     //
-    if (selected_list.every(wb => wb.CateID !== EnumCate.text)) {
+    if (selected_list.some(wb => !wb.value.classList.contains('w-text'))) {
       let editBackground = EditBackgroundBlock()
       listEditContainer.appendChild(editBackground)
     }
     if (
-      selected_list.some(
-        wb =>
-          wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
+      selected_list.some(wb =>
+        ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
       )
     ) {
       let editTextStyle = EditTypoBlock()
@@ -117,11 +112,19 @@ function updateUIDesignView () {
     }
     if (
       selected_list.some(wb =>
-        EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+        ['w-checkbox', ...WbClass.borderEffect].some(e =>
+          wb.value.classList.contains(e)
+        )
       )
     ) {
       let editBorder = EditBorderBlock()
       listEditContainer.appendChild(editBorder)
+    }
+    if (
+      selected_list.some(wb =>
+        WbClass.borderEffect.some(e => wb.value.classList.contains(e))
+      )
+    ) {
       let editEffect = EditEffectBlock()
       listEditContainer.appendChild(editEffect)
     }
@@ -196,28 +199,13 @@ function createCanvasBackground () {
 function EditAlignBlock () {
   let editAlignContainer = document.createElement('div')
   editAlignContainer.id = 'edit_align_div'
-  let isEnable =
-    !selected_list[0].value.closest(`.wbaseItem-value[isinstance="true"]`) &&
-    selected_list.every(
-      wb =>
-        (window.getComputedStyle(wb.value).position === 'absolute' &&
-          (selected_list.length > 1 || wb.Level > 1)) ||
-        [
-          ...wb.value.querySelectorAll(
-            `.wbaseItem-value[level="${wb.Level + 1}"]`
-          )
-        ].some(
-          childWb => window.getComputedStyle(childWb).position === 'absolute'
-        )
-    )
-  if (isEnable) {
-    isEnable = !selected_list.some(
-      wb =>
-        wb.IsInstance &&
-        (window.getComputedStyle(wb.value).position !== 'absolute' ||
-          wb.Level === 1)
-    )
-  }
+  let isEnable = selected_list.every(
+    wb =>
+      ((selected_list.length > 1 || wb.Level > 1) &&
+        window.getComputedStyle(wb.value).position === 'absolute') ||
+      wb.value.classList.contains('w-stack') ||
+      wb.value.querySelector(':scope > .fixed-position')
+  )
   editAlignContainer.setAttribute('enable', isEnable)
   editAlignContainer.replaceChildren(
     ...[
@@ -255,7 +243,7 @@ function EditOffsetBlock () {
   if (
     select_box_parentID === wbase_parentID &&
     selected_list.every(
-      e => !e.IsInstance && EnumCate.extend_frame.some(ct => e.CateID === ct)
+      e => !e.IsInstance && e.value.classList.contains('w-container')
     )
   ) {
     let pageDeviceContainer = document.createElement('div')
@@ -301,7 +289,7 @@ function EditOffsetBlock () {
       }
     }
     let listSize = selected_list
-      .filter(wb => EnumCate.extend_frame.some(ct => wb.CateID === ct))
+      .filter(wb => wb.value.classList.contains('w-container'))
       .filterAndMap(
         wb =>
           `${parseInt(wb.value.offsetWidth)}x${parseInt(wb.value.offsetHeight)}`
@@ -353,13 +341,10 @@ function EditOffsetBlock () {
     }
   })
   editXYContainer.replaceChildren(edit_left, edit_top)
-  let parentHTML = document.getElementById(select_box_parentID)
-  if (
-    EnumCate.extend_frame.some(
-      ct => parentHTML?.getAttribute('cateid') == ct
-    ) &&
-    window.getComputedStyle(parentHTML).display.match('flex')
-  ) {
+  let parentHTML = divSection.querySelector(
+    `.wbaseItem-value.w-container[id="${select_box_parentID}"]`
+  )
+  if (parentHTML && window.getComputedStyle(parentHTML).display.match('flex')) {
     let isFixPos = selected_list.every(e =>
       e.value.classList.contains('fixed-position')
     )
@@ -415,7 +400,7 @@ function EditOffsetBlock () {
     }
   })
   let isRatio = selected_list.some(wb =>
-    EnumCate.scale_size_component.some(ct => wb.CateID === ct)
+    WbClass.scale.some(e => wb.value.classList.contains(e))
   )
   let icon_ratioWH = document.createElement('img')
   icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
@@ -437,12 +422,14 @@ function EditOffsetBlock () {
   edit_size_position_div.appendChild(editWHContainer)
 
   if (
-    selected_list.every(
-      wb =>
-        EnumCate.scale_size_component.every(ct => wb.CateID !== ct) &&
-        (window.getComputedStyle(wb.value).display.match(/(flex|table)/g) ||
-          window.getComputedStyle(wb.value).position !== 'absolute')
-    )
+    selected_list.every(wb => {
+      let computeSt = window.getComputedStyle(wb.value)
+      return (
+        WbClass.scale.every(e => !wb.value.classList.contains(e)) &&
+        (computeSt.display.match(/(flex|table)/g) ||
+          computeSt.position !== 'absolute')
+      )
+    })
   ) {
     let resizeContainer = document.createElement('div')
     resizeContainer.className = 'row'
@@ -671,10 +658,10 @@ function EditOffsetBlock () {
     edit_size_position_div.appendChild(_row_radius_detail)
   }
   if (
-    selected_list.filter(
-      wb =>
-        wb !== EnumCate.table &&
-        EnumCate.no_child_component.every(ct => wb.CateID != ct)
+    selected_list.filter(wb =>
+      ['w-container', 'w-button', 'w-textformfield', 'w-variant'].some(e =>
+        wb.value.classList.contains(e)
+      )
     ).length > 0
   ) {
     // sixth line is btn checkboc clip content (overflow)
@@ -683,16 +670,20 @@ function EditOffsetBlock () {
     btn_clip_content.style.margin = '4px 0 0 16px'
     btn_clip_content.innerHTML = `<input type="checkbox"${
       selected_list
-        .filter(wb => wb.CateID !== EnumCate.table)
+        .filter(wb =>
+          ['w-container', 'w-button', 'w-textformfield', 'w-variant'].some(e =>
+            wb.value.classList.contains(e)
+          )
+        )
         .every(wb =>
           window.getComputedStyle(wb.value).overflow.includes('hidden')
         )
         ? ' checked'
         : ''
     } style="margin-right: 8px; width: fit-content" />Clip content`
-    btn_clip_content.firstChild.onchange = function (ev) {
+    $(btn_clip_content).on('change', 'input', function (ev) {
       handleEditOffset({ isClip: ev.target.checked })
-    }
+    })
     edit_size_position_div.appendChild(btn_clip_content)
   }
   return edit_size_position_div
@@ -841,7 +832,7 @@ function EditLayoutBlock () {
   editContainer.id = 'edit_auto_layout_div'
   editContainer.className = 'edit-container'
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   header.innerHTML = `<p>${isEditTable ? 'Table layout' : 'Auto layout'}</p>`
   editContainer.appendChild(header)
   let showDetails = selected_list.every(wb =>
@@ -1248,7 +1239,7 @@ function EditConstraintsBlock () {
   editContainer.className = 'edit-container'
 
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   editContainer.appendChild(header)
 
   let title = document.createElement('p')
@@ -1292,7 +1283,7 @@ function EditConstraintsBlock () {
   ]
   if (
     selected_list.every(wb =>
-      EnumCate.scale_size_component.every(ct => wb.CateID != ct)
+      WbClass.scale.every(e => !wb.value.classList.contains(e))
     )
   ) {
     if (
@@ -1735,307 +1726,80 @@ function EditBackgroundBlock () {
   editContainer.style.rowGap = '6px'
   editContainer.className = 'edit-container'
   let header = document.createElement('div')
-  header.className = 'header_design_style'
-  let checkedComponent = selected_list.every(wb =>
-    EnumCate.scale_size_component.some(ct => wb.CateID === ct)
+  header.className = 'ds-block-header'
+  let scaleWb = selected_list.every(wb =>
+    WbClass.scale.some(e => wb.value.classList.contains(e))
   )
-  header.innerHTML = `<p>${
-    checkedComponent ? 'Checked primary color' : 'Background'
-  }</p>`
+  header.innerHTML = `<p>${scaleWb ? 'Checked primary color' : 'Background'}</p>
+  <button class="action-button skin-btn bg-header-action"></button>
+  <i class="fa-regular fa-image fa-sm bg-header-action"></i>
+  <i class="fa-solid fa-plus fa-sm bg-header-action"></i>`
   editContainer.appendChild(header)
 
-  let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
-    null,
-    function () {
-      let offset = header.getBoundingClientRect()
-      createDropdownTableSkin(EnumCate.color, offset)
-    }
+  let wbBg = selected_list.filterAndMap(
+    wb => window.getComputedStyle(wb.value).backgroundImage
   )
-  btnSelectSkin.className = 'action-button bg-header-action'
-  let btnSelectImg = document.createElement('i')
-  btnSelectImg.className = 'fa-regular fa-image fa-sm bg-header-action'
-  btnSelectImg.onclick = function () {
-    if (!document.getElementById('popup_img_document')) FileDA.init()
-  }
-  if (
-    selected_list.every(
-      wb => window.getComputedStyle(wb.value).backgroundImage === 'none'
-    )
-  ) {
-    header.appendChild(btnSelectImg)
-    let listColorID = selected_list.filterAndMap(wb => {
-      let wbSt = wb.StyleItem
-        ? wb.value.style
-        : StyleDA.docStyleSheets.find(cssRule =>
+  if (wbBg.length === 1) {
+    if (wbBg[0] === 'none') {
+      wbBg = selected_list.filterAndMap(wb => {
+        let bgColor =
+          wb.value.style?.backgroundColor ??
+          StyleDA.docStyleSheets.find(cssRule =>
             [...divSection.querySelectorAll(cssRule.selectorText)].includes(
               wb.value
             )
-          )?.style
-      return wbSt?.backgroundColor?.replace(
-        /(var\(--background-color-|\))/g,
-        ''
-      )
-    })
-
-    if (listColorID.length === 1) {
-      if (listColorID[0]?.length === 36) {
-        let colorSkin = ColorDA.list.find(skin => listColorID[0] === skin.GID)
-        let cateItem
-        if (colorSkin) {
-          if (colorSkin.CateID !== EnumCate.color) {
-            cateItem = CateDA.list_color_cate.find(
-              e => e.ID == colorSkin.CateID
-            )
-          }
-          let skin_tile = wbaseSkinTile({
-            cate: EnumCate.color,
-            prefixValue: `#${colorSkin.Value}`,
-            title: (cateItem ? `${cateItem.Name}/` : '') + colorSkin.Name,
-            onClick: function () {
-              let offset = header.getBoundingClientRect()
-              createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID)
-            },
-            onRemove: function () {
-              handleEditBackground({ hexCode: null })
-              reloadEditBackgroundBlock()
+          )?.style?.backgroundColor
+        return bgColor?.replace(/(var\(|\))/g, '')
+      })
+      if (wbBg.length === 1 && wbBg[0]?.length > 0) {
+        header.querySelector('.fa-plus').remove()
+        if (wbBg[0].length === 36) {
+          let colorSkin = ColorDA.list.find(skin => listColorID[0] === skin.GID)
+          let cateItem
+          if (colorSkin) {
+            if (colorSkin.CateID !== EnumCate.color) {
+              cateItem = CateDA.list_color_cate.find(
+                e => e.ID == colorSkin.CateID
+              )
             }
-          })
-          editContainer.appendChild(skin_tile)
-          if (checkedComponent) skin_tile.lastChild.style.display = 'none'
-        }
-      } else if (listColorID[0]) {
-        let selectColorValue = listColorID[0].includes('rgb')
-          ? Ultis.rgbToHex(listColorID[0]).replace('#', '')
-          : listColorID[0]
-        //body
-        let colorsSelectionList = document.createElement('div')
-        colorsSelectionList.id = 'colors_selection_list'
-        colorsSelectionList.className = 'col'
-        editContainer.appendChild(colorsSelectionList)
-        let listEditColorForm = []
-
-        if (selectColorValue.split(',').length > 1) {
-          for (let colorForm of selectColorValue.split(',')) {
-            let formEdit = editColorContainer(
-              colorForm,
-              function (_, onSubmit) {
-                let newListColorValue = [
-                  ...colorsSelectionList.querySelectorAll(
-                    '.edit-color-container'
-                  )
-                ].map(eHTML => {
-                  return (
-                    eHTML.querySelector('.hex-color-value').value +
-                    Ultis.percentToHex(
-                      eHTML
-                        .querySelector('.opacity-color-value')
-                        .value.replace('%', '')
-                    )
-                  )
-                })
-                handleEditBackground({
-                  hexCode: newListColorValue.join(','),
-                  onSubmit: onSubmit
-                })
-                if (onSubmit) reloadEditBackgroundBlock()
+            let skin_tile = wbaseSkinTile({
+              cate: EnumCate.color,
+              prefixValue: `#${colorSkin.Value}`,
+              title: (cateItem ? `${cateItem.Name}/` : '') + colorSkin.Name,
+              onClick: function () {
+                let offset = header.getBoundingClientRect()
+                createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID)
+              },
+              onRemove: function () {
+                handleEditBackground({ hexCode: null })
+                reloadEditBackgroundBlock()
               }
-            )
-            formEdit.style.justifyContent = 'space-between'
-            formEdit.style.marginRight = '8px'
-            listEditColorForm.push(formEdit)
+            })
+            editContainer.appendChild(skin_tile)
+            if (scaleWb) skin_tile.lastChild.style.display = 'none'
           }
         } else {
-          function updateColor (onSubmit = true) {
-            let colorTile = colorsSelectionList.querySelector('.parameter-form')
-            handleEditBackground({
-              hexCode:
-                colorTile.querySelector('.edit-color-form').value +
-                Ultis.percentToHex(
-                  colorTile
-                    .querySelector('.edit-opacity-form')
-                    .value.replace('%', '')
-                ),
-              onSubmit: onSubmit
-            })
-            if (onSubmit) reloadEditBackgroundBlock()
-          }
-          let formEdit = createEditColorForm(
-            function () {
-              updateColor(false)
+          let bgColor = wbBg[0].includes('rgb')
+            ? Ultis.rgbToHex(wbBg[0]).replace('#', '')
+            : wbBg[0]
+          let formEdit = createEditColorForm({
+            value: `#${bgColor}`,
+            onchange: vl => {
+              handleEditBackground({ hexCode: vl, onSubmit: false })
             },
-            updateColor,
-            function () {
+            onsubmit: vl => {
+              handleEditBackground({ hexCode: vl })
+            },
+            ondelete: function () {
               handleEditBackground({ hexCode: null })
               reloadEditBackgroundBlock()
             }
-          )
-          for (let eHTML of formEdit.childNodes) {
-            // input type color & edit hex color
-            if (eHTML.className.includes('parameter-form')) {
-              for (let parameterHTML of eHTML.childNodes) {
-                if (parameterHTML.className.includes('show-color-container')) {
-                  parameterHTML.value = `#${selectColorValue.substring(0, 6)}`
-                } else if (
-                  parameterHTML.className.includes('edit-color-form')
-                ) {
-                  parameterHTML.value = selectColorValue
-                    .substring(0, 6)
-                    .toUpperCase()
-                } else if (
-                  parameterHTML.className.includes('edit-opacity-form')
-                ) {
-                  parameterHTML.value =
-                    Ultis.hexToPercent(selectColorValue.substring(6)) + '%'
-                }
-              }
-            }
-          }
-          listEditColorForm.push(formEdit)
-        }
-        if (checkedComponent)
-          listEditColorForm.forEach(
-            colorForm =>
-              (colorForm.querySelector(
-                '.action-button:last-child'
-              ).style.display = 'none')
-          )
-        colorsSelectionList.replaceChildren(...listEditColorForm)
-        if (listEditColorForm.length <= 1) {
-          header.appendChild(btnSelectSkin)
-        }
-      } else {
-        header.appendChild(btnSelectSkin)
-        header.appendChild(btnSelectImg)
-        let btnAdd = document.createElement('i')
-        btnAdd.className = 'fa-solid fa-plus fa-sm bg-header-action'
-        btnAdd.onclick = function () {
-          addBackgroundColor()
-          reloadEditBackgroundBlock()
-        }
-        header.appendChild(btnAdd)
-      }
-    } else if (
-      selected_list.filterAndMap(
-        wb => window.getComputedStyle(wb.value).backgroundColor
-      ).length === 1
-    ) {
-      let selectColorValue =
-        selected_list[0].StyleItem?.DecorationItem?.ColorValue ??
-        Ultis.rgbToHex(
-          window.getComputedStyle(selected_list[0].value).backgroundColor
-        ).replace('#', '')
-      //body
-      let colorsSelectionList = document.createElement('div')
-      colorsSelectionList.id = 'colors_selection_list'
-      colorsSelectionList.className = 'col'
-      editContainer.appendChild(colorsSelectionList)
-      let listEditColorForm = []
-
-      if (selectColorValue.split(',').length > 1) {
-        for (let colorForm of selectColorValue.split(',')) {
-          let formEdit = editColorContainer(colorForm, function (_, onSubmit) {
-            let newListColorValue = [
-              ...colorsSelectionList.querySelectorAll('.edit-color-container')
-            ].map(eHTML => {
-              return (
-                eHTML.querySelector('.hex-color-value').value +
-                Ultis.percentToHex(
-                  eHTML
-                    .querySelector('.opacity-color-value')
-                    .value.replace('%', '')
-                )
-              )
-            })
-            handleEditBackground({
-              hexCode: newListColorValue.join(','),
-              onSubmit: onSubmit
-            })
-            if (onSubmit) reloadEditBackgroundBlock()
           })
-          formEdit.style.justifyContent = 'space-between'
-          formEdit.style.marginRight = '8px'
-          listEditColorForm.push(formEdit)
+          editContainer.appendChild(formEdit)
         }
-      } else {
-        function updateColor (onSubmit = true) {
-          let newListColorValue = [
-            ...colorsSelectionList.querySelectorAll('.parameter-form')
-          ].map(eHTML => {
-            return (
-              eHTML.querySelector('.edit-color-form').value +
-              Ultis.percentToHex(
-                eHTML.querySelector('.edit-opacity-form').value.replace('%', '')
-              )
-            )
-          })
-          handleEditBackground({
-            hexCode: newListColorValue.join(','),
-            onSubmit: onSubmit
-          })
-          if (onSubmit) reloadEditBackgroundBlock()
-        }
-        let formEdit = createEditColorForm(
-          function () {
-            updateColor(false)
-          },
-          updateColor,
-          function () {
-            handleEditBackground({ hexCode: null })
-            reloadEditBackgroundBlock()
-          }
-        )
-        for (let eHTML of formEdit.childNodes) {
-          // input type color & edit hex color
-          if (eHTML.className.includes('parameter-form')) {
-            for (let parameterHTML of eHTML.childNodes) {
-              if (parameterHTML.className.includes('show-color-container')) {
-                parameterHTML.value = `#${selectColorValue.substring(0, 6)}`
-              } else if (parameterHTML.className.includes('edit-color-form')) {
-                parameterHTML.value = selectColorValue
-                  .substring(0, 6)
-                  .toUpperCase()
-              } else if (
-                parameterHTML.className.includes('edit-opacity-form')
-              ) {
-                parameterHTML.value =
-                  Ultis.hexToPercent(selectColorValue.substring(6)) + '%'
-              }
-            }
-          }
-        }
-        listEditColorForm.push(formEdit)
-      }
-      if (checkedComponent)
-        listEditColorForm.forEach(
-          colorForm =>
-            (colorForm.querySelector(
-              '.action-button:last-child'
-            ).style.display = 'none')
-        )
-      colorsSelectionList.replaceChildren(...listEditColorForm)
-      if (listEditColorForm.length <= 1) {
-        header.appendChild(btnSelectSkin)
       }
     } else {
-      header.appendChild(btnSelectSkin)
-      let notiText = document.createElement('p')
-      notiText.className = 'regular1'
-      notiText.style.margin = '4px 8px'
-      notiText.innerHTML = 'choose a color skin to replace mixed content'
-      editContainer.appendChild(notiText)
-    }
-  } else if (
-    selected_list.every(
-      wb => window.getComputedStyle(wb.value).backgroundImage !== 'none'
-    )
-  ) {
-    header.appendChild(btnSelectSkin)
-    if (
-      selected_list.filterAndMap(
-        wb => window.getComputedStyle(wb.value).backgroundImage
-      ).length === 1
-    ) {
+      header.querySelector('.fa-plus').remove()
       let editImgTile = document.createElement('div')
       editImgTile.id = 'select_img_tile'
       editContainer.appendChild(editImgTile)
@@ -2069,22 +1833,23 @@ function EditBackgroundBlock () {
         handleEditBackground({ hexCode: null })
         reloadEditBackgroundBlock()
       }
-    } else {
-      header.appendChild(btnSelectSkin)
-      let notiText = document.createElement('p')
-      notiText.className = 'regular1'
-      notiText.style.margin = '4px 8px'
-      notiText.innerHTML = 'choose a color skin to replace mixed content'
-      editContainer.appendChild(notiText)
     }
-  } else {
-    header.appendChild(btnSelectSkin)
+  }
+  if (wbBg.length > 1) {
     let notiText = document.createElement('p')
     notiText.className = 'regular1'
     notiText.style.margin = '4px 8px'
     notiText.innerHTML = 'choose a color skin to replace mixed content'
     editContainer.appendChild(notiText)
   }
+
+  $(header).on('click', '.skin-btn', function () {
+    let offset = header.getBoundingClientRect()
+    createDropdownTableSkin(EnumCate.color, offset)
+  })
+  $(header).on('click', '.fa-image', function () {
+    if (!document.getElementById('popup_img_document')) FileDA.init()
+  })
 
   return editContainer
 }
@@ -2118,15 +1883,15 @@ let list_font_weight = ['200', '300', '400', '500', '600', '700', '800', '900']
 
 // ! textStyle
 function EditTypoBlock () {
-  let listTextStyle = selected_list.filter(
-    wb => wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
+  let listTextStyle = selected_list.filter(wb =>
+    ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
   )
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_text_style'
   editContainer.className = 'edit-container'
   let header = document.createElement('div')
   header.id = 'edit_text_style_header'
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   editContainer.appendChild(header)
   let title = document.createElement('p')
   title.innerHTML = 'Text'
@@ -2140,47 +1905,19 @@ function EditTypoBlock () {
       createDropdownTableSkin(EnumCate.typography, offset)
     }
   )
-  btnSelectSkin.className = 'action-button'
 
   let listTypoSkin = listTextStyle.filterAndMap(wb => {
-    if (wb.StyleItem) {
-      var rule = wb.value.style
-    } else {
-      rule = StyleDA.docStyleSheets.find(cssRule =>
+    let fontSt =
+      wb.value.style.font ??
+      StyleDA.docStyleSheets.find(cssRule =>
         [...divSection.querySelectorAll(cssRule.selectorText)].includes(
           wb.value
         )
-      )?.style
-    }
-    if (rule) {
-      if (rule.font) {
-        return rule.font.replace('var(--font-style-', '').replace(')', '')
-      } else {
-        return {
-          FontSize: parseFloat(rule.fontSize.replace('px', '')),
-          FontWeight: rule.fontWeight,
-          CateID: EnumCate.typography,
-          IsStyle: false,
-          ColorValue: Ultis.rgbToHex(rule.color).replace('#', ''),
-          LetterSpacing: parseFloat(
-            rule.letterSpacing.length > 0
-              ? rule.letterSpacing.replace('px', '')
-              : '0'
-          ),
-          FontFamily: rule.fontFamily,
-          Height:
-            rule.lineHeight.length > 0
-              ? parseFloat(rule.lineHeight.replace('px', ''))
-              : null,
-          TextAlign: rule.textAlign,
-          TextAlignVertical: rule.alignItems
-        }
-      }
-    }
-    return null
+      )?.style?.font
+    return fontSt?.replace(/(var\(|\))/g, '')
   })
 
-  if (listTypoSkin.length === 1 && typeof listTypoSkin[0] === 'string') {
+  if (listTypoSkin.length === 1 && listTypoSkin[0]?.length === 36) {
     let typoSkin = TypoDA.list.find(skin => listTypoSkin[0] == skin.GID)
     let cateItem = CateDA.list_typo_cate.find(e => e.ID == typoSkin.CateID)
     let skin_tile = wbaseSkinTile({
@@ -2194,7 +1931,7 @@ function EditTypoBlock () {
     })
     skin_tile.firstChild.firstChild.style.fontWeight = typoSkin.FontWeight
     editContainer.appendChild(skin_tile)
-  } else if (listTypoSkin.some(e => typeof e !== 'object')) {
+  } else if (listTypoSkin.some(vl => vl.length === 36)) {
     header.appendChild(btnSelectSkin)
     let notiText = document.createElement('p')
     notiText.className = 'regular1'
@@ -2211,49 +1948,38 @@ function EditTypoBlock () {
       handleEditTypo({ color: params, onSubmit: onSubmit })
       if (onSubmit) reloadEditTypoBlock()
     }
-    let edit_text_color = createEditColorForm(function (params) {
-      updateTextStyleColor(params, false)
-    }, updateTextStyleColor)
-    let colorParamForm = edit_text_color.querySelector('.parameter-form')
-    for (let elementHTML of colorParamForm.childNodes) {
-      let color_value = listTypoSkin[0].ColorValue
-      if (elementHTML.className?.includes('show-color-container')) {
-        elementHTML.value = `#${color_value.substring(0, 6)}`
-      } else if (elementHTML.className?.includes('edit-color-form')) {
-        elementHTML.value = color_value.substring(0, 6)
-      } else if (elementHTML.className?.includes('edit-opacity-form')) {
-        elementHTML.value = Ultis.hexToPercent(color_value.substring(6)) + '%'
-      }
-    }
-    text_style_attribute.appendChild(edit_text_color)
-    // select font-family
-    let fontFamilyValues = listTypoSkin.filterAndMap(e => e.FontFamily)
-    let btn_select_font_family = _btnInputSelect(
-      fontFamilyValues.length === 1
-        ? list_font_family
-        : ['mixed', ...list_font_family],
-      function (options) {
-        let firstValue =
-          fontFamilyValues.length > 1 ? 'mixed' : fontFamilyValues[0]
-        for (let option of options) {
-          option.firstChild.style.opacity =
-            firstValue === option.getAttribute('value') ? 1 : 0
-        }
+    let editColor = createEditColorForm({
+      value: `${Ultis.rgbToHex(
+        window.getComputedStyle(listTextStyle[0].value).color
+      )}`,
+      onchange: params => {
+        updateTextStyleColor(params, false)
       },
-      function (option) {
-        let newFontFamily = list_font_family.find(
-          e => e.toLowerCase() === option.toLowerCase()
-        )
-        if (newFontFamily) {
-          handleEditTypo({ fontFamily: newFontFamily })
-          btn_select_font_family.firstChild.value = newFontFamily
-        }
+      onsubmit: updateTextStyleColor,
+      suffixAction: function () {
+        let offset = editColor.getBoundingClientRect()
+        createDropdownTableSkin(EnumCate.color, offset)
       }
+    })
+    text_style_attribute.appendChild(editColor)
+    // select font-family
+    let fontFamilyValues = listTextStyle.filterAndMap(
+      wb => window.getComputedStyle(wb.value).fontFamily
     )
-    btn_select_font_family.firstChild.value =
-      fontFamilyValues.length == 1 ? fontFamilyValues[0] : 'mixed'
-    btn_select_font_family.style.marginTop = '8px'
-    btn_select_font_family.style.marginBottom = '8px'
+    let btn_select_font_family = _btnInputSelect({
+      initvalue: fontFamilyValues.length === 1 ? fontFamilyValues[0] : 'mixed',
+      listvalue:
+        fontFamilyValues.length === 1
+          ? list_font_family
+          : ['mixed', ...list_font_family],
+      onselect: option => {
+        handleEditTypo({ fontFamily: option })
+      }
+    })
+    $(btn_select_font_family).css({
+      'margin-top': '8px',
+      'margin-bottom': '8px'
+    })
     text_style_attribute.appendChild(btn_select_font_family)
     //
     let div_font_size_weight = document.createElement('div')
@@ -2261,47 +1987,37 @@ function EditTypoBlock () {
     $(div_font_size_weight).css({ width: '100%', 'box-sizing': 'border-box' })
     text_style_attribute.appendChild(div_font_size_weight)
     // select font-weight
-    let fWeightValues = listTypoSkin.filterAndMap(e => e.FontWeight)
-    let btn_select_font_weight = _btnDropDownSelect(
-      fWeightValues.length === 1
-        ? list_font_weight
-        : ['mixed', ...list_font_weight],
-      function (options) {
-        let firstFWeight = fWeightValues.length > 1 ? 'mixed' : fWeightValues[0]
-        for (let option of options) {
-          option.firstChild.style.opacity =
-            option.getAttribute('value') === firstFWeight ? 1 : 0
-        }
-      },
-      function (value) {
-        handleEditTypo({ fontWeight: value })
-        btn_select_font_weight.firstChild.innerHTML = value
-      }
+    let fWeightValues = listTextStyle.filterAndMap(
+      wb => window.getComputedStyle(wb.value).fontWeight
     )
-    btn_select_font_weight.firstChild.innerHTML =
-      fWeightValues.length === 1 ? fWeightValues[0] : 'mixed'
+    let btn_select_font_weight = _btnDropDownSelect({
+      initvalue: fWeightValues.length === 1 ? fWeightValues[0] : 'mixed',
+      listvalue:
+        fWeightValues.length === 1
+          ? list_font_weight
+          : ['mixed', ...list_font_weight],
+      onselect: value => {
+        handleEditTypo({ fontWeight: value })
+      }
+    })
     div_font_size_weight.appendChild(btn_select_font_weight)
     // select font-size
-    let fSizeValues = listTypoSkin.filterAndMap(e => e.FontSize)
-    let btn_select_font_size = _btnInputSelect(
-      fSizeValues.length === 1 ? list_font_size : ['mixed', ...list_font_size],
-      function (options) {
-        let firstValue = fSizeValues.length > 1 ? 'mixed' : fSizeValues[0]
-        for (let option of options) {
-          option.firstChild.style.opacity =
-            firstValue == option.getAttribute('value') ? 1 : 0
-        }
-      },
-      function (option) {
+    let fSizeValues = listTextStyle.filterAndMap(wb =>
+      parseFloat(window.getComputedStyle(wb.value).fontSize.replace('px', ''))
+    )
+    let btn_select_font_size = _btnInputSelect({
+      initvalue: fSizeValues.length === 1 ? fSizeValues[0] : 'mixed',
+      listvalue:
+        fSizeValues.length === 1
+          ? list_font_size
+          : ['mixed', ...list_font_size],
+      onselect: option => {
         if (!isNaN(parseFloat(option))) {
           handleEditTypo({ fontSize: parseFloat(option) })
-          btn_select_font_size.firstChild.value = option
         }
       },
-      true
-    )
-    btn_select_font_size.firstChild.value =
-      fSizeValues.length === 1 ? fSizeValues[0] : 'mixed'
+      extend: true
+    })
     btn_select_font_size.style.flex = 1
     div_font_size_weight.appendChild(btn_select_font_size)
     // if (listTextStyle.some(e => e.CateID !== EnumCate.chart)) {
@@ -2315,40 +2031,44 @@ function EditTypoBlock () {
     })
     text_style_attribute.appendChild(div_height_spacing)
     // input line-height
-    let lineHeightValues = listTypoSkin.filterAndMap(e => e.Height)
+    let lineHeightValues = listTextStyle.filterAndMap(wb =>
+      window.getComputedStyle(wb.value).lineHeight.replace('px', '')
+    )
     let input_line_height = _textField({
       width: '100%',
       icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/line-height.svg',
-      value:
-        lineHeightValues.length === 1
-          ? lineHeightValues[0] == null
-            ? 'Auto'
-            : lineHeightValues[0]
-          : 'mixed',
-      onBlur: function () {
-        if (this.value.toLowerCase() === 'auto') {
+      value: lineHeightValues.length === 1 ? lineHeightValues[0] : 'mixed',
+      onBlur: function (ev) {
+        if (
+          ev.target.value.toLowerCase() === 'auto' ||
+          ev.target.value.toLowerCase() === 'normal'
+        ) {
           handleEditTypo({ height: null })
-        } else if (!isNaN(parseFloat(this.value))) {
-          handleEditTypo({ height: parseFloat(this.value) })
+        } else if (!isNaN(parseFloat(ev.target.value))) {
+          handleEditTypo({ height: parseFloat(ev.target.value) })
         }
-        reloadEditTypoBlock()
-        updateInputTLWH()
       }
     })
     $(input_line_height).css({ flex: 1, 'margin-right': '8px' })
     div_height_spacing.appendChild(input_line_height)
     // input letter spacing
-    let lSpacingValues = listTypoSkin.filterAndMap(e => e.LetterSpacing)
+    let lSpacingValues = listTextStyle.filterAndMap(wb =>
+      window.getComputedStyle(wb.value).letterSpacing.replace('px', '')
+    )
     let input_letter_spacing = _textField({
       width: '100%',
       value: lSpacingValues.length === 1 ? lSpacingValues[0] : 'mixed',
       icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/letter-spacing.svg',
       iconSize: '28px',
-      onBlur: function () {
-        if (!isNaN(parseFloat(this.value))) {
-          handleEditTypo({ letterSpacing: parseFloat(this.value) })
+      onBlur: function (ev) {
+        if (
+          ev.target.value.toLowerCase() === 'auto' ||
+          ev.target.value.toLowerCase() === 'normal'
+        ) {
+          handleEditTypo({ letterSpacing: null })
+        } else if (!isNaN(parseFloat(ev.target.value))) {
+          handleEditTypo({ letterSpacing: parseFloat(ev.target.value) })
         }
-        reloadEditTypoBlock()
       }
     })
     input_letter_spacing.style.flex = 1
@@ -2357,8 +2077,21 @@ function EditTypoBlock () {
   }
   // if (listTextStyle.some(e => e.CateID !== EnumCate.chart)) {
   // group btn select text auto size
-  let group_btn_auto_size = _groupBtnSelect(
-    [
+  let autoSizeValues = listTextStyle.filterAndMap(wb => {
+    switch (wb.value.getAttribute('width-type')) {
+      case 'fit':
+        return TextAutoSize.autoWidth
+      default:
+        if (wb.value.getAttribute('height-type') === 'fit') {
+          return TextAutoSize.autoHeight
+        } else {
+          return TextAutoSize.fixedSize
+        }
+    }
+  })
+  let group_btn_auto_size = _groupBtnSelect({
+    initvalue: autoSizeValues.length > 1 ? 'mixed' : autoSizeValues[0],
+    listvalue: [
       {
         attribute: TextAutoSize.autoWidth,
         src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/auto-width.svg'
@@ -2372,7 +2105,7 @@ function EditTypoBlock () {
         src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/fixed-size.svg'
       }
     ],
-    function (value) {
+    onselect: value => {
       switch (value) {
         case TextAutoSize.autoWidth:
           handleEditOffset({ width: null, height: null })
@@ -2390,19 +2123,21 @@ function EditTypoBlock () {
       updateUIConstraints()
       updateUISelectBox()
     }
-  )
+  })
   group_btn_auto_size.id = 'group_btn_text_auto_size'
   group_btn_auto_size.style.margin = '8px'
-  updateUIAutoSizeWH(group_btn_auto_size)
   editContainer.appendChild(group_btn_auto_size)
   let _row = document.createElement('div')
   _row.className = 'row'
   _row.style.padding = '0 8px 8px 8px'
   editContainer.appendChild(_row)
   // group btn select text align
-  let textAlignValues = listTypoSkin.filterAndMap(e => e.TextAlign)
-  let group_btn_text_align = _groupBtnSelect(
-    [
+  let textAlignValues = listTextStyle.filterAndMap(
+    wb => window.getComputedStyle(wb.value).textAlign
+  )
+  let group_btn_text_align = _groupBtnSelect({
+    initvalue: textAlignValues.length > 1 ? 'mixed' : textAlignValues[0],
+    listvalue: [
       {
         attribute: TextAlign.left,
         src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-left.svg'
@@ -2416,21 +2151,20 @@ function EditTypoBlock () {
         src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-right.svg'
       }
     ],
-    function (value) {
+    onselect: value => {
       handleEditTypo({ textAlign: value })
       reloadEditTypoBlock()
     }
-  )
-  let firstTextAlign = textAlignValues.length > 1 ? 'mixed' : textAlignValues[0]
-  for (let alignOption of group_btn_text_align.childNodes) {
-    alignOption.style.backgroundColor =
-      alignOption.getAttribute('value') === firstTextAlign ? '#e5e5e5' : null
-  }
+  })
   _row.appendChild(group_btn_text_align)
   // group btn select text align vertical
-  let alignVerticalValues = listTypoSkin.filterAndMap(e => e.TextAlignVertical)
-  let group_btn_text_align_vertical = _groupBtnSelect(
-    [
+  let alignVerticalValues = listTextStyle.filterAndMap(
+    wb => window.getComputedStyle(wb.value).alignItems
+  )
+  let group_btn_text_align_vertical = _groupBtnSelect({
+    initvalue:
+      alignVerticalValues.length > 1 ? 'mixed' : alignVerticalValues[0],
+    listvalue: [
       {
         attribute: TextAlignVertical.top,
         src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-top.svg'
@@ -2444,40 +2178,37 @@ function EditTypoBlock () {
         src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-bottom.svg'
       }
     ],
-    function (value) {
+    onselect: value => {
       handleEditTypo({ alignVertical: value })
       reloadEditTypoBlock()
     }
-  )
+  })
   group_btn_text_align_vertical.style.marginLeft = '42px'
-  let firstTextAlignVertical =
-    alignVerticalValues.length > 1 ? 'mixed' : alignVerticalValues[0]
-  for (let alginVerticalOption of group_btn_text_align_vertical.childNodes) {
-    alginVerticalOption.style.backgroundColor =
-      alginVerticalOption.getAttribute('value') === firstTextAlignVertical
-        ? '#e5e5e5'
-        : null
-  }
   _row.appendChild(group_btn_text_align_vertical)
   // }
   return editContainer
 }
 
-function _groupBtnSelect (list_icon, func) {
+function _groupBtnSelect ({ initvalue, listvalue = [], onselect }) {
   let group_btn_select = document.createElement('div')
   group_btn_select.className = 'group_btn_select'
-  var i
-  for (i = 0; i < list_icon.length; i++) {
-    let option = document.createElement('img')
-    option.src = list_icon[i].src
-    option.setAttribute('value', list_icon[i].attribute)
-    option.style.width = '24px'
-    option.style.height = '24px'
-    option.onclick = function () {
-      func(this.getAttribute('value'))
-    }
-    group_btn_select.appendChild(option)
-  }
+  group_btn_select.replaceChildren(
+    ...listvalue.map(vl => {
+      let option = document.createElement('img')
+      option.src = vl.src
+      option.style.width = '24px'
+      option.style.height = '24px'
+      if (initvalue === vl.attribute) option.style.backgroundColor = '#e5e5e5'
+      option.onclick = function () {
+        onselect(vl.attribute)
+        group_btn_select.querySelectorAll('img').forEach(e => {
+          if (e !== option) e.style.backgroundColor = null
+          else e.style.backgroundColor = '#e5e5e5'
+        })
+      }
+      return option
+    })
+  )
   return group_btn_select
 }
 
@@ -2486,104 +2217,64 @@ function reloadEditTypoBlock () {
   document.getElementById('edit_text_style').replaceWith(newEditTextStyle)
 }
 
-function updateUIAutoSizeWH (groupBtn) {
-  let group_btn_auto_size =
-    groupBtn ?? document.getElementById('group_btn_text_auto_size')
-  if (group_btn_auto_size) {
-    let autoSizeValues = selected_list
-      .filter(wb => wb.CateID === EnumCate.text)
-      .filterAndMap(wb => {
-        switch (wb.value.getAttribute('width-type')) {
-          case 'fit':
-            return TextAutoSize.autoWidth
-          default:
-            if (wb.value.getAttribute('height-type') === 'fit') {
-              return TextAutoSize.autoHeight
-            } else {
-              return TextAutoSize.fixedSize
-            }
-        }
-      })
-    let firstAutoSize = autoSizeValues.length > 1 ? 'mixed' : autoSizeValues[0]
-    for (let autoSizeOption of group_btn_auto_size.childNodes) {
-      autoSizeOption.style.backgroundColor =
-        autoSizeOption.getAttribute('value') == firstAutoSize ? '#e5e5e5' : null
-    }
-  }
-}
-
-function _btnInputSelect (
-  list = [],
-  func_on_show_popup,
-  onclick,
-  acceptAll = false
-) {
+function _btnInputSelect ({
+  initvalue = '',
+  listvalue = [],
+  onselect,
+  extend = false
+}) {
   let btn_select = document.createElement('div')
   btn_select.className = 'btn_input_select'
-  let input = document.createElement('input')
-  let inputValue = ''
-  input.onfocus = function () {
-    inputValue = this.value
+  btn_select.innerHTML = `<input value="${initvalue}"/><i class="fa-solid fa-chevron-down"></i>`
+  $(btn_select).on('focus', 'input', function () {
+    initvalue = this.value
     this.setSelectionRange(0, this.value.length)
-    btn_icon_down.style.display = 'block'
-  }
-  input.onblur = function () {
+  })
+  $(btn_select).on('blur', 'input', function () {
     // func edit font family
-    btn_icon_down.style.display = 'none'
-    if (acceptAll) {
-      onclick(this.value)
+    if (extend) {
+      onselect(this.value)
+    } else if (
+      listvalue
+        .filter(vl => vl != 'mixed')
+        .some(vl => vl.toString().toLowerCase() === this.value.toLowerCase())
+    ) {
+      onselect(
+        listvalue.find(vl => vl.toLowerCase() === this.value.toLowerCase())
+      )
     } else {
-      if (
-        list
-          .filter(vl => vl != 'mixed')
-          .some(vl => vl.toString().toLowerCase() === input.value.toLowerCase())
-      ) {
-        onclick(list.find(vl => vl.toLowerCase() === input.value.toLowerCase()))
-      } else {
-        this.value = inputValue
-      }
+      this.value = initvalue
     }
-  }
-  btn_select.appendChild(input)
-  let btn_icon_down = document.createElement('i')
-  btn_icon_down.className = 'fa-solid fa-chevron-down fa-xs'
-  btn_icon_down.onclick = function () {
+  })
+  $(btn_select).on('click', '.fa-chevron-down', function () {
     setTimeout(function () {
-      document
-        .getElementById('body')
-        .querySelectorAll(':scope > .popup_select')
-        .forEach(popup => popup.remove())
+      document.body
+        .querySelectorAll('div[id="body"] > .popup_select')
+        .forEach(e => e.remove())
       let popup_select = document.createElement('div')
       let popupOffset = btn_select.getBoundingClientRect()
       popup_select.className = 'popup_select col wini_popup popup_remove'
       popup_select.style.left = popupOffset.x + 'px'
       popup_select.style.top = popupOffset.y + 'px'
       popup_select.style.width = btn_select.offsetWidth + 'px'
-      for (let i = 0; i < list.length; i++) {
-        let option = document.createElement('div')
-        if (list[i] != 'mixed')
-          option.onclick = function (e) {
-            e.stopPropagation()
-            onclick(this.getAttribute('value'))
-            popup_select.style.display = 'none'
-          }
-        option.setAttribute('value', list[i])
-        let icon_check = document.createElement('i')
-        icon_check.className = 'fa-solid fa-check'
-        icon_check.style.boxSizing = 'border-box'
-        icon_check.style.color = '#ffffff'
-        icon_check.style.marginRight = '8px'
-        option.appendChild(icon_check)
-        let title = document.createElement('span')
-        title.innerHTML = list[i]
-        title.style.fontSize = '14px'
-        title.style.fontWeight = '600'
-        title.style.color = '#ffffff'
-        option.appendChild(title)
-        popup_select.appendChild(option)
-      }
+      popup_select.replaceChildren(
+        ...listvalue.map(vl => {
+          let option = document.createElement('div')
+          if (vl != 'mixed')
+            option.onclick = function (e) {
+              e.stopPropagation()
+              initvalue = vl
+              btn_select.querySelector('input').value = vl
+              onselect(vl)
+              popup_select.remove()
+            }
+          option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${
+            vl === initvalue ? 1 : 0
+          }"></i><span class="semibold2" style="color: #ffffff">${vl}</span>`
+          return option
+        })
+      )
       document.getElementById('body').appendChild(popup_select)
-      func_on_show_popup([...popup_select.childNodes])
       if (
         popup_select.getBoundingClientRect().bottom > document.body.offsetHeight
       ) {
@@ -2593,28 +2284,19 @@ function _btnInputSelect (
         popup_select.style.overflowY = 'scroll'
       }
     }, 200)
-  }
-  btn_select.appendChild(btn_icon_down)
+  })
   return btn_select
 }
 
-function _btnDropDownSelect (list = [], func_on_show_popup, onclick) {
-  let isString = typeof list[0] === 'string'
+function _btnDropDownSelect ({ initvalue = '', listvalue = [], onselect }) {
+  let isString = typeof listvalue[0] === 'string'
   let btnDropDownSelect = document.createElement('div')
   btnDropDownSelect.className = 'btn_dropdown_select'
-  let title = document.createElement('span')
-  title.innerHTML = 'bold'
-  btnDropDownSelect.appendChild(title)
-  let icon_down = document.createElement('img')
-  icon_down.src =
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/down_black.svg'
-  btnDropDownSelect.appendChild(icon_down)
-
+  btnDropDownSelect.innerHTML = `<span>${initvalue}</span><i class="fa-solid fa-chevron-down"></i>`
   btnDropDownSelect.onclick = function () {
     setTimeout(function () {
-      document
-        .getElementById('body')
-        .querySelectorAll(':scope > .popup_select')
+      document.body
+        .querySelectorAll('div[id="body"] > .popup_select')
         .forEach(popup => popup.remove())
       let popupOffset = btnDropDownSelect.getBoundingClientRect()
       let popup_select_option = document.createElement('div')
@@ -2622,32 +2304,25 @@ function _btnDropDownSelect (list = [], func_on_show_popup, onclick) {
       popup_select_option.style.left = popupOffset.x + 'px'
       popup_select_option.style.top = popupOffset.y + 'px'
       popup_select_option.style.width = btnDropDownSelect.offsetWidth + 'px'
-      for (let i = 0; i < list.length; i++) {
-        let option = document.createElement('div')
-        if (isString ? list[i] != 'mixed' : list[i].value != 'mixed')
-          option.onclick = function (e) {
-            e.stopPropagation()
-            popup_select_option.style.display = 'none'
-            onclick(this.getAttribute('value'))
-          }
-        option.setAttribute('value', isString ? list[i] : list[i].value)
-        let icon_check = document.createElement('i')
-        icon_check.className = 'fa-solid fa-check'
-        icon_check.style.boxSizing = 'border-box'
-        icon_check.style.color = '#ffffff'
-        icon_check.style.marginRight = '8px'
-        option.appendChild(icon_check)
-        let title = document.createElement('span')
-        title.innerHTML = isString ? list[i] : list[i].title
-        title.style.fontSize = '14px'
-        title.style.fontWeight = '600'
-        title.style.color = '#ffffff'
-        option.appendChild(title)
-        popup_select_option.appendChild(option)
-      }
+      popup_select_option.replaceChildren(
+        ...listvalue.map(vl => {
+          let option = document.createElement('div')
+          if (isString ? vl != 'mixed' : vl.value != 'mixed')
+            option.onclick = function (e) {
+              e.stopPropagation()
+              initvalue = vl
+              btn_select.querySelector('span').value = isString ? vl : vl.title
+              onselect(vl)
+              popup_select_option.remove
+            }
+          option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${
+            vl === initvalue ? 1 : 0
+          }"></i><span class="semibold2" style="color: #ffffff">${
+            isString ? vl : vl.title
+          }</span>`
+        })
+      )
       document.getElementById('body').appendChild(popup_select_option)
-      func_on_show_popup([...popup_select_option.childNodes])
-      popup_select_option.style.display = 'flex'
     }, 200)
   }
   return btnDropDownSelect
@@ -2665,14 +2340,16 @@ let list_border_style = [
 //! border
 function EditBorderBlock () {
   let listBorder = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+    ['w-checkbox', ...WbClass.borderEffect].some(e =>
+      wb.value.classList.contains(e)
+    )
   )
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-border'
   editContainer.className = 'edit-container'
 
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   editContainer.appendChild(header)
 
   let title = document.createElement('p')
@@ -2795,29 +2472,18 @@ function EditBorderBlock () {
           handleEditBorder({ color: params, onSubmit: onSubmit })
           if (onSubmit) reloadEditBorderBlock()
         }
-        let formEditColor = createEditColorForm(
-          function (params) {
+        let formEditColor = createEditColorForm({
+          value: `#${colorValue}`,
+          onchange: params => {
             updateBorderColor(params, false)
           },
-          updateBorderColor,
-          function () {
+          onsubmit: updateBorderColor,
+          ondelete: () => {
             deleteBorder()
             reloadEditBorderBlock()
           }
-        )
+        })
         editContainer.appendChild(formEditColor)
-        let paramForm = formEditColor.querySelector('.parameter-form')
-        // input type color & edit hex color
-        for (let parameterHTML of paramForm.childNodes) {
-          if (parameterHTML.className.includes('show-color-container')) {
-            parameterHTML.value = `#${colorValue.substring(0, 6)}`
-          } else if (parameterHTML.className.includes('edit-color-form')) {
-            parameterHTML.value = colorValue.substring(0, 6).toUpperCase()
-          } else if (parameterHTML.className.includes('edit-opacity-form')) {
-            parameterHTML.value =
-              Ultis.hexToPercent(colorValue.substring(6)) + '%'
-          }
-        }
       }
 
       let formEditLine = document.createElement('div')
@@ -3069,14 +2735,14 @@ let list_effect_type = [
 // ! effect
 function EditEffectBlock () {
   let listEffect = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+    WbClass.borderEffect.some(e => wb.value.classList.contains(e))
   )
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-effect'
   editContainer.className = 'edit-container'
 
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   editContainer.appendChild(header)
 
   let title = document.createElement('p')
@@ -3250,9 +2916,7 @@ function EditEffectBlock () {
                     '.parameter-form'
                   ).childNodes) {
                     // input type color & edit hex color
-                    if (
-                      parameterHTML.className.includes('show-color-container')
-                    ) {
+                    if (parameterHTML.className.includes('color-picker')) {
                       parameterHTML.value = `#${color_value.substring(0, 6)}`
                     } else if (
                       parameterHTML.className.includes('edit-color-form')
@@ -3344,11 +3008,14 @@ function EditEffectBlock () {
         handleEditEffect({ color: params, onSubmit: onSubmit })
         // if (onSubmit) updateUIEffectAttribute()
       }
-      let select_effect_color = createEditColorForm(function (params) {
-        updateEffectColor(params, false)
-      }, updateEffectColor)
+      let select_effect_color = createEditColorForm({
+        id: 'edit-effect-color',
+        onchange: params => {
+          updateEffectColor(params, false)
+        },
+        onsubmit: updateEffectColor
+      })
       select_effect_color.style.margin = '4px'
-      select_effect_color.id = 'edit-effect-color'
       div_attribute.appendChild(select_effect_color)
       // select effect type
       let eTypeValues = listEffectSkin.filterAndMap(e => e.Type)
@@ -3407,151 +3074,74 @@ function reloadEditEffectBlock () {
   document.getElementById('edit-effect').replaceWith(newEditEffect)
 }
 
-function createEditColorForm (funcEdit, funcSubmit, funcDelete) {
-  let visible = true
-  let isFocus = false
-
+function createEditColorForm ({
+  id,
+  value = '#000000ff',
+  onchange,
+  onsubmit,
+  ondelete,
+  suffixAction
+}) {
   let editColorTile = document.createElement('div')
+  if (id) editColorTile.id = id
   editColorTile.className = 'container-edit-tile'
   editColorTile.style.padding = '0 4px'
 
-  let containerInput = document.createElement('div')
-  containerInput.className = 'parameter-form'
-  editColorTile.appendChild(containerInput)
+  editColorTile.innerHTML = `<div class="parameter-form">
+  <input type="color" value=${value.substring(0, 7)} class="color-picker"/>
+  <input value="${value
+    .replace('#', '')
+    .substring(0, 6)
+    .toUpperCase()}" class="edit-color-form"/><div class="ver-line"></div><input value="${Ultis.hexToPercent(
+    value.replace('#', '').substring(6)
+  )}%" class="edit-opacity-form"/>
+  </div>
+  ${
+    suffixAction
+      ? '<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg"/>'
+      : '<div class="row"><i class="fa-regular fa-eye"></i><i class="fa-solid fa-minus"></i></div>'
+  }`
 
-  let colorSelected = document.createElement('input')
-  colorSelected.className = 'show-color-container'
-  colorSelected.type = 'color'
-  colorSelected.oninput = function () {
-    editColorForm.value = this.value.replace('#', '').toUpperCase()
-    funcEdit(
-      this.value.replace('#', '') +
-        Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', '')))
-    )
-  }
-  colorSelected.onblur = function () {
-    funcSubmit(
-      this.value.replace('#', '') +
-        Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', '')))
-    )
-  }
-
-  containerInput.appendChild(colorSelected)
-
-  let editColorForm = document.createElement('input')
-  editColorForm.className = 'edit-color-form'
-  editColorForm.value = '000000'
-
-  containerInput.appendChild(editColorForm)
-
-  let divider = document.createElement('div')
-  divider.className = 'ver-line'
-
-  containerInput.appendChild(divider)
-
-  let editOpacity = document.createElement('input')
-  editOpacity.className = 'edit-opacity-form'
-  editOpacity.value = '100%'
-
-  containerInput.appendChild(editOpacity)
-
-  let containerAction = document.createElement('div')
-  containerAction.style.display = 'flex'
-  editColorTile.appendChild(containerAction)
-
-  let buttonVisible = document.createElement('button')
-  buttonVisible.className = 'action-button'
-
-  containerAction.appendChild(buttonVisible)
-
-  let buttonVisibleIcon = document.createElement('img')
-  buttonVisibleIcon.src =
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg'
-  buttonVisibleIcon.style.padding = '0px'
-
-  buttonVisible.appendChild(buttonVisibleIcon)
-
-  let buttonMinus = document.createElement('button')
-
-  if (funcDelete) {
-    buttonMinus.className = 'action-button'
-    let buttonMinusIcon = document.createElement('img')
-    buttonMinusIcon.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg'
-    buttonMinus.appendChild(buttonMinusIcon)
-    buttonMinus.onclick = funcDelete
-    containerAction.appendChild(buttonMinus)
-  }
-
-  //? <function>
-  //change icon
-  buttonVisible.onclick = function () {
-    visible = visible ? false : true
-    buttonVisibleIcon.src = !visible
-      ? 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg'
-      : 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg'
-  }
-  // UI action
-  containerInput.onmouseover = function () {
-    if (isFocus == false) {
-      this.style.border = '0.5px solid #DFDFDF'
-      divider.style.backgroundColor = '#DFDFDF'
-    }
-  }
-  containerInput.onmouseout = function () {
-    if (isFocus == false) {
-      this.style.border = '0.5px solid transparent'
-      divider.style.backgroundColor = 'transparent'
-    }
-  }
-  let startHexColor = 'ffffff'
-  editColorForm.onfocus = function () {
-    isFocus = true
+  $(editColorTile).on('input', '.color-picker', function () {
+    editColorTile.querySelector('.edit-color-form').value = this.value
+      .replace('#', '')
+      .toUpperCase()
+    value = this.value + value.substring(7)
+    onchange(value)
+  })
+  $(editColorTile).on('blur', '.color-picker', () => onsubmit(value))
+  $(editColorTile).on('focus', '.edit-color-form', function () {
     this.setSelectionRange(0, this.value.length)
-    this.parentElement.style.border = '0.5px solid #1890FF'
-    divider.style.backgroundColor = '#1890FF'
-    startHexColor = this.value
-  }
-  editColorForm.oninput = function () {
-    if (this.value.startsWith('#')) {
-      editColorForm.maxLength = 7
+  })
+  $(editColorTile).on('blur', '.edit-color-form', function () {
+    if (this.value.match(hexRegex)) {
+      value =
+        this.value.match(hexRegex).input.replace('#', '').substring(0, 6) +
+        value.substring(7)
+      editColorTile.querySelector('.color-picker').value = `#${value}`
+      this.value = value.toUpperCase()
+      onsubmit(`#${value}`)
     } else {
-      editColorForm.maxLength = 6
+      this.value = value.replace('#', '').substring(0, 6).toUpperCase()
     }
-  }
-  editColorForm.onblur = function () {
-    isFocus = false
-    this.parentElement.style.border = '0.5px solid transparent'
-    divider.style.backgroundColor = 'transparent'
-    this.value = this.value.replace('#', '')
-    if (this.value.length == 6) {
-      funcSubmit(
-        this.value +
-          Ultis.percentToHex(parseFloat(editOpacity.value.replace('%', '')))
+  })
+  $(editColorTile).on('blur', '.edit-opacity-form', function () {
+    this.setSelectionRange(0, this.value.length)
+  })
+  $(editColorTile).on('blur', '.edit-opacity-form', function () {
+    if (!isNaN(parseInt(this.value.replace('%', '')))) {
+      onsubmit(
+        value.substring(7) +
+          Ultis.percentToHex(parseInt(this.value.replace('%', '')))
       )
     } else {
-      this.value = startHexColor
+      this.value = Ultis.hexToPercent(value.replace('#', '').substring(6))
     }
-  }
-  let startOpacity = '100%'
-  editOpacity.onfocus = function () {
-    isFocus = true
-    this.setSelectionRange(0, this.value.length)
-    this.parentElement.style.border = '0.5px solid #1890FF'
-    divider.style.backgroundColor = '#1890FF'
-    startOpacity = this.value
-  }
-  editOpacity.onblur = function () {
-    isFocus = false
-    this.parentElement.style.border = '0.5px solid transparent'
-    divider.style.backgroundColor = 'transparent'
-    opacity_value = parseFloat(this.value.replace('%', ''))
-    if (opacity_value != undefined) {
-      funcSubmit(editColorForm.value + Ultis.percentToHex(opacity_value))
-    } else {
-      this.value = startOpacity
-    }
-  }
+  })
+  if (ondelete) $(editColorTile).on('click', '.fa-minus', ondelete)
+  else if (suffixAction)
+    $(editColorTile).on('click', 'parameter-form + img', suffixAction)
+  else editColorTile.querySelector('.fa-minus').style.display = 'none'
   //? </function>
   return editColorTile
 }
@@ -3687,90 +3277,76 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
   dropdown.style.left = offset.x + 'px'
   dropdown.style.top = offset.y - 56 + 'px'
   dropdown.setAttribute('cate', enumCate)
-  let header = document.createElement('div')
-  header.className = 'col header_popup_skin'
-  dropdown.appendChild(header)
-  let titleBar = document.createElement('div')
-  titleBar.className = 'row'
-  let title = document.createElement('span')
-  let action1 = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/library-black.svg',
-    null,
-    function () {}
-  )
-
-  let action2 = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/add2.svg',
-    null,
-    function () {
-      setTimeout(function () {
-        let create_skin_popup = document.getElementById('create_skin_popup')
-        create_skin_popup.style.display = 'flex'
-        create_skin_popup.querySelector('.popup-input').value = ''
-        let popup_header = [...create_skin_popup.childNodes[1].childNodes].find(
-          e => e.className?.includes('popup-header')
-        )
-        switch (parseInt(dropdown.getAttribute('cate'))) {
-          case EnumCate.color:
-            popup_header.childNodes[1].innerHTML = 'Create new color skin'
-            break
-          case EnumCate.typography:
-            popup_header.childNodes[1].innerHTML = 'Create new typography skin'
-            break
-          case EnumCate.border:
-            popup_header.childNodes[1].innerHTML = 'Create new border skin'
-            break
-          case EnumCate.effect:
-            popup_header.childNodes[1].innerHTML = 'Create new effect skin'
-            break
-          default:
-            break
-        }
-        let input_skin_name = document.getElementById('input_new_skin_name')
-        let list_demo_skin = [...input_skin_name.childNodes].filter(
-          e => e.nodeName != '#text' && e.getAttribute('cate')
-        )
-        for (let i = 0; i < list_demo_skin.length; i++) {
-          if (
-            list_demo_skin[i].getAttribute('cate') ==
-            dropdown.getAttribute('cate')
-          ) {
-            list_demo_skin[i].style.display = 'block'
-          } else {
-            list_demo_skin[i].style.display = 'none'
-          }
-        }
-      }, 200)
-    }
-  )
-  titleBar.replaceChildren(title, action1, action2)
   switch (enumCate) {
     case EnumCate.color:
-      title.innerHTML = 'Color skin'
+      var title = 'Color skin'
       break
     case EnumCate.typography:
-      title.innerHTML = 'Typography skin'
+      title = 'Typography skin'
       break
     case EnumCate.border:
-      title.innerHTML = 'Border skin'
+      title = 'Border skin'
       break
     case EnumCate.effect:
-      title.innerHTML = 'Effect skin'
+      title = 'Effect skin'
       break
     default:
       return
   }
-  let searchContainer = document.createElement('div')
-  searchContainer.className = 'row search-skins'
-  let prefixIcon = document.createElement('i')
-  prefixIcon.className = 'fa-solid fa-magnifying-glass fa-xs'
-  let inputSearch = document.createElement('input')
-  inputSearch.placeholder = 'Search skins...'
-  inputSearch.oninput = function (e) {
+  dropdown.innerHTML = `<div class="col header_popup_skin">
+  <div class="row title"><span>${title}</span><button class="action-button sort-btn"></button><button class="action-button add-skin-btn"></button></div>
+  <div class="row search-skins"><i class="fa-solid fa-magnifying-glass fa-xs"></i><input placeholder="Search skins..."/></div>
+  </div>`
+  $(dropdown).on('click', '.header_popup_skin .add-skin-btn', function () {
+    setTimeout(function () {
+      let popupAddSkin = document.getElementById('create_skin_popup')
+      popupAddSkin.style.display = 'flex'
+      popupAddSkin.querySelector('.popup-input').value = ''
+      let prefixInput = popupAddSkin.querySelector(
+        '.popup-body .box20.semibold4'
+      )
+      prefixInput.innerHTML = ''
+      switch (enumCate) {
+        case EnumCate.color:
+          popupAddSkin.querySelector('.title_create_skin').innerHTML =
+            'Create new color skin'
+          prefixInput.style.backgroundColor = window.getComputedStyle(
+            selected_list[0].value
+          ).backgroundColor
+          break
+        case EnumCate.typography:
+          popupAddSkin.querySelector('.title_create_skin').innerHTML =
+            'Create new typography skin'
+          prefixInput.innerHTML = 'Ag'
+          prefixInput.style.fontWeight = window.getComputedStyle(
+            selected_list[0].value
+          ).fontWeight
+          break
+        case EnumCate.border:
+          popupAddSkin.querySelector('.title_create_skin').innerHTML =
+            'Create new border skin'
+          prefixInput.style.backgroundColor = window.getComputedStyle(
+            selected_list[0].value
+          ).borderColor
+          break
+        case EnumCate.effect:
+          popupAddSkin.querySelector('.title_create_skin').innerHTML =
+            'Create new effect skin'
+          prefixInput.style.backgroundImage =
+            'url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg)'
+          break
+        default:
+          break
+      }
+      $(popupAddSkin).on('click', '.confirm-button', () =>
+        createNewSkin(enumCate)
+      )
+    }, 200)
+  })
+  $(dropdown).on('input', '.header_popup_skin input', function (e) {
     e.stopPropagation()
     searchSkins()
-  }
-  searchContainer.replaceChildren(prefixIcon, inputSearch)
+  })
   function searchSkins () {
     let searchContent = inputSearch.value.toLowerCase()
     if (searchContent.trim() == '') {
@@ -3802,8 +3378,6 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
       })
     }
   }
-  header.replaceChildren(titleBar, searchContainer)
-
   document.getElementById('body').appendChild(dropdown)
 
   updateTableSkinBody(enumCate, currentSkinID)
@@ -3828,7 +3402,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
   switch (enumCate) {
     case EnumCate.color:
-      if (ColorDA.list.length == 0) {
+      if (StyleDA.listSkin.filter(e => e.Type === EnumCate.color).length == 0) {
         noti_empty_skin.innerHTML = 'No color skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3845,7 +3419,9 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
       break
     case EnumCate.typography:
-      if (TypoDA.list.length == 0) {
+      if (
+        StyleDA.listSkin.filter(e => e.Type === EnumCate.typography).length == 0
+      ) {
         noti_empty_skin.innerHTML = 'No typography skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3862,7 +3438,9 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
       break
     case EnumCate.border:
-      if (BorderDA.list.length == 0) {
+      if (
+        StyleDA.listSkin.filter(e => e.Type === EnumCate.border).length == 0
+      ) {
         noti_empty_skin.innerHTML = 'No border skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3879,7 +3457,9 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
       break
     case EnumCate.effect:
-      if (EffectDA.list.length == 0) {
+      if (
+        StyleDA.listSkin.filter(e => e.Type === EnumCate.effect).length == 0
+      ) {
         noti_empty_skin.innerHTML = 'No effect skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3956,90 +3536,21 @@ function createCateSkinHTML (cateItem, currentSkinID) {
     }
   }
   let enumCate = cateItem.ParentID ?? cateItem.ID
-  switch (enumCate) {
-    case EnumCate.color:
-      let color_list = ColorDA.list
-        .filter(e => {
-          if (selected_list.length == 0) {
-            return e.CateID == cateItem.ID
-          } else {
-            return e.CateID == cateItem.ID && e.ProjectID == ProjectDA.obj.ID
-          }
-        })
-        .sort((a, b) => a.Name - b.Name)
-      childrenHTML.push(
-        ...color_list.map(colorItem => {
-          let skin_tile = createSkinTileHTML(enumCate, colorItem)
-          if (colorItem.GID == currentSkinID) {
-            skin_tile.style.backgroundColor = '#E6F7FF'
-          }
-          return skin_tile
-        })
-      )
-      break
-    case EnumCate.typography:
-      let typo_list = TypoDA.list
-        .filter(e => {
-          if (selected_list.length == 0) {
-            return e.CateID == cateItem.ID
-          } else {
-            return e.CateID == cateItem.ID && e.ProjectID == ProjectDA.obj.ID
-          }
-        })
-        .sort((a, b) => a.Name - b.Name)
-      childrenHTML.push(
-        ...typo_list.map(typoItem => {
-          let skin_tile = createSkinTileHTML(enumCate, typoItem)
-          if (typoItem.GID == currentSkinID) {
-            skin_tile.style.backgroundColor = '#E6F7FF'
-          }
-          return skin_tile
-        })
-      )
-      break
-    case EnumCate.border:
-      let border_list = BorderDA.list
-        .filter(e => {
-          if (selected_list.length == 0) {
-            return e.CateID == cateItem.ID
-          } else {
-            return e.CateID == cateItem.ID && e.ProjectID == ProjectDA.obj.ID
-          }
-        })
-        .sort((a, b) => a.Name - b.Name)
-      childrenHTML.push(
-        ...border_list.map(borderItem => {
-          let skin_tile = createSkinTileHTML(enumCate, borderItem)
-          if (borderItem.GID == currentSkinID) {
-            skin_tile.style.backgroundColor = '#E6F7FF'
-          }
-          return skin_tile
-        })
-      )
-      break
-    case EnumCate.effect:
-      let effect_list = EffectDA.list
-        .filter(e => {
-          if (selected_list.length == 0) {
-            return e.CateID == cateItem.ID
-          } else {
-            return e.CateID == cateItem.ID && e.ProjectID == ProjectDA.obj.ID
-          }
-        })
-        .sort((a, b) => a.Name - b.Name)
-      childrenHTML.push(
-        ...effect_list.map(effectItem => {
-          let skin_tile = createSkinTileHTML(enumCate, effectItem)
-          if (effectItem.GID == currentSkinID) {
-            skin_tile.style.backgroundColor = '#E6F7FF'
-          }
-          return skin_tile
-        })
-      )
-      break
-    default:
-      break
-  }
+  let skin_list = StyleDA.listSkin.filter(
+    e =>
+      e.Type === enumCate &&
+      e.CateID === cateItem.ID &&
+      e.ProjectID === ProjectDA.obj.ID
+  )
+  childrenHTML.push(
+    ...skin_list.map(skin => {
+      let skin_tile = createSkinTileHTML(enumCate, skin)
+      if (skin.GID == currentSkinID) {
+        skin_tile.style.backgroundColor = '#E6F7FF'
+      }
+      return skin_tile
+    })
+  )
   if (
     cateContainer.querySelectorAll(':scope > .skin_tile_option').length &&
     [
@@ -4104,22 +3615,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
         title: 'Delete',
         click: function (e) {
           e.stopPropagation()
-          switch (enumCate) {
-            case EnumCate.color:
-              ColorDA.delete(jsonSkin)
-              break
-            case EnumCate.typography:
-              TypoDA.delete(jsonSkin)
-              break
-            case EnumCate.border:
-              BorderDA.delete(jsonSkin)
-              break
-            case EnumCate.effect:
-              EffectDA.delete(jsonSkin)
-              break
-            default:
-              break
-          }
+          StyleDA.deleteStyleSheet(jsonSkin)
           skin_tile.remove()
         }
       }
@@ -4156,22 +3652,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditBackgroundBlock()
         }
       }
-      let demo_color = document.createElement('div')
-      demo_color.style.width = '15px'
-      demo_color.style.height = '15px'
-      demo_color.style.borderRadius = '50%'
-      demo_color.style.pointerEvents = 'none'
-      demo_color.style.border = '0.5px solid #c4c4c4'
-      demo_color.style.backgroundColor = `#${jsonSkin.Value}`
-      skin_tile.appendChild(demo_color)
-      let color_name = document.createElement('p')
-      color_name.className = 'skin-name'
-      color_name.innerHTML = jsonSkin.Name
-      color_name.style.margin = '0 8px'
-      color_name.style.flex = 1
-      color_name.style.textAlign = 'left'
-      color_name.style.pointerEvents = 'none'
-      skin_tile.appendChild(color_name)
+      skin_tile.innerHTML = `<div class="prefix-tile" style="background-color: ${jsonSkin.Css}"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     case EnumCate.typography:
       skin_tile.onclick = function (e) {
@@ -4184,30 +3665,13 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditTypoBlock()
         }
       }
-      let demo_typo = document.createElement('p')
-      demo_typo.innerHTML = 'Ag'
-      demo_typo.style.fontSize = '14px'
-      demo_typo.style.lineHeight = '16px'
-      demo_typo.style.fontWeight = jsonSkin.FontWeight
-      demo_typo.style.pointerEvents = 'none'
-      skin_tile.appendChild(demo_typo)
-      let typo_name = document.createElement('div')
-      typo_name.style.margin = '0 8px'
-      typo_name.style.flex = 1
-      typo_name.style.display = 'flex'
-      typo_name.style.pointerEvents = 'none'
-      let title_name = document.createElement('p')
-      title_name.className = 'skin-name'
-      title_name.style.overflow = 'auto'
-      title_name.innerHTML = jsonSkin.Name
-      let title_style = document.createElement('p')
-      title_style.innerHTML = ` . ${jsonSkin.FontSize}/${
-        jsonSkin.Height ?? 'auto'
-      }`
-      title_style.style.color = '#c4c4c4'
-      typo_name.appendChild(title_name)
-      typo_name.appendChild(title_style)
-      skin_tile.appendChild(typo_name)
+      skin_tile.innerHTML = `<div class="prefix-tile"><p style="transform: scale(0.5);font: ${jsonSkin.Css}">Ag</p></div><div class="row"><p class="skin-name">${jsonSkin.Name}</p><p></p></div>`
+      let prefixSt = window.getComputedStyle(
+        skin_tile.querySelector('.prefix-tile > p')
+      )
+      skin_tile.querySelector(
+        '.skin-name + p'
+      ).innerHTML = ` . ${prefixSt.fontSize}/${prefixSt.lineHeight}`
       break
     case EnumCate.border:
       skin_tile.onclick = function (e) {
@@ -4220,22 +3684,9 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditBorderBlock()
         }
       }
-      let demo_border = document.createElement('div')
-      demo_border.style.width = '15px'
-      demo_border.style.height = '15px'
-      demo_border.style.borderRadius = '50%'
-      demo_border.style.pointerEvents = 'none'
-      demo_border.style.border = '0.5px solid #c4c4c4'
-      demo_border.style.backgroundColor = `#${jsonSkin.ColorValue}`
-      skin_tile.appendChild(demo_border)
-      let border_name = document.createElement('p')
-      border_name.className = 'skin-name'
-      border_name.innerHTML = jsonSkin.Name
-      border_name.style.margin = '0 8px'
-      border_name.style.flex = 1
-      border_name.style.textAlign = 'left'
-      border_name.style.pointerEvents = 'none'
-      skin_tile.appendChild(border_name)
+      skin_tile.innerHTML = `<div class="prefix-tile" style="background-color: ${
+        jsonSkin.Css.split(' ')[0]
+      }"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     case EnumCate.effect:
       skin_tile.onclick = function (e) {
@@ -4248,21 +3699,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditEffectBlock()
         }
       }
-      let demo_effect = document.createElement('img')
-      demo_effect.src =
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg'
-      demo_effect.style.width = '16px'
-      demo_effect.style.height = '16px'
-      demo_effect.style.pointerEvents = 'none'
-      skin_tile.appendChild(demo_effect)
-      let effect_name = document.createElement('p')
-      effect_name.className = 'skin-name'
-      effect_name.innerHTML = jsonSkin.Name
-      effect_name.style.margin = '0 8px'
-      effect_name.style.flex = 1
-      effect_name.style.textAlign = 'left'
-      effect_name.style.pointerEvents = 'none'
-      skin_tile.appendChild(effect_name)
+      skin_tile.innerHTML = `<div class="prefix-tile" style="background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg);border-color: transparent"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     default:
       break
@@ -4372,31 +3809,12 @@ function popupEditSkin (enumCate, jsonSkin) {
         editColorSkin({ Value: newColor }, thisSkin, onSubmit)
         demoDiv.style.backgroundColor = `#${thisSkin.Value}`
       }
-      let editColorValue = createEditColorForm(
-        function (newColor) {
+      let editColorValue = createEditColorForm({
+        value: `#${jsonSkin.Value}`,
+        onchange: newColor => {
           updateColorSkin(newColor, false)
         },
-        function (newColor) {
-          updateColorSkin(newColor)
-        }
-      )
-      var formEditColor = [...editColorValue.childNodes].find(
-        e => e.className == 'parameter-form'
-      )
-      formEditColor.childNodes.forEach(e => {
-        switch (e.className) {
-          case 'show-color-container':
-            e.value = `#${jsonSkin.Value.substring(0, 6)}`
-            break
-          case 'edit-color-form':
-            e.value = jsonSkin.Value.substring(0, 6).toUpperCase()
-            break
-          case 'edit-opacity-form':
-            e.value = Ultis.hexToPercent(jsonSkin.Value.substring(6)) + '%'
-            break
-          default:
-            break
-        }
+        onsubmit: updateColorSkin
       })
       body.appendChild(editColorValue)
       break
@@ -4432,34 +3850,17 @@ function popupEditSkin (enumCate, jsonSkin) {
       demoText.style.color = `#${jsonSkin.ColorValue}`
       demoDiv.appendChild(demoText)
       // edit skin color
-      let inputTextColor = createEditColorForm(
-        function (newColor) {
+      let inputTextColor = createEditColorForm({
+        value: `#${jsonSkin.ColorValue}`,
+        onchange: newColor => {
           let thisSkin = TypoDA.list.find(e => e.GID == jsonSkin.GID)
           editTypoSkin({ ColorValue: newColor }, thisSkin, false)
           demoText.style.color = `#${thisSkin.ColorValue}`
         },
-        function (newColor) {
+        onsubmit: newColor => {
           let thisSkin = TypoDA.list.find(e => e.GID == jsonSkin.GID)
           editTypoSkin({ ColorValue: newColor }, thisSkin)
           demoText.style.color = `#${thisSkin.ColorValue}`
-        }
-      )
-      var formEditColor = [...inputTextColor.childNodes].find(
-        e => e.className == 'parameter-form'
-      )
-      formEditColor.childNodes.forEach(e => {
-        switch (e.className) {
-          case 'show-color-container':
-            e.value = `#${jsonSkin.ColorValue.substring(0, 6)}`
-            break
-          case 'edit-color-form':
-            e.value = jsonSkin.ColorValue.substring(0, 6).toUpperCase()
-            break
-          case 'edit-opacity-form':
-            e.value = Ultis.hexToPercent(jsonSkin.ColorValue.substring(6)) + '%'
-            break
-          default:
-            break
         }
       })
       body.appendChild(inputTextColor)
@@ -4618,34 +4019,17 @@ function popupEditSkin (enumCate, jsonSkin) {
       demoDiv.style.borderLeftWidth = list_width[3] + 'px'
       demoDiv.style.borderStyle = jsonSkin.BorderStyle
       demoDiv.style.borderColor = `#${jsonSkin.ColorValue}`
-      let inputBorderColor = createEditColorForm(
-        function (newColor) {
+      let inputBorderColor = createEditColorForm({
+        value: `#${jsonSkin.ColorValue}`,
+        onchange: newColor => {
           let thisSkin = BorderDA.list.find(e => e.GID == jsonSkin.GID)
           editBorderSkin({ ColorValue: newColor }, thisSkin, false)
           demoDiv.style.borderColor = `#${thisSkin.ColorValue}`
         },
-        function (newColor) {
+        ondelete: newColor => {
           let thisSkin = BorderDA.list.find(e => e.GID == jsonSkin.GID)
           editBorderSkin({ ColorValue: newColor }, thisSkin)
           demoDiv.style.borderColor = `#${thisSkin.ColorValue}`
-        }
-      )
-      var formEditColor = [...inputBorderColor.childNodes].find(
-        e => e.className == 'parameter-form'
-      )
-      formEditColor.childNodes.forEach(e => {
-        switch (e.className) {
-          case 'show-color-container':
-            e.value = `#${jsonSkin.ColorValue.substring(0, 6)}`
-            break
-          case 'edit-color-form':
-            e.value = jsonSkin.ColorValue.substring(0, 6).toUpperCase()
-            break
-          case 'edit-opacity-form':
-            e.value = Ultis.hexToPercent(jsonSkin.ColorValue.substring(6)) + '%'
-            break
-          default:
-            break
         }
       })
       body.appendChild(inputBorderColor)
@@ -5021,8 +4405,9 @@ function popupEditSkin (enumCate, jsonSkin) {
             })
             div_attribute.appendChild(input_offsetY)
             div_attribute.appendChild(input_spread)
-            let inputEffectColor = createEditColorForm(
-              function (newColor) {
+            let inputEffectColor = createEditColorForm({
+              value: `#${thisSkin.ColorValue}`,
+              onchange: newColor => {
                 let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
                 editEffectSkin({ ColorValue: newColor }, thisSkin, false)
                 demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
@@ -5032,7 +4417,7 @@ function popupEditSkin (enumCate, jsonSkin) {
                 }px #${newColor} 
                     ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
               },
-              function (newColor) {
+              onsubmit: newColor => {
                 let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
                 editEffectSkin({ ColorValue: newColor }, thisSkin)
                 demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
@@ -5042,27 +4427,8 @@ function popupEditSkin (enumCate, jsonSkin) {
                 }px #${newColor} 
                     ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
               }
-            )
-            inputEffectColor.style.margin = '4px'
-            var formEditColor = [...inputEffectColor.childNodes].find(
-              e => e.className == 'parameter-form'
-            )
-            formEditColor.childNodes.forEach(e => {
-              switch (e.className) {
-                case 'show-color-container':
-                  e.value = `#${thisSkin.ColorValue.substring(0, 6)}`
-                  break
-                case 'edit-color-form':
-                  e.value = thisSkin.ColorValue.substring(0, 6).toUpperCase()
-                  break
-                case 'edit-opacity-form':
-                  e.value =
-                    Ultis.hexToPercent(thisSkin.ColorValue.substring(6)) + '%'
-                  break
-                default:
-                  break
-              }
             })
+            inputEffectColor.style.margin = '4px'
             div_attribute.appendChild(inputEffectColor)
           }
           document.getElementById('body').appendChild(popupEditEffect)
@@ -5266,7 +4632,7 @@ function createEditVariants () {
   editContainer.className = 'edit-container'
 
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   editContainer.appendChild(header)
 
   let btnTitle = document.createElement('div')
@@ -5653,7 +5019,7 @@ function createSelectionSkins () {
   selectionSkins.style.paddingRight = '0px'
 
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   header.style.paddingLeft = '12px'
   header.style.paddingRight = '8px'
   selectionSkins.appendChild(header)
@@ -6503,7 +5869,7 @@ function createBreakpoint () {
   editContainer.className = 'edit-container'
 
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   editContainer.appendChild(header)
 
   let title = document.createElement('p')
@@ -6767,7 +6133,7 @@ function winiResponsive () {
   editContainer.style.padding = '8px 0'
 
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   header.style.margin = '0 8px'
   editContainer.appendChild(header)
 
@@ -6804,7 +6170,7 @@ function colNumberByBrp (enable = true) {
   editContainer.className = 'edit-container'
 
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   editContainer.appendChild(header)
 
   let title = document.createElement('p')
@@ -7107,7 +6473,7 @@ function selectionClass () {
   editContainer.className = 'edit-container'
 
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   editContainer.appendChild(header)
 
   let title = document.createElement('p')
@@ -7149,7 +6515,7 @@ function createVariables () {
   editContainer.id = 'edit-variables'
   editContainer.className = 'edit-container'
   let header = document.createElement('div')
-  header.className = 'header_design_style'
+  header.className = 'ds-block-header'
   let title = document.createElement('p')
   title.innerHTML = 'Variables'
   let addBtn = document.createElement('i')

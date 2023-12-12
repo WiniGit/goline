@@ -350,7 +350,7 @@ body:has(.wbaseItem-value[loading="true"]) > #body::after {
   padding: 0 !important;
 }
 
-#history-view > .header_design_style {
+#history-view > .ds-block-header {
   border-bottom: 1px solid #e5e5e5;
   padding: 2px 8px;
 }

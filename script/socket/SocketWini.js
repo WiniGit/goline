@@ -701,53 +701,7 @@ socket.on('server-post', data => {
     case EnumObj.cate:
       let newId = data.data
       CateDA.list[CateDA.list.length - 1].ID = newId
-      let is_show_popup_create =
-        window.getComputedStyle(document.getElementById('create_skin_popup'))
-          .display != 'none'
-      switch (CateDA.parentCateID) {
-        case EnumCate.color:
-          if (is_show_popup_create) {
-            ColorDA.newColor.CateID = newId
-            ColorDA.add(ColorDA.newColor)
-          } else {
-            let colorItem = ColorDA.list.find(e => e.CateID == -1)
-            colorItem.CateID = newId
-            ColorDA.edit(colorItem)
-          }
-          break
-        case EnumCate.border:
-          if (is_show_popup_create) {
-            BorderDA.newBorder.CateID = newId
-            BorderDA.add(BorderDA.newBorder)
-          } else {
-            let borderItem = BorderDA.list.find(e => e.CateID == -1)
-            borderItem.CateID = newId
-            BorderDA.edit(borderItem)
-          }
-          break
-        case EnumCate.effect:
-          if (is_show_popup_create) {
-            EffectDA.newEffect.CateID = newId
-            EffectDA.add(EffectDA.newEffect)
-          } else {
-            let effectItem = EffectDA.list.find(e => e.CateID == -1)
-            effectItem.CateID = newId
-            EffectDA.edit(effectItem)
-          }
-          break
-        case EnumCate.typography:
-          if (is_show_popup_create) {
-            TypoDA.newTypo.CateID = newId
-            TypoDA.add(TypoDA.newTypo)
-          } else {
-            let typoItem = TypoDA.list.find(e => e.CateID == -1)
-            typoItem.CateID = newId
-            TypoDA.edit(typoItem)
-          }
-          break
-        default:
-          break
-      }
+      StyleDA.newSkin.CateID = newId
       CateDA.convertData(CateDA.list)
       break
     // !POST collection
@@ -944,10 +898,8 @@ socket.on('server-mouse', data => {
     // wdraw();
   }
 })
-// socket.on("server-update", (data) => {
-//   var listu = data;
-//   WbaseIO.addOrUpdate({ data: listu });
-// });
+
+socket.on('server-css', data => {})
 
 socket.on('server-refresh', data => {
   const href = window.location.href
