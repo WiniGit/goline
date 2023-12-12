@@ -82,6 +82,7 @@ function createNewSkin (skinType) {
     skinType
   ).then(skin => {
     if (skin) {
+      document.documentElement.style.setProperty(`--${skin.GID}`, skin.Css)
       switch (skinType) {
         case EnumCate.color:
           handleEditBackground({ colorSkin: skin })

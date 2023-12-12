@@ -1773,7 +1773,7 @@ function EditBackgroundBlock () {
               onRemove: function () {
                 handleEditBackground({ hexCode: null })
                 reloadEditBackgroundBlock()
-              },
+              }
             })
             editContainer.appendChild(skin_tile)
             if (scaleWb) skin_tile.lastChild.style.display = 'none'
@@ -1917,19 +1917,41 @@ function EditTypoBlock () {
     return fontSt?.replace(/(var\(--|\))/g, '')
   })
 
+  function updateTextStyleColor (params, onSubmit = true) {
+    handleEditTypo({ color: params, onSubmit: onSubmit })
+    if (onSubmit) reloadEditTypoBlock()
+  }
+
+  let editColor = createEditColorForm({
+    value: `${Ultis.rgbToHex(
+      window.getComputedStyle(listTextStyle[0].value).color
+    )}`,
+    onchange: params => {
+      updateTextStyleColor(params, false)
+    },
+    onsubmit: updateTextStyleColor,
+    suffixAction: function () {
+      let offset = editColor.getBoundingClientRect()
+      createDropdownTableSkin(EnumCate.color, offset)
+    }
+  })
+
   if (listTypoSkin.length === 1 && listTypoSkin[0]?.length === 36) {
     let typoSkin = StyleDA.listSkin.find(skin => listTypoSkin[0] == skin.GID)
     let cateItem = CateDA.list_typo_cate.find(e => e.ID == typoSkin.CateID)
+    let wbComputeSt = window.getComputedStyle(listTextStyle[0].value)
     let skin_tile = wbaseSkinTile({
       cate: EnumCate.typography,
-      prefixValue: `${typoSkin.FontSize}/${typoSkin.Height ?? 'auto'}`,
+      prefixValue: `${wbComputeSt.fontSize}/${wbComputeSt.lineHeight}`,
       title: (cateItem ? `${cateItem.Name}/` : '') + typoSkin.Name,
       onClick: function () {
         let offset = header.getBoundingClientRect()
         createDropdownTableSkin(EnumCate.typography, offset, typoSkin.GID)
       }
     })
-    skin_tile.querySelector().style.fontWeight = typoSkin.FontWeight
+    skin_tile.querySelector('p').style.fontWeight = typoSkin.FontWeight
+    editColor.style.marginBottom = '6px'
+    editContainer.appendChild(editColor)
     editContainer.appendChild(skin_tile)
   } else if (listTypoSkin.some(vl => vl.length === 36)) {
     header.appendChild(btnSelectSkin)
@@ -1944,23 +1966,6 @@ function EditTypoBlock () {
     text_style_attribute.className = 'col'
     $(text_style_attribute).css({ width: '100%', 'box-sizing': 'border-box' })
     editContainer.appendChild(text_style_attribute)
-    function updateTextStyleColor (params, onSubmit = true) {
-      handleEditTypo({ color: params, onSubmit: onSubmit })
-      if (onSubmit) reloadEditTypoBlock()
-    }
-    let editColor = createEditColorForm({
-      value: `${Ultis.rgbToHex(
-        window.getComputedStyle(listTextStyle[0].value).color
-      )}`,
-      onchange: params => {
-        updateTextStyleColor(params, false)
-      },
-      onsubmit: updateTextStyleColor,
-      suffixAction: function () {
-        let offset = editColor.getBoundingClientRect()
-        createDropdownTableSkin(EnumCate.color, offset)
-      }
-    })
     text_style_attribute.appendChild(editColor)
     // select font-family
     let fontFamilyValues = listTextStyle.filterAndMap(

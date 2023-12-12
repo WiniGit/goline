@@ -1888,7 +1888,7 @@ function scanSelectList (event) {
   let newList = []
   let divSectionWbase = [
     ...divSection.querySelectorAll(
-      `:is(.wbaseItem-value[level="1"] , .wbaseItem-value[level="2"])`
+      `.wbaseItem-value[level="1"], .wbaseItem-value[level="2"]`
     )
   ]
   newList.push(...divSectionWbase)
@@ -1897,11 +1897,11 @@ function scanSelectList (event) {
       return false
     }
 
-    let parentElement = $(eHTML).parents(
-      `.wbaseItem-value.w-container[level="1"], .wbaseItem-value.w-variant[level="1"]`
-    )[0]
+    // let parentElement = $(eHTML).parents(
+    //   `.wbaseItem-value.w-container[level="1"], .wbaseItem-value.w-variant[level="1"]`
+    // )[0]
 
-    if (parentElement) return false
+    // if (parentElement) return false
 
     return elementIsInRange(
       eHTML,
@@ -3204,11 +3204,7 @@ function upListener (event) {
 
 function elementIsInRange (element, range, checkAll = false) {
   // nếu checkAllObj = true thì phải toàn bộ Obj nằm trong range hàm mới return true
-  let parentElemetList = element
-    .getAttribute('listid')
-    .split(',')
-    .filter(id => id != wbase_parentID)
-    .map(id => document.getElementById(id))
+  let parentElemetList = [...$(element).parents('.wbaseItem-value')]
 
   let _parentX = 0
   let _parentY = 0

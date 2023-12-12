@@ -719,6 +719,10 @@ socket.on('server-post', data => {
           default:
             break
         }
+        document.documentElement.style.setProperty(
+          `--${StyleDA.newSkin.GID}`,
+          StyleDA.newSkin.Css
+        )
         StyleDA.newSkin = null
         document.querySelectorAll('.popup_remove').forEach(e => e.remove())
         create_skin_popup.style.display = 'none'
