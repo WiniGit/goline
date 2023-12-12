@@ -16,6 +16,9 @@ async function initData () {
   action_index = -1
   divSection.replaceChildren()
   let wbaseResponse = await WBaseDA.apiGetInitWbase()
+  StyleDA.initSkin(ProjectDA.obj.ID).then(skinResponse => {
+    debugger
+  }) 
   // ColorDA.list = skinResponse.Data.ColorItems
   // ColorDA.list.forEach(colorSkin => {
   //   document.documentElement.style.setProperty(

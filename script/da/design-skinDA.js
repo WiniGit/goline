@@ -7,14 +7,6 @@ class EnumCate {
   static style_class = 69
 }
 
-class SkinType {
-  static css = 0
-  static color = 1
-  static typo = 2
-  static border = 3
-  static effect = 4
-}
-
 class StyleDA {
   static cssStyleSheets = []
   static docStyleSheets = []
@@ -43,6 +35,11 @@ class StyleDA {
       let url = StyleDA.urlCtr + 'ListItem'
       WiniIO.emitGet(null, url, EnumObj.style, EnumEvent.init)
     }
+  }
+
+  static async initSkin (pid) {
+    let result = await $.get(domainApi + `ListSkinItem?pid=${pid}`)
+    return result.Data
   }
 
   static async getById (id) {
@@ -284,7 +281,7 @@ class CateDA {
       this.list = jsonData
       //
       this.list_color_cate = StyleDA.cssStyleSheets
-        .filter(e => e.Type === SkinType.color && e.CateID != EnumCate.color)
+        .filter(e => e.Type === EnumCate.color && e.CateID != EnumCate.color)
         .filterAndMap(e => e.CateID)
       this.list_color_cate = this.list.filter(e =>
         this.list_color_cate.some(id => {
@@ -298,7 +295,7 @@ class CateDA {
       //
       this.list_typo_cate = StyleDA.cssStyleSheets
         .filter(
-          e => e.Type === SkinType.typo && e.CateID != EnumCate.typography
+          e => e.Type === EnumCate.typography && e.CateID != EnumCate.typography
         )
         .filterAndMap(e => e.CateID)
       this.list_typo_cate = this.list.filter(e =>
@@ -312,7 +309,7 @@ class CateDA {
       )
       //
       this.list_border_cate = StyleDA.cssStyleSheets
-        .filter(e => e.Type === SkinType.border && e.CateID != EnumCate.border)
+        .filter(e => e.Type === EnumCate.border && e.CateID != EnumCate.border)
         .filterAndMap(e => e.CateID)
       this.list_border_cate = this.list.filter(e =>
         this.list_border_cate.some(id => {
@@ -325,7 +322,7 @@ class CateDA {
       )
       //
       this.list_effect_cate = StyleDA.cssStyleSheets
-        .filter(e => e.Type === SkinType.effect && e.CateID != EnumCate.effect)
+        .filter(e => e.Type === EnumCate.effect && e.CateID != EnumCate.effect)
         .filterAndMap(e => e.CateID)
       this.list_effect_cate = this.list.filter(e =>
         this.list_effect_cate.some(id => {

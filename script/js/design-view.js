@@ -3405,7 +3405,10 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
   switch (enumCate) {
     case EnumCate.color:
-      if (StyleDA.cssStyleSheets.filter(e => e.Type === SkinType.color).length == 0) {
+      if (
+        StyleDA.cssStyleSheets.filter(e => e.Type === EnumCate.color).length ==
+        0
+      ) {
         noti_empty_skin.innerHTML = 'No color skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3422,7 +3425,9 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
       break
     case EnumCate.typography:
-      if (StyleDA.cssStyleSheets.filter(e => e.Type === SkinType.typo).length == 0) {
+      if (
+        StyleDA.cssStyleSheets.filter(e => e.Type === EnumCate.typography).length == 0
+      ) {
         noti_empty_skin.innerHTML = 'No typography skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3439,7 +3444,10 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
       break
     case EnumCate.border:
-      if (StyleDA.cssStyleSheets.filter(e => e.Type === SkinType.border).length == 0) {
+      if (
+        StyleDA.cssStyleSheets.filter(e => e.Type === EnumCate.border).length ==
+        0
+      ) {
         noti_empty_skin.innerHTML = 'No border skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3456,7 +3464,10 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
       break
     case EnumCate.effect:
-      if (StyleDA.cssStyleSheets.filter(e => e.Type === SkinType.effect).length == 0) {
+      if (
+        StyleDA.cssStyleSheets.filter(e => e.Type === EnumCate.effect).length ==
+        0
+      ) {
         noti_empty_skin.innerHTML = 'No effect skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3533,29 +3544,12 @@ function createCateSkinHTML (cateItem, currentSkinID) {
     }
   }
   let enumCate = cateItem.ParentID ?? cateItem.ID
-  let skin_list = StyleDA.cssStyleSheets.filter(e => {
-    switch (enumCate) {
-      case EnumCate.color:
-        if (e.Type !== SkinType.color) return false
-        break
-      case EnumCate.typography:
-        if (e.Type !== SkinType.typo) return false
-        break
-      case EnumCate.border:
-        if (e.Type !== SkinType.border) return false
-        break
-      case EnumCate.effect:
-        if (e.Type !== SkinType.effect) return false
-        break
-      default:
-        return false
-    }
-    // if (selected_list.length === 0) {
-    //   return e.CateID === cateItem.ID
-    // } else {
-    return e.CateID === cateItem.ID && e.ProjectID === ProjectDA.obj.ID
-    // }
-  })
+  let skin_list = StyleDA.cssStyleSheets.filter(
+    e =>
+      e.Type === enumCate &&
+      e.CateID === cateItem.ID &&
+      e.ProjectID === ProjectDA.obj.ID
+  )
   childrenHTML.push(
     ...skin_list.map(skin => {
       let skin_tile = createSkinTileHTML(enumCate, skin)

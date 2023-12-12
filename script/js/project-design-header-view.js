@@ -25,7 +25,7 @@ function createNewSkin (skinType) {
         Css: Ultis.rgbToHex(
           window.getComputedStyle(selected_list[0].value).backgroundColor
         ),
-        Type: SkinType.color
+        Type: EnumCate.color
       }
       break
     case EnumCate.typography:
@@ -38,7 +38,7 @@ function createNewSkin (skinType) {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
         Css: window.getComputedStyle(select_typo.value).font,
-        Type: SkinType.typo
+        Type: EnumCate.typography
       }
       break
     case EnumCate.border:
@@ -57,7 +57,7 @@ function createNewSkin (skinType) {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
         Css: `${borderWidth} ${select_border.borderStyle} ${select_border.borderColor}`,
-        Type: SkinType.border
+        Type: EnumCate.border
       }
       break
     case EnumCate.effect:
@@ -70,7 +70,7 @@ function createNewSkin (skinType) {
         GID: uuidv4(),
         ProjectID: ProjectDA.obj.ID,
         Css: select_effect.boxShadow,
-        Type: SkinType.effect
+        Type: EnumCate.effect
       }
       break
     default:
