@@ -19,3 +19,14 @@ var downloadUrl = "http://download.wini.vn/";
 
 var homeUrl = '/View/';
 // var homeUrl = '/wini-test/home/'
+
+const pathUrl = 'http://10.15.144.116:9093/api';
+
+const base_headers = (contenttype) => {
+    return {
+        token: localStorage.getItem("token"),
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Accept": "application/json",
+        "Content-Type": contenttype != null ? contenttype : "application/json-patch+json",
+    };
+};

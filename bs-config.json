@@ -1,0 +1,13 @@
+{
+    "port": 9080,
+    "host": "wini-social.com",
+    "files": [
+        "./dist/**/*.{html,htm,css,js}"
+    ],
+    "server": {
+        "baseDir": "./"
+    },
+    "ui": {
+        "port": 8001
+    }
+}

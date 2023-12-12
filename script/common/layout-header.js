@@ -1,4 +1,5 @@
 $('.home-header').load('/View/lauout-header.html', function () {
+    debugger
     let customer = JSON.parse(Ultis.getStorage('customer'));
     $('.customer-name .name').text(customer.Fullname);
     $('.customer-name .email').text(customer.Email);

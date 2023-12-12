@@ -1,4 +1,5 @@
-.left-view-container .col>* {
+.left-view-container .col>*,
+.right-view-container .col>* {
     flex-shrink: 0;
 }
 
@@ -13,6 +14,7 @@
 }
 
 .left-view-container button {
+    min-width: 24px;
     border: none;
     background-color: transparent;
 }
@@ -22,7 +24,7 @@
     height: 100%;
     max-height: 100%;
 
-    width: 240px;
+    width: 360px;
     min-width: 240px;
     max-width: 524px;
 
@@ -90,7 +92,7 @@
 }
 
 .left-view-container .left-view .list-tab-container .list-tab {
-    flex: 1;
+    margin-right: 4px;
 }
 
 .left-view-container .left-view .list-tab-container .list-tab>* {
@@ -142,7 +144,7 @@
 .left-view-container .left-view .tabbar-view>*[class*="-view"] {
     display: none;
     width: 100%;
-    height: calc(100% - 166px);
+    height: calc(100%);
 
     overflow-x: hidden;
     overflow-y: auto;
@@ -157,9 +159,11 @@
 .left-view-container .left-view .tabbar-view .list-page-container {
     width: 100%;
     height: 160px;
-    min-height: 160px;
 
+    min-height: 160px;
     max-height: 400px;
+
+    display: none;
 }
 
 .left-view-container .left-view .tabbar-view .list-page-container .add-page-container {
@@ -215,10 +219,47 @@
 }
 
 
-.left-view-container .left-view .tabbar-view .layers-view .layers-card {
-    height: 32px;
+.left-view-container .left-view .tabbar-view .layers-view .layers-card.selected {
+    background-color: rgba(58, 109, 248, 0.1);
 }
 
+.left-view-container .left-view .tabbar-view .layers-view .layers-card {
+    height: 32px;
+    padding: 0 4px;
+}
+
+.left-view-container .left-view .tabbar-view .layers-view .layers-card:hover .button-lock,
+.left-view-container .left-view .tabbar-view .layers-view .layers-card.locked .button-lock {
+    display: flex;
+}
+
+.left-view-container .left-view .tabbar-view .layers-view .layers-card input {
+    padding: 0 4px;
+}
+
+.left-view-container .left-view .tabbar-view .layers-view .layers-card input:read-only {
+    cursor: context-menu;
+}
+
+.left-view-container .left-view .tabbar-view .layers-view .group-layer-child {
+    display: none;
+}
+
+.left-view-container .left-view .tabbar-view .layers-view .layers-card .button-lock {
+    display: none;
+}
+
+.assets-view .search-assets-container {
+    width: 100%;
+    height: 32px;
+
+    padding: 0 4px;
+}
+
+.assets-view .list-asset {
+    width: 100%;
+    height: calc(100% - 32px);
+}
 
 .left-view-container .resize-line {
     width: 3px;
