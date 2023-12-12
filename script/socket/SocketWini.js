@@ -705,16 +705,16 @@ socket.on('server-post', data => {
       StyleDA.addStyleSheet(StyleDA.newSkin).then(() => {
         switch (StyleDA.newSkin.Type) {
           case EnumCate.color:
-            handleEditBackground({ colorSkin: skin })
+            handleEditBackground({ colorSkin: StyleDA.newSkin })
             break
           case EnumCate.typography:
-            handleEditTypo({ typoSkin: skin })
+            handleEditTypo({ typoSkin: StyleDA.newSkin })
             break
           case EnumCate.border:
-            handleEditBorder({ borderSkin: skin })
+            handleEditBorder({ borderSkin: StyleDA.newSkin })
             break
           case EnumCate.effect:
-            handleEditEffect({ effectSkin: skin })
+            handleEditEffect({ effectSkin: StyleDA.newSkin })
             break
           default:
             break
