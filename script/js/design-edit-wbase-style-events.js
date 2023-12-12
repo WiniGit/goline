@@ -3255,7 +3255,6 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
   if (colorSkin) {
     if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.value.style.backgroundImage = null
         if (wb.IsWini && wb.CateID !== EnumCate.variant) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -3274,8 +3273,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
               `var(${colorSkin.GID})`
             )
           } else {
-            cssRule.style.backgroundColor =
-              `var(${colorSkin.GID})` === null ? null : `var(${colorSkin.GID})`
+            cssRule.style.backgroundColor = `var(${colorSkin.GID})`
           }
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -3297,8 +3295,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
               `var(${colorSkin.GID})`
             )
           } else {
-            wb.value.style.backgroundColor =
-              `var(${colorSkin.GID})` === null ? null : `var(${colorSkin.GID})`
+            wb.value.style.backgroundColor = `var(${colorSkin.GID})`
           }
           wb.Css = wb.value.style.cssText
         }
@@ -3321,13 +3318,9 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
             cssRule.classList.contains(e)
           )
         ) {
-          cssRule.style.setProperty(
-            '--checked-color',
-            `var(${colorSkin.GID})`
-          )
+          cssRule.style.setProperty('--checked-color', `var(${colorSkin.GID})`)
         } else {
-          cssRule.style.backgroundColor =
-            `var(${colorSkin.GID})` === null ? null : `var(${colorSkin.GID})`
+          cssRule.style.backgroundColor = `var(${colorSkin.GID})`
         }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -3534,7 +3527,8 @@ function unlinkTypoSkin () {
 
 function handleEditTypo ({
   typoSkin,
-  color,
+  colorSkin,
+  hexCode,
   fontFamily,
   fontSize,
   fontWeight,
@@ -3548,14 +3542,26 @@ function handleEditTypo ({
     wb => wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
   )
   if (typoSkin) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.TextStyleID = typoSkin.GID
-        wb.StyleItem.TextStyleItem = typoSkin
-        wb.value.style.font = `var(--font-style-${typoSkin.GID})`
-        wb.value.style.color = `var(--font-color-${typoSkin.GID})`
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.font = `var(${typoSkin.GID})`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.font = `var(${typoSkin.GID})`
+          wb.Css = wb.value.style.cssText
+        }
       }
-      WBaseDA.edit(listUpdate, EnumObj.style)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -3565,8 +3571,7 @@ function handleEditTypo ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.font = `var(--font-style-${typoSkin.GID})`
-        cssRule.style.color = `var(--font-color-${typoSkin.GID})`
+        cssRule.style.font = `var(${typoSkin.GID})`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3574,13 +3579,27 @@ function handleEditTypo ({
       }
       StyleDA.editStyleSheet(cssItem)
     }
-  } else if (color) {
-    if (listUpdate[0].StyleItem) {
+  } else if (colorSkin) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.TextStyleItem.ColorValue = color
-        wb.value.style.color = `#${color}`
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.color = `var(${colorSkin.GID})`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.color = `var(${colorSkin.GID})`
+          wb.Css = wb.value.style.cssText
+        }
       }
-      if (onSubmit) WBaseDA.edit(listUpdate, EnumObj.textStyle)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -3590,7 +3609,45 @@ function handleEditTypo ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.color = `#${color}`
+        cssRule.style.color = `var(${colorSkin.GID})`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (hexCode !== undefined) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
+      for (let wb of [...listUpdate]) {
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.backgroundColor = hexCode === null ? null : hexCode
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          if (onSubmit) StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.backgroundColor = hexCode === null ? null : hexCode
+          wb.Css = wb.value.style.cssText
+        }
+      }
+      if (onSubmit && listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of [...listUpdate]) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.backgroundColor = hexCode === null ? null : hexCode
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3599,10 +3656,25 @@ function handleEditTypo ({
       if (onSubmit) StyleDA.editStyleSheet(cssItem)
     }
   } else if (fontFamily) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.TextStyleItem.FontFamily = fontFamily
-        wb.value.style.fontFamily = fontFamily
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.font = `${wbComputeSt.fontWeight} ${wbComputeSt.fontSize}/${wbComputeSt.lineHeight} ${fontFamily}`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.font = `${wbComputeSt.fontWeight} ${wbComputeSt.fontSize}/${wbComputeSt.lineHeight} ${fontFamily}`
+          wb.Css = wb.value.style.cssText
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.textStyle)
     } else {
@@ -3611,10 +3683,11 @@ function handleEditTypo ({
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.fontFamily = fontFamily
+        cssRule.style.font = `${wbComputeSt.fontWeight} ${wbComputeSt.fontSize}/${wbComputeSt.lineHeight} ${fontFamily}`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3623,10 +3696,25 @@ function handleEditTypo ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (fontSize !== undefined) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.TextStyleItem.FontSize = fontSize
-        wb.value.style.fontSize = `${fontSize}px`
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.font = `${wbComputeSt.fontWeight} ${fontSize}px/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.font = `${wbComputeSt.fontWeight} ${fontSize}px/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
+          wb.Css = wb.value.style.cssText
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.textStyle)
     } else {
@@ -3635,10 +3723,11 @@ function handleEditTypo ({
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.fontSize = `${fontSize}px`
+        cssRule.style.font = `${wbComputeSt.fontWeight} ${fontSize}px/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3647,10 +3736,25 @@ function handleEditTypo ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (fontWeight) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.TextStyleItem.FontWeight = fontWeight
-        wb.value.style.fontWeight = fontWeight
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.font = `${fontWeight} ${wbComputeSt.fontSize}px/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.font = `${fontWeight} ${wbComputeSt.fontSize}px/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
+          wb.Css = wb.value.style.cssText
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.textStyle)
     } else {
@@ -3659,10 +3763,11 @@ function handleEditTypo ({
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.fontWeight = fontWeight
+        cssRule.style.font = `${fontWeight} ${wbComputeSt.fontSize}px/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3671,10 +3776,33 @@ function handleEditTypo ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (height !== undefined) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.TextStyleItem.Height = height
-        wb.value.style.height = height === null ? height : `${height}px`
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.font = `${wbComputeSt.fontWeight} ${
+            wbComputeSt.fontSize
+          }px/${height === null ? 'normal' : `${height}px`} ${
+            wbComputeSt.fontFamily
+          }`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.font = `${wbComputeSt.fontWeight} ${
+            wbComputeSt.fontSize
+          }px/${height === null ? 'normal' : `${height}px`} ${
+            wbComputeSt.fontFamily
+          }`
+          wb.Css = wb.value.style.cssText
+        }
       }
       WBaseDA.edit(listUpdate, EnumObj.textStyle)
     } else {
@@ -3683,10 +3811,15 @@ function handleEditTypo ({
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.height = height === null ? height : `${height}px`
+        cssRule.style.font = `${wbComputeSt.fontWeight} ${
+          wbComputeSt.fontSize
+        }px/${height === null ? 'normal' : `${height}px`} ${
+          wbComputeSt.fontFamily
+        }`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3695,12 +3828,26 @@ function handleEditTypo ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (letterSpacing !== undefined) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.TextStyleItem.LetterSpacing = letterSpacing
-        wb.value.style.letterSpacing = `${letterSpacing}px`
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.letterSpacing = `${letterSpacing}px`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.letterSpacing = `${letterSpacing}px`
+          wb.Css = wb.value.style.cssText
+        }
       }
-      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -3719,12 +3866,26 @@ function handleEditTypo ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (textAlign) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.TypoStyleItem.TextAlign = textAlign
-        wb.value.style.textAlign = textAlign
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.textAlign = textAlign
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.textAlign = textAlign
+          wb.Css = wb.value.style.cssText
+        }
       }
-      WBaseDA.edit(listUpdate, EnumObj.typoStyleItem)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -3743,12 +3904,26 @@ function handleEditTypo ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (alignVertical) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.TypoStyleItem.TextAlignVertical = alignVertical
-        wb.value.style.alignItems = alignVertical
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.alignItems = alignVertical
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.alignItems = alignVertical
+          wb.Css = wb.value.style.cssText
+        }
       }
-      WBaseDA.edit(listUpdate, EnumObj.typoStyleItem)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`

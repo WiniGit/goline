@@ -3302,40 +3302,37 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
       let popupAddSkin = document.getElementById('create_skin_popup')
       popupAddSkin.style.display = 'flex'
       popupAddSkin.querySelector('.popup-input').value = ''
+      let prefixInput = popupAddSkin.querySelector(
+        '.popup-body .box20.semibold4'
+      )
+      prefixInput.innerHTML = ''
       switch (enumCate) {
         case EnumCate.color:
           popupAddSkin.querySelector('.title_create_skin').innerHTML =
             'Create new color skin'
-          popupAddSkin.querySelector(
-            '.popup-body .box20.semibold4'
-          ).style.backgroundColor = window.getComputedStyle(
+          prefixInput.style.backgroundColor = window.getComputedStyle(
             selected_list[0].value
           ).backgroundColor
           break
         case EnumCate.typography:
           popupAddSkin.querySelector('.title_create_skin').innerHTML =
             'Create new typography skin'
-          popupAddSkin.querySelector(
-            '.popup-body .box20.semibold4'
-          ).style.fontWeight = window.getComputedStyle(
+          prefixInput.innerHTML = 'Ag'
+          prefixInput.style.fontWeight = window.getComputedStyle(
             selected_list[0].value
           ).fontWeight
           break
         case EnumCate.border:
           popupAddSkin.querySelector('.title_create_skin').innerHTML =
             'Create new border skin'
-          popupAddSkin.querySelector(
-            '.popup-body .box20.semibold4'
-          ).style.backgroundColor = window.getComputedStyle(
+          prefixInput.style.backgroundColor = window.getComputedStyle(
             selected_list[0].value
           ).borderColor
           break
         case EnumCate.effect:
           popupAddSkin.querySelector('.title_create_skin').innerHTML =
             'Create new effect skin'
-          popupAddSkin.querySelector(
-            '.popup-body .box20.semibold4'
-          ).style.backgroundImage =
+          prefixInput.style.backgroundImage =
             'url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg)'
           break
         default:
@@ -3405,10 +3402,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
 
   switch (enumCate) {
     case EnumCate.color:
-      if (
-        StyleDA.cssStyleSheets.filter(e => e.Type === EnumCate.color).length ==
-        0
-      ) {
+      if (StyleDA.listSkin.filter(e => e.Type === EnumCate.color).length == 0) {
         noti_empty_skin.innerHTML = 'No color skins.'
         body.replaceChildren(noti_empty_skin)
       } else {
@@ -3426,7 +3420,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
       break
     case EnumCate.typography:
       if (
-        StyleDA.cssStyleSheets.filter(e => e.Type === EnumCate.typography).length == 0
+        StyleDA.listSkin.filter(e => e.Type === EnumCate.typography).length == 0
       ) {
         noti_empty_skin.innerHTML = 'No typography skins.'
         body.replaceChildren(noti_empty_skin)
@@ -3445,8 +3439,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
       break
     case EnumCate.border:
       if (
-        StyleDA.cssStyleSheets.filter(e => e.Type === EnumCate.border).length ==
-        0
+        StyleDA.listSkin.filter(e => e.Type === EnumCate.border).length == 0
       ) {
         noti_empty_skin.innerHTML = 'No border skins.'
         body.replaceChildren(noti_empty_skin)
@@ -3465,8 +3458,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
       break
     case EnumCate.effect:
       if (
-        StyleDA.cssStyleSheets.filter(e => e.Type === EnumCate.effect).length ==
-        0
+        StyleDA.listSkin.filter(e => e.Type === EnumCate.effect).length == 0
       ) {
         noti_empty_skin.innerHTML = 'No effect skins.'
         body.replaceChildren(noti_empty_skin)
@@ -3544,7 +3536,7 @@ function createCateSkinHTML (cateItem, currentSkinID) {
     }
   }
   let enumCate = cateItem.ParentID ?? cateItem.ID
-  let skin_list = StyleDA.cssStyleSheets.filter(
+  let skin_list = StyleDA.listSkin.filter(
     e =>
       e.Type === enumCate &&
       e.CateID === cateItem.ID &&
@@ -3660,7 +3652,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditBackgroundBlock()
         }
       }
-      skin_tile.innerHTML = `<div style="width: 15px;height: 15px;border-radius: 50%;border: 0.5px solid #c4c4c4;background-color: ${jsonSkin.Css}"></div><p class="skin-name" style="margin: 0 8px;flex: 1;text-align: left">${jsonSkin.Name}</p>`
+      skin_tile.innerHTML = `<div class="prefix-tile" style="background-color: ${jsonSkin.Css}"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     case EnumCate.typography:
       skin_tile.onclick = function (e) {
@@ -3673,30 +3665,13 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditTypoBlock()
         }
       }
-      let demo_typo = document.createElement('p')
-      demo_typo.innerHTML = 'Ag'
-      demo_typo.style.fontSize = '14px'
-      demo_typo.style.lineHeight = '16px'
-      demo_typo.style.fontWeight = jsonSkin.FontWeight
-      demo_typo.style.pointerEvents = 'none'
-      skin_tile.appendChild(demo_typo)
-      let typo_name = document.createElement('div')
-      typo_name.style.margin = '0 8px'
-      typo_name.style.flex = 1
-      typo_name.style.display = 'flex'
-      typo_name.style.pointerEvents = 'none'
-      let title_name = document.createElement('p')
-      title_name.className = 'skin-name'
-      title_name.style.overflow = 'auto'
-      title_name.innerHTML = jsonSkin.Name
-      let title_style = document.createElement('p')
-      title_style.innerHTML = ` . ${jsonSkin.FontSize}/${
-        jsonSkin.Height ?? 'auto'
-      }`
-      title_style.style.color = '#c4c4c4'
-      typo_name.appendChild(title_name)
-      typo_name.appendChild(title_style)
-      skin_tile.appendChild(typo_name)
+      skin_tile.innerHTML = `<div class="prefix-tile"><p style="transform: scale(0.5);font: ${jsonSkin.Css}">Ag</p></div><div class="row"><p class="skin-name">${jsonSkin.Name}</p><p></p></div>`
+      let prefixSt = window.getComputedStyle(
+        skin_tile.querySelector('.prefix-tile > p')
+      )
+      skin_tile.querySelector(
+        '.skin-name + p'
+      ).innerHTML = ` . ${prefixSt.fontSize}/${prefixSt.lineHeight}`
       break
     case EnumCate.border:
       skin_tile.onclick = function (e) {
@@ -3709,22 +3684,9 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditBorderBlock()
         }
       }
-      let demo_border = document.createElement('div')
-      demo_border.style.width = '15px'
-      demo_border.style.height = '15px'
-      demo_border.style.borderRadius = '50%'
-      demo_border.style.pointerEvents = 'none'
-      demo_border.style.border = '0.5px solid #c4c4c4'
-      demo_border.style.backgroundColor = `#${jsonSkin.ColorValue}`
-      skin_tile.appendChild(demo_border)
-      let border_name = document.createElement('p')
-      border_name.className = 'skin-name'
-      border_name.innerHTML = jsonSkin.Name
-      border_name.style.margin = '0 8px'
-      border_name.style.flex = 1
-      border_name.style.textAlign = 'left'
-      border_name.style.pointerEvents = 'none'
-      skin_tile.appendChild(border_name)
+      skin_tile.innerHTML = `<div class="prefix-tile" style="background-color: ${
+        jsonSkin.Css.split(' ')[0]
+      }"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     case EnumCate.effect:
       skin_tile.onclick = function (e) {
@@ -3737,21 +3699,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditEffectBlock()
         }
       }
-      let demo_effect = document.createElement('img')
-      demo_effect.src =
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg'
-      demo_effect.style.width = '16px'
-      demo_effect.style.height = '16px'
-      demo_effect.style.pointerEvents = 'none'
-      skin_tile.appendChild(demo_effect)
-      let effect_name = document.createElement('p')
-      effect_name.className = 'skin-name'
-      effect_name.innerHTML = jsonSkin.Name
-      effect_name.style.margin = '0 8px'
-      effect_name.style.flex = 1
-      effect_name.style.textAlign = 'left'
-      effect_name.style.pointerEvents = 'none'
-      skin_tile.appendChild(effect_name)
+      skin_tile.innerHTML = `<div class="prefix-tile" style="background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg);border-color: transparent"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     default:
       break

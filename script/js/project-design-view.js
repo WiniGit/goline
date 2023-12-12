@@ -17,63 +17,11 @@ async function initData () {
   divSection.replaceChildren()
   let wbaseResponse = await WBaseDA.apiGetInitWbase()
   StyleDA.initSkin(ProjectDA.obj.ID).then(skinResponse => {
-    debugger
-  }) 
-  // ColorDA.list = skinResponse.Data.ColorItems
-  // ColorDA.list.forEach(colorSkin => {
-  //   document.documentElement.style.setProperty(
-  //     `--background-color-${colorSkin.GID}`,
-  //     `#${colorSkin.Value}`
-  //   )
-  // })
-  // TypoDA.list = skinResponse.Data.TextStyleItems
-  // TypoDA.list.forEach(typoSkin => {
-  //   document.documentElement.style.setProperty(
-  //     `--font-style-${typoSkin.GID}`,
-  //     `${typoSkin.FontWeight} ${typoSkin.FontSize}px/${
-  //       typoSkin.Height != undefined ? typoSkin.Height + 'px' : 'normal'
-  //     } ${typoSkin.FontFamily}`
-  //   )
-  //   document.documentElement.style.setProperty(
-  //     `--font-color-${typoSkin.GID}`,
-  //     `#${typoSkin.ColorValue}`
-  //   )
-  // })
-  // BorderDA.list = skinResponse.Data.BorderItems
-  // BorderDA.list.forEach(borderSkin => {
-  //   document.documentElement.style.setProperty(
-  //     `--border-width-${borderSkin.GID}`,
-  //     borderSkin.Width.split(' ')
-  //       .map(e => `${e}px`)
-  //       .join(' ')
-  //   )
-  //   document.documentElement.style.setProperty(
-  //     `--border-style-${borderSkin.GID}`,
-  //     borderSkin.BorderStyle
-  //   )
-  //   document.documentElement.style.setProperty(
-  //     `--border-color-${borderSkin.GID}`,
-  //     `#${borderSkin.ColorValue}`
-  //   )
-  // })
-  // EffectDA.list = skinResponse.Data.EffectItems
-  // EffectDA.list.forEach(effectSkin => {
-  //   if (effectSkin.Type === ShadowType.layer_blur) {
-  //     document.documentElement.style.setProperty(
-  //       `--effect-blur-${effectSkin.GID}`,
-  //       `blur(${effectSkin.BlurRadius}px)`
-  //     )
-  //   } else {
-  //     document.documentElement.style.setProperty(
-  //       `--effect-shadow-${effectSkin.GID}`,
-  //       `${effectSkin.OffsetX}px ${effectSkin.OffsetY}px ${
-  //         effectSkin.BlurRadius
-  //       }px ${effectSkin.SpreadRadius}px #${effectSkin.ColorValue} ${
-  //         effectSkin.Type == ShadowType.inner ? 'inset' : ''
-  //       }`
-  //     )
-  //   }
-  // })
+    StyleDA.listSkin = skinResponse
+    StyleDA.listSkin.forEach(skin => {
+      document.documentElement.style.setProperty(skin.GID, skin.Css)
+    })
+  })
   // PropertyDA.list = skinResponse.Data.WPropertyItems
   CateDA.initCate()
   console.log('get server done: ', Date.now())

@@ -80,7 +80,18 @@ function createNewSkin (skinType) {
     new_skin,
     input_value.replace('\\', '/').split('/'),
     skinType
-  ).then(() => (create_skin_popup.style.display = 'none'))
+  ).then(skin => {
+    if(skin) {
+      switch (skinType) {
+        case EnumCate.color:
+          handleEditBackground({colorSkin: skin})
+          break;
+        default:
+          break;
+      }
+      create_skin_popup.style.display = 'none'
+    }
+  })
 }
 // setup create obj tool
 let create_obj_tool = document.getElementById('create_tool')

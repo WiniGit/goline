@@ -25,6 +25,7 @@ class StyleDA {
   static listTypo = []
   static listBorder = []
   static listEffect = []
+  static listSkin = []
   static newSkin
 
   static init (projectItem) {
@@ -69,7 +70,7 @@ class StyleDA {
     })
     return result
   }
-  
+
   static async deleteStyleSheet (cssItem) {
     let result = await $.post('/view/delete-stylesheet', {
       headers: UserService.headerProject(),
@@ -281,7 +282,7 @@ class CateDA {
     if (jsonData != null) {
       this.list = jsonData
       //
-      this.list_color_cate = StyleDA.cssStyleSheets
+      this.list_color_cate = StyleDA.listSkin
         .filter(e => e.Type === EnumCate.color && e.CateID != EnumCate.color)
         .filterAndMap(e => e.CateID)
       this.list_color_cate = this.list.filter(e =>
@@ -294,7 +295,7 @@ class CateDA {
         })
       )
       //
-      this.list_typo_cate = StyleDA.cssStyleSheets
+      this.list_typo_cate = StyleDA.listSkin
         .filter(
           e => e.Type === EnumCate.typography && e.CateID != EnumCate.typography
         )
@@ -309,7 +310,7 @@ class CateDA {
         })
       )
       //
-      this.list_border_cate = StyleDA.cssStyleSheets
+      this.list_border_cate = StyleDA.listSkin
         .filter(e => e.Type === EnumCate.border && e.CateID != EnumCate.border)
         .filterAndMap(e => e.CateID)
       this.list_border_cate = this.list.filter(e =>
@@ -322,7 +323,7 @@ class CateDA {
         })
       )
       //
-      this.list_effect_cate = StyleDA.cssStyleSheets
+      this.list_effect_cate = StyleDA.listSkin
         .filter(e => e.Type === EnumCate.effect && e.CateID != EnumCate.effect)
         .filterAndMap(e => e.CateID)
       this.list_effect_cate = this.list.filter(e =>
@@ -347,12 +348,22 @@ class CateDA {
           case EnumCate.color:
             StyleDA.newSkin.Name = StyleDA.newSkin.Css
             break
+          case EnumCate.typography:
+            StyleDA.newSkin.Name = StyleDA.newSkin.Css
+            break
+          case EnumCate.border:
+            StyleDA.newSkin.Name = StyleDA.newSkin.Css
+            break
+          case EnumCate.effect:
+            StyleDA.newSkin.Name = StyleDA.newSkin.Css
+            break
           default:
             break
         }
       }
       StyleDA.newSkin.CateID = enumCate
       await StyleDA.addStyleSheet(StyleDA.newSkin)
+      debugger
     } else {
       StyleDA.newSkin.Name = listName.pop()
       let nameCate = listName.join(' ')
@@ -364,6 +375,7 @@ class CateDA {
       if (cateItem) {
         StyleDA.newSkin.CateID = cateItem.ID
         await StyleDA.addStyleSheet(StyleDA.newSkin)
+        debugger
       } else {
         let newCate = {
           ID: 0,
