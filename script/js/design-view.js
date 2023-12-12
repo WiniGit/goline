@@ -1754,7 +1754,7 @@ function EditBackgroundBlock () {
       if (wbBg.length === 1 && wbBg[0]?.length > 0) {
         header.querySelector('.fa-plus').remove()
         if (wbBg[0].length === 36) {
-          let colorSkin = ColorDA.list.find(skin => listColorID[0] === skin.GID)
+          let colorSkin = StyleDA.listSkin.find(skin => wbBg[0] === skin.GID)
           let cateItem
           if (colorSkin) {
             if (colorSkin.CateID !== EnumCate.color) {
@@ -1918,7 +1918,7 @@ function EditTypoBlock () {
   })
 
   if (listTypoSkin.length === 1 && listTypoSkin[0]?.length === 36) {
-    let typoSkin = TypoDA.list.find(skin => listTypoSkin[0] == skin.GID)
+    let typoSkin = StyleDA.listSkin.find(skin => listTypoSkin[0] == skin.GID)
     let cateItem = CateDA.list_typo_cate.find(e => e.ID == typoSkin.CateID)
     let skin_tile = wbaseSkinTile({
       cate: EnumCate.typography,

@@ -1244,6 +1244,7 @@ input[type="color"]::-webkit-color-swatch {
   width: 28px;
   height: 28px;
   display: none;
+  font-size: 14px;
 }
 
 .wbase_skin_tile > .unlink-skin-btn {
@@ -1254,6 +1255,8 @@ input[type="color"]::-webkit-color-swatch {
 
 .wbase_skin_tile:hover > * {
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .wbase_skin_tile > *:hover {
