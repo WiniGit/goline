@@ -164,23 +164,23 @@
 .layer_wbase_tile > img {
   width: 16px;
   height: 16px;
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/base_component_black.svg);
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/base_component_black.svg);
 }
 
 .layer_wbase_tile.w-container > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame_black.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/frame_black.svg) !important;
 }
 .layer_wbase_tile.w-rect > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle_black.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/rectangle_black.svg) !important;
 }
 .layer_wbase_tile.w-text > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text_black.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/text_black.svg) !important;
 }
 .layer_wbase_tile.w-variant > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/multiple_component.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/multiple_component.svg) !important;
 }
 .layer_wbase_tile[iswini="true"]:not(.w-variant) > img {
-  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/component.svg) !important;
+  content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/component.svg) !important;
 }
 
 .layer_wbase_tile:has(> .fa-caret-down) + .col {

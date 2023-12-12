@@ -352,7 +352,7 @@ function EditOffsetBlock () {
     iconFixPos.className =
       'img-button size-28 tlwh-option' + (isFixPos ? ' toggle' : '')
     iconFixPos.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/fix_position.svg'
+      'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/fix_position.svg'
     edit_top.lastChild.disabled = !isFixPos
     edit_left.lastChild.disabled = !isFixPos
     iconFixPos.onclick = function () {
@@ -403,7 +403,7 @@ function EditOffsetBlock () {
     WbClass.scale.some(e => wb.value.classList.contains(e))
   )
   let icon_ratioWH = document.createElement('img')
-  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
+  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/${
     isRatio ? 'ratioWH' : 'un_ratioWH'
   }.svg`
   icon_ratioWH.className =
@@ -411,7 +411,7 @@ function EditOffsetBlock () {
   if (!isRatio) {
     icon_ratioWH.onclick = function () {
       isRatio = !isRatio
-      this.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
+      this.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/${
         isRatio ? 'ratioWH' : 'un_ratioWH'
       }.svg`
       if (isRatio) this.classList.add('toggle')
@@ -472,7 +472,7 @@ function EditOffsetBlock () {
   radiusContainer.className = 'row'
   // input edit rotate
   let edit_rotate = _textField({
-    icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rotate_rect.svg',
+    icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/rotate_rect.svg',
     value: 0
   })
   if (showInputRadius.length > 0) {
@@ -484,7 +484,7 @@ function EditOffsetBlock () {
     )
     list_radius_value = [].concat(...list_radius_value).filterAndMap()
     let edit_radius = _textField({
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/radius_rect.svg',
       value: list_radius_value.length == 1 ? list_radius_value[0] : 'mixed',
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -530,7 +530,7 @@ function EditOffsetBlock () {
     _row_radius_detail.id = 'row_radius_detail'
     let icon_HTML = document.createElement('img')
     icon_HTML.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg'
+      'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/radius_rect.svg'
     icon_HTML.className = 'img-button size-24'
     _row_radius_detail.replaceChildren(
       icon_HTML,
@@ -940,7 +940,7 @@ function EditLayoutBlock () {
     if (!isEditTable) {
       let inputChildSpace = _textField({
         width: '88px',
-        icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
+        icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/${
           isVertical ? 'vertical' : 'horizontal'
         } child spacing.svg`,
         value: childSpaceValues.length == 1 ? childSpaceValues[0] : 'mixed',
@@ -972,7 +972,7 @@ function EditLayoutBlock () {
         let runSpaceValues = layoutItem.RunSpace
         let inputRunSpace = _textField({
           width: '88px',
-          icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
+          icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/${
             isVertical ? 'horizontal' : 'vertical'
           } child spacing.svg`,
           value: runSpaceValues.length == 1 ? runSpaceValues[0] : 'mixed',
@@ -1042,7 +1042,7 @@ function EditLayoutBlock () {
     editContainer.appendChild(paddingContainer)
     let input_padding_horizontal = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding horizontal.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/padding horizontal.svg',
       value: padLeftValue == padRightValue ? padLeftValue : 'mixed',
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1060,7 +1060,7 @@ function EditLayoutBlock () {
     })
     let input_padding_vertical = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding vertical.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/padding vertical.svg',
       value: padTopValue == padBotValue ? padTopValue : 'mixed',
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1078,7 +1078,7 @@ function EditLayoutBlock () {
     input_padding_vertical.style.marginLeft = '6px'
     let input_padding_left = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding left.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/padding left.svg',
       value: padLeftValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1094,7 +1094,7 @@ function EditLayoutBlock () {
     })
     let input_padding_top = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding top.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/padding top.svg',
       value: padTopValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1114,10 +1114,10 @@ function EditLayoutBlock () {
     icon_padding_details.style.borderRadius = '2px'
     icon_padding_details.style.margin = '4px 0 0 6px'
     icon_padding_details.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding details.svg'
+      'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/padding details.svg'
     let input_padding_right = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding right.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/padding right.svg',
       value: padRightValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1134,7 +1134,7 @@ function EditLayoutBlock () {
 
     let input_padding_bottom = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding bottom.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/padding bottom.svg',
       value: padBotValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1819,7 +1819,7 @@ function EditBackgroundBlock () {
 
       let btnEye = document.createElement('img')
       btnEye.src =
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg'
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/eye-outline.svg'
       btnEye.style.width = '16px'
       btnEye.style.height = '16px'
       btnEye.style.padding = '6px'
@@ -1898,7 +1898,7 @@ function EditTypoBlock () {
   header.appendChild(title)
 
   let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/buttonStyle.svg',
     null,
     function () {
       let offset = header.getBoundingClientRect()
@@ -2041,7 +2041,7 @@ function EditTypoBlock () {
     )
     let input_line_height = _textField({
       width: '100%',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/line-height.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/line-height.svg',
       value: lineHeightValues.length === 1 ? lineHeightValues[0] : 'mixed',
       onBlur: function (ev) {
         if (
@@ -2063,7 +2063,7 @@ function EditTypoBlock () {
     let input_letter_spacing = _textField({
       width: '100%',
       value: lSpacingValues.length === 1 ? lSpacingValues[0] : 'mixed',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/letter-spacing.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/letter-spacing.svg',
       iconSize: '28px',
       onBlur: function (ev) {
         if (
@@ -2099,15 +2099,15 @@ function EditTypoBlock () {
     listvalue: [
       {
         attribute: TextAutoSize.autoWidth,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/auto-width.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/auto-width.svg'
       },
       {
         attribute: TextAutoSize.autoHeight,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/auto-height.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/auto-height.svg'
       },
       {
         attribute: TextAutoSize.fixedSize,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/fixed-size.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/fixed-size.svg'
       }
     ],
     onselect: value => {
@@ -2145,15 +2145,15 @@ function EditTypoBlock () {
     listvalue: [
       {
         attribute: TextAlign.left,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-left.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/text-align-left.svg'
       },
       {
         attribute: TextAlign.center,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-center.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/text-align-center.svg'
       },
       {
         attribute: TextAlign.right,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-right.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/text-align-right.svg'
       }
     ],
     onselect: value => {
@@ -2172,15 +2172,15 @@ function EditTypoBlock () {
     listvalue: [
       {
         attribute: TextAlignVertical.top,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-top.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/text-align-vertical-top.svg'
       },
       {
         attribute: TextAlignVertical.middle,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-center.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/text-align-vertical-center.svg'
       },
       {
         attribute: TextAlignVertical.bottom,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-bottom.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/text-align-vertical-bottom.svg'
       }
     ],
     onselect: value => {
@@ -2469,7 +2469,7 @@ function EditBorderBlock () {
       )
       let edit_stroke_width = _textField({
         width: '60px',
-        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/stroke-width.svg',
+        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/stroke-width.svg',
         value: widthValues.length > 1 ? 'mixed' : widthValues[0],
         iconSize: '28px',
         onBlur: function (ev) {
@@ -2552,7 +2552,7 @@ function EditBorderBlock () {
       action_edit_line_container.appendChild(btnSelectBorderSide)
 
       // let edit_line_action2 = createButtonAction(
-      //   'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg',
+      //   'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/more-horizontal.svg',
       //   null,
       //   function () {}
       // )
@@ -2598,7 +2598,7 @@ function EditEffectBlock () {
   header.appendChild(title)
 
   let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/buttonStyle.svg',
     null,
     function () {
       let offset = header.getBoundingClientRect()
@@ -2691,7 +2691,7 @@ function EditEffectBlock () {
       editContainer.appendChild(div_select_eType)
       // popup edit effect type attribute
       let effect_setting = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/effect-settings.svg',
         null,
         function () {
           setTimeout(function () {
@@ -2895,14 +2895,14 @@ function EditEffectBlock () {
       div_select_eType.appendChild(btn_select_eType)
 
       let btn_isShow = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/eye-outline.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/eye-close.svg',
         function () {}
       )
       div_select_eType.appendChild(btn_isShow)
 
       let btn_delete = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/minus.svg',
         null,
         function () {
           deleteEffect()
@@ -2946,7 +2946,7 @@ function createEditColorForm ({
   </div>
   ${
     suffixAction
-      ? '<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg"/>'
+      ? '<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/buttonStyle.svg"/>'
       : '<div class="row"><i class="fa-regular fa-eye"></i><i class="fa-solid fa-minus"></i></div>'
   }`
 
@@ -2997,31 +2997,31 @@ function createEditColorForm ({
 function selectBorderSide (params, onclick) {
   let list = [
     {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all.svg',
+      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-all.svg',
       name: 'mixed'
     },
     {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all.svg',
+      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-all.svg',
       name: BorderSide.all
     },
     {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top.svg',
+      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-top.svg',
       name: BorderSide.top
     },
     {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left.svg',
+      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-left.svg',
       name: BorderSide.left
     },
     {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom.svg',
+      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-bottom.svg',
       name: BorderSide.bottom
     },
     {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right.svg',
+      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-right.svg',
       name: BorderSide.right
     },
     // {
-    //   src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/settings-gear.svg',
+    //   src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/settings-gear.svg',
     //   name: BorderSide.custom
     // }
   ]
@@ -3068,7 +3068,7 @@ function selectBorderSide (params, onclick) {
     let checkIcon = document.createElement('img')
     checkIcon.className = 'option-icon'
     checkIcon.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/check.svg'
+      'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/check.svg'
     checkIcon.style.opacity = params == list[i].name ? 1 : 0
     option.appendChild(checkIcon)
 
@@ -3181,7 +3181,7 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
           popupAddSkin.querySelector('.title_create_skin').innerHTML =
             'Create new effect skin'
           prefixInput.style.backgroundImage =
-            'url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg)'
+            'url(https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/effect-settings.svg)'
           break
         default:
           break
@@ -3547,7 +3547,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditEffectBlock()
         }
       }
-      skin_tile.innerHTML = `<div class="prefix-tile" style="background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg);border-color: transparent"></div><div class="skin-name">${jsonSkin.Name}</div>`
+      skin_tile.innerHTML = `<div class="prefix-tile" style="background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/effect-settings.svg);border-color: transparent"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     default:
       break
@@ -3800,7 +3800,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       // input line-height
       let input_line_height = _textField(
         '100%',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/line-height.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/line-height.svg',
         undefined,
         '0',
         '25px'
@@ -3826,7 +3826,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       // input letter spacing
       let input_letter_spacing = _textField(
         '100%',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/letter-spacing.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/letter-spacing.svg',
         undefined,
         '0',
         '28px'
@@ -3908,7 +3908,7 @@ function popupEditSkin (enumCate, jsonSkin) {
 
       let edit_stroke_width = _textField(
         '60px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/stroke-width.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/stroke-width.svg',
         undefined,
         '0',
         '28px'
@@ -4006,7 +4006,7 @@ function popupEditSkin (enumCate, jsonSkin) {
         jsonSkin.BorderSide == BorderSide.custom ? 'flex' : 'none'
       let input_border_left = _textField(
         '88px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left-black.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-left-black.svg',
         undefined,
         '0',
         '36px'
@@ -4026,7 +4026,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       group_custom_border_side.appendChild(input_border_left)
       let input_border_top = _textField(
         '88px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top-black.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-top-black.svg',
         undefined,
         '0',
         '36px'
@@ -4045,7 +4045,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       group_custom_border_side.appendChild(input_border_top)
       let input_border_right = _textField(
         '88px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right-black.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-right-black.svg',
         undefined,
         '0',
         '36px'
@@ -4064,7 +4064,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       group_custom_border_side.appendChild(input_border_right)
       let input_border_bottom = _textField(
         '88px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom-black.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-bottom-black.svg',
         undefined,
         '0',
         '36px'
@@ -4129,7 +4129,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       body.appendChild(div_select_eType)
       // popup edit effect type attribute
       let effect_setting = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/effect-settings.svg',
         null,
         function () {
           let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
@@ -4333,8 +4333,8 @@ function popupEditSkin (enumCate, jsonSkin) {
       div_select_eType.appendChild(btn_select_eType)
 
       let btn_isShow = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/eye-outline.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/eye-close.svg',
         function () {}
       )
       btn_isShow.className = 'action-button'
@@ -4380,7 +4380,7 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
       }
       break
     case EnumCate.effect:
-      btn_table_skin.innerHTML = `<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg" style="width: 16px;height: 16px"/><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
+      btn_table_skin.innerHTML = `<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/effect-settings.svg" style="width: 16px;height: 16px"/><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
       btn_unLink.onclick = function () {
         unlinkEffectSkin()
         reloadEditEffectBlock()
@@ -4873,7 +4873,7 @@ function createSelectionSkins () {
   header.appendChild(title)
 
   let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/read.svg',
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/read.svg',
     null,
     StyleDA.getListMergeSkin
   )
@@ -5481,7 +5481,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
     case EnumCate.effect:
       var demoDiv1 = document.createElement('div')
       demoDiv1.className = 'demo-div'
-      demoDiv1.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg'})`
+      demoDiv1.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/effect-settings.svg'})`
       demoDiv1.style.backgroundSize = `contain`
       var skinTitle = document.createElement('p')
       skinTitle.className = 'regular1'
@@ -5507,7 +5507,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
           demoDiv.style.height = '20px'
           demoDiv.style.borderRadius = '50%'
           demoDiv.style.backgroundColor = '#ffffff'
-          demoDiv.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg'})`
+          demoDiv.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/effect-settings.svg'})`
           demoDiv.style.backgroundSize = `contain`
           let cateItem
           if (option.CateID !== EnumCate.effect)
@@ -5524,7 +5524,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
           onSelectLocalSkin(option)
           var demoDiv = document.createElement('div')
           demoDiv.className = 'demo-div'
-          demoDiv.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg'})`
+          demoDiv.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/effect-settings.svg'})`
           demoDiv.style.backgroundSize = `contain`
           iconSearch.replaceWith(demoDiv)
         }
@@ -5721,7 +5721,7 @@ function createBreakpoint () {
   title.innerHTML = 'Breakpoint'
 
   let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/filter.svg',
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/filter.svg',
     null,
     function () {
       let brpPopup = document.createElement('div')
@@ -5991,7 +5991,7 @@ function winiResponsive () {
   editContainer.appendChild(body)
   let prefixIcon = document.createElement('img')
   prefixIcon.src =
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/column.svg'
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/column.svg'
   prefixIcon.style.width = '16px'
   prefixIcon.style.height = '16px'
   let text = document.createElement('p')
@@ -6328,7 +6328,7 @@ function selectionClass () {
   iconAdd.className = 'fa-solid fa-plus fa-sm'
 
   // let btnSelectSkin = createButtonAction(
-  //   'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
+  //   'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/buttonStyle.svg',
   //   null,
   //   function () {
   //     // let offset = header.getBoundingClientRect();
@@ -6347,8 +6347,8 @@ function selectionClass () {
       let classTile = document.createElement('div')
       classTile.className = 'row style-class-tile'
       classTile.innerHTML = `<p class="regular1">${clName}</p>
-      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg"/>
-      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/target.svg"/>`
+      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/unlink-skin.svg"/>
+      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/target.svg"/>`
       return classTile
     })
   )

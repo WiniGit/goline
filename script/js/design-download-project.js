@@ -624,7 +624,7 @@ try {
         // ${ProjectDA.obj.Code}/Views/${router[0].PageName}.html
         ipcRenderer.send('asynchronous-play', `${ProjectDA.obj.Code}`)
         $('.btn-play').html(
-          `<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/play.svg" class="btn-play">`
+          `<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/play.svg" class="btn-play">`
         )
       }
     )

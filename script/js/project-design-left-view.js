@@ -159,28 +159,28 @@ function showSearchResult () {
         let cateImg = document.createElement('img')
         if (wb.IsWini && wb.CateID != EnumCate.variant) {
           cateImg.src =
-            'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/component.svg'
+            'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/component.svg'
         } else {
           switch (wb.CateID) {
             case EnumCate.frame:
               cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame_black.svg'
+                'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/frame_black.svg'
               break
             case EnumCate.rectangle:
               cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle_black.svg'
+                'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/rectangle_black.svg'
               break
             case EnumCate.text:
               cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text_black.svg'
+                'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/text_black.svg'
               break
             case EnumCate.variant:
               cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/multiple_component.svg'
+                'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/multiple_component.svg'
               break
             default:
               cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/base_component_black.svg'
+                'https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/base_component_black.svg'
               break
           }
         }
