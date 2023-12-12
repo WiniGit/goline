@@ -38,7 +38,7 @@ class StyleDA {
   }
 
   static async initSkin (pid) {
-    let result = await $.get(domainApi + `ListSkinItem?pid=${pid}`)
+    let result = await $.get(domainApi + `Css/ListSkinItem?pid=${pid}`)
     return result.Data
   }
 
@@ -69,6 +69,7 @@ class StyleDA {
     })
     return result
   }
+  
   static async deleteStyleSheet (cssItem) {
     let result = await $.post('/view/delete-stylesheet', {
       headers: UserService.headerProject(),
