@@ -2419,7 +2419,9 @@ function EditBorderBlock () {
     let cateItem = CateDA.list_border_cate.find(e => e.ID === borderItem.CateID)
     let skin_tile = wbaseSkinTile({
       cate: EnumCate.border,
-      prefixValue: Ultis.rgbToHex(window.getComputedStyle(listBorder[0].value)),
+      prefixValue: Ultis.rgbToHex(
+        window.getComputedStyle(listBorder[0].value).borderColor
+      ),
       title: (cateItem ? `${cateItem.Name}/` : '') + borderItem.Name,
       onClick: function () {
         let offset = header.getBoundingClientRect()
@@ -3193,9 +3195,7 @@ function createDropdownTableSkin ({ cate, offset, currentSkinID, cssText }) {
   function searchSkins () {
     let searchContent = inputSearch.value.toLowerCase()
     if (searchContent.trim() == '') {
-      let listTile = body.querySelectorAll(
-        ':is(.cate-skin-tile, .skin_tile_option)'
-      )
+      let listTile = body.querySelectorAll('.cate-skin-tile, .skin_tile_option')
       listTile.forEach(tile => {
         tile.style.display = 'flex'
       })
@@ -3508,13 +3508,15 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditTypoBlock()
         }
       }
-      skin_tile.innerHTML = `<div class="prefix-tile"><p style="transform: scale(0.5);font: ${jsonSkin.Css}">Ag</p></div><div class="row"><p class="skin-name">${jsonSkin.Name}</p><p></p></div>`
-      let prefixSt = window.getComputedStyle(
-        skin_tile.querySelector('.prefix-tile > p')
-      )
-      skin_tile.querySelector(
-        '.skin-name + p'
-      ).innerHTML = ` . ${prefixSt.fontSize}/${prefixSt.lineHeight}`
+      skin_tile.innerHTML = `<div class="prefix-tile"><p style="font: ${jsonSkin.Css}">Ag</p></div><div class="row"><p class="skin-name">${jsonSkin.Name}</p><p style="font-size: 11px; color: #bfbfbf"></p></div>`
+      setTimeout(function () {
+        let prefixSt = window.getComputedStyle(
+          skin_tile.querySelector('.prefix-tile > p')
+        )
+        skin_tile.querySelector(
+          '.skin-name + p'
+        ).innerHTML = `&nbsp . ${prefixSt.fontSize}/${prefixSt.lineHeight}`
+      }, 100)
       break
     case EnumCate.border:
       skin_tile.onclick = function (e) {
@@ -3527,9 +3529,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditBorderBlock()
         }
       }
-      skin_tile.innerHTML = `<div class="prefix-tile" style="background-color: ${
-        jsonSkin.Css.split(' ')[0]
-      }"></div><div class="skin-name">${jsonSkin.Name}</div>`
+      skin_tile.innerHTML = `<div class="prefix-tile" style="border: ${jsonSkin.Css};border-width: 5px !important"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     case EnumCate.effect:
       skin_tile.onclick = function (e) {

@@ -523,6 +523,20 @@ input[type="color"]::-webkit-color-swatch {
   border: 0.5px solid #c4c4c4;
   background-position: center;
   background-repeat: no-repeat;
+  box-sizing: border-box;
+}
+
+.skin_tile_option .prefix-tile:has(p) {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.skin_tile_option .prefix-tile > p {
+  font-size: 14px !important;
 }
 
 .skin_tile_option .prefix-tile + div {
