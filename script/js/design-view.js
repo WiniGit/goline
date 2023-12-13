@@ -2392,7 +2392,9 @@ function EditBorderBlock () {
   let listBorderSkin = listBorder.filterAndMap(wb => {
     for (let side of borderSide) {
       if (wb.value.style[side]) {
-        return wb.value.style[side].replace(/(var\(--|\))/g, '')
+        return wb.value.style[side].match(uuid4Regex)
+          ? wb.value.style[side].replace(/(var\(--|\))/g, '')
+          : wb.value.style[side]
       }
     }
     let rule = StyleDA.docStyleSheets.find(cssRule =>
@@ -2401,7 +2403,9 @@ function EditBorderBlock () {
     if (rule)
       for (let side of borderSide) {
         if (rule.style[side]) {
-          return rule.style[side].replace(/(var\(--|\))/g, '')
+          return rule.style[side].match(uuid4Regex)
+            ? rule.style[side].replace(/(var\(--|\))/g, '')
+            : rule.style[side]
         }
       }
     return null
@@ -2573,7 +2577,6 @@ function EditBorderBlock () {
       })
 
       const listBorderSide = [
-        'mixed',
         BorderSide.all,
         BorderSide.top,
         BorderSide.left,
@@ -2598,7 +2601,10 @@ function EditBorderBlock () {
           popup_select_option.style.top = popupOffset.y + 'px'
           popup_select_option.style.transform = 'translateX(-100%)'
           popup_select_option.replaceChildren(
-            ...listBorderSide.map(vl => {
+            ...(sideValues.length === 1
+              ? listBorderSide
+              : ['mixed', ...listBorderSide]
+            ).map(vl => {
               let option = document.createElement('div')
               if (vl != 'mixed')
                 option.onclick = function (e) {
@@ -2615,7 +2621,7 @@ function EditBorderBlock () {
                 vl === sideValues[0] ? 1 : 0
               }"></i><div style="height: 16px; margin: 4px; background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/border-${
                 vl === 'mixed' ? 'all' : vl
-              }.svg)"></div><span class="semibold2" style="color: #ffffff">${vl}</span>`
+              }.svg)"></div><span class="semibold2" style="color: #ffffff; width: max-content">${vl}</span>`
               return option
             })
           )

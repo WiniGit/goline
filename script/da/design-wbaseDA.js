@@ -101,8 +101,8 @@ class BorderSide {
   static top = 'top'
   static right = 'right'
   static bottom = 'bottom'
-  static top_bottom = 'top_bottom'
-  static left_right = 'left_right'
+  static top_bottom = 'top-bottom'
+  static left_right = 'left-right'
 }
 
 class BorderStyle {

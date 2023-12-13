@@ -239,7 +239,7 @@ function handleEditAlign (newValue) {
           ].filter(
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           }
           if (children.length > 0) {
@@ -473,7 +473,7 @@ function handleEditAlign (newValue) {
           ].filter(
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           }
           if (children.length > 0) {
@@ -691,7 +691,7 @@ function handleEditAlign (newValue) {
           ].filter(
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           }
           if (children.length > 0) {
@@ -915,7 +915,7 @@ function handleEditAlign (newValue) {
           ].filter(
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           }
           if (children.length > 0) {
@@ -1148,7 +1148,7 @@ function handleEditAlign (newValue) {
           ].filter(
             cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
           )
-          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           }
           if (children.length > 0) {
@@ -1402,7 +1402,7 @@ function handleEditOffset ({
           width = (height * wb.value.offsetWidth) / wb.value.offsetHeight
         }
       }
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
       }
       let cssRule = cssItem
@@ -1446,7 +1446,10 @@ function handleEditOffset ({
             fillWChildren.some(wbHTML => wb.GID === wbHTML.id)
           )
           for (let cWb of fillWChildren) {
-            if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
+            if (
+              cssItem ||
+              (cWb.IsWini && !cWb.value.classList.contains('w-variant'))
+            ) {
               StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
                 let check = selector.includes(cWb.value)
@@ -1511,7 +1514,10 @@ function handleEditOffset ({
             fillHChildren.some(wbHTML => wb.GID === wbHTML.id)
           )
           for (let cWb of fillHChildren) {
-            if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
+            if (
+              cssItem ||
+              (cWb.IsWini && !cWb.value.classList.contains('w-variant'))
+            ) {
               StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
                 let check = selector.includes(cWb.value)
@@ -1585,7 +1591,7 @@ function handleEditOffset ({
     }
     for (let wb of selected_list) {
       if (resizeFixed) width = wb.value.offsetWidth
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
       }
       let cssRule = cssItem
@@ -1625,7 +1631,10 @@ function handleEditOffset ({
             fillWChildren.some(wbHTML => wb.GID === wbHTML.id)
           )
           for (let cWb of fillWChildren) {
-            if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
+            if (
+              cssItem ||
+              (cWb.IsWini && !cWb.value.classList.contains('w-variant'))
+            ) {
               StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
                 let check = selector.includes(cWb.value)
@@ -1699,7 +1708,7 @@ function handleEditOffset ({
     }
     for (let wb of selected_list) {
       if (resizeFixed) height = wb.value.offsetHeight
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
       }
       let cssRule = cssItem
@@ -1739,7 +1748,10 @@ function handleEditOffset ({
             fillHChildren.some(wbHTML => wb.GID === wbHTML.id)
           )
           for (let cWb of fillHChildren) {
-            if (cssItem || (cWb.IsWini && cWb.CateID !== EnumCate.variant)) {
+            if (
+              cssItem ||
+              (cWb.IsWini && !cWb.value.classList.contains('w-variant'))
+            ) {
               StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
                 let check = selector.includes(cWb.value)
@@ -2054,7 +2066,7 @@ function handleEditOffset ({
   } else if (radius !== undefined) {
     if (selected_list[0].Css || selected_list[0].IsInstance) {
       for (let wb of selected_list) {
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -2101,7 +2113,7 @@ function handleEditOffset ({
         ]
         let newVl = radiusVl.filterAndMap()
         newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -2157,7 +2169,7 @@ function handleEditOffset ({
         ]
         let newVl = radiusVl.filterAndMap()
         newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -2213,7 +2225,7 @@ function handleEditOffset ({
         ]
         let newVl = radiusVl.filterAndMap()
         newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -2269,7 +2281,7 @@ function handleEditOffset ({
         ]
         let newVl = radiusVl.filterAndMap()
         newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -3131,41 +3143,35 @@ function handleEditConstraints ({ constX, constY }) {
 
 function addBackgroundColor () {
   let listUpdate = selected_list.filter(wb => wb.CateID !== EnumCate.text)
-  if (listUpdate[0].StyleItem) {
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      switch (wb.CateID) {
-        case EnumCate.frame:
-          var new_color_value = 'FFFFFFFF'
-          break
-        case EnumCate.form:
-          var new_color_value = 'FFFFFFFF'
-          break
-        case EnumCate.variant:
-          var new_color_value = 'FFFFFFFF'
-          break
-        case EnumCate.rectangle:
-          var new_color_value = 'C4C4C4FF'
-          break
-        default:
-          var new_color_value = 'D9D9D9FF'
-          break
+      if (wb.value.classList.contains('w-container')) {
+        var newColor = `#ffffffff`
+      } else if (wb.value.classList.contains('w-rect')) {
+        newColor = `#c4c4c4ff`
+      } else if (wb.value.classList.contains('w-variant')) {
+        newColor = `#ffffffff`
+      } else {
+        newColor = `#d9d9d9ff`
       }
-      wb.StyleItem.DecorationItem.ColorValue = new_color_value
-      wb.value.style.backgroundColor = `#${new_color_value}`
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.backgroundColor = `#${new_color_value}`
+        cssRule.style.backgroundColor = newColor
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
         StyleDA.editStyleSheet(cssItem)
+        listUpdate = listUpdate.filter(e => e !== wb)
+      } else {
+        wb.value.style.backgroundColor = newColor
+        wb.Css = wb.value.style.cssText
       }
     }
-    WBaseDA.edit(listUpdate, EnumObj.decoration)
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
@@ -3175,24 +3181,15 @@ function addBackgroundColor () {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      switch (wb.CateID) {
-        case EnumCate.frame:
-          var new_color_value = 'FFFFFFFF'
-          break
-        case EnumCate.form:
-          var new_color_value = 'FFFFFFFF'
-          break
-        case EnumCate.variant:
-          var new_color_value = 'FFFFFFFF'
-          break
-        case EnumCate.rectangle:
-          var new_color_value = 'C4C4C4FF'
-          break
-        default:
-          var new_color_value = 'D9D9D9FF'
-          break
+      if (wb.value.classList.contains('w-container')) {
+        cssRule.style.backgroundColor = `#ffffffff`
+      } else if (wb.value.classList.contains('w-rect')) {
+        cssRule.style.backgroundColor = `#c4c4c4ff`
+      } else if (wb.value.classList.contains('w-variant')) {
+        cssRule.style.backgroundColor = `#ffffffff`
+      } else {
+        cssRule.style.backgroundColor = `#d9d9d9ff`
       }
-      cssRule.style.backgroundColor = `#${new_color_value}`
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
@@ -3203,29 +3200,43 @@ function addBackgroundColor () {
 }
 
 function unlinkColorSkin () {
-  let listUpdate = selected_list.filter(wb => wb.CateID !== EnumCate.text)
-  if (listUpdate[0].StyleItem) {
+  let listUpdate = selected_list
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      wb.StyleItem.DecorationItem.ColorID = null
-      let backgroundColor = Ultis.rgbToHex(
-        window.getComputedStyle(wb.value).backgroundColor
-      )
-      wb.StyleItem.DecorationItem.ColorValue = backgroundColor.replace('#', '')
-      wb.value.style.backgroundColor = backgroundColor
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.backgroundColor = backgroundColor
+        if (wb.value.classList.contains('w-text')) {
+          cssRule.style.backgroundColor = Ultis.rgbToHex(
+            window.getComputedStyle(wb.value).backgroundColor
+          )
+        } else {
+          cssRule.style.color = Ultis.rgbToHex(
+            window.getComputedStyle(wb.value).color
+          )
+        }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
         StyleDA.editStyleSheet(cssItem)
+        if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
+      } else {
+        if (wb.value.classList.contains('w-text')) {
+          wb.value.style.backgroundColor = Ultis.rgbToHex(
+            window.getComputedStyle(wb.value).backgroundColor
+          )
+        } else {
+          wb.value.style.color = Ultis.rgbToHex(
+            window.getComputedStyle(wb.value).color
+          )
+        }
+        wb.Css = wb.value.style.cssText
       }
     }
-    WBaseDA.edit(listUpdate, EnumObj.decoration)
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
@@ -3235,10 +3246,15 @@ function unlinkColorSkin () {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      let backgroundColor = Ultis.rgbToHex(
-        window.getComputedStyle(wb.value).backgroundColor
-      )
-      cssRule.style.backgroundColor = backgroundColor
+      if (wb.value.classList.contains('w-text')) {
+        cssRule.style.backgroundColor = Ultis.rgbToHex(
+          window.getComputedStyle(wb.value).backgroundColor
+        )
+      } else {
+        cssRule.style.color = Ultis.rgbToHex(
+          window.getComputedStyle(wb.value).color
+        )
+      }
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
@@ -3255,7 +3271,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
   if (colorSkin) {
     if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -3335,7 +3351,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
   } else if (hexCode !== undefined) {
     if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -3415,7 +3431,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
         wb.value.style.backgroundImage = `url(${
           urlImg + image.replaceAll(' ', '%20')
         })`
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -3457,38 +3473,31 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
 
 function unlinkTypoSkin () {
   let listUpdate = selected_list.filter(
-    wb => wb.CateID === EnumCate.text || wb.CateID === EnumCate.textformfield
+    wb =>
+      wb.value.classList.contains('w-text') ||
+      wb.value.classList.contains('w-textformfield')
   )
-  if (listUpdate[0].StyleItem) {
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      let skinTypo = wb.StyleItem.TextStyleItem
-      let newTextStyleItem = {
-        GID: uuidv4(),
-        Name: 'new text style',
-        FontSize: skinTypo.FontSize,
-        FontWeight: skinTypo.FontWeight,
-        CateID: 17,
-        IsStyle: false,
-        ColorValue: skinTypo.ColorValue,
-        LetterSpacing: skinTypo.LetterSpacing,
-        FontFamily: skinTypo.FontFamily,
-        Height: skinTypo.Height
+      let wbComputeSt = window.getComputedStyle(wb.value)
+      if (wb.IsWini) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.font = `${wbComputeSt.fontWeight} ${wbComputeSt.fontSize}/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+        listUpdate = listUpdate.filter(e => e !== wb)
+      } else {
+        wb.value.style.font = `${wbComputeSt.fontWeight} ${wbComputeSt.fontSize}/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
+        wb.Css = wb.value.style.cssText
       }
-      wb.StyleItem.TextStyleID = null
-      wb.StyleItem.TextStyleItem = newTextStyleItem
-      wb.value.style.font = null
-      wb.value.style.fontFamily = newTextStyleItem.FontFamily
-      wb.value.style.fontSize = `${newTextStyleItem.FontSize}px`
-      wb.value.style.fontWeight = newTextStyleItem.FontWeight
-      wb.value.style.color = `#${newTextStyleItem.ColorValue}`
-      wb.value.style.letterSpacing = `${newTextStyleItem.LetterSpacing}px`
-      if (newTextStyleItem.Height != undefined)
-        wb.value.style.lineHeight = `${newTextStyleItem.Height}px`
     }
-    WBaseDA.addStyle(listUpdate, EnumObj.textStyle)
-    listUpdate.forEach(
-      wb => (wb.StyleItem.TextStyleID = wb.StyleItem.TextStyleItem.GID)
-    )
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
@@ -3498,27 +3507,8 @@ function unlinkTypoSkin () {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      let wbStyle =
-        wb.CateID === EnumCate.text
-          ? window.getComputedStyle(wb.value)
-          : window.getComputedStyle(wb.value.querySelector('input'))
-      let typoItem = {
-        FontSize: wbStyle.fontSize,
-        FontWeight: wbStyle.fontWeight,
-        ColorValue: Ultis.rgbToHex(wbStyle.color),
-        LetterSpacing: parseFloat(
-          wbStyle.letterSpacing.length > 0 ? wbStyle.letterSpacing : '0'
-        ),
-        FontFamily: wbStyle.fontFamily,
-        Height: wbStyle.lineHeight.length > 0 ? wbStyle.lineHeight : null
-      }
-      cssRule.style.font = null
-      cssRule.style.fontFamily = typoItem.FontFamily
-      cssRule.style.fontSize = typoItem.FontSize
-      cssRule.style.fontWeight = typoItem.FontWeight
-      cssRule.style.color = typoItem.ColorValue
-      cssRule.style.letterSpacing = typoItem.LetterSpacing
-      if (typoItem.Height != null) cssRule.style.lineHeight = typoItem.Height
+      let wbComputeSt = window.getComputedStyle(wb.value)
+      cssRule.style.font = `${wbComputeSt.fontWeight} ${wbComputeSt.fontSize}/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
@@ -3679,7 +3669,7 @@ function handleEditTypo ({
           wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -3719,7 +3709,7 @@ function handleEditTypo ({
           wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -3759,7 +3749,7 @@ function handleEditTypo ({
           wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -3807,7 +3797,7 @@ function handleEditTypo ({
           wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.textStyle)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -3974,7 +3964,7 @@ function unlinkBorderSkin () {
         .join(' ')
       wb.value.style.borderStyle = newBorderItem.BorderStyle
       wb.value.style.borderColor = `#${newBorderItem.ColorValue}`
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -4027,7 +4017,7 @@ function addBorder () {
   )
   if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -4069,55 +4059,126 @@ function handleEditBorder ({
   borderSkin,
   color,
   width,
-  lWidth,
-  rWidth,
-  tWidth,
-  bWidth,
   side,
   style,
   onSubmit = true
 }) {
   let listUpdate = selected_list.filter(
     wb =>
-      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
-      (borderSkin || window.getComputedStyle(wb.value).borderStyle !== 'none')
+      WbClass.borderEffect.some(e => wb.value.classList.contains(e)) &&
+      (borderSkin || window.getComputedStyle(wb.value).borderStyle === 'none')
   )
   if (borderSkin) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.BorderID = borderSkin.GID
-        wb.StyleItem.DecorationItem.BorderItem = borderSkin
-        wb.value.style.borderWidth = `var(--border-width-${borderSkin.GID})`
-        wb.value.style.borderStyle = `var(--border-style-${borderSkin.GID})`
-        wb.value.style.borderColor = `var(--border-color-${borderSkin.GID})`
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let wbBorderW = window
+          .getComputedStyle(wb.value)
+          .borderWidth.split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.borderWidth = `var(--border-width-${borderSkin.GID})`
-          cssRule.style.borderStyle = `var(--border-style-${borderSkin.GID})`
-          cssRule.style.borderColor = `var(--border-color-${borderSkin.GID})`
+          switch (wbBorderW.length) {
+            case 1:
+              cssRule.style.border = `var(--${borderSkin.GID})`
+              break
+            case 2:
+              if (wbBorderW[0] > 0) {
+                cssRule.style.borderTop = `var(--${borderSkin.GID})`
+                cssRule.style.borderBottom = `var(--${borderSkin.GID})`
+              } else {
+                cssRule.style.borderLeft = `var(--${borderSkin.GID})`
+                cssRule.style.borderRight = `var(--${borderSkin.GID})`
+              }
+              break
+            default: // case 4
+              if (wbBorderW[0] > 0) {
+                cssRule.style.borderTop = `var(--${borderSkin.GID})`
+              } else if (wbBorderW[1] > 0) {
+                cssRule.style.borderRight = `var(--${borderSkin.GID})`
+              } else if (wbBorderW[2] > 0) {
+                cssRule.style.borderBottom = `var(--${borderSkin.GID})`
+              } else {
+                cssRule.style.borderLeft = `var(--${borderSkin.GID})`
+              }
+              break
+          }
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          switch (wbBorderW.length) {
+            case 1:
+              wb.value.style.border = `var(--${borderSkin.GID})`
+              break
+            case 2:
+              if (wbBorderW[0] > 0) {
+                wb.value.style.borderTop = `var(--${borderSkin.GID})`
+                wb.value.style.borderBottom = `var(--${borderSkin.GID})`
+              } else {
+                wb.value.style.borderLeft = `var(--${borderSkin.GID})`
+                wb.value.style.borderRight = `var(--${borderSkin.GID})`
+              }
+              break
+            default: // case 4
+              if (wbBorderW[0] > 0) {
+                wb.value.style.borderTop = `var(--${borderSkin.GID})`
+              } else if (wbBorderW[1] > 0) {
+                wb.value.style.borderRight = `var(--${borderSkin.GID})`
+              } else if (wbBorderW[2] > 0) {
+                wb.value.style.borderBottom = `var(--${borderSkin.GID})`
+              } else {
+                wb.value.style.borderLeft = `var(--${borderSkin.GID})`
+              }
+              break
+          }
+          wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.decoration)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbBorderW = window
+          .getComputedStyle(wb.value)
+          .borderWidth.split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.borderWidth = `var(--border-width-${borderSkin.GID})`
-        cssRule.style.borderStyle = `var(--border-style-${borderSkin.GID})`
-        cssRule.style.borderColor = `var(--border-color-${borderSkin.GID})`
+        switch (wbBorderW.length) {
+          case 1:
+            cssRule.style.border = `var(--${borderSkin.GID})`
+            break
+          case 2:
+            if (wbBorderW[0] > 0) {
+              cssRule.style.borderTop = `var(--${borderSkin.GID})`
+              cssRule.style.borderBottom = `var(--${borderSkin.GID})`
+            } else {
+              cssRule.style.borderLeft = `var(--${borderSkin.GID})`
+              cssRule.style.borderRight = `var(--${borderSkin.GID})`
+            }
+            break
+          default: // case 4
+            if (wbBorderW[0] > 0) {
+              cssRule.style.borderTop = `var(--${borderSkin.GID})`
+            } else if (wbBorderW[1] > 0) {
+              cssRule.style.borderRight = `var(--${borderSkin.GID})`
+            } else if (wbBorderW[2] > 0) {
+              cssRule.style.borderBottom = `var(--${borderSkin.GID})`
+            } else {
+              cssRule.style.borderLeft = `var(--${borderSkin.GID})`
+            }
+            break
+        }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -4126,34 +4187,116 @@ function handleEditBorder ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (color) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.BorderItem.ColorValue = color
-        wb.value.style.borderColor = `#${color}`
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let wbBorderW = wbComputeSt.borderWidth
+          .split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.borderColor = `#${color}`
+          switch (wbBorderW.length) {
+            case 1:
+              cssRule.style.border = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+              break
+            case 2:
+              if (wbBorderW[0] > 0) {
+                cssRule.style.borderTop = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+                cssRule.style.borderBottom = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+              } else {
+                cssRule.style.borderLeft = `${wbBorderW[1]}px ${wbComputeSt.borderStyle} ${color}`
+                cssRule.style.borderRight = `${wbBorderW[1]}px ${wbComputeSt.borderStyle} ${color}`
+              }
+              break
+            default: // case 4
+              if (wbBorderW[0] > 0) {
+                cssRule.style.borderTop = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+              } else if (wbBorderW[1] > 0) {
+                cssRule.style.borderRight = `${wbBorderW[1]}px ${wbComputeSt.borderStyle} ${color}`
+              } else if (wbBorderW[2] > 0) {
+                cssRule.style.borderBottom = `${wbBorderW[2]}px ${wbComputeSt.borderStyle} ${color}`
+              } else {
+                cssRule.style.borderLeft = `${wbBorderW[3]}px ${wbComputeSt.borderStyle} ${color}`
+              }
+              break
+          }
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
-          StyleDA.editStyleSheet(cssItem)
+          if (onSubmit) StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          switch (wbBorderW.length) {
+            case 1:
+              wb.value.style.border = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+              break
+            case 2:
+              if (wbBorderW[0] > 0) {
+                wb.value.style.borderTop = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+                wb.value.style.borderBottom = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+              } else {
+                wb.value.style.borderLeft = `${wbBorderW[1]}px ${wbComputeSt.borderStyle} ${color}`
+                wb.value.style.borderRight = `${wbBorderW[1]}px ${wbComputeSt.borderStyle} ${color}`
+              }
+              break
+            default: // case 4
+              if (wbBorderW[0] > 0) {
+                wb.value.style.borderTop = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+              } else if (wbBorderW[1] > 0) {
+                wb.value.style.borderRight = `${wbBorderW[1]}px ${wbComputeSt.borderStyle} ${color}`
+              } else if (wbBorderW[2] > 0) {
+                wb.value.style.borderBottom = `${wbBorderW[2]}px ${wbComputeSt.borderStyle} ${color}`
+              } else {
+                wb.value.style.borderLeft = `${wbBorderW[3]}px ${wbComputeSt.borderStyle} ${color}`
+              }
+              break
+          }
+          wb.Css = wb.value.style.cssText
         }
       }
-      if (onSubmit) WBaseDA.edit(listUpdate, EnumObj.border)
+      if (onSubmit && listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let wbBorderW = wbComputeSt.borderWidth
+          .split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.borderColor = `#${color}`
+        switch (wbBorderW.length) {
+          case 1:
+            cssRule.style.border = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+            break
+          case 2:
+            if (wbBorderW[0] > 0) {
+              cssRule.style.borderTop = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+              cssRule.style.borderBottom = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+            } else {
+              cssRule.style.borderLeft = `${wbBorderW[1]}px ${wbComputeSt.borderStyle} ${color}`
+              cssRule.style.borderRight = `${wbBorderW[1]}px ${wbComputeSt.borderStyle} ${color}`
+            }
+            break
+          default: // case 4
+            if (wbBorderW[0] > 0) {
+              cssRule.style.borderTop = `${wbBorderW[0]}px ${wbComputeSt.borderStyle} ${color}`
+            } else if (wbBorderW[1] > 0) {
+              cssRule.style.borderRight = `${wbBorderW[1]}px ${wbComputeSt.borderStyle} ${color}`
+            } else if (wbBorderW[2] > 0) {
+              cssRule.style.borderBottom = `${wbBorderW[2]}px ${wbComputeSt.borderStyle} ${color}`
+            } else {
+              cssRule.style.borderLeft = `${wbBorderW[3]}px ${wbComputeSt.borderStyle} ${color}`
+            }
+            break
+        }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -4161,317 +4304,171 @@ function handleEditBorder ({
       }
       if (onSubmit) StyleDA.editStyleSheet(cssItem)
     }
-  } else if (width !== undefined) {
-    if (listUpdate[0].StyleItem) {
+  } else if (width !== undefined && width > 0) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        switch (wb.StyleItem.DecorationItem.BorderItem.BorderSide) {
-          case BorderSide.top:
-            wb.StyleItem.DecorationItem.BorderItem.Width = `${width} 0 0 0`
-            wb.value.style.borderWidth = `${width}px 0 0 0`
-            break
-          case BorderSide.right:
-            wb.StyleItem.DecorationItem.BorderItem.Width = `0 ${width} 0 0`
-            wb.value.style.borderWidth = `0 ${width}px 0 0`
-            break
-          case BorderSide.bottom:
-            wb.StyleItem.DecorationItem.BorderItem.Width = `0 0 ${width} 0`
-            wb.value.style.borderWidth = `0 0 ${width}px 0`
-            break
-          case BorderSide.left:
-            wb.StyleItem.DecorationItem.BorderItem.Width = `0 0 0 ${width}`
-            wb.value.style.borderWidth = `0 0 0 ${width}px`
-            break
-          default: // all & custom
-            wb.StyleItem.DecorationItem.BorderItem.Width = `${width} ${width} ${width} ${width}`
-            wb.value.style.borderWidth = `${width}px ${width}px ${width}px ${width}px`
-            break
-        }
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let wbBorderW = wbComputeSt.borderWidth
+          .split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.borderWidth = wb.value.style.borderWidth
+          switch (wbBorderW.length) {
+            case 1:
+              cssRule.style.border = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case 2:
+              if (wbBorderW[0] > 0) {
+                cssRule.style.borderTop = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+                cssRule.style.borderBottom = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else {
+                cssRule.style.borderLeft = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+                cssRule.style.borderRight = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              }
+              break
+            default: // case 4
+              if (wbBorderW[0] > 0) {
+                cssRule.style.borderTop = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else if (wbBorderW[1] > 0) {
+                cssRule.style.borderRight = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else if (wbBorderW[2] > 0) {
+                cssRule.style.borderBottom = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else {
+                cssRule.style.borderLeft = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              }
+              break
+          }
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          switch (wbBorderW.length) {
+            case 1:
+              wb.value.style.border = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case 2:
+              if (wbBorderW[0] > 0) {
+                wb.value.style.borderTop = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+                wb.value.style.borderBottom = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else {
+                wb.value.style.borderLeft = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+                wb.value.style.borderRight = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              }
+              break
+            default: // case 4
+              if (wbBorderW[0] > 0) {
+                wb.value.style.borderTop = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else if (wbBorderW[1] > 0) {
+                wb.value.style.borderRight = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else if (wbBorderW[2] > 0) {
+                wb.value.style.borderBottom = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else {
+                wb.value.style.borderLeft = `${width}px ${
+                  wbComputeSt.borderStyle
+                } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              }
+              break
+          }
+          wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.border)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let wbBorderW = wbComputeSt.borderWidth
+          .split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        switch (wb.borderSide) {
-          case BorderSide.top:
-            cssRule.style.borderWidth = `${width}px 0 0 0`
+        switch (wbBorderW.length) {
+          case 1:
+            cssRule.style.border = `${width}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
             break
-
-          case BorderSide.right:
-            cssRule.style.borderWidth = `0 ${width}px 0 0`
+          case 2:
+            if (wbBorderW[0] > 0) {
+              cssRule.style.borderTop = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              cssRule.style.borderBottom = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            } else {
+              cssRule.style.borderLeft = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              cssRule.style.borderRight = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            }
             break
-          case BorderSide.bottom:
-            cssRule.style.borderWidth = `0 0 ${width}px 0`
-            break
-          case BorderSide.left:
-            cssRule.style.borderWidth = `0 0 0 ${width}px`
-            break
-          default: // all & custom
-            cssRule.style.borderWidth = `${width}px ${width}px ${width}px ${width}px`
-            break
-        }
-        delete wb.borderSide
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-      }
-      StyleDA.editStyleSheet(cssItem)
-    }
-  } else if (lWidth !== undefined) {
-    if (listUpdate[0].StyleItem) {
-      for (let wb of [...listUpdate]) {
-        switch (wb.StyleItem.DecorationItem.BorderItem.BorderSide) {
-          case BorderSide.left:
-            wb.StyleItem.DecorationItem.BorderItem.Width = `0 0 0 ${lWidth}`
-            wb.value.style.borderWidth = `0 0 0 ${lWidth}px`
-            break
-          case BorderSide.custom:
-            let widthList =
-              wb.StyleItem.DecorationItem.BorderItem.Width.split(' ')
-            widthList[3] = lWidth
-            wb.StyleItem.DecorationItem.BorderItem.Width = widthList.join(' ')
-            wb.value.style.borderWidth = widthList.map(e => `${e}px`).join(' ')
-            break
-          default:
-            break
-        }
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-          let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-          )
-          cssRule.style.borderWidth = wb.value.style.borderWidth
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-            cssRule.cssText
-          )
-          StyleDA.editStyleSheet(cssItem)
-        }
-      }
-      WBaseDA.edit(listUpdate, EnumObj.border)
-    } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini="true"]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of [...listUpdate]) {
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        switch (wb.borderSide) {
-          case BorderSide.left:
-            cssRule.style.borderWidth = `0 0 0 ${lWidth}px`
-            break
-          case BorderSide.custom:
-            let widthList = cssRule.style.borderWidth.split(' ')
-            widthList[3] = `${lWidth}px`
-            cssRule.style.borderWidth = widthList.join(' ')
-            break
-          default:
+          default: // case 4
+            if (wbBorderW[0] > 0) {
+              cssRule.style.borderTop = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            } else if (wbBorderW[1] > 0) {
+              cssRule.style.borderRight = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            } else if (wbBorderW[2] > 0) {
+              cssRule.style.borderBottom = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            } else {
+              cssRule.style.borderLeft = `${width}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            }
             break
         }
-        delete wb.borderSide
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-      }
-      StyleDA.editStyleSheet(cssItem)
-    }
-  } else if (rWidth !== undefined) {
-    if (listUpdate[0].StyleItem) {
-      for (let wb of [...listUpdate]) {
-        switch (wb.StyleItem.DecorationItem.BorderItem.BorderSide) {
-          case BorderSide.right:
-            wb.StyleItem.DecorationItem.BorderItem.Width = `0 ${rWidth} 0 0`
-            wb.value.style.borderWidth = `0 ${rWidth}px 0 0`
-            break
-          case BorderSide.custom:
-            let widthList =
-              wb.StyleItem.DecorationItem.BorderItem.Width.split(' ')
-            widthList[1] = rWidth
-            wb.StyleItem.DecorationItem.BorderItem.Width = widthList.join(' ')
-            wb.value.style.borderWidth = widthList.map(e => `${e}px`).join(' ')
-            break
-          default:
-            break
-        }
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-          let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-          )
-          cssRule.style.borderWidth = wb.value.style.borderWidth
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-            cssRule.cssText
-          )
-          StyleDA.editStyleSheet(cssItem)
-        }
-      }
-      WBaseDA.edit(listUpdate, EnumObj.border)
-    } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini="true"]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of [...listUpdate]) {
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        switch (wb.borderSide) {
-          case BorderSide.right:
-            cssRule.style.borderWidth = `0 ${rWidth}px 0 0`
-            break
-          case BorderSide.custom:
-            let widthList = cssRule.style.borderWidth.split(' ')
-            widthList[1] = `${rWidth}px`
-            cssRule.style.borderWidth = widthList.join(' ')
-            break
-          default:
-            break
-        }
-        delete wb.borderSide
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-      }
-      StyleDA.editStyleSheet(cssItem)
-    }
-  } else if (tWidth !== undefined) {
-    if (listUpdate[0].StyleItem) {
-      for (let wb of [...listUpdate]) {
-        switch (wb.StyleItem.DecorationItem.BorderItem.BorderSide) {
-          case BorderSide.top:
-            wb.StyleItem.DecorationItem.BorderItem.Width = `${tWidth} 0 0 0`
-            wb.value.style.borderWidth = `${tWidth}px 0 0 0`
-            break
-          case BorderSide.custom:
-            let widthList =
-              wb.StyleItem.DecorationItem.BorderItem.Width.split(' ')
-            widthList[0] = tWidth
-            wb.StyleItem.DecorationItem.BorderItem.Width = widthList.join(' ')
-            wb.value.style.borderWidth = widthList.map(e => `${e}px`).join(' ')
-            break
-          default:
-            break
-        }
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-          let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-          )
-          cssRule.style.borderWidth = wb.value.style.borderWidth
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-            cssRule.cssText
-          )
-          StyleDA.editStyleSheet(cssItem)
-        }
-      }
-      WBaseDA.edit(listUpdate, EnumObj.border)
-    } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini="true"]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of [...listUpdate]) {
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        switch (wb.borderSide) {
-          case BorderSide.top:
-            cssRule.style.borderWidth = `${tWidth}px 0 0 0`
-            break
-          case BorderSide.custom:
-            let widthList = cssRule.style.borderWidth.split(' ')
-            widthList[0] = `${tWidth}px`
-            cssRule.style.borderWidth = widthList.join(' ')
-            break
-          default:
-            break
-        }
-        delete wb.borderSide
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-      }
-      StyleDA.editStyleSheet(cssItem)
-    }
-  } else if (bWidth !== undefined) {
-    if (listUpdate[0].StyleItem) {
-      for (let wb of [...listUpdate]) {
-        switch (wb.StyleItem.DecorationItem.BorderItem.BorderSide) {
-          case BorderSide.bottom:
-            wb.StyleItem.DecorationItem.BorderItem.Width = `0 0 ${bWidth} 0`
-            wb.value.style.borderWidth = `0 0 ${bWidth}px 0`
-            break
-          case BorderSide.custom:
-            let widthList =
-              wb.StyleItem.DecorationItem.BorderItem.Width.split(' ')
-            widthList[2] = bWidth
-            wb.StyleItem.DecorationItem.BorderItem.Width = widthList.join(' ')
-            wb.value.style.borderWidth = widthList.map(e => `${e}px`).join(' ')
-            break
-          default:
-            break
-        }
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-          let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-          )
-          cssRule.style.borderWidth = wb.value.style.borderWidth
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-            cssRule.cssText
-          )
-          StyleDA.editStyleSheet(cssItem)
-        }
-      }
-      WBaseDA.edit(listUpdate, EnumObj.border)
-    } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini="true"]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of [...listUpdate]) {
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        switch (wb.borderSide) {
-          case BorderSide.bottom:
-            cssRule.style.borderWidth = `0 0 ${bWidth}px 0`
-            break
-          case BorderSide.custom:
-            let widthList = cssRule.style.borderWidth.split(' ')
-            widthList[2] = `${bWidth}px`
-            cssRule.style.borderWidth = widthList.join(' ')
-            break
-          default:
-            break
-        }
-        delete wb.borderSide
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -4480,83 +4477,172 @@ function handleEditBorder ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (side) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        let widthList = wb.StyleItem.DecorationItem.BorderItem.Width.split(
-          ' '
-        ).sort((a, b) => parseFloat(b) - parseFloat(a))
-        switch (side) {
-          case BorderSide.all:
-            widthList = [widthList[0], widthList[0], widthList[0], widthList[0]]
-            break
-          case BorderSide.left:
-            widthList = [0, 0, 0, widthList[0]]
-            break
-          case BorderSide.top:
-            widthList = [widthList[0], 0, 0, 0]
-            break
-          case BorderSide.right:
-            widthList = [0, widthList[0], 0, 0]
-            break
-          case BorderSide.bottom:
-            widthList = [0, 0, widthList[0], 0]
-            break
-          default:
-            break
-        }
-        wb.StyleItem.DecorationItem.BorderItem.Width = widthList.join(' ')
-        wb.StyleItem.DecorationItem.BorderItem.BorderSide = side
-        wb.value.style.borderWidth = widthList.map(e => `${e}px`).join(' ')
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let wbBorderW = wbComputeSt.borderWidth
+          .split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
+          .sort((a, b) => b - a)[0]
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.borderWidth = wb.value.style.borderWidth
+          switch (side) {
+            case BorderSide.top:
+              cssRule.style.borderTop = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.right:
+              cssRule.style.borderRight = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.bottom:
+              cssRule.style.borderBottom = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.left:
+              cssRule.style.borderLeft = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.left_right:
+              cssRule.style.borderLeft = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              cssRule.style.borderRight = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.top_bottom:
+              cssRule.style.borderTop = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              cssRule.style.borderBottom = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            default: // case all
+              cssRule.style.border = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+          }
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          switch (side) {
+            case BorderSide.top:
+              wb.value.style.borderTop = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.right:
+              wb.value.style.borderRight = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.bottom:
+              wb.value.style.borderBottom = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.left:
+              wb.value.style.borderLeft = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.left_right:
+              wb.value.style.borderLeft = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              wb.value.style.borderRight = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case BorderSide.top_bottom:
+              wb.value.style.borderTop = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              wb.value.style.borderBottom = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            default: // case all
+              wb.value.style.border = `${wbBorderW}px ${
+                wbComputeSt.borderStyle
+              } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+          }
+          wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.border)
-    } else if (side !== BorderSide.custom) {
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
+    } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let wbBorderW = wbComputeSt.borderWidth
+          .split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
+          .sort((a, b) => b - a)[0]
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        let widthList = cssRule.style.borderWidth
-          .split(' ')
-          .sort(
-            (a, b) =>
-              parseFloat(b.replace('px', '')) - parseFloat(a.replace('px', ''))
-          )
         switch (side) {
-          case BorderSide.all:
-            widthList = [widthList[0], widthList[0], widthList[0], widthList[0]]
-            break
-          case BorderSide.left:
-            widthList = [0, 0, 0, widthList[0]]
-            break
           case BorderSide.top:
-            widthList = [widthList[0], 0, 0, 0]
+            cssRule.style.borderTop = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
             break
           case BorderSide.right:
-            widthList = [0, widthList[0], 0, 0]
+            cssRule.style.borderRight = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
             break
           case BorderSide.bottom:
-            widthList = [0, 0, widthList[0], 0]
+            cssRule.style.borderBottom = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
             break
-          default:
+          case BorderSide.left:
+            cssRule.style.borderLeft = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            break
+          case BorderSide.left_right:
+            cssRule.style.borderLeft = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            cssRule.style.borderRight = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            break
+          case BorderSide.top_bottom:
+            cssRule.style.borderTop = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            cssRule.style.borderBottom = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            break
+          default: // case all
+            cssRule.style.border = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
             break
         }
-        cssRule.style.borderWidth = widthList.join(' ')
-        delete wb.borderSide
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -4565,34 +4651,170 @@ function handleEditBorder ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (style) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.BorderItem.BorderStyle = style
-        wb.value.style.borderStyle = style
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let wbBorderW = wbComputeSt.borderWidth
+          .split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.borderStyle = style
+          switch (wbBorderW.length) {
+            case 1:
+              cssRule.style.border = `${
+                wbBorderW[0]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case 2:
+              if (wbBorderW[0] > 0) {
+                cssRule.style.borderTop = `${
+                  wbBorderW[0]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+                cssRule.style.borderBottom = `${
+                  wbBorderW[0]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else {
+                cssRule.style.borderLeft = `${
+                  wbBorderW[1]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+                cssRule.style.borderRight = `${
+                  wbBorderW[1]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              }
+              break
+            default: // case 4
+              if (wbBorderW[0] > 0) {
+                cssRule.style.borderTop = `${
+                  wbBorderW[0]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else if (wbBorderW[1] > 0) {
+                cssRule.style.borderRight = `${
+                  wbBorderW[1]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else if (wbBorderW[2] > 0) {
+                cssRule.style.borderBottom = `${
+                  wbBorderW[2]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else {
+                cssRule.style.borderLeft = `${
+                  wbBorderW[3]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              }
+              break
+          }
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          switch (wbBorderW.length) {
+            case 1:
+              wb.value.style.border = `${
+                wbBorderW[0]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              break
+            case 2:
+              if (wbBorderW[0] > 0) {
+                wb.value.style.borderTop = `${
+                  wbBorderW[0]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+                wb.value.style.borderBottom = `${
+                  wbBorderW[0]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else {
+                wb.value.style.borderLeft = `${
+                  wbBorderW[1]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+                wb.value.style.borderRight = `${
+                  wbBorderW[1]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              }
+              break
+            default: // case 4
+              if (wbBorderW[0] > 0) {
+                wb.value.style.borderTop = `${
+                  wbBorderW[0]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else if (wbBorderW[1] > 0) {
+                wb.value.style.borderRight = `${
+                  wbBorderW[1]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else if (wbBorderW[2] > 0) {
+                wb.value.style.borderBottom = `${
+                  wbBorderW[2]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              } else {
+                wb.value.style.borderLeft = `${
+                  wbBorderW[3]
+                }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              }
+              break
+          }
+          wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.border)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let wbBorderW = wbComputeSt.borderWidth
+          .split(' ')
+          .map(e => parseFloat(e.replace('px', '')))
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.borderStyle = style
+        switch (wbBorderW.length) {
+          case 1:
+            cssRule.style.border = `${wbBorderW[0]}px ${style} ${Ultis.rgbToHex(
+              wbComputeSt.borderColor
+            )}`
+            break
+          case 2:
+            if (wbBorderW[0] > 0) {
+              cssRule.style.borderTop = `${
+                wbBorderW[0]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              cssRule.style.borderBottom = `${
+                wbBorderW[0]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            } else {
+              cssRule.style.borderLeft = `${
+                wbBorderW[1]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+              cssRule.style.borderRight = `${
+                wbBorderW[1]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            }
+            break
+          default: // case 4
+            if (wbBorderW[0] > 0) {
+              cssRule.style.borderTop = `${
+                wbBorderW[0]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            } else if (wbBorderW[1] > 0) {
+              cssRule.style.borderRight = `${
+                wbBorderW[1]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            } else if (wbBorderW[2] > 0) {
+              cssRule.style.borderBottom = `${
+                wbBorderW[2]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            } else {
+              cssRule.style.borderLeft = `${
+                wbBorderW[3]
+              }px ${style} ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            }
+            break
+        }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -4614,7 +4836,7 @@ function deleteBorder () {
       wb.value.style.borderWidth = null
       wb.value.style.borderStyle = null
       wb.value.style.borderColor = null
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -5334,7 +5556,10 @@ function handleEditLayout ({
                   cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
                   cWb.value.style.height = `${cWb.value.offsetHeight}px`
                   cWb.value.removeAttribute('height-type')
-                  if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                  if (
+                    cWb.IsWini &&
+                    !cWb.value.classList.contains('w-variant')
+                  ) {
                     let childCss = StyleDA.cssStyleSheets.find(
                       e => e.GID === cWb.GID
                     )
@@ -5405,7 +5630,10 @@ function handleEditLayout ({
                     cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
                     cWb.value.style.width = `${cWb.value.offsetWidth}px`
                     cWb.value.removeAttribute('width-type')
-                    if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                    if (
+                      cWb.IsWini &&
+                      !cWb.value.classList.contains('w-variant')
+                    ) {
                       let childCss = StyleDA.cssStyleSheets.find(
                         e => e.GID === cWb.GID
                       )
@@ -5471,7 +5699,7 @@ function handleEditLayout ({
             '--cross-axis-align',
             wCrossAxis(_layout.Alignment, false)
           )
-          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
             StyleDA.docStyleSheets.find(wbRule => {
               let selector = [
@@ -5556,7 +5784,8 @@ function handleEditLayout ({
                       listUpdate.push(pWb)
                     }
                     if (
-                      (pWb.IsWini && pWb.CateID !== EnumCate.variant) ||
+                      (pWb.IsWini &&
+                        !pWb.value.classList.contains('w-variant')) ||
                       !pWb.StyleItem
                     ) {
                       StyleDA.docStyleSheets.find(pRule => {
@@ -5624,7 +5853,8 @@ function handleEditLayout ({
                     listUpdate.push(pWb)
                   }
                   if (
-                    (pWb.IsWini && pWb.CateID !== EnumCate.variant) ||
+                    (pWb.IsWini &&
+                      !pWb.value.classList.contains('w-variant')) ||
                     !pWb.StyleItem
                   ) {
                     StyleDA.docStyleSheets.find(pRule => {
@@ -5747,7 +5977,10 @@ function handleEditLayout ({
                   cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
                   cWb.value.style.width = `${cWb.value.offsetWidth}px`
                   cWb.value.removeAttribute('width-type')
-                  if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                  if (
+                    cWb.IsWini &&
+                    !cWb.value.classList.contains('w-variant')
+                  ) {
                     let childCss = StyleDA.cssStyleSheets.find(
                       e => e.GID === cWb.GID
                     )
@@ -5819,7 +6052,10 @@ function handleEditLayout ({
                     cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
                     cWb.value.style.height = `${cWb.value.offsetHeight}px`
                     cWb.value.removeAttribute('height-type')
-                    if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                    if (
+                      cWb.IsWini &&
+                      !cWb.value.classList.contains('w-variant')
+                    ) {
                       let childCss = StyleDA.cssStyleSheets.find(
                         e => e.GID === cWb.GID
                       )
@@ -5887,7 +6123,7 @@ function handleEditLayout ({
             '--cross-axis-align',
             wCrossAxis(_layout.Alignment, true)
           )
-          if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
             StyleDA.docStyleSheets.find(wbRule => {
               let selector = [
@@ -5973,7 +6209,8 @@ function handleEditLayout ({
                       listUpdate.push(pWb)
                     }
                     if (
-                      (pWb.IsWini && pWb.CateID !== EnumCate.variant) ||
+                      (pWb.IsWini &&
+                        !pWb.value.classList.contains('w-variant')) ||
                       !pWb.StyleItem
                     ) {
                       StyleDA.docStyleSheets.find(pRule => {
@@ -6135,7 +6372,7 @@ function handleEditLayout ({
               : wb.WAutolayoutItem.Direction === 'Horizontal'
           )
         )
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -6234,7 +6471,7 @@ function handleEditLayout ({
           )
         }
         wb.value.style.setProperty('--child-space', `${childSpace}px`)
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -6304,7 +6541,7 @@ function handleEditLayout ({
       for (let wb of [...listUpdate]) {
         wb.WAutolayoutItem.RunSpace = runSpace
         wb.value.style.setProperty('--run-space', `${runSpace}px`)
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -6351,7 +6588,10 @@ function handleEditLayout ({
                   cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
                   cWb.value.style.width = `${cWb.value.offsetWidth}px`
                   cWb.value.removeAttribute('width-type')
-                  if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                  if (
+                    cWb.IsWini &&
+                    !cWb.value.classList.contains('w-variant')
+                  ) {
                     let cssItem = StyleDA.cssStyleSheets.find(
                       e => e.GID === cWb.GID
                     )
@@ -6410,7 +6650,10 @@ function handleEditLayout ({
                   cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
                   cWb.value.style.height = `${cWb.value.offsetHeight}px`
                   cWb.value.removeAttribute('height-type')
-                  if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+                  if (
+                    cWb.IsWini &&
+                    !cWb.value.classList.contains('w-variant')
+                  ) {
                     let cssItem = StyleDA.cssStyleSheets.find(
                       e => e.GID === cWb.GID
                     )
@@ -6462,7 +6705,7 @@ function handleEditLayout ({
           }
           wb.value.setAttribute('wrap', 'wrap')
         } else wb.value.removeAttribute('wrap')
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
@@ -6567,7 +6810,7 @@ function handleEditLayout ({
         wb.WAutolayoutItem.IsScroll = isScroll
         if (isScroll) wb.value.setAttribute('scroll', 'true')
         else wb.value.removeAttribute('scroll')
-        if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.id)
           let cssRule = StyleDA.docStyleSheets.find(e => {
             let selector = [...divSection.querySelectorAll(e.selectorText)]
@@ -6664,7 +6907,7 @@ function removeLayout () {
           cWb.value.style.top = cWb.StyleItem.PositionItem.Top
           cWb.value.setAttribute('constx', Constraints.left)
           cWb.value.setAttribute('consty', Constraints.top)
-          if (cWb.IsWini && cWb.CateID !== EnumCate.variant) {
+          if (cWb.IsWini && !cWb.value.classList.contains('w-variant')) {
             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === cWb.GID)
             StyleDA.docStyleSheets.find(rule => {
               let selector = [...divSection.querySelectorAll(rule.selectorText)]
@@ -6742,7 +6985,7 @@ function removeLayout () {
       $(wb.value).removeClass('w-row')
       $(wb.value).removeClass('w-col')
       $(wb.value).addClass('w-stack')
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         StyleDA.docStyleSheets.find(rule => {
           let selector = [...divSection.querySelectorAll(rule.selectorText)]
@@ -6873,7 +7116,7 @@ function handleEditPadding ({ top, right, bottom, left }) {
         '--padding',
         `${wb.StyleItem.PaddingItem.Top}px ${wb.StyleItem.PaddingItem.Right}px ${wb.StyleItem.PaddingItem.Bottom}px ${wb.StyleItem.PaddingItem.Left}px`
       )
-      if (wb.IsWini && wb.CateID !== EnumCate.variant) {
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
