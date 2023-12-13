@@ -3318,7 +3318,10 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
             cssRule.classList.contains(e)
           )
         ) {
-          cssRule.style.setProperty('--checked-color', `var(--${colorSkin.GID})`)
+          cssRule.style.setProperty(
+            '--checked-color',
+            `var(--${colorSkin.GID})`
+          )
         } else {
           cssRule.style.backgroundColor = `var(--${colorSkin.GID})`
         }
@@ -4019,45 +4022,29 @@ function unlinkBorderSkin () {
 function addBorder () {
   let listUpdate = selected_list.filter(
     wb =>
-      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
+      WbClass.borderEffect.some(e => wb.value.classList.contains(e)) &&
       window.getComputedStyle(wb.value).borderStyle === 'none'
   )
-  let newBorderItem = {
-    GID: uuidv4(),
-    Name: 'new border',
-    BorderStyle: BorderStyle.solid,
-    IsStyle: false,
-    ColorValue: '000000FF',
-    BorderSide: BorderSide.all,
-    Width: '1 1 1 1'
-  }
-  if (listUpdate[0].StyleItem) {
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      wb.StyleItem.DecorationItem.BorderID = newBorderItem.GID
-      wb.StyleItem.DecorationItem.BorderItem = newBorderItem
-      wb.value.style.borderWidth = newBorderItem.Width.split(' ')
-        .map(e => `${e}px`)
-        .join(' ')
-      wb.value.style.borderStyle = newBorderItem.BorderStyle
-      wb.value.style.borderColor = `#${newBorderItem.ColorValue}`
       if (wb.IsWini && wb.CateID !== EnumCate.variant) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.borderWidth = newBorderItem.Width.split(' ')
-          .map(e => `${e}px}`)
-          .join(' ')
-        cssRule.style.borderStyle = newBorderItem.BorderStyle
-        cssRule.style.borderColor = `#${newBorderItem.ColorValue}`
+        cssRule.style.border = '1px solid #000000ff'
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
         StyleDA.editStyleSheet(cssItem)
+        listUpdate = listUpdate.filter(e => e !== wb)
+      } else {
+        wb.value.style.border = '1px solid #000000ff'
+        wb.Css = wb.value.style.cssText
       }
     }
-    WBaseDA.edit(listUpdate, EnumObj.border)
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
@@ -4067,11 +4054,7 @@ function addBorder () {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      cssRule.style.borderWidth = newBorderItem.Width.split(' ')
-        .map(e => `${e}px`)
-        .join(' ')
-      cssRule.style.borderStyle = newBorderItem.BorderStyle
-      cssRule.style.borderColor = `#${newBorderItem.ColorValue}`
+      cssRule.style.border = '1px solid #000000ff'
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText

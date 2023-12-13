@@ -14,70 +14,16 @@ let create_skin_popup = document.getElementById('create_skin_popup')
 $(create_skin_popup).on('click', '.popup-close', function closePopupSkin () {
   create_skin_popup.style.display = 'none'
 })
-function createNewSkin (skinType) {
+function createNewSkin (skinType, skinValue) {
   let input_new_skin_name = document.getElementById('input_new_skin_name')
   let input_value = input_new_skin_name.querySelector('input').value
-  switch (skinType) {
-    case EnumCate.color:
-      var new_skin = {
-        GID: uuidv4(),
-        ProjectID: ProjectDA.obj.ID,
-        Css: Ultis.rgbToHex(
-          window.getComputedStyle(selected_list[0].value).backgroundColor
-        ),
-        Type: EnumCate.color
-      }
-      break
-    case EnumCate.typography:
-      let select_typo = selected_list.find(
-        wb =>
-          wb.value.classList.contains('w-text') ||
-          wb.value.classList.contains('w-textformfield')
-      )
-      new_skin = {
-        GID: uuidv4(),
-        ProjectID: ProjectDA.obj.ID,
-        Css: window.getComputedStyle(select_typo.value).font,
-        Type: EnumCate.typography
-      }
-      break
-    case EnumCate.border:
-      let select_border = window.getComputedStyle(
-        selected_list.find(wb =>
-          WbClass.borderEffect.some(e => wb.value.classList.contains(e))
-        ).value
-      )
-      let borderWidth = [
-        parseFloat(select_border.borderTopWidth.replace('px', '')),
-        parseFloat(select_border.borderRightWidth.replace('px', '')),
-        parseFloat(select_border.borderBottomWidth.replace('px', '')),
-        parseFloat(select_border.borderLeftWidth.replace('px', ''))
-      ].sort((a, b) => b - a)[0]
-      new_skin = {
-        GID: uuidv4(),
-        ProjectID: ProjectDA.obj.ID,
-        Css: `${borderWidth} ${select_border.borderStyle} ${select_border.borderColor}`,
-        Type: EnumCate.border
-      }
-      break
-    case EnumCate.effect:
-      let select_effect = window.getComputedStyle(
-        selected_list.find(wb =>
-          WbClass.borderEffect.some(e => wb.value.classList.contains(e))
-        ).value
-      )
-      var new_skin = {
-        GID: uuidv4(),
-        ProjectID: ProjectDA.obj.ID,
-        Css: select_effect.boxShadow,
-        Type: EnumCate.effect
-      }
-      break
-    default:
-      break
-  }
   CateDA.createSkin(
-    new_skin,
+    {
+      GID: uuidv4(),
+      ProjectID: ProjectDA.obj.ID,
+      Css: skinValue,
+      Type: skinType
+    },
     input_value.replace('\\', '/').split('/'),
     skinType
   ).then(skin => {

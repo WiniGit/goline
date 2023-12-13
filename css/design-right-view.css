@@ -35,6 +35,10 @@ input[type="color"]::-webkit-color-swatch {
   position: relative;
 }
 
+.edit-container > .edit-color-tile {
+  margin-left: 4px;
+}
+
 #edit_size_position_div {
   gap: 2px;
 }
@@ -74,6 +78,8 @@ input[type="color"]::-webkit-color-swatch {
   align-items: center;
   justify-content: center;
   background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .action-button:hover {
@@ -82,7 +88,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 /* các form tile */
-.container-edit-tile {
+.edit-color-tile {
   width: 100%;
   display: inline-flex;
   box-sizing: border-box;
@@ -163,6 +169,10 @@ input[type="color"]::-webkit-color-swatch {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: 2px;
+}
+.parameter-form + .row i:hover {
+  background-color: #f1f1f1;
 }
 
 .parameter-form + .row {
@@ -1121,8 +1131,7 @@ input[type="color"]::-webkit-color-swatch {
 .popup_select {
   width: 100%;
   border-radius: 4px;
-  top: 0;
-  left: 0;
+  width: fit-content;
   z-index: 2;
   overflow: hidden;
   transform: translateX(-2%);
@@ -1132,6 +1141,9 @@ input[type="color"]::-webkit-color-swatch {
   display: flex;
   padding: 4px 8px;
   align-items: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  box-sizing: border-box;
 }
 
 .popup_select div:hover {
