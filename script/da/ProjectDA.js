@@ -44,7 +44,7 @@ class ProjectDA {
   };
 
   static initLayoutResponsive() {
-    fetch("https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/css/css_Responsive.txt").then((response) =>
+    fetch("https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/css/css_Responsive.txt").then((response) =>
       response.text().then((text) => {
         let colCss = text.replace(/(\.w-grid ){0,1}\.{1}col[0-9]{1,2}/g, (mtc) => `.min-brp ${mtc}`);
         colCss += text.substring(text.indexOf(`/* .w-grid */`)).replace(/(\.w-grid ){1}\.{1}col[0-9]{1,2}/g, (mtc) => `.min-brp${mtc}`);
@@ -190,7 +190,7 @@ class ProjectDA {
     let pro = "";
 
     if (HomeDA.sort_project == 1) {
-      pro = '<div class="disable-text-select project-card-container ' + `${ProjectDA.selected?.ID == item.ID ? "selected" : ""}` + '">' + '    <div class="project-card col elevation7"  data-id="' + item.ID + '">' + '        <div class="design-preview background-grey3"></div>' + '        <div class="project-info row background-white">' + '            <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/pen.svg" class="box32">' + '                <div class="col">' + '                    <input class="button-text-5 text-title" type="text" value="' + item.Name + '" disabled>' + '                        <span class="regular11 text-subtitle">Editor ' + Ultis.getTimeEdit(item.DateUpdate) + " ago</span>" + "                </div>" + "        </div>" + "    </div>" + "</div>";
+      pro = '<div class="disable-text-select project-card-container ' + `${ProjectDA.selected?.ID == item.ID ? "selected" : ""}` + '">' + '    <div class="project-card col elevation7"  data-id="' + item.ID + '">' + '        <div class="design-preview background-grey3"></div>' + '        <div class="project-info row background-white">' + '            <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/pen.svg" class="box32">' + '                <div class="col">' + '                    <input class="button-text-5 text-title" type="text" value="' + item.Name + '" disabled>' + '                        <span class="regular11 text-subtitle">Editor ' + Ultis.getTimeEdit(item.DateUpdate) + " ago</span>" + "                </div>" + "        </div>" + "    </div>" + "</div>";
     } else {
       pro = '<div class="disable-text-select project-tile elevation4 row ' + `${ProjectDA.selected?.ID == item.ID ? "selected" : ""}` + '" data-id="' + item.ID + '">' + '    <div class="block1 row">' + '        <button class="button-transparent box32"><i class="fa-regular fa-star"></i></button>' + '        <input type="text" class="button-text-5 text-title" value="' + item.Name + '" disabled>' + "    </div>" + '    <div class="block2">' + '        <span class="regular11 text-subtitle">Editor ' + Ultis.getTimeEdit(item.DateUpdate) + " ago</span>" + "    </div>" + '    <div class="block3 row">' + '        <div class="box12 circular background-grey3"></div>' + '        <div class="box12 circular background-grey3"></div>' + "    </div>" + "</div>";
     }

@@ -99,7 +99,7 @@ function create_UI_State() {
       '       <div class="col field-setting background-setting">' +
       '           <div class="row field-header">' +
       '               <div class="field-name regular1 text-title">Background</div>' +
-      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/buttonStyle.svg"></button>' +
+      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/buttonStyle.svg"></button>' +
       "           </div>" +
       '           <div class="row field-value ">' +
       '               <div class="row skin-container hover-setting">' +
@@ -111,13 +111,13 @@ function create_UI_State() {
       `${ColorDA.list.find((e) => e.GID == stateItem.ColorSkinID)?.Name ?? "Initial"}` +
       "</div>" +
       "               </div>" +
-      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/unlink-skin.svg"></button>' +
+      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/unlink-skin.svg"></button>' +
       "           </div>" +
       "       </div>" +
       '       <div class="col field-setting border-setting">' +
       '           <div class="row field-header">' +
       '               <div class="field-name regular1 text-title">Border</div>' +
-      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/buttonStyle.svg"></button>' +
+      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/buttonStyle.svg"></button>' +
       "           </div>" +
       '           <div class="row field-value">' +
       '               <div class="row skin-container hover-setting">' +
@@ -129,22 +129,22 @@ function create_UI_State() {
       `${BorderDA.list.find((e) => e.GID == stateItem.BorderSkinID)?.Name ?? "Initial"}` +
       "</div>" +
       "               </div>" +
-      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/unlink-skin.svg"></button>' +
+      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/unlink-skin.svg"></button>' +
       "           </div>" +
       "       </div>" +
       '       <div class="col field-setting effect-setting">' +
       '           <div class="row field-header">' +
       '               <div class="field-name regular1 text-title">Effect</div>' +
-      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/buttonStyle.svg"></button>' +
+      // '               <button class="box24 select-skin-button button-transparent"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/buttonStyle.svg"></button>' +
       "           </div>" +
       '           <div class="row field-value">' +
       '               <div class="row skin-container hover-setting">' +
-      '                   <div class="box16"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/effect-settings.svg"></div>' +
+      '                   <div class="box16"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/effect-settings.svg"></div>' +
       '                   <div class="skin-name regular1 text-body">' +
       `${EffectDA.list.find((e) => e.GID == stateItem.EffectSkinID)?.Name ?? "Initial"}` +
       "</div>" +
       "               </div>" +
-      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/unlink-skin.svg"></button>' +
+      '               <button class="box24 abort-skin-button button-transparent hover-setting"><img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/unlink-skin.svg"></button>' +
       "           </div>" +
       "       </div>" +
       "   </div>" +
@@ -1613,7 +1613,7 @@ function editColorContainer(color, func) {
   colorContainer.replaceChildren(demoColor, hexColor, opacityColor);
   let btnSkin = document.createElement("button");
   let imgIcon = document.createElement("img");
-  imgIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@fc5ed59/lib/assets/buttonStyle.svg";
+  imgIcon.src = "https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/buttonStyle.svg";
   btnSkin.appendChild(imgIcon);
   btnSkin.onclick = function (event) {
     event.stopPropagation();
