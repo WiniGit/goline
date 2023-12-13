@@ -58,14 +58,14 @@ let list_tool = [
     expand: function () {
       console.log('move')
     },
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/move.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/move.svg'
   },
   {
     message: ToolState.container,
     expand: function () {
       console.log('frame')
     },
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/frame.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/frame.svg'
   },
   {
     message: ToolState.rectangle,
@@ -98,7 +98,7 @@ let list_tool = [
         $('body').append(popup)
       }, 200)
     },
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/rectangle.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/rectangle.svg'
   },
   {
     message: ToolState.base_component,
@@ -114,21 +114,21 @@ let list_tool = [
       $('#choose-component-popup').css('display', 'flex')
       $('#choose-component-popup').removeAttr('cateid')
     },
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/base_component.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/base_component.svg'
   },
   {
     message: ToolState.text,
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/text.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text.svg'
   },
   {
     message: ToolState.hand_tool,
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/hand.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/hand.svg'
   }
 ]
 
 let logo_wini = document.createElement('img')
 logo_wini.src =
-  'https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/logo_wini.svg'
+  'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/logo_wini.svg'
 logo_wini.style.padding = '12px'
 logo_wini.style.width = '24px'
 logo_wini.style.height = '24px'
@@ -393,7 +393,7 @@ button_play.className = 'box48 center btn-play'
 
 let button_play_img = document.createElement('img')
 button_play_img.src =
-  'https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/play.svg'
+  'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/play.svg'
 button_play.appendChild(button_play_img)
 
 let history = document.createElement('div')
@@ -401,7 +401,7 @@ history.className = 'box48 center btn-history'
 
 let history_img = document.createElement('img')
 history_img.src =
-  'https://cdn.jsdelivr.net/gh/WiniGit/goline@5da339b/lib/assets/history.svg'
+  'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/history.svg'
 history.appendChild(history_img)
 
 let input_scale = document.createElement('div')
