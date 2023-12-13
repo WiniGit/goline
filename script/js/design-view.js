@@ -1941,6 +1941,7 @@ function EditTypoBlock () {
     onsubmit: updateTextStyleColor,
     suffixAction: function () {
       let offset = editColor.getBoundingClientRect()
+      debugger
       createDropdownTableSkin({
         cate: EnumCate.color,
         offset: offset,
@@ -3152,17 +3153,14 @@ function createDropdownTableSkin ({ cate, offset, currentSkinID, cssText }) {
           case EnumCate.color:
             popupAddSkin.querySelector('.title_create_skin').innerHTML =
               'Create new color skin'
-            prefixInput.style.backgroundColor = window.getComputedStyle(
-              selected_list[0].value
-            ).backgroundColor
+            prefixInput.style.backgroundColor = cssText
             break
           case EnumCate.typography:
             popupAddSkin.querySelector('.title_create_skin').innerHTML =
               'Create new typography skin'
             prefixInput.innerHTML = 'Ag'
-            prefixInput.style.fontWeight = window.getComputedStyle(
-              selected_list[0].value
-            ).fontWeight
+            prefixInput.style.cssText = cssText
+            prefixInput.style.fontSize = '14px'
             break
           case EnumCate.border:
             popupAddSkin.querySelector('.title_create_skin').innerHTML =
