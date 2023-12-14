@@ -1926,31 +1926,79 @@ function EditTypoBlock () {
     return fontSt?.replace(/(var\(--|\))/g, '')
   })
 
-  function updateTextStyleColor (params, onSubmit = true) {
-    handleEditTypo({ color: params, onSubmit: onSubmit })
-    if (onSubmit) reloadEditTypoBlock()
-  }
-
-  let editColor = createEditColorForm({
-    value: Ultis.rgbToHex(
-      window.getComputedStyle(listTextStyle[0].value).color
-    ),
-    onchange: params => {
-      updateTextStyleColor(params, false)
-    },
-    onsubmit: updateTextStyleColor,
-    suffixAction: function () {
-      let offset = editColor.getBoundingClientRect()
-      debugger
-      createDropdownTableSkin({
-        cate: EnumCate.color,
-        offset: offset,
-        cssText: Ultis.rgbToHex(
-          window.getComputedStyle(listTextStyle[0].value).color
+  let wbColor = selected_list.filterAndMap(wb => {
+    let bgColor =
+      wb.value.style?.color ??
+      StyleDA.docStyleSheets.find(cssRule =>
+        [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+          wb.value
         )
+      )?.style?.color
+    return bgColor?.replace(/(var\(--|\))/g, '')
+  })
+
+  if (wbColor.length === 1) {
+    if (wbColor[0].length === 36) {
+      let colorSkin = StyleDA.listSkin.find(skin => wbColor[0] === skin.GID)
+      let cateItem
+      if (colorSkin) {
+        if (colorSkin.CateID !== EnumCate.color) {
+          cateItem = CateDA.list_color_cate.find(e => e.ID == colorSkin.CateID)
+        }
+        var editColor = wbaseSkinTile({
+          cate: EnumCate.color,
+          prefixValue: colorSkin.Css,
+          title: (cateItem ? `${cateItem.Name}/` : '') + colorSkin.Name,
+          onClick: function () {
+            let offset = header.getBoundingClientRect()
+            createDropdownTableSkin({
+              cate: EnumCate.color,
+              offset: offset,
+              currentSkinID: colorSkin.GID,
+              cssText: colorSkin.Css
+            })
+            document
+              .getElementById('popup_table_skin')
+              .setAttribute('edit-typo', 'true')
+          },
+          handleUnlinkSkin: function () {
+            handleEditTypo({
+              hexCode: Ultis.rgbToHex(
+                window.getComputedStyle(listTextStyle[0].value).color
+              )
+            })
+            reloadEditTypoBlock()
+          }
+        })
+      }
+    } else {
+      editColor = createEditColorForm({
+        value: Ultis.rgbToHex(
+          window.getComputedStyle(listTextStyle[0].value).color
+        ),
+        onchange: params => {
+          handleEditTypo({ color: params, onSubmit: false })
+        },
+        onsubmit: params => {
+          handleEditTypo({ color: params })
+          reloadEditTypoBlock()
+        },
+        suffixAction: function () {
+          let offset = editColor.getBoundingClientRect()
+          createDropdownTableSkin({
+            cate: EnumCate.color,
+            offset: offset,
+            cssText: Ultis.rgbToHex(
+              window.getComputedStyle(listTextStyle[0].value).color
+            )
+          })
+          document
+            .getElementById('popup_table_skin')
+            .setAttribute('edit-typo', 'true')
+        }
       })
     }
-  })
+  }
 
   if (listTypoSkin.length === 1 && listTypoSkin[0]?.length === 36) {
     let typoSkin = StyleDA.listSkin.find(skin => listTypoSkin[0] == skin.GID)
@@ -1971,8 +2019,10 @@ function EditTypoBlock () {
       }
     })
     skin_tile.querySelector('p').style.fontWeight = typoSkin.FontWeight
-    editColor.style.marginBottom = '6px'
-    editContainer.appendChild(editColor)
+    if (editColor) {
+      editColor.style.marginBottom = '6px'
+      editContainer.appendChild(editColor)
+    }
     editContainer.appendChild(skin_tile)
   } else if (listTypoSkin.some(vl => vl.length === 36)) {
     header.appendChild(btnSelectSkin)
@@ -1987,7 +2037,7 @@ function EditTypoBlock () {
     text_style_attribute.className = 'col'
     $(text_style_attribute).css({ width: '100%', 'box-sizing': 'border-box' })
     editContainer.appendChild(text_style_attribute)
-    text_style_attribute.appendChild(editColor)
+    if (editColor) text_style_attribute.appendChild(editColor)
     // select font-family
     let fontFamilyValues = listTextStyle.filterAndMap(
       wb => window.getComputedStyle(wb.value).fontFamily
@@ -2337,7 +2387,7 @@ function _btnDropDownSelect ({ initvalue = '', listvalue = [], onselect }) {
             option.onclick = function (e) {
               e.stopPropagation()
               initvalue = vl
-              btn_select.querySelector('span').value = isString ? vl : vl.title
+              btnDropDownSelect.querySelector('span').value = isString ? vl : vl.title
               onselect(vl)
               popup_select_option.remove()
             }
@@ -3118,7 +3168,6 @@ function createDropdownTableSkin ({ cate, offset, currentSkinID, cssText }) {
   dropdown.className = 'wini_popup col popup_remove'
   dropdown.style.left = offset.x + 'px'
   dropdown.style.top = offset.y - 56 + 'px'
-  dropdown.setAttribute('cate', cate)
   switch (cate) {
     case EnumCate.color:
       var title = 'Color skin'
@@ -3257,7 +3306,6 @@ function updateTableSkinBody (enumCate, currentSkinID) {
           )
         )
       }
-
       break
     case EnumCate.typography:
       if (
@@ -3486,11 +3534,20 @@ function createSkinTileHTML (enumCate, jsonSkin) {
       skin_tile.onclick = function (e) {
         e.stopPropagation()
         if (selected_list.length > 0) {
-          handleEditBackground({ colorSkin: jsonSkin })
+          if (
+            document
+              .getElementById('popup_table_skin')
+              .getAttribute('edit-typo')
+          ) {
+            handleEditTypo({ colorSkin: jsonSkin })
+            reloadEditTypoBlock()
+          } else {
+            handleEditBackground({ colorSkin: jsonSkin })
+            reloadEditBackgroundBlock()
+          }
           document
             .querySelectorAll('.popup_remove')
             .forEach(popup => popup.remove())
-          reloadEditBackgroundBlock()
         }
       }
       skin_tile.innerHTML = `<div class="prefix-tile" style="background-color: ${jsonSkin.Css}"></div><div class="skin-name">${jsonSkin.Name}</div>`
@@ -4341,7 +4398,14 @@ function popupEditSkin (enumCate, jsonSkin) {
   return divEditSkin
 }
 
-function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
+function wbaseSkinTile ({
+  cate,
+  onClick,
+  onRemove,
+  prefixValue,
+  title,
+  handleUnlinkSkin
+}) {
   let wbase_skin_tile = document.createElement('div')
   wbase_skin_tile.className = 'wbase_skin_tile row'
   let btn_table_skin = document.createElement('div')
@@ -4353,9 +4417,13 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
   switch (cate) {
     case EnumCate.color:
       btn_table_skin.innerHTML = `<div style="width: 15px;height: 15px;border-radius: 50%;border: 0.5px solid #c4c4c4; background-color: ${prefixValue}"></div><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
-      btn_unLink.onclick = function () {
-        unlinkColorSkin()
-        reloadEditBackgroundBlock()
+      if (handleUnlinkSkin) {
+        btn_unLink.onclick = handleUnlinkSkin
+      } else {
+        btn_unLink.onclick = function () {
+          unlinkColorSkin()
+          reloadEditBackgroundBlock()
+        }
       }
       break
     case EnumCate.typography:

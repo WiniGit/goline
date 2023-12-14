@@ -31,7 +31,13 @@ function createNewSkin (skinType, skinValue) {
       document.documentElement.style.setProperty(`--${skin.GID}`, skin.Css)
       switch (skinType) {
         case EnumCate.color:
-          handleEditBackground({ colorSkin: skin })
+          if (
+            document
+              .getElementById('popup_table_skin')
+              .getAttribute('edit-typo')
+          ) {
+            handleEditTypo({ colorSkin: skin })
+          } else handleEditBackground({ colorSkin: skin })
           break
         case EnumCate.typography:
           handleEditTypo({ typoSkin: skin })

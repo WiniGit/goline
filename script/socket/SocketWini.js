@@ -705,7 +705,13 @@ socket.on('server-post', data => {
       StyleDA.addStyleSheet(StyleDA.newSkin).then(() => {
         switch (StyleDA.newSkin.Type) {
           case EnumCate.color:
-            handleEditBackground({ colorSkin: StyleDA.newSkin })
+            if (
+              document
+                .getElementById('popup_table_skin')
+                .getAttribute('edit-typo')
+            ) {
+              handleEditTypo({ colorSkin: StyleDA.newSkin })
+            } else handleEditBackground({ colorSkin: StyleDA.newSkin })
             break
           case EnumCate.typography:
             handleEditTypo({ typoSkin: StyleDA.newSkin })

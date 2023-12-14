@@ -3618,7 +3618,7 @@ function handleEditTypo ({
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.backgroundColor = hexCode === null ? null : hexCode
+          cssRule.style.color = hexCode === null ? null : hexCode
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
@@ -3626,7 +3626,7 @@ function handleEditTypo ({
           if (onSubmit) StyleDA.editStyleSheet(cssItem)
           listUpdate = listUpdate.filter(e => e !== wb)
         } else {
-          wb.value.style.backgroundColor = hexCode === null ? null : hexCode
+          wb.value.style.color = hexCode === null ? null : hexCode
           wb.Css = wb.value.style.cssText
         }
       }
@@ -3640,7 +3640,7 @@ function handleEditTypo ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.backgroundColor = hexCode === null ? null : hexCode
+        cssRule.style.color = hexCode === null ? null : hexCode
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3737,7 +3737,7 @@ function handleEditTypo ({
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.font = `${fontWeight} ${wbComputeSt.fontSize}px/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
+          cssRule.style.font = `${fontWeight} ${wbComputeSt.fontSize}/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
@@ -3745,7 +3745,7 @@ function handleEditTypo ({
           StyleDA.editStyleSheet(cssItem)
           listUpdate = listUpdate.filter(e => e !== wb)
         } else {
-          wb.value.style.font = `${fontWeight} ${wbComputeSt.fontSize}px/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
+          wb.value.style.font = `${fontWeight} ${wbComputeSt.fontSize}/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
           wb.Css = wb.value.style.cssText
         }
       }
@@ -3760,7 +3760,7 @@ function handleEditTypo ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.font = `${fontWeight} ${wbComputeSt.fontSize}px/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
+        cssRule.style.font = `${fontWeight} ${wbComputeSt.fontSize}/${wbComputeSt.lineHeight} ${wbComputeSt.fontFamily}`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3779,7 +3779,7 @@ function handleEditTypo ({
           )
           cssRule.style.font = `${wbComputeSt.fontWeight} ${
             wbComputeSt.fontSize
-          }px/${height === null ? 'normal' : `${height}px`} ${
+          }/${height === null ? 'normal' : `${height}px`} ${
             wbComputeSt.fontFamily
           }`
           cssItem.Css = cssItem.Css.replace(
@@ -3791,7 +3791,7 @@ function handleEditTypo ({
         } else {
           wb.value.style.font = `${wbComputeSt.fontWeight} ${
             wbComputeSt.fontSize
-          }px/${height === null ? 'normal' : `${height}px`} ${
+          }/${height === null ? 'normal' : `${height}px`} ${
             wbComputeSt.fontFamily
           }`
           wb.Css = wb.value.style.cssText
@@ -3810,7 +3810,7 @@ function handleEditTypo ({
         )
         cssRule.style.font = `${wbComputeSt.fontWeight} ${
           wbComputeSt.fontSize
-        }px/${height === null ? 'normal' : `${height}px`} ${
+        }/${height === null ? 'normal' : `${height}px`} ${
           wbComputeSt.fontFamily
         }`
         cssItem.Css = cssItem.Css.replace(
@@ -3938,68 +3938,79 @@ function handleEditTypo ({
 }
 
 function unlinkBorderSkin () {
-  let listUpdate = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(
-      ct =>
-        wb.CateID === ct &&
-        window.getComputedStyle(wb.value).borderStyle !== 'none'
-    )
+  let listUpdate = selected_list.filter(
+    wb =>
+      WbClass.borderEffect.some(e => wb.value.classList.contains(e)) &&
+      window.getComputedStyle(wb.value).borderStyle !== 'none'
   )
-  if (listUpdate[0].StyleItem) {
+  const borderSide = [
+    'border',
+    'border-top',
+    'border-right',
+    'border-bottom',
+    'border-left'
+  ]
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      let currentBorder = wb.StyleItem.DecorationItem.BorderItem
-      let newBorderItem = {
-        GID: uuidv4(),
-        Name: 'new border',
-        BorderStyle: currentBorder.BorderStyle,
-        IsStyle: false,
-        ColorValue: currentBorder.ColorValue,
-        BorderSide: currentBorder.BorderSide,
-        Width: currentBorder.Width
-      }
-      wb.StyleItem.DecorationItem.BorderID = null
-      wb.StyleItem.DecorationItem.BorderItem = newBorderItem
-      wb.value.style.borderWidth = newBorderItem.Width.split(' ')
-        .map(e => `${e}px}`)
-        .join(' ')
-      wb.value.style.borderStyle = newBorderItem.BorderStyle
-      wb.value.style.borderColor = `#${newBorderItem.ColorValue}`
+      let wbComputeSt = window.getComputedStyle(wb.value)
+      let wbBorderW = wbComputeSt.borderWidth
+        .split(' ')
+        .map(e => parseFloat(e.replace('px', '')))
+        .sort((a, b) => b - a)[0]
       if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.borderWidth = newBorderItem.Width.split(' ')
-          .map(e => `${e}px}`)
-          .join(' ')
-        cssRule.style.borderStyle = newBorderItem.BorderStyle
-        cssRule.style.borderColor = `#${newBorderItem.ColorValue}`
+        for (let vl of borderSide) {
+          if (cssRule.style[vl]?.length > 0) {
+            cssRule.style[vl] = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            if (vl === 'border') break
+          }
+        }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
         StyleDA.editStyleSheet(cssItem)
+        listUpdate = listUpdate.filter(e => e !== wb)
+      } else {
+        for (let vl of borderSide) {
+          if (wb.value.style[vl]?.length > 0) {
+            wb.value.style[vl] = `${wbBorderW}px ${
+              wbComputeSt.borderStyle
+            } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+            if (vl === 'border') break
+          }
+        }
+        wb.Css = wb.value.style.cssText
       }
     }
-    WBaseDA.addStyle(listUpdate, EnumObj.border)
-    listUpdate.forEach(
-      wb =>
-        (wb.StyleItem.DecorationItem.BorderID =
-          wb.StyleItem.DecorationItem.BorderItem.GID)
-    )
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
     )
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of [...listUpdate]) {
+      let wbComputeSt = window.getComputedStyle(wb.value)
+      let wbBorderW = wbComputeSt.borderWidth
+        .split(' ')
+        .map(e => parseFloat(e.replace('px', '')))
+        .sort((a, b) => b - a)[0]
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      let wbStyle = window.getComputedStyle(wb.value)
-      cssRule.style.borderWidth = wbStyle.borderWidth
-      cssRule.style.borderStyle = wbStyle.borderStyle
-      cssRule.style.borderColor = wbStyle.borderColor
+      for (let vl of borderSide) {
+        if (cssRule.style[vl]?.length > 0) {
+          cssRule.style[vl] = `${wbBorderW}px ${
+            wbComputeSt.borderStyle
+          } ${Ultis.rgbToHex(wbComputeSt.borderColor)}`
+          if (vl === 'border') break
+        }
+      }
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
