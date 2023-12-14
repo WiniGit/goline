@@ -88,15 +88,15 @@ function updateUIDesignView () {
         listEditContainer.appendChild(selectColByBrp)
       }
     }
-    // if (
-    //   selected_list.some(wb =>
-    //     WbClass.parent.some(e => wb.value.classList.contains(e))
-    //   ) ||
-    //   selected_list.length > 1
-    // ) {
-    //   let editAutoLayout = EditLayoutBlock()
-    //   listEditContainer.appendChild(editAutoLayout)
-    // }
+    if (
+      selected_list.some(wb =>
+        WbClass.parent.some(e => wb.value.classList.contains(e))
+      ) ||
+      selected_list.length > 1
+    ) {
+      let editAutoLayout = EditLayoutBlock()
+      listEditContainer.appendChild(editAutoLayout)
+    }
     //
     if (selected_list.some(wb => !wb.value.classList.contains('w-text'))) {
       let editBackground = EditBackgroundBlock()
@@ -825,22 +825,29 @@ function updateInputTLWH () {
 // edit auto layout
 function EditLayoutBlock () {
   let wbList = selected_list.filter(wb =>
-    EnumCate.no_child_component.every(ct => wb.CateID !== ct)
+    WbClass.parent.some(e => wb.value.classList.contains(e))
   )
-  let isEditTable = wbList.every(wb => wb.CateID === EnumCate.table)
+  let isEditTable = wbList.every(wb => wb.value.classList.contains('w-table'))
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_auto_layout_div'
   editContainer.className = 'edit-container'
   let header = document.createElement('div')
   header.className = 'ds-block-header'
-  header.innerHTML = `<p>${isEditTable ? 'Table layout' : 'Auto layout'}</p>`
+  header.innerHTML = `<p>${
+    isEditTable ? 'Table layout' : 'Auto layout'
+  }</p><i class="fa-solid fa-minus fa-sm"></i><i class="fa-solid fa-plus fa-sm"></i>`
   editContainer.appendChild(header)
   let showDetails = selected_list.every(wb =>
     window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
   )
   if (showDetails) {
+    header.querySelector('.fa-plus').remove()
+    let body = document.createElement('div')
+    editContainer.appendChild(body)
+    body.className = 'row'
+    body.style.position = 'relative'
+
     let auto_layout_details_div = document.createElement('div')
-    editContainer.appendChild(auto_layout_details_div)
     auto_layout_details_div.className = 'col'
     auto_layout_details_div.style.marginBottom = '4px'
     let _row1 = document.createElement('div')
@@ -849,7 +856,9 @@ function EditLayoutBlock () {
     _row1.style.position = 'relative'
     //
     let isVertical = wbList.every(
-      wb => wb.value.classList.contains('w-col') || wb.CateID === EnumCate.table
+      wb =>
+        wb.value.classList.contains('w-col') ||
+        wb.value.classList.contains('w-table')
     )
     let cssList = wbList.filterAndMap(wb => {
       if (wb.StyleItem) {
@@ -883,47 +892,37 @@ function EditLayoutBlock () {
     layoutItem.Alignment =
       layoutItem.Alignment === 'CenterCenter' ? 'Center' : layoutItem.Alignment
     // group btn edit auto layout direction
-    let group_btn_direction = document.createElement('div')
-    group_btn_direction.className = 'group_btn_direction'
-    group_btn_direction.style.pointerEvents = wbList.every(wb =>
-      [EnumCate.textformfield, ...EnumCate.data_component].every(
-        ct => wb.CateID !== ct
-      )
-    )
-      ? 'auto'
-      : 'none'
-    group_btn_direction.innerHTML = `<i class="fa-solid fa-arrow-down fa-xs" style="background-color: ${
+    let selectDirection = document.createElement('div')
+    selectDirection.className = 'group_btn_direction'
+    selectDirection.innerHTML = `<i class="fa-solid fa-arrow-down fa-xs" style="background-color: ${
       isVertical ? '#e5e5e5' : 'transparent'
     }"></i><i class="fa-solid fa-arrow-right fa-xs" style="background-color: ${
       isVertical ? 'transparent' : '#e5e5e5'
     }"></i>`
-    _row1.appendChild(group_btn_direction)
+    body.appendChild(selectDirection)
     if (
       wbList.every(
         wb =>
-          wb.CateID !== EnumCate.textformfield && wb.CateID != EnumCate.table
+          !wb.value.classList.contains('w-textformfield') &&
+          !wb.value.classList.contains('w-table')
       )
     ) {
-      let icon_remove = document.createElement('i')
-      icon_remove.id = 'btn_remove_auto_layout'
-      header.appendChild(icon_remove)
-      icon_remove.className = 'fa-solid fa-minus fa-sm'
-      icon_remove.onclick = function () {
+      $(header).on('click', '.fa-minus', function () {
         removeLayout()
         reloadEditLayoutBlock()
-      }
-    } else {
-      if (isVertical) {
-        group_btn_direction.lastChild.onclick = function () {
-          handleEditLayout({ direction: 'Horizontal' })
-          reloadEditLayoutBlock()
-        }
-      } else {
-        group_btn_direction.firstChild.onclick = function () {
+      })
+      $(selectDirection).on('click', '.fa-arrow-down', function () {
+        if (!isVertical) {
           handleEditLayout({ direction: 'Vertical' })
           reloadEditLayoutBlock()
         }
-      }
+      })
+      $(selectDirection).on('click', '.fa-arrow-right', function () {
+        if (isVertical) {
+          handleEditLayout({ direction: 'Horizontal' })
+          reloadEditLayoutBlock()
+        }
+      })
     }
     // select alignment type
     let alignment_type = _alignTable(isVertical, layoutItem.Alignment)
@@ -1183,15 +1182,12 @@ function EditLayoutBlock () {
       }
     }
   } else {
+    header.querySelector('.fa-minus').remove()
     header.id = 'edit-layout-header'
-    let icon_add = document.createElement('i')
-    icon_add.id = 'btn_add_auto_layout'
-    header.appendChild(icon_add)
-    icon_add.className = 'fa-solid fa-plus fa-sm'
-    icon_add.onclick = function () {
+    $(header).on('click', '.fa-plus', function () {
       addAutoLayout()
       reloadEditLayoutBlock()
-    }
+    })
   }
   return editContainer
 }
@@ -1654,7 +1650,7 @@ function showPopupSelectResizeType (popup_list_resize_type, isW, type) {
 }
 
 // create alignment type table UI
-function _alignTable (isVertical = true, value) {
+function _alignTable ({isVertical = true, alignX, alignY}) {
   let alignment_type = document.createElement('div')
   alignment_type.className = 'layout-align-table'
   alignment_type.setAttribute('oy', isVertical)
@@ -2387,7 +2383,9 @@ function _btnDropDownSelect ({ initvalue = '', listvalue = [], onselect }) {
             option.onclick = function (e) {
               e.stopPropagation()
               initvalue = vl
-              btnDropDownSelect.querySelector('span').value = isString ? vl : vl.title
+              btnDropDownSelect.querySelector('span').value = isString
+                ? vl
+                : vl.title
               onselect(vl)
               popup_select_option.remove()
             }
