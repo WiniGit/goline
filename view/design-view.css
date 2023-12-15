@@ -1,3 +1,4 @@
+
 .left-view-container .col>*,
 .right-view-container .col>* {
     flex-shrink: 0;
@@ -39,11 +40,6 @@
 
     position: relative;
 }
-
-/* .left-view-container *::-webkit-scrollbar {
-    display: none;
-} */
-
 
 .left-view-container .left-view .tabbar {
     width: 100%;

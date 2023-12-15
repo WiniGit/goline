@@ -206,7 +206,7 @@ class ProjectDA {
     update_UI_InfoView(ProjectDA.selected, "project");
   }
 
-  static projectUIByPermission() {}
+  static projectUIByPermission() { }
 
   static update_titlebar(id) {
     if (!TitleBarDA.list.some((e) => e.ID == id)) {

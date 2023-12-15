@@ -4,10 +4,13 @@
     "files": [
         "./dist/**/*.{html,htm,css,js}"
     ],
+    "ghostMode": false,
+    "open": true,
+    
     "server": {
         "baseDir": "./"
     },
     "ui": {
-        "port": 8001
+        "port": 9080
     }
 }
