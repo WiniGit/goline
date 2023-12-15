@@ -1,0 +1,5 @@
+<svg class="svg" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 6h6v1H9V6zm6 12H9v-1h6v1zm-9-3V9h1v6H6zm12-6v6h-1V9h1z" fill-rule="evenodd" fill-opacity=".3" fill="#ffffff" stroke="none"></path>
+    <path d="M6 18V6h1v12H6z" fill-rule="evenodd" fill-opacity="1" fill="#ffffff" stroke="none"></path>
+    <path d="M18 6v12h-1V6h1z" fill-rule="evenodd" fill-opacity="1" fill="#ffffff" stroke="none"></path>
+</svg>

@@ -14,81 +14,44 @@ let create_skin_popup = document.getElementById('create_skin_popup')
 $(create_skin_popup).on('click', '.popup-close', function closePopupSkin () {
   create_skin_popup.style.display = 'none'
 })
-function createNewSkin (skinType) {
+function createNewSkin (skinType, skinValue) {
   let input_new_skin_name = document.getElementById('input_new_skin_name')
   let input_value = input_new_skin_name.querySelector('input').value
-  switch (skinType) {
-    case EnumCate.color:
-      var new_skin = {
-        GID: uuidv4(),
-        ProjectID: ProjectDA.obj.ID,
-        Css: Ultis.rgbToHex(
-          window.getComputedStyle(selected_list[0].value).backgroundColor
-        ),
-        Type: EnumCate.color
-      }
-      break
-    case EnumCate.typography:
-      let select_typo = selected_list.find(
-        wb =>
-          wb.value.classList.contains('w-text') ||
-          wb.value.classList.contains('w-textformfield')
-      )
-      new_skin = {
-        GID: uuidv4(),
-        ProjectID: ProjectDA.obj.ID,
-        Css: window.getComputedStyle(select_typo.value).font,
-        Type: EnumCate.typography
-      }
-      break
-    case EnumCate.border:
-      let select_border = window.getComputedStyle(
-        selected_list.find(wb =>
-          WbClass.borderEffect.some(e => wb.value.classList.contains(e))
-        ).value
-      )
-      let borderWidth = [
-        parseFloat(select_border.borderTopWidth.replace('px', '')),
-        parseFloat(select_border.borderRightWidth.replace('px', '')),
-        parseFloat(select_border.borderBottomWidth.replace('px', '')),
-        parseFloat(select_border.borderLeftWidth.replace('px', ''))
-      ].sort((a, b) => b - a)[0]
-      new_skin = {
-        GID: uuidv4(),
-        ProjectID: ProjectDA.obj.ID,
-        Css: `${borderWidth} ${select_border.borderStyle} ${select_border.borderColor}`,
-        Type: EnumCate.border
-      }
-      break
-    case EnumCate.effect:
-      let select_effect = window.getComputedStyle(
-        selected_list.find(wb =>
-          WbClass.borderEffect.some(e => wb.value.classList.contains(e))
-        ).value
-      )
-      var new_skin = {
-        GID: uuidv4(),
-        ProjectID: ProjectDA.obj.ID,
-        Css: select_effect.boxShadow,
-        Type: EnumCate.effect
-      }
-      break
-    default:
-      break
-  }
   CateDA.createSkin(
-    new_skin,
+    {
+      GID: uuidv4(),
+      ProjectID: ProjectDA.obj.ID,
+      Css: skinValue,
+      Type: skinType
+    },
     input_value.replace('\\', '/').split('/'),
     skinType
   ).then(skin => {
-    if(skin) {
+    if (skin) {
+      document.documentElement.style.setProperty(`--${skin.GID}`, skin.Css)
       switch (skinType) {
         case EnumCate.color:
-          handleEditBackground({colorSkin: skin})
-          break;
+          if (
+            document
+              .getElementById('popup_table_skin')
+              .getAttribute('edit-typo')
+          ) {
+            handleEditTypo({ colorSkin: skin })
+          } else handleEditBackground({ colorSkin: skin })
+          break
+        case EnumCate.typography:
+          handleEditTypo({ typoSkin: skin })
+          break
+        case EnumCate.border:
+          handleEditBorder({ borderSkin: skin })
+          break
+        case EnumCate.effect:
+          handleEditEffect({ effectSkin: skin })
+          break
         default:
-          break;
+          break
       }
+      document.querySelectorAll('.popup_remove').forEach(e => e.remove())
       create_skin_popup.style.display = 'none'
     }
   })
@@ -101,14 +64,14 @@ let list_tool = [
     expand: function () {
       console.log('move')
     },
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/move.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/move.svg'
   },
   {
     message: ToolState.container,
     expand: function () {
       console.log('frame')
     },
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/frame.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/frame.svg'
   },
   {
     message: ToolState.rectangle,
@@ -141,7 +104,7 @@ let list_tool = [
         $('body').append(popup)
       }, 200)
     },
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rectangle.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/rectangle.svg'
   },
   {
     message: ToolState.base_component,
@@ -157,21 +120,21 @@ let list_tool = [
       $('#choose-component-popup').css('display', 'flex')
       $('#choose-component-popup').removeAttr('cateid')
     },
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/base_component.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/base_component.svg'
   },
   {
     message: ToolState.text,
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text.svg'
   },
   {
     message: ToolState.hand_tool,
-    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/hand.svg'
+    scr: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/hand.svg'
   }
 ]
 
 let logo_wini = document.createElement('img')
 logo_wini.src =
-  'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/logo_wini.svg'
+  'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/logo_wini.svg'
 logo_wini.style.padding = '12px'
 logo_wini.style.width = '24px'
 logo_wini.style.height = '24px'
@@ -436,7 +399,7 @@ button_play.className = 'box48 center btn-play'
 
 let button_play_img = document.createElement('img')
 button_play_img.src =
-  'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/play.svg'
+  'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/play.svg'
 button_play.appendChild(button_play_img)
 
 let history = document.createElement('div')
@@ -444,7 +407,7 @@ history.className = 'box48 center btn-history'
 
 let history_img = document.createElement('img')
 history_img.src =
-  'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/history.svg'
+  'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/history.svg'
 history.appendChild(history_img)
 
 let input_scale = document.createElement('div')

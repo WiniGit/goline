@@ -702,6 +702,37 @@ socket.on('server-post', data => {
       let newId = data.data
       CateDA.list[CateDA.list.length - 1].ID = newId
       StyleDA.newSkin.CateID = newId
+      StyleDA.addStyleSheet(StyleDA.newSkin).then(() => {
+        switch (StyleDA.newSkin.Type) {
+          case EnumCate.color:
+            if (
+              document
+                .getElementById('popup_table_skin')
+                .getAttribute('edit-typo')
+            ) {
+              handleEditTypo({ colorSkin: StyleDA.newSkin })
+            } else handleEditBackground({ colorSkin: StyleDA.newSkin })
+            break
+          case EnumCate.typography:
+            handleEditTypo({ typoSkin: StyleDA.newSkin })
+            break
+          case EnumCate.border:
+            handleEditBorder({ borderSkin: StyleDA.newSkin })
+            break
+          case EnumCate.effect:
+            handleEditEffect({ effectSkin: StyleDA.newSkin })
+            break
+          default:
+            break
+        }
+        document.documentElement.style.setProperty(
+          `--${StyleDA.newSkin.GID}`,
+          StyleDA.newSkin.Css
+        )
+        StyleDA.newSkin = null
+        document.querySelectorAll('.popup_remove').forEach(e => e.remove())
+        create_skin_popup.style.display = 'none'
+      })
       CateDA.convertData(CateDA.list)
       break
     // !POST collection

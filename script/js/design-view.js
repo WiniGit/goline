@@ -88,15 +88,15 @@ function updateUIDesignView () {
         listEditContainer.appendChild(selectColByBrp)
       }
     }
-    // if (
-    //   selected_list.some(wb =>
-    //     WbClass.parent.some(e => wb.value.classList.contains(e))
-    //   ) ||
-    //   selected_list.length > 1
-    // ) {
-    //   let editAutoLayout = EditLayoutBlock()
-    //   listEditContainer.appendChild(editAutoLayout)
-    // }
+    if (
+      selected_list.some(wb =>
+        WbClass.parent.some(e => wb.value.classList.contains(e))
+      ) ||
+      selected_list.length > 1
+    ) {
+      let editAutoLayout = EditLayoutBlock()
+      listEditContainer.appendChild(editAutoLayout)
+    }
     //
     if (selected_list.some(wb => !wb.value.classList.contains('w-text'))) {
       let editBackground = EditBackgroundBlock()
@@ -352,7 +352,7 @@ function EditOffsetBlock () {
     iconFixPos.className =
       'img-button size-28 tlwh-option' + (isFixPos ? ' toggle' : '')
     iconFixPos.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/fix_position.svg'
+      'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/fix_position.svg'
     edit_top.lastChild.disabled = !isFixPos
     edit_left.lastChild.disabled = !isFixPos
     iconFixPos.onclick = function () {
@@ -403,7 +403,7 @@ function EditOffsetBlock () {
     WbClass.scale.some(e => wb.value.classList.contains(e))
   )
   let icon_ratioWH = document.createElement('img')
-  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
+  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
     isRatio ? 'ratioWH' : 'un_ratioWH'
   }.svg`
   icon_ratioWH.className =
@@ -411,7 +411,7 @@ function EditOffsetBlock () {
   if (!isRatio) {
     icon_ratioWH.onclick = function () {
       isRatio = !isRatio
-      this.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
+      this.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
         isRatio ? 'ratioWH' : 'un_ratioWH'
       }.svg`
       if (isRatio) this.classList.add('toggle')
@@ -472,7 +472,7 @@ function EditOffsetBlock () {
   radiusContainer.className = 'row'
   // input edit rotate
   let edit_rotate = _textField({
-    icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/rotate_rect.svg',
+    icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/rotate_rect.svg',
     value: 0
   })
   if (showInputRadius.length > 0) {
@@ -484,7 +484,7 @@ function EditOffsetBlock () {
     )
     list_radius_value = [].concat(...list_radius_value).filterAndMap()
     let edit_radius = _textField({
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/radius_rect.svg',
       value: list_radius_value.length == 1 ? list_radius_value[0] : 'mixed',
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -530,7 +530,7 @@ function EditOffsetBlock () {
     _row_radius_detail.id = 'row_radius_detail'
     let icon_HTML = document.createElement('img')
     icon_HTML.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/radius_rect.svg'
+      'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/radius_rect.svg'
     icon_HTML.className = 'img-button size-24'
     _row_radius_detail.replaceChildren(
       icon_HTML,
@@ -824,123 +824,131 @@ function updateInputTLWH () {
 
 // edit auto layout
 function EditLayoutBlock () {
-  let wbList = selected_list.filter(wb =>
-    EnumCate.no_child_component.every(ct => wb.CateID !== ct)
+    let wbList = selected_list.filter(wb =>
+    WbClass.parent.some(e => wb.value.classList.contains(e))
   )
-  let isEditTable = wbList.every(wb => wb.CateID === EnumCate.table)
+  let isEditTable = wbList.every(wb => wb.value.classList.contains('w-table'))
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_auto_layout_div'
   editContainer.className = 'edit-container'
   let header = document.createElement('div')
   header.className = 'ds-block-header'
-  header.innerHTML = `<p>${isEditTable ? 'Table layout' : 'Auto layout'}</p>`
+  header.innerHTML = `<p>${
+    isEditTable ? 'Table layout' : 'Auto layout'
+  }</p><i class="fa-solid fa-minus fa-sm"></i><i class="fa-solid fa-plus fa-sm"></i>`
   editContainer.appendChild(header)
   let showDetails = selected_list.every(wb =>
     window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
   )
   if (showDetails) {
-    let auto_layout_details_div = document.createElement('div')
-    editContainer.appendChild(auto_layout_details_div)
-    auto_layout_details_div.className = 'col'
-    auto_layout_details_div.style.marginBottom = '4px'
-    let _row1 = document.createElement('div')
-    auto_layout_details_div.appendChild(_row1)
-    _row1.style.display = 'flex'
-    _row1.style.position = 'relative'
-    //
-    let isVertical = wbList.every(
-      wb => wb.value.classList.contains('w-col') || wb.CateID === EnumCate.table
+    header.querySelector('.fa-plus').remove()
+    let body = document.createElement('div')
+    editContainer.appendChild(body)
+    body.className = 'row'
+    body.style.position = 'relative'
+    let isVertical = wbList.every(wb =>
+      ['w-col', 'w-table'].some(e => wb.value.classList.contains(e))
     )
-    let cssList = wbList.filterAndMap(wb => {
-      if (wb.StyleItem) {
-        return wb.value.style
-      } else {
-        return StyleDA.docStyleSheets.find(cssRule =>
-          [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-            wb.value
-          )
-        )?.style
-      }
-    })
-    let layoutItem = {
-      Direction: isVertical ? 'Vertical' : 'Horizontal',
-      Alignment:
-        mainAxisToAlign(cssList[0].getPropertyValue('--main-axis-align')) +
-        crossAxisToAlign(cssList[0].getPropertyValue('--cross-axis-align')),
-      ChildSpace: cssList.filterAndMap(st =>
-        parseFloat(st.getPropertyValue('--child-space').replace('px', ''))
-      ),
-      RunSpace: cssList.filterAndMap(st =>
-        parseFloat(st.getPropertyValue('--run-space').replace('px', ''))
-      ),
-      IsWrap: wbList
-        .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
-        .every(e => e === 'wrap'),
-      IsScroll: wbList
-        .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
-        .every(e => e.includes('scroll'))
-    }
-    layoutItem.Alignment =
-      layoutItem.Alignment === 'CenterCenter' ? 'Center' : layoutItem.Alignment
-    // group btn edit auto layout direction
-    let group_btn_direction = document.createElement('div')
-    group_btn_direction.className = 'group_btn_direction'
-    group_btn_direction.style.pointerEvents = wbList.every(wb =>
-      [EnumCate.textformfield, ...EnumCate.data_component].every(
-        ct => wb.CateID !== ct
-      )
-    )
-      ? 'auto'
-      : 'none'
-    group_btn_direction.innerHTML = `<i class="fa-solid fa-arrow-down fa-xs" style="background-color: ${
+    let selectDirection = document.createElement('div')
+    selectDirection.className = 'group_btn_direction'
+    selectDirection.innerHTML = `<i class="fa-solid fa-arrow-down fa-xs" style="background-color: ${
       isVertical ? '#e5e5e5' : 'transparent'
     }"></i><i class="fa-solid fa-arrow-right fa-xs" style="background-color: ${
       isVertical ? 'transparent' : '#e5e5e5'
     }"></i>`
-    _row1.appendChild(group_btn_direction)
     if (
-      wbList.every(
-        wb =>
-          wb.CateID !== EnumCate.textformfield && wb.CateID != EnumCate.table
+      wbList.every(wb =>
+        ['w-textformfield', 'w-table'].every(
+          e => !wb.value.classList.contains(e)
+        )
       )
     ) {
-      let icon_remove = document.createElement('i')
-      icon_remove.id = 'btn_remove_auto_layout'
-      header.appendChild(icon_remove)
-      icon_remove.className = 'fa-solid fa-minus fa-sm'
-      icon_remove.onclick = function () {
+      $(header).on('click', '.fa-minus', function () {
         removeLayout()
         reloadEditLayoutBlock()
-      }
-    } else {
-      if (isVertical) {
-        group_btn_direction.lastChild.onclick = function () {
-          handleEditLayout({ direction: 'Horizontal' })
-          reloadEditLayoutBlock()
-        }
-      } else {
-        group_btn_direction.firstChild.onclick = function () {
+      })
+      $(selectDirection).on('click', '.fa-arrow-down', function () {
+        if (!isVertical) {
           handleEditLayout({ direction: 'Vertical' })
           reloadEditLayoutBlock()
         }
-      }
+      })
+      $(selectDirection).on('click', '.fa-arrow-right', function () {
+        if (isVertical) {
+          handleEditLayout({ direction: 'Horizontal' })
+          reloadEditLayoutBlock()
+        }
+      })
+    } else {
+      header.querySelector('.fa-minus').remove()
     }
-    // select alignment type
-    let alignment_type = _alignTable(isVertical, layoutItem.Alignment)
-    _row1.appendChild(alignment_type)
-    // extension auto layout
+    let alignContainer = _alignTable({
+      isVertical: isVertical,
+      value:
+        mainAxisToAlign(
+          wbList[0].value.style.getPropertyValue('--main-axis-align') ??
+            StyleDA.docStyleSheets
+              .find(cssRule =>
+                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                  wbList[0].value
+                )
+              )
+              ?.style?.getPropertyValue('--main-axis-align')
+        ) +
+        crossAxisToAlign(
+          wbList[0].value.style.getPropertyValue('--cross-axis-align') ??
+            StyleDA.docStyleSheets
+              .find(cssRule =>
+                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                  wbList[0].value
+                )
+              )
+              ?.style?.getPropertyValue('--cross-axis-align')
+        )
+    })
     let btn_extension = document.createElement('i')
-    _row1.appendChild(btn_extension)
     btn_extension.className = 'fa-solid fa-ellipsis icon_btn_default_style'
-    // btn_extension.onclick = function () {
-    //   setTimeout(function () {}, 200)
+    body.replaceChildren(selectDirection, alignContainer, btn_extension)
+
+    // let layoutItem = {
+    //   Direction: isVertical ? 'Vertical' : 'Horizontal',
+    //   Alignment:
+    //     mainAxisToAlign(cssList[0].getPropertyValue('--main-axis-align')) +
+    //     crossAxisToAlign(cssList[0].getPropertyValue('--cross-axis-align')),
+    //   ChildSpace: ,
+    //   RunSpace: cssList.filterAndMap(st =>
+    //     parseFloat(st.getPropertyValue('--run-space').replace('px', ''))
+    //   ),
+    //   IsWrap: wbList
+    //     .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
+    //     .every(e => e === 'wrap'),
+    //   IsScroll: wbList
+    //     .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
+    //     .every(e => e.includes('scroll'))
     // }
+    // layoutItem.Alignment =
+    //   layoutItem.Alignment === 'CenterCenter' ? 'Center' : layoutItem.Alignment
+    // group btn edit auto layout direction
+
     // input edit child space
-    let childSpaceValues = layoutItem.ChildSpace
     if (!isEditTable) {
+      let childSpaceValues = wbList.filterAndMap(wb =>
+        parseFloat(
+          (
+            wb.value.getPropertyValue('--child-space') ??
+            StyleDA.docStyleSheets
+              .find(cssRule =>
+                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                  wbList[0].value
+                )
+              )
+              ?.style?.getPropertyValue('--child-space')
+          ).replace('px', '')
+        )
+      )
       let inputChildSpace = _textField({
         width: '88px',
-        icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
+        icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
           isVertical ? 'vertical' : 'horizontal'
         } child spacing.svg`,
         value: childSpaceValues.length == 1 ? childSpaceValues[0] : 'mixed',
@@ -956,8 +964,8 @@ function EditLayoutBlock () {
         }
       })
       $(inputChildSpace).css({ position: 'absolute', left: '0', bottom: '0' })
-      _row1.appendChild(inputChildSpace)
-      if (wbList.every(wb => wb.CateID !== EnumCate.textformfield)) {
+      body.appendChild(inputChildSpace)
+      if (wbList.every(wb => !wb.value.classList.contains('w-textformfield'))) {
         let isWrapRow = document.createElement('div')
         isWrapRow.className = 'row'
         isWrapRow.style.width = '100%'
@@ -972,7 +980,7 @@ function EditLayoutBlock () {
         let runSpaceValues = layoutItem.RunSpace
         let inputRunSpace = _textField({
           width: '88px',
-          icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/${
+          icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
             isVertical ? 'horizontal' : 'vertical'
           } child spacing.svg`,
           value: runSpaceValues.length == 1 ? runSpaceValues[0] : 'mixed',
@@ -1042,7 +1050,7 @@ function EditLayoutBlock () {
     editContainer.appendChild(paddingContainer)
     let input_padding_horizontal = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding horizontal.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/padding horizontal.svg',
       value: padLeftValue == padRightValue ? padLeftValue : 'mixed',
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1060,7 +1068,7 @@ function EditLayoutBlock () {
     })
     let input_padding_vertical = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding vertical.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/padding vertical.svg',
       value: padTopValue == padBotValue ? padTopValue : 'mixed',
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1078,7 +1086,7 @@ function EditLayoutBlock () {
     input_padding_vertical.style.marginLeft = '6px'
     let input_padding_left = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding left.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/padding left.svg',
       value: padLeftValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1094,7 +1102,7 @@ function EditLayoutBlock () {
     })
     let input_padding_top = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding top.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/padding top.svg',
       value: padTopValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1114,10 +1122,10 @@ function EditLayoutBlock () {
     icon_padding_details.style.borderRadius = '2px'
     icon_padding_details.style.margin = '4px 0 0 6px'
     icon_padding_details.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding details.svg'
+      'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/padding details.svg'
     let input_padding_right = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding right.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/padding right.svg',
       value: padRightValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1134,7 +1142,7 @@ function EditLayoutBlock () {
 
     let input_padding_bottom = _textField({
       width: '88px',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/padding bottom.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/padding bottom.svg',
       value: padBotValue,
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
@@ -1183,15 +1191,12 @@ function EditLayoutBlock () {
       }
     }
   } else {
+    header.querySelector('.fa-minus').remove()
     header.id = 'edit-layout-header'
-    let icon_add = document.createElement('i')
-    icon_add.id = 'btn_add_auto_layout'
-    header.appendChild(icon_add)
-    icon_add.className = 'fa-solid fa-plus fa-sm'
-    icon_add.onclick = function () {
+    $(header).on('click', '.fa-plus', function () {
       addAutoLayout()
       reloadEditLayoutBlock()
-    }
+    })
   }
   return editContainer
 }
@@ -1654,76 +1659,45 @@ function showPopupSelectResizeType (popup_list_resize_type, isW, type) {
 }
 
 // create alignment type table UI
-function _alignTable (isVertical = true, value) {
-  let alignment_type = document.createElement('div')
-  alignment_type.className = 'layout-align-table'
-  alignment_type.setAttribute('oy', isVertical)
-  let top_left = _btnAlignType()
-  top_left.id = AlignmentType.top_left
-  //
-  let top_center = _btnAlignType()
-  top_center.id = AlignmentType.top_center
-  //
-  let top_right = _btnAlignType()
-  top_right.id = AlignmentType.top_right
-  //
-  let left_center = _btnAlignType()
-  left_center.id = AlignmentType.left_center
-  //
-  let center = _btnAlignType()
-  center.id = AlignmentType.center
-  //
-  let right_center = _btnAlignType()
-  right_center.id = AlignmentType.right_center
-  //
-  let bottom_left = _btnAlignType()
-  bottom_left.id = AlignmentType.bottom_left
-  //
-  let bottom_center = _btnAlignType()
-  bottom_center.id = AlignmentType.bottom_center
-  //
-  let bottom_right = _btnAlignType()
-  bottom_right.id = AlignmentType.bottom_right
-  ;[
-    top_left,
-    top_center,
-    top_right,
-    left_center,
-    center,
-    right_center,
-    bottom_left,
-    bottom_center,
-    bottom_right
-  ].forEach(alignBtn => {
-    if (value == alignBtn.id) {
-      alignBtn.style.opacity = 1
-    }
-    alignment_type.appendChild(alignBtn)
-  })
-  return alignment_type
-}
-
-function _btnAlignType () {
-  let img = document.createElement('img')
-  img.className = 'layout_btn_align_type'
-  img.onclick = function () {
-    let list_align_type = document.getElementsByClassName(
-      'layout_btn_align_type'
+function _alignTable ({ isVertical = true, value }) {
+  let alignContainer = document.createElement('div')
+  alignContainer.className = 'alignment-container'
+  alignContainer.setAttribute('oy', isVertical)
+  alignContainer.innerHTML = [
+    AlignmentType.top_left,
+    AlignmentType.top_center,
+    AlignmentType.top_right,
+    AlignmentType.left_center,
+    AlignmentType.center,
+    AlignmentType.right_center,
+    AlignmentType.bottom_left,
+    AlignmentType.bottom_center,
+    AlignmentType.bottom_right
+  ]
+    .map(
+      vl =>
+        `<div class='align-option' alignvl="${vl}" style='opacity: ${
+          vl === value ? 1 : 0.05
+        }'></div>`
     )
-    for (alignType of list_align_type) {
-      alignType.style.opacity = 0.05
-    }
-    this.style.opacity = 1
-    handleEditLayout({ alignment: this.id })
-  }
-  return img
+    .join('')
+  $(alignContainer).on('click', '.align-option', function (ev) {
+    alignContainer.querySelectorAll('.align-option').forEach(e => {
+      if (e === ev.target) {
+        ev.target.style.opacity = 1
+      } else {
+        e.target.style.opacity = 0.05
+      }
+    })
+    handleEditLayout({ alignment: ev.target.getAttribute('alignvl') })
+  })
+  return alignContainer
 }
 
 //! background-color || img
 function EditBackgroundBlock () {
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-background'
-  editContainer.style.rowGap = '6px'
   editContainer.className = 'edit-container'
   let header = document.createElement('div')
   header.className = 'ds-block-header'
@@ -1749,14 +1723,15 @@ function EditBackgroundBlock () {
               wb.value
             )
           )?.style?.backgroundColor
-        return bgColor?.replace(/(var\(|\))/g, '')
+        return bgColor?.replace(/(var\(--|\))/g, '')
       })
       if (wbBg.length === 1 && wbBg[0]?.length > 0) {
         header.querySelector('.fa-plus').remove()
         if (wbBg[0].length === 36) {
-          let colorSkin = ColorDA.list.find(skin => listColorID[0] === skin.GID)
+          let colorSkin = StyleDA.listSkin.find(skin => wbBg[0] === skin.GID)
           let cateItem
           if (colorSkin) {
+            header.querySelector('.skin-btn').remove()
             if (colorSkin.CateID !== EnumCate.color) {
               cateItem = CateDA.list_color_cate.find(
                 e => e.ID == colorSkin.CateID
@@ -1764,11 +1739,16 @@ function EditBackgroundBlock () {
             }
             let skin_tile = wbaseSkinTile({
               cate: EnumCate.color,
-              prefixValue: `#${colorSkin.Value}`,
+              prefixValue: colorSkin.Css,
               title: (cateItem ? `${cateItem.Name}/` : '') + colorSkin.Name,
               onClick: function () {
                 let offset = header.getBoundingClientRect()
-                createDropdownTableSkin(EnumCate.color, offset, colorSkin.GID)
+                createDropdownTableSkin({
+                  cate: EnumCate.color,
+                  offset: offset,
+                  currentSkinID: colorSkin.GID,
+                  cssText: colorSkin.Css
+                })
               },
               onRemove: function () {
                 handleEditBackground({ hexCode: null })
@@ -1779,7 +1759,7 @@ function EditBackgroundBlock () {
             if (scaleWb) skin_tile.lastChild.style.display = 'none'
           }
         } else {
-          let bgColor = wbBg[0].includes('rgb')
+          var bgColor = wbBg[0].includes('rgb')
             ? Ultis.rgbToHex(wbBg[0]).replace('#', '')
             : wbBg[0]
           let formEdit = createEditColorForm({
@@ -1819,7 +1799,7 @@ function EditBackgroundBlock () {
 
       let btnEye = document.createElement('img')
       btnEye.src =
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg'
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/eye-outline.svg'
       btnEye.style.width = '16px'
       btnEye.style.height = '16px'
       btnEye.style.padding = '6px'
@@ -1845,7 +1825,11 @@ function EditBackgroundBlock () {
 
   $(header).on('click', '.skin-btn', function () {
     let offset = header.getBoundingClientRect()
-    createDropdownTableSkin(EnumCate.color, offset)
+    createDropdownTableSkin({
+      cate: EnumCate.color,
+      offset: offset,
+      cssText: bgColor ? `#${bgColor}` : null
+    })
   })
   $(header).on('click', '.fa-image', function () {
     if (!document.getElementById('popup_img_document')) FileDA.init()
@@ -1898,11 +1882,11 @@ function EditTypoBlock () {
   header.appendChild(title)
 
   let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/buttonStyle.svg',
     null,
     function () {
       let offset = header.getBoundingClientRect()
-      createDropdownTableSkin(EnumCate.typography, offset)
+      createDropdownTableSkin({ cate: EnumCate.typography, offset: offset })
     }
   )
 
@@ -1914,22 +1898,106 @@ function EditTypoBlock () {
           wb.value
         )
       )?.style?.font
-    return fontSt?.replace(/(var\(|\))/g, '')
+    return fontSt?.replace(/(var\(--|\))/g, '')
   })
 
+  let wbColor = selected_list.filterAndMap(wb => {
+    let bgColor =
+      wb.value.style?.color ??
+      StyleDA.docStyleSheets.find(cssRule =>
+        [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+          wb.value
+        )
+      )?.style?.color
+    return bgColor?.replace(/(var\(--|\))/g, '')
+  })
+
+  if (wbColor.length === 1) {
+    if (wbColor[0].length === 36) {
+      let colorSkin = StyleDA.listSkin.find(skin => wbColor[0] === skin.GID)
+      let cateItem
+      if (colorSkin) {
+        if (colorSkin.CateID !== EnumCate.color) {
+          cateItem = CateDA.list_color_cate.find(e => e.ID == colorSkin.CateID)
+        }
+        var editColor = wbaseSkinTile({
+          cate: EnumCate.color,
+          prefixValue: colorSkin.Css,
+          title: (cateItem ? `${cateItem.Name}/` : '') + colorSkin.Name,
+          onClick: function () {
+            let offset = header.getBoundingClientRect()
+            createDropdownTableSkin({
+              cate: EnumCate.color,
+              offset: offset,
+              currentSkinID: colorSkin.GID,
+              cssText: colorSkin.Css
+            })
+            document
+              .getElementById('popup_table_skin')
+              .setAttribute('edit-typo', 'true')
+          },
+          handleUnlinkSkin: function () {
+            handleEditTypo({
+              hexCode: Ultis.rgbToHex(
+                window.getComputedStyle(listTextStyle[0].value).color
+              )
+            })
+            reloadEditTypoBlock()
+          }
+        })
+      }
+    } else {
+      editColor = createEditColorForm({
+        value: Ultis.rgbToHex(
+          window.getComputedStyle(listTextStyle[0].value).color
+        ),
+        onchange: params => {
+          handleEditTypo({ color: params, onSubmit: false })
+        },
+        onsubmit: params => {
+          handleEditTypo({ color: params })
+          reloadEditTypoBlock()
+        },
+        suffixAction: function () {
+          let offset = editColor.getBoundingClientRect()
+          createDropdownTableSkin({
+            cate: EnumCate.color,
+            offset: offset,
+            cssText: Ultis.rgbToHex(
+              window.getComputedStyle(listTextStyle[0].value).color
+            )
+          })
+          document
+            .getElementById('popup_table_skin')
+            .setAttribute('edit-typo', 'true')
+        }
+      })
+    }
+  }
+
   if (listTypoSkin.length === 1 && listTypoSkin[0]?.length === 36) {
-    let typoSkin = TypoDA.list.find(skin => listTypoSkin[0] == skin.GID)
+    let typoSkin = StyleDA.listSkin.find(skin => listTypoSkin[0] == skin.GID)
     let cateItem = CateDA.list_typo_cate.find(e => e.ID == typoSkin.CateID)
+    let wbComputeSt = window.getComputedStyle(listTextStyle[0].value)
     let skin_tile = wbaseSkinTile({
       cate: EnumCate.typography,
-      prefixValue: `${typoSkin.FontSize}/${typoSkin.Height ?? 'auto'}`,
+      prefixValue: `${wbComputeSt.fontSize}/${wbComputeSt.lineHeight}`,
       title: (cateItem ? `${cateItem.Name}/` : '') + typoSkin.Name,
       onClick: function () {
         let offset = header.getBoundingClientRect()
-        createDropdownTableSkin(EnumCate.typography, offset, typoSkin.GID)
+        createDropdownTableSkin({
+          cate: EnumCate.typography,
+          offset: offset,
+          currentSkinID: typoSkin.GID,
+          cssText: typoSkin.Css
+        })
       }
     })
-    skin_tile.firstChild.firstChild.style.fontWeight = typoSkin.FontWeight
+    skin_tile.querySelector('p').style.fontWeight = typoSkin.FontWeight
+    if (editColor) {
+      editColor.style.marginBottom = '6px'
+      editContainer.appendChild(editColor)
+    }
     editContainer.appendChild(skin_tile)
   } else if (listTypoSkin.some(vl => vl.length === 36)) {
     header.appendChild(btnSelectSkin)
@@ -1944,24 +2012,7 @@ function EditTypoBlock () {
     text_style_attribute.className = 'col'
     $(text_style_attribute).css({ width: '100%', 'box-sizing': 'border-box' })
     editContainer.appendChild(text_style_attribute)
-    function updateTextStyleColor (params, onSubmit = true) {
-      handleEditTypo({ color: params, onSubmit: onSubmit })
-      if (onSubmit) reloadEditTypoBlock()
-    }
-    let editColor = createEditColorForm({
-      value: `${Ultis.rgbToHex(
-        window.getComputedStyle(listTextStyle[0].value).color
-      )}`,
-      onchange: params => {
-        updateTextStyleColor(params, false)
-      },
-      onsubmit: updateTextStyleColor,
-      suffixAction: function () {
-        let offset = editColor.getBoundingClientRect()
-        createDropdownTableSkin(EnumCate.color, offset)
-      }
-    })
-    text_style_attribute.appendChild(editColor)
+    if (editColor) text_style_attribute.appendChild(editColor)
     // select font-family
     let fontFamilyValues = listTextStyle.filterAndMap(
       wb => window.getComputedStyle(wb.value).fontFamily
@@ -2036,7 +2087,7 @@ function EditTypoBlock () {
     )
     let input_line_height = _textField({
       width: '100%',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/line-height.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/line-height.svg',
       value: lineHeightValues.length === 1 ? lineHeightValues[0] : 'mixed',
       onBlur: function (ev) {
         if (
@@ -2058,7 +2109,7 @@ function EditTypoBlock () {
     let input_letter_spacing = _textField({
       width: '100%',
       value: lSpacingValues.length === 1 ? lSpacingValues[0] : 'mixed',
-      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/letter-spacing.svg',
+      icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/letter-spacing.svg',
       iconSize: '28px',
       onBlur: function (ev) {
         if (
@@ -2094,15 +2145,15 @@ function EditTypoBlock () {
     listvalue: [
       {
         attribute: TextAutoSize.autoWidth,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/auto-width.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/auto-width.svg'
       },
       {
         attribute: TextAutoSize.autoHeight,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/auto-height.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/auto-height.svg'
       },
       {
         attribute: TextAutoSize.fixedSize,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/fixed-size.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/fixed-size.svg'
       }
     ],
     onselect: value => {
@@ -2140,15 +2191,15 @@ function EditTypoBlock () {
     listvalue: [
       {
         attribute: TextAlign.left,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-left.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text-align-left.svg'
       },
       {
         attribute: TextAlign.center,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-center.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text-align-center.svg'
       },
       {
         attribute: TextAlign.right,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-right.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text-align-right.svg'
       }
     ],
     onselect: value => {
@@ -2167,15 +2218,15 @@ function EditTypoBlock () {
     listvalue: [
       {
         attribute: TextAlignVertical.top,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-top.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text-align-vertical-top.svg'
       },
       {
         attribute: TextAlignVertical.middle,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-center.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text-align-vertical-center.svg'
       },
       {
         attribute: TextAlignVertical.bottom,
-        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/text-align-vertical-bottom.svg'
+        src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text-align-vertical-bottom.svg'
       }
     ],
     onselect: value => {
@@ -2311,15 +2362,18 @@ function _btnDropDownSelect ({ initvalue = '', listvalue = [], onselect }) {
             option.onclick = function (e) {
               e.stopPropagation()
               initvalue = vl
-              btn_select.querySelector('span').value = isString ? vl : vl.title
+              btnDropDownSelect.querySelector('span').value = isString
+                ? vl
+                : vl.title
               onselect(vl)
-              popup_select_option.remove
+              popup_select_option.remove()
             }
           option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${
             vl === initvalue ? 1 : 0
           }"></i><span class="semibold2" style="color: #ffffff">${
             isString ? vl : vl.title
           }</span>`
+          return option
         })
       )
       document.getElementById('body').appendChild(popup_select_option)
@@ -2350,94 +2404,61 @@ function EditBorderBlock () {
 
   let header = document.createElement('div')
   header.className = 'ds-block-header'
+  header.innerHTML = `<p>Border</p>
+  <button class="action-button skin-btn bg-header-action"></button>
+  <i class="fa-solid fa-plus fa-sm bg-header-action"></i>`
   editContainer.appendChild(header)
 
-  let title = document.createElement('p')
-  title.innerHTML = 'Border'
-  header.appendChild(title)
-
-  let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
-    null,
-    function () {
-      let offset = header.getBoundingClientRect()
-      createDropdownTableSkin(EnumCate.border, offset)
-    }
-  )
   //
+  const borderSide = [
+    'border',
+    'border-top',
+    'border-right',
+    'border-bottom',
+    'border-left'
+  ]
   let listBorderSkin = listBorder.filterAndMap(wb => {
-    if (wb.StyleItem) {
-      var rule = wb.value.style
-    } else {
-      rule = StyleDA.docStyleSheets.find(cssRule =>
-        [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-          wb.value
-        )
-      )?.style
-    }
-    if (rule && rule.borderStyle.length > 0) {
-      if (rule.borderStyle.includes('var')) {
-        return rule.borderStyle
-          .replace('var(--border-style-', '')
-          .replace(')', '')
-      } else {
-        let borderWidth = rule.borderWidth.replaceAll('px', '').split(' ')
-        let borderSide = BorderSide.custom
-        switch (borderWidth.length) {
-          case 1:
-            borderWidth = `${borderWidth} ${borderWidth} ${borderWidth} ${borderWidth}`
-            borderSide = BorderSide.all
-            break
-          case 2:
-            borderWidth = [...borderWidth, ...borderWidth].join(' ')
-            break
-          case 3:
-            if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
-              if (borderWidth[0] > 0) {
-                borderSide = BorderSide.top
-              } else {
-                borderSide = BorderSide.bottom
-              }
-            }
-            borderWidth = [...borderWidth, borderWidth[1]].join(' ')
-            break
-          default: // 4
-            if (borderWidth.filter(e => parseInt(e) > 0).length === 1) {
-              if (borderWidth[0] > 0) {
-                borderSide = BorderSide.top
-              } else if (borderWidth[1] > 0) {
-                borderSide = BorderSide.right
-              } else if (borderWidth[2] > 0) {
-                borderSide = BorderSide.bottom
-              } else {
-                borderSide = BorderSide.left
-              }
-            }
-            borderWidth = borderWidth.join(' ')
-            break
-        }
-        wb.borderSide = borderSide
-        return {
-          Width: borderWidth,
-          BorderStyle: rule.borderStyle,
-          ColorValue: Ultis.rgbToHex(rule.borderColor).replace('#', ''),
-          IsStyle: false,
-          BorderSide: borderSide
-        }
+    for (let side of borderSide) {
+      if (wb.value.style[side]) {
+        return wb.value.style[side].match(uuid4Regex)
+          ? wb.value.style[side].replace(/(var\(--|\))/g, '')
+          : wb.value.style[side]
       }
     }
+    let rule = StyleDA.docStyleSheets.find(cssRule =>
+      [...divSection.querySelectorAll(cssRule.selectorText)].includes(wb.value)
+    )
+    if (rule)
+      for (let side of borderSide) {
+        if (rule.style[side]) {
+          return rule.style[side].match(uuid4Regex)
+            ? rule.style[side].replace(/(var\(--|\))/g, '')
+            : rule.style[side]
+        }
+      }
     return null
   })
-  if (listBorderSkin.length === 1 && typeof listBorderSkin[0] === 'string') {
-    let borderItem = BorderDA.list.find(skin => listBorderSkin[0] === skin.GID)
-    let cateItem = CateDA.list_border_cate.find(e => e.ID == borderItem.CateID)
+  if (listBorderSkin.length === 1 && listBorderSkin[0]?.length === 36) {
+    header.querySelector('.fa-plus').remove()
+    header.querySelector('.skin-btn').remove()
+    let borderItem = StyleDA.listSkin.find(
+      skin => listBorderSkin[0] === skin.GID
+    )
+    let cateItem = CateDA.list_border_cate.find(e => e.ID === borderItem.CateID)
     let skin_tile = wbaseSkinTile({
       cate: EnumCate.border,
-      prefixValue: `#${borderItem.ColorValue}`,
+      prefixValue: Ultis.rgbToHex(
+        window.getComputedStyle(listBorder[0].value).borderColor
+      ),
       title: (cateItem ? `${cateItem.Name}/` : '') + borderItem.Name,
       onClick: function () {
         let offset = header.getBoundingClientRect()
-        createDropdownTableSkin(EnumCate.border, offset, borderItem.GID)
+        createDropdownTableSkin({
+          cate: EnumCate.border,
+          offset: offset,
+          currentSkinID: borderItem.GID,
+          cssText: borderItem.Css
+        })
       },
       onRemove: function () {
         deleteBorder()
@@ -2445,39 +2466,30 @@ function EditBorderBlock () {
       }
     })
     editContainer.appendChild(skin_tile)
-  } else if (listBorderSkin.some(e => typeof e !== 'object')) {
-    header.appendChild(btnSelectSkin)
+  } else if (listBorderSkin.some(vl => vl?.length === 36)) {
     let notiText = document.createElement('span')
     notiText.className = 'regular1'
     notiText.style.margin = '4px 8px'
     notiText.innerHTML = 'Choose a border skin to replace mixed content'
     editContainer.appendChild(notiText)
   } else {
-    header.appendChild(btnSelectSkin)
-    if (listBorderSkin.some(e => e === null)) {
-      let btnAdd = document.createElement('i')
-      btnAdd.className = 'fa-solid fa-plus fa-sm'
-      btnAdd.onclick = function () {
-        addBorder()
-        reloadEditBorderBlock()
-      }
-      header.appendChild(btnAdd)
-    }
     listBorderSkin = listBorderSkin.filter(e => e !== null)
+    if (listBorderSkin.length > 0) header.querySelector('.fa-plus').remove()
+    //
     if (listBorderSkin.length > 0) {
-      let borderColorValues = listBorderSkin.filterAndMap(e => e.ColorValue)
+      let borderColorValues = listBorder.filterAndMap(wb =>
+        Ultis.rgbToHex(window.getComputedStyle(wb.value).borderColor)
+      )
       if (borderColorValues.length == 1) {
-        let colorValue = borderColorValues[0]
-        function updateBorderColor (params, onSubmit = true) {
-          handleEditBorder({ color: params, onSubmit: onSubmit })
-          if (onSubmit) reloadEditBorderBlock()
-        }
         let formEditColor = createEditColorForm({
-          value: `#${colorValue}`,
+          value: borderColorValues[0],
           onchange: params => {
-            updateBorderColor(params, false)
+            handleEditBorder({ color: params, onSubmit: false })
           },
-          onsubmit: updateBorderColor,
+          onsubmit: params => {
+            handleEditBorder({ color: params })
+            reloadEditBorderBlock()
+          },
           ondelete: () => {
             deleteBorder()
             reloadEditBorderBlock()
@@ -2492,49 +2504,38 @@ function EditBorderBlock () {
       formEditLine.style.paddingLeft = '4px'
       formEditLine.style.justifyContent = 'space-between'
       editContainer.appendChild(formEditLine)
-      let borderStyles = listBorderSkin.filterAndMap(e => e.BorderStyle)
-      let btnSelectStyle = _btnDropDownSelect(
-        borderStyles.length === 1
-          ? list_border_style
-          : ['mixed', ...list_border_style],
-        function (options) {
-          let firstStyle = borderStyles[0]
-          for (let option of options) {
-            let style = option.getAttribute('value')
-            option.firstChild.style.opacity = style == firstStyle ? 1 : 0
-          }
-        },
-        function (value) {
+      let borderStyles = listBorder.filterAndMap(
+        wb =>
+          window
+            .getComputedStyle(wb.value)
+            .borderStyle.split(' ')
+            .filter(e => e !== 'none')[0]
+      )
+      let btnSelectStyle = _btnDropDownSelect({
+        initvalue: borderStyles.length > 1 ? 'mixed' : borderStyles[0],
+        listvalue:
+          borderStyles.length === 1
+            ? list_border_style
+            : ['mixed', ...list_border_style],
+        onselect: value => {
           handleEditBorder({ style: value })
           reloadEditBorderBlock()
         }
-      )
-      btnSelectStyle.firstChild.innerHTML =
-        borderStyles.length > 1 ? 'mixed' : borderStyles[0]
+      })
+      btnSelectStyle.style.width = '88px'
       formEditLine.appendChild(btnSelectStyle)
       //
-      let widthValues = listBorderSkin.filterAndMap(e => {
-        let eListWidth = e.Width.split(' ')
-        switch (e.BorderSide) {
-          case BorderSide.top:
-            return eListWidth[0]
-          case BorderSide.right:
-            return eListWidth[1]
-          case BorderSide.bottom:
-            return eListWidth[2]
-          case BorderSide.left:
-            return eListWidth[3]
-          default:
-            if (eListWidth.every(value => value == eListWidth[0])) {
-              return eListWidth[0]
-            } else {
-              return 'mixed'
-            }
-        }
-      })
+      let widthValues = listBorder.filterAndMap(
+        wb =>
+          window
+            .getComputedStyle(wb.value)
+            .borderWidth.split(' ')
+            .map(e => parseFloat(e.replace('px', '')))
+            .sort((a, b) => b - a)[0]
+      )
       let edit_stroke_width = _textField({
         width: '60px',
-        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/stroke-width.svg',
+        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/stroke-width.svg',
         value: widthValues.length > 1 ? 'mixed' : widthValues[0],
         iconSize: '28px',
         onBlur: function (ev) {
@@ -2581,144 +2582,107 @@ function EditBorderBlock () {
       action_edit_line_container.className = 'action-container'
       formEditLine.appendChild(action_edit_line_container)
 
-      let sideValues = listBorderSkin.filterAndMap(e => e.BorderSide)
-      let btnSelectBorderSide = selectBorderSide(
-        sideValues.length === 1 ? sideValues[0] : 'mixed',
-        function (value) {
-          if (selected_list.every(wb => wb.CateID !== EnumCate.checkbox)) {
-            handleEditBorder({ side: value })
-            reloadUIBySide(value)
-          }
+      let sideValues = listBorder.filterAndMap(wb => {
+        let borderW = window.getComputedStyle(wb.value).borderWidth.split(' ')
+        switch (borderW.length) {
+          case 1:
+            return BorderSide.all
+          case 2:
+            if (parseFloat(borderW[0].replace('px', '')) > 0) {
+              return BorderSide.top_bottom
+            } else {
+              return BorderSide.left_right
+            }
+          default: // case 4
+            if (parseFloat(borderW[0].replace('px', '')) > 0) {
+              return BorderSide.top
+            } else if (parseFloat(borderW[1].replace('px', '')) > 0) {
+              return BorderSide.right
+            } else if (parseFloat(borderW[2].replace('px', '')) > 0) {
+              return BorderSide.bottom
+            } else {
+              return BorderSide.left
+            }
         }
-      )
+      })
+
+      const listBorderSide = [
+        BorderSide.all,
+        BorderSide.top,
+        BorderSide.left,
+        BorderSide.bottom,
+        BorderSide.right,
+        BorderSide.left_right,
+        BorderSide.top_bottom
+      ]
+
+      let btnSelectBorderSide = document.createElement('button')
+      btnSelectBorderSide.className = 'action-button'
+      btnSelectBorderSide.onclick = function () {
+        setTimeout(function () {
+          document.body
+            .querySelectorAll('div[id="body"] > .popup_select')
+            .forEach(popup => popup.remove())
+          let popupOffset = btnSelectBorderSide.getBoundingClientRect()
+          let popup_select_option = document.createElement('div')
+          popup_select_option.className =
+            'popup_select col wini_popup popup_remove'
+          popup_select_option.style.left = popupOffset.x + 'px'
+          popup_select_option.style.top = popupOffset.y + 'px'
+          popup_select_option.style.transform = 'translateX(-100%)'
+          popup_select_option.replaceChildren(
+            ...(sideValues.length === 1
+              ? listBorderSide
+              : ['mixed', ...listBorderSide]
+            ).map(vl => {
+              let option = document.createElement('div')
+              if (vl != 'mixed')
+                option.onclick = function (e) {
+                  e.stopPropagation()
+                  if (
+                    selected_list.every(
+                      wb => !wb.classList.contains('w-checkbox')
+                    )
+                  )
+                    handleEditBorder({ side: vl })
+                  popup_select_option.remove()
+                }
+              option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${
+                vl === sideValues[0] ? 1 : 0
+              }"></i><div style="height: 16px; margin: 4px; background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-${
+                vl === 'mixed' ? 'all' : vl
+              }.svg)"></div><span class="semibold2" style="color: #ffffff; width: max-content">${vl}</span>`
+              return option
+            })
+          )
+          document.getElementById('body').appendChild(popup_select_option)
+        }, 200)
+      }
+      btnSelectBorderSide.style.backgroundImage = `url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-${
+        sideValues.length > 1 ? 'all' : sideValues[0]
+      }-black.svg)`
       action_edit_line_container.appendChild(btnSelectBorderSide)
 
-      let edit_line_action2 = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/more-horizontal.svg',
-        null,
-        function () {}
-      )
-      action_edit_line_container.appendChild(edit_line_action2)
-
-      let group_custom_border_side = document.createElement('div')
-      editContainer.appendChild(group_custom_border_side)
-      group_custom_border_side.id = 'group_input_edit_border_side'
-      group_custom_border_side.className = 'group_input_border_side'
-      let input_border_left = _textField({
-        width: '88px',
-        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left-black.svg',
-        value: '0',
-        iconSize: '36px',
-        onBlur: function () {
-          let left_width_value = parseFloat(this.value)
-          if (!isNaN(left_width_value)) {
-            handleEditBorder({ lWidth: this.value })
-          }
-          reloadEditBorderBlock()
-        }
-      })
-      input_border_left.style.marginLeft = '8px'
-      let input_border_top = _textField({
-        width: '88px',
-        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top-black.svg',
-        value: '0',
-        iconSize: '36px',
-        onBlur: function () {
-          let top_width_value = parseFloat(this.value)
-          if (!isNaN(top_width_value)) {
-            handleEditBorder({ tWidth: this.value })
-          }
-          reloadEditBorderBlock()
-        }
-      })
-      input_border_top.style.marginRight = '35px'
-      let input_border_right = _textField({
-        width: '88px',
-        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right-black.svg',
-        value: '0',
-        iconSize: '36px',
-        onBlur: function () {
-          let right_width_value = parseFloat(this.value)
-          if (!isNaN(right_width_value)) {
-            handleEditBorder({ rWidth: this.value })
-          }
-          reloadEditBorderBlock()
-        }
-      })
-      input_border_right.style.marginLeft = '8px'
-      let input_border_bottom = _textField({
-        width: '88px',
-        icon: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom-black.svg',
-        value: '0',
-        iconSize: '36px',
-        onBlur: function () {
-          let bottom_width_value = parseFloat(this.value)
-          if (!isNaN(bottom_width_value)) {
-            handleEditBorder({ bWidth: this.value })
-          }
-          reloadEditBorderBlock()
-        }
-      })
-      input_border_bottom.style.marginRight = '35px'
-      group_custom_border_side.replaceChildren(
-        input_border_left,
-        input_border_top,
-        input_border_right,
-        input_border_bottom
-      )
-      let firstSideValue = sideValues.length == 1 ? sideValues[0] : 'mixed'
-      function reloadUIBySide (changeSide) {
-        if (changeSide === BorderSide.custom) {
-          group_custom_border_side.style.display = 'flex'
-          btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-black.svg`
-          for (let j = 0; j < group_custom_border_side.childNodes.length; j++) {
-            switch (j) {
-              case 0:
-                // case edit left border width
-                var list_width = listBorderSkin.filterAndMap(e =>
-                  e.Width.split(' ').pop()
-                )
-                var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-                break
-              case 1:
-                // case edit top border width
-                var list_width = listBorderSkin.filterAndMap(e =>
-                  e.Width.split(' ').shift()
-                )
-                var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-                break
-              case 2:
-                // case edit right border width
-                var list_width = listBorderSkin.filterAndMap(
-                  e => e.Width.split(' ')[1]
-                )
-                var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-                break
-              case 3:
-                // case edit bottom border width
-                var list_width = listBorderSkin.filterAndMap(
-                  e => e.Width.split(' ')[2]
-                )
-                var inputValue = list_width.length > 1 ? 'mixed' : list_width[0]
-                break
-              default:
-                break
-            }
-            let inputForm = group_custom_border_side.childNodes[j]
-            inputForm.lastChild.value = inputValue
-          }
-        } else {
-          group_custom_border_side.style.display = 'none'
-          btnSelectBorderSide.firstChild.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-${
-            firstSideValue.toLowerCase() === 'mixed'
-              ? 'all'
-              : firstSideValue.toLowerCase()
-          }-black.svg`
-        }
-      }
-      reloadUIBySide(firstSideValue)
+      // let edit_line_action2 = createButtonAction(
+      //   'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/more-horizontal.svg',
+      //   null,
+      //   function () {}
+      // )
+      // action_edit_line_container.appendChild(edit_line_action2)
     }
   }
+  $(header).on('click', '.skin-btn', function () {
+    let offset = header.getBoundingClientRect()
+    createDropdownTableSkin({
+      cate: EnumCate.border,
+      offset: offset,
+      cssText: listBorderSkin[0]
+    })
+  })
+  $(header).on('click', '.fa-plus', function () {
+    addBorder()
+    reloadEditBorderBlock()
+  })
   return editContainer
 }
 
@@ -2750,7 +2714,7 @@ function EditEffectBlock () {
   header.appendChild(title)
 
   let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/buttonStyle.svg',
     null,
     function () {
       let offset = header.getBoundingClientRect()
@@ -2843,7 +2807,7 @@ function EditEffectBlock () {
       editContainer.appendChild(div_select_eType)
       // popup edit effect type attribute
       let effect_setting = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/effect-settings.svg',
         null,
         function () {
           setTimeout(function () {
@@ -3047,14 +3011,14 @@ function EditEffectBlock () {
       div_select_eType.appendChild(btn_select_eType)
 
       let btn_isShow = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/eye-outline.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/eye-close.svg',
         function () {}
       )
       div_select_eType.appendChild(btn_isShow)
 
       let btn_delete = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/minus.svg',
         null,
         function () {
           deleteEffect()
@@ -3084,7 +3048,7 @@ function createEditColorForm ({
 }) {
   let editColorTile = document.createElement('div')
   if (id) editColorTile.id = id
-  editColorTile.className = 'container-edit-tile'
+  editColorTile.className = 'edit-color-tile'
   editColorTile.style.padding = '0 4px'
 
   editColorTile.innerHTML = `<div class="parameter-form">
@@ -3098,7 +3062,7 @@ function createEditColorForm ({
   </div>
   ${
     suffixAction
-      ? '<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg"/>'
+      ? '<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/buttonStyle.svg"/>'
       : '<div class="row"><i class="fa-regular fa-eye"></i><i class="fa-solid fa-minus"></i></div>'
   }`
 
@@ -3140,105 +3104,10 @@ function createEditColorForm ({
   })
   if (ondelete) $(editColorTile).on('click', '.fa-minus', ondelete)
   else if (suffixAction)
-    $(editColorTile).on('click', 'parameter-form + img', suffixAction)
+    $(editColorTile).on('click', '.parameter-form + img', suffixAction)
   else editColorTile.querySelector('.fa-minus').style.display = 'none'
   //? </function>
   return editColorTile
-}
-
-function selectBorderSide (params, onclick) {
-  let list = [
-    {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-white.svg',
-      name: 'mixed'
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-all-white.svg',
-      name: BorderSide.all
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top.svg',
-      name: BorderSide.top
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left.svg',
-      name: BorderSide.left
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom.svg',
-      name: BorderSide.bottom
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right.svg',
-      name: BorderSide.right
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/settings-gear.svg',
-      name: BorderSide.custom
-    }
-  ]
-  let button = document.createElement('button')
-  button.className = 'action-button'
-
-  let buttonIcon = document.createElement('img')
-  buttonIcon.src = list.find(e => e.name === params)
-  buttonIcon.style.pointerEvents = 'none'
-  button.appendChild(buttonIcon)
-  button.onclick = function (ev) {
-    if (ev.target.className.includes(`${this.className}`)) {
-      setTimeout(function () {
-        dropdownContainer.style.display = 'flex'
-        dropdownContainer.childNodes[0].style.display = 'none'
-        for (let i = 1; i < dropdownContainer.childNodes.length; i++) {
-          let type = dropdownContainer.childNodes[i].getAttribute('type')
-          dropdownContainer.childNodes[i].firstChild.style.opacity =
-            type == params ? 1 : 0
-        }
-      }, 200)
-    }
-  }
-
-  let dropdownContainer = document.createElement('div')
-  dropdownContainer.className = 'dropdown-border-type wini_popup'
-
-  for (let i = 0; i < list.length; i++) {
-    let option = document.createElement('div')
-    option.setAttribute('type', list[i].name)
-    option.className = 'option'
-    if (i == 0) {
-      option.style.borderBottom = '1.5px solid #C4C4C4'
-      option.style.pointerEvents = 'none'
-      option.style.opacity = '0.8'
-    } else {
-      option.onclick = function () {
-        if (this.firstChild.style.opacity == 0) {
-          onclick(this.getAttribute('type'))
-        }
-        dropdownContainer.style.display = 'none'
-      }
-    }
-    let checkIcon = document.createElement('img')
-    checkIcon.className = 'option-icon'
-    checkIcon.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/check.svg'
-    checkIcon.style.opacity = params == list[i].name ? 1 : 0
-    option.appendChild(checkIcon)
-
-    let optionIcon = document.createElement('img')
-    optionIcon.className = 'option-icon'
-    optionIcon.src = list[i].src
-    optionIcon.style.width = '28px'
-    optionIcon.style.height = '28px'
-    option.appendChild(optionIcon)
-
-    let optionTitle = document.createElement('span')
-    optionTitle.className = 'option-title'
-    optionTitle.innerHTML = list[i].name
-    option.appendChild(optionTitle)
-    dropdownContainer.appendChild(option)
-  }
-  button.appendChild(dropdownContainer)
-  return button
 }
 
 function createButtonAction (src1, src2, action) {
@@ -3263,7 +3132,7 @@ function createButtonAction (src1, src2, action) {
   return button
 }
 
-function createDropdownTableSkin (enumCate, offset, currentSkinID) {
+function createDropdownTableSkin ({ cate, offset, currentSkinID, cssText }) {
   let dropdown = document.createElement('div')
   dropdown.onclick = function (e) {
     e.stopPropagation()
@@ -3276,8 +3145,7 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
   dropdown.className = 'wini_popup col popup_remove'
   dropdown.style.left = offset.x + 'px'
   dropdown.style.top = offset.y - 56 + 'px'
-  dropdown.setAttribute('cate', enumCate)
-  switch (enumCate) {
+  switch (cate) {
     case EnumCate.color:
       var title = 'Color skin'
       break
@@ -3297,52 +3165,53 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
   <div class="row title"><span>${title}</span><button class="action-button sort-btn"></button><button class="action-button add-skin-btn"></button></div>
   <div class="row search-skins"><i class="fa-solid fa-magnifying-glass fa-xs"></i><input placeholder="Search skins..."/></div>
   </div>`
-  $(dropdown).on('click', '.header_popup_skin .add-skin-btn', function () {
-    setTimeout(function () {
-      let popupAddSkin = document.getElementById('create_skin_popup')
-      popupAddSkin.style.display = 'flex'
-      popupAddSkin.querySelector('.popup-input').value = ''
-      let prefixInput = popupAddSkin.querySelector(
-        '.popup-body .box20.semibold4'
-      )
-      prefixInput.innerHTML = ''
-      switch (enumCate) {
-        case EnumCate.color:
-          popupAddSkin.querySelector('.title_create_skin').innerHTML =
-            'Create new color skin'
-          prefixInput.style.backgroundColor = window.getComputedStyle(
-            selected_list[0].value
-          ).backgroundColor
-          break
-        case EnumCate.typography:
-          popupAddSkin.querySelector('.title_create_skin').innerHTML =
-            'Create new typography skin'
-          prefixInput.innerHTML = 'Ag'
-          prefixInput.style.fontWeight = window.getComputedStyle(
-            selected_list[0].value
-          ).fontWeight
-          break
-        case EnumCate.border:
-          popupAddSkin.querySelector('.title_create_skin').innerHTML =
-            'Create new border skin'
-          prefixInput.style.backgroundColor = window.getComputedStyle(
-            selected_list[0].value
-          ).borderColor
-          break
-        case EnumCate.effect:
-          popupAddSkin.querySelector('.title_create_skin').innerHTML =
-            'Create new effect skin'
-          prefixInput.style.backgroundImage =
-            'url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg)'
-          break
-        default:
-          break
-      }
-      $(popupAddSkin).on('click', '.confirm-button', () =>
-        createNewSkin(enumCate)
-      )
-    }, 200)
-  })
+  if (cssText) {
+    $(dropdown).on('click', '.header_popup_skin .add-skin-btn', function () {
+      setTimeout(function () {
+        let popupAddSkin = document.getElementById('create_skin_popup')
+        popupAddSkin.style.display = 'flex'
+        popupAddSkin.querySelector('.popup-input').value = ''
+        let prefixInput = popupAddSkin.querySelector(
+          '.popup-body .box20.semibold4'
+        )
+        prefixInput.innerHTML = ''
+        switch (cate) {
+          case EnumCate.color:
+            popupAddSkin.querySelector('.title_create_skin').innerHTML =
+              'Create new color skin'
+            prefixInput.style.backgroundColor = cssText
+            break
+          case EnumCate.typography:
+            popupAddSkin.querySelector('.title_create_skin').innerHTML =
+              'Create new typography skin'
+            prefixInput.innerHTML = 'Ag'
+            prefixInput.style.cssText = cssText
+            prefixInput.style.fontSize = '14px'
+            break
+          case EnumCate.border:
+            popupAddSkin.querySelector('.title_create_skin').innerHTML =
+              'Create new border skin'
+            prefixInput.style.backgroundColor = window.getComputedStyle(
+              selected_list[0].value
+            ).borderColor
+            break
+          case EnumCate.effect:
+            popupAddSkin.querySelector('.title_create_skin').innerHTML =
+              'Create new effect skin'
+            prefixInput.style.backgroundImage =
+              'url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/effect-settings.svg)'
+            break
+          default:
+            break
+        }
+        $(popupAddSkin).on('click', '.confirm-button', () =>
+          createNewSkin(cate, cssText)
+        )
+      }, 200)
+    })
+  } else {
+    dropdown.querySelector('.header_popup_skin .add-skin-btn').remove()
+  }
   $(dropdown).on('input', '.header_popup_skin input', function (e) {
     e.stopPropagation()
     searchSkins()
@@ -3350,9 +3219,7 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
   function searchSkins () {
     let searchContent = inputSearch.value.toLowerCase()
     if (searchContent.trim() == '') {
-      let listTile = body.querySelectorAll(
-        ':is(.cate-skin-tile, .skin_tile_option)'
-      )
+      let listTile = body.querySelectorAll('.cate-skin-tile, .skin_tile_option')
       listTile.forEach(tile => {
         tile.style.display = 'flex'
       })
@@ -3380,7 +3247,7 @@ function createDropdownTableSkin (enumCate, offset, currentSkinID) {
   }
   document.getElementById('body').appendChild(dropdown)
 
-  updateTableSkinBody(enumCate, currentSkinID)
+  updateTableSkinBody(cate, currentSkinID)
   let dropdownRect = dropdown.getBoundingClientRect()
   if (dropdownRect.bottom > document.body.offsetHeight) {
     dropdown.style.top =
@@ -3416,7 +3283,6 @@ function updateTableSkinBody (enumCate, currentSkinID) {
           )
         )
       }
-
       break
     case EnumCate.typography:
       if (
@@ -3645,11 +3511,20 @@ function createSkinTileHTML (enumCate, jsonSkin) {
       skin_tile.onclick = function (e) {
         e.stopPropagation()
         if (selected_list.length > 0) {
-          handleEditBackground({ colorSkin: jsonSkin })
+          if (
+            document
+              .getElementById('popup_table_skin')
+              .getAttribute('edit-typo')
+          ) {
+            handleEditTypo({ colorSkin: jsonSkin })
+            reloadEditTypoBlock()
+          } else {
+            handleEditBackground({ colorSkin: jsonSkin })
+            reloadEditBackgroundBlock()
+          }
           document
             .querySelectorAll('.popup_remove')
             .forEach(popup => popup.remove())
-          reloadEditBackgroundBlock()
         }
       }
       skin_tile.innerHTML = `<div class="prefix-tile" style="background-color: ${jsonSkin.Css}"></div><div class="skin-name">${jsonSkin.Name}</div>`
@@ -3665,13 +3540,15 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditTypoBlock()
         }
       }
-      skin_tile.innerHTML = `<div class="prefix-tile"><p style="transform: scale(0.5);font: ${jsonSkin.Css}">Ag</p></div><div class="row"><p class="skin-name">${jsonSkin.Name}</p><p></p></div>`
-      let prefixSt = window.getComputedStyle(
-        skin_tile.querySelector('.prefix-tile > p')
-      )
-      skin_tile.querySelector(
-        '.skin-name + p'
-      ).innerHTML = ` . ${prefixSt.fontSize}/${prefixSt.lineHeight}`
+      skin_tile.innerHTML = `<div class="prefix-tile"><p style="font: ${jsonSkin.Css}">Ag</p></div><div class="row"><p class="skin-name">${jsonSkin.Name}</p><p style="font-size: 11px; color: #bfbfbf"></p></div>`
+      setTimeout(function () {
+        let prefixSt = window.getComputedStyle(
+          skin_tile.querySelector('.prefix-tile > p')
+        )
+        skin_tile.querySelector(
+          '.skin-name + p'
+        ).innerHTML = `&nbsp . ${prefixSt.fontSize}/${prefixSt.lineHeight}`
+      }, 100)
       break
     case EnumCate.border:
       skin_tile.onclick = function (e) {
@@ -3684,9 +3561,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditBorderBlock()
         }
       }
-      skin_tile.innerHTML = `<div class="prefix-tile" style="background-color: ${
-        jsonSkin.Css.split(' ')[0]
-      }"></div><div class="skin-name">${jsonSkin.Name}</div>`
+      skin_tile.innerHTML = `<div class="prefix-tile" style="border: ${jsonSkin.Css};border-width: 5px !important"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     case EnumCate.effect:
       skin_tile.onclick = function (e) {
@@ -3699,7 +3574,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
           reloadEditEffectBlock()
         }
       }
-      skin_tile.innerHTML = `<div class="prefix-tile" style="background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg);border-color: transparent"></div><div class="skin-name">${jsonSkin.Name}</div>`
+      skin_tile.innerHTML = `<div class="prefix-tile" style="background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/effect-settings.svg);border-color: transparent"></div><div class="skin-name">${jsonSkin.Name}</div>`
       break
     default:
       break
@@ -3952,7 +3827,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       // input line-height
       let input_line_height = _textField(
         '100%',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/line-height.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/line-height.svg',
         undefined,
         '0',
         '25px'
@@ -3978,7 +3853,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       // input letter spacing
       let input_letter_spacing = _textField(
         '100%',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/letter-spacing.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/letter-spacing.svg',
         undefined,
         '0',
         '28px'
@@ -4035,7 +3910,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       body.appendChild(inputBorderColor)
 
       let formEditLine = document.createElement('div')
-      formEditLine.className = 'container-edit-tile'
+      formEditLine.className = 'edit-color-tile'
       formEditLine.style.paddingLeft = '4px'
       body.appendChild(formEditLine)
 
@@ -4060,7 +3935,7 @@ function popupEditSkin (enumCate, jsonSkin) {
 
       let edit_stroke_width = _textField(
         '60px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/stroke-width.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/stroke-width.svg',
         undefined,
         '0',
         '28px'
@@ -4158,7 +4033,7 @@ function popupEditSkin (enumCate, jsonSkin) {
         jsonSkin.BorderSide == BorderSide.custom ? 'flex' : 'none'
       let input_border_left = _textField(
         '88px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-left-black.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-left-black.svg',
         undefined,
         '0',
         '36px'
@@ -4178,7 +4053,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       group_custom_border_side.appendChild(input_border_left)
       let input_border_top = _textField(
         '88px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-top-black.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-top-black.svg',
         undefined,
         '0',
         '36px'
@@ -4197,7 +4072,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       group_custom_border_side.appendChild(input_border_top)
       let input_border_right = _textField(
         '88px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-right-black.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-right-black.svg',
         undefined,
         '0',
         '36px'
@@ -4216,7 +4091,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       group_custom_border_side.appendChild(input_border_right)
       let input_border_bottom = _textField(
         '88px',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/border-bottom-black.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-bottom-black.svg',
         undefined,
         '0',
         '36px'
@@ -4281,7 +4156,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       body.appendChild(div_select_eType)
       // popup edit effect type attribute
       let effect_setting = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/effect-settings.svg',
         null,
         function () {
           let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
@@ -4485,8 +4360,8 @@ function popupEditSkin (enumCate, jsonSkin) {
       div_select_eType.appendChild(btn_select_eType)
 
       let btn_isShow = createButtonAction(
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-outline.svg',
-        'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/eye-close.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/eye-outline.svg',
+        'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/eye-close.svg',
         function () {}
       )
       btn_isShow.className = 'action-button'
@@ -4500,23 +4375,32 @@ function popupEditSkin (enumCate, jsonSkin) {
   return divEditSkin
 }
 
-function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
+function wbaseSkinTile ({
+  cate,
+  onClick,
+  onRemove,
+  prefixValue,
+  title,
+  handleUnlinkSkin
+}) {
   let wbase_skin_tile = document.createElement('div')
-  wbase_skin_tile.className = 'wbase_skin_tile'
+  wbase_skin_tile.className = 'wbase_skin_tile row'
   let btn_table_skin = document.createElement('div')
   btn_table_skin.onclick = function () {
     setTimeout(onClick, 200)
   }
-  wbase_skin_tile.appendChild(btn_table_skin)
-  let btn_unLink = document.createElement('img')
-  btn_unLink.src =
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg'
+  let btn_unLink = document.createElement('div')
+  btn_unLink.className = 'unlink-skin-btn'
   switch (cate) {
     case EnumCate.color:
       btn_table_skin.innerHTML = `<div style="width: 15px;height: 15px;border-radius: 50%;border: 0.5px solid #c4c4c4; background-color: ${prefixValue}"></div><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
-      btn_unLink.onclick = function () {
-        unlinkColorSkin()
-        reloadEditBackgroundBlock()
+      if (handleUnlinkSkin) {
+        btn_unLink.onclick = handleUnlinkSkin
+      } else {
+        btn_unLink.onclick = function () {
+          unlinkColorSkin()
+          reloadEditBackgroundBlock()
+        }
       }
       break
     case EnumCate.typography:
@@ -4534,7 +4418,7 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
       }
       break
     case EnumCate.effect:
-      btn_table_skin.innerHTML = `<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg" style="width: 16px;height: 16px"/><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
+      btn_table_skin.innerHTML = `<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/effect-settings.svg" style="width: 16px;height: 16px"/><p style="margin: 0 8px; flex: 1; text-align: left">${title}</p>`
       btn_unLink.onclick = function () {
         unlinkEffectSkin()
         reloadEditEffectBlock()
@@ -4543,13 +4427,12 @@ function wbaseSkinTile ({ cate, onClick, onRemove, prefixValue, title }) {
     default:
       break
   }
-  wbase_skin_tile.appendChild(btn_unLink)
+  wbase_skin_tile.replaceChildren(btn_table_skin, btn_unLink)
   if (onRemove) {
-    let btn_remove_color = document.createElement('img')
-    btn_remove_color.src =
-      'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/minus.svg'
-    wbase_skin_tile.appendChild(btn_remove_color)
-    btn_remove_color.onclick = onRemove
+    let btnRemoveColor = document.createElement('i')
+    btnRemoveColor.className = 'fa-solid fa-minus fa-xs'
+    wbase_skin_tile.appendChild(btnRemoveColor)
+    btnRemoveColor.onclick = onRemove
   }
   return wbase_skin_tile
 }
@@ -5028,7 +4911,7 @@ function createSelectionSkins () {
   header.appendChild(title)
 
   let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/read.svg',
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/read.svg',
     null,
     StyleDA.getListMergeSkin
   )
@@ -5636,7 +5519,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
     case EnumCate.effect:
       var demoDiv1 = document.createElement('div')
       demoDiv1.className = 'demo-div'
-      demoDiv1.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg'})`
+      demoDiv1.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/effect-settings.svg'})`
       demoDiv1.style.backgroundSize = `contain`
       var skinTitle = document.createElement('p')
       skinTitle.className = 'regular1'
@@ -5662,7 +5545,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
           demoDiv.style.height = '20px'
           demoDiv.style.borderRadius = '50%'
           demoDiv.style.backgroundColor = '#ffffff'
-          demoDiv.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg'})`
+          demoDiv.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/effect-settings.svg'})`
           demoDiv.style.backgroundSize = `contain`
           let cateItem
           if (option.CateID !== EnumCate.effect)
@@ -5679,7 +5562,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
           onSelectLocalSkin(option)
           var demoDiv = document.createElement('div')
           demoDiv.className = 'demo-div'
-          demoDiv.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/effect-settings.svg'})`
+          demoDiv.style.backgroundImage = `url(${'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/effect-settings.svg'})`
           demoDiv.style.backgroundSize = `contain`
           iconSearch.replaceWith(demoDiv)
         }
@@ -5876,7 +5759,7 @@ function createBreakpoint () {
   title.innerHTML = 'Breakpoint'
 
   let btnSelectSkin = createButtonAction(
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/filter.svg',
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/filter.svg',
     null,
     function () {
       let brpPopup = document.createElement('div')
@@ -6146,7 +6029,7 @@ function winiResponsive () {
   editContainer.appendChild(body)
   let prefixIcon = document.createElement('img')
   prefixIcon.src =
-    'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/column.svg'
+    'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/column.svg'
   prefixIcon.style.width = '16px'
   prefixIcon.style.height = '16px'
   let text = document.createElement('p')
@@ -6483,7 +6366,7 @@ function selectionClass () {
   iconAdd.className = 'fa-solid fa-plus fa-sm'
 
   // let btnSelectSkin = createButtonAction(
-  //   'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/buttonStyle.svg',
+  //   'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/buttonStyle.svg',
   //   null,
   //   function () {
   //     // let offset = header.getBoundingClientRect();
@@ -6502,8 +6385,8 @@ function selectionClass () {
       let classTile = document.createElement('div')
       classTile.className = 'row style-class-tile'
       classTile.innerHTML = `<p class="regular1">${clName}</p>
-      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/unlink-skin.svg"/>
-      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/lib/assets/target.svg"/>`
+      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/unlink-skin.svg"/>
+      <img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/target.svg"/>`
       return classTile
     })
   )

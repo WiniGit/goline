@@ -1,26 +1,26 @@
 /* Color */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/ds-skin.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/ds-skin.css';
 
 /* Typo */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/ds-typography.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/ds-typography.css';
 
 /* Layout */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/ds-layout.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/ds-layout.css';
 
 /* Effect */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/ds-effect.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/ds-effect.css';
 
 /* Systems */
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/ds-systems.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/ds-systems.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/ds-Responsive.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/ds-Responsive.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/appbar.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/appbar.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/design-block.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/design-block.css';
 
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/design-f12-container.css';
-@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@785f3a1/css/design-invite-member.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/design-f12-container.css';
+@import 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/css/design-invite-member.css';
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200..900');
 
