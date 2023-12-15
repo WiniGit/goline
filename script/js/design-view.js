@@ -824,7 +824,7 @@ function updateInputTLWH () {
 
 // edit auto layout
 function EditLayoutBlock () {
-  let wbList = selected_list.filter(wb =>
+    let wbList = selected_list.filter(wb =>
     WbClass.parent.some(e => wb.value.classList.contains(e))
   )
   let isEditTable = wbList.every(wb => wb.value.classList.contains('w-table'))
@@ -846,52 +846,9 @@ function EditLayoutBlock () {
     editContainer.appendChild(body)
     body.className = 'row'
     body.style.position = 'relative'
-
-    let auto_layout_details_div = document.createElement('div')
-    auto_layout_details_div.className = 'col'
-    auto_layout_details_div.style.marginBottom = '4px'
-    let _row1 = document.createElement('div')
-    auto_layout_details_div.appendChild(_row1)
-    _row1.style.display = 'flex'
-    _row1.style.position = 'relative'
-    //
-    let isVertical = wbList.every(
-      wb =>
-        wb.value.classList.contains('w-col') ||
-        wb.value.classList.contains('w-table')
+    let isVertical = wbList.every(wb =>
+      ['w-col', 'w-table'].some(e => wb.value.classList.contains(e))
     )
-    let cssList = wbList.filterAndMap(wb => {
-      if (wb.StyleItem) {
-        return wb.value.style
-      } else {
-        return StyleDA.docStyleSheets.find(cssRule =>
-          [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-            wb.value
-          )
-        )?.style
-      }
-    })
-    let layoutItem = {
-      Direction: isVertical ? 'Vertical' : 'Horizontal',
-      Alignment:
-        mainAxisToAlign(cssList[0].getPropertyValue('--main-axis-align')) +
-        crossAxisToAlign(cssList[0].getPropertyValue('--cross-axis-align')),
-      ChildSpace: cssList.filterAndMap(st =>
-        parseFloat(st.getPropertyValue('--child-space').replace('px', ''))
-      ),
-      RunSpace: cssList.filterAndMap(st =>
-        parseFloat(st.getPropertyValue('--run-space').replace('px', ''))
-      ),
-      IsWrap: wbList
-        .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
-        .every(e => e === 'wrap'),
-      IsScroll: wbList
-        .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
-        .every(e => e.includes('scroll'))
-    }
-    layoutItem.Alignment =
-      layoutItem.Alignment === 'CenterCenter' ? 'Center' : layoutItem.Alignment
-    // group btn edit auto layout direction
     let selectDirection = document.createElement('div')
     selectDirection.className = 'group_btn_direction'
     selectDirection.innerHTML = `<i class="fa-solid fa-arrow-down fa-xs" style="background-color: ${
@@ -899,12 +856,11 @@ function EditLayoutBlock () {
     }"></i><i class="fa-solid fa-arrow-right fa-xs" style="background-color: ${
       isVertical ? 'transparent' : '#e5e5e5'
     }"></i>`
-    body.appendChild(selectDirection)
     if (
-      wbList.every(
-        wb =>
-          !wb.value.classList.contains('w-textformfield') &&
-          !wb.value.classList.contains('w-table')
+      wbList.every(wb =>
+        ['w-textformfield', 'w-table'].every(
+          e => !wb.value.classList.contains(e)
+        )
       )
     ) {
       $(header).on('click', '.fa-minus', function () {
@@ -923,20 +879,73 @@ function EditLayoutBlock () {
           reloadEditLayoutBlock()
         }
       })
+    } else {
+      header.querySelector('.fa-minus').remove()
     }
-    // select alignment type
-    let alignment_type = _alignTable(isVertical, layoutItem.Alignment)
-    _row1.appendChild(alignment_type)
-    // extension auto layout
+    let alignContainer = _alignTable({
+      isVertical: isVertical,
+      value:
+        mainAxisToAlign(
+          wbList[0].value.style.getPropertyValue('--main-axis-align') ??
+            StyleDA.docStyleSheets
+              .find(cssRule =>
+                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                  wbList[0].value
+                )
+              )
+              ?.style?.getPropertyValue('--main-axis-align')
+        ) +
+        crossAxisToAlign(
+          wbList[0].value.style.getPropertyValue('--cross-axis-align') ??
+            StyleDA.docStyleSheets
+              .find(cssRule =>
+                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                  wbList[0].value
+                )
+              )
+              ?.style?.getPropertyValue('--cross-axis-align')
+        )
+    })
     let btn_extension = document.createElement('i')
-    _row1.appendChild(btn_extension)
     btn_extension.className = 'fa-solid fa-ellipsis icon_btn_default_style'
-    // btn_extension.onclick = function () {
-    //   setTimeout(function () {}, 200)
+    body.replaceChildren(selectDirection, alignContainer, btn_extension)
+
+    // let layoutItem = {
+    //   Direction: isVertical ? 'Vertical' : 'Horizontal',
+    //   Alignment:
+    //     mainAxisToAlign(cssList[0].getPropertyValue('--main-axis-align')) +
+    //     crossAxisToAlign(cssList[0].getPropertyValue('--cross-axis-align')),
+    //   ChildSpace: ,
+    //   RunSpace: cssList.filterAndMap(st =>
+    //     parseFloat(st.getPropertyValue('--run-space').replace('px', ''))
+    //   ),
+    //   IsWrap: wbList
+    //     .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
+    //     .every(e => e === 'wrap'),
+    //   IsScroll: wbList
+    //     .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
+    //     .every(e => e.includes('scroll'))
     // }
+    // layoutItem.Alignment =
+    //   layoutItem.Alignment === 'CenterCenter' ? 'Center' : layoutItem.Alignment
+    // group btn edit auto layout direction
+
     // input edit child space
-    let childSpaceValues = layoutItem.ChildSpace
     if (!isEditTable) {
+      let childSpaceValues = wbList.filterAndMap(wb =>
+        parseFloat(
+          (
+            wb.value.getPropertyValue('--child-space') ??
+            StyleDA.docStyleSheets
+              .find(cssRule =>
+                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                  wbList[0].value
+                )
+              )
+              ?.style?.getPropertyValue('--child-space')
+          ).replace('px', '')
+        )
+      )
       let inputChildSpace = _textField({
         width: '88px',
         icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
@@ -955,8 +964,8 @@ function EditLayoutBlock () {
         }
       })
       $(inputChildSpace).css({ position: 'absolute', left: '0', bottom: '0' })
-      _row1.appendChild(inputChildSpace)
-      if (wbList.every(wb => wb.CateID !== EnumCate.textformfield)) {
+      body.appendChild(inputChildSpace)
+      if (wbList.every(wb => !wb.value.classList.contains('w-textformfield'))) {
         let isWrapRow = document.createElement('div')
         isWrapRow.className = 'row'
         isWrapRow.style.width = '100%'
@@ -1650,69 +1659,39 @@ function showPopupSelectResizeType (popup_list_resize_type, isW, type) {
 }
 
 // create alignment type table UI
-function _alignTable ({isVertical = true, alignX, alignY}) {
-  let alignment_type = document.createElement('div')
-  alignment_type.className = 'layout-align-table'
-  alignment_type.setAttribute('oy', isVertical)
-  let top_left = _btnAlignType()
-  top_left.id = AlignmentType.top_left
-  //
-  let top_center = _btnAlignType()
-  top_center.id = AlignmentType.top_center
-  //
-  let top_right = _btnAlignType()
-  top_right.id = AlignmentType.top_right
-  //
-  let left_center = _btnAlignType()
-  left_center.id = AlignmentType.left_center
-  //
-  let center = _btnAlignType()
-  center.id = AlignmentType.center
-  //
-  let right_center = _btnAlignType()
-  right_center.id = AlignmentType.right_center
-  //
-  let bottom_left = _btnAlignType()
-  bottom_left.id = AlignmentType.bottom_left
-  //
-  let bottom_center = _btnAlignType()
-  bottom_center.id = AlignmentType.bottom_center
-  //
-  let bottom_right = _btnAlignType()
-  bottom_right.id = AlignmentType.bottom_right
-  ;[
-    top_left,
-    top_center,
-    top_right,
-    left_center,
-    center,
-    right_center,
-    bottom_left,
-    bottom_center,
-    bottom_right
-  ].forEach(alignBtn => {
-    if (value == alignBtn.id) {
-      alignBtn.style.opacity = 1
-    }
-    alignment_type.appendChild(alignBtn)
-  })
-  return alignment_type
-}
-
-function _btnAlignType () {
-  let img = document.createElement('img')
-  img.className = 'layout_btn_align_type'
-  img.onclick = function () {
-    let list_align_type = document.getElementsByClassName(
-      'layout_btn_align_type'
+function _alignTable ({ isVertical = true, value }) {
+  let alignContainer = document.createElement('div')
+  alignContainer.className = 'alignment-container'
+  alignContainer.setAttribute('oy', isVertical)
+  alignContainer.innerHTML = [
+    AlignmentType.top_left,
+    AlignmentType.top_center,
+    AlignmentType.top_right,
+    AlignmentType.left_center,
+    AlignmentType.center,
+    AlignmentType.right_center,
+    AlignmentType.bottom_left,
+    AlignmentType.bottom_center,
+    AlignmentType.bottom_right
+  ]
+    .map(
+      vl =>
+        `<div class='align-option' alignvl="${vl}" style='opacity: ${
+          vl === value ? 1 : 0.05
+        }'></div>`
     )
-    for (alignType of list_align_type) {
-      alignType.style.opacity = 0.05
-    }
-    this.style.opacity = 1
-    handleEditLayout({ alignment: this.id })
-  }
-  return img
+    .join('')
+  $(alignContainer).on('click', '.align-option', function (ev) {
+    alignContainer.querySelectorAll('.align-option').forEach(e => {
+      if (e === ev.target) {
+        ev.target.style.opacity = 1
+      } else {
+        e.target.style.opacity = 0.05
+      }
+    })
+    handleEditLayout({ alignment: ev.target.getAttribute('alignvl') })
+  })
+  return alignContainer
 }
 
 //! background-color || img

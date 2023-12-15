@@ -5239,223 +5239,83 @@ function updateConstraints (wbHTML) {
 }
 
 async function addAutoLayout () {
-  let newLayoutItem = {
-    GID: uuidv4(),
-    Name: '',
-    Alignment: 'Center',
-    Direction: select_box.w > select_box.h ? 'Horizontal' : 'Vertical',
-    ChildSpace: 8.0,
-    IsScroll: false,
-    IsWrap: false,
-    RunSpace: 0.0,
-    CountItem: 1
-  }
-  let newPaddingItem = {
-    GID: uuidv4(),
-    Top: 8,
-    Left: 8,
-    Right: 8,
-    Bottom: 8
-  }
   if (
     selected_list.length === 1 &&
-    EnumCate.extend_frame.some(ct => ct === selected_list[0].CateID) &&
-    !selected_list[0].WAutolayoutItem
+    selected_list[0].value.classList.contains('w-container') &&
+    window.getComputedStyle(selected_list[0].value).display === 'flex'
   ) {
+    var listUpdate = [...selected_list]
     let wb = selected_list[0]
-    wb.AutoLayoutID = newLayoutItem.GID
-    wb.WAutolayoutItem = newLayoutItem
-    if (wb.StyleItem) {
-      if (!wb.StyleItem.PaddingItem) {
-        wb.StyleItem.PaddingID = null
-        wb.StyleItem.PaddingItem = newPaddingItem
-      } else {
-        wb.StyleItem.PaddingItem.Top = {
-          ...newPaddingItem,
-          GID: wb.StyleItem.PaddingID
-        }
-      }
-      if (
-        wb.Level === 1 &&
-        wb.CountChild > 0 &&
-        wb.value.querySelectorAll('.col-').length === 0
-      ) {
-        wb.StyleItem.FrameItem.Height = null
-        wb.StyleItem.FrameItem.Width = null
-        wb.value.style.width = null
-        wb.value.style.height = null
-        wb.value.setAttribute('width-type', 'fit')
-        wb.value.setAttribute('height-type', 'fit')
-      }
-      $(wb.value).addClass(
-        newLayoutItem.Direction === 'Horizontal' ? 'w-row' : 'w-col'
-      )
-      $(wb.value).removeClass('w-stack')
-      wb.value.style.setProperty(
-        '--child-space',
-        `${newLayoutItem.ChildSpace}px`
-      )
-      wb.value.style.setProperty('--run-space', `${newLayoutItem.RunSpace}px`)
-      wb.value.style.setProperty(
-        '--main-axis-align',
-        wMainAxis(
-          newLayoutItem.Alignment,
-          newLayoutItem.Direction === 'Horizontal'
-        )
-      )
-      wb.value.style.setProperty(
-        '--cross-axis-align',
-        wCrossAxis(
-          newLayoutItem.Alignment,
-          newLayoutItem.Direction === 'Horizontal'
-        )
-      )
-      wb.value.style.setProperty(
-        '--padding',
-        `${newPaddingItem.Top}px ${newPaddingItem.Right}px ${newPaddingItem.Bottom}px ${newPaddingItem.Left}px`
-      )
-      wb.value
-        .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
-        .forEach(cWbHTML => {
-          cWbHTML.style.setProperty('--gutter', `${newLayoutItem.ChildSpace}px`)
-        })
-      WBaseDA.edit(selected_list, EnumObj.padddingWbaseFrame)
-      handleWbSelectedList(selected_list)
-      wb.StyleItem.PaddingID = wb.StyleItem.PaddingItem.GID
-    } else {
-      let pWbComponent = wb.value.closest(`.wbaseItem-value[iswini="true"]`)
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      let cssRule = StyleDA.docStyleSheets.find(rule => {
-        let selector = [...divSection.querySelectorAll(rule.selectorText)]
-        let check = selector.includes(wb.value)
-        if (check) {
-          if (
-            wb.Level === 1 &&
-            wb.CountChild > 0 &&
-            wb.value.querySelectorAll('.col-').length === 0
-          ) {
-            rule.style.width = null
-            rule.style.height = null
-            var setWH = true
-          }
-          selector.forEach(e => {
-            if (setWH) {
-              e.setAttribute('width-type', 'fit')
-              e.setAttribute('height-type', 'fit')
-            }
-            $(e).addClass(
-              newLayoutItem.Direction === 'Horizontal' ? 'w-row' : 'w-col'
-            )
-            $(e).removeClass('w-stack')
-          })
-        }
-        return check
-      })
-      cssRule.style.setProperty(
-        '--child-space',
-        `${newLayoutItem.ChildSpace}px`
-      )
-      cssRule.style.setProperty('--run-space', `${newLayoutItem.RunSpace}px`)
-      cssRule.style.setProperty(
-        '--main-axis-align',
-        wMainAxis(
-          newLayoutItem.Alignment,
-          newLayoutItem.Direction === 'Horizontal'
-        )
-      )
-      cssRule.style.setProperty(
-        '--cross-axis-align',
-        wCrossAxis(
-          newLayoutItem.Alignment,
-          newLayoutItem.Direction === 'Horizontal'
-        )
-      )
-      cssRule.style.setProperty(
-        '--padding',
-        `${newPaddingItem.Top}px ${newPaddingItem.Right}px ${newPaddingItem.Bottom}px ${newPaddingItem.Left}px`
-      )
-      wb.value
-        .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
-        .forEach(cWbHTML => {
-          let childRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(cWbHTML)
-          )
-          childRule.style.setProperty(
-            '--gutter',
-            `${newLayoutItem.ChildSpace}px`
-          )
-        })
-      cssItem.Css = cssItem.Css.replace(
-        new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-        cssRule.cssText
-      )
-      StyleDA.editStyleSheet(cssItem)
+    if (
+      wb.Level === 1 &&
+      wb.ListChildID.length > 0 &&
+      wb.value.querySelectorAll('.col-').length === 0
+    ) {
+      wb.value.style.width = null
+      wb.value.style.height = null
+      wb.value.setAttribute('width-type', 'fit')
+      wb.value.setAttribute('height-type', 'fit')
     }
+    $(wb.value).addClass(select_box.w > select_box.h ? 'w-row' : 'w-col')
+    $(wb.value).removeClass('w-stack')
+    wb.value.style.setProperty('--child-space', `8px`)
+    wb.value.style.setProperty('--run-space', `0px`)
+    wb.value.style.setProperty('--main-axis-align', 'center')
+    wb.value.style.setProperty('--cross-axis-align', 'center')
+    wb.value.style.setProperty('--padding', `8px`)
+    wbase_list.forEach(cWb => {
+      if (cWb.ParentID === selected_list[0].GID) {
+        cWb.value.style.setProperty('--gutter', `8px`)
+        cWb.Css = cWb.value.style.cssText
+        listUpdate.push(cWb)
+      }
+    })
+    wb.ListClassName = wb.value.className
+    wb.Css = wb.value.style.cssText
+    WBaseDA.edit(listUpdate, EnumObj.wBase)
+    handleWbSelectedList(selected_list)
   } else {
-    let list_update = [...selected_list]
-    let newWb = JSON.parse(JSON.stringify(WbClass.frame))
-    newWb.WAutolayoutItem = newLayoutItem
-    newWb.StyleItem.PaddingItem = newPaddingItem
-    newWb = createNewWbase({ wb: newWb })[0]
-    newWb.StyleItem.PositionItem.Left = `${Math.min(
+    listUpdate = [...selected_list]
+    let newWb = JSON.parse(JSON.stringify(WbClass.container))
+    newWb.GID = uuidv4()
+    newWb.Level = selected_list[0].Level
+    newWb.ListClassName = `wbaseItem-value w-container ${
+      select_box.w > select_box.h ? 'w-row' : 'w-col'
+    }`
+    newWb.ParentID = selected_list[0].ParentID
+    newWb.ListChildID = selected_list.map(e => e.GID)
+    let newX = `${Math.min(
       ...selected_list.map(e => getWBaseOffset(e).x)
     ).toFixed(2)}px`
-    newWb.StyleItem.PositionItem.Top = `${Math.min(
+    let newY = `${Math.min(
       ...selected_list.map(e => getWBaseOffset(e).y)
     ).toFixed(2)}px`
-    newWb.CountChild = selected_list.length
-    newWb.ListChildID = selected_list.map(e => e.GID)
     if (
-      selected_list.some(
-        wb => wb.Level === 1 || wb.value.querySelectorAll('.col-').length === 0
-      )
+      newWb.Level > 1 ||
+      selected_list.some(wb => wb.value.querySelectorAll('.col-').length > 0)
     ) {
-      newWb.StyleItem.FrameItem.Width = null
-      newWb.StyleItem.FrameItem.Height = null
-    } else {
-      newWb.StyleItem.FrameItem.Width = select_box.w / scale
-      newWb.StyleItem.FrameItem.Height = select_box.h / scale
+      newWb.Css += `width: ${Math.ceil(
+        select_box.w / scale
+      )}px; height: ${Math.ceil(select_box.h / scale)}px;`
     }
-    newWb.ParentID = selected_list[0].ParentID
-    newWb.ListID = selected_list[0].ListID
-    newWb.Sort = selected_list[0].Sort
-    newWb.Level = selected_list[0].Level
-    for (let i = 0; i < selected_list.length; i++) {
-      let eHTML = selected_list[i].value
-      selected_list[i].ParentID = newWb.GID
-      selected_list[i].ListID += `,${newWb.GID}`
-      selected_list[i].Sort = i
-      selected_list[i].Level = selected_list[i].ListID.split(',').length
-      eHTML.setAttribute('level', selected_list[i].Level)
-      eHTML.setAttribute('listid', selected_list[i].ListID)
-      eHTML.style.zIndex = i
-      eHTML.style.order = i
-      if (selected_list[i].CountChild > 0) {
-        for (let childSelect of wbase_list.filter(e =>
-          e.ListID.includes(selected_list[i].GID)
-        )) {
-          let thisListID = childSelect.ListID.split(',')
-          thisListID = thisListID.slice(
-            thisListID.indexOf(selected_list[i].GID)
-          )
-          thisListID.unshift(...selected_list[i].ListID.split(','))
-          childSelect.ListID = thisListID.join(',')
-          childSelect.Level = thisListID.length
-          childSelect.value.setAttribute('level', childSelect.Level)
-          childSelect.value.setAttribute('listid', childSelect.ListID)
-        }
-      }
-    }
-    await initComponents(newWb, selected_list)
-    wbase_list.push(newWb)
-    list_update.push(newWb)
-    if (newWb.ParentID != wbase_parentID) {
-      let parent_wbase = wbase_list.find(e => e.GID === newWb.ParentID)
-      list_update.push(parent_wbase)
-      parent_wbase.CountChild += 1 - selected_list.length
-      let parentHTML = document.getElementById(newWb.ParentID)
-      if (parentHTML.getAttribute('cateid') == EnumCate.table) {
-        let cellList = parent_wbase.TableRows.reduce((a, b) => a.concat(b))
+    initComponents(newWb, [])
+    newWb.value.style.setProperty('--child-space', `8px`)
+    newWb.value.style.setProperty('--run-space', `0px`)
+    newWb.value.style.setProperty('--main-axis-align', 'center')
+    newWb.value.style.setProperty('--cross-axis-align', 'center')
+    newWb.value.style.setProperty('--padding', `8px`)
+    if (newWb.Level > 1) {
+      let pWb = wbase_list.find(e => e.GID === newWb.ParentID)
+      listUpdate.push(pWb)
+      var childrenHTML = [
+        ...pWb.value.querySelectorAll(
+          `.wbaseItem-value[level="${
+            parseInt(pWb.value.getAttribute('level') ?? '0') + 1
+          }"]`
+        )
+      ]
+      if (pWb.value.classList.contains('w-table')) {
+        let cellList = pWb.TableRows.reduce((a, b) => a.concat(b))
         let availableCell = cellList.find(cd =>
           cd.contentid.includes(selected_list[0].GID)
         )
@@ -5471,28 +5331,66 @@ async function addAutoLayout () {
             .join(',')
           if (cd.id === availableCell.id) cd.contentid = newWb.GID
         })
-      } else if (!window.getComputedStyle(parentHTML).display.match('flex')) {
-        initPositionStyle(newWb)
-        parentHTML.appendChild(newWb.value)
-      } else {
-        parentHTML.appendChild(newWb.value)
-      }
-      let childrenHTML = [
-        ...parentHTML.querySelectorAll(
-          `.wbaseItem-value[level="${
-            parseInt(parentHTML.getAttribute('level') ?? '0') + 1
-          }"]`
+      } else if (!window.getComputedStyle(pWb.value).display.match('flex')) {
+        childrenHTML[childrenHTML.indexOf(selected_list[0].value)] = newWb.value
+        childrenHTML = childrenHTML.filter(e =>
+          selected_list.every(wb => e !== wb.value)
         )
+        newWb.value.style.left = newX
+        newWb.value.style.top = newY
+        newWb.value.setAttribute('constx', Constraints.left)
+        newWb.value.setAttribute('consty', Constraints.top)
+        pWb.value.replaceChildren(...childrenHTML)
+      } else {
+        childrenHTML[childrenHTML.indexOf(selected_list[0].value)] = newWb.value
+        childrenHTML = childrenHTML.filter(e =>
+          selected_list.every(wb => e !== wb.value)
+        )
+        pWb.value.replaceChildren(...childrenHTML)
+      }
+      pWb.ListChildID = childrenHTML.map(e => e.id)
+    } else {
+      childrenHTML = [
+        ...divSection.querySelectorAll(`.wbaseItem-value[level="1"]`)
       ]
-      childrenHTML.sort(
-        (a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex)
+      childrenHTML[childrenHTML.indexOf(selected_list[0].value)] = newWb.value
+      childrenHTML = childrenHTML.filter(e =>
+        selected_list.every(wb => e !== wb.value)
       )
-      parent_wbase.ListChildID = childrenHTML.map(e => e.id)
+      newWb.value.style.left = newX
+      newWb.value.style.top = newY
+      newWb.value.setAttribute('constx', Constraints.left)
+      newWb.value.setAttribute('consty', Constraints.top)
+      divSection.replaceChildren(...childrenHTML)
     }
+    for (let wb of selected_list) {
+      wb.ParentID = newWb.GID
+      wb.Level += 1
+      wb.value.setAttribute('parentid', newWb.GID)
+      wb.value.removeAttribute('constx')
+      wb.value.removeAttribute('consty')
+      wb.value.style.setProperty('--gutter', `8px`)
+      wb.value.style.left = null
+      wb.value.style.top = null
+      wb.value.style.right = null
+      wb.value.style.bottom = null
+      wb.value.style.transform = null
+      wb.value.style.zIndex = null
+      wb.Css = wb.value.style.cssText
+    }
+    newWb.Css = newWb.value.style.cssText
+    wbase_list.push(newWb)
+    listUpdate.push(newWb)
     arrange()
+    wbase_list.forEach(wb => {
+      if (newWb.value.contains(wb.value)) {
+        wb.Level += 1
+        wb.value.setAttribute('level', wb.Level)
+      }
+    })
     replaceAllLyerItemHTML()
     handleWbSelectedList([newWb])
-    WBaseDA.add(list_update, null, EnumEvent.parent, EnumObj.wBase)
+    WBaseDA.add(listUpdate, null, EnumEvent.parent, EnumObj.wBase)
   }
 }
 

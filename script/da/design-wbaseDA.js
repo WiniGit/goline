@@ -426,7 +426,7 @@ var listDevice = [
 class WbClass {
   static scale = ['w-checkbox', 'w-switch', 'w-radio']
   static parent = [
-    'w-conatiner',
+    'w-container',
     'w-form',
     'w-textformfield',
     'w-button',
