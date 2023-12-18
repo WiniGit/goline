@@ -1202,7 +1202,7 @@ function moveListener (event) {
                 Math.min(minx, event.pageX),
                 Math.min(miny, event.pageY)
               )
-              let parentHTML = $(event.target).closest(
+              let parentHTML = event.target.closest(
                 `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table):not(*[isinstance="true"])`
               )
               createWbaseHTML({

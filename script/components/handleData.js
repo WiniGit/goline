@@ -556,9 +556,9 @@ function wMainAxis (key, isHorizontal) {
     }
   } else if (isHorizontal) {
     if (key.includes('Left')) {
-      return 'flex-start'
+      return 'start'
     } else if (key.includes('Right')) {
-      return 'flex-end'
+      return 'end'
     } else if (key.includes('SpaceBetween')) {
       return 'space-between'
     } else {
@@ -566,9 +566,9 @@ function wMainAxis (key, isHorizontal) {
     }
   } else {
     if (key.includes('Top')) {
-      return 'flex-start'
+      return 'start'
     } else if (key.includes('Bottom')) {
-      return 'flex-end'
+      return 'end'
     } else if (key.includes('SpaceBetween')) {
       return 'space-between'
     } else {
@@ -588,17 +588,17 @@ function wCrossAxis (key, isHorizontal) {
     }
   } else if (isHorizontal) {
     if (key.includes('Top')) {
-      return 'flex-start'
+      return 'start'
     } else if (key.includes('Bottom')) {
-      return 'flex-end'
+      return 'end'
     } else {
       return 'center'
     }
   } else {
     if (key.includes('Left')) {
-      return 'flex-start'
+      return 'start'
     } else if (key.includes('Right')) {
-      return 'flex-end'
+      return 'end'
     } else {
       return 'center'
     }

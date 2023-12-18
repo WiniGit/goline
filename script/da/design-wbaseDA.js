@@ -528,7 +528,7 @@ class WbClass {
     IsWini: false,
     ListChildID: [],
     ListClassName: 'wbaseItem-value w-button w-row',
-    Css: 'background-color: #366AE2FF;border-radius: 8px;--padding: 12px 20px;--main-axis-align: center;--cross-axis-align: center;--child-space: 4px;--run-space: 0px;',
+    Css: 'background-color: #366AE2FF;border-radius: 8px;--padding: 12px 20px;justify-content: center;align-items: center;--child-space: 4px;--run-space: 0px;',
     BasePropertyItems: [],
     AttributesItem: {
       Name: 'Button'
@@ -587,7 +587,7 @@ class WbClass {
     ListClassName: 'wbaseItem-value w-textformfield w-row',
     ListChildID: [],
     IsWini: false,
-    Css: 'width: 382px;background-color: #ffffffff;border-radius: 8px;--padding: 10px 16px;--main-axis-align: flex-start;--cross-axis-align: center;--child-space: 4px;--run-space: 0px;border-width: 1px;border-color: #e5eaf0ff;border-style: solid;font-size: 16px;line-height: 24px;font-weight: 400;color: #394960ff;font-family: Roboto;',
+    Css: 'width: 382px;background-color: #ffffffff;border-radius: 8px;--padding: 10px 16px;justify-content: flex-start;align-items: center;--child-space: 4px;--run-space: 0px;border-width: 1px;border-color: #e5eaf0ff;border-style: solid;font-size: 16px;line-height: 24px;font-weight: 400;color: #394960ff;font-family: Roboto;',
     AttributesItem: {
       Name: 'Textformfield',
       Content: ''

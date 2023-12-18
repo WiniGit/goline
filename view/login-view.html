@@ -106,7 +106,7 @@
                                     },
                                     success: async function (data) {
                                         if (data.Code === 200) {
-                                            localStorage.setItem("customer", data.Data);
+                                            localStorage.setItem("customer", JSON.stringify(data.Data));
                                             window.location.href = '/View/home-screen.html?tab=home';
                                         } else {
                                             toastr["error"](data.Message);

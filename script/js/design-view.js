@@ -824,7 +824,7 @@ function updateInputTLWH () {
 
 // edit auto layout
 function EditLayoutBlock () {
-    let wbList = selected_list.filter(wb =>
+  let wbList = selected_list.filter(wb =>
     WbClass.parent.some(e => wb.value.classList.contains(e))
   )
   let isEditTable = wbList.every(wb => wb.value.classList.contains('w-table'))
@@ -845,7 +845,6 @@ function EditLayoutBlock () {
     let body = document.createElement('div')
     editContainer.appendChild(body)
     body.className = 'row'
-    body.style.position = 'relative'
     let isVertical = wbList.every(wb =>
       ['w-col', 'w-table'].some(e => wb.value.classList.contains(e))
     )
@@ -860,7 +859,7 @@ function EditLayoutBlock () {
       wbList.every(wb =>
         ['w-textformfield', 'w-table'].every(
           e => !wb.value.classList.contains(e)
-        )
+        ) && !wb.IsInstance && !wb.value.closest('.wbaseItem-value[iswini="true"]')
       )
     ) {
       $(header).on('click', '.fa-minus', function () {
@@ -935,7 +934,7 @@ function EditLayoutBlock () {
       let childSpaceValues = wbList.filterAndMap(wb =>
         parseFloat(
           (
-            wb.value.getPropertyValue('--child-space') ??
+            wb.value.style.getPropertyValue('--child-space') ??
             StyleDA.docStyleSheets
               .find(cssRule =>
                 [...divSection.querySelectorAll(cssRule.selectorText)].includes(
@@ -972,12 +971,29 @@ function EditLayoutBlock () {
         let btnIsWarp = document.createElement('label')
         btnIsWarp.className = 'row regular1 check-box-label'
         btnIsWarp.innerHTML = `<input type="checkbox"${
-          layoutItem.IsWrap ? ' checked' : ''
+          wbList
+            .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
+            .every(e => e === 'wrap')
+            ? ' checked'
+            : ''
         } />Wrap content`
         btnIsWarp.firstChild.onchange = function (ev) {
           handleEditLayout({ isWrap: ev.target.checked })
         }
-        let runSpaceValues = layoutItem.RunSpace
+        let runSpaceValues = wbList.filterAndMap(wb =>
+          parseFloat(
+            (
+              wb.value.style.getPropertyValue('--run-space') ??
+              StyleDA.docStyleSheets
+                .find(cssRule =>
+                  [
+                    ...divSection.querySelectorAll(cssRule.selectorText)
+                  ].includes(wbList[0].value)
+                )
+                ?.style?.getPropertyValue('--run-space')
+            ).replace('px', '')
+          )
+        )
         let inputRunSpace = _textField({
           width: '88px',
           icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
@@ -999,7 +1015,11 @@ function EditLayoutBlock () {
         let btnIsScroll = document.createElement('label')
         btnIsScroll.className = 'row regular1 check-box-label'
         btnIsScroll.innerHTML = `<input type="checkbox"${
-          layoutItem.IsScroll ? ' checked' : ''
+          wbList
+            .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
+            .every(e => e.includes('scroll'))
+            ? ' checked'
+            : ''
         }/>Overflow scroll`
         if (
           wbList.some(
@@ -1660,6 +1680,7 @@ function showPopupSelectResizeType (popup_list_resize_type, isW, type) {
 
 // create alignment type table UI
 function _alignTable ({ isVertical = true, value }) {
+  value = value === 'CenterCenter' ? 'Center' : value
   let alignContainer = document.createElement('div')
   alignContainer.className = 'alignment-container'
   alignContainer.setAttribute('oy', isVertical)
@@ -1686,7 +1707,7 @@ function _alignTable ({ isVertical = true, value }) {
       if (e === ev.target) {
         ev.target.style.opacity = 1
       } else {
-        e.target.style.opacity = 0.05
+        e.style.opacity = 0.05
       }
     })
     handleEditLayout({ alignment: ev.target.getAttribute('alignvl') })

@@ -4993,75 +4993,16 @@ function updateConstraints (wbHTML) {
   let wbComputeSt = window.getComputedStyle(wbHTML)
   switch (wbHTML.getAttribute('constx')) {
     case Constraints.left:
-      // var leftValue = `${
-      //   Math.round(
-      //     (wbHTML.getBoundingClientRect().x -
-      //       wbHTML.parentElement.getBoundingClientRect().x) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderLeftWidth.replace('px', '')
-      //   )
-      // }px`
       wbHTML.style.left = wbComputeSt.left
       break
     case Constraints.right:
-      // var rightValue = `${
-      //   Math.round(
-      //     (wbHTML.parentElement.getBoundingClientRect().right -
-      //       wbHTML.getBoundingClientRect().right) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderRightWidth.replace('px', '')
-      //   )
-      // }px`
       wbHTML.style.right = wbComputeSt.right
       break
     case Constraints.left_right:
-      // var leftValue = `${
-      //   Math.round(
-      //     (wbHTML.getBoundingClientRect().x -
-      //       wbHTML.parentElement.getBoundingClientRect().x) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderLeftWidth.replace('px', '')
-      //   )
-      // }px`
-      // var rightValue = `${
-      //   Math.round(
-      //     (wbHTML.parentElement.getBoundingClientRect().right -
-      //       wbHTML.getBoundingClientRect().right) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderRightWidth.replace('px', '')
-      //   )
-      // }px`
       wbHTML.style.left = wbComputeSt.left
       wbHTML.style.right = wbComputeSt.right
       break
     case Constraints.center:
-      // var leftValue =
-      //   Math.round(
-      //     (wbHTML.getBoundingClientRect().x -
-      //       wbHTML.parentElement.getBoundingClientRect().x) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderLeftWidth.replace('px', '')
-      //   )
       var leftValue = parseFloat(wbComputeSt.left.replace('px', ''))
       var centerValue = `${
         leftValue + (wbHTML.offsetWidth - wbHTML.parentElement.offsetWidth) / 2
@@ -5071,39 +5012,10 @@ function updateConstraints (wbHTML) {
       wbHTML.style.transform = 'translateX(-50%)'
       break
     case Constraints.scale:
-      // var leftValue = `${(
-      //   ((Math.round(
-      //     (wbHTML.getBoundingClientRect().x -
-      //       wbHTML.parentElement.getBoundingClientRect().x) /
-      //       scale
-      //   ) -
-      //     parseFloat(
-      //       window
-      //         .getComputedStyle(wbHTML.parentElement)
-      //         .borderLeftWidth?.replace('px', '')
-      //     ))
-      //      *
-      //     100) /
-      //   wbHTML.parentElement.offsetWidth
-      // ).toFixed(2)}%`
       var leftValue = `${(
         (parseFloat(wbComputeSt.left.replace('px', '')) * 100) /
         wbHTML.parentElement.offsetWidth
       ).toFixed(2)}%`
-      // var rightValue = `${(
-      //   ((Math.round(
-      //     (wbHTML.parentElement.getBoundingClientRect().right -
-      //       wbHTML.getBoundingClientRect().right) /
-      //       scale
-      //   ) -
-      //     parseFloat(
-      //       window
-      //         .getComputedStyle(wbHTML.parentElement)
-      //         .borderRightWidth?.replace('px', '')
-      //     )) *
-      //     100) /
-      //   wbHTML.parentElement.offsetWidth
-      // ).toFixed(2)}%`
       var rightValue = `${(
         (parseFloat(wbComputeSt.right.replace('px', '')) * 100) /
         wbHTML.parentElement.offsetWidth
@@ -5116,75 +5028,16 @@ function updateConstraints (wbHTML) {
   }
   switch (wbHTML.getAttribute('consty')) {
     case Constraints.top:
-      // var topValue = `${
-      //   Math.round(
-      //     (wbHTML.getBoundingClientRect().y -
-      //       wbHTML.parentElement.getBoundingClientRect().y) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderTopWidth.replace('px', '')
-      //   )
-      // }px`
       wbHTML.style.top = wbComputeSt.top
       break
     case Constraints.bottom:
-      // var bottomValue = `${
-      //   Math.round(
-      //     (wbHTML.parentElement.getBoundingClientRect().bottom -
-      //       wbHTML.getBoundingClientRect().bottom) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderBottomWidth.replace('px', '')
-      //   )
-      // }px`
       wbHTML.style.bottom = wbComputeSt.bottom
       break
     case Constraints.top_bottom:
-      // var topValue = `${
-      //   Math.round(
-      //     (wbHTML.getBoundingClientRect().y -
-      //       wbHTML.parentElement.getBoundingClientRect().y) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderTopWidth?.replace('px', '')
-      //   )
-      // }px`
-      // var bottomValue = `${
-      //   Math.round(
-      //     (wbHTML.parentElement.getBoundingClientRect().bottom -
-      //       wbHTML.getBoundingClientRect().bottom) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderBottomWidth.replace('px', '')
-      //   )
-      // }px`
       wbHTML.style.top = wbComputeSt.top
       wbHTML.style.bottom = wbComputeSt.bottom
       break
     case Constraints.center:
-      // var topValue =
-      //   Math.round(
-      //     (wbHTML.getBoundingClientRect().y -
-      //       wbHTML.parentElement.getBoundingClientRect().y) /
-      //       scale
-      //   ) -
-      //   parseFloat(
-      //     window
-      //       .getComputedStyle(wbHTML.parentElement)
-      //       .borderTopWidth.replace('px', '')
-      //   )
       var topValue = parseFloat(wbComputeSt.top.replace('px', ''))
       var centerValue = `${
         topValue + (wbHTML.offsetHeight - wbHTML.parentElement.offsetHeight) / 2
@@ -5194,38 +5047,10 @@ function updateConstraints (wbHTML) {
       else wbHTML.style.transform = 'translateY(-50%)'
       break
     case Constraints.scale:
-      // var topValue = `${(
-      //   ((Math.round(
-      //     (wbHTML.getBoundingClientRect().y -
-      //       wbHTML.parentElement.getBoundingClientRect().y) /
-      //       scale
-      //   ) -
-      //     parseFloat(
-      //       window
-      //         .getComputedStyle(wbHTML.parentElement)
-      //         .borderTopWidth?.replace('px', '')
-      //     )) *
-      //     100) /
-      //   wbHTML.parentElement.offsetHeight
-      // ).toFixed(2)}%`
       var topValue = `${(
         (parseFloat(wbComputeSt.top.replace('px', '')) * 100) /
         wbHTML.parentElement.offsetHeight
       ).toFixed(2)}%`
-      // var bottomValue = `${(
-      //   ((Math.round(
-      //     (wbHTML.parentElement.getBoundingClientRect().bottom -
-      //       wbHTML.getBoundingClientRect().bottom) /
-      //       scale
-      //   ) -
-      //     parseFloat(
-      //       window
-      //         .getComputedStyle(wbHTML.parentElement)
-      //         .borderBottomWidth?.replace('px', '')
-      //     )) *
-      //     100) /
-      //   wbHTML.parentElement.offsetHeight
-      // ).toFixed(2)}%`
       var bottomValue = `${(
         (parseFloat(wbComputeSt.bottom.replace('px', '')) * 100) /
         wbHTML.parentElement.offsetHeight
@@ -5238,11 +5063,11 @@ function updateConstraints (wbHTML) {
   }
 }
 
-async function addAutoLayout () {
+function addAutoLayout () {
   if (
     selected_list.length === 1 &&
     selected_list[0].value.classList.contains('w-container') &&
-    window.getComputedStyle(selected_list[0].value).display === 'flex'
+    window.getComputedStyle(selected_list[0].value).display !== 'flex'
   ) {
     var listUpdate = [...selected_list]
     let wb = selected_list[0]
@@ -5260,8 +5085,8 @@ async function addAutoLayout () {
     $(wb.value).removeClass('w-stack')
     wb.value.style.setProperty('--child-space', `8px`)
     wb.value.style.setProperty('--run-space', `0px`)
-    wb.value.style.setProperty('--main-axis-align', 'center')
-    wb.value.style.setProperty('--cross-axis-align', 'center')
+    wb.value.style.justifyContent = 'center'
+    wb.value.style.alignItems = 'center'
     wb.value.style.setProperty('--padding', `8px`)
     wbase_list.forEach(cWb => {
       if (cWb.ParentID === selected_list[0].GID) {
@@ -5301,8 +5126,8 @@ async function addAutoLayout () {
     initComponents(newWb, [])
     newWb.value.style.setProperty('--child-space', `8px`)
     newWb.value.style.setProperty('--run-space', `0px`)
-    newWb.value.style.setProperty('--main-axis-align', 'center')
-    newWb.value.style.setProperty('--cross-axis-align', 'center')
+    newWb.value.style.justifyContent = 'center'
+    newWb.value.style.alignItems = 'center'
     newWb.value.style.setProperty('--padding', `8px`)
     if (newWb.Level > 1) {
       let pWb = wbase_list.find(e => e.GID === newWb.ParentID)
@@ -5407,473 +5232,81 @@ function handleEditLayout ({
   )
   if (direction) {
     // TH user muốn cập nhật layout từ dạng chiều ngang sang chiều dọc
-    listUpdate = selected_list.filter(
-      wb =>
-        wb.value.classList.contains(
-          direction === 'Vertical' ? 'w-row' : 'w-col'
-        ) &&
-        wb.CateID !== EnumCate.table &&
-        wb.CateID !== EnumCate.textformfield
+    listUpdate = listUpdate.filter(wb =>
+      wb.value.classList.contains(direction === 'Vertical' ? 'w-row' : 'w-col')
     )
     let pWb = wbase_list.find(e => e.GID === select_box_parentID)
     if (direction === 'Vertical') {
-      if (listUpdate[0].StyleItem) {
-        for (let wb of [...listUpdate]) {
-          // gán lại chiều autoLayout của wbase item này sang chiều dọc
-          wb.WAutolayoutItem.Direction = direction
-          let _layout = wb.WAutolayoutItem
-          // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
-          if (_layout.Alignment.includes('SpaceBetween')) {
-            // align TopSpaceBetween => SpaceBetweenLeft
-            if (_layout.Alignment.includes('Top'))
-              _layout.Alignment = 'SpaceBetweenLeft'
-            // align BottomSpaceBetween => SpaceBetweenRight
-            if (_layout.Alignment.includes('Bottom'))
-              _layout.Alignment = 'SpaceBetweenRight'
-          }
-          //TH width của wbase item này đang hug contents thì height của wbase item này phải chuyển về dạng hug contents
-          if (wb.StyleItem.FrameItem.Width == null) {
-            // TH height của wbase item này dạng fill container thì phải chuyển width của wbase item này về dạng fill container
-            if (wb.StyleItem.FrameItem.Height < 0) {
-              //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
-              if (pWb.StyleItem.FrameItem.Width == null) {
-                pWb.StyleItem.FrameItem.Width = pWb.value.offsetWidth
-                pWb.value.style.width = `${pWb.value.offsetWidth}px`
-                pWb.value.removeAttribute('width-type')
-                listUpdate.push(pWb)
-              }
-              wb.StyleItem.FrameItem.Width = -1
-              wb.value.style.width = '100%'
-              wb.value.setAttribute('width-type', 'fill')
-            }
-            // TH height của wbase item này dạng fixed thì phải chuyển width của wbase item này về dạng fixed
-            else if (wb.StyleItem.FrameItem.Height != null) {
-              wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
-              wb.value.style.width = `${wb.value.offsetWidth}px`
-              cWb.value.removeAttribute('width-type')
-            }
-            // gán height của wbase item này null để hug contents
-            //TH đang có bất kì wbase item con của item này đang fill container height thì phải chuyển height của nó về fixed
-            let listChildFillH = wbase_list.filter(
-              e =>
-                e.ParentID === wb.GID &&
-                e.value.getAttribute('height-type') === 'fill'
-            )
-            if (listChildFillH.length > 0) {
-              if (listChildFillH[0].StyleItem) {
-                for (let cWb of listChildFillH) {
-                  cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
-                  cWb.value.style.height = `${cWb.value.offsetHeight}px`
-                  cWb.value.removeAttribute('height-type')
-                  if (
-                    cWb.IsWini &&
-                    !cWb.value.classList.contains('w-variant')
-                  ) {
-                    let childCss = StyleDA.cssStyleSheets.find(
-                      e => e.GID === cWb.GID
-                    )
-                    StyleDA.docStyleSheets.find(rule => {
-                      let selector = [
-                        ...divSection.querySelectorAll(rule.selectorText)
-                      ]
-                      let check = selector.includes(cWb.value)
-                      if (check) {
-                        rule.style.height = `${cWb.value.offsetHeight}px`
-                        selector.forEach(e => e.removeAttribute('height-type'))
-                        childCss.Css = childCss.Css.replace(
-                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                          rule.cssText
-                        )
-                      }
-                      return check
-                    })
-                    StyleDA.editStyleSheet(childCss)
-                  }
-                }
-                listUpdate.push(...listChildFillH)
-              } else {
-                var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-                for (let cWb of listChildFillH) {
-                  StyleDA.docStyleSheets.find(rule => {
-                    let selector = [
-                      ...divSection.querySelectorAll(rule.selectorText)
-                    ]
-                    let check = selector.includes(cWb.value)
-                    if (check) {
-                      rule.style.height = `${cWb.value.offsetHeight}px`
-                      selector.forEach(e => e.removeAttribute('height-type'))
-                      cssItem.Css = cssItem.Css.replace(
-                        new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                        rule.cssText
-                      )
-                    }
-                    return check
-                  })
-                }
-              }
-            }
-            wb.StyleItem.FrameItem.Height = null
-            wb.value.style.height = null
-            wb.value.setAttribute('height-type', 'fit')
-          }
-          //TH width của wbase item này đang fill container thì height của wbase item này phải chuyển về dạng fill container
-          else if (wb.StyleItem.FrameItem.Width < 0) {
-            //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
-            if (pWb.StyleItem.FrameItem.Height == null) {
-              pWb.StyleItem.FrameItem.Height = pWb.value.offsetHeight
-              pWb.value.style.height = `${pWb.value.offsetHeight}px`
-              pWb.value.removeAttribute('height-type')
+      for (let wb of [...listUpdate]) {
+        if (wb.value.getAttribute('width-type') === 'fit') {
+          // TH height của wbase item này dạng fill container thì phải chuyển width của wbase item này về dạng fill container
+          if (wb.value.getAttribute('height-type') === 'fill') {
+            //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
+            if (pWb.value.getAttribute('width-type') === 'fit') {
+              pWb.value.style.width = `${pWb.value.offsetWidth}px`
+              pWb.value.removeAttribute('width-type')
+              pWb.Css = pWb.value.style.cssText
               listUpdate.push(pWb)
             }
-            // TH height của wbase item này dạng hug contents thì phải chuyển width của wbase item này về dạng hug contents
-            if (wb.StyleItem.FrameItem.Height == null) {
-              //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
-              let listChildFillW = wbase_list.filter(
-                e =>
-                  e.ParentID === wb.GID &&
-                  e.value.getAttribute('width-type') === 'fill'
-              )
-              if (listChildFillW.length > 0) {
-                if (listChildFillW[0].StyleItem) {
-                  for (let cWb of listChildFillW) {
-                    cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
-                    cWb.value.style.width = `${cWb.value.offsetWidth}px`
-                    cWb.value.removeAttribute('width-type')
-                    if (
-                      cWb.IsWini &&
-                      !cWb.value.classList.contains('w-variant')
-                    ) {
-                      let childCss = StyleDA.cssStyleSheets.find(
-                        e => e.GID === cWb.GID
-                      )
-                      StyleDA.docStyleSheets.find(rule => {
-                        let selector = [
-                          ...divSection.querySelectorAll(rule.selectorText)
-                        ]
-                        let check = selector.includes(cWb.value)
-                        if (check) {
-                          rule.style.width = `${cWb.value.offsetWidth}px`
-                          selector.forEach(e => e.removeAttribute('width-type'))
-                          childCss.Css = childCss.Css.replace(
-                            new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                            rule.cssText
-                          )
-                        }
-                        return check
-                      })
-                      StyleDA.editStyleSheet(childCss)
-                    }
-                  }
-                  listUpdate.push(...listChildFillW)
-                } else {
-                  cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-                  for (let cWb of listChildFillW) {
-                    StyleDA.docStyleSheets.find(rule => {
-                      let selector = [
-                        ...divSection.querySelectorAll(rule.selectorText)
-                      ]
-                      let check = selector.includes(cWb.value)
-                      if (check) {
-                        rule.style.width = `${cWb.value.offsetWidth}px`
-                        selector.forEach(e => e.removeAttribute('width-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                          rule.cssText
-                        )
-                      }
-                      return check
-                    })
-                  }
-                }
-              }
-              wb.StyleItem.FrameItem.Width = null
-              wb.value.style.width = null
-              wb.value.setAttribute('width-type', 'fit')
-            } else if (wb.StyleItem.FrameItem.Height >= 0) {
-              wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
-              wb.value.style.width = `${wb.value.offsetWidth}px`
-              wb.value.removeAttribute('width-type')
-            }
-            wb.StyleItem.FrameItem.Height = -1
-            wb.value.style.height = '100%'
-            wb.value.setAttribute('height-type', 'fill')
+            wb.value.style.width = '100%'
+            wb.value.setAttribute('width-type', 'fill')
           }
-          $(wb.value).removeClass('w-row')
-          $(wb.value).addClass('w-col')
-          wb.value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(_layout.Alignment, false)
+          // TH height của wbase item này dạng fixed thì phải chuyển width của wbase item này về dạng fixed
+          else if (!wb.value.getAttribute('height-type')) {
+            wb.value.style.width = `${wb.value.offsetWidth}px`
+            cWb.value.removeAttribute('width-type')
+          }
+          // gán height của wbase item này null để hug contents
+          //TH đang có bất kì wbase item con của item này đang fill container height thì phải chuyển height của nó về fixed
+          let listChildFillH = wbase_list.filter(
+            e =>
+              e.ParentID === wb.GID &&
+              e.value.getAttribute('height-type') === 'fill'
           )
-          wb.value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(_layout.Alignment, false)
-          )
-          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
-            cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            StyleDA.docStyleSheets.find(wbRule => {
-              let selector = [
-                ...divSection.querySelectorAll(wbRule.selectorText)
-              ]
-              let check = selector.includes(wb.value)
-              if (check) {
-                wbRule.style.width = wb.value.style.width
-                wbRule.style.height = wb.value.style.height
-                selector.forEach(e => {
-                  if (e !== wb.value) {
-                    $(e).removeClass('w-row')
-                    $(e).addClass('w-col')
-                    if (wb.value.getAttribute('width-type')) {
-                      e.setAttribute(
-                        'width-type',
-                        wb.value.getAttribute('width-type')
-                      )
-                    } else {
-                      e.removeAttribute('width-type')
-                    }
-                    if (wb.value.getAttribute('height-type')) {
-                      e.setAttribute(
-                        'height-type',
-                        wb.value.getAttribute('height-type')
-                      )
-                    } else {
-                      e.removeAttribute('height-type')
-                    }
-                    e.style.setProperty(
-                      '--main-axis-align',
-                      wMainAxis(_layout.Alignment, false)
-                    )
-                    e.style.setProperty(
-                      '--cross-axis-align',
-                      wCrossAxis(_layout.Alignment, false)
+          if (listChildFillH.length > 0) {
+            for (let cWb of listChildFillH) {
+              if (cWb.IsWini && !cWb.value.classList.contains('w-variant')) {
+                let childCss = StyleDA.cssStyleSheets.find(
+                  e => e.GID === cWb.GID
+                )
+                StyleDA.docStyleSheets.find(rule => {
+                  let selector = [
+                    ...divSection.querySelectorAll(rule.selectorText)
+                  ]
+                  let check = selector.includes(cWb.value)
+                  if (check) {
+                    rule.style.height = `${cWb.value.offsetHeight}px`
+                    selector.forEach(e => e.removeAttribute('height-type'))
+                    childCss.Css = childCss.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
                     )
                   }
+                  return check
                 })
-                cssItem.Css = cssItem.Css.replace(
-                  new RegExp(`${wbRule.selectorText} {[^}]*}`, 'g'),
-                  wbRule.cssText
-                )
+                StyleDA.editStyleSheet(childCss)
+              } else {
+                cWb.value.style.height = `${cWb.value.offsetHeight}px`
+                cWb.value.removeAttribute('height-type')
+                cWb.Css = cWb.value.style.cssText
+                listUpdate.push(cWb)
               }
-              return check
-            })
+            }
           }
+          wb.value.style.height = null
+          wb.value.setAttribute('height-type', 'fit')
         }
-        if (cssItem) StyleDA.editStyleSheet(cssItem)
-      } else {
-        let pWbComponent = listUpdate[0].value.closest(
-          `.wbaseItem-value[iswini="true"]`
-        )
-        let cssItem = StyleDA.cssStyleSheets.find(
-          e => e.GID === pWbComponent.id
-        )
-        for (let wb of [...listUpdate]) {
-          wb.WAutolayoutItem.Direction = direction
-          let _layout = wb.WAutolayoutItem
-          // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
-          if (_layout.Alignment.includes('SpaceBetween')) {
-            // align TopSpaceBetween => SpaceBetweenLeft
-            if (_layout.Alignment.includes('Top'))
-              _layout.Alignment = 'SpaceBetweenLeft'
-            // align BottomSpaceBetween => SpaceBetweenRight
-            if (_layout.Alignment.includes('Bottom'))
-              _layout.Alignment = 'SpaceBetweenRight'
+        //TH width của wbase item này đang fill container thì height của wbase item này phải chuyển về dạng fill container
+        else if (wb.value.getAttribute('width-type') === 'fill') {
+          //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
+          if (pWb.value.getAttribute('height-type') === 'fit') {
+            pWb.value.style.height = `${pWb.value.offsetHeight}px`
+            pWb.value.removeAttribute('height-type')
+            pWb.Css = pWb.value.style.cssText
+            listUpdate.push(pWb)
           }
-          StyleDA.docStyleSheets.find(rule => {
-            let selector = [...divSection.querySelectorAll(rule.selectorText)]
-            let check = selector.includes(wb.value)
-            if (check) {
-              if (wb.value.getAttribute('width-type') === 'fit') {
-                // TH height của wbase item này dạng fill container thì phải chuyển width của wbase item này về dạng fill container
-                if (wb.value.getAttribute('height-type') === 'fill') {
-                  //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
-                  if (pWb.value.getAttribute('width-type') === 'fit') {
-                    if (pWb.StyleItem) {
-                      pWb.StyleItem.FrameItem.Width = pWb.value.offsetWidth
-                      pWb.value.style.width = `${pWb.value.offsetWidth}px`
-                      pWb.value.removeAttribute('width-type')
-                      listUpdate.push(pWb)
-                    }
-                    if (
-                      (pWb.IsWini &&
-                        !pWb.value.classList.contains('w-variant')) ||
-                      !pWb.StyleItem
-                    ) {
-                      StyleDA.docStyleSheets.find(pRule => {
-                        let pSelector = [
-                          ...divSection.querySelectorAll(pRule.selectorText)
-                        ]
-                        let check = pSelector.includes(pWb.value)
-                        if (check) {
-                          pRule.style.width = `${pWb.value.offsetWidth}px`
-                          pSelector.forEach(e =>
-                            e.removeAttribute('width-type')
-                          )
-                          cssItem.Css = cssItem.Css.replace(
-                            new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
-                            pRule.cssText
-                          )
-                        }
-                        return check
-                      })
-                    }
-                  }
-                  rule.style.width = '100%'
-                  selector.forEach(e => e.setAttribute('width-type', 'fill'))
-                }
-                // TH height của wbase item này dạng fixed thì phải chuyển width của wbase item này về dạng fixed
-                else if (!wb.value.getAttribute('height-type')) {
-                  rule.style.width = `${wb.value.offsetWidth}px`
-                  selector.forEach(e => e.removeAttribute('width-type'))
-                }
-                // gán height của wbase item này null để hug contents
-                //TH đang có bất kì wbase item con của item này đang fill container height thì phải chuyển height của nó về fixed
-                let listChildFillH = wb.value.querySelectorAll(
-                  `.wbaseItem-value[level="${
-                    wb.Level + 1
-                  }"][height-type="fill"]`
-                )
-                for (let cWbHTML of listChildFillH) {
-                  StyleDA.docStyleSheets.find(cRule => {
-                    let selectorC = [
-                      ...divSection.querySelectorAll(cRule.selectorText)
-                    ]
-                    let checkC = selectorC.includes(cWbHTML)
-                    if (checkC) {
-                      cRule.style.height = `${cWbHTML.offsetHeight}px`
-                      selectorC.forEach(e => e.removeAttribute('height-type'))
-                      cssItem.Css = cssItem.Css.replace(
-                        new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
-                        cRule.cssText
-                      )
-                    }
-                    return checkC
-                  })
-                }
-                rule.style.height = null
-                selector.forEach(e => e.setAttribute('height-type', 'fit'))
-              }
-              //TH width của wbase item này đang fill container thì height của wbase item này phải chuyển về dạng fill container
-              else if (wb.value.getAttribute('width-type') === 'fill') {
-                //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
-                if (pWb.value.getAttribute('height-type', 'fit')) {
-                  if (pWb.StyleItem) {
-                    pWb.StyleItem.FrameItem.Height = pWb.value.offsetHeight
-                    pWb.value.style.height = `${pWb.value.offsetHeight}px`
-                    pWb.value.removeAttribute('height-type')
-                    listUpdate.push(pWb)
-                  }
-                  if (
-                    (pWb.IsWini &&
-                      !pWb.value.classList.contains('w-variant')) ||
-                    !pWb.StyleItem
-                  ) {
-                    StyleDA.docStyleSheets.find(pRule => {
-                      let selectorP = [
-                        ...divSection.querySelectorAll(pRule.selectorText)
-                      ]
-                      let checkP = selectorP.includes(pWb.value)
-                      if (checkP) {
-                        pRule.style.height = `${pWb.value.offsetHeight}px`
-                        selectorP.forEach(e => e.removeAttribute('height-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
-                          pRule.cssText
-                        )
-                      }
-                      return checkP
-                    })
-                  }
-                }
-                // TH height của wbase item này dạng hug contents thì phải chuyển width của wbase item này về dạng hug contents
-                if (wb.value.getAttribute('height-type', 'fit')) {
-                  //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
-                  let listChildFillW = wb.value.querySelectorAll(
-                    `.wbaseItem-value[level="${
-                      wb.Level + 1
-                    }"][width-type="fill"]`
-                  )
-                  for (let cWbHTML of listChildFillW) {
-                    StyleDA.docStyleSheets.find(cRule => {
-                      let selectorC = [
-                        ...divSection.querySelectorAll(cRule.selectorText)
-                      ]
-                      let checkC = selectorC.includes(cWbHTML)
-                      if (checkC) {
-                        cRule.style.width = `${cWbHTML.offsetWidth}px`
-                        selectorC.forEach(e => e.removeAttribute('width-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
-                          cRule.cssText
-                        )
-                      }
-                      return checkC
-                    })
-                  }
-                  rule.style.width = null
-                  selector.forEach(e => e.setAttribute('width-type', 'fit'))
-                } else if (!wb.value.getAttribute('height-type')) {
-                  rule.style.width = `${wb.value.offsetWidth}px`
-                  selector.forEach(e => e.removeAttribute('width-type'))
-                }
-                rule.style.height = '100%'
-                selector.forEach(e => e.setAttribute('height-type', 'fill'))
-              }
-              selector.forEach(e => {
-                $(e).removeClass('w-row')
-                $(e).addClass('w-col')
-              })
-              rule.style.setProperty(
-                '--main-axis-align',
-                wMainAxis(_layout.Alignment, false)
-              )
-              rule.style.setProperty(
-                '--cross-axis-align',
-                wCrossAxis(_layout.Alignment, false)
-              )
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                rule.cssText
-              )
-            }
-            return check
-          })
-        }
-        StyleDA.editStyleSheet(cssItem)
-      }
-    } else {
-      if (listUpdate[0].StyleItem) {
-        for (let wb of [...listUpdate]) {
-          wb.WAutolayoutItem.Direction = direction
-          let _layout = wb.WAutolayoutItem
-          // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
-          if (_layout.Alignment.includes('SpaceBetween')) {
-            // align SpaceBetweenLeft => TopSpaceBetween
-            if (_layout.Alignment.includes('Left'))
-              _layout.Alignment = 'TopSpaceBetween'
-            // align SpaceBetweenRight => BottomSpaceBetween
-            if (_layout.Alignment.includes('Right'))
-              _layout.Alignment = 'BottomSpaceBetween'
-          }
-          //TH height của wbase item này đang hug contents thì width của wbase item này phải chuyển về dạng hug contents
-          if (wb.StyleItem.FrameItem.Height == null) {
-            // TH width của wbase item này dạng fill container thì phải chuyển height của wbase item này về dạng fill container
-            if (wb.StyleItem.FrameItem.Width < 0) {
-              //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
-              if (pWb.StyleItem.FrameItem.Height == null) {
-                pWb.StyleItem.FrameItem.Height = pWb.value.offsetHeight
-                pWb.value.style.height = `${pWb.value.offsetHeight}px`
-                pWb.value.removeAttribute('height-type')
-                listUpdate.push(pWb)
-              }
-              wb.StyleItem.FrameItem.Height = -1
-              wb.value.style.height = '100%'
-              wb.value.setAttribute('height-type', 'fill')
-            }
-            // TH width của wbase item này dạng fixed thì phải chuyển height của wbase item này về dạng fixed
-            else if (wb.StyleItem.FrameItem.Width != null) {
-              wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
-              wb.value.style.height = `${wb.value.offsetHeight}px`
-              wb.value.removeAttribute('height-type')
-            }
+          // TH height của wbase item này dạng hug contents thì phải chuyển width của wbase item này về dạng hug contents
+          if (wb.value.getAttribute('height-type') === 'fit') {
             //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
             let listChildFillW = wbase_list.filter(
               e =>
@@ -5881,40 +5314,11 @@ function handleEditLayout ({
                 e.value.getAttribute('width-type') === 'fill'
             )
             if (listChildFillW.length > 0) {
-              if (listChildFillW[0].StyleItem) {
-                for (let cWb of listChildFillW) {
-                  cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
-                  cWb.value.style.width = `${cWb.value.offsetWidth}px`
-                  cWb.value.removeAttribute('width-type')
-                  if (
-                    cWb.IsWini &&
-                    !cWb.value.classList.contains('w-variant')
-                  ) {
-                    let childCss = StyleDA.cssStyleSheets.find(
-                      e => e.GID === cWb.GID
-                    )
-                    StyleDA.docStyleSheets.find(rule => {
-                      let selector = [
-                        ...divSection.querySelectorAll(rule.selectorText)
-                      ]
-                      let check = selector.includes(cWb.value)
-                      if (check) {
-                        rule.style.width = `${cWb.value.offsetWidth}px`
-                        selector.forEach(e => e.removeAttribute('width-type'))
-                        childCss.Css = childCss.Css.replace(
-                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                          rule.cssText
-                        )
-                      }
-                      return check
-                    })
-                    StyleDA.editStyleSheet(childCss)
-                  }
-                }
-                listUpdate.push(...listChildFillW)
-              } else {
-                var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-                for (let cWb of listChildFillW) {
+              for (let cWb of listChildFillW) {
+                if (cWb.IsWini && !cWb.value.classList.contains('w-variant')) {
+                  let childCss = StyleDA.cssStyleSheets.find(
+                    e => e.GID === cWb.GID
+                  )
                   StyleDA.docStyleSheets.find(rule => {
                     let selector = [
                       ...divSection.querySelectorAll(rule.selectorText)
@@ -5923,394 +5327,194 @@ function handleEditLayout ({
                     if (check) {
                       rule.style.width = `${cWb.value.offsetWidth}px`
                       selector.forEach(e => e.removeAttribute('width-type'))
-                      cssItem.Css = cssItem.Css.replace(
+                      childCss.Css = childCss.Css.replace(
                         new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
                         rule.cssText
                       )
                     }
                     return check
                   })
+                  StyleDA.editStyleSheet(childCss)
+                } else {
+                  cWb.value.style.width = `${cWb.value.offsetWidth}px`
+                  cWb.value.removeAttribute('width-type')
+                  cWb.Css = cWb.value.style.cssText
+                  listUpdate.push(cWb)
                 }
               }
             }
-            // gán width của wbase item này null để hug contents
-            wb.StyleItem.FrameItem.Width = null
             wb.value.style.width = null
             wb.value.setAttribute('width-type', 'fit')
+          } else if (!wb.value.getAttribute('height-type')) {
+            wb.value.style.width = `${wb.value.offsetWidth}px`
+            wb.value.removeAttribute('width-type')
           }
-          //TH height của wbase item này đang fill container thì width của wbase item này phải chuyển về dạng fill container
-          else if (wb.StyleItem.FrameItem.Height < 0) {
-            //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
-            if (pWb.StyleItem.FrameItem.Width == null) {
-              pWb.StyleItem.FrameItem.Width = pWb.value.offsetWidth
-              pWb.value.style.width = `${pWb.value.offsetWidth}px`
-              pWb.value.removeAttribute('width-type')
+          wb.value.style.height = '100%'
+          wb.value.setAttribute('height-type', 'fill')
+        }
+        $(wb.value).removeClass('w-row')
+        $(wb.value).addClass('w-col')
+        wb.ListClassName = wb.value.className
+        wb.Css = wb.value.style.cssText
+      }
+    } else {
+      for (let wb of [...listUpdate]) {
+        if (wb.value.getAttribute('height-type') === 'fit') {
+          // TH width của wbase item này dạng fill container thì phải chuyển height của wbase item này về dạng fill container
+          if (wb.value.getAttribute('width-type') === 'fill') {
+            //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
+            if (pWb.value.getAttribute('height-type') === 'fit') {
+              pWb.value.style.height = `${pWb.value.offsetHeight}px`
+              pWb.value.removeAttribute('height-type')
+              pWb.Css = pWb.value.style.cssText
               listUpdate.push(pWb)
             }
-            // TH width của wbase item này dạng hug contents thì phải chuyển height của wbase item này về dạng hug contents
-            if (wb.StyleItem.FrameItem.Width == null) {
-              //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển height của nó về fixed
-              let listChildFillH = wbase_list.filter(
-                e =>
-                  e.ParentID === wb.GID &&
-                  e.value.getAttribute('height-type') === 'fill'
-              )
-              if (listChildFillH.length > 0) {
-                if (listChildFillH[0].StyleItem) {
-                  for (let cWb of listChildFillH) {
-                    cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
-                    cWb.value.style.height = `${cWb.value.offsetHeight}px`
-                    cWb.value.removeAttribute('height-type')
-                    if (
-                      cWb.IsWini &&
-                      !cWb.value.classList.contains('w-variant')
-                    ) {
-                      let childCss = StyleDA.cssStyleSheets.find(
-                        e => e.GID === cWb.GID
-                      )
-                      StyleDA.docStyleSheets.find(rule => {
-                        let selector = [
-                          ...divSection.querySelectorAll(rule.selectorText)
-                        ]
-                        let check = selector.includes(cWb.value)
-                        if (check) {
-                          rule.style.height = `${cWb.value.offsetHeight}px`
-                          selector.forEach(e =>
-                            e.removeAttribute('height-type')
-                          )
-                          childCss.Css = childCss.Css.replace(
-                            new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                            rule.cssText
-                          )
-                        }
-                        return check
-                      })
-                      StyleDA.editStyleSheet(childCss)
-                    }
-                  }
-                  listUpdate.push(...listChildFillH)
-                } else {
-                  cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-                  for (let cWb of listChildFillH) {
-                    StyleDA.docStyleSheets.find(rule => {
-                      let selector = [
-                        ...divSection.querySelectorAll(rule.selectorText)
-                      ]
-                      let check = selector.includes(cWb.value)
-                      if (check) {
-                        rule.style.height = `${cWb.value.offsetHeight}px`
-                        selector.forEach(e => e.removeAttribute('height-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                          rule.cssText
-                        )
-                      }
-                      return check
-                    })
-                  }
-                }
-              }
-              wb.StyleItem.FrameItem.Height = null
-              wb.value.style.height = null
-              wb.value.setAttribute('height-type', 'fit')
-            } else if (wb.StyleItem.FrameItem.Width >= 0) {
-              wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
-              wb.value.style.height = `${wb.value.offsetHeight}px`
-              wb.value.removeAttribute('height-type')
-            }
-            wb.StyleItem.FrameItem.Width = -1
-            wb.value.style.width = '100%'
-            wb.value.setAttribute('width-type', 'fill')
+            wb.value.style.height = '100%'
+            wb.value.setAttribute('height-type', 'fill')
           }
-          $(wb.value).addClass('w-row')
-          $(wb.value).removeClass('w-col')
-          wb.value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(_layout.Alignment, true)
+          // TH width của wbase item này dạng fixed thì phải chuyển height của wbase item này về dạng fixed
+          else if (!wb.value.getAttribute('width-type')) {
+            wb.value.style.height = `${wb.value.offsetHeight}px`
+            wb.value.removeAttribute('height-type')
+          }
+          //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
+          let listChildFillW = wbase_list.filter(
+            e =>
+              e.ParentID === wb.GID &&
+              e.value.getAttribute('width-type') === 'fill'
           )
-          wb.value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(_layout.Alignment, true)
-          )
-          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
-            cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            StyleDA.docStyleSheets.find(wbRule => {
-              let selector = [
-                ...divSection.querySelectorAll(wbRule.selectorText)
-              ]
-              let check = selector.includes(wb.value)
-              if (check) {
-                wbRule.style.width = wb.value.style.width
-                wbRule.style.height = wb.value.style.height
-                selector.forEach(e => {
-                  if (e !== wb.value) {
-                    $(e).addClass('w-row')
-                    $(e).removeClass('w-col')
-                    if (wb.value.getAttribute('width-type')) {
-                      e.setAttribute(
-                        'width-type',
-                        wb.value.getAttribute('width-type')
-                      )
-                    } else {
-                      e.removeAttribute('width-type')
-                    }
-                    if (wb.value.getAttribute('height-type')) {
-                      e.setAttribute(
-                        'height-type',
-                        wb.value.getAttribute('height-type')
-                      )
-                    } else {
-                      e.removeAttribute('height-type')
-                    }
-                    e.style.setProperty(
-                      '--main-axis-align',
-                      wMainAxis(_layout.Alignment, true)
-                    )
-                    e.style.setProperty(
-                      '--cross-axis-align',
-                      wCrossAxis(_layout.Alignment, true)
+          if (listChildFillW.length > 0) {
+            for (let cWb of listChildFillW) {
+              if (cWb.IsWini && !cWb.value.classList.contains('w-variant')) {
+                let childCss = StyleDA.cssStyleSheets.find(
+                  e => e.GID === cWb.GID
+                )
+                StyleDA.docStyleSheets.find(rule => {
+                  let selector = [
+                    ...divSection.querySelectorAll(rule.selectorText)
+                  ]
+                  let check = selector.includes(cWb.value)
+                  if (check) {
+                    rule.style.width = `${cWb.value.offsetWidth}px`
+                    selector.forEach(e => e.removeAttribute('width-type'))
+                    childCss.Css = childCss.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
                     )
                   }
+                  return check
                 })
-                cssItem.Css = cssItem.Css.replace(
-                  new RegExp(`${wbRule.selectorText} {[^}]*}`, 'g'),
-                  wbRule.cssText
-                )
+                StyleDA.editStyleSheet(childCss)
+              } else {
+                cWb.value.style.width = `${cWb.value.offsetWidth}px`
+                cWb.value.removeAttribute('width-type')
+                cWb.Css = cWb.value.style.cssText
+                listUpdate.push(cWb)
               }
-              return check
-            })
-          }
-        }
-        if (cssItem) StyleDA.editStyleSheet(cssItem)
-      } else {
-        let pWbComponent = listUpdate[0].value.closest(
-          `.wbaseItem-value[iswini="true"]`
-        )
-        let cssItem = StyleDA.cssStyleSheets.find(
-          e => e.GID === pWbComponent.id
-        )
-        for (let wb of [...listUpdate]) {
-          wb.WAutolayoutItem.Direction = direction
-          let _layout = wb.WAutolayoutItem
-          // TH kiểu align trong autoLayout là spacebetween thì phải cập nhật cả dạng align cho autoLayout của wbase item này
-          if (_layout.Alignment.includes('SpaceBetween')) {
-            // align SpaceBetweenLeft => TopSpaceBetween
-            if (_layout.Alignment.includes('Left'))
-              _layout.Alignment = 'TopSpaceBetween'
-            // align SpaceBetweenRight => BottomSpaceBetween
-            if (_layout.Alignment.includes('Right'))
-              _layout.Alignment = 'BottomSpaceBetween'
-          }
-          StyleDA.docStyleSheets.find(rule => {
-            let selector = [...divSection.querySelectorAll(rule.selectorText)]
-            let check = selector.includes(wb.value)
-            if (check) {
-              //TH height của wbase item này đang hug contents thì width của wbase item này phải chuyển về dạng hug contents
-              if (wb.value.getAttribute('height-type') === 'fit') {
-                // TH width của wbase item này dạng fill container thì phải chuyển height của wbase item này về dạng fill container
-                if (wb.value.getAttribute('width-type') === 'fill') {
-                  //TH đang có wbase item parent của item này đang hug contents height thì lúc này bắt buộc phải chuyển height của nó từ hug sang fixed
-                  if (pWb.value.getAttribute('height-type') === 'fit') {
-                    if (pWb.StyleItem) {
-                      pWb.StyleItem.FrameItem.Height = pWb.value.offsetHeight
-                      pWb.value.style.height = `${pWb.value.offsetHeight}px`
-                      pWb.value.removeAttribute('height-type')
-                      listUpdate.push(pWb)
-                    }
-                    if (
-                      (pWb.IsWini &&
-                        !pWb.value.classList.contains('w-variant')) ||
-                      !pWb.StyleItem
-                    ) {
-                      StyleDA.docStyleSheets.find(pRule => {
-                        let pSelector = [
-                          ...divSection.querySelectorAll(pRule.selectorText)
-                        ]
-                        let check = pSelector.includes(pWb.value)
-                        if (check) {
-                          pRule.style.height = `${pWb.value.offsetHeight}px`
-                          pSelector.forEach(e =>
-                            e.removeAttribute('height-type')
-                          )
-                        }
-                        return check
-                      })
-                      cssItem.Css = cssItem.Css.replace(
-                        new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
-                        pRule.cssText
-                      )
-                    }
-                  }
-                  rule.style.height = '100%'
-                  selector.forEach(e => e.setAttribute('height-type', 'fill'))
-                }
-                // TH width của wbase item này dạng fixed thì phải chuyển height của wbase item này về dạng fixed
-                else if (!wb.value.getAttribute('width-type')) {
-                  rule.style.height = `${wb.value.offsetHeight}px`
-                  selector.forEach(e => e.removeAttribute('height-type'))
-                }
-                //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển width của nó về fixed
-                let listChildFillW = wb.value.querySelectorAll(
-                  `.wbaseItem-value[level="${wb.Level + 1}"][width-type="fill"]`
-                )
-                for (let cWbHTML of listChildFillW) {
-                  StyleDA.docStyleSheets.find(cRule => {
-                    let selectorC = [
-                      ...divSection.querySelectorAll(cRule.selectorText)
-                    ]
-                    let checkC = selectorC.includes(cWbHTML)
-                    if (checkC) {
-                      cRule.style.width = `${cWbHTML.offsetWidth}px`
-                      selectorC.forEach(e => e.removeAttribute('width-type'))
-                      cssItem.Css = cssItem.Css.replace(
-                        new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
-                        cRule.cssText
-                      )
-                    }
-                    return checkC
-                  })
-                }
-                // gán width của wbase item này null để hug contents
-                rule.style.width = null
-                selector.forEach(e => e.setAttribute('width-type', 'fit'))
-              }
-              //TH height của wbase item này đang fill container thì width của wbase item này phải chuyển về dạng fill container
-              else if (wb.value.getAttribute('height-type') === 'fill') {
-                //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
-                if (pWb.value.getAttribute('width-type', 'fit')) {
-                  if (pWb.StyleItem) {
-                    pWb.StyleItem.FrameItem.Width = pWb.value.offsetWidth
-                    pWb.value.style.width = `${pWb.value.offsetWidth}px`
-                    pWb.value.removeAttribute('width-type')
-                    listUpdate.push(pWb)
-                  } else {
-                    StyleDA.docStyleSheets.find(pRule => {
-                      let selectorP = [
-                        ...divSection.querySelectorAll(pRule.selectorText)
-                      ]
-                      let checkP = selectorP.includes(pWb.value)
-                      if (checkP) {
-                        pRule.style.width = `${pWb.value.offsetWidth}px`
-                        selectorP.forEach(e => e.removeAttribute('width-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${pRule.selectorText} {[^}]*}`, 'g'),
-                          pRule.cssText
-                        )
-                      }
-                      return checkP
-                    })
-                  }
-                }
-                // TH width của wbase item này dạng hug contents thì phải chuyển height của wbase item này về dạng hug contents
-                if (wb.value.getAttribute('width-type', 'fit')) {
-                  //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển height của nó về fixed
-                  let listChildFillH = wb.value.querySelectorAll(
-                    `.wbaseItem-value[level="${
-                      wb.Level + 1
-                    }"][height-type="fill"]`
-                  )
-                  for (let cWbHTML of listChildFillH) {
-                    StyleDA.docStyleSheets.find(cRule => {
-                      let selector = [
-                        ...divSection.querySelectorAll(cRule.selectorText)
-                      ]
-                      let checkC = selector.includes(cWbHTML)
-                      if (checkC) {
-                        cRule.style.height = `${cWbHTML.offsetHeight}px`
-                        selector.forEach(e => e.removeAttribute('height-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
-                          cRule.cssText
-                        )
-                      }
-                      return checkC
-                    })
-                  }
-                  rule.style.height = null
-                  selector.forEach(e => e.setAttribute('height-type', 'fit'))
-                } else if (!wb.value.getAttribute('width-type')) {
-                  rule.style.height = `${wb.value.offsetHeight}px`
-                  selector.forEach(e => e.removeAttribute('height-type'))
-                }
-                rule.style.width = '100%'
-                selector.forEach(e => e.setAttribute('width-type', 'fill'))
-              }
-              selector.forEach(e => {
-                $(e).addClass('w-row')
-                $(e).removeClass('w-col')
-              })
-              rule.style.setProperty(
-                '--main-axis-align',
-                wMainAxis(_layout.Alignment, true)
-              )
-              rule.style.setProperty(
-                '--cross-axis-align',
-                wCrossAxis(_layout.Alignment, true)
-              )
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                rule.cssText
-              )
             }
-            return check
-          })
+          }
+          // gán width của wbase item này null để hug contents
+          wb.value.style.width = null
+          wb.value.setAttribute('width-type', 'fit')
         }
-        StyleDA.editStyleSheet(cssItem)
+        //TH height của wbase item này đang fill container thì width của wbase item này phải chuyển về dạng fill container
+        else if (wb.value.getAttribute('height-type') === 'fill') {
+          //TH đang có wbase item parent của item này đang hug contents width thì lúc này bắt buộc phải chuyển width của nó từ hug sang fixed
+          if (pWb.value.getAttribute('width-type') === 'fit') {
+            pWb.value.style.width = `${pWb.value.offsetWidth}px`
+            pWb.value.removeAttribute('width-type')
+            pWb.Css = pWb.value.style.cssText
+            listUpdate.push(pWb)
+          }
+          // TH width của wbase item này dạng hug contents thì phải chuyển height của wbase item này về dạng hug contents
+          if (wb.value.getAttribute('width-type') === 'fit') {
+            //TH đang có bất kì wbase item con của item này đang fill container width thì phải chuyển height của nó về fixed
+            let listChildFillH = wbase_list.filter(
+              e =>
+                e.ParentID === wb.GID &&
+                e.value.getAttribute('height-type') === 'fill'
+            )
+            if (listChildFillH.length > 0) {
+              for (let cWb of listChildFillH) {
+                if (cWb.IsWini && !cWb.value.classList.contains('w-variant')) {
+                  let childCss = StyleDA.cssStyleSheets.find(
+                    e => e.GID === cWb.GID
+                  )
+                  StyleDA.docStyleSheets.find(rule => {
+                    let selector = [
+                      ...divSection.querySelectorAll(rule.selectorText)
+                    ]
+                    let check = selector.includes(cWb.value)
+                    if (check) {
+                      rule.style.height = `${cWb.value.offsetHeight}px`
+                      selector.forEach(e => e.removeAttribute('height-type'))
+                      childCss.Css = childCss.Css.replace(
+                        new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                        rule.cssText
+                      )
+                    }
+                    return check
+                  })
+                  StyleDA.editStyleSheet(childCss)
+                } else {
+                  cWb.value.style.height = `${cWb.value.offsetHeight}px`
+                  cWb.value.removeAttribute('height-type')
+                  cWb.Css = cWb.value.style.cssText
+                  listUpdate.push(cWb)
+                }
+              }
+            }
+            wb.value.style.height = null
+            wb.value.setAttribute('height-type', 'fit')
+          } else if (!wb.value.getAttribute('width-type')) {
+            wb.value.style.height = `${wb.value.offsetHeight}px`
+            wb.value.removeAttribute('height-type')
+          }
+          wb.value.style.width = '100%'
+          wb.value.setAttribute('width-type', 'fill')
+        }
+        $(wb.value).addClass('w-row')
+        $(wb.value).removeClass('w-col')
+        wb.ListClassName = wb.value.className
+        wb.Css = wb.value.style.cssText
       }
     }
-    WBaseDA.edit(listUpdate, EnumObj.autoLayoutFrame)
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else if (alignment) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.WAutolayoutItem.Alignment = alignment
-        wb.value.style.setProperty(
-          '--main-axis-align',
-          wMainAxis(
-            alignment,
-            wb.CateID === EnumCate.table
-              ? null
-              : wb.WAutolayoutItem.Direction === 'Horizontal'
-          )
-        )
-        wb.value.style.setProperty(
-          '--cross-axis-align',
-          wCrossAxis(
-            alignment,
-            wb.CateID === EnumCate.table
-              ? null
-              : wb.WAutolayoutItem.Direction === 'Horizontal'
-          )
-        )
         if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              alignment,
-              wb.CateID === EnumCate.table
-                ? null
-                : wb.WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
-          cssRule.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              alignment,
-              wb.CateID === EnumCate.table
-                ? null
-                : wb.WAutolayoutItem.Direction === 'Horizontal'
-            )
-          )
+          if (wb.value.classList.contains('w-table')) {
+          } else if (wb.value.classList.contains('w-row')) {
+            cssRule.style.justifyContent = wMainAxis(alignment, true)
+            cssRule.style.alignItems = wCrossAxis(alignment, true)
+          } else {
+            cssRule.style.justifyContent = wMainAxis(alignment, false)
+            cssRule.style.alignItems = wCrossAxis(alignment, false)
+          }
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          if (wb.value.classList.contains('w-table')) {
+          } else if (wb.value.classList.contains('w-row')) {
+            wb.value.style.justifyContent = wMainAxis(alignment, true)
+            wb.value.style.alignItems = wCrossAxis(alignment, true)
+          } else {
+            wb.value.style.justifyContent = wMainAxis(alignment, false)
+            wb.value.style.alignItems = wCrossAxis(alignment, false)
+          }
+          wb.Css = wb.value.style.cssText
         }
       }
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -6320,25 +5524,14 @@ function handleEditLayout ({
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        wb.WAutolayoutItem.Alignment = alignment
-        cssRule.style.setProperty(
-          '--main-axis-align',
-          wMainAxis(
-            alignment,
-            wb.CateID === EnumCate.table
-              ? null
-              : wb.value.classList.contains('w-row')
-          )
-        )
-        cssRule.style.setProperty(
-          '--cross-axis-align',
-          wCrossAxis(
-            alignment,
-            wb.CateID === EnumCate.table
-              ? null
-              : wb.value.classList.contains('w-row')
-          )
-        )
+        if (wb.value.classList.contains('w-table')) {
+        } else if (wb.value.classList.contains('w-row')) {
+          cssRule.style.justifyContent = wMainAxis(alignment, true)
+          cssRule.style.alignItems = wCrossAxis(alignment, true)
+        } else {
+          cssRule.style.justifyContent = wMainAxis(alignment, false)
+          cssRule.style.alignItems = wCrossAxis(alignment, false)
+        }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -6346,60 +5539,27 @@ function handleEditLayout ({
       }
       StyleDA.editStyleSheet(cssItem)
     }
-    WBaseDA.edit(listUpdate, EnumObj.autoLayout)
   } else if (childSpace !== undefined) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.WAutolayoutItem.ChildSpace = childSpace
-        if (wb.WAutolayoutItem.Alignment.includes('SpaceBetween')) {
-          var isRow = wb.WAutolayoutItem.Direction == 'Horizontal'
-          if (isRow) {
-            wb.WAutolayoutItem.Alignment = wb.WAutolayoutItem.Alignment.replace(
-              'SpaceBetween',
-              'Left'
-            )
-          } else {
-            wb.WAutolayoutItem.Alignment = wb.WAutolayoutItem.Alignment.replace(
-              'SpaceBetween',
-              'Top'
-            )
-          }
-          wb.value.style.setProperty(
-            '--main-axis-align',
-            wMainAxis(
-              wb.WAutolayoutItem.Alignment,
-              wb.CateID === EnumCate.table ? null : isRow
-            )
-          )
-          wb.value.style.setProperty(
-            '--cross-axis-align',
-            wCrossAxis(
-              wb.WAutolayoutItem.Alignment,
-              wb.CateID === EnumCate.table ? null : isRow
-            )
-          )
-        }
-        wb.value.style.setProperty('--child-space', `${childSpace}px`)
         if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-          let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-          )
-          if (isRow != null) {
-            cssRule.style.setProperty(
-              '--main-axis-align',
-              wMainAxis(
-                wb.WAutolayoutItem.Alignment,
-                wb.CateID === EnumCate.table ? null : isRow
-              )
-            )
-            cssRule.style.setProperty(
-              '--cross-axis-align',
-              wCrossAxis(
-                wb.WAutolayoutItem.Alignment,
-                wb.CateID === EnumCate.table ? null : isRow
-              )
-            )
+          let cssRule = StyleDA.docStyleSheets.find(rule => {
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
+            let check = selector.includes(wb.value)
+            if (check) {
+              selector.forEach(e => {
+                e.querySelectorAll(
+                  `.col-[level="${parseInt(e.getAttribute('level')) + 1}"]`
+                ).forEach(cWbHTMl => {
+                  cWbHTMl.style.setProperty('--gutter', `${childSpace}px`)
+                })
+              })
+            }
+            return check
+          })
+          if (cssRule.style.justifyContent === 'space-between') {
+            cssRule.style.justifyContent = 'start'
           }
           cssRule.style.setProperty('--child-space', `${childSpace}px`)
           cssItem.Css = cssItem.Css.replace(
@@ -6407,36 +5567,47 @@ function handleEditLayout ({
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
         } else {
-          wb.value
-            .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
-            .forEach(cWbHTMl => {
-              cWbHTMl.style.setProperty('--gutter', `${childSpace}px`)
-            })
+          if (wb.value.style.justifyContent === 'space-between') {
+            wb.value.style.justifyContent = 'start'
+          }
+          wb.value.style.setProperty('--child-space', `${childSpace}px`)
+          wbase_list.forEach(cWb => {
+            if (cWb.ParentID === wb.GID) {
+              cWb.value.style.setProperty('--gutter', `${childSpace}px`)
+              cWb.Css = cWb.value.style.cssText
+              listUpdate.push(cWb)
+            }
+          })
+          wb.Css = wb.value.style.cssText
         }
       }
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
+        let cssRule = StyleDA.docStyleSheets.find(rule => {
+          let selector = [...divSection.querySelectorAll(rule.selectorText)]
+          let check = selector.includes(wb.value)
+          if (check) {
+            selector.forEach(e => {
+              e.querySelectorAll(
+                `.col-[level="${parseInt(e.getAttribute('level')) + 1}"]`
+              ).forEach(cWbHTMl => {
+                cWbHTMl.style.setProperty('--gutter', `${childSpace}px`)
+              })
+            })
+          }
+          return check
+        })
+        if (cssRule.style.justifyContent === 'space-between') {
+          cssRule.style.justifyContent = 'start'
+        }
         cssRule.style.setProperty('--child-space', `${childSpace}px`)
-        wb.value
-          .querySelectorAll(`.col-[level="${wb.Level + 1}"]`)
-          .forEach(cWbHTMl => {
-            let cRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(cWbHTMl)
-            )
-            cRule.style.setProperty('--gutter', `${childSpace}px`)
-            cssItem.Css = cssItem.Css.replace(
-              new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
-              cRule.cssText
-            )
-          })
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -6444,12 +5615,9 @@ function handleEditLayout ({
       }
       StyleDA.editStyleSheet(cssItem)
     }
-    WBaseDA.edit(listUpdate, EnumObj.autoLayout)
   } else if (runSpace !== undefined) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.WAutolayoutItem.RunSpace = runSpace
-        wb.value.style.setProperty('--run-space', `${runSpace}px`)
         if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -6461,8 +5629,13 @@ function handleEditLayout ({
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.setProperty('--run-space', `${runSpace}px`)
+          wb.Css = wb.value.style.cssText
         }
       }
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -6481,238 +5654,100 @@ function handleEditLayout ({
       }
       StyleDA.editStyleSheet(cssItem)
     }
-    WBaseDA.edit(listUpdate, EnumObj.autoLayout)
   } else if (isWrap !== undefined) {
-    if (listUpdate[0].StyleItem) {
-      for (let wb of [...listUpdate]) {
-        wb.WAutolayoutItem.IsWrap = isWrap
-        if (isWrap) {
-          if (wb.WAutolayoutItem.Direction === 'Vertical') {
-            let listChildFillW = wbase_list.filter(
-              e => e.ParentID === wb.GID && e.StyleItem.FrameItem.Width < 0
-            )
-            if (listChildFillW.length > 0) {
-              if (listChildFillW[0].StyleItem) {
-                for (let cWb of listChildFillW) {
-                  cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
-                  cWb.value.style.width = `${cWb.value.offsetWidth}px`
-                  cWb.value.removeAttribute('width-type')
-                  if (
-                    cWb.IsWini &&
-                    !cWb.value.classList.contains('w-variant')
-                  ) {
-                    let cssItem = StyleDA.cssStyleSheets.find(
-                      e => e.GID === cWb.GID
+    for (let wb of [...listUpdate]) {
+      if (isWrap) {
+        if (wb.value.classList.contains('w-col')) {
+          let listChildFillW = wbase_list.filter(
+            e =>
+              e.ParentID === wb.GID &&
+              e.value.getAttribute('width-type') === 'fill'
+          )
+          if (listChildFillW.length > 0) {
+            for (let cWb of listChildFillW) {
+              if (cWb.IsWini && !cWb.value.classList.contains('w-variant')) {
+                let cssItem = StyleDA.cssStyleSheets.find(
+                  e => e.GID === cWb.GID
+                )
+                StyleDA.docStyleSheets.find(rule => {
+                  let selector = [
+                    ...divSection.querySelectorAll(rule.selectorText)
+                  ]
+                  let check = selector.includes(cWb.value)
+                  if (check) {
+                    rule.style.width = `${cWb.value.offsetWidth}px`
+                    selector.forEach(e => e.removeAttribute('width-type'))
+                    cssItem.Css = cssItem.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
                     )
-                    StyleDA.docStyleSheets.find(rule => {
-                      let selector = [
-                        ...divSection.querySelectorAll(rule.selectorText)
-                      ]
-                      let check = selector.includes(cWb.value)
-                      if (check) {
-                        rule.style.width = `${cWb.value.offsetWidth}px`
-                        selector.forEach(e => e.removeAttribute('width-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                          rule.cssText
-                        )
-                      }
-                      return check
-                    })
-                    StyleDA.editStyleSheet(cssItem)
                   }
-                }
-                listUpdate.push(...listChildFillW)
+                  return check
+                })
+                StyleDA.editStyleSheet(cssItem)
               } else {
-                var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-                for (let cWb of listChildFillW) {
-                  StyleDA.docStyleSheets.find(rule => {
-                    let selector = [
-                      ...divSection.querySelectorAll(rule.selectorText)
-                    ]
-                    let check = selector.includes(cWb.value)
-                    if (check) {
-                      rule.style.width = `${cWb.value.offsetWidth}px`
-                      selector.forEach(e => e.removeAttribute('width-type'))
-                      cssItem.Css = cssItem.Css.replace(
-                        new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                        rule.cssText
-                      )
-                    }
-                    return check
-                  })
-                }
+                cWb.value.style.width = `${cWb.value.offsetWidth}px`
+                cWb.value.removeAttribute('width-type')
+                cWb.Css = cWb.value.style.cssText
+                listUpdate.push(cWb)
               }
-            }
-            if (wb.StyleItem.FrameItem.Height == null) {
-              wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
-              wb.value.style.height = wb.value.offsetHeight + 'px'
-              wb.value.removeAttribute('height-type')
-            }
-          } else {
-            let listChildFillH = wbase_list.filter(
-              e => e.ParentID === wb.GID && e.StyleItem.FrameItem.Height < 0
-            )
-            if (listChildFillH.length > 0) {
-              if (listChildFillH[0].StyleItem) {
-                for (let cWb of listChildFillH) {
-                  cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
-                  cWb.value.style.height = `${cWb.value.offsetHeight}px`
-                  cWb.value.removeAttribute('height-type')
-                  if (
-                    cWb.IsWini &&
-                    !cWb.value.classList.contains('w-variant')
-                  ) {
-                    let cssItem = StyleDA.cssStyleSheets.find(
-                      e => e.GID === cWb.GID
-                    )
-                    StyleDA.docStyleSheets.find(rule => {
-                      let selector = [
-                        ...divSection.querySelectorAll(rule.selectorText)
-                      ]
-                      let check = selector.includes(cWb.value)
-                      if (check) {
-                        rule.style.height = `${cWb.value.offsetHeight}px`
-                        selector.forEach(e => e.removeAttribute('height-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                          rule.cssText
-                        )
-                      }
-                      return check
-                    })
-                    StyleDA.editStyleSheet(cssItem)
-                  }
-                }
-                listUpdate.push(...listChildFillH)
-              } else {
-                cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-                for (let cWb of listChildFillH) {
-                  StyleDA.docStyleSheets.find(rule => {
-                    let selector = [
-                      ...divSection.querySelectorAll(rule.selectorText)
-                    ]
-                    let check = selector.includes(cWb.value)
-                    if (check) {
-                      rule.style.height = `${cWb.value.offsetHeight}px`
-                      selector.forEach(e => e.removeAttribute('height-type'))
-                      cssItem.Css = cssItem.Css.replace(
-                        new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                        rule.cssText
-                      )
-                    }
-                    return check
-                  })
-                }
-              }
-            }
-            if (wb.StyleItem.FrameItem.Width == null) {
-              wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
-              wb.value.style.width = wb.value.offsetWidth + 'px'
-              wb.value.removeAttribute('width-type')
             }
           }
-          wb.value.setAttribute('wrap', 'wrap')
-        } else wb.value.removeAttribute('wrap')
-        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
-          cssItem ??= StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-          let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          if (wb.value.getAttribute('height-type') === 'fit') {
+            wb.value.style.height = wb.value.offsetHeight + 'px'
+            wb.value.removeAttribute('height-type')
+          }
+          wb.Css = wb.value.style.cssText
+        } else {
+          let listChildFillH = wbase_list.filter(
+            e =>
+              e.ParentID === wb.GID &&
+              e.value.getAttribute('height-type') === 'fill'
           )
-          cssRule.style.flexWrap = isWrap ? 'wrap' : null
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-            cssRule.cssText
-          )
+          if (listChildFillH.length > 0) {
+            for (let cWb of listChildFillH) {
+              if (cWb.IsWini && !cWb.value.classList.contains('w-variant')) {
+                let cssItem = StyleDA.cssStyleSheets.find(
+                  e => e.GID === cWb.GID
+                )
+                StyleDA.docStyleSheets.find(rule => {
+                  let selector = [
+                    ...divSection.querySelectorAll(rule.selectorText)
+                  ]
+                  let check = selector.includes(cWb.value)
+                  if (check) {
+                    rule.style.height = `${cWb.value.offsetHeight}px`
+                    selector.forEach(e => e.removeAttribute('height-type'))
+                    cssItem.Css = cssItem.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
+                  }
+                  return check
+                })
+                StyleDA.editStyleSheet(cssItem)
+              } else {
+                cWb.value.style.height = `${cWb.value.offsetHeight}px`
+                cWb.value.removeAttribute('height-type')
+                cWb.Css = cWb.value.style.cssText
+                listUpdate.push(cWb)
+              }
+            }
+          }
+          if (wb.value.getAttribute('width-type') === 'fit') {
+            wb.value.style.width = wb.value.offsetWidth + 'px'
+            wb.value.removeAttribute('width-type')
+          }
         }
-        if (cssItem) StyleDA.editStyleSheet(cssItem)
+        wb.value.style.flexWrap = 'wrap'
+        wb.value.setAttribute('wrap', 'wrap')
+      } else {
+        wb.value.style.flexWrap = null
+        wb.value.removeAttribute('wrap')
       }
-      WBaseDA.edit(listUpdate, EnumObj.autoLayoutFrame)
-    } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini="true"]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of [...listUpdate]) {
-        wb.WAutolayoutItem.IsWrap = isWrap
-        StyleDA.docStyleSheets.find(rule => {
-          let selector = [...divSection.querySelectorAll(rule.selectorText)]
-          let check = selector.includes(wb.value)
-          if (check) {
-            if (isWrap) {
-              if (wb.value.classList.contains('w-col')) {
-                let listChildFillW = wb.value.querySelectorAll(
-                  `.wbaseItem-value[level="${wb.Level + 1}"][width-type="fill"]`
-                )
-                if (listChildFillW.length > 0) {
-                  for (let cWb of listChildFillW) {
-                    StyleDA.docStyleSheets.find(cRule => {
-                      let selectorC = [
-                        ...divSection.querySelectorAll(cRule.selectorText)
-                      ]
-                      let checkC = selectorC.includes(cWb.value)
-                      if (checkC) {
-                        cRule.style.width = `${cWb.value.offsetWidth}px`
-                        selectorC.forEach(e => e.removeAttribute('width-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
-                          cRule.cssText
-                        )
-                      }
-                      return checkC
-                    })
-                  }
-                }
-                if (wb.value.getAttribute('height-type') === 'fit') {
-                  rule.style.height = wb.value.offsetHeight + 'px'
-                  selector.forEach(e => e.removeAttribute('height-type'))
-                }
-              } else {
-                let listChildFillH = wb.value.querySelectorAll(
-                  `.wbaseItem-value[level="${
-                    wb.Level + 1
-                  }"][height-type="fill"]`
-                )
-                if (listChildFillH.length > 0) {
-                  for (let cWb of listChildFillH) {
-                    StyleDA.docStyleSheets.find(cRule => {
-                      let selectorC = [
-                        ...divSection.querySelectorAll(cRule.selectorText)
-                      ]
-                      let checkC = selectorC.includes(cWb.value)
-                      if (checkC) {
-                        cRule.style.height = `${cWb.value.offsetHeight}px`
-                        selectorC.forEach(e => e.removeAttribute('height-type'))
-                        cssItem.Css = cssItem.Css.replace(
-                          new RegExp(`${cRule.selectorText} {[^}]*}`, 'g'),
-                          cRule.cssText
-                        )
-                      }
-                      return checkC
-                    })
-                  }
-                }
-                if (wb.value.getAttribute('width-type') === 'fit') {
-                  rule.style.width = wb.value.offsetWidth + 'px'
-                  selector.forEach(e => e.removeAttribute('width-type'))
-                }
-              }
-              selector.forEach(e => e.setAttribute('wrap', 'wrap'))
-            } else {
-              selector.forEach(e => e.removeAttribute('wrap'))
-            }
-            rule.style.flexWrap = isWrap ? 'wrap' : null
-            cssItem.Css = cssItem.Css.replace(
-              new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-              rule.cssText
-            )
-          }
-          return check
-        })
-      }
-      StyleDA.editStyleSheet(cssItem)
-      WBaseDA.edit(listUpdate, EnumObj.autoLayout)
+      wb.Css = wb.value.style.cssText
     }
+    WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else if (isScroll !== undefined) {
     if (listUpdate[0].StyleItem) {
       for (let wb of [...listUpdate]) {
@@ -6772,145 +5807,40 @@ function removeLayout () {
   let listUpdate = selected_list.filter(wb =>
     window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
   )
-  if (listUpdate[0].StyleItem) {
-    for (let wb of [...listUpdate]) {
-      let wbRect = wb.value.getBoundingClientRect()
-      let offsetWbRect = offsetScale(wbRect.x, wbRect.y)
-      wb.AutoLayoutID = null
-      wb.WAutolayoutItem = null
-      if (wb.value.getAttribute('width-type') === 'fit') {
-        wb.StyleItem.FrameItem.Width = wb.value.offsetWidth
-        wb.value.style.width = wb.value.offsetWidth + 'px'
-        wb.value.removeAttribute('width-type')
-      }
-      if (wb.value.getAttribute('height-type') === 'fit') {
-        wb.StyleItem.FrameItem.Height = wb.value.offsetHeight
-        wb.value.style.height = wb.value.offsetHeight + 'px'
-        wb.value.removeAttribute('height-type')
-      }
-      let wbChildren = wbase_list.filter(e => e.ParentID === wb.GID)
-      if (wbChildren[0].StyleItem) {
-        for (let cWb of wbChildren) {
-          let cWbRect = cWb.value.getBoundingClientRect()
-          let childOffset = offsetScale(cWbRect.x, cWbRect.y)
-          if (cWb.value.getAttribute('width-type') === 'fill') {
-            cWb.StyleItem.FrameItem.Width = cWb.value.offsetWidth
-            cWb.value.style.width = cWb.value.offsetWidth + 'px'
-            cWb.value.removeAttribute('width-type')
-          }
-          if (cWb.value.getAttribute('height-type') === 'fill') {
-            cWb.StyleItem.FrameItem.Height = cWb.value.offsetHeight
-            cWb.value.style.height = cWb.value.offsetHeight + 'px'
-            cWb.value.removeAttribute('height-type')
-          }
-          //
-          cWb.StyleItem.PositionItem.Left = `${Math.round(
-            childOffset.x - offsetWbRect.x
-          )}px`
-          cWb.StyleItem.PositionItem.Top = `${Math.round(
-            childOffset.y - offsetWbRect.y
-          )}px`
-          cWb.StyleItem.PositionItem.ConstraintsX = Constraints.left
-          cWb.StyleItem.PositionItem.ConstraintsY = Constraints.top
-          cWb.value.style.left = cWb.StyleItem.PositionItem.Left
-          cWb.value.style.top = cWb.StyleItem.PositionItem.Top
-          cWb.value.setAttribute('constx', Constraints.left)
-          cWb.value.setAttribute('consty', Constraints.top)
-          if (cWb.IsWini && !cWb.value.classList.contains('w-variant')) {
-            let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === cWb.GID)
-            StyleDA.docStyleSheets.find(rule => {
-              let selector = [...divSection.querySelectorAll(rule.selectorText)]
-              let check = selector.includes(cWb.value)
-              if (check) {
-                if (cWb.value.getAttribute('width-type') === 'fill') {
-                  rule.style.width = cWb.value.offsetWidth + 'px'
-                  selector.forEach(e => {
-                    e.removeAttribute('width-type')
-                    e.setAttribute('constx', Constraints.left)
-                  })
-                }
-                if (cWb.value.getAttribute('height-type') === 'fill') {
-                  rule.style.height = cWb.value.offsetHeight + 'px'
-                  selector.forEach(e => {
-                    e.removeAttribute('height-type')
-                    e.setAttribute('consty', Constraints.top)
-                  })
-                }
-                rule.style.left = cWb.StyleItem.PositionItem.Left
-                rule.style.top = cWb.StyleItem.PositionItem.Top
-                cssItem.Css = cssItem.Css.replace(
-                  new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
-                  rule.cssText
-                )
-              }
-              return check
-            })
-            StyleDA.editStyleSheet(cssItem)
-          }
-        }
-        listUpdate.push(...wbChildren)
-      } else {
-        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-        for (let cWb of wbChildren) {
-          let cssRule = StyleDA.docStyleSheets.find(rule => {
-            let selector = [...divSection.querySelectorAll(rule.selectorText)]
-            let check = selector.includes(cWb.value)
-            if (check) {
-              if (cWb.value.getAttribute('width-type') === 'fill') {
-                rule.style.width = cWb.value.offsetWidth + 'px'
-                selector.forEach(e => {
-                  e.removeAttribute('width-type')
-                  e.setAttribute('constx', Constraints.left)
-                })
-              }
-              if (cWb.value.getAttribute('height-type') === 'fill') {
-                rule.style.height = cWb.value.offsetHeight + 'px'
-                selector.forEach(e => {
-                  e.removeAttribute('height-type')
-                  e.setAttribute('consty', Constraints.top)
-                })
-              }
-            }
-            return check
-          })
-          let cWbRect = cWb.value.getBoundingClientRect()
-          let childOffset = offsetScale(cWbRect.x, cWbRect.y)
-          //
-          cssRule.style.left = `${Math.round(childOffset.x - offsetWbRect.x)}px`
-          cssRule.style.top = `${Math.round(childOffset.y - offsetWbRect.y)}px`
-          cssRule.style.removeProperty('--gutter')
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-            cssRule.cssText
-          )
-        }
-        StyleDA.editStyleSheet(cssItem)
-      }
-      wb.value.style.removeProperty('--child-space')
-      wb.value.style.removeProperty('--run-space')
-      wb.value.style.removeProperty('--main-axis-align')
-      wb.value.style.removeProperty('--cross-axis-align')
-      wb.value.style.removeProperty('--padding')
-      $(wb.value).removeClass('w-row')
-      $(wb.value).removeClass('w-col')
-      $(wb.value).addClass('w-stack')
-      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
-        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+  for (let wb of [...listUpdate]) {
+    let wbRect = wb.value.getBoundingClientRect()
+    let offsetWbRect = offsetScale(wbRect.x, wbRect.y)
+    if (wb.value.getAttribute('width-type') === 'fit') {
+      wb.value.style.width = wb.value.offsetWidth + 'px'
+      wb.value.removeAttribute('width-type')
+    }
+    if (wb.value.getAttribute('height-type') === 'fit') {
+      wb.value.style.height = wb.value.offsetHeight + 'px'
+      wb.value.removeAttribute('height-type')
+    }
+    let wbChildren = wbase_list.filter(e => e.ParentID === wb.GID)
+    for (let cWb of wbChildren) {
+      let cWbRect = cWb.value.getBoundingClientRect()
+      let childOffset = offsetScale(cWbRect.x, cWbRect.y)
+      //
+      cWb.value.style.left = `${Math.round(childOffset.x - offsetWbRect.x)}px`
+      cWb.value.style.top = `${Math.round(childOffset.y - offsetWbRect.y)}px`
+      cWb.value.setAttribute('constx', Constraints.left)
+      cWb.value.setAttribute('consty', Constraints.top)
+      if (cWb.IsWini && !cWb.value.classList.contains('w-variant')) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === cWb.GID)
         StyleDA.docStyleSheets.find(rule => {
           let selector = [...divSection.querySelectorAll(rule.selectorText)]
-          let check = selector.includes(wb.value)
+          let check = selector.includes(cWb.value)
           if (check) {
-            rule.cssText = wb.value.style.cssText
-              .split(';')
-              .filter(e =>
-                e.match(/(z-index|order|left|top|bottom|right|transform)/g)
-              )
-              .join(';')
-            selector.forEach(e => {
-              $(e).removeClass('w-row')
-              $(e).removeClass('w-col')
-              $(e).addClass('w-stack')
-            })
+            if (cWb.value.getAttribute('width-type') === 'fill') {
+              rule.style.width = cWb.value.offsetWidth + 'px'
+              selector.forEach(e => e.removeAttribute('width-type'))
+            }
+            if (cWb.value.getAttribute('height-type') === 'fill') {
+              rule.style.height = cWb.value.offsetHeight + 'px'
+              selector.forEach(e => e.removeAttribute('height-type'))
+            }
             cssItem.Css = cssItem.Css.replace(
               new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
               rule.cssText
@@ -6919,88 +5849,28 @@ function removeLayout () {
           return check
         })
         StyleDA.editStyleSheet(cssItem)
-      }
-    }
-    WBaseDA.edit(listUpdate, EnumObj.basePositionFrame)
-  } else {
-    let pWbComponent = selected_list[0].value.closest(
-      `.wbaseItem-value[iswini="true"]`
-    )
-    let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-    for (let wb of [...listUpdate]) {
-      let wbRect = wb.value.getBoundingClientRect()
-      let offsetWbRect = offsetScale(wbRect.x, wbRect.y)
-      wb.AutoLayoutID = null
-      wb.WAutolayoutItem = null
-      let cssRule = StyleDA.docStyleSheets.find(rule => {
-        let selector = [...divSection.querySelectorAll(rule.selectorText)]
-        let check = selector.includes(wb.value)
-        if (check) {
-          if (wb.value.getAttribute('width-type') === 'fit') {
-            rule.style.width = wb.value.offsetWidth + 'px'
-            selector.forEach(e => e.removeAttribute('width-type'))
-          }
-          if (wb.value.getAttribute('height-type') === 'fit') {
-            rule.style.height = wb.value.offsetHeight + 'px'
-            selector.forEach(e => e.removeAttribute('height-type'))
-          }
-          selector.forEach(e => {
-            $(e).removeClass('w-row')
-            $(e).removeClass('w-col')
-            $(e).addClass('w-stack')
-          })
+      } else {
+        if (cWb.value.getAttribute('width-type') === 'fill') {
+          cWb.value.style.width = cWb.value.offsetWidth + 'px'
+          cWb.value.removeAttribute('width-type')
         }
-        return check
-      })
-      let wbChildren = wb.value.querySelectorAll(
-        `.wbaseItem-value[level="${wb.Level + 1}"]`
-      )
-      for (let cWbHTML of wbChildren) {
-        let childRule = StyleDA.docStyleSheets.find(rule => {
-          let selector = [...divSection.querySelectorAll(rule.selectorText)]
-          let check = selector.includes(cWbHTML)
-          if (check) {
-            if (cWbHTML.getAttribute('width-type') === 'fill') {
-              rule.style.width = cWbHTML.offsetWidth + 'px'
-              selector.forEach(e => {
-                e.removeAttribute('width-type')
-                e.setAttribute('constx', Constraints.left)
-              })
-            }
-            if (cWbHTML.getAttribute('height-type') === 'fill') {
-              rule.style.height = cWbHTML.offsetHeight + 'px'
-              selector.forEach(e => {
-                e.removeAttribute('height-type')
-                e.setAttribute('consty', Constraints.top)
-              })
-            }
-          }
-          return check
-        })
-        let cWbRect = cWbHTML.getBoundingClientRect()
-        let childOffset = offsetScale(cWbRect.x, cWbRect.y)
-        //
-        childRule.style.left = `${Math.round(childOffset.x - offsetWbRect.x)}px`
-        childRule.style.top = `${Math.round(childOffset.y - offsetWbRect.y)}px`
-        childRule.style.removeProperty('--gutter')
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${childRule.selectorText} {[^}]*}`, 'g'),
-          childRule.cssText
-        )
+        if (cWb.value.getAttribute('height-type') === 'fill') {
+          cWb.value.style.height = cWb.value.offsetHeight + 'px'
+          cWb.value.removeAttribute('height-type')
+        }
       }
-      cssRule.style.removeProperty('--child-space')
-      cssRule.style.removeProperty('--run-space')
-      cssRule.style.removeProperty('--main-axis-align')
-      cssRule.style.removeProperty('--cross-axis-align')
-      cssRule.style.removeProperty('--padding')
-      cssItem.Css = cssItem.Css.replace(
-        new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-        cssRule.cssText
-      )
     }
-    StyleDA.editStyleSheet(cssItem)
-    WBaseDA.edit(listUpdate, EnumObj.wBase)
+    listUpdate.push(...wbChildren)
+    wb.value.style.removeProperty('--child-space')
+    wb.value.style.removeProperty('--run-space')
+    wb.value.style.justifyContent = null
+    wb.value.style.alignItems = null
+    wb.value.style.removeProperty('--padding')
+    $(wb.value).removeClass('w-row')
+    $(wb.value).removeClass('w-col')
+    $(wb.value).addClass('w-stack')
   }
+  WBaseDA.edit(listUpdate, EnumObj.wBase)
 }
 
 function handleEditPadding ({ top, right, bottom, left }) {

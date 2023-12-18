@@ -470,7 +470,7 @@ function createComponent () {
       ProjectID: ProjectDA.obj.ID, 
       Css: `.${wbClassName} { ${wbCssText
         .filter(
-          e => !e.match(/(z-index|order|left|top|bottom|right|transform)/g)
+          e => !e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
         )
         .join(';')} }`
     }
@@ -505,7 +505,7 @@ function createComponent () {
           childWbClassName = childClsList.find(cCls => cCls.startsWith('w-st0'))
           cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWbCssText
             .filter(e =>
-              e.match(/(z-index|order|left|top|bottom|right|transform)/g)
+              e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
             )
             .join(';')} }`
         } else {
@@ -534,7 +534,7 @@ function createComponent () {
               ? childWbCssText.filter(e => !e.match(/order/g)).join(';')
               : childWbCssText
                   .filter(
-                    e => !e.match(/(z-index|left|top|bottom|right|transform)/g)
+                    e => !e.match(/(z-index|left|top|bottom|right|transform|--gutter)/g)
                   )
                   .join(';')
           } }`

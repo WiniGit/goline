@@ -601,24 +601,11 @@ function dragWbaseUpdate (xp, yp, event) {
     select_box_parentID !== new_parentID
   ) {
     let oldParentHTML = document.getElementById(select_box_parentID)
-    if (oldParentHTML.getAttribute('cateid') == EnumCate.tree) {
-      selected_list.forEach(wb => {
-        oldParentHTML
-          .querySelectorAll(`:scope > .w-tree .wbaseItem-value[id="${wb.GID}"]`)
-          .forEach(dlt => dlt.remove())
-      })
-    }
     if (oldParentHTML.childElementCount - selected_list.length === 0) {
-      if (
-        oldParentHTML.style.width == null ||
-        oldParentHTML.style.width == 'fit-content'
-      ) {
+      if (oldParentHTML.getAttribute('width-type') === 'fit') {
         oldParentHTML.style.width = oldParentHTML.offsetWidth + 'px'
       }
-      if (
-        oldParentHTML.style.height == null ||
-        oldParentHTML.style.height == 'fit-content'
-      ) {
+      if (oldParentHTML.getAttribute('height-type') === 'fit') {
         oldParentHTML.style.height = oldParentHTML.offsetHeight + 'px'
       }
     }
@@ -672,7 +659,7 @@ function dragWbaseUpdate (xp, yp, event) {
     }
   } else if (
     window.getComputedStyle(parentHTML).display.match('flex') &&
-    selected_list.some(e => !e.StyleItem.PositionItem.FixPosition)
+    selected_list.some(e => !e.value.classList.contains('fixed-position'))
   ) {
     let children = [
       ...parentHTML.querySelectorAll(
