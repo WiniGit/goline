@@ -67,8 +67,8 @@ class ProjectDA {
     } else {
       // var url = ProjectDA.urlCtr + "ListAll";
       // emitGet(null, url, EnumObj.project, EnumEvent.init);
-      const result = await $.post('/view/init-project', {
-        headers: UserService.headerProject(),
+      const result = await $.get('/view/init-project', {
+        headers: UserService.headerSocket(),
       });
       ProjectDA.list = result.data.sort((a, b) => b.DateUpdate - a.DateUpdate);
       loadding_P_success = true;
