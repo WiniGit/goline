@@ -68,21 +68,31 @@
                         "mode": 1
                     };
 
-                    // const res = await BaseDA.postData(pathUrl + '/Customer/extend-login', { bodyData: data });
-                    // if (res.Code === 200) {
-                    //     localStorage.setItem("token", data.Data);
-                    //     localStorage.setItem("refreshToken", data.Data);
-
-                    //     const userData = await BaseDA.getData(pathUrl + '/Customer/get-info', {});
-                    //     if (userData.Code === 200) {
-                    //         localStorage.setItem("customer", data.Data);
-                    //     } else {
-                    //         toastr["error"](data.Message);
+                    // await $.post(
+                    //     '/view/login',
+                    //     {
+                    //         body: JSON.stringify({
+                    //             "type": "google",
+                    //             "code": idToken,
+                    //             "mode": 1
+                    //         }),
+                    //     },
+                    //     async function (data) {
+                    //         console.success('login: ', data);
+                    //         await $.get(
+                    //             '/view/get-user-info',
+                    //             {
+                    //                 headers: {
+                    //                     Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    //                 },
+                    //             },
+                    //             function (data) {
+                    //                 console.success('login: ', data)
+                    //             }
+                    //         )
                     //     }
-                    // } else {
-                    //     toastr["error"](data.Message);
-                    // }
-                    // debugger
+                    // )
+
                     await $.ajax({
                         url: pathUrl + '/Customer/extend-login',
                         type: 'POST',
@@ -106,7 +116,7 @@
                                     },
                                     success: async function (data) {
                                         if (data.Code === 200) {
-                                            localStorage.setItem("customer", data.Data);
+                                            localStorage.setItem("customer", JSON.stringify(data.Data));
                                             window.location.href = '/View/home-screen.html?tab=home';
                                         } else {
                                             toastr["error"](data.Message);

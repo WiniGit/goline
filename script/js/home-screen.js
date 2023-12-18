@@ -3,10 +3,30 @@ var urlParams = new URLSearchParams(queryString);
 var url_tab = urlParams.get('tab');
 var url_id = urlParams.get('id');
 
-$('.loading-view').load('/View/loading.html', function () {
-    $('.user-container .user-name').text(userItem?.Fullname ?? "");
+$('.loading-view').load('/View/loading.html', async function () {
+    $('.user-container .user-name').text(userItem?.FullName ?? "");
     $('.user-container .user-email').text(userItem?.Email ?? "");
     ProjectDA.init();
+    //     await $.ajax({
+    //         url: pathUrl + '/Project/ListAll',
+    //         type: 'GET',
+    //         contentType: 'application/json',
+    //         headers: {
+    //             Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //         },
+    //         success: async function (data) {
+    //             debugger
+    //             if (data.Code === 200) {
+    //                 // localStorage.setItem("customer", data.Data);
+    //                 // window.location.href = '/View/home-screen.html?tab=home';
+    //             } else {
+    //                 toastr["error"](data.Message);
+    //             }
+    //         },
+    //         error: function (xhr, status, error) {
+    //             // Handle error cases here
+    //         }
+    //     });
     TeamDA.init();
     $('.loading-view').show();
     $('#home-body').hide();

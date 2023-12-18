@@ -214,10 +214,8 @@ socket.on('server-effect', data => {
           } else {
             document.documentElement.style.setProperty(
               `--effect-shadow-${obj.GID}`,
-              `${obj.OffsetX}px ${obj.OffsetY}px ${obj.BlurRadius}px ${
-                obj.SpreadRadius
-              }px #${obj.ColorValue} ${
-                obj.Type == ShadowType.inner ? 'inset' : ''
+              `${obj.OffsetX}px ${obj.OffsetY}px ${obj.BlurRadius}px ${obj.SpreadRadius
+              }px #${obj.ColorValue} ${obj.Type == ShadowType.inner ? 'inset' : ''
               }`
             )
           }
@@ -255,8 +253,7 @@ socket.on('server-typo', data => {
           TypoDA.list.push(obj)
           document.documentElement.style.setProperty(
             `--font-style-${obj.GID}`,
-            `${obj.FontWeight} ${obj.FontSize}px/${
-              obj.Height != undefined ? obj.Height + 'px' : 'normal'
+            `${obj.FontWeight} ${obj.FontSize}px/${obj.Height != undefined ? obj.Height + 'px' : 'normal'
             } ${obj.FontFamily}`
           )
           document.documentElement.style.setProperty(
@@ -437,9 +434,9 @@ socket.on('server-get', data => {
             }
             assets_list.push(...listAssets)
             let listProjectID = listAssets.filterAndMap(e => e.ProjectID)
-            ;[...ProjectDA.assetsList, ProjectDA.obj]
-              .filter(pro => listProjectID.some(id => pro.ID == id))
-              .forEach(projectItem => updateListComponentByProject(projectItem))
+              ;[...ProjectDA.assetsList, ProjectDA.obj]
+                .filter(pro => listProjectID.some(id => pro.ID == id))
+                .forEach(projectItem => updateListComponentByProject(projectItem))
           } else {
             WBaseDA.assetsLoading = false
             $(
@@ -930,7 +927,7 @@ socket.on('server-mouse', data => {
   }
 })
 
-socket.on('server-css', data => {})
+socket.on('server-css', data => { })
 
 socket.on('server-refresh', data => {
   const href = window.location.href
@@ -949,7 +946,7 @@ socket.on('server-refresh', data => {
 })
 
 class WiniIO {
-  static emitMain (obj) {
+  static emitMain(obj) {
     obj.userItem = UserService.getUser()
     obj.token = UserService.getToken()
     obj.pid = parseInt(obj.pid ?? ProjectDA.obj.ID)
@@ -1033,7 +1030,7 @@ class WiniIO {
     socket.emit('client-main', obj)
   }
 
-  static emitProperty (item, enumEvent) {
+  static emitProperty(item, enumEvent) {
     var jsonData = item
     socket.emit('client-property', {
       headers: UserService.headerProject(),
@@ -1043,7 +1040,7 @@ class WiniIO {
     })
   }
 
-  static emitColor (color, enumEvent) {
+  static emitColor(color, enumEvent) {
     console.log('emit-color')
     let jsonData = color
     console.log(jsonData)
@@ -1057,7 +1054,7 @@ class WiniIO {
     })
   }
 
-  static emitTypo (typo, enumEvent) {
+  static emitTypo(typo, enumEvent) {
     var jsonData = typo
     socket.emit('client-typo', {
       headers: UserService.headerProject(),
@@ -1069,7 +1066,7 @@ class WiniIO {
     })
   }
 
-  static emitEffect (effect, enumEvent) {
+  static emitEffect(effect, enumEvent) {
     var jsonData = effect
     socket.emit('client-effect', {
       headers: UserService.headerProject(),
@@ -1081,7 +1078,7 @@ class WiniIO {
     })
   }
 
-  static emitBorder (borderItem, enumEvent) {
+  static emitBorder(borderItem, enumEvent) {
     var jsonData = borderItem
     socket.emit('client-border', {
       headers: UserService.headerProject(),
@@ -1093,14 +1090,14 @@ class WiniIO {
     })
   }
 
-  static emitInit () {
+  static emitInit() {
     socket.emit('client-init', {
       pid: ProjectDA.obj.ID,
       headers: UserService.headerProject()
     })
   }
 
-  static emitPage (listPage, enumEvent) {
+  static emitPage(listPage, enumEvent) {
     console.log('client-page')
     let jsonData
     if (enumEvent != EnumEvent.sort) {
@@ -1117,14 +1114,14 @@ class WiniIO {
   }
 
   static kc = { xMouse: 0, yMouse: 0 }
-  static emitMouse (mouseItem) {
+  static emitMouse(mouseItem) {
     if (
       (!this.kc.w && mouseItem.w !== undefined) ||
       Math.sqrt(
         Math.pow(this.kc.xMouse - mouseItem.xMouse, 2) +
-          Math.pow(this.kc.yMouse - mouseItem.yMouse, 2)
+        Math.pow(this.kc.yMouse - mouseItem.yMouse, 2)
       ) >=
-        20 / scale
+      20 / scale
     ) {
       let mouseData = JSON.parse(JSON.stringify(mouseItem))
       this.kc = mouseData
@@ -1139,7 +1136,7 @@ class WiniIO {
     }
   }
 
-  static emitCss (cssItem, enumEvent) {
+  static emitCss(cssItem, enumEvent) {
     socket.emit('client-css', {
       pid: PageDA.obj.ProjectID,
       data: cssItem,
@@ -1147,7 +1144,7 @@ class WiniIO {
     })
   }
 
-  static emitGet (json, url, enumObj, enumEvent) {
+  static emitGet(json, url, enumObj, enumEvent) {
     var header = UserService.headerProject()
     socket.emit('client-get', {
       headers: header,
@@ -1160,7 +1157,7 @@ class WiniIO {
     })
   }
 
-  static emitPort (json, url, enumObj, enumEvent) {
+  static emitPort(json, url, enumObj, enumEvent) {
     socket.emit('client-post', {
       headers: UserService.headerProject(),
       body: json,
@@ -1172,7 +1169,7 @@ class WiniIO {
     })
   }
 
-  static emitFile (listFile, collectionId) {
+  static emitFile(listFile, collectionId) {
     let result = BaseDA.uploadFile(
       listFile,
       // "http://10.15.138.23:4000/uploadfile",
@@ -1182,7 +1179,7 @@ class WiniIO {
     return result
   }
 
-  static emitRefreshToken () {
+  static emitRefreshToken() {
     socket.emit('client-refresh', {
       headers: UserService.headerRefreshSocket(),
       data: []
@@ -1190,7 +1187,7 @@ class WiniIO {
   }
 }
 class WbaseIO {
-  static delete (list) {
+  static delete(list) {
     if (list.some(e => e.GID == hover_wbase?.GID)) {
       updateHoverWbase()
     }
@@ -1287,7 +1284,7 @@ class WbaseIO {
     }
   }
 
-  static async addOrUpdate (list, enumEvent) {
+  static async addOrUpdate(list, enumEvent) {
     let relativeList = []
     if (enumEvent === EnumEvent.parent) {
       relativeList = wbase_list.filter(wbaseItem =>
@@ -1343,11 +1340,10 @@ class WbaseIO {
             if (PropertyDA.list.some(e => e.GID != baseProperty.PropertyID)) {
               PropertyDA.list.push({
                 GID: baseProperty.PropertyID,
-                Name: `Property ${
-                  PropertyDA.list.filter(
-                    property => property.BaseID == item.ParentID
-                  ).length + 1
-                }`,
+                Name: `Property ${PropertyDA.list.filter(
+                  property => property.BaseID == item.ParentID
+                ).length + 1
+                  }`,
                 BaseID: item.ParentID,
                 BasePropertyItems: [baseProperty]
               })

@@ -60,13 +60,19 @@ class ProjectDA {
     );
   }
 
-  static init() {
+  static async init() {
     if (this.obj.ID != 0) {
       var url = this.urlCtr + "ListAll";
       WiniIO.emitGet(null, url, EnumObj.project, EnumEvent.init);
     } else {
-      var url = ProjectDA.urlCtr + "ListAll";
-      emitGet(null, url, EnumObj.project, EnumEvent.init);
+      // var url = ProjectDA.urlCtr + "ListAll";
+      // emitGet(null, url, EnumObj.project, EnumEvent.init);
+      const result = await $.post('/view/init-project', {
+        headers: UserService.headerProject(),
+      });
+      ProjectDA.list = result.data.sort((a, b) => b.DateUpdate - a.DateUpdate);
+      loadding_P_success = true;
+      check_loadingSuccess();
     }
   }
 

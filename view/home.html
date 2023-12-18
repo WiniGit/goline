@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+    <link rel="shortcut icon" href="/lib/assets/logo.svg">
+
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/css/styles.css">
+
+    <script src="https://kit.fontawesome.com/bd12e96ffa.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="/js/jquery.validate.min.js"></script>
+
+    <script src="/js/bootstrap-toastr/toastr.js"></script>
+    <link href="/js/bootstrap-toastr/toastr.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="/tool/qrcode.min.js"></script>
+
+    <script src="/script/appconfig.js"></script>
+    <script src="/script/utils.js"></script>
+
+</head>
+
+
+<body id="home-screen">
+    <div class="title-bar"></div>
+    <div class="window-bar"></div>
+    <div class="home-screen">
+        <div class="header-view row">
+            <img class="box32" src="/lib/assets/logo_wini.svg" alt="logo">
+            <div class="user-info-container col">
+                <div class="user-fullname semibold1 text-white">Admin WINI</div>
+                <div class="user-email regular0 text-subtitle-white">AdminWini@wini.com</div>
+            </div>
+
+            <div class="search-container row">
+                <i class="fa-solid fa-search text-subtitle-white fa-xs"></i>
+                <input class="regular11 text-white" type="text" placeholder="Search...">
+            </div>
+
+            <div class="space"></div>
+
+            <button type="button" class="join-by-code semibold11 text-white">Join by code</button>
+            <button type="button" class="alert-button box32">
+                <i class="fa-solid fa-bell text-white"></i>
+            </button>
+            <button type="button" class="more-option row" title=null>
+                <div class="box24 circular background-grey1">
+
+                </div>
+
+                <i class="fa-solid fa-chevron-down text-subtitle-white fa-2xs"></i>
+            </button>
+        </div>
+        <div class="body-view row">
+            <div class="sidebar-view"></div>
+            <div class="content-view">
+                <div class="project-view"></div>
+                <div class="team-view"></div>
+            </div>
+            <div class="info-view"></div>
+        </div>
+    </div>
+
+    <div class="popup-overlay"></div>
+</body>
+
+</html>

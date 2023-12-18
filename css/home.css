@@ -1,0 +1,94 @@
+.window-bar {
+    height: 38px;
+    background-color: black;
+}
+
+#home-screen * {
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+#home-screen .popup-overlay {
+    display: none;
+
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    top: 0;
+
+    background-color: rgba(0, 14, 34, 0.3);
+}
+
+#home-screen button {
+    border: none;
+    background-color: transparent;
+}
+
+#home-screen .home-screen {
+    width: 100%;
+    height: calc(100% - 38px);
+}
+
+.home-screen .header-view {
+    width: 100%;
+    height: 48px;
+    background-color: #2C2C2C;
+
+    padding: 0 12px;
+
+    gap: 10px;
+}
+
+.home-screen .header-view .user-info-container {
+    width: 200px;
+    height: 100%;
+    justify-content: center;
+    border-right: 1px solid #5C5C5C;
+
+    padding-right: 8px;
+
+    gap: 2px;
+}
+
+.home-screen .header-view .user-info-container>* {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.home-screen .header-view .search-container {
+    width: 360px;
+    height: 32px;
+
+    gap: 8px;
+    padding: 0 16px;
+
+    border-radius: 16px;
+    background-color: #444444;
+}
+
+.home-screen .header-view .search-container input {
+    padding: 0;
+}
+
+.home-screen .header-view .search-container input::placeholder {
+    color: rgb(255, 255, 255, 0.3);
+}
+
+.home-screen .header-view button {
+    height: 32px;
+    padding: 0 8px;
+}
+
+.home-screen .header-view button:hover {
+    border-radius: 8px;
+    background-color: #444444 !important;
+}
+
+.home-screen .header-view .more-option {
+    gap: 8px;
+    height: 32px;
+}
