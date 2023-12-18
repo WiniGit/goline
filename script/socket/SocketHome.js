@@ -31,7 +31,7 @@ socketH.on('server-log', (data) => {
                 cancelAction: function () {
                 },
                 confirmAction: function () {
-                    window.location.href = '/View/login-tool-view.html';
+                    window.location.href = '/View/login-view.html';
                 },
             };
             $('.popup-background').append(PopupDA.create_alertPopup_center(item));
@@ -475,7 +475,7 @@ socketH.on('server-refresh', (data) => {
             },
             confirmAction: function () {
                 if (!href.includes("login-success.html")) {
-                    window.location.href = '/View/login-tool-view.html';
+                    window.location.href = '/View/login-view.html';
                 } else {
                     window.location.href = '/View/login-web-view.html';
                 }

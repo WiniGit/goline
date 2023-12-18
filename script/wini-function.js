@@ -1,7 +1,7 @@
 ﻿function checkIsLogin() {
     var token = UserService.getToken();
     if (UserService.getToken() == null) {
-        window.location.href = '/View/login-tool-view.html';
+        window.location.href = '/View/login-view.html';
     }
 }
 

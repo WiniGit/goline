@@ -6,7 +6,6 @@
     ],
     "ghostMode": false,
     "open": true,
-    
     "server": {
         "baseDir": "./"
     },

@@ -6,7 +6,6 @@ class UserService {
         return Ultis.getStorage('refreshToken');
     }
     static setToken(token, refreshToken) {
-        debugger
         Ultis.setStorage('token', token);
         Ultis.setStorage('refreshToken', refreshToken);
         UserService.setTimeRefresh();
