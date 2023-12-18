@@ -14,7 +14,7 @@
     });
 
     $("#button-cancel-signup").on("click", function () {
-        window.location.href = "/View/login-tool-view.html";
+        window.location.href = "/View/login-view.html";
     });
     $("#signup-form").validate({
         rules: {

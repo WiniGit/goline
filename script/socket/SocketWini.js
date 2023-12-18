@@ -57,7 +57,7 @@ socket.on('server-log', data => {
       toastr['error'](
         'Phiên làm việc của bạn đã hết hạn, vui lòng đăng nhập lại!!!'
       )
-      window.location.href = '/View/login-tool-view.html'
+      window.location.href = '/View/login-view.html'
       break
     default:
       toastr['error'](data.Message)
@@ -940,7 +940,7 @@ socket.on('server-refresh', data => {
     UserService.setToken(data.data.Data.Token, UserService.getRefreshToken())
   } else {
     if (!href.includes('login-success.html')) {
-      window.location.href = '/View/login-tool-view.html'
+      window.location.href = '/View/login-view.html'
     } else {
       window.location.href = '/View/login-web-success.html'
     }

@@ -23,7 +23,7 @@ socketH.on('server-log', (data) => {
     switch (data["Code"]) {
         case StatusApi.refreshToken:
             // toastr["error"]("Phiên làm việc của bạn đã hết hạn, vui lòng đăng nhập lại!!!");
-            // window.location.href = '/View/login-tool-view.html';
+            // window.location.href = '/View/login-view.html';
             let item = {
                 type: "warning",
                 title: "Thông báo",
@@ -33,7 +33,7 @@ socketH.on('server-log', (data) => {
                 cancelAction: function () {
                 },
                 confirmAction: function () {
-                    window.location.href = '/View/login-tool-view.html';
+                    window.location.href = '/View/login-view.html';
                     $('.popup-background').css("display", "none");
                 },
             };
@@ -738,7 +738,7 @@ socketH.on('server-refresh', (data) => {
             },
             confirmAction: function () {
                 if (!href.includes("login-success.html")) {
-                    window.location.href = '/View/login-tool-view.html';
+                    window.location.href = '/View/login-view.html';
                 } else {
                     window.location.href = '/View/login-web-success.html';
                 }
