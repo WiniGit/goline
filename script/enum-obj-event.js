@@ -66,6 +66,8 @@ class EnumEvent {
     static check = 27;
     static create = 28;
     static editRouter = 29;
+    static home_init = 30;
+
 }
 
 class WEnum {

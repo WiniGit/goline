@@ -519,7 +519,12 @@ socket.on('server-get', data => {
         case EnumEvent.init:
           ProjectDA.list = data.data.sort((a, b) => b.DateUpdate - a.DateUpdate)
           TitleBarDA.initDataStorage()
-          break
+          break;
+        case EnumEvent.init:
+          TeamDA.list = data.data.sort((a, b) => b.DateUpdate - a.DateUpdate);
+          loadding_T_success = true;
+          check_loadingSuccess();
+          break;
         case EnumEvent.permission:
           try {
             for (let wpageItem of data.data.WPageItems) {
