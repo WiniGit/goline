@@ -191,7 +191,7 @@ socketH.on('server-get', (data) => {
     }
 });
 
-socketH.on('server-post', (data) => {
+socketH.on('server-post', async (data) => {
     console.log('server-post: ', data);
     switch (data["enumObj"]) {
         //! TEAM post
@@ -235,7 +235,7 @@ socketH.on('server-post', (data) => {
                         TeamDA.list = TeamDA.list.filter(e => e != TeamDA.selected);
 
                         window.history.pushState(null, null, "/View/home-screen.html?tab=recent");
-                        switch_tab_selected("recent");
+                        await switch_tab_selected("recent");
                     }
                     else {
                         $(`.team-child-nav[data-id=${TeamDA.selected.ID}]`).remove();
@@ -243,7 +243,7 @@ socketH.on('server-post', (data) => {
                         team_parent.ListChild = team_parent.ListChild.filter(e => e != TeamDA.selected);
 
                         window.history.pushState(null, null, "/View/home-screen.html?tab=team?id=" + team_parent.ID);
-                        switch_tab_selected("team", team_parent.ID);
+                        await switch_tab_selected("team", team_parent.ID);
                     }
                     break
             }
