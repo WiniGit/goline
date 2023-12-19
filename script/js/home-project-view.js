@@ -53,7 +53,7 @@ class ProjectView {
         }
     }
 
-    static update_infoView(item) {
+    static async update_infoView(item) {
         $(".info_block>.logo-container").text(item.Name[0]);
         $(".info_block>.project-name").text(item.Name);
 
@@ -76,7 +76,8 @@ class ProjectView {
         $(".member-block").css("height", "calc(100% - 544px)");
         $(".member-block .invite-member").show();
 
-        $(".member-block .list-member").html(InfoView.create_listMember(item.CustomerProjectItems, "project"));
+        const listUser = await getListUser(item.CustomerProjectItems);
+        $(".member-block .list-member").html(InfoView.create_listMember(listUser != null ? listUser : item.CustomerProjectItems, "project"));
 
         ProjectDA.selected.Permission == 2 ?
             $('.edit-domain-button, .invite-member').hide() :
@@ -126,10 +127,8 @@ $("body").on("mousedown", ".project-card, .project-tile", async function (ev) {
     $('#info-container').removeClass("team");
     $('#info-container').addClass("project");
 
-
-    const data = await getListUser();
     // debugger
-    ProjectView.update_infoView(ProjectDA.selected);
+    await ProjectView.update_infoView(ProjectDA.selected);
 
 
 });

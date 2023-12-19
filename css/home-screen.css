@@ -485,6 +485,8 @@
     padding: 0px 12px;
     box-sizing: border-box;
     gap: 4px;
+
+    gap: 8px;
 }
 
 #info-container #logo-container,

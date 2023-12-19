@@ -79,7 +79,7 @@ class TeamView {
         return list_team_child;
     }
 
-    static update_infoView(item) {
+    static async update_infoView(item) {
         $(".info_block>.logo-container").text(item.Name[0]);
         $(".info_block>.project-name").text(item.Name);
         $('#QR_container').html("").promise().done(() => { });
@@ -98,7 +98,8 @@ class TeamView {
         $(".member-block").css("height", "calc(100% - 512px)");
         $(".member-block .invite-member").hide();
 
-        $(".member-block .list-member").html(InfoView.create_listMember(item.CustomerTeamItems, "team"));
+        const listUser = await getListUser(item.CustomerTeamItems);
+        $(".member-block .list-member").html(InfoView.create_listMember(listUser != null ? listUser : item.CustomerTeamItems, "team"));
 
         let cus = TeamDA.selected.CustomerTeamItems.find(e => e.CustomerID == userItem.ID);
         if (cus == null) {
@@ -262,7 +263,7 @@ $(`body`).on(`click`, `.team-nav-popup .option-tile.active.leave`, function (ev)
         }
     });
 
-    $('body').on('mouseup', function (ev) {
+    $('body').on('mouseup', async function (ev) {
         if (move) {
             $('.team-nav[data-id=' + na_id + '], .team-nav[data-id=' + na_id + '] *').css('cursor', 'default');
             $('.move-card').hide();
@@ -279,7 +280,7 @@ $(`body`).on(`click`, `.team-nav-popup .option-tile.active.leave`, function (ev)
                         // history.pushState('', 'Team', homeUrl + "/home-screen.html?tab=team-child&id=" + url_id);
                         // update_UI_InfoView(TeamDA.selected, 'team');
                         // update_SelectedOption();
-                        switch_tab_selected(url_tab, url_id);
+                        await switch_tab_selected(url_tab, url_id);
                     } else {
                         toastr.warning(`Bạn phải có quyền Admin trở lên ở ${new_team.Name} để thực hiện thao tác này!`);
                     }

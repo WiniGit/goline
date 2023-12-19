@@ -43,10 +43,10 @@ function check_loadingSuccess() {
     if (loadding_P_success && loadding_T_success) {
         $('.list-team-container').html(TeamView.create_list_Team());
         setTimeout(
-            function () {
+            async function () {
                 $('.loading-view').hide();
                 $('#home-body').css('display', "flex");
-                switch_tab_selected(url_tab, url_id);
+                await switch_tab_selected(url_tab, url_id);
             }, 250
         )
     }
@@ -54,7 +54,7 @@ function check_loadingSuccess() {
 
 var list_type = 1; // 1: grid, 2: list
 
-function switch_tab_selected(tab_seleted, id) {
+async function switch_tab_selected(tab_seleted, id) {
     queryString = window.location.search;
     urlParams = new URLSearchParams(queryString);
     url_tab = urlParams.get('tab');
@@ -101,7 +101,7 @@ function switch_tab_selected(tab_seleted, id) {
             ProjectDA.selected = null;
             TeamDA.selected = TeamDA.list.find(e => e.ID == id);
             $('.team-header-name').text(TeamDA.selected.Name);
-            TeamView.update_infoView(TeamDA.selected)
+            await TeamView.update_infoView(TeamDA.selected)
             $('.team-content-container').html(TeamView.create_listTeamChild(TeamDA.list.find(e => e.ID == id).ListChild));
             $(".team-content-container").css("display", "flex");
             // $(".add-project-container").hide();
@@ -118,7 +118,7 @@ function switch_tab_selected(tab_seleted, id) {
             let teamP = TeamDA.list.find(e => e.ListChild.some(el => el.ID == id))
             TeamDA.selected = teamP.ListChild.find(e => e.ID == id);
             $('.team-header-name').text(TeamDA.selected.Name);
-            TeamView.update_infoView(TeamDA.selected)
+            await TeamView.update_infoView(TeamDA.selected)
             list_type == 1 ?
                 ProjectView.create_listProjectCard(ProjectDA.list.filter(e => e.TeamID == id)) :
                 ProjectView.create_listProjectTile(ProjectDA.list.filter(e => e.TeamID == id));

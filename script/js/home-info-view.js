@@ -1,13 +1,17 @@
 class InfoView {
     static create_memberTile(item, isOwner) {
+        debugger
+        // `<div data-id=${item.ID} data-customer=${item.CustomerID} class="member-row info_tile row">
         let member_tile =
-            `<div data-id=${item.ID} data-customer=${item.CustomerID} class="member-row info_tile row">
-                <div class="box36 center"><i class="fa-solid fa-user-circle text-body fa-lg"></i></div>
-                <div class="regular2 space">
-                    <span class="text-body">${item?.CustomerName ?? "Anonymus"}</span>
-                    <span class="regular2 text-subtitle ${item.CustomerID == userItem.ID ? "" : "hide"}">(You)</span>
+            `<div data-id=${item.ID} class="member-row info_tile row">
+                <div class="box36 center circular" style="overflow: hidden">
+                    ${item.UrlAvatar != null ? `<img src=${item.UrlAvatar} alt=""/>` : '<i class="fa-solid fa-user-circle text-body fa-lg"></i>'}
                 </div>
-                <button class="${item.CustomerID == userItem.ID && !isOwner ? "" : "hide"} button-delete button-transparent text-primary regular1">leave</button>
+                <div class="regular2 space">
+                    <span class="text-body">${item?.FullName ?? "Anonymus"}</span>
+                    <span class="regular2 text-subtitle ${item.ID == userItem.ID ? "" : "hide"}">(You)</span>
+                </div>
+                <button class="${item.ID == userItem.ID && !isOwner ? "" : "hide"} button-delete button-transparent text-primary regular1">leave</button>
             </div>`;
         return member_tile;
     }
@@ -33,61 +37,24 @@ class InfoView {
     }
 }
 
-const getListUser = async () => {
-    debugger
-    // const res = await $.ajax({
-    //     url: pathUrl + '/Customer/get-info-mutiple',
-    //     type: 'GET',
-    //     contentType: 'application/json',
-    //     data: ['1', '2'],
-    //     headers: {
-    //         Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //     },
-    //     success: async function (data) {
-    //         debugger
-    //         return data.Data;
-    //     },
-    //     error: function (xhr, status, error) {
-    //         // Handle error cases here
-    //     }
-    // });
-    // const token = localStorage.getItem("token");
-
-    // Định nghĩa headers chứa Authorization token
-    // const headers = {
-    //     Authorization: `Bearer ${token}`,
-    //     'Content-Type': 'application/json' // Header Content-Type
-    // };
-
-    // Dữ liệu muốn gửi đi
-    const data = [
-        "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-    ];
-
-    // URL của API
+const getListUser = async (list) => {
+    let output;
     const url = `${pathUrl}/Customer/get-info-mutiple`;
 
-    // Gửi yêu cầu GET bằng Axios
     await $.ajax({
         url: url,
         type: 'POST',
-        data: data,
+        data: JSON.stringify(list.map((e) => e.CustomerID)),
         contentType: 'application/json',
-        // headers: {
-        //     Authorization: `Bearer ${localStorage.getItem("token")}`,
-        // },
         success: async function (data) {
-            debugger
-            if (data.Code === 200) {
-
-            } else {
-            }
+            output = data.Data;
         },
         error: function (xhr, status, error) {
-            debugger
+            output = null
             // Handle error cases here
         }
     });
+    return output;
 }
 
 $("body").on("click", ".copy-code-button", function (ev) {
