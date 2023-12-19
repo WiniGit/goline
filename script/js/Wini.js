@@ -3152,8 +3152,8 @@ function upListener (event) {
       break
   }
   WBaseDA.enumEvent = null
-  WBaseDA.listData = []
-  drag_start_list = []
+  // WBaseDA.listData = []
+  // drag_start_list = []
   checkpad = 0
   dragTime = 0
   objr = null
