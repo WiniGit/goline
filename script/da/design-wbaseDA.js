@@ -832,10 +832,10 @@ class WBaseDA {
   }
 
   static parent (list_wbase_item) {
-    if (!WBaseDA.isCtrlZ) {
-      clearActionListFrom(action_index)
-      addAction()
-    }
+    // if (!WBaseDA.isCtrlZ) {
+    //   clearActionListFrom(action_index)
+    //   addAction()
+    // }
     let data = {
       enumObj: EnumObj.wBase,
       data: list_wbase_item,

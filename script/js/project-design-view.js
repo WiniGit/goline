@@ -705,19 +705,21 @@ function dragWbaseUpdate (xp, yp, event) {
             zIndex--
           }
         } else {
-          zIndex = Math.max(...children.map(childHTML => children.indexOf(childHTML)))
+          zIndex = Math.max(
+            ...children.map(childHTML => children.indexOf(childHTML))
+          )
         }
       }
       if (drag_start_list[0].ParentID != new_parentID) {
         selected_list.forEach(e => $(e.value).addClass('drag-hide'))
-        var demo = document.getElementById('demo_auto_layout') 
-        if(!demo) {
+        var demo = document.getElementById('demo_auto_layout')
+        if (!demo) {
           demo = document.createElement('div')
           demo.id = 'demo_auto_layout'
           demo.style.backgroundColor = '#1890FF'
           demo.style.height = `${2.4 / scale}px`
           demo.style.width = `${select_box.w * 0.8}px`
-        } 
+        }
         newPWbHTML.replaceChildren(
           ...children.slice(0, zIndex),
           demo,
@@ -783,20 +785,22 @@ function dragWbaseUpdate (xp, yp, event) {
           distance = event.pageX - (htmlRect.x + htmlRect.width / 2)
           if (distance < 0) zIndex--
         } else {
-          zIndex = Math.max(...children.map(childHTML => children.indexOf(childHTML)))
+          zIndex = Math.max(
+            ...children.map(childHTML => children.indexOf(childHTML))
+          )
         }
       }
       if (drag_start_list[0].ParentID != new_parentID) {
-        console.log("?????????????????:", zIndex, closestHTML)
+        console.log('?????????????????:', zIndex, closestHTML)
         selected_list.forEach(e => $(e.value).addClass('drag-hide'))
-        var demo = document.getElementById('demo_auto_layout') 
-        if(!demo) {
+        var demo = document.getElementById('demo_auto_layout')
+        if (!demo) {
           demo = document.createElement('div')
           demo.id = 'demo_auto_layout'
           demo.style.backgroundColor = '#1890FF'
           demo.style.width = `${2.4 / scale}px`
           demo.style.height = `${select_box.h * 0.8}px`
-        } 
+        }
         newPWbHTML.replaceChildren(
           ...children.slice(0, zIndex),
           demo,
@@ -870,7 +874,7 @@ function dragWbaseUpdate (xp, yp, event) {
       }
     }
   }
-  if(!demo) document.getElementById('demo_auto_layout')?.remove()
+  if (!demo) document.getElementById('demo_auto_layout')?.remove()
   select_box_parentID = selected_list[0].ParentID
 }
 
@@ -994,12 +998,16 @@ function dragWbaseEnd () {
     )
     replaceAllLyerItemHTML()
     updateUIDesignView()
+    if (drag_start_list[0].ParentID === new_parentID) {
+      WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
+    } else {
+      WBaseDA.parent(WBaseDA.listData, EnumObj.wBase)
+    }
   }
   select_box_parentID = selected_list[0].ParentID
   parent = divSection
   updateHoverWbase()
   handleWbSelectedList([...selected_list])
-  WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
 }
 
 // ALT copy
