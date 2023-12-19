@@ -1036,22 +1036,22 @@ class WiniIO {
     socket.emit('client-main', obj)
   }
 
-  static emitProperty(item, enumEvent) {
+  static async emitProperty(item, enumEvent) {
     var jsonData = item
     socket.emit('client-property', {
-      headers: UserService.headerProject(),
+      headers: await UserService.headerProject(),
       data: jsonData,
       pid: PageDA.obj.ProjectID,
       enumEvent: enumEvent
     })
   }
 
-  static emitColor(color, enumEvent) {
+  static async emitColor(color, enumEvent) {
     console.log('emit-color')
     let jsonData = color
     console.log(jsonData)
     socket.emit('client-color', {
-      headers: UserService.headerProject(),
+      headers: await UserService.headerProject(),
       data: jsonData,
       enumEvent: enumEvent,
       pid: PageDA.obj.ProjectID,
@@ -1060,10 +1060,10 @@ class WiniIO {
     })
   }
 
-  static emitTypo(typo, enumEvent) {
+  static async emitTypo(typo, enumEvent) {
     var jsonData = typo
     socket.emit('client-typo', {
-      headers: UserService.headerProject(),
+      headers: await UserService.headerProject(),
       data: jsonData,
       enumEvent: enumEvent,
       pid: PageDA.obj.ProjectID,
@@ -1072,10 +1072,10 @@ class WiniIO {
     })
   }
 
-  static emitEffect(effect, enumEvent) {
+  static async emitEffect(effect, enumEvent) {
     var jsonData = effect
     socket.emit('client-effect', {
-      headers: UserService.headerProject(),
+      headers: await UserService.headerProject(),
       data: jsonData,
       enumEvent: enumEvent,
       pid: PageDA.obj.ProjectID,
@@ -1084,10 +1084,10 @@ class WiniIO {
     })
   }
 
-  static emitBorder(borderItem, enumEvent) {
+  static async emitBorder(borderItem, enumEvent) {
     var jsonData = borderItem
     socket.emit('client-border', {
-      headers: UserService.headerProject(),
+      headers: await UserService.headerProject(),
       data: jsonData,
       enumEvent: enumEvent,
       pid: PageDA.obj.ProjectID,
@@ -1096,14 +1096,14 @@ class WiniIO {
     })
   }
 
-  static emitInit() {
+  static async emitInit() {
     socket.emit('client-init', {
       pid: ProjectDA.obj.ID,
-      headers: UserService.headerProject()
+      headers: await UserService.headerProject()
     })
   }
 
-  static emitPage(listPage, enumEvent) {
+  static async emitPage(listPage, enumEvent) {
     console.log('client-page')
     let jsonData
     if (enumEvent != EnumEvent.sort) {
@@ -1115,12 +1115,12 @@ class WiniIO {
       pid: ProjectDA.obj.ID,
       data: jsonData,
       enumEvent: enumEvent,
-      headers: UserService.headerProject()
+      headers: await UserService.headerProject()
     })
   }
 
   static kc = { xMouse: 0, yMouse: 0 }
-  static emitMouse(mouseItem) {
+  static async emitMouse(mouseItem) {
     if (
       (!this.kc.w && mouseItem.w !== undefined) ||
       Math.sqrt(
@@ -1134,7 +1134,7 @@ class WiniIO {
       mouseData.ID = UserService.getUser().ID
       if (PageDA.obj?.ProjectID) {
         socket.emit('client-mouse', {
-          headers: UserService.headerProject(),
+          headers: await UserService.headerProject(),
           pid: PageDA.obj.ProjectID,
           data: mouseData
         })
@@ -1150,8 +1150,8 @@ class WiniIO {
     })
   }
 
-  static emitGet(json, url, enumObj, enumEvent) {
-    var header = UserService.headerProject()
+  static async emitGet(json, url, enumObj, enumEvent) {
+    var header = await UserService.headerProject()
     socket.emit('client-get', {
       headers: header,
       body: json,
@@ -1163,9 +1163,9 @@ class WiniIO {
     })
   }
 
-  static emitPort(json, url, enumObj, enumEvent) {
+  static async emitPort(json, url, enumObj, enumEvent) {
     socket.emit('client-post', {
-      headers: UserService.headerProject(),
+      headers: await UserService.headerProject(),
       body: json,
       url: url,
       data: [],

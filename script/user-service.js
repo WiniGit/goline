@@ -90,7 +90,6 @@ class UserService {
             }),
             success: async function (data) {
                 if (data.Code === 200) {
-                    debugger
                     localStorage.setItem("token", data.Data.token);
                     localStorage.setItem("refreshToken", data.Data.refreshToken);
                 } else {
