@@ -684,10 +684,7 @@ function selectParent (event) {
       value =
         parseInt(b.getAttribute('level')) - parseInt(a.getAttribute('level'))
       if (value == 0) {
-        return (
-          parseInt(window.getComputedStyle(b).zIndex ?? '0') -
-          parseInt(window.getComputedStyle(a).zIndex ?? '0')
-        )
+        return $(b).index() - $(a).index()
       } else {
         return value
       }
@@ -1601,35 +1598,20 @@ function moveListener (event) {
                       yb = 0
                     if (checkpad === 0) {
                       drag_start_list = []
-                      let isFixedWhenScroll = false
-                      if (
-                        select_box_parentID !== wbase_parentID &&
-                        !window
-                          .getComputedStyle(
-                            document.getElementById(select_box_parentID)
-                          )
-                          .display.match('flex')
-                      ) {
-                        isFixedWhenScroll = true
-                      }
-                      selected_list.forEach(wbase => {
-                        let wbaseHTML = wbase.value
-                        let eHTMLRect = wbaseHTML.getBoundingClientRect()
+                      selected_list.forEach(wb => {
+                        let eHTMLRect = wb.value.getBoundingClientRect()
                         let eHTMLOffset = offsetScale(eHTMLRect.x, eHTMLRect.y)
-                        wbase.StyleItem.PositionItem.Left = `${
-                          eHTMLOffset.x - parent_offset1.x
-                        }px`
-                        wbase.StyleItem.PositionItem.Top = `${
-                          eHTMLOffset.y - parent_offset1.y
-                        }px`
+                        wb.tmpX = eHTMLOffset.x - parent_offset1.x
+                        wb.tmpY = eHTMLOffset.y - parent_offset1.y
                         if (!event.altKey) {
-                          if (wbase.StyleItem.FrameItem.Width != null)
-                            wbaseHTML.style.width = wbaseHTML.offsetWidth + 'px'
-                          if (wbase.StyleItem.FrameItem.Height != null)
-                            wbaseHTML.style.height =
-                              wbaseHTML.offsetHeight + 'px'
-                          if (isFixedWhenScroll)
-                            wbase.StyleItem.PositionItem.FixPosition = false
+                          if (wb.value.getAttribute('width-type') === 'fill') {
+                            wb.value.style.width = wb.value.offsetWidth + 'px'
+                            wb.value.style.flex = null
+                          }
+                          if (wb.value.getAttribute('height-type') === 'fill') {
+                            wb.value.style.height = wb.value.offsetHeight + 'px'
+                            wb.value.style.flex = null
+                          }
                         }
                       })
                       drag_start_list = JSON.parse(
@@ -1648,7 +1630,7 @@ function moveListener (event) {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event)
                       }
                       if (checkpad % 2 === 0) {
-                        updateInputTLWH()
+                        // updateInputTLWH()
                         wdraw()
                       }
                     }
@@ -1943,7 +1925,7 @@ function checkHoverElement (event) {
     let currentLevel = 1
     let currentListPPage = []
     if (selected_list.length > 0) {
-      currentLevel = parseInt(selected_list[0].value.getAttribute('level'))
+      currentLevel = selected_list[0].Level
       if (currentLevel > 1)
         currentListPPage = [
           ...$(selected_list[0].value).parents(`.wbaseItem-value`)
@@ -1960,13 +1942,18 @@ function checkHoverElement (event) {
       let target_level = parseInt(wbHTML.getAttribute('level'))
       switch (target_level) {
         case 1:
-          is_enable =
+          if (wbHTML.getAttribute('isinstance') === 'true') {
+            is_enable = true
+          } else if (
             ['w-container', 'w-variant'].some(e =>
               wbHTML.classList.contains(e)
-            ) ||
-            wbHTML.children.length === 0 ||
-            wbHTML.getAttribute('isinstance') === 'true' ||
-            currentLevel === 1 // || event.altKey
+            ) &&
+            !event.altKey
+          ) {
+            is_enable = wbHTML.childElementCount === 0
+          } else {
+            is_enable = target_level <= currentLevel
+          }
           break
         default:
           let parentPage = $(wbHTML).parents(
@@ -3145,18 +3132,7 @@ function upListener (event) {
       }
       break
     case EnumEvent.edit:
-      let isInFlex = false
-      if (select_box_parentID != wbase_parentID)
-        isInFlex = window
-          .getComputedStyle(document.getElementById(select_box_parentID))
-          .display.match('flex')
-      if (!isInFlex) {
-        for (let wb of selected_list) {
-          updateConstraints(wb.value)
-          wb.Css = wb.value.cssText
-        }
-      }
-      WBaseDA.edit(selected_list, enumObj)
+      
       break
     case EnumEvent.parent:
       let list_update = []

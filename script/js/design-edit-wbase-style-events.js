@@ -1489,7 +1489,7 @@ function handleEditOffset ({
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
-        if (cssItem && wb.value.parentElement.classList.contains('w-row')) {
+        if (cssItem && wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('width-type', 'fill')
@@ -1557,7 +1557,7 @@ function handleEditOffset ({
         wb.value.setAttribute('height-type', 'fit')
       } else if (height < 0) {
         cssRule.style.height = '100%'
-        if (cssItem && wb.value.parentElement.classList.contains('w-col')) {
+        if (cssItem && wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('height-type', 'fill')
@@ -1674,7 +1674,7 @@ function handleEditOffset ({
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
-        if (cssItem && wb.value.parentElement.classList.contains('w-row')) {
+        if (cssItem && wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('width-type', 'fill')
@@ -1791,7 +1791,7 @@ function handleEditOffset ({
         wb.value.setAttribute('height-type', 'fit')
       } else if (height < 0) {
         cssRule.style.height = '100%'
-        if (cssItem && wb.value.parentElement.classList.contains('w-col')) {
+        if (cssItem && wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('height-type', 'fill')
@@ -5249,6 +5249,8 @@ function handleEditLayout ({
               listUpdate.push(pWb)
             }
             wb.value.style.width = '100%'
+            if (pWb.value.classList.contains('w-row')) wb.value.style.flex = 1
+            else wb.value.style.flex = null
             wb.value.setAttribute('width-type', 'fill')
           }
           // TH height của wbase item này dạng fixed thì phải chuyển width của wbase item này về dạng fixed
@@ -5276,6 +5278,7 @@ function handleEditLayout ({
                   let check = selector.includes(cWb.value)
                   if (check) {
                     rule.style.height = `${cWb.value.offsetHeight}px`
+                    rule.style.flex = null
                     selector.forEach(e => e.removeAttribute('height-type'))
                     childCss.Css = childCss.Css.replace(
                       new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
@@ -5287,6 +5290,7 @@ function handleEditLayout ({
                 StyleDA.editStyleSheet(childCss)
               } else {
                 cWb.value.style.height = `${cWb.value.offsetHeight}px`
+                cWb.value.style.flex = null
                 cWb.value.removeAttribute('height-type')
                 cWb.Css = cWb.value.style.cssText
                 listUpdate.push(cWb)
@@ -5326,6 +5330,9 @@ function handleEditLayout ({
                     let check = selector.includes(cWb.value)
                     if (check) {
                       rule.style.width = `${cWb.value.offsetWidth}px`
+                      if (cWb.value.getAttribute('height-type') === 'fill')
+                        rule.style.flex = 1
+                      else rule.style.flex = null
                       selector.forEach(e => e.removeAttribute('width-type'))
                       childCss.Css = childCss.Css.replace(
                         new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
@@ -5337,6 +5344,9 @@ function handleEditLayout ({
                   StyleDA.editStyleSheet(childCss)
                 } else {
                   cWb.value.style.width = `${cWb.value.offsetWidth}px`
+                  if (cWb.value.getAttribute('height-type') === 'fill')
+                    cWb.value.style.flex = 1
+                  else cWb.value.style.flex = null
                   cWb.value.removeAttribute('width-type')
                   cWb.Css = cWb.value.style.cssText
                   listUpdate.push(cWb)
@@ -5350,6 +5360,8 @@ function handleEditLayout ({
             wb.value.removeAttribute('width-type')
           }
           wb.value.style.height = '100%'
+          if (pWb.value.classList.contains('w-col')) wb.value.style.flex = 1
+          else wb.value.style.flex = null
           wb.value.setAttribute('height-type', 'fill')
         }
         $(wb.value).removeClass('w-row')
@@ -5370,6 +5382,8 @@ function handleEditLayout ({
               listUpdate.push(pWb)
             }
             wb.value.style.height = '100%'
+            if (pWb.value.classList.contains('w-row')) wb.value.style.flex = 1
+            else wb.value.style.flex = null
             wb.value.setAttribute('height-type', 'fill')
           }
           // TH width của wbase item này dạng fixed thì phải chuyển height của wbase item này về dạng fixed
@@ -5396,6 +5410,7 @@ function handleEditLayout ({
                   let check = selector.includes(cWb.value)
                   if (check) {
                     rule.style.width = `${cWb.value.offsetWidth}px`
+                    rule.style.flex = null
                     selector.forEach(e => e.removeAttribute('width-type'))
                     childCss.Css = childCss.Css.replace(
                       new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
@@ -5407,6 +5422,7 @@ function handleEditLayout ({
                 StyleDA.editStyleSheet(childCss)
               } else {
                 cWb.value.style.width = `${cWb.value.offsetWidth}px`
+                cWb.value.style.flex = null
                 cWb.value.removeAttribute('width-type')
                 cWb.Css = cWb.value.style.cssText
                 listUpdate.push(cWb)
@@ -5447,6 +5463,9 @@ function handleEditLayout ({
                     let check = selector.includes(cWb.value)
                     if (check) {
                       rule.style.height = `${cWb.value.offsetHeight}px`
+                      if (cWb.value.getAttribute('width-type') === 'fill')
+                        rule.style.flex = 1
+                      else rule.style.flex = null
                       selector.forEach(e => e.removeAttribute('height-type'))
                       childCss.Css = childCss.Css.replace(
                         new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
@@ -5458,6 +5477,9 @@ function handleEditLayout ({
                   StyleDA.editStyleSheet(childCss)
                 } else {
                   cWb.value.style.height = `${cWb.value.offsetHeight}px`
+                  if (cWb.value.getAttribute('width-type') === 'fill')
+                    cWb.value.style.flex = 1
+                  else cWb.value.style.flex = null
                   cWb.value.removeAttribute('height-type')
                   cWb.Css = cWb.value.style.cssText
                   listUpdate.push(cWb)
@@ -5471,6 +5493,8 @@ function handleEditLayout ({
             wb.value.removeAttribute('height-type')
           }
           wb.value.style.width = '100%'
+          if (pWb.value.classList.contains('w-row')) wb.value.style.flex = 1
+          else wb.value.style.flex = null
           wb.value.setAttribute('width-type', 'fill')
         }
         $(wb.value).addClass('w-row')
@@ -5841,6 +5865,7 @@ function removeLayout () {
               rule.style.height = cWb.value.offsetHeight + 'px'
               selector.forEach(e => e.removeAttribute('height-type'))
             }
+            rule.style.flex = null
             cssItem.Css = cssItem.Css.replace(
               new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
               rule.cssText
@@ -5858,6 +5883,8 @@ function removeLayout () {
           cWb.value.style.height = cWb.value.offsetHeight + 'px'
           cWb.value.removeAttribute('height-type')
         }
+        cWb.value.style.flex = null
+        cWb.Css = cWb.value.style.cssText
       }
     }
     listUpdate.push(...wbChildren)
@@ -5869,27 +5896,24 @@ function removeLayout () {
     $(wb.value).removeClass('w-row')
     $(wb.value).removeClass('w-col')
     $(wb.value).addClass('w-stack')
+    wb.ListClassName = wb.value.className
+    wb.Css = wb.value.style.cssText
   }
   WBaseDA.edit(listUpdate, EnumObj.wBase)
 }
 
 function handleEditPadding ({ top, right, bottom, left }) {
   let listUpdate = selected_list.filter(wb =>
-    EnumCate.no_child_component.every(ct => wb.CateID !== ct)
+    window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
   )
-  if (listUpdate[0].StyleItem) {
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      wb.StyleItem.PaddingItem ??= {
-        GID: uuidv4(),
-        Top: 0,
-        Right: 0,
-        Bottom: 0,
-        Left: 0
-      }
-      if (top !== undefined) wb.StyleItem.PaddingItem.Top = top
-      if (right !== undefined) wb.StyleItem.PaddingItem.Right = right
-      if (bottom !== undefined) wb.StyleItem.PaddingItem.Bottom = bottom
-      if (left !== undefined) wb.StyleItem.PaddingItem.Left = left
+      let wbComputeSt = window.getComputedStyle(wb,value)
+      let paddings = [wbComputeSt.paddingTop, wbComputeSt.paddingRight, wbComputeSt.paddingBottom, wbComputeSt.paddingLeft]
+      if (top !== undefined) paddings[0] = `${top}px`
+      if (right !== undefined) paddings[1] = `${right}px`
+      if (bottom !== undefined) paddings[2] = `${bottom}px`
+      if (left !== undefined) paddings[3] = `${left}px`
       //
       wb.value.style.setProperty(
         '--padding',
@@ -5909,9 +5933,11 @@ function handleEditPadding ({ top, right, bottom, left }) {
           cssRule.cssText
         )
         StyleDA.editStyleSheet(cssItem)
+      } else {
+        
       }
     }
-    WBaseDA.edit(listUpdate, EnumObj.padding)
+    WBaseDA.edit(listUpdate, EnumObj.wBase)
     listUpdate.forEach(
       wb => (wb.StyleItem.PaddingID = wb.StyleItem.PaddingItem.GID)
     )
