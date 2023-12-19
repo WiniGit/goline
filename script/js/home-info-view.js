@@ -60,7 +60,9 @@ const getListUser = async () => {
     // };
 
     // Dữ liệu muốn gửi đi
-    const data = ['1'];
+    const data = [
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    ];
 
     // URL của API
     const url = `${pathUrl}/Customer/get-info-mutiple`;
@@ -71,13 +73,13 @@ const getListUser = async () => {
         type: 'POST',
         data: data,
         contentType: 'application/json',
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        // headers: {
+        //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+        // },
         success: async function (data) {
             debugger
             if (data.Code === 200) {
-              
+
             } else {
             }
         },

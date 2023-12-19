@@ -29,7 +29,7 @@ class UserService {
         var now = Date.now() / 1000;
         if (timeRefresh > 0 && timeRefresh <= now) {
             // WiniIO.emitRefreshToken();
-            await refreshToken();
+            await UserService.refreshToken();
             return {
                 "refreshToken": UserService.getRefreshToken(),
                 "token": UserService.getToken(),
@@ -52,7 +52,7 @@ class UserService {
         var now = Date.now() / 1000;
         if (timeRefresh > 0 && timeRefresh <= now) {
             // WiniIO.emitRefreshToken();
-            await refreshToken();
+            await UserService.refreshToken();
             return {
                 "refreshToken": UserService.getRefreshToken(),
                 "token": UserService.getToken(),
@@ -82,16 +82,15 @@ class UserService {
 
     static async refreshToken() {
         await $.ajax({
-            url: pathUrl + '/Customer/refreshToken',
-            type: 'GET',
+            url: pathUrl + '/Customer/refresh-token?token=' + localStorage.getItem("refreshToken"),
+            type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({
+            params: JSON.stringify({
                 token: localStorage.getItem("token")
             }),
             success: async function (data) {
                 if (data.Code === 200) {
-                    localStorage.setItem("token", data.Data.token);
-                    localStorage.setItem("refreshToken", data.Data.refreshToken);
+                    localStorage.setItem("token", data.Data);
                 } else {
                     toastr["error"](data.Message);
                 }
@@ -106,7 +105,7 @@ class UserService {
         var timeRefresh = UserService.getTimeRefresh();
         var now = Date.now() / 1000;
         if (timeRefresh > 0 && timeRefresh <= now) {
-            await refreshToken();
+            await UserService.refreshToken();
             let headers = {
                 "refreshToken": UserService.getRefreshToken(),
                 "token": UserService.getToken(),
