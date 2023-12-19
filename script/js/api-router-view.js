@@ -1,4 +1,4 @@
-RouterDA.getAllPage();
+// RouterDA.getAllPage();
 
 $('.router-container').load('/View/api-router-view.html');
 

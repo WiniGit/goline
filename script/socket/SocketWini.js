@@ -639,7 +639,8 @@ socket.on('server-google', data => {
   UserService.setToken(data['data']['Token'], data['data']['RefreshToken'])
   UserDA.setToStore(data['data'])
   moveProject({ ID: 0 })
-})
+});
+
 socket.on('server-post', data => {
   console.log('server post')
   console.log(data)

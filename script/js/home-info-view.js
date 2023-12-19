@@ -33,6 +33,61 @@ class InfoView {
     }
 }
 
+const getListUser = async () => {
+    debugger
+    // const res = await $.ajax({
+    //     url: pathUrl + '/Customer/get-info-mutiple',
+    //     type: 'GET',
+    //     contentType: 'application/json',
+    //     data: ['1', '2'],
+    //     headers: {
+    //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //     },
+    //     success: async function (data) {
+    //         debugger
+    //         return data.Data;
+    //     },
+    //     error: function (xhr, status, error) {
+    //         // Handle error cases here
+    //     }
+    // });
+    // const token = localStorage.getItem("token");
+
+    // Định nghĩa headers chứa Authorization token
+    // const headers = {
+    //     Authorization: `Bearer ${token}`,
+    //     'Content-Type': 'application/json' // Header Content-Type
+    // };
+
+    // Dữ liệu muốn gửi đi
+    const data = ['1'];
+
+    // URL của API
+    const url = `${pathUrl}/Customer/get-info-mutiple`;
+
+    // Gửi yêu cầu GET bằng Axios
+    await $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        contentType: 'application/json',
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        success: async function (data) {
+            debugger
+            if (data.Code === 200) {
+              
+            } else {
+            }
+        },
+        error: function (xhr, status, error) {
+            debugger
+            // Handle error cases here
+        }
+    });
+}
+
 $("body").on("click", ".copy-code-button", function (ev) {
     navigator.clipboard.writeText($(".code-value").text());
     toastr['success']('copied');

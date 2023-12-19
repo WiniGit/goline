@@ -49,10 +49,9 @@ socketH.on('server-log', (data) => {
 
             break;
         default:
-
+            debugger
             toastr["error"](data.Message);
             alert(JSON.stringify(data.Data));
-
     }
 });
 
@@ -502,7 +501,7 @@ async function emitRefreshToken() {
 async function emitGet(json, url, enumObj, enumEvent) {
     await socketH.emit('client-get',
         {
-            "headers": UserService.headerSocket(),
+            "headers": await UserService.headerSocket(),
             "body": json,
             'url': url,
             'data': [],
@@ -512,10 +511,10 @@ async function emitGet(json, url, enumObj, enumEvent) {
     );
 }
 
-function emitPort(json, url, enumObj, enumEvent) {
+async function emitPort(json, url, enumObj, enumEvent) {
     socketH.emit('client-post',
         {
-            "headers": UserService.headerSocket(),
+            "headers": await UserService.headerSocket(),
             "body": json,
             'url': url,
             'data': [],
