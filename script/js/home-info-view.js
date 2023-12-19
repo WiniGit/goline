@@ -33,6 +33,44 @@ class InfoView {
     }
 }
 
+const getListUser = async () => {
+    // const res = await $.ajax({
+    //     url: pathUrl + '/Customer/get-info-mutiple',
+    //     type: 'GET',
+    //     contentType: 'application/json',
+    //     data: ['1', '2'],
+    //     headers: {
+    //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //     },
+    //     success: async function (data) {
+    //         debugger
+    //         return data.Data;
+    //     },
+    //     error: function (xhr, status, error) {
+    //         // Handle error cases here
+    //     }
+    // });
+    const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
+
+    // $.ajax({
+    //     url: pathUrl + '/Customer/get-info-mutiple',
+    //     type: 'GET',
+    //     data: ['1'],
+    //     headers: headers,
+    //     dataType: 'json',
+    //     success: function (data) {
+    //         // Xử lý dữ liệu ở đây
+    //         console.log(data);
+    //     },
+    //     error: function (xhr, status, error) {
+    //         // Xử lý lỗi nếu có
+    //         console.error('Error:', error);
+    //     }
+    // });
+}
+
 $("body").on("click", ".copy-code-button", function (ev) {
     navigator.clipboard.writeText($(".code-value").text());
     toastr['success']('copied');

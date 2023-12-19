@@ -103,6 +103,7 @@
                             "mode": 1
                         }),
                         success: async function (data) {
+                            debugger
                             if (data.Code === 200) {
                                 localStorage.setItem("token", data.Data.token);
                                 localStorage.setItem("refreshToken", data.Data.refreshToken);

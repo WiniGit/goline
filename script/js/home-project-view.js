@@ -106,7 +106,7 @@ class ProjectView {
 }
 
 
-$("body").on("mousedown", ".project-card, .project-tile", function (ev) {
+$("body").on("mousedown", ".project-card, .project-tile", async function (ev) {
     ev.stopPropagation();
     $(".project-card, .project-tile").removeClass("selected");
     $(`.project-card[data-id=${$(this).data('id')}], .project-tile[data-id=${$(this).data('id')}]`).addClass("selected");
@@ -125,7 +125,13 @@ $("body").on("mousedown", ".project-card, .project-tile", function (ev) {
     $(".domain-container").css("display", "flex");
     $('#info-container').removeClass("team");
     $('#info-container').addClass("project");
+
+
+    const data = await getListUser();
+    debugger
     ProjectView.update_infoView(ProjectDA.selected);
+
+
 });
 
 $('body').on(`click`, `.add-project-container .button-add-project`, function (ev) {

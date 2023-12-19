@@ -20,7 +20,7 @@ var downloadUrl = "http://download.wini.vn/";
 var homeUrl = '/View/';
 // var homeUrl = '/wini-test/home/'
 
-const pathUrl = 'http://10.15.144.116:9093/api';
+const pathUrl = 'https://customer.wini.vn/api';
 
 const base_headers = (contenttype) => {
     return {
