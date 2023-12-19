@@ -1,9 +1,12 @@
 class InfoView {
     static create_memberTile(item, isOwner) {
+        debugger
         // `<div data-id=${item.ID} data-customer=${item.CustomerID} class="member-row info_tile row">
         let member_tile =
             `<div data-id=${item.ID} class="member-row info_tile row">
-                <div class="box36 center"><i class="fa-solid fa-user-circle text-body fa-lg"></i></div>
+                <div class="box36 center circular" style="overflow: hidden">
+                    ${item.UrlAvatar != null ? `<img src=${item.UrlAvatar} alt=""/>` : '<i class="fa-solid fa-user-circle text-body fa-lg"></i>'}
+                </div>
                 <div class="regular2 space">
                     <span class="text-body">${item?.FullName ?? "Anonymus"}</span>
                     <span class="regular2 text-subtitle ${item.ID == userItem.ID ? "" : "hide"}">(You)</span>
