@@ -591,28 +591,26 @@ function dragWbaseUpdate (xp, yp, event) {
     alt_list.forEach(altItem => altItem.value?.remove())
     alt_list = []
   }
-  let parentHTML = parent
-  let new_parentID = parentHTML.id.length != 36 ? wbase_parentID : parentHTML.id
-  let isTableParent = parentHTML.localName === 'table'
-  document.getElementById(`demo_auto_layout`)?.remove()
+  let newPWbHTML = parent
+  let new_parentID = newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
   if (
-    select_box_parentID !== wbase_parentID &&
-    select_box_parentID === drag_start_list[0].ParentID &&
-    select_box_parentID !== new_parentID
+    drag_start_list[0].ParentID !== new_parentID &&
+    drag_start_list[0].Level > 1 &&
+    drag_start_list[0].ParentID === select_box_parentID
   ) {
-    let oldParentHTML = document.getElementById(select_box_parentID)
-    if (oldParentHTML.childElementCount - selected_list.length === 0) {
-      if (oldParentHTML.getAttribute('width-type') === 'fit') {
-        oldParentHTML.style.width = oldParentHTML.offsetWidth + 'px'
+    let oldPWbHTML = document.getElementById(select_box_parentID)
+    if (oldPWbHTML.childElementCount - selected_list.length === 0) {
+      if (oldPWbHTML.getAttribute('width-type') === 'fit') {
+        oldPWbHTML.style.width = oldPWbHTML.offsetWidth + 'px'
       }
-      if (oldParentHTML.getAttribute('height-type') === 'fit') {
-        oldParentHTML.style.height = oldParentHTML.offsetHeight + 'px'
+      if (oldPWbHTML.getAttribute('height-type') === 'fit') {
+        oldPWbHTML.style.height = oldPWbHTML.offsetHeight + 'px'
       }
     }
   }
-  if (isTableParent) {
+  if (newPWbHTML.classList.contains('w-table')) {
     console.log('table')
-    let availableCell = findCell(parentHTML, event)
+    let availableCell = findCell(newPWbHTML, event)
     if (availableCell) {
       let distance = 0
       let cellChildren = [...availableCell.childNodes].filter(eHTML =>
@@ -658,18 +656,18 @@ function dragWbaseUpdate (xp, yp, event) {
       }
     }
   } else if (
-    window.getComputedStyle(parentHTML).display.match('flex') &&
+    window.getComputedStyle(newPWbHTML).display.match('flex') &&
     selected_list.some(e => !e.value.classList.contains('fixed-position'))
   ) {
     let children = [
-      ...parentHTML.querySelectorAll(
+      ...newPWbHTML.querySelectorAll(
         `.wbaseItem-value[level="${
-          parseInt(parentHTML.getAttribute('level') ?? '0') + 1
+          parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
         }"]`
       )
     ]
-    let isGrid = window.getComputedStyle(parentHTML).flexWrap == 'wrap'
-    if (parentHTML.classList.contains('w-col')) {
+    let isGrid = window.getComputedStyle(newPWbHTML).flexWrap == 'wrap'
+    if (newPWbHTML.classList.contains('w-col')) {
       let zIndex = 0
       let distance = 0
       if (children.length > 0) {
@@ -693,7 +691,7 @@ function dragWbaseUpdate (xp, yp, event) {
           }
           return a_center_oy - b_center_oy
         })
-        let closestHTML = children[0]
+        var closestHTML = children[0]
         if (isGrid) {
           closestHTML = children.find(
             childHTML => childHTML.getBoundingClientRect().bottom >= event.pageX
@@ -701,74 +699,53 @@ function dragWbaseUpdate (xp, yp, event) {
         }
         if (closestHTML) {
           let htmlRect = closestHTML.getBoundingClientRect()
-          zIndex = parseInt(window.getComputedStyle(closestHTML).zIndex)
+          zIndex = children.indexOf(closestHTML)
           distance = event.pageY - (htmlRect.y + htmlRect.height / 2)
           if (distance < 0) {
             zIndex--
           }
         } else {
-          zIndex = Math.max(
-            ...children.map(childHTML => parseInt(childHTML.style.zIndex))
-          )
+          zIndex = Math.max(...children.map(childHTML => children.indexOf(childHTML)))
         }
       }
       if (drag_start_list[0].ParentID != new_parentID) {
         selected_list.forEach(e => $(e.value).addClass('drag-hide'))
-        let demo = document.createElement('div')
-        demo.id = 'demo_auto_layout'
-        demo.style.backgroundColor = '#1890FF'
-        demo.style.height = `${2.4 / scale}px`
-        demo.style.width = `${select_box.w * 0.8}px`
-        demo.style.order = zIndex
-        switch (parseInt(parentHTML.getAttribute('cateid'))) {
-          case EnumCate.tree:
-            parentHTML.querySelector('.children-value').appendChild(demo)
-            break
-          case EnumCate.carousel:
-            parentHTML.querySelector('.children-value').appendChild(demo)
-            break
-          default:
-            parentHTML.appendChild(demo)
-            break
-        }
+        var demo = document.getElementById('demo_auto_layout') 
+        if(!demo) {
+          demo = document.createElement('div')
+          demo.id = 'demo_auto_layout'
+          demo.style.backgroundColor = '#1890FF'
+          demo.style.height = `${2.4 / scale}px`
+          demo.style.width = `${select_box.w * 0.8}px`
+        } 
+        newPWbHTML.replaceChildren(
+          ...children.slice(0, zIndex),
+          demo,
+          ...children.slice(zIndex)
+        )
       } else {
-        if (selected_list.every(wbase => wbase.GID != children[0].id)) {
-          children = children.filter(eHTML =>
-            selected_list.every(wbase => wbase.GID != eHTML.id)
-          )
-          if (distance >= 0) {
-            zIndex++
-          }
-          for (let i = 0; i < selected_list.length; i++) {
-            let selectHTML = selected_list[i].value
-            $(selectHTML).removeClass('drag-hide')
-            selectHTML.style.position = null
-            selected_list[i].Sort = zIndex + i
-            selectHTML.style.zIndex = zIndex + i
-            selectHTML.style.order = zIndex + i
-            if (new_parentID != selected_list[i].ParentID) {
-              selected_list[i].ParentID = new_parentID
-              let parent_listID = parentHTML.getAttribute('listid')
-              selected_list[i].ListID = parent_listID + `,${new_parentID}`
-              selected_list[i].Level = selected_list[i].ListID.split(',').length
-              switch (parseInt(parentHTML.getAttribute('cateid'))) {
-                case EnumCate.tree:
-                  parentHTML
-                    .querySelector('.children-value')
-                    .appendChild(selectHTML)
-                  break
-                case EnumCate.carousel:
-                  parentHTML
-                    .querySelector('.children-value')
-                    .appendChild(selectHTML)
-                  break
-                default:
-                  parentHTML.appendChild(selectHTML)
-                  break
-              }
-            }
-          }
-        }
+        children = children.filter(e =>
+          selected_list.every(wb => wb.GID !== e.id)
+        )
+        if (distance >= 0) zIndex++
+        newPWbHTML.replaceChildren(
+          ...children.slice(0, zIndex),
+          ...selected_list.map(wb => {
+            $(wb.value).removeClass('drag-hide')
+            $(wb.value).removeClass('fixed-position')
+            wb.value.style.position = null
+            wb.value.style.left = null
+            wb.value.style.top = null
+            wb.value.style.right = null
+            wb.value.style.bottom = null
+            wb.value.style.transform = null
+            wb.value.setAttribute('parentid', new_parentID)
+            wb.Level = parseInt(newPWbHTML.getAttribute('level')) + 1
+            wb.ParentID = new_parentID
+            return wb.value
+          }),
+          ...children.slice(zIndex)
+        )
       }
     } else {
       let zIndex = 0
@@ -802,140 +779,98 @@ function dragWbaseUpdate (xp, yp, event) {
         }
         if (closestHTML) {
           let htmlRect = closestHTML.getBoundingClientRect()
-          zIndex = parseInt(window.getComputedStyle(closestHTML).zIndex)
+          zIndex = children.indexOf(closestHTML)
           distance = event.pageX - (htmlRect.x + htmlRect.width / 2)
-          if (distance < 0) {
-            zIndex--
-          }
+          if (distance < 0) zIndex--
         } else {
-          zIndex = Math.max(
-            ...children.map(childHTML => parseInt(childHTML.style.zIndex))
-          )
+          zIndex = Math.max(...children.map(childHTML => children.indexOf(childHTML)))
         }
       }
       if (drag_start_list[0].ParentID != new_parentID) {
+        console.log("?????????????????:", zIndex, closestHTML)
         selected_list.forEach(e => $(e.value).addClass('drag-hide'))
-        let demo = document.createElement('div')
-        demo.id = 'demo_auto_layout'
-        demo.style.backgroundColor = '#1890FF'
-        demo.style.width = `${2.4 / scale}px`
-        demo.style.height = `${select_box.h * 0.8}px`
-        demo.style.order = zIndex
-        switch (parseInt(parentHTML.getAttribute('cateid'))) {
-          case EnumCate.tree:
-            parentHTML.querySelector('.children-value').appendChild(demo)
-            break
-          case EnumCate.carousel:
-            parentHTML.querySelector('.children-value').appendChild(demo)
-            break
-          default:
-            parentHTML.appendChild(demo)
-            break
-        }
+        var demo = document.getElementById('demo_auto_layout') 
+        if(!demo) {
+          demo = document.createElement('div')
+          demo.id = 'demo_auto_layout'
+          demo.style.backgroundColor = '#1890FF'
+          demo.style.width = `${2.4 / scale}px`
+          demo.style.height = `${select_box.h * 0.8}px`
+        } 
+        newPWbHTML.replaceChildren(
+          ...children.slice(0, zIndex),
+          demo,
+          ...children.slice(zIndex)
+        )
       } else {
-        if (selected_list.every(wbase => wbase.GID != children[0].id)) {
-          children = children.filter(eHTML =>
-            selected_list.every(wbase => wbase.GID != eHTML.id)
-          )
-          if (distance >= 0) {
-            zIndex++
-          }
-          for (let i = 0; i < selected_list.length; i++) {
-            let selectHTML = selected_list[i].value
-            $(selectHTML).removeClass('drag-hide')
-            selected_list[i].Sort = zIndex + i
-            selectHTML.style.zIndex = zIndex + i
-            selectHTML.style.order = zIndex + i
-            if (new_parentID != selected_list[i].ParentID) {
-              selected_list[i].ParentID = new_parentID
-              let parent_listID = parentHTML.getAttribute('listid')
-              selected_list[i].ListID = parent_listID + `,${new_parentID}`
-              selected_list[i].Level = selected_list[i].ListID.split(',').length
-              switch (parseInt(parentHTML.getAttribute('cateid'))) {
-                case EnumCate.tree:
-                  parentHTML
-                    .querySelector('.children-value')
-                    .appendChild(selectHTML)
-                  break
-                case EnumCate.carousel:
-                  parentHTML
-                    .querySelector('.children-value')
-                    .appendChild(selectHTML)
-                  break
-                default:
-                  parentHTML.appendChild(selectHTML)
-                  break
-              }
-            }
-          }
-        }
+        children = children.filter(e =>
+          selected_list.every(wb => wb.GID !== e.id)
+        )
+        if (distance >= 0) zIndex++
+        newPWbHTML.replaceChildren(
+          ...children.slice(0, zIndex),
+          ...selected_list.map(wb => {
+            $(wb.value).removeClass('drag-hide')
+            $(wb.value).removeClass('fixed-position')
+            wb.value.style.position = null
+            wb.value.style.left = null
+            wb.value.style.top = null
+            wb.value.style.right = null
+            wb.value.style.bottom = null
+            wb.value.style.transform = null
+            wb.value.setAttribute('parentid', new_parentID)
+            wb.Level = parseInt(newPWbHTML.getAttribute('level')) + 1
+            wb.ParentID = new_parentID
+            return wb.value
+          }),
+          ...children.slice(zIndex)
+        )
       }
     }
   } else {
     console.log('stack')
-    let zIndex
+    selected_list.forEach(wb => {
+      $(wb.value).removeClass('drag-hide')
+      $(wb.value).removeClass('fixed-position')
+      wb.value.style.left = `${wb.tmpX + xp + parent_offset1.x - offsetp.x}px`
+      wb.value.style.top = `${wb.tmpY + yp + parent_offset1.y - offsetp.y}px`
+      wb.value.style.right = null
+      wb.value.style.bottom = null
+      wb.value.style.transform = null
+      wb.value.setAttribute('parentid', new_parentID)
+      wb.Level = parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+      wb.ParentID = new_parentID
+      return wb.value
+    })
     if (
-      drag_start_list[0].ParentID != new_parentID &&
-      select_box_parentID != new_parentID
+      drag_start_list[0].ParentID !== new_parentID &&
+      select_box_parentID !== new_parentID
     ) {
       let children = [
-        ...parentHTML.querySelectorAll(
+        ...newPWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${
-            parseInt(parentHTML.getAttribute('level') ?? '0') + 1
+            parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
           }"]`
         )
       ]
       if (children.length > 0) {
-        zIndex =
+        let zIndex =
           Math.max(
             0,
             ...children.map(eHTML => {
               if (selected_list.some(wb => wb.GID === eHTML.id)) return 0
-              else return parseInt(window.getComputedStyle(eHTML).zIndex)
+              else return $(eHTML).index()
             })
           ) + 1
-      }
-    }
-    for (let i = 0; i < selected_list.length; i++) {
-      let selectHTML = selected_list[i].value
-      $(selectHTML).removeClass('drag-hide')
-      selected_list[i].StyleItem.PositionItem.Left = `${
-        parseFloat(
-          `${drag_start_list[i].StyleItem.PositionItem.Left}`.replace('px', '')
-        ) +
-        xp +
-        parent_offset1.x -
-        offsetp.x
-      }px`
-      selected_list[i].StyleItem.PositionItem.Top = `${
-        parseFloat(
-          `${drag_start_list[i].StyleItem.PositionItem.Top}`.replace('px', '')
-        ) +
-        yp +
-        parent_offset1.y -
-        offsetp.y
-      }px`
-      selectHTML.style.transform = null
-      selectHTML.style.left = selected_list[i].StyleItem.PositionItem.Left
-      selectHTML.style.top = selected_list[i].StyleItem.PositionItem.Top
-      selectHTML.style.right = null
-      selectHTML.style.bottom = null
-      if (selectHTML.parentElement !== parentHTML) {
-        if (zIndex) {
-          selectHTML.style.zIndex = zIndex + i
-          selectHTML.style.order = zIndex + i
-          selected_list[i].Sort = zIndex + i
-        } else {
-          selectHTML.style.zIndex = drag_start_list[i].Sort
-          selectHTML.style.order = drag_start_list[i].Sort
-          selected_list[i].Sort = drag_start_list[i].Sort
-        }
-
-        parentHTML.appendChild(selectHTML)
-        selected_list[i].ParentID = new_parentID
+        newPWbHTML.replaceChildren(
+          ...children.slice(0, zIndex),
+          ...selected_list.map(wb => wb.value),
+          ...children.slice(zIndex)
+        )
       }
     }
   }
+  if(!demo) document.getElementById('demo_auto_layout')?.remove()
   select_box_parentID = selected_list[0].ParentID
 }
 
@@ -946,48 +881,23 @@ function dragWbaseEnd () {
   }
   if (drag_start_list.length > 0) {
     WBaseDA.enumEvent = EnumEvent.edit
-    let new_parentHTML = parent
+    let newPWbHTML = parent
     let new_parentID =
-      new_parentHTML.id?.length == 36 ? new_parentHTML.id : wbase_parentID
-    let isTableParent = new_parentHTML.localName === 'table'
-    let parent_wbase = wbase_list.find(e => e.GID == new_parentHTML.id)
-    if (isTableParent) {
-      let demo = document.getElementById('demo_auto_layout')
-      if (demo) {
-        demo.replaceWith(...selected_list.map(e => e.value))
-      }
-      let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b))
-      ;[
-        ...new_parentHTML.querySelectorAll(':scope > .table-row > .table-cell')
-      ].forEach(cell => {
-        listCell.find(e => e.id === cell.id).contentid = [...cell.childNodes]
-          .map(e => e.id)
-          .join(',')
-      })
-      WBaseDA.enumEvent = EnumEvent.parent
-    }
+      newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
+    let pWb = wbase_list.find(e => e.GID === new_parentID)
+    //
     if (drag_start_list[0].ParentID !== new_parentID) {
       if (drag_start_list[0].ParentID !== wbase_parentID) {
-        let oldParent = wbase_list.find(
-          wbaseItem => wbaseItem.GID === drag_start_list[0].ParentID
+        let oldPWb = wbase_list.find(
+          wb => wb.GID === drag_start_list[0].ParentID
         )
-        if (oldParent.CateID === EnumCate.tree) {
-          selected_list.forEach(wb => {
-            oldParent.value
-              .querySelectorAll(
-                `:scope > .w-tree .wbaseItem-value[id="${wb.GID}"]`
-              )
-              .forEach(dlt => dlt.remove())
-          })
-        }
-        oldParent.ListChildID = oldParent.ListChildID.filter(id =>
+        oldPWb.ListChildID = oldPWb.ListChildID.filter(id =>
           selected_list.every(e => e.GID != id)
         )
-        oldParent.CountChild = oldParent.ListChildID.length
-        if (oldParent.CateID === EnumCate.table) {
-          let listCell = oldParent.TableRows.reduce((a, b) => a.concat(b))
+        if (oldPWb.value.classList.contains('w-table')) {
+          let listCell = oldPWb.TableRows.reduce((a, b) => a.concat(b))
           ;[
-            ...oldParent.value.querySelectorAll(
+            ...oldPWb.value.querySelectorAll(
               ':scope > .table-row > .table-cell'
             )
           ].forEach(cell => {
@@ -998,28 +908,18 @@ function dragWbaseEnd () {
               .join(',')
           })
           let wbaseChildren = [
-            ...oldParent.value.querySelectorAll(
-              `.wbaseItem-value[level="${oldParent.Level + 1}"]`
+            ...oldPWb.value.querySelectorAll(
+              `.wbaseItem-value[level="${oldPWb.Level + 1}"]`
             )
           ]
           for (let i = 0; i < wbaseChildren.length; i++) {
             wbaseChildren[i].style.zIndex = i
           }
-          WBaseDA.listData.push(oldParent)
-        } else if (oldParent.CountChild == 0) {
-          if (oldParent.StyleItem.FrameItem.Width == null) {
-            oldParent.StyleItem.FrameItem.Width = oldParent.value.offsetWidth
-          }
-          if (oldParent.StyleItem.FrameItem.Height == null) {
-            oldParent.StyleItem.FrameItem.Height = oldParent.value.offsetHeight
-          }
-          WBaseDA.listData.push(oldParent)
-        } else {
-          handleStyleSize(oldParent)
+          WBaseDA.listData.push(oldPWb)
         }
-        if (oldParent?.CateID === EnumCate.variant) {
+        if (oldPWb.value.classList.contains('w-variant')) {
           let listProperty = PropertyDA.list.filter(
-            e => e.BaseID === oldParent.GID
+            e => e.BaseID === oldPWb.GID
           )
           for (let propertyItem of listProperty) {
             propertyItem.BasePropertyItems =
@@ -1028,201 +928,70 @@ function dragWbaseEnd () {
               )
           }
         }
+        WBaseDA.listData.push(oldPWb)
       }
-      WBaseDA.enumEvent = EnumEvent.parent
-      let drag_to_layout =
-        window.getComputedStyle(new_parentHTML).display.match('flex') &&
-        selected_list.some(e => !e.StyleItem.PositionItem.FixPosition)
-      let zIndex
       let demo = document.getElementById('demo_auto_layout')
       if (demo) {
-        zIndex = parseInt(demo.style.order)
-        demo.remove()
-      }
-      for (let i = 0; i < selected_list.length; i++) {
-        let selectHTML = selected_list[i].value
-        $(selectHTML).removeClass('drag-hide')
-        if (new_parentID != wbase_parentID) {
-          selected_list[i].ParentID = new_parentHTML.id
-          selected_list[i].ListID =
-            parent_wbase.ListID + `,${new_parentHTML.id}`
-          selected_list[i].Level = selected_list[i].ListID.split(',').length
-          selectHTML.setAttribute('level', selected_list[i].Level)
-          selectHTML.setAttribute('listid', selected_list[i].ListID)
-          if (
-            selected_list[i].IsWini &&
-            selected_list[i].BasePropertyItems?.length > 0
-          ) {
-            selected_list[i].BasePropertyItems = selected_list[
-              i
-            ].BasePropertyItems.filter(
-              e =>
-                PropertyDA.list.find(property => property.GID == e.PropertyID)
-                  ?.BaseID == new_parentID
-            )
-          }
-        } else {
-          selected_list[i].ParentID = wbase_parentID
-          selected_list[i].ListID = wbase_parentID
-          selected_list[i].Level = 1
-          selectHTML.setAttribute('level', 1)
-          selectHTML.setAttribute('listid', wbase_parentID)
-          if (
-            selected_list[i].IsWini &&
-            selected_list[i].BasePropertyItems?.length > 0
-          ) {
-            selected_list[i].BasePropertyItems = []
-          }
-        }
-        if (isTableParent) {
-          let wbaseChildren = [
-            ...new_parentHTML.querySelectorAll(
-              `.wbaseItem-value[level="${parent_wbase.Level + 1}"]`
-            )
-          ]
-          for (let j = 0; j < wbaseChildren.length; j++) {
-            wbaseChildren[j].style.zIndex = j
-          }
-          selected_list[i].StyleItem.PositionItem.FixPosition = false
-          selected_list[i].StyleItem.PositionItem.ConstraintsX =
-            Constraints.left
-          selected_list[i].StyleItem.PositionItem.ConstraintsY = Constraints.top
-          selectHTML.style.left = null
-          selectHTML.style.top = null
-          selectHTML.style.right = null
-          selectHTML.style.bottom = null
-          selectHTML.style.transform = null
-        } else if (drag_to_layout) {
-          let startWbaseItem = drag_start_list.find(
-            e => e.GID === selected_list[i].GID
-          )
-          if (
-            startWbaseItem.StyleItem.FrameItem.Width < 0 &&
-            parent_wbase.StyleItem.FrameItem.Width != null
-          ) {
-            selected_list[i].StyleItem.FrameItem.Width =
-              startWbaseItem.StyleItem.FrameItem.Width
-            selectHTML.style.width = '100%'
-          }
-          if (
-            startWbaseItem.StyleItem.FrameItem.Height < 0 &&
-            parent_wbase.StyleItem.FrameItem.Height != null
-          ) {
-            selected_list[i].StyleItem.FrameItem.Height =
-              startWbaseItem.StyleItem.FrameItem.Height
-            selectHTML.style.height = '100%'
-          }
-          switch (parseInt(new_parentHTML.getAttribute('cateid'))) {
-            case EnumCate.tree:
-              new_parentHTML
-                .querySelector('.children-value')
-                .appendChild(selectHTML)
-              break
-            case EnumCate.carousel:
-              new_parentHTML
-                .querySelector('.children-value')
-                .appendChild(selectHTML)
-              break
-            default:
-              new_parentHTML.appendChild(selectHTML)
-              break
-          }
-          selected_list[i].StyleItem.PositionItem.FixPosition = false
-          selected_list[i].StyleItem.PositionItem.ConstraintsX =
-            Constraints.left
-          selected_list[i].StyleItem.PositionItem.ConstraintsY = Constraints.top
-          $(selectHTML).removeClass('fixed-position')
-          selectHTML.style.position = null
-          selectHTML.style.left = null
-          selectHTML.style.right = null
-          selectHTML.style.top = null
-          selectHTML.style.bottom = null
-          selectHTML.style.transform = null
-          selectHTML.style.zIndex = zIndex + i
-          selectHTML.style.order = zIndex + i
-        } else {
-          if (
-            selected_list[i].StyleItem.FrameItem.Width != null &&
-            selected_list[i].StyleItem.FrameItem.Width < 0
-          )
-            selected_list[i].StyleItem.FrameItem.Width = selectHTML.offsetWidth
-          if (
-            selected_list[i].StyleItem.FrameItem.Height != null &&
-            selected_list[i].StyleItem.FrameItem.Height < 0
-          )
-            selected_list[i].StyleItem.FrameItem.Height =
-              selectHTML.offsetHeight
-          updateConstraints(selected_list[i])
-        }
-        let children = wbase_list.filter(wbase =>
-          wbase.ListID.includes(selected_list[i].GID)
+        demo.replaceWith(
+          ...selected_list.map(wb => {
+            $(wb.value).removeClass('drag-hide')
+            $(wb.value).removeClass('fixed-position')
+            wb.value.style.position = null
+            wb.value.style.left = null
+            wb.value.style.top = null
+            wb.value.style.right = null
+            wb.value.style.bottom = null
+            wb.value.style.transform = null
+            wb.value.setAttribute('parentid', new_parentID)
+            wb.Level = pWb.Level + 1
+            wb.ParentID = new_parentID
+            if (
+              wb.value.getAttribute('width-type') === 'fill' &&
+              newPWbHTML.getAttribute('width-type') !== 'fit'
+            ) {
+              wb.value.style.width = '100%'
+              if (newPWbHTML.classList.contains('w-row'))
+                wb.value.style.flex = 1
+            }
+            if (
+              wb.value.getAttribute('height-type') === 'fill' &&
+              newPWbHTML.getAttribute('height-type') !== 'fit'
+            ) {
+              wb.value.style.height = '100%'
+              if (newPWbHTML.classList.contains('w-col'))
+                wb.value.style.flex = 1
+            }
+            return wb.value
+          })
         )
-        for (let j = 0; j < children.length; j++) {
-          let child_listID = children[j].ListID.split(',')
-          let index = child_listID.indexOf(selected_list[i].GID)
-          let new_listID = selected_list[i].ListID.split(',').concat(
-            child_listID.slice(index)
-          )
-          children[j].ListID = new_listID.join(',')
-          children[j].Level = new_listID.length
-          let childHTML = children[j].value
-          childHTML.setAttribute('level', new_listID.length)
-          childHTML.setAttribute('listid', new_listID.join(','))
-        }
       }
-      let children = [
-        ...new_parentHTML.querySelectorAll(
-          `.wbaseItem-value[level="${(parent_wbase?.Level ?? 0) + 1}"]`
+      pWb.ListChildID = [
+        ...pWb.value.querySelectorAll(
+          `.wbaseItem-value[level="${pWb.Level + 1}"]`
         )
-      ]
-      children.sort(
-        (a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex)
-      )
-      for (let i = 0; i < children.length; i++) {
-        wbase_list.find(wbase => wbase.GID == children[i].id).Sort = i
-        children[i].style.zIndex = i
-        children[i].style.order = i
-      }
-      if (parent_wbase) {
-        parent_wbase.CountChild = children.length
-        parent_wbase.ListChildID = children.map(e => e.id)
-      }
-      WBaseDA.listData.push(...selected_list)
-      if (parent_wbase) WBaseDA.listData.push(parent_wbase)
+      ].map(e => e.id)
     } else if (
-      window.getComputedStyle(new_parentHTML).display.match('flex') &&
-      selected_list.some(e => !e.StyleItem.PositionItem.FixPosition)
+      window.getComputedStyle(
+        document.getElementById(drag_start_list[0].ParentID) ?? divSection
+      ).display === 'flex'
     ) {
-      WBaseDA.enumEvent = EnumEvent.parent
-      handleStyleSize(parent_wbase)
-      let children = [
-        ...new_parentHTML.querySelectorAll(
-          `.wbaseItem-value[level="${(parent_wbase?.Level ?? 0) + 1}"]`
-        )
-      ]
-      children.sort(
-        (a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex)
-      )
-      for (let i = 0; i < children.length; i++) {
-        wbase_list.find(wbase => wbase.GID == children[i].id).Sort = i
-        children[i].style.zIndex = i
-        children[i].style.order = i
+      let oldPWbHTML = document.getElementById(drag_start_list[0].ParentID)
+      if (oldPWbHTML.getAttribute('width-type') === 'fit') {
+        oldPWbHTML.style.width = null
       }
-      if (parent_wbase) {
-        parent_wbase.CountChild = children.length
-        parent_wbase.ListChildID = children.map(e => e.id)
-      }
-      initWbaseStyle(parent_wbase)
-    } else if (!isTableParent) {
-      for (let wbaseItem of selected_list) {
-        wbaseItem.StyleItem.PositionItem.FixPosition = drag_start_list.find(
-          e => e.GID === wbaseItem.GID
-        ).StyleItem.PositionItem.FixPosition
-        updateConstraints(wbaseItem)
+      if (oldPWbHTML.getAttribute('height-type') === 'fit') {
+        oldPWbHTML.style.height = null
       }
     }
     arrange()
     drag_start_list = []
+    WBaseDA.listData.push(
+      ...selected_list.map(wb => {
+        wb.Css = wb.value.style.cssText
+        wb.ListClassName = wb.value.className
+        return wb
+      })
+    )
     replaceAllLyerItemHTML()
     updateUIDesignView()
   }
@@ -1230,6 +999,7 @@ function dragWbaseEnd () {
   parent = divSection
   updateHoverWbase()
   handleWbSelectedList([...selected_list])
+  WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
 }
 
 // ALT copy
