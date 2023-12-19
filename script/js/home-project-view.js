@@ -128,7 +128,7 @@ $("body").on("mousedown", ".project-card, .project-tile", async function (ev) {
 
 
     const data = await getListUser();
-    debugger
+    // debugger
     ProjectView.update_infoView(ProjectDA.selected);
 
 

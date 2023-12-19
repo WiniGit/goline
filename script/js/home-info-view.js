@@ -34,6 +34,7 @@ class InfoView {
 }
 
 const getListUser = async () => {
+    debugger
     // const res = await $.ajax({
     //     url: pathUrl + '/Customer/get-info-mutiple',
     //     type: 'GET',
@@ -50,25 +51,41 @@ const getListUser = async () => {
     //         // Handle error cases here
     //     }
     // });
-    const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    // const token = localStorage.getItem("token");
 
-    // $.ajax({
-    //     url: pathUrl + '/Customer/get-info-mutiple',
-    //     type: 'GET',
-    //     data: ['1'],
-    //     headers: headers,
-    //     dataType: 'json',
-    //     success: function (data) {
-    //         // Xử lý dữ liệu ở đây
-    //         console.log(data);
-    //     },
-    //     error: function (xhr, status, error) {
-    //         // Xử lý lỗi nếu có
-    //         console.error('Error:', error);
-    //     }
-    // });
+    // Định nghĩa headers chứa Authorization token
+    // const headers = {
+    //     Authorization: `Bearer ${token}`,
+    //     'Content-Type': 'application/json' // Header Content-Type
+    // };
+
+    // Dữ liệu muốn gửi đi
+    const data = ['1'];
+
+    // URL của API
+    const url = `${pathUrl}/Customer/get-info-mutiple`;
+
+    // Gửi yêu cầu GET bằng Axios
+    await $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        contentType: 'application/json',
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        success: async function (data) {
+            debugger
+            if (data.Code === 200) {
+              
+            } else {
+            }
+        },
+        error: function (xhr, status, error) {
+            debugger
+            // Handle error cases here
+        }
+    });
 }
 
 $("body").on("click", ".copy-code-button", function (ev) {

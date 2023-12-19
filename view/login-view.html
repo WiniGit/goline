@@ -103,10 +103,8 @@
                             "mode": 1
                         }),
                         success: async function (data) {
-                            debugger
                             if (data.Code === 200) {
-                                localStorage.setItem("token", data.Data.token);
-                                localStorage.setItem("refreshToken", data.Data.refreshToken);
+                                UserService.setToken(data.Data.token, data.Data.refreshToken);
 
                                 await $.ajax({
                                     url: pathUrl + '/Customer/get-info',

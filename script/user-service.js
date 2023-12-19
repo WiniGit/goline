@@ -24,11 +24,12 @@ class UserService {
         return Ultis.getStorage('time_refresh');
     }
 
-    static headerProject() {
+    static async headerProject() {
         var timeRefresh = UserService.getTimeRefresh();
         var now = Date.now() / 1000;
         if (timeRefresh > 0 && timeRefresh <= now) {
-            WiniIO.emitRefreshToken();
+            // WiniIO.emitRefreshToken();
+            await refreshToken();
             return {
                 "refreshToken": UserService.getRefreshToken(),
                 "token": UserService.getToken(),
@@ -46,11 +47,12 @@ class UserService {
             };
         }
     }
-    static headerFile() {
+    static async headerFile() {
         var timeRefresh = UserService.getTimeRefresh();
         var now = Date.now() / 1000;
         if (timeRefresh > 0 && timeRefresh <= now) {
-            WiniIO.emitRefreshToken();
+            // WiniIO.emitRefreshToken();
+            await refreshToken();
             return {
                 "refreshToken": UserService.getRefreshToken(),
                 "token": UserService.getToken(),
@@ -77,11 +79,35 @@ class UserService {
             // TODO: bạn chưa đăng nhập
         }
     }
-    static headerSocket() {
+
+    static async refreshToken() {
+        await $.ajax({
+            url: pathUrl + '/Customer/refreshToken',
+            type: 'GET',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                token: localStorage.getItem("token")
+            }),
+            success: async function (data) {
+                if (data.Code === 200) {
+                    debugger
+                    localStorage.setItem("token", data.Data.token);
+                    localStorage.setItem("refreshToken", data.Data.refreshToken);
+                } else {
+                    toastr["error"](data.Message);
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle error cases here
+            }
+        });
+    }
+
+    static async headerSocket() {
         var timeRefresh = UserService.getTimeRefresh();
         var now = Date.now() / 1000;
         if (timeRefresh > 0 && timeRefresh <= now) {
-            emitRefreshToken();
+            await refreshToken();
             let headers = {
                 "refreshToken": UserService.getRefreshToken(),
                 "token": UserService.getToken(),
