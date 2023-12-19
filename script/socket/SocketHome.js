@@ -49,10 +49,9 @@ socketH.on('server-log', (data) => {
 
             break;
         default:
-
+            debugger
             toastr["error"](data.Message);
             alert(JSON.stringify(data.Data));
-
     }
 });
 
