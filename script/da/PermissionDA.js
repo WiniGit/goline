@@ -13,9 +13,39 @@ class PermissionDA {
             type: 'GET',
             contentType: 'application/json',
             success: async function (data) {
-                debugger
+                if ($('#info-container').hasClass("team")) {
+                    if (TeamDA.selected.CustomerTeamItems.some((e) => e.CustomerID == data.Data.ID)) {
+                        toastr["error"]("Người dùng đã là thành viên trong nhóm này!");
+                    } else {
+                        let customerInviteItem = {
+                            ID: 0,
+                            Permission: ProjectDA.permission,
+                            CustomerID: data.Data.ID,
+                            CustomerName: data.Data.Email,
+                            TeamID: TeamDA.selected.ID,
+                            UrlAvatar: data.Data.UrlAvatar,
+                        }
+                        TeamDA.addCustomerTeam(customerInviteItem);
+                    }
+                }
+                else {
+                    if (ProjectDA.selected.CustomerProjectItems.some(e => e.CustomerID == data.Data.ID)) {
+                        toastr["error"]("Người dùng đã là thành viên của dự án này!");
+                    } else {
+                        let customerInviteItem = {
+                            ID: 0,
+                            Permission: ProjectDA.permission,
+                            CustomerID: data.Data.ID,
+                            CustomerName: data.Data.Email,
+                            ProjectID: ProjectDA.selected.ID,
+                            UrlAvatar: data.Data.UrlAvatar,
+                        }
+                        ProjectDA.addCustomerProject(customerInviteItem);
+                    }
+                }
             },
             error: function (xhr, status, error) {
+                toastr["error"]("Người dùng chưa đăng ký tài khoản Wini!");
             }
         });
     }

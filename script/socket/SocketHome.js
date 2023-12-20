@@ -251,6 +251,7 @@ socketH.on('server-post', async (data) => {
         case EnumObj.customerTeam:
             switch (data["enumEvent"]) {
                 case EnumEvent.add:
+                    debugger
                     TeamDA.selected.CustomerTeamItems.push(data.data.Data);
 
                     let info_new_member = InfoView.create_memberTile(data.data.Data);
@@ -312,6 +313,7 @@ socketH.on('server-post', async (data) => {
         case EnumObj.customerProject:
             switch (data["enumEvent"]) {
                 case EnumEvent.add:
+                    debugger
                     ProjectDA.selected.CustomerProjectItems.push(data.data.Data);
                     let new_HTML = InfoView.create_memberTile(data.data.Data);
                     $('#info-container .list-member').append(new_HTML);
