@@ -3132,7 +3132,8 @@ function upListener (event) {
       }
       break
     case EnumEvent.edit:
-      
+      selected_list.forEach(wb => (wb.Css = wb.value.style.cssText))
+      WBaseDA.edit(selected_list, EnumObj.wBase)
       break
     case EnumEvent.parent:
       let list_update = []
