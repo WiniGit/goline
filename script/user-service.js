@@ -97,6 +97,25 @@ class UserService {
             },
             error: function (xhr, status, error) {
                 // Handle error cases here
+                let item = {
+                    type: "warning",
+                    title: "Thông báo",
+                    content: "Phiên làm việc của bạn đã hết hạn, vui lòng đăng nhập lại để tiếp tục sử dụng",
+                    cancelTitle: "Hủy bỏ",
+                    confirmTitle: "Đồng ý",
+                    cancelAction: function () {
+                    },
+                    confirmAction: function () {
+                        if (!href.includes("login-success.html")) {
+                            window.location.href = '/View/login-view.html';
+                        } else {
+                            window.location.href = '/View/login-web-view.html';
+                        }
+                        $('.popup-background').css("display", "none");
+                    },
+                };
+                $('.popup-background').append(PopupDA.create_alertPopup_center(item));
+                $('.popup-background').css("display", "flex");
             }
         });
     }
