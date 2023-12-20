@@ -1489,7 +1489,7 @@ function handleEditOffset ({
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
-        if (cssItem && wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
+        if (wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('width-type', 'fill')
@@ -1557,7 +1557,7 @@ function handleEditOffset ({
         wb.value.setAttribute('height-type', 'fit')
       } else if (height < 0) {
         cssRule.style.height = '100%'
-        if (cssItem && wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
+        if (wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('height-type', 'fill')
@@ -1674,7 +1674,7 @@ function handleEditOffset ({
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
-        if (cssItem && wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
+        if (wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('width-type', 'fill')
@@ -1791,7 +1791,7 @@ function handleEditOffset ({
         wb.value.setAttribute('height-type', 'fit')
       } else if (height < 0) {
         cssRule.style.height = '100%'
-        if (cssItem && wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
+        if (wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('height-type', 'fill')

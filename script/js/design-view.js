@@ -856,10 +856,13 @@ function EditLayoutBlock () {
       isVertical ? 'transparent' : '#e5e5e5'
     }"></i>`
     if (
-      wbList.every(wb =>
-        ['w-textformfield', 'w-table'].every(
-          e => !wb.value.classList.contains(e)
-        ) && !wb.IsInstance && !wb.value.closest('.wbaseItem-value[iswini="true"]')
+      wbList.every(
+        wb =>
+          ['w-textformfield', 'w-table'].every(
+            e => !wb.value.classList.contains(e)
+          ) &&
+          !wb.IsInstance &&
+          !wb.value.closest('.wbaseItem-value[iswini="true"]')
       )
     ) {
       $(header).on('click', '.fa-minus', function () {
@@ -1475,74 +1478,48 @@ function _btnSelectResizeType (isW = true, type) {
     let popup_list_resize_type = document.createElement('div')
     popup_list_resize_type.className =
       'popup_list_resize_type col wini_popup popup_remove'
-    for (let i = 0; i < 4; i++) {
-      let resize_type_option = document.createElement('div')
-      resize_type_option.className = 'resize_type_option'
-      let icon_check = document.createElement('span')
-      icon_check.innerHTML = SVGIcon.check_mark.replace('#000', '#fff')
-      let icon_option_type = document.createElement('span')
-      if (!isW) {
-        icon_option_type.style.transform = 'rotate(90deg)'
-      }
-      resize_type_option.replaceChildren(icon_check, icon_option_type)
-      switch (i) {
-        case 0:
-          resize_type_option.innerHTML += 'mixed'
-          break
-        case 1:
-          if (type != 'fixed') icon_check.style.visibility = 'hidden'
-          icon_option_type.innerHTML = SVGIcon.fixed_size.replace(
-            '#000',
-            '#fff'
-          )
-          resize_type_option.innerHTML += `fixed ${isW ? 'width' : 'height'}`
-          resize_type_option.onclick = function (e) {
+    let resizeType = ['fixed', 'hug', 'fill']
+    if (type === 'mixed') resizeType.unshift('mixed')
+    popup_list_resize_type.replaceChildren(
+      ...resizeType.map(vl => {
+        let option = document.createElement('div')
+        option.className = 'resize-option'
+        if (vl === 'mixed' || checkActiveFillHug({ type: vl, isW: isW })) {
+          option.innerHTML = `<i class="fa-solid fa-check" style="color: #fff;opacity: ${
+            type === vl ? 1 : 0
+          }"></i><span ${
+            isW ? '' : 'style="transform: rotate(90deg)"'
+          }>${(vl === 'fixed'
+            ? SVGIcon.fixed_size
+            : vl === 'hug'
+            ? SVGIcon.hug_content
+            : SVGIcon.fill_container
+          ).replace('#000', '#fff')}</span>${
+            vl === 'hug'
+              ? 'hug contents'
+              : vl === 'fill'
+              ? 'fill container'
+              : vl
+          }`
+        }
+        if (vl !== 'mixed')
+          option.onclick = function (e) {
             e.stopPropagation()
-            if (isW) handleEditOffset({ width: 'fixed' })
-            else handleEditOffset({ height: 'fixed' })
+            if (isW)
+              handleEditOffset({
+                width: vl === 'hug' ? null : vl === 'fill' ? -1 : vl
+              })
+            else
+              handleEditOffset({
+                height: vl === 'hug' ? null : vl === 'fill' ? -1 : vl
+              })
             popup_list_resize_type.remove()
-            updateInputTLWH()
-            updateUIConstraints()
+            // updateInputTLWH()
+            // updateUIConstraints()
           }
-          break
-        case 2:
-          if (type != 'hug') icon_check.style.visibility = 'hidden'
-          icon_option_type.innerHTML = SVGIcon.hug_content.replace(
-            '#000',
-            '#fff'
-          )
-          resize_type_option.innerHTML += 'hug contents'
-          resize_type_option.onclick = function (e) {
-            e.stopPropagation()
-            if (isW) handleEditOffset({ width: null })
-            else handleEditOffset({ height: null })
-            popup_list_resize_type.remove()
-            updateInputTLWH()
-            updateUIConstraints()
-          }
-          break
-        case 3:
-          if (type != 'fill') icon_check.style.visibility = 'hidden'
-          icon_option_type.innerHTML = SVGIcon.fill_container.replace(
-            '#000',
-            '#fff'
-          )
-          resize_type_option.innerHTML += 'fill container'
-          resize_type_option.onclick = function (e) {
-            e.stopPropagation()
-            if (isW) handleEditOffset({ width: -1 })
-            else handleEditOffset({ height: -1 })
-            popup_list_resize_type.remove()
-            updateInputTLWH()
-            updateUIConstraints()
-          }
-          break
-        default:
-          break
-      }
-      popup_list_resize_type.appendChild(resize_type_option)
-    }
-    showPopupSelectResizeType(popup_list_resize_type, isW, title.innerHTML)
+        return option
+      })
+    )
     let offset = this.getBoundingClientRect()
     popup_list_resize_type.style.left = offset.x + 'px'
     popup_list_resize_type.style.top = offset.y + 'px'
@@ -1554,127 +1531,83 @@ function _btnSelectResizeType (isW = true, type) {
   return btn_resize
 }
 
-//
-function showPopupSelectResizeType (popup_list_resize_type, isW, type) {
-  var parentHTML
-  var activeFill = false
-  if (select_box_parentID !== wbase_parentID) {
-    parentHTML = document.getElementById(select_box_parentID)
-    activeFill = window
-      .getComputedStyle(parentHTML)
-      .display.match(/(flex|table)/g)
-  }
-  var activeHug = false
-  activeHug = selected_list.every(e => {
-    if (e.CateID === EnumCate.text || e.CateID === EnumCate.table) return true
-    if (
-      e.WAutolayoutItem &&
-      !(e.WAutolayoutItem.IsScroll && e.WAutolayoutItem.IsWrap)
-    ) {
-      if (isW) {
-        if (e.CateID !== EnumCate.textformfield) {
-          if (e.WAutolayoutItem.Direction === 'Horizontal') {
-            return !e.WAutolayoutItem.IsWrap && !e.WAutolayoutItem.IsScroll
-          } else if (
-            [
-              ...e.value.querySelectorAll(
-                `.wbaseItem-value[level="${e.Level + 1}"]`
-              )
-            ].every(childHTML => !childHTML.classList.contains('col-'))
-          ) {
-            return !e.WAutolayoutItem.IsScroll
-          }
-        }
-      } else {
-        if (e.WAutolayoutItem.Direction === 'Vertical') {
-          return !e.WAutolayoutItem.IsWrap && !e.WAutolayoutItem.IsScroll
-        } else {
-          return !e.WAutolayoutItem.IsScroll
-        }
+// fill || hug
+function checkActiveFillHug ({ type = 'fill', isW = true }) {
+  switch (type) {
+    case 'fill':
+      let activeFill = false
+      if (select_box_parentID !== wbase_parentID) {
+        var pWbHTML = document.getElementById(select_box_parentID)
+        var pWbComputedSt = window.getComputedStyle(pWbHTML)
+        activeFill = pWbComputedSt.display.match(/(flex|table)/g)
       }
-    }
-    return false
-  })
-  if (activeFill)
-    activeFill = selected_list.every(e => {
-      if (isW) {
-        if (parentHTML.classList.contains('w-row')) {
-          if (
-            parentHTML.style.width &&
-            parentHTML.style.width != 'fit-content'
-          ) {
-            return (
-              parentHTML.getAttribute('wrap') == 'wrap' ||
-              parentHTML.getAttribute('scroll') != 'true'
-            )
+      if (activeFill) {
+        if (isW) {
+          if (pWbHTML.classList.contains('w-row')) {
+            if (pWbHTML.getAttribute('width-type') === 'fill') {
+              activeFill =
+                pWbComputedSt.flexWrap === 'wrap' ||
+                !pWbComputedSt.overflow.includes('scroll')
+            }
+          } else {
+            activeFill = pWbComputedSt.flexWrap !== 'wrap'
           }
         } else {
-          return parentHTML.getAttribute('wrap') != 'wrap'
-        }
-      } else {
-        if (e.CateID !== EnumCate.tree) {
-          if (parentHTML.classList.contains('w-row')) {
-            return parentHTML.getAttribute('wrap') != 'wrap'
+          if (pWbHTML.classList.contains('w-row')) {
+            activeFill = pWbComputedSt.flexWrap !== 'wrap'
           } else {
-            if (
-              parentHTML.style.height &&
-              parentHTML.style.height != 'fit-content'
-            ) {
-              return (
-                parentHTML.getAttribute('wrap') == 'wrap' ||
-                parentHTML.getAttribute('scroll') != 'true'
-              )
+            if (pWbHTML.getAttribute('height-type') === 'fill') {
+              activeFill =
+                pWbComputedSt.flexWrap === 'wrap' ||
+                !pWbComputedSt.overflow.includes('scroll')
             }
           }
         }
       }
-      return false
-    })
-  if (activeFill) {
-    popup_list_resize_type.childNodes[3].style.display = 'flex'
-  } else {
-    popup_list_resize_type.childNodes[3].style.display = 'none'
-  }
-  if (activeHug) {
-    popup_list_resize_type.childNodes[2].style.display = 'flex'
-  } else {
-    popup_list_resize_type.childNodes[2].style.display = 'none'
-  }
-  switch (type.toLowerCase()) {
-    case 'fixed':
-      popup_list_resize_type.firstChild.style.display = 'none'
-      popup_list_resize_type.childNodes[1].firstChild.style.visibility =
-        'visible'
-      popup_list_resize_type.childNodes[2].firstChild.style.visibility =
-        'hidden'
-      popup_list_resize_type.childNodes[3].firstChild.style.visibility =
-        'hidden'
-      break
+      return activeFill
     case 'hug':
-      popup_list_resize_type.firstChild.style.display = 'none'
-      popup_list_resize_type.childNodes[1].firstChild.style.visibility =
-        'hidden'
-      popup_list_resize_type.childNodes[2].firstChild.style.visibility =
-        'visible'
-      popup_list_resize_type.childNodes[3].firstChild.style.visibility =
-        'hidden'
-      break
-    case 'fill':
-      popup_list_resize_type.firstChild.style.display = 'none'
-      popup_list_resize_type.childNodes[1].firstChild.style.visibility =
-        'hidden'
-      popup_list_resize_type.childNodes[2].firstChild.style.visibility =
-        'hidden'
-      popup_list_resize_type.childNodes[3].firstChild.style.visibility =
-        'visible'
-      break
+      return selected_list.every(wb => {
+        if (
+          wb.value.classList.contains('w-text') ||
+          wb.value.classList.contains('w-table')
+        )
+          return true
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        if (
+          wbComputeSt.display === 'flex' &&
+          !(
+            wbComputeSt.overflow.includes('scroll') &&
+            wbComputeSt.flexWrap === 'wrap'
+          )
+        ) {
+          if (isW) {
+            if (!wb.value.classList.contains('w-textformfield')) {
+              if (wb.value.classList.contains('w-row')) {
+                return (
+                  !wbComputeSt.overflow.includes('scroll') &&
+                  !wbComputeSt.flexWrap === 'wrap'
+                )
+              } else if (
+                !wb.value.querySelector(`.col-[level="${wb.Level + 1}"]`)
+              ) {
+                return !wbComputeSt.overflow.includes('scroll')
+              }
+            }
+          } else {
+            if (wb.value.classList.contains('w-col')) {
+              return (
+                !wbComputeSt.flexWrap === 'wrap' &&
+                !wbComputeSt.overflow.includes('scroll')
+              )
+            } else {
+              return !wbComputeSt.overflow.includes('scroll')
+            }
+          }
+        }
+        return false
+      })
     default:
-      popup_list_resize_type.firstChild.style.display = 'flex'
-      for (var i = 1; i < popup_list_resize_type.childNodes.length; i++) {
-        popup_list_resize_type.childNodes[i].firstChild.style.visibility =
-          'hidden'
-      }
-      break
+      return true
   }
 }
 

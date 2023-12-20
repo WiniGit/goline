@@ -371,7 +371,7 @@ input[type="color"]::-webkit-color-swatch {
   background-color: #1890ff;
 }
 
-.resize_type_option {
+.resize-option {
   display: flex;
   align-items: center;
   font-size: 12px;
@@ -381,18 +381,21 @@ input[type="color"]::-webkit-color-swatch {
   background-color: transparent;
 }
 
-.resize_type_option:first-child {
+.popup_list_resize_type:has(div:nth-child(4)) > div:first-child {
   color: #e5e5e5;
   border-bottom: 1px solid #e5e5e5;
   pointer-events: none;
 }
 
-.resize_type_option > span:first-child {
-  transform: scale(0.6);
-  margin: 0;
+.popup_list_resize_type:has(div:nth-child(4)) > div:first-child > span {
+  visibility: hidden !important;
 }
 
-.resize_type_option > span:nth-child(2) {
+.resize-option > i {
+  margin: 2px 4px;
+}
+
+.resize-option > span {
   margin: 4px 4px 4px 0;
 }
 
