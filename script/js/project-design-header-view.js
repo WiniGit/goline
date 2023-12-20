@@ -37,13 +37,19 @@ function createNewSkin (skinType, skinValue) {
               .getAttribute('edit-typo')
           ) {
             handleEditTypo({ colorSkin: skin })
-          } else handleEditBackground({ colorSkin: skin })
+            reloadEditTypoBlock()
+          } else {
+            handleEditBackground({ colorSkin: skin })
+            reloadEditBackgroundBlock()
+          }
           break
         case EnumCate.typography:
           handleEditTypo({ typoSkin: skin })
+          reloadEditTypoBlock()
           break
         case EnumCate.border:
           handleEditBorder({ borderSkin: skin })
+          reloadEditBorderBlock()
           break
         case EnumCate.effect:
           handleEditEffect({ effectSkin: skin })

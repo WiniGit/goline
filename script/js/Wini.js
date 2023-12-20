@@ -1222,9 +1222,8 @@ function moveListener (event) {
                 let isInFlex = false
                 let parentHTML = document.getElementById(select_box_parentID)
                 if (select_box_parentID != wbase_parentID) {
-                  isInFlex = window
-                    .getComputedStyle(parentHTML)
-                    .display.match('flex')
+                  isInFlex =
+                    window.getComputedStyle(parentHTML).display === 'flex'
                 }
                 switch (tool_state) {
                   case ToolState.resize_left:
@@ -1411,8 +1410,13 @@ function moveListener (event) {
                           wb.tmpX = thisOffset.x
                           wb.tmpY = thisOffset.y + 'px'
                           wb.value.style.transform = null
+                        } else {
+                          wb.value.style.width = `${wb.value.offsetWidth}px`
+                          wb.value.style.height = `${wb.value.offsetHeight}px`
+                          wb.value.style.flex = null
+                          wb.value.removeAttribute('width-type')
+                          wb.value.removeAttribute('height-type')
                         }
-                        wb.value.style.flex = null
                         wb.tmpH = wb.value.offsetHeight
                         wb.tmpW = wb.value.offsetWidth
                       }
@@ -1454,8 +1458,13 @@ function moveListener (event) {
                           wb.value.style.right = null
                           wb.tmpY = thisOffset.y
                           wb.value.style.transform = null
+                        } else {
+                          wb.value.style.width = `${wb.value.offsetWidth}px`
+                          wb.value.style.height = `${wb.value.offsetHeight}px`
+                          wb.value.style.flex = null
+                          wb.value.removeAttribute('width-type')
+                          wb.value.removeAttribute('height-type')
                         }
-                        wb.value.style.flex = null
                         wb.tmpH = wb.value.offsetHeight
                         wb.tmpW = wb.value.offsetWidth
                       }
@@ -1495,8 +1504,13 @@ function moveListener (event) {
                           wb.value.style.bottom = null
                           wb.tmpX = thisOffset.x
                           wb.value.style.transform = null
+                        } else {
+                          wb.value.style.width = `${wb.value.offsetWidth}px`
+                          wb.value.style.height = `${wb.value.offsetHeight}px`
+                          wb.value.style.flex = null
+                          wb.value.removeAttribute('width-type')
+                          wb.value.removeAttribute('height-type')
                         }
-                        wb.value.style.flex = null
                         wb.tmpH = wb.value.offsetHeight
                         wb.tmpW = wb.value.offsetWidth
                       }
@@ -1536,8 +1550,13 @@ function moveListener (event) {
                           wb.value.style.top = thisOffset.y + 'px'
                           wb.value.style.bottom = null
                           wb.value.style.transform = null
+                        } else {
+                          wb.value.style.width = `${wb.value.offsetWidth}px`
+                          wb.value.style.height = `${wb.value.offsetHeight}px`
+                          wb.value.style.flex = null
+                          wb.value.removeAttribute('width-type')
+                          wb.value.removeAttribute('height-type')
                         }
-                        wb.value.style.flex = null
                         wb.tmpH = wb.value.offsetHeight
                         wb.tmpW = wb.value.offsetWidth
                       }
@@ -3132,8 +3151,62 @@ function upListener (event) {
       }
       break
     case EnumEvent.edit:
-      selected_list.forEach(wb => (wb.Css = wb.value.style.cssText))
-      WBaseDA.edit(selected_list, EnumObj.wBase)
+      let listUpdate = []
+      if (selected_list[0].Css || selected_list[0].IsInstance) {
+        for (let wb of selected_list) {
+          if (window.getComputedStyle(wb.value).position === 'absolute')
+            updateConstraints(wb.value)
+          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+            let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+            let cssRule = StyleDA.docStyleSheets.find(e =>
+              [...divSection.querySelectorAll(e.selectorText)].includes(
+                wb.value
+              )
+            )
+            cssRule.style.width = wb.value.style.width
+            cssRule.style.height = wb.value.style.height
+            cssRule.style.flex = wb.value.style.flex
+            wb.value.style.width = null
+            wb.value.style.height = null
+            wb.value.style.flex = null
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              cssRule.cssText
+            )
+            StyleDA.editStyleSheet(cssItem)
+          }
+          wb.Css = wb.value.style.cssText
+          listUpdate.push(wb)
+        }
+      } else {
+        let pWbComponent = selected_list[0].value.closest(
+          `.wbaseItem-value[iswini="true"]`
+        )
+        let cssItem = StyleDA.cssStyleSheets.find(
+          e => e.GID === pWbComponent.id
+        )
+        for (let wb of selected_list) {
+          if (window.getComputedStyle(wb.value).position === 'absolute')
+            updateConstraints(wb.value)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.top = wb.value.style.top
+          cssRule.style.right = wb.value.style.right
+          cssRule.style.bottom = wb.value.style.bottom
+          cssRule.style.left = wb.value.style.left
+          cssRule.style.transform = wb.value.style.transform
+          cssRule.style.height = wb.value.style.height
+          cssRule.style.flex = wb.value.style.flex
+          wb.value.style = null
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+        }
+        StyleDA.editStyleSheet(cssItem)
+      }
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
       break
     case EnumEvent.parent:
       let list_update = []
