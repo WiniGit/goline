@@ -60,7 +60,7 @@ class StyleDA {
       headers: await UserService.headerProject(),
       body: cssItem
     })
-    if (result.data.Code === '200') StyleDA.listSkin.push(cssItem)
+    if (result.data.Code === 200) StyleDA.listSkin.push(cssItem)
     return result
   }
 
