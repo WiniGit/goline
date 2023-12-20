@@ -1016,6 +1016,7 @@ let tmpAltHTML = []
 function dragAltUpdate (xp, yp, event) {
   console.log('drag alt update')
   let newPWbHTML = parent
+  let new_parentID = newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
   if (alt_list.length == 0) {
     for (let wb of selected_list) {
       let alt_wbase = JSON.parse(JSON.stringify(wb))
@@ -1200,7 +1201,7 @@ function dragAltUpdate (xp, yp, event) {
       wb.ParentID = new_parentID
       return wb.value
     })
-    if (select_box_parentID !== new_parentID) {
+    if (select_box_parentID !== new_parentID || checkpad === selected_list.length) {
       let children = [
         ...newPWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${
