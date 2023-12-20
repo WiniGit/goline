@@ -665,9 +665,7 @@ function dragWbaseUpdate (xp, yp, event) {
           parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
         }"]`
       )
-    ].filter(e =>
-      selected_list.every(wb => wb.GID !== e.id)
-    )
+    ].filter(e => selected_list.every(wb => wb.GID !== e.id))
     let isGrid = window.getComputedStyle(newPWbHTML).flexWrap == 'wrap'
     if (newPWbHTML.classList.contains('w-col')) {
       let zIndex = 0
@@ -695,19 +693,16 @@ function dragWbaseUpdate (xp, yp, event) {
         })[0]
         if (isGrid) {
           closestHTML = children.find(
-            childHTML => childHTML.getBoundingClientRect().bottom >= event.pageX
+            childHTML => childHTML.getBoundingClientRect().right >= event.pageX
           )
         }
         if (closestHTML) {
           let htmlRect = closestHTML.getBoundingClientRect()
           zIndex = children.indexOf(closestHTML)
           distance = event.pageY - (htmlRect.y + htmlRect.height / 2)
-          if (distance < 0) 
-            zIndex--
+          if (distance < 0) zIndex--
         } else {
-          zIndex = Math.max(
-            ...children.map(childHTML => children.indexOf(childHTML))
-          )
+          zIndex = children.length - 1
         }
       }
       if (drag_start_list[0].ParentID != new_parentID) {
@@ -781,9 +776,7 @@ function dragWbaseUpdate (xp, yp, event) {
           distance = event.pageX - (htmlRect.x + htmlRect.width / 2)
           if (distance < 0) zIndex--
         } else {
-          zIndex = Math.max(
-            ...children.map(childHTML => children.indexOf(childHTML))
-          )
+          zIndex = children.length - 1
         }
       }
       if (drag_start_list[0].ParentID != new_parentID) {
@@ -838,10 +831,7 @@ function dragWbaseUpdate (xp, yp, event) {
       wb.ParentID = new_parentID
       return wb.value
     })
-    if (
-      drag_start_list[0].ParentID !== new_parentID &&
-      select_box_parentID !== new_parentID
-    ) {
+    if (select_box_parentID !== new_parentID) {
       let children = [
         ...newPWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${
@@ -859,9 +849,9 @@ function dragWbaseUpdate (xp, yp, event) {
             })
           ) + 1
         newPWbHTML.replaceChildren(
-          ...children.slice(0, zIndex),
+          ...children.slice(0, zIndex + 1),
           ...selected_list.map(wb => wb.value),
-          ...children.slice(zIndex)
+          ...children.slice(zIndex + 1)
         )
       }
     }
@@ -879,7 +869,10 @@ function dragWbaseEnd () {
     let newPWbHTML = parent
     let new_parentID =
       newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
-    let pWb = wbase_list.find(e => e.GID === new_parentID)
+    let pWb =
+      new_parentID !== wbase_parentID
+        ? wbase_list.find(e => e.GID === new_parentID)
+        : null
     //
     if (drag_start_list[0].ParentID !== new_parentID) {
       var eEvent = EnumEvent.parent
@@ -942,27 +935,11 @@ function dragWbaseEnd () {
             wb.Level = pWb.Level + 1
             wb.value.setAttribute('level', wb.Level)
             wb.ParentID = new_parentID
-            if (
-              wb.value.getAttribute('width-type') === 'fill' &&
-              newPWbHTML.getAttribute('width-type') !== 'fit'
-            ) {
-              wb.value.style.width = '100%'
-              if (newPWbHTML.classList.contains('w-row'))
-                wb.value.style.flex = 1
-            }
-            if (
-              wb.value.getAttribute('height-type') === 'fill' &&
-              newPWbHTML.getAttribute('height-type') !== 'fit'
-            ) {
-              wb.value.style.height = '100%'
-              if (newPWbHTML.classList.contains('w-col'))
-                wb.value.style.flex = 1
-            }
             return wb.value
           })
         )
       }
-      if(pWb) {
+      if (pWb) {
         pWb.ListChildID = [
           ...pWb.value.querySelectorAll(
             `.wbaseItem-value[level="${pWb.Level + 1}"]`
@@ -992,6 +969,24 @@ function dragWbaseEnd () {
     }
     WBaseDA.listData.push(
       ...selected_list.map(wb => {
+        if(wb.value.getAttribute('width-type') === 'fill') {
+          if(wb.value.closest(`.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`)) {
+            wb.value.style.width = '100%'
+            wb.value.style.flex = 1
+          } else {
+            wb.value.style.width = wb.value.offsetWidth + 'px'
+            wb.value.removeAttribute('width-type')
+          }
+        }
+        if(wb.value.getAttribute('height-type') === 'fill') {
+          if(wb.value.closest(`.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`)) {
+            wb.value.style.height = '100%'
+            wb.value.style.flex = 1
+          } else {
+            wb.value.style.height = wb.value.offsetHeight + 'px'
+            wb.value.removeAttribute('height-type')
+          }
+        }
         wb.Css = wb.value.style.cssText
         wb.ListClassName = wb.value.className
         return wb
@@ -1020,34 +1015,21 @@ let tmpAltHTML = []
 // new alt
 function dragAltUpdate (xp, yp, event) {
   console.log('drag alt update')
-  let parentHTML = parent
+  let newPWbHTML = parent
+  let new_parentID = newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
   if (alt_list.length == 0) {
-    let isFixedWhenScroll = false
-    if (
-      !window
-        .getComputedStyle(selected_list[0].value.parentElement)
-        .display.match('flex')
-    ) {
-      isFixedWhenScroll = true
-    }
-    for (let i = 0; i < selected_list.length; i++) {
-      let alt_wbase = JSON.parse(JSON.stringify(selected_list[i]))
+    for (let wb of selected_list) {
+      let alt_wbase = JSON.parse(JSON.stringify(wb))
       alt_wbase.GID = uuidv4()
-      alt_wbase.ChildID = selected_list[i].GID
-      alt_wbase.Sort += i
+      alt_wbase.ChildID = wb.GID
       alt_wbase.IsCopy = true
-      if (isFixedWhenScroll)
-        alt_wbase.StyleItem.PositionItem.FixPosition = false
-      let tmp = selected_list[i].value.cloneNode(true)
-      if (selected_list[i].StyleItem.FrameItem.Width < 0) {
-        alt_wbase.StyleItem.FrameItem.Width = selected_list[i].value.offsetWidth
-        tmp.style.width = alt_wbase.StyleItem.FrameItem.Width + 'px'
+      let tmp = wb.value.cloneNode(true)
+      if (wb.value.getAttribute('width-type') === 'fill') {
+        tmp.style.width = wb.value.offsetWidth + 'px'
       }
       //
-      if (selected_list[i].StyleItem.FrameItem.Height < 0) {
-        alt_wbase.StyleItem.FrameItem.Height =
-          selected_list[i].value.offsetHeight
-        tmp.style.height = alt_wbase.StyleItem.FrameItem.Width + 'px'
+      if (wb.value.getAttribute('height-type') === 'fill') {
+        tmp.style.height = wb.value.offsetHeight + 'px'
       }
       tmpAltHTML.push(tmp)
       tmp.id = alt_wbase.GID
@@ -1055,9 +1037,7 @@ function dragAltUpdate (xp, yp, event) {
       alt_list.push(alt_wbase)
     }
   }
-  let isTableParent = parentHTML.localName === 'table'
-  document.getElementById(`demo_auto_layout`)?.remove()
-  if (isTableParent) {
+  if (newPWbHTML.classList.contains('w-table')) {
     console.log('table')
     let availableCell = findCell(parentHTML, event)
     if (availableCell) {
@@ -1090,23 +1070,23 @@ function dragAltUpdate (xp, yp, event) {
       }
     }
   } else if (
-    window.getComputedStyle(parentHTML).display?.match('flex') &&
-    alt_list.some(e => !e.StyleItem.PositionItem.FixPosition)
+    window.getComputedStyle(newPWbHTML).display.match('flex') &&
+    alt_list.some(e => !e.value.classList.contains('fixed-position'))
   ) {
     console.log('flex')
     let children = [
-      ...parentHTML.querySelectorAll(
+      ...newPWbHTML.querySelectorAll(
         `.wbaseItem-value[level="${
-          parseInt(parentHTML.getAttribute('level') ?? '0') + 1
+          parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
         }"]`
       )
-    ]
-    let isGrid = window.getComputedStyle(parentHTML).flexWrap == 'wrap'
-    if (parentHTML.classList.contains('w-col')) {
+    ].filter(e => alt_list.every(wb => wb.GID !== e.id))
+    let isGrid = window.getComputedStyle(newPWbHTML).flexWrap == 'wrap'
+    if (newPWbHTML.classList.contains('w-col')) {
       let zIndex = 0
       let distance = 0
       if (children.length > 0) {
-        children.sort((aHTML, bHTML) => {
+        let closestHTML = [...children].sort((aHTML, bHTML) => {
           let aRect = aHTML.getBoundingClientRect()
           let bRect = bHTML.getBoundingClientRect()
           let a_center_oy
@@ -1125,49 +1105,40 @@ function dragAltUpdate (xp, yp, event) {
             b_center_oy = Math.abs(event.pageY - (bRect.y + bRect.height / 2))
           }
           return a_center_oy - b_center_oy
-        })
-        let closestHTML = children[0]
+        })[0]
         if (isGrid) {
           closestHTML = children.find(
-            childHTML => childHTML.getBoundingClientRect().bottom >= event.pageX
+            childHTML => childHTML.getBoundingClientRect().right >= event.pageX
           )
         }
         if (closestHTML) {
           let closestRect = closestHTML.getBoundingClientRect()
-          zIndex = parseInt(window.getComputedStyle(closestHTML).order)
+          zIndex = children.indexOf(closestHTML)
           distance = event.pageY - (closestRect.y + closestRect.height / 2)
-          if (distance < 0) {
-            zIndex--
-          }
+          if (distance < 0) zIndex--
         } else {
-          zIndex = Math.max(
-            ...children.map(childHTML => parseInt(childHTML.style.zIndex))
-          )
+          zIndex = children.length - 1
         }
       }
       alt_list.forEach(e => $(e.value).addClass('drag-hide'))
-      let demo = document.createElement('div')
-      demo.id = 'demo_auto_layout'
-      demo.style.backgroundColor = '#1890FF'
-      demo.style.height = `${2.4 / scale}px`
-      demo.style.width = `${select_box.w * 0.8}px`
-      demo.style.order = zIndex
-      switch (parseInt(parentHTML.getAttribute('cateid'))) {
-        case EnumCate.tree:
-          parentHTML.querySelector('.children-value').appendChild(demo)
-          break
-        case EnumCate.carousel:
-          parentHTML.querySelector('.children-value').appendChild(demo)
-          break
-        default:
-          parentHTML.appendChild(demo)
-          break
+      var demo = document.getElementById('demo_auto_layout')
+      if (!demo) {
+        demo = document.createElement('div')
+        demo.id = 'demo_auto_layout'
+        demo.style.backgroundColor = '#1890FF'
+        demo.style.height = `${2.4 / scale}px`
+        demo.style.width = `${select_box.w * 0.8}px`
       }
+      newPWbHTML.replaceChildren(
+        ...children.slice(0, zIndex + 1),
+        demo,
+        ...children.slice(zIndex + 1)
+      )
     } else {
       let zIndex = 0
       let distance = 0
       if (children.length > 0) {
-        children.sort((aHTML, bHTML) => {
+        let closestHTML = [...children].sort((aHTML, bHTML) => {
           let aRect = aHTML.getBoundingClientRect()
           let bRect = bHTML.getBoundingClientRect()
           let a_center_ox
@@ -1186,8 +1157,7 @@ function dragAltUpdate (xp, yp, event) {
             b_center_ox = Math.abs(event.pageX - (bRect.x + bRect.width / 2))
           }
           return a_center_ox - b_center_ox
-        })
-        let closestHTML = children[0]
+        })[0]
         if (isGrid) {
           closestHTML = children.find(
             childHTML => childHTML.getBoundingClientRect().bottom >= event.pageY
@@ -1197,254 +1167,141 @@ function dragAltUpdate (xp, yp, event) {
           let closestRect = closestHTML.getBoundingClientRect()
           zIndex = parseInt(window.getComputedStyle(closestHTML).zIndex)
           distance = event.pageX - (closestRect.x + closestRect.width / 2)
-          if (distance < 0) {
-            zIndex--
-          }
+          if (distance < 0) zIndex--
         } else {
-          zIndex = Math.max(
-            ...children.map(childHTML => parseInt(childHTML.style.zIndex))
-          )
+          zIndex = children.length - 1
         }
       }
       alt_list.forEach(e => $(e.value).addClass('drag-hide'))
-      let demo = document.createElement('div')
-      demo.id = 'demo_auto_layout'
-      demo.style.backgroundColor = '#1890FF'
-      demo.style.width = `${2.4 / scale}px`
-      demo.style.height = `${select_box.h * 0.8}px`
-      demo.style.order = zIndex
-      switch (parseInt(parentHTML.getAttribute('cateid'))) {
-        case EnumCate.tree:
-          parentHTML.querySelector('.children-value').appendChild(demo)
-          break
-        case EnumCate.carousel:
-          parentHTML.querySelector('.children-value').appendChild(demo)
-          break
-        default:
-          parentHTML.appendChild(demo)
-          break
+      var demo = document.getElementById('demo_auto_layout')
+      if (!demo) {
+        demo = document.createElement('div')
+        demo.id = 'demo_auto_layout'
+        demo.style.backgroundColor = '#1890FF'
+        demo.style.width = `${2.4 / scale}px`
+        demo.style.height = `${select_box.h * 0.8}px`
       }
+      newPWbHTML.replaceChildren(
+        ...children.slice(0, zIndex + 1),
+        demo,
+        ...children.slice(zIndex + 1)
+      )
     }
   } else {
-    document.getElementById('demo_auto_layout')?.remove()
-    let children = [
-      ...parentHTML.querySelectorAll(
-        `.wbaseItem-value[level="${
-          parseInt(parentHTML.getAttribute('level') ?? '0') + 1
-        }"]`
-      )
-    ]
-    let zIndex = 0
-    if (drag_start_list[0].ParentID != parentHTML.id) {
-      zIndex =
-        Math.max(
-          0,
-          ...children.map(eHTML =>
-            parseInt(window.getComputedStyle(eHTML).zIndex)
-          )
-        ) + 1
-    }
-    for (let i = 0; i < alt_list.length; i++) {
-      let selectHTML = alt_list[i].value
-      selectHTML.style.position = 'absolute'
-      $(selectHTML).removeClass('drag-hide')
-
-      if (zIndex) {
-        selectHTML.style.zIndex = zIndex + i
-        selectHTML.style.order = zIndex + i
-        alt_list[i].Sort = zIndex + i
-      } else {
-        selectHTML.style.zIndex = drag_start_list[i].Sort
-        selectHTML.style.order = drag_start_list[i].Sort
-        alt_list[i].Sort = drag_start_list[i].Sort
-      }
-      alt_list[i].StyleItem.PositionItem.Left = `${
-        parseFloat(
-          `${drag_start_list[i].StyleItem.PositionItem.Left}`.replace('px', '')
-        ) +
-        xp +
-        parent_offset1.x -
-        offsetp.x
-      }px`
-      alt_list[i].StyleItem.PositionItem.Top = `${
-        parseFloat(
-          `${drag_start_list[i].StyleItem.PositionItem.Top}`.replace('px', '')
-        ) +
-        yp +
-        parent_offset1.y -
-        offsetp.y
-      }px`
-      if (parentHTML.id?.length != 36) {
-        alt_list[i].ParentID = wbase_parentID
-        alt_list[i].ListID = wbase_parentID
-        alt_list[i].Level = 1
-      } else {
-        alt_list[i].ParentID = parentHTML.id
-        let parent_listID = parentHTML.getAttribute('listid')
-        alt_list[i].ListID = parent_listID + `,${parentHTML.id}`
-        alt_list[i].Level = alt_list[i].ListID.split(',').length
-      }
-      selectHTML.style.right = null
-      selectHTML.style.bottom = null
-      selectHTML.style.transform = null
-      selectHTML.style.left = alt_list[i].StyleItem.PositionItem.Left
-      selectHTML.style.top = alt_list[i].StyleItem.PositionItem.Top
-      if (selectHTML.parentElement !== parentHTML) {
-        parentHTML.appendChild(selectHTML)
+    alt_list.forEach(wb => {
+      $(wb.value).removeClass('drag-hide')
+      $(wb.value).removeClass('fixed-position')
+      wb.value.style.left = `${wb.tmpX + xp + parent_offset1.x - offsetp.x}px`
+      wb.value.style.top = `${wb.tmpY + yp + parent_offset1.y - offsetp.y}px`
+      wb.value.style.right = null
+      wb.value.style.bottom = null
+      wb.value.style.transform = null
+      wb.value.setAttribute('parentid', new_parentID)
+      wb.Level = parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+      wb.ParentID = new_parentID
+      return wb.value
+    })
+    if (select_box_parentID !== new_parentID || checkpad === selected_list.length) {
+      let children = [
+        ...newPWbHTML.querySelectorAll(
+          `.wbaseItem-value[level="${
+            parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+          }"]`
+        )
+      ]
+      if (children.length > 0) {
+        let zIndex =
+          Math.max(
+            0,
+            ...children.map(eHTML => {
+              if (alt_list.some(wb => wb.GID === eHTML.id)) return 0
+              else return $(eHTML).index()
+            })
+          ) + 1
+        newPWbHTML.replaceChildren(
+          ...children.slice(0, zIndex + 1),
+          ...alt_list.map(wb => wb.value),
+          ...children.slice(zIndex + 1)
+        )
       }
     }
   }
+  if (!demo) document.getElementById('demo_auto_layout')?.remove()
   select_box_parentID = alt_list[0].ParentID
 }
 
 function dragAltEnd () {
   console.log('dragend alt')
   if (drag_start_list.length > 0 && alt_list.length > 0) {
-    WBaseDA.enumEvent = EnumEvent.copy
-    let new_parentHTML = parent
+    let newPWbHTML = parent
     let new_parentID =
-      new_parentHTML.id?.length == 36 ? new_parentHTML.id : wbase_parentID
-    let isTableParent = new_parentHTML.localName === 'table'
-    let parent_wbase
-    let zIndex
-    if (new_parentID !== wbase_parentID)
-      parent_wbase = wbase_list.find(e => e.GID === new_parentID)
-    let drag_to_layout = window
-      .getComputedStyle(new_parentHTML)
-      .display.match('flex')
-    if (isTableParent) {
-      let demo = document.getElementById('demo_auto_layout')
-      if (demo) {
-        zIndex = parent_wbase.CountChild + 1
-        demo.replaceWith(...alt_list.map(e => e.value))
-      }
-      let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b))
-      ;[
-        ...new_parentHTML.querySelectorAll(':scope > .table-row > .table-cell')
-      ].forEach(cell => {
-        listCell.find(e => e.id === cell.id).contentid = [...cell.childNodes]
-          .map(e => e.id)
-          .join(',')
+      newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
+    let pWb =
+      new_parentID !== wbase_parentID
+        ? wbase_list.find(e => e.GID === new_parentID)
+        : null
+    let demo = document.getElementById('demo_auto_layout')
+    if (demo) {
+      demo.replaceWith(
+        ...alt_list.map(wb => {
+          $(wb.value).removeClass('drag-hide')
+          $(wb.value).removeClass('fixed-position')
+          wb.value.style.position = null
+          wb.value.style.left = null
+          wb.value.style.top = null
+          wb.value.style.right = null
+          wb.value.style.bottom = null
+          wb.value.style.transform = null
+          wb.value.setAttribute('parentid', new_parentID)
+          wb.Level = pWb.Level + 1
+          wb.value.setAttribute('level', wb.Level)
+          wb.ParentID = new_parentID
+          return wb.value
+        })
+      )
+    }
+    if (pWb) {
+      pWb.ListChildID = [
+        ...pWb.value.querySelectorAll(
+          `.wbaseItem-value[level="${pWb.Level + 1}"]`
+        )
+      ].map(e => e.id)
+      WBaseDA.listData.push(pWb)
+    }
+    WBaseDA.listData.push(
+      ...selected_list.map(wb => {
+        if(wb.value.getAttribute('width-type') === 'fill') {
+          if(wb.value.closest(`.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`)) {
+            wb.value.style.width = '100%'
+            wb.value.style.flex = 1
+          } else {
+            wb.value.style.width = wb.value.offsetWidth + 'px'
+            wb.value.removeAttribute('width-type')
+          }
+        }
+        if(wb.value.getAttribute('height-type') === 'fill') {
+          if(wb.value.closest(`.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`)) {
+            wb.value.style.height = '100%'
+            wb.value.style.flex = 1
+          } else {
+            wb.value.style.height = wb.value.offsetHeight + 'px'
+            wb.value.removeAttribute('height-type')
+          }
+        }
+        wb.Css = wb.value.style.cssText
+        wb.ListClassName = wb.value.className
+        return wb
       })
-      parent_wbase.AttributesItem.Content = JSON.stringify(
-        parent_wbase.TableRows
-      )
-      WBaseDA.listData.push(parent_wbase)
-    } else if (drag_to_layout) {
-      let demo = document.getElementById('demo_auto_layout')
-      if (demo) {
-        zIndex = parseInt(demo.style.order)
-        demo.remove()
-      }
-    }
-    for (let i = 0; i < alt_list.length; i++) {
-      let selectHTML = alt_list[i].value
-      $(selectHTML).removeClass('drag-hide')
-      if (new_parentID != wbase_parentID) {
-        alt_list[i].ParentID = new_parentHTML.id
-        alt_list[i].ListID = parent_wbase.ListID + `,${new_parentHTML.id}`
-        alt_list[i].Level = alt_list[i].ListID.split(',').length
-        selectHTML.setAttribute('level', alt_list[i].Level)
-        selectHTML.setAttribute('listid', alt_list[i].ListID)
-      } else {
-        alt_list[i].ParentID = wbase_parentID
-        alt_list[i].ListID = wbase_parentID
-        alt_list[i].Level = 1
-        selectHTML.setAttribute('level', 1)
-        selectHTML.setAttribute('listid', wbase_parentID)
-      }
-      if (isTableParent) {
-        alt_list[i].Sort = zIndex + i + 1
-        selectHTML.style.left = null
-        selectHTML.style.top = null
-        selectHTML.style.right = null
-        selectHTML.style.bottom = null
-        selectHTML.style.transform = null
-        alt_list[i].StyleItem.PositionItem.FixPosition = false
-        alt_list[i].StyleItem.PositionItem.ConstraintsX = Constraints.left
-        alt_list[i].StyleItem.PositionItem.ConstraintsY = Constraints.top
-      } else if (drag_to_layout) {
-        let startWbaseItem = drag_start_list.find(
-          e => e.GID === alt_list[i].ChildID
-        )
-        if (
-          startWbaseItem.StyleItem.FrameItem.Width < 0 &&
-          parent_wbase.StyleItem.FrameItem.Width != undefined
-        ) {
-          alt_list[i].StyleItem.FrameItem.Width =
-            startWbaseItem.StyleItem.FrameItem.Width
-          selectHTML.style.width = '100%'
-        }
-        if (
-          startWbaseItem.StyleItem.FrameItem.Height < 0 &&
-          parent_wbase.StyleItem.FrameItem.Height != undefined
-        ) {
-          alt_list[i].StyleItem.FrameItem.Height =
-            startWbaseItem.StyleItem.FrameItem.Height
-          selectHTML.style.height = '100%'
-        }
-        switch (parseInt(new_parentHTML.getAttribute('cateid'))) {
-          case EnumCate.tree:
-            new_parentHTML
-              .querySelector('.children-value')
-              .appendChild(selectHTML)
-            break
-          case EnumCate.carousel:
-            new_parentHTML
-              .querySelector('.children-value')
-              .appendChild(selectHTML)
-            break
-          default:
-            new_parentHTML.appendChild(selectHTML)
-            break
-        }
-        alt_list[i].StyleItem.PositionItem.FixPosition = false
-        alt_list[i].StyleItem.PositionItem.ConstraintsX = Constraints.left
-        alt_list[i].StyleItem.PositionItem.ConstraintsY = Constraints.top
-        $(selectHTML).removeClass('fixed-position')
-        selectHTML.style.position = null
-        selectHTML.style.left = null
-        selectHTML.style.right = null
-        selectHTML.style.top = null
-        selectHTML.style.bottom = null
-        selectHTML.style.transform = null
-        selectHTML.style.zIndex = zIndex + i
-        selectHTML.style.order = zIndex + i
-      } else {
-        if (alt_list[i].ParentID === selected_list[0].ParentID) {
-          alt_list[i].StyleItem.PositionItem.FixPosition = selected_list.find(
-            e => e.GID === alt_list[i].ChildID
-          ).StyleItem.PositionItem.FixPosition
-        }
-        updateConstraints(alt_list[i])
-      }
-      WBaseDA.listData.push(alt_list[i])
-      wbase_list.push(alt_list[i])
-    }
-    if (parent_wbase) {
-      let children = [
-        ...new_parentHTML.querySelectorAll(
-          `.wbaseItem-value[level="${parent_wbase.Level + 1}"]`
-        )
-      ]
-      children.sort(
-        (a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex)
-      )
-      for (let i = 0; i < children.length; i++) {
-        wbase_list.find(wbase => wbase.GID == children[i].id).Sort = i
-        children[i].style.zIndex = i
-        children[i].style.order = i
-      }
-      parent_wbase.CountChild = children.length
-      parent_wbase.ListChildID = children.map(e => e.id)
-      WBaseDA.listData.push(parent_wbase)
-    }
+    )
+    wbase_list.push(...alt_list)
+    arrange()
+    WBaseDA.copy(WBaseDA.listData)
     replaceAllLyerItemHTML()
     parent = divSection
     handleWbSelectedList(alt_list)
     tmpAltHTML.forEach(tmp => tmp.setAttribute('loading', 'true'))
-    action_list[action_index].tmpHTML = [...tmpAltHTML]
-    tmpAltHTML = []
+    // action_list[action_index].tmpHTML = [...tmpAltHTML]
+    // tmpAltHTML = []
     drag_start_list = []
     alt_list = []
   }

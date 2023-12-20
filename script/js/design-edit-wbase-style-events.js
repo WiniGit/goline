@@ -1489,7 +1489,7 @@ function handleEditOffset ({
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
-        if (cssItem && wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
+        if (wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('width-type', 'fill')
@@ -1557,7 +1557,7 @@ function handleEditOffset ({
         wb.value.setAttribute('height-type', 'fit')
       } else if (height < 0) {
         cssRule.style.height = '100%'
-        if (cssItem && wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
+        if (wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('height-type', 'fill')
@@ -1674,7 +1674,7 @@ function handleEditOffset ({
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
-        if (cssItem && wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
+        if (wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('width-type', 'fill')
@@ -1791,7 +1791,7 @@ function handleEditOffset ({
         wb.value.setAttribute('height-type', 'fit')
       } else if (height < 0) {
         cssRule.style.height = '100%'
-        if (cssItem && wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
+        if (wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
         }
         wb.value.setAttribute('height-type', 'fill')
@@ -4077,7 +4077,7 @@ function handleEditBorder ({
   let listUpdate = selected_list.filter(
     wb =>
       WbClass.borderEffect.some(e => wb.value.classList.contains(e)) &&
-      (borderSkin || window.getComputedStyle(wb.value).borderStyle === 'none')
+      (borderSkin || window.getComputedStyle(wb.value).borderStyle !== 'none')
   )
   if (borderSkin) {
     if (listUpdate[0].Css || listUpdate[0].IsInstance) {
@@ -4838,31 +4838,36 @@ function handleEditBorder ({
 
 function deleteBorder () {
   let listUpdate = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+    WbClass.borderEffect.some(e => wb.value.classList.contains(e))
   )
-  if (listUpdate[0].StyleItem) {
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      wb.StyleItem.DecorationItem.BorderID = null
-      wb.StyleItem.DecorationItem.BorderItem = null
-      wb.value.style.borderWidth = null
-      wb.value.style.borderStyle = null
-      wb.value.style.borderColor = null
       if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.borderWidth = null
-        cssRule.style.borderStyle = null
-        cssRule.style.borderColor = null
+        cssRule.style.border = null
+        cssRule.style.borderTop = null
+        cssRule.style.borderBottom = null
+        cssRule.style.borderLeft = null
+        cssRule.style.borderRight = null
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
         StyleDA.editStyleSheet(cssItem)
+        listUpdate = listUpdate.filter(e => e !== wb)
+      } else {
+        wb.value.style.border = null
+        wb.value.style.borderTop = null
+        wb.value.style.borderBottom = null
+        wb.value.style.borderLeft = null
+        wb.value.style.borderRight = null
+        wb.Css = wb.value.style.cssText
       }
     }
-    WBaseDA.edit(listUpdate, EnumObj.decoration)
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
@@ -4872,9 +4877,11 @@ function deleteBorder () {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      cssRule.style.borderWidth = null
-      cssRule.style.borderStyle = null
-      cssRule.style.borderColor = null
+      cssRule.style.border = null
+      cssRule.style.borderTop = null
+      cssRule.style.borderBottom = null
+      cssRule.style.borderLeft = null
+      cssRule.style.borderRight = null
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
@@ -5908,54 +5915,56 @@ function handleEditPadding ({ top, right, bottom, left }) {
   )
   if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      let wbComputeSt = window.getComputedStyle(wb,value)
-      let paddings = [wbComputeSt.paddingTop, wbComputeSt.paddingRight, wbComputeSt.paddingBottom, wbComputeSt.paddingLeft]
+      let wbComputeSt = window.getComputedStyle(wb.value)
+      let paddings = [
+        wbComputeSt.paddingTop,
+        wbComputeSt.paddingRight,
+        wbComputeSt.paddingBottom,
+        wbComputeSt.paddingLeft
+      ]
       if (top !== undefined) paddings[0] = `${top}px`
       if (right !== undefined) paddings[1] = `${right}px`
       if (bottom !== undefined) paddings[2] = `${bottom}px`
       if (left !== undefined) paddings[3] = `${left}px`
       //
-      wb.value.style.setProperty(
-        '--padding',
-        `${wb.StyleItem.PaddingItem.Top}px ${wb.StyleItem.PaddingItem.Right}px ${wb.StyleItem.PaddingItem.Bottom}px ${wb.StyleItem.PaddingItem.Left}px`
-      )
       if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.setProperty(
-          '--padding',
-          `${wb.StyleItem.PaddingItem.Top}px ${wb.StyleItem.PaddingItem.Right}px ${wb.StyleItem.PaddingItem.Bottom}px ${wb.StyleItem.PaddingItem.Left}px`
-        )
+        cssRule.style.setProperty('--padding', paddings.join(' '))
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
         StyleDA.editStyleSheet(cssItem)
+        listUpdate = listUpdate.filter(e => e !== wb)
       } else {
-        
+        wb.value.style.setProperty('--padding', paddings.join(' '))
+        wb.Css = wb.value.style.cssText
       }
     }
-    WBaseDA.edit(listUpdate, EnumObj.wBase)
-    listUpdate.forEach(
-      wb => (wb.StyleItem.PaddingID = wb.StyleItem.PaddingItem.GID)
-    )
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
     )
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-    for (let wb of [...listUpdate]) {
+    for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      let paddingValues = cssRule.style.getPropertyValue('--padding').split(' ')
-      if (top !== undefined) paddingValues[0] = top + 'px'
-      if (right !== undefined) paddingValues[1] = right + 'px'
-      if (bottom !== undefined) paddingValues[2] = bottom + 'px'
-      if (left !== undefined) paddingValues[3] = left + 'px'
-      cssRule.style.setProperty('--padding', paddingValues.join(' '))
+      let paddings = [
+        wbComputeSt.paddingTop,
+        wbComputeSt.paddingRight,
+        wbComputeSt.paddingBottom,
+        wbComputeSt.paddingLeft
+      ]
+      if (top !== undefined) paddings[0] = `${top}px`
+      if (right !== undefined) paddings[1] = `${right}px`
+      if (bottom !== undefined) paddings[2] = `${bottom}px`
+      if (left !== undefined) paddings[3] = `${left}px`
+      cssRule.style.setProperty('--padding', paddings.join(' '))
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
