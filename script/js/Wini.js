@@ -1586,7 +1586,6 @@ function moveListener (event) {
                     break
                 }
                 updateUISelectBox()
-                updateInputTLWH()
               } else {
                 if (!selected_list.length) {
                   handleWbSelectedList([hover_wbase])
@@ -1648,10 +1647,7 @@ function moveListener (event) {
                       } else {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event)
                       }
-                      if (checkpad % 2 === 0) {
-                        // updateInputTLWH()
-                        wdraw()
-                      }
+                      if (checkpad % 2 === 0) wdraw()
                     }
                   } else {
                     handleWbSelectedList()
@@ -3207,6 +3203,7 @@ function upListener (event) {
         StyleDA.editStyleSheet(cssItem)
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
+      reloadEditOffsetBlock()
       break
     case EnumEvent.parent:
       let list_update = []

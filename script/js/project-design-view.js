@@ -969,8 +969,12 @@ function dragWbaseEnd () {
     }
     WBaseDA.listData.push(
       ...selected_list.map(wb => {
-        if(wb.value.getAttribute('width-type') === 'fill') {
-          if(wb.value.closest(`.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`)) {
+        if (wb.value.getAttribute('width-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`
+            )
+          ) {
             wb.value.style.width = '100%'
             wb.value.style.flex = 1
           } else {
@@ -978,8 +982,12 @@ function dragWbaseEnd () {
             wb.value.removeAttribute('width-type')
           }
         }
-        if(wb.value.getAttribute('height-type') === 'fill') {
-          if(wb.value.closest(`.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`)) {
+        if (wb.value.getAttribute('height-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`
+            )
+          ) {
             wb.value.style.height = '100%'
             wb.value.style.flex = 1
           } else {
@@ -1007,6 +1015,7 @@ function dragWbaseEnd () {
   parent = divSection
   updateHoverWbase()
   handleWbSelectedList([...selected_list])
+  reloadEditOffsetBlock()
 }
 
 // ALT copy
@@ -1201,7 +1210,10 @@ function dragAltUpdate (xp, yp, event) {
       wb.ParentID = new_parentID
       return wb.value
     })
-    if (select_box_parentID !== new_parentID || checkpad === selected_list.length) {
+    if (
+      select_box_parentID !== new_parentID ||
+      checkpad === selected_list.length
+    ) {
       let children = [
         ...newPWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${
@@ -1270,8 +1282,12 @@ function dragAltEnd () {
     }
     WBaseDA.listData.push(
       ...selected_list.map(wb => {
-        if(wb.value.getAttribute('width-type') === 'fill') {
-          if(wb.value.closest(`.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`)) {
+        if (wb.value.getAttribute('width-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`
+            )
+          ) {
             wb.value.style.width = '100%'
             wb.value.style.flex = 1
           } else {
@@ -1279,8 +1295,12 @@ function dragAltEnd () {
             wb.value.removeAttribute('width-type')
           }
         }
-        if(wb.value.getAttribute('height-type') === 'fill') {
-          if(wb.value.closest(`.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`)) {
+        if (wb.value.getAttribute('height-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`
+            )
+          ) {
             wb.value.style.height = '100%'
             wb.value.style.flex = 1
           } else {
