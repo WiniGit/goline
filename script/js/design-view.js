@@ -321,7 +321,6 @@ function EditOffsetBlock () {
       if (!isNaN(newValue)) {
         handleEditOffset({ x: newValue })
       }
-      updateInputTLWH()
     }
   })
   // input edit right position
@@ -337,7 +336,6 @@ function EditOffsetBlock () {
       if (!isNaN(newValue)) {
         handleEditOffset({ y: newValue })
       }
-      updateInputTLWH()
     }
   })
   editXYContainer.replaceChildren(edit_left, edit_top)
@@ -382,7 +380,6 @@ function EditOffsetBlock () {
       if (!isNaN(newValue)) {
         handleEditOffset({ width: newValue, ratioWH: isRatio })
       }
-      updateInputTLWH()
     }
   })
   // input edit height
@@ -396,7 +393,6 @@ function EditOffsetBlock () {
       if (!isNaN(newValue)) {
         handleEditOffset({ height: newValue, ratioWH: isRatio })
       }
-      updateInputTLWH()
     }
   })
   let isRatio = selected_list.some(wb =>
@@ -695,131 +691,6 @@ function reloadEditOffsetBlock () {
   document
     .getElementById('edit_size_position_div')
     .replaceWith(newEditSizePositionForm)
-}
-
-// update input top,left,width,height
-function updateInputTLWH () {
-  if (document.getElementById('edit_size_position_div')) {
-    let edit_left = document.getElementById('edit_position_item_left')
-    let list_offsetX = selected_list.filterAndMap(wbaseItem =>
-      `${getWBaseOffset(wbaseItem).x}`.replace('.00', '')
-    )
-    edit_left.lastChild.value =
-      list_offsetX.length == 1 ? list_offsetX[0] : 'mixed'
-    // Y
-    let edit_top = document.getElementById('edit_position_item_top')
-    let list_offsetY = selected_list.filterAndMap(wbaseItem =>
-      `${getWBaseOffset(wbaseItem).y}`.replace('.00', '')
-    )
-    edit_top.lastChild.value =
-      list_offsetY.length == 1 ? list_offsetY[0] : 'mixed'
-    // W
-    let edit_width = document.getElementById('edit_frame_item_w')
-    let list_width = selected_list.filterAndMap(
-      e => (document.getElementById(e.GID) ?? e.value).offsetWidth
-    )
-    edit_width.lastChild.value =
-      list_width.length == 1 ? list_width[0] : 'mixed'
-    // H
-    let edit_height = document.getElementById('edit_frame_item_h')
-    let list_height = selected_list.filterAndMap(
-      e => (document.getElementById(e.GID) ?? e.value).offsetHeight
-    )
-    edit_height.lastChild.value =
-      list_height.length == 1 ? list_height[0] : 'mixed'
-    //
-    let parentHTML = document.getElementById(select_box_parentID) ?? divSection
-    if (
-      parentHTML &&
-      window.getComputedStyle(parentHTML).display.match(/(flex|table)/g) &&
-      selected_list.some(e => !e.value.classList.contains('fixed-position'))
-    ) {
-      edit_left.lastChild.disabled = true
-      edit_top.lastChild.disabled = true
-    } else {
-      edit_left.lastChild.disabled = false
-      edit_top.lastChild.disabled = false
-    }
-    if (checkpad <= selected_list.length) {
-      let resizeWType = 'fixed'
-      if (selected_list.every(e => e.value.style.width == '100%')) {
-        resizeWType = 'fill'
-      } else if (
-        selected_list.every(
-          e =>
-            !e.value.style.width ||
-            e.value.style.width == 'fit-content' ||
-            e.value.style.width == 'max-content'
-        )
-      ) {
-        resizeWType = 'hug'
-      } else if (selected_list.every(e => e.value.style.width)) {
-        resizeWType = 'fixed'
-      } else {
-        resizeWType = 'mixed'
-      }
-      let resizeHType = 'fixed'
-      if (selected_list.every(e => e.value.style.height == '100%')) {
-        resizeHType = 'fill'
-      } else if (
-        selected_list.every(
-          e => !e.value.style.height || e.value.style.height == 'fit-content'
-        )
-      ) {
-        resizeHType = 'hug'
-      } else if (selected_list.every(e => e.value.style.height)) {
-        resizeHType = 'fixed'
-      } else {
-        resizeHType = 'mixed'
-      }
-      if (resizeWType == 'fixed' && resizeHType == 'fixed') {
-        edit_width.parentElement.lastChild.style.display = 'block'
-      } else {
-        edit_width.parentElement.lastChild.style.display = 'none'
-      }
-      if (resizeWType == 'fixed') {
-        edit_width.lastChild.disabled = false
-      } else {
-        edit_width.lastChild.disabled = true
-      }
-      if (resizeHType == 'fixed') {
-        edit_height.lastChild.disabled = false
-      } else {
-        edit_height.lastChild.disabled = true
-      }
-      // update button select resizing type
-      let btn_resize_with_height = document.getElementsByClassName('btn_resize')
-      if (btn_resize_with_height.length > 0) {
-        if (
-          selected_list.every(
-            e =>
-              e.WAutolayoutItem ||
-              (!e.value.classList.contains('fixed-position') &&
-                window
-                  .getComputedStyle(parentHTML)
-                  .display.match(/(flex|table)/g))
-          )
-        ) {
-          btn_resize_with_height[0].parentElement.style.display = 'flex'
-          for (let option of btn_resize_with_height) {
-            if (option.className.includes('width')) {
-              option.childNodes[1].innerHTML = resizeWType
-            } else {
-              option.childNodes[1].innerHTML = resizeHType
-            }
-          }
-        } else {
-          btn_resize_with_height[0].parentElement.style.display = 'none'
-        }
-      }
-    }
-  }
-  if (
-    checkpad <= selected_list.length &&
-    document.getElementById('edit_text_style')
-  ) {
-    updateUIAutoSizeWH()
-  }
 }
 
 // edit auto layout
@@ -1514,7 +1385,6 @@ function _btnSelectResizeType (isW = true, type) {
                 height: vl === 'hug' ? null : vl === 'fill' ? -1 : vl
               })
             popup_list_resize_type.remove()
-            // updateInputTLWH()
             // updateUIConstraints()
           }
         return option
@@ -1680,11 +1550,11 @@ function EditBackgroundBlock () {
         return bgColor?.replace(/(var\(--|\))/g, '')
       })
       if (wbBg.length === 1 && wbBg[0]?.length > 0) {
-        header.querySelector('.fa-plus').remove()
         if (wbBg[0].length === 36) {
           let colorSkin = StyleDA.listSkin.find(skin => wbBg[0] === skin.GID)
           let cateItem
           if (colorSkin) {
+            header.querySelector('.fa-plus').remove()
             header.querySelector('.skin-btn').remove()
             if (colorSkin.CateID !== EnumCate.color) {
               cateItem = CateDA.list_color_cate.find(
@@ -1713,6 +1583,7 @@ function EditBackgroundBlock () {
             if (scaleWb) skin_tile.lastChild.style.display = 'none'
           }
         } else {
+          header.querySelector('.fa-plus').remove()
           var bgColor = wbBg[0].includes('rgb')
             ? Ultis.rgbToHex(wbBg[0]).replace('#', '')
             : wbBg[0]
@@ -1777,6 +1648,7 @@ function EditBackgroundBlock () {
     editContainer.appendChild(notiText)
   }
 
+  $(header).on('click', '.fa-plus', addBackgroundColor)
   $(header).on('click', '.skin-btn', function () {
     let offset = header.getBoundingClientRect()
     createDropdownTableSkin({
@@ -2124,7 +1996,6 @@ function EditTypoBlock () {
         default:
           break
       }
-      updateInputTLWH()
       updateUIConstraints()
       updateUISelectBox()
     }

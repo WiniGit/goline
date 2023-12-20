@@ -3142,7 +3142,7 @@ function handleEditConstraints ({ constX, constY }) {
 }
 
 function addBackgroundColor () {
-  let listUpdate = selected_list.filter(wb => wb.CateID !== EnumCate.text)
+  let listUpdate = selected_list.filter(wb => !wb.value.classList.contains('w-text'))
   if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
       if (wb.value.classList.contains('w-container')) {
