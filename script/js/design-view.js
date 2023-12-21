@@ -222,7 +222,7 @@ function EditAlignBlock () {
         btnAlign.onclick = function () {
           handleEditAlign(alignType)
           reloadEditOffsetBlock()
-          updateUIConstraints()
+          reloadEditConstraintsBlock()
         }
       return btnAlign
     })
@@ -361,6 +361,8 @@ function EditOffsetBlock () {
       edit_top.lastChild.disabled = !isFixPos
       edit_left.lastChild.disabled = !isFixPos
       reloadEditAlignBlock()
+      reloadEditOffsetBlock()
+      reloadEditConstraintsBlock()
     }
     editXYContainer.appendChild(iconFixPos)
   }
@@ -1229,7 +1231,7 @@ function EditConstraintsBlock () {
     }
     selectBtn.onclick = function () {
       handleEditConstraints({ constY: constY })
-      updateUIConstraints()
+      reloadEditConstraintsBlock()
     }
     constraintsRect.appendChild(selectBtn)
   }
@@ -1263,7 +1265,7 @@ function EditConstraintsBlock () {
     }
     selectBtn.onclick = function () {
       handleEditConstraints({ constX: constX })
-      updateUIConstraints()
+      reloadEditConstraintsBlock()
     }
     constraintsRect.appendChild(selectBtn)
   }
@@ -1281,7 +1283,7 @@ function EditConstraintsBlock () {
     },
     function (value) {
       handleEditConstraints({ constX: value })
-      updateUIConstraints()
+      reloadEditConstraintsBlock()
     }
   )
   dropdownConstX.firstChild.innerHTML = constraintsX
@@ -1299,7 +1301,7 @@ function EditConstraintsBlock () {
     },
     function (value) {
       handleEditConstraints({ constY: value })
-      updateUIConstraints()
+      reloadEditConstraintsBlock()
     }
   )
   dropdownConstY.firstChild.innerHTML = constraintsY
@@ -1309,7 +1311,7 @@ function EditConstraintsBlock () {
   return editContainer
 }
 
-function updateUIConstraints () {
+function reloadEditConstraintsBlock () {
   if (document.getElementById('edit-constraints')) {
     let newEditConst = EditConstraintsBlock()
     document.getElementById('edit-constraints').replaceWith(newEditConst)
@@ -1385,7 +1387,7 @@ function _btnSelectResizeType (isW = true, type) {
                 height: vl === 'hug' ? null : vl === 'fill' ? -1 : vl
               })
             popup_list_resize_type.remove()
-            // updateUIConstraints()
+            reloadEditOffsetBlock()
           }
         return option
       })
@@ -1996,7 +1998,7 @@ function EditTypoBlock () {
         default:
           break
       }
-      updateUIConstraints()
+      reloadEditConstraintsBlock()
       updateUISelectBox()
     }
   })
