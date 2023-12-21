@@ -53,6 +53,7 @@ function createNewSkin (skinType, skinValue) {
           break
         case EnumCate.effect:
           handleEditEffect({ effectSkin: skin })
+          reloadEditEffectBlock()
           break
         default:
           break

@@ -1281,7 +1281,7 @@ function dragAltEnd () {
       WBaseDA.listData.push(pWb)
     }
     WBaseDA.listData.push(
-      ...selected_list.map(wb => {
+      ...alt_list.map(wb => {
         if (wb.value.getAttribute('width-type') === 'fill') {
           if (
             wb.value.closest(
@@ -1313,8 +1313,6 @@ function dragAltEnd () {
         return wb
       })
     )
-    wbase_list.push(...alt_list)
-    arrange()
     WBaseDA.copy(WBaseDA.listData)
     replaceAllLyerItemHTML()
     parent = divSection

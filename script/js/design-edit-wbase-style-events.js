@@ -3142,7 +3142,9 @@ function handleEditConstraints ({ constX, constY }) {
 }
 
 function addBackgroundColor () {
-  let listUpdate = selected_list.filter(wb => !wb.value.classList.contains('w-text'))
+  let listUpdate = selected_list.filter(
+    wb => !wb.value.classList.contains('w-text')
+  )
   if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
       if (wb.value.classList.contains('w-container')) {
@@ -4051,7 +4053,7 @@ function addBorder () {
       `.wbaseItem-value[iswini="true"]`
     )
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-    for (let wb of [...listUpdate]) {
+    for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
@@ -4157,7 +4159,7 @@ function handleEditBorder ({
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of [...listUpdate]) {
+      for (let wb of listUpdate) {
         let wbBorderW = window
           .getComputedStyle(wb.value)
           .borderWidth.split(' ')
@@ -6239,54 +6241,54 @@ function editTypoSkin (text_style_item, thisSkin) {
 function unlinkEffectSkin () {
   let listUpdate = selected_list.filter(
     wb =>
-      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
+      WbClass.borderEffect.some(e => wb.value.classList.contains(e)) &&
       (window.getComputedStyle(wb.value).boxShadow !== 'none' ||
         window.getComputedStyle(wb.value).filter !== 'none')
   )
-  if (listUpdate[0].StyleItem) {
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      let currentEffect = wb.StyleItem.DecorationItem.EffectItem
-      let newEffectItem = {
-        GID: uuidv4(),
-        Name: 'new effect',
-        OffsetX: currentEffect.OffsetX,
-        OffsetY: currentEffect.OffsetY,
-        IsStyle: false,
-        ColorValue: currentEffect.ColorValue,
-        SpreadRadius: currentEffect.SpreadRadius,
-        BlurRadius: currentEffect.BlurRadius,
-        Type: currentEffect.Type
-      }
-      wb.StyleItem.DecorationItem.EffectID = newEffectItem.GID
-      wb.StyleItem.DecorationItem.EffectItem = newEffectItem
-      if (newEffectItem.Type === ShadowType.layer_blur) {
-        wb.value.style.filter = `blur(${newEffectItem.BlurRadius}px)`
+      let wbComputeSt = window.getComputedStyle(wb.value)
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        if (wbComputeSt.boxShadow !== 'none') {
+          cssRule.style.boxShadow = wbComputeSt.boxShadow
+        } else {
+          cssRule.style.filter = wbComputeSt.filter
+        }
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+        listUpdate = listUpdate.filter(e => e !== wb)
       } else {
-        wb.value.style.boxShadow = `${newEffectItem.OffsetX}px ${
-          newEffectItem.OffsetY
-        }px ${newEffectItem.BlurRadius}px ${newEffectItem.SpreadRadius}px #${
-          newEffectItem.ColorValue
-        } ${newEffectItem.Type == ShadowType.inner ? 'inset' : ''}`
+        if (wbComputeSt.boxShadow !== 'none') {
+          wb.value.style.boxShadow = wbComputeSt.boxShadow
+        } else {
+          wb.value.style.filter = wbComputeSt.filter
+        }
+        wb.Css = wb.value.style.cssText
       }
     }
-    WBaseDA.addStyle(listUpdate, EnumObj.effect)
-    listUpdate.forEach(
-      wb =>
-        (wb.StyleItem.DecorationItem.EffectID =
-          wb.StyleItem.DecorationItem.EffectItem.GID)
-    )
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
     )
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-    for (let wb of [...listUpdate]) {
+    for (let wb of listUpdate) {
+      let wbComputeSt = window.getComputedStyle(wb.value)
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      let wbStyle = window.getComputedStyle(wb.value)
-      cssRule.style.filter = wbStyle.filter
-      cssRule.style.boxShadow = wbStyle.boxShadow
+      if (wbComputeSt.boxShadow !== 'none') {
+        cssRule.style.boxShadow = wbComputeSt.boxShadow
+      } else {
+        cssRule.style.filter = wbComputeSt.filter
+      }
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
@@ -6299,38 +6301,40 @@ function unlinkEffectSkin () {
 function addEffect () {
   let listUpdate = selected_list.filter(
     wb =>
-      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
+      WbClass.borderEffect.some(e => wb.value.classList.contains(e)) &&
       window.getComputedStyle(wb.value).boxShadow === 'none' &&
       window.getComputedStyle(wb.value).filter === 'none'
   )
-  let newEffectItem = {
-    GID: uuidv4(),
-    Name: 'new effect',
-    OffsetX: 0,
-    OffsetY: 4,
-    IsStyle: false,
-    ColorValue: '00000040',
-    SpreadRadius: 0,
-    BlurRadius: 4,
-    Type: ShadowType.dropdown
-  }
-  if (listUpdate[0].StyleItem) {
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      wb.StyleItem.DecorationItem.EffectID = newEffectItem.GID
-      wb.StyleItem.DecorationItem.EffectItem = newEffectItem
-      wb.value.style.boxShadow = `${newEffectItem.OffsetX}px ${newEffectItem.OffsetY}px ${newEffectItem.BlurRadius}px ${newEffectItem.SpreadRadius}px #${newEffectItem.ColorValue}`
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.boxShadow = `0px 4px 4px 0px #00000040`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+        listUpdate = listUpdate.filter(e => e !== wb)
+      } else {
+        wb.value.style.boxShadow = `0px 4px 4px 0px #00000040`
+        wb.Css = wb.value.style.cssText
+      }
     }
-    WBaseDA.edit(listUpdate, EnumObj.effect)
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
     )
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-    for (let wb of [...listUpdate]) {
+    for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
-      cssRule.style.boxShadow = `${newEffectItem.OffsetX}px ${newEffectItem.OffsetY}px ${newEffectItem.BlurRadius}px ${newEffectItem.SpreadRadius}px #${newEffectItem.ColorValue}`
+      cssRule.style.boxShadow = `0px 4px 4px 0px #00000040`
       cssItem.Css = cssItem.Css.replace(
         new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
         cssRule.cssText
@@ -6341,23 +6345,40 @@ function addEffect () {
 }
 
 function deleteEffect () {
-  let listUpdate = selected_list.filter(wb =>
-    EnumCate.accept_border_effect.some(ct => wb.CateID === ct)
+  let listUpdate = selected_list.filter(
+    wb =>
+      WbClass.borderEffect.some(e => wb.value.classList.contains(e)) &&
+      (window.getComputedStyle(wb.value).boxShadow !== 'none' ||
+        window.getComputedStyle(wb.value).filter !== 'none')
   )
-  if (listUpdate[0].StyleItem) {
+  if (listUpdate[0].Css || listUpdate[0].IsInstance) {
     for (let wb of [...listUpdate]) {
-      wb.StyleItem.DecorationItem.EffectID = null
-      wb.StyleItem.DecorationItem.EffectItem = null
-      wb.value.style.boxShadow = null
-      wb.value.style.filter = null
+      if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.boxShadow = null
+        cssRule.style.filter = null
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        StyleDA.editStyleSheet(cssItem)
+        listUpdate = listUpdate.filter(e => e !== wb)
+      } else {
+        wb.value.style.boxShadow = null
+        wb.value.style.filter = null
+        wb.Css = wb.value.style.cssText
+      }
     }
-    WBaseDA.edit(listUpdate, EnumObj.decoration)
+    if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
     let pWbComponent = listUpdate[0].value.closest(
       `.wbaseItem-value[iswini="true"]`
     )
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-    for (let wb of [...listUpdate]) {
+    for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
         [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
       )
@@ -6384,36 +6405,53 @@ function handleEditEffect ({
 }) {
   let listUpdate = selected_list.filter(
     wb =>
-      EnumCate.accept_border_effect.some(ct => wb.CateID === ct) &&
+      WbClass.borderEffect.some(e => wb.value.classList.contains(e)) &&
       (effectSkin ||
         window.getComputedStyle(wb.value).boxShadow !== 'none' ||
         window.getComputedStyle(wb.value).filter !== 'none')
   )
   if (effectSkin) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.EffectID = effectSkin.GID
-        wb.StyleItem.DecorationItem.EffectItem = effectSkin
-        if (effectSkin.Type == ShadowType.layer_blur) {
-          wb.value.style.filter = `var(--effect-blur-${effectSkin.GID})`
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          if (effectSkin.Css.includes('blur')) {
+            cssRule.style.filter = `var(--${effectSkin.GID})`
+          } else {
+            cssRule.style.boxShadow = `var(--${effectSkin.GID})`
+          }
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
         } else {
-          wb.value.style.boxShadow = `var(--effect-shadow-${effectSkin.GID})`
+          if (effectSkin.Css.includes('blur')) {
+            wb.value.style.filter = `var(--${effectSkin.GID})`
+          } else {
+            wb.value.style.boxShadow = `var(--${effectSkin.GID})`
+          }
+          wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.decoration)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of [...listUpdate]) {
+      for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        if (effectSkin.Type == ShadowType.layer_blur) {
-          cssRule.style.filter = `var(--effect-blur-${effectSkin.GID})`
+        if (effectSkin.Css.includes('blur')) {
+          cssRule.style.filter = `var(--${effectSkin.GID})`
         } else {
-          cssRule.style.boxShadow = `var(--effect-shadow-${effectSkin.GID})`
+          cssRule.style.boxShadow = `var(--${effectSkin.GID})`
         }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -6423,15 +6461,32 @@ function handleEditEffect ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (color) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.EffectItem.ColorValue = color
-        wb.value.style.boxShadow = wb.value.style.boxShadow.replace(
-          /(rgba|rgb)\(.*\)/g,
-          `#${color}`
-        )
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.boxShadow = cssRule.style.boxShadow.replace(
+            /(rgba|rgb)\(.*\)/g,
+            color
+          )
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          if (onSubmit) StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.boxShadow = wb.value.style.boxShadow.replace(
+            /(rgba|rgb)\(.*\)/g,
+            color
+          )
+          wb.Css = wb.value.style.cssText
+        }
       }
-      if (onSubmit) WBaseDA.edit(listUpdate, EnumObj.decoration)
+      if (onSubmit && listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -6443,7 +6498,7 @@ function handleEditEffect ({
         )
         cssRule.style.boxShadow = cssRule.style.boxShadow.replace(
           /(rgba|rgb)\(.*\)/g,
-          `#${color}`
+          color
         )
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -6453,33 +6508,44 @@ function handleEditEffect ({
       if (onSubmit) StyleDA.editStyleSheet(cssItem)
     }
   } else if (offX !== undefined) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.EffectItem.OffsetX = offX
-        let wbEffect = wb.StyleItem.DecorationItem.EffectItem
-        wb.value.style.boxShadow = `${offX}px ${wbEffect.OffsetY}px ${
-          wbEffect.BlurRadius
-        }px ${wbEffect.SpreadRadius}px #${wbEffect.ColorValue} ${
-          wbEffect.Type == ShadowType.inner ? 'inset' : ''
-        }`
+        let wbShadow = window.getComputedStyle(wb.value).boxShadow
+        let color = wbShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        wbShadow = wbShadow.replace(color, '').trim().split(' ')
+        wbShadow[0] = `${offX}px`
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.boxShadow = wbShadow.join(' ') + ` ${color}`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.boxShadow = wbShadow.join(' ') + ` ${color}`
+          wb.Css = wb.value.style.cssText
+        }
       }
-      WBaseDA.edit(listUpdate, EnumObj.decoration)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbShadow = window.getComputedStyle(wb.value).boxShadow
+        let color = wbShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        wbShadow = wbShadow.replace(color, '').trim().split(' ')
+        wbShadow[0] = `${offX}px`
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = cssRule.style.boxShadow
-          .replace(effectColor, '')
-          .trim()
-          .split(' ')
-        props[0] = `${offX}px`
-        cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
+        cssRule.style.boxShadow = wbShadow.join(' ') + ` ${color}`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -6488,33 +6554,44 @@ function handleEditEffect ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (offY !== undefined) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.EffectItem.OffsetY = offY
-        let wbEffect = wb.StyleItem.DecorationItem.EffectItem
-        wb.value.style.boxShadow = `${wbEffect.OffsetX}px ${offY}px ${
-          wbEffect.BlurRadius
-        }px ${wbEffect.SpreadRadius}px #${wbEffect.ColorValue} ${
-          wbEffect.Type == ShadowType.inner ? 'inset' : ''
-        }`
+        let wbShadow = window.getComputedStyle(wb.value).boxShadow
+        let color = wbShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        wbShadow = wbShadow.replace(color, '').trim().split(' ')
+        wbShadow[1] = `${offY}px`
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.boxShadow = wbShadow.join(' ') + ` ${color}`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.boxShadow = wbShadow.join(' ') + ` ${color}`
+          wb.Css = wb.value.style.cssText
+        }
       }
-      WBaseDA.edit(listUpdate, EnumObj.decoration)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbShadow = window.getComputedStyle(wb.value).boxShadow
+        let color = wbShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        wbShadow = wbShadow.replace(color, '').trim().split(' ')
+        wbShadow[1] = `${offY}px`
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = cssRule.style.boxShadow
-          .replace(effectColor, '')
-          .trim()
-          .split(' ')
-        props[1] = `${offY}px`
-        cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
+        cssRule.style.boxShadow = wbShadow.join(' ') + ` ${color}`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -6523,33 +6600,44 @@ function handleEditEffect ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (spreadRadius !== undefined) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.EffectItem.SpreadRadius = spreadRadius
-        let wbEffect = wb.StyleItem.DecorationItem.EffectItem
-        wb.value.style.boxShadow = `${wbEffect.OffsetX}px ${
-          wbEffect.OffsetY
-        }px ${wbEffect.BlurRadius}px ${spreadRadius}px #${
-          wbEffect.ColorValue
-        } ${wbEffect.Type == ShadowType.inner ? 'inset' : ''}`
+        let wbShadow = window.getComputedStyle(wb.value).boxShadow
+        let color = wbShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        wbShadow = wbShadow.replace(color, '').trim().split(' ')
+        wbShadow[3] = `${spreadRadius}px`
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.boxShadow = wbShadow.join(' ') + ` ${color}`
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.boxShadow = wbShadow.join(' ') + ` ${color}`
+          wb.Css = wb.value.style.cssText
+        }
       }
-      WBaseDA.edit(listUpdate, EnumObj.decoration)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        let wbShadow = window.getComputedStyle(wb.value).boxShadow
+        let color = wbShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+        wbShadow = wbShadow.replace(color, '').trim().split(' ')
+        wbShadow[3] = `${spreadRadius}px`
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        let effectColor = cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-        let props = cssRule.style.boxShadow
-          .replace(effectColor, '')
-          .trim()
-          .split(' ')
-        props[3] = `${spreadRadius}px`
-        cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
+        cssRule.style.boxShadow = wbShadow.join(' ') + ` ${color}`
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -6558,41 +6646,59 @@ function handleEditEffect ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (blurRadius !== undefined) {
-    if (listUpdate[0].StyleItem) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.EffectItem.BlurRadius = blurRadius
-        let wbEffect = wb.StyleItem.DecorationItem.EffectItem
-        if (wbEffect.Type === ShadowType.layer_blur) {
-          wb.value.style.filter = `blur(${blurRadius}px)`
+        if (window.getComputedStyle(wb.value).boxShadow !== 'none') {
+          var wbShadow = window.getComputedStyle(wb.value).boxShadow
+          var color = wbShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+          wbShadow = wbShadow.replace(color, '').trim().split(' ')
+          wbShadow[2] = `${blurRadius}px`
+        }
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          if (wbShadow) {
+            cssRule.style.boxShadow = wbShadow.join(' ') + ` ${color}`
+          } else {
+            cssRule.style.filter = `blur(${blurRadius}px)`
+          }
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
         } else {
-          wb.value.style.boxShadow = `${wbEffect.OffsetX}px ${
-            wbEffect.OffsetY
-          }px ${blurRadius}px ${wbEffect.spreadRadius}px #${
-            wbEffect.ColorValue
-          } ${wbEffect.Type == ShadowType.inner ? 'inset' : ''}`
+          if (wbShadow) {
+            wb.value.style.boxShadow = wbShadow.join(' ') + ` ${color}`
+          } else {
+            wb.value.style.filter = `blur(${blurRadius}px)`
+          }
+          wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.decoration)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
+        if (window.getComputedStyle(wb.value).boxShadow !== 'none') {
+          var wbShadow = window.getComputedStyle(wb.value).boxShadow
+          var color = wbShadow.match(/(rgba|rgb)\(.*\)/g)[0]
+          wbShadow = wbShadow.replace(color, '').trim().split(' ')
+          wbShadow[2] = `${blurRadius}px`
+        }
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        if (cssRule.style.filter?.length > 0) {
-          cssRule.style.filter = `blur(${blurRadius}px)`
+        if (wbShadow) {
+          cssRule.style.boxShadow = wbShadow.join(' ') + ` ${color}`
         } else {
-          let effectColor =
-            cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-          let props = cssRule.style.boxShadow
-            .replace(effectColor, '')
-            .trim()
-            .split(' ')
-          props[2] = `${blurRadius}px`
-          cssRule.style.boxShadow = effectColor + ' ' + props.join(' ')
+          cssRule.style.filter = `blur(${blurRadius}px)`
         }
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
@@ -6602,84 +6708,87 @@ function handleEditEffect ({
       StyleDA.editStyleSheet(cssItem)
     }
   } else if (type) {
-    switch (type) {
-      case ShadowType.layer_blur:
-        if (listUpdate[0].StyleItem) {
-          for (let wb of [...listUpdate]) {
-            wb.StyleItem.DecorationItem.EffectItem.Type = type
-            wb.value.style.filter = `blur(${wb.StyleItem.DecorationItem.EffectItem.BlurRadius}px)`
+    listUpdate = listUpdate.filter(
+      wb => window.getComputedStyle(wb.value)[type] === 'none'
+    )
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
+      for (let wb of [...listUpdate]) {
+        if (window.getComputedStyle(wb.value).boxShadow !== 'none') {
+          let wbShadow = window.getComputedStyle(wb.value).boxShadow
+          wbShadow = wbShadow
+            .replace(/(rgba|rgb)\(.*\)/g, '')
+            .trim()
+            .split(' ')
+          var blurVl = wbShadow[2]
+        } else {
+          blurVl = window
+            .getComputedStyle(wb.value)
+            .filter.replace(/(blur\(|\))/g, '')
+        }
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          if (type === 'filter') {
+            cssRule.style.filter = `blur(${blurVl})`
+            cssRule.style.boxShadow = null
+          } else {
+            cssRule.style.boxShadow = `0px 4px ${blurVl} 0px #00000040`
+            cssRule.style.filter = null
+          }
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          if (type === 'filter') {
+            wb.value.style.filter = `blur(${blurVl})`
             wb.value.style.boxShadow = null
-          }
-          WBaseDA.edit(listUpdate, EnumObj.decoration)
-        } else {
-          let pWbComponent = listUpdate[0].value.closest(
-            `.wbaseItem-value[iswini="true"]`
-          )
-          let cssItem = StyleDA.cssStyleSheets.find(
-            e => e.GID === pWbComponent.id
-          )
-          for (let wb of [...listUpdate]) {
-            let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(
-                wb.value
-              )
-            )
-            if (cssRule.style.filter === '') {
-              let effectColor =
-                cssRule.style.boxShadow.match(/(rgba|rgb)\(.*\)/g)[0]
-              let props = cssRule.style.boxShadow
-                .replace(effectColor, '')
-                .trim()
-                .split(' ')
-              cssRule.style.filter = `blur(${props[2]})`
-              cssRule.style.boxShadow = null
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-                cssRule.cssText
-              )
-            }
-          }
-          StyleDA.editStyleSheet(cssItem)
-        }
-        break
-      default:
-        if (listUpdate[0].StyleItem) {
-          for (let wb of [...listUpdate]) {
-            wb.StyleItem.DecorationItem.EffectItem.Type = type
+          } else {
+            wb.value.style.boxShadow = `0px 4px ${blurVl} 0px #00000040`
             wb.value.style.filter = null
-            wb.value.style.boxShadow = `${wbEffect.OffsetX}px ${
-              wbEffect.OffsetY
-            }px ${wbEffect.BlurRadius}px ${wbEffect.spreadRadius}px #${
-              wbEffect.ColorValue
-            } ${wbEffect.Type === ShadowType.inner ? 'inset' : ''}`
           }
-          WBaseDA.edit(listUpdate, EnumObj.decoration)
-        } else {
-          let pWbComponent = listUpdate[0].value.closest(
-            `.wbaseItem-value[iswini="true"]`
-          )
-          let cssItem = StyleDA.cssStyleSheets.find(
-            e => e.GID === pWbComponent.id
-          )
-          for (let wb of [...listUpdate]) {
-            let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(
-                wb.value
-              )
-            )
-            if (cssRule.style.filter.length > 0) {
-              let blurValue = cssRule.style.filter.replace(/(blur\(|\))/g, '')
-              cssRule.style.filter = null
-              cssRule.style.boxShadow = `0px 4px ${blurValue} 0px #00000040`
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-                cssRule.cssText
-              )
-            }
-          }
-          StyleDA.editStyleSheet(cssItem)
+          wb.Css = wb.value.style.cssText
         }
-        break
+      }
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of [...listUpdate]) {
+        if (window.getComputedStyle(wb.value).boxShadow !== 'none') {
+          let wbShadow = window.getComputedStyle(wb.value).boxShadow
+          wbShadow = wbShadow
+            .replace(/(rgba|rgb)\(.*\)/g, '')
+            .trim()
+            .split(' ')
+          var blurVl = wbShadow[2]
+        } else {
+          blurVl = window
+            .getComputedStyle(wb.value)
+            .filter.replace(/(blur\(|px\))/g, '')
+        }
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        if (type === 'filter') {
+          cssRule.style.filter = `blur(${blurVl})`
+          cssRule.style.boxShadow = null
+        } else {
+          cssRule.style.boxShadow = `0px 4px ${blurVl} 0px #00000040`
+          cssRule.style.filter = null
+        }
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
     }
   }
 }
