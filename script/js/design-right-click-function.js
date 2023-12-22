@@ -63,7 +63,9 @@ let feature_list = [
     shortKey: 'Ctrl+Alt+K',
     onclick: createComponent,
     isShow: () =>
-      selected_list.some(e => !e.IsWini && e.CateID !== EnumCate.text) &&
+      selected_list.some(
+        e => !e.IsWini && !e.value.classList.contains('w-text')
+      ) &&
       !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)
         .length
   },
@@ -467,10 +469,13 @@ function createComponent () {
     let cssItem = {
       GID: wb.GID,
       Name: wbClassName,
-      ProjectID: ProjectDA.obj.ID, 
+      ProjectID: ProjectDA.obj.ID,
       Css: `.${wbClassName} { ${wbCssText
         .filter(
-          e => !e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
+          e =>
+            !e.match(
+              /(z-index|order|left|top|bottom|right|transform|--gutter)/g
+            )
         )
         .join(';')} }`
     }
@@ -505,7 +510,9 @@ function createComponent () {
           childWbClassName = childClsList.find(cCls => cCls.startsWith('w-st0'))
           cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWbCssText
             .filter(e =>
-              e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
+              e.match(
+                /(z-index|order|left|top|bottom|right|transform|--gutter)/g
+              )
             )
             .join(';')} }`
         } else {
@@ -534,7 +541,10 @@ function createComponent () {
               ? childWbCssText.filter(e => !e.match(/order/g)).join(';')
               : childWbCssText
                   .filter(
-                    e => !e.match(/(z-index|left|top|bottom|right|transform|--gutter)/g)
+                    e =>
+                      !e.match(
+                        /(z-index|left|top|bottom|right|transform|--gutter)/g
+                      )
                   )
                   .join(';')
           } }`
