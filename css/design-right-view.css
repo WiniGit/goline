@@ -131,15 +131,20 @@ input[type="color"]::-webkit-color-swatch {
   background-color: #f1f1f1;
 }
 
-.ds-block-header.disable {
+.ds-block-header.disable > i {
+  color: #c4c4c4;
+  pointer-events: none;
+}
+
+#edit-col-number > .ds-block-header.disable {
   position: relative;
 }
 
-.ds-block-header.disable > * {
+#edit-col-number > .ds-block-header.disable > * {
   color: #c4c4c4;
 }
 
-.ds-block-header.disable:hover:after {
+#edit-col-number > .ds-block-header.disable:hover:after {
   content: "can't use breakpoints in fit-content page";
   position: absolute;
   left: 50%;
@@ -732,6 +737,11 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #edit_align_div[enable="false"] > .img-button {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.img-button.disabled {
   opacity: 0.4;
   pointer-events: none;
 }
@@ -3017,7 +3027,7 @@ div:has(> .edit-color-container) {
 }
 
 .dropdown-effect-tile > i {
-  margin-left: 4px ;
+  margin-left: 4px;
   font-size: 14px;
   padding: 6px;
   justify-content: center;

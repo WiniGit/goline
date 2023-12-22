@@ -821,6 +821,7 @@ function dragWbaseUpdate (xp, yp, event) {
     selected_list.forEach(wb => {
       $(wb.value).removeClass('drag-hide')
       $(wb.value).removeClass('fixed-position')
+
       wb.value.style.left = `${wb.tmpX + xp + parent_offset1.x - offsetp.x}px`
       wb.value.style.top = `${wb.tmpY + yp + parent_offset1.y - offsetp.y}px`
       wb.value.style.right = null
@@ -828,6 +829,7 @@ function dragWbaseUpdate (xp, yp, event) {
       wb.value.style.transform = null
       wb.value.setAttribute('parentid', new_parentID)
       wb.Level = parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+      wb.value.setAttribute('level', wb.Level)
       wb.ParentID = new_parentID
       return wb.value
     })
@@ -840,19 +842,17 @@ function dragWbaseUpdate (xp, yp, event) {
         )
       ]
       if (children.length > 0) {
-        let zIndex =
-          Math.max(
-            0,
-            ...children.map(eHTML => {
-              if (selected_list.some(wb => wb.GID === eHTML.id)) return 0
-              else return $(eHTML).index()
-            })
-          ) + 1
+        children = children.filter(e =>
+          selected_list.every(wb => e !== wb.value)
+        )
+        let zIndex = children.length + 1
         newPWbHTML.replaceChildren(
           ...children.slice(0, zIndex + 1),
           ...selected_list.map(wb => wb.value),
           ...children.slice(zIndex + 1)
         )
+      } else {
+        newPWbHTML.replaceChildren(...selected_list.map(wb => wb.value))
       }
     }
   }

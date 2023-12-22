@@ -348,7 +348,16 @@ function EditOffsetBlock () {
     )
     let iconFixPos = document.createElement('img')
     iconFixPos.className =
-      'img-button size-28 tlwh-option' + (isFixPos ? ' toggle' : '')
+      'img-button size-28 tlwh-option' +
+      (isFixPos ? ' toggle' : '') +
+      selected_list.some(
+        wb =>
+          wb.IsInstance ||
+          (!wb.value.classList.contains('w-variant') &&
+            wb.value.closest('.wbaseItem-value[iswini="true"]'))
+      )
+        ? ' disabled'
+        : ''
     iconFixPos.src =
       'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/fix_position.svg'
     edit_top.lastChild.disabled = !isFixPos
@@ -707,7 +716,16 @@ function EditLayoutBlock () {
   editContainer.id = 'edit_auto_layout_div'
   editContainer.className = 'edit-container'
   let header = document.createElement('div')
-  header.className = 'ds-block-header'
+  header.className = `ds-block-header ${
+    wbList.some(
+      wb =>
+        wb.IsInstance ||
+        (!wb.value.classList.contains('w-variant') &&
+          wb.value.closest('.wbaseItem-value[iswini="true"]'))
+    )
+      ? 'disable'
+      : ''
+  }`
   header.innerHTML = `<p>${
     isEditTable ? 'Table layout' : 'Auto layout'
   }</p><i class="fa-solid fa-minus fa-sm"></i><i class="fa-solid fa-plus fa-sm"></i>`

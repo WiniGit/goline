@@ -1134,7 +1134,7 @@ class WbaseIO {
     }
   }
 
-  static addOrUpdate (list, enumEvent) {
+  static addOrUpdate (list) {
     list = initDOM(list)
     arrange(list)
     wbase_list = [
@@ -1144,15 +1144,12 @@ class WbaseIO {
     arrange()
     for (let wb of list) {
       wb.value = null
-      initComponents(
-        wb,
-        list.filter(e => e.ParentID === wb.GID)
-      )
+      initComponents(wb)
     }
     list = list.filter(
       wb =>
         wb.Level === 1 ||
-        !wb.value.closets(`.wbaseItem-value[level="${wb.Level - 1}"]`)
+        !wb.value.closest(`.wbaseItem-value[level="${wb.Level - 1}"]`)
     )
     for (let wb of list) {
       let oldWbHTML = divSection.querySelector(
@@ -1169,5 +1166,11 @@ class WbaseIO {
         }
       }
     }
+    if (!pWb)
+      divSection.replaceChildren(
+        ...wbase_list
+          .filter(e => e.ParentID === wbase_parentID)
+          .map(e => e.value)
+      )
   }
 }

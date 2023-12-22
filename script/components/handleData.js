@@ -257,7 +257,7 @@ const resizeWbase = new ResizeObserver(entries => {
       brp.Key.match(brpRegex).pop().replace(/[()]/g, '')
     )
     let listClass = [...framePage.classList].filter(clName =>
-      ['min-brp', ...brpShortName].every(brpKey => clName != brpKey)
+      [...brpShortName, 'min-brp'].every(brpKey => clName != brpKey)
     )
     let closestBrp = localResponsive.BreakPoint.filter(
       brp => framePage.offsetWidth >= brp.Width
