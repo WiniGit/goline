@@ -5436,6 +5436,8 @@ function addAutoLayout () {
     listUpdate = [...selected_list]
     let newWb = JSON.parse(JSON.stringify(WbClass.container))
     newWb.GID = uuidv4()
+    newWb.AttributeID = uuidv4()
+    newWb.AttributesItem.GID = newWb.AttributeID
     newWb.Level = selected_list[0].Level
     newWb.ListClassName = `wbaseItem-value w-container ${
       select_box.w > select_box.h ? 'w-row' : 'w-col'

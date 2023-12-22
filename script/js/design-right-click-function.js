@@ -477,10 +477,14 @@ function createComponent () {
         )
         .join(';')} }`
     }
-    wb.value.style.cssText = wbCssText.filter(e =>
-      e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
-    ).join(';').trim()
-    if(wb.value.style.cssText === '') {
+    debugger
+    wb.value.style.cssText = wbCssText
+      .filter(e =>
+        e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
+      )
+      .join(';')
+      .trim()
+    if (wb.value.style.cssText === '') {
       wb.value.style = null
       wb.Css = null
     }
