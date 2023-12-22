@@ -432,7 +432,7 @@ function pasteWbase () {
 function createComponent () {
   let listUpdate = []
   let un_component_list = selected_list.filter(
-    e => !e.IsWini && e.CateID !== EnumCate.text
+    e => !e.IsWini && !e.value.classList.contains('w-text')
   )
   for (let wb of un_component_list) {
     wb.IsWini = true
@@ -462,8 +462,6 @@ function createComponent () {
       wb.ListClassName = wbClassName
     }
     let newStyle = document.createElement('style')
-    if (wb.value.getAttribute('wrap') === 'wrap')
-      wb.value.style.flexWrap = 'wrap'
     newStyle.id = `w-st-comp${wb.GID}`
     let wbCssText = wb.value.style.cssText.split(';')
     let cssItem = {
@@ -480,7 +478,7 @@ function createComponent () {
         .join(';')} }`
     }
     let children = []
-    if (wb.CateID === EnumCate.svg) {
+    if (wb.value.classList.contains('w-svg')) {
       ;[...wb.value.querySelector('svg').children].forEach(eHTML => {
         let styleCss = ''
         for (let prop of eHTML.attributes) {
@@ -490,21 +488,21 @@ function createComponent () {
         }
         cssItem.Css += `/**/ .${wbClassName} ${eHTML.localName} { ${styleCss} }`
       })
-    } else if (EnumCate.no_child_component.every(ct => wb.CateID !== ct)) {
+    } else if (
+      WbClass.parent.some(
+        e => e !== 'w-variant' && wb.value.classList.contains(e)
+      )
+    ) {
       let existNameList = [
         ...wb.value.querySelectorAll(`.wbaseItem-value[class*="w-st"]`)
       ].map(e => [...e.classList].find(cls => cls.startsWith('w-st')))
-      children = wbase_list.filter(
-        e => e.ListID.includes(wb.GID) && e.StyleItem
-      )
+      children = wbase_list.filter(e => wb.value.contains(e.value) && e.Css)
       for (let childWb of children) {
         let childWbClassName =
           `w-st${childWb.Level - wb.Level}-` +
           Ultis.toSlug(childWb.Name.toLowerCase().trim())
         childWb.ListClassName ??= ''
         let childClsList = childWb.ListClassName.split(' ')
-        if (childWb.value.getAttribute('wrap') === 'wrap')
-          childWb.value.style.flexWrap = 'wrap'
         let childWbCssText = childWb.value.style.cssText.split(';')
         if (childClsList.some(cCls => cCls.startsWith('w-st0'))) {
           childWbClassName = childClsList.find(cCls => cCls.startsWith('w-st0'))
@@ -549,7 +547,7 @@ function createComponent () {
                   .join(';')
           } }`
         }
-        if (childWb.CateID === EnumCate.svg) {
+        if (childWb.value.classList.contains('w-svg')) {
           ;[...childWb.value.querySelector('svg').children].forEach(eHTML => {
             let styleCss = ''
             for (let prop of eHTML.attributes) {
@@ -589,19 +587,6 @@ function createComponent () {
   wdraw()
   updateUIDesignView()
 }
-
-// function unComponent() {
-//   let component_list = selected_list.filter((e) => e.IsWini);
-//   for (let i = 0; i < component_list.length; i++) {
-//     component_list[i].IsWini = false;
-//     component_list[i].value.removeAttribute("iswini");
-//     document.getElementById(`wbaseID:${component_list[i].GID}`).removeAttribute("iswini");
-//   }
-//   assets_list = assets_list.filter((e) => component_list.every((wbaseItem) => wbaseItem.GID != e.GID));
-//   WBaseDA.edit(component_list, EnumObj.wBase);
-//   wdraw();
-//   updateUIDesignView();
-// }
 
 function showImgDocument () {
   let imgDocument = createImgDocument()
