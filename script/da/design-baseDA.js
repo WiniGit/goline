@@ -16,7 +16,7 @@ class BaseDA {
   static async uploadFile(listFile, url, collectionId) {
     listFile = [...listFile];
     let _date = new Date();
-    let headers = UserService.headerFile();
+    let headers = await UserService.headerFile();
     headers.folder = UserService.getUser().ID;
     headers.collectionId = collectionId;
     headers.code = ProjectDA.obj.Code;

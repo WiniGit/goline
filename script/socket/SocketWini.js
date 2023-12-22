@@ -1019,8 +1019,8 @@ class WiniIO {
     })
   }
 
-  static emitFile (listFile, collectionId) {
-    let result = BaseDA.uploadFile(
+  static async emitFile (listFile, collectionId) {
+    let result = await BaseDA.uploadFile(
       listFile,
       // "http://10.15.138.23:4000/uploadfile",
       socketWiniFile + '/uploadfile',
