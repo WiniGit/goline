@@ -150,54 +150,31 @@ function toolStateChange (toolState) {
   }
 }
 
-function createNewWbase ({ wb, relativeWbs = [], listId, sort }) {
+function createNewWbase ({ wb, relativeWbs = [], level, sort }) {
   let list_new_wbase = []
-  let new_wbase_item = JSON.parse(JSON.stringify(wb))
-  new_wbase_item.GID = uuidv4()
-  new_wbase_item.IsWini = false
-  new_wbase_item.BasePropertyItems = null
-  new_wbase_item.PropertyItems = null
-  new_wbase_item.value = null
-  new_wbase_item.ProtoType = null
-  new_wbase_item.PrototypeID = null
-  if (new_wbase_item.JsonEventItem)
-    new_wbase_item.JsonEventItem = new_wbase_item.JsonEventItem.filter(
-      e => e.Name === 'State'
-    )
-  if (!listId) {
-    let parent_wbase = wbase_list.find(e => e.GID == new_wbase_item.ParentID)
-    if (parent_wbase) {
-      let list_child = wbase_list.filter(e => e.ParentID == parent_wbase.GID)
-      list_child.sort((a, b) => b.Sort - a.Sort)
-      new_wbase_item.ListID = parent_wbase.ListID + `,${parent_wbase.GID}`
-      new_wbase_item.Level = new_wbase_item.ListID.split(',').length
-      new_wbase_item.Sort = list_child.length == 0 ? 1 : list_child[0].Sort + 1
-    } else {
-      let list_level1 = wbase_list.filter(e => e.ParentID == wbase_parentID)
-      list_level1.sort((a, b) => b.Sort - a.Sort)
-      new_wbase_item.ListID = wbase_parentID
-      new_wbase_item.Level = 1
-      new_wbase_item.Sort =
-        list_level1.length == 0 ? 1 : list_level1[0].Sort + 1
-    }
-  } else {
-    let new_listID = listId.split(',')
-    new_wbase_item.ParentID = new_listID[new_listID.length - 1]
-    new_wbase_item.ListID = listId
-    new_wbase_item.Sort = sort ?? wb.Sort
-    new_wbase_item.Level = new_listID.length
-  }
+  let newWb = JSON.parse(JSON.stringify(wb))
+  newWb.GID = uuidv4()
+  newWb.IsWini = false
+  newWb.BasePropertyItems = null
+  newWb.PropertyItems = null
+  newWb.value = null
+  newWb.ProtoType = null
+  newWb.PrototypeID = null
+  newWb.Level = level
+  if (newWb.JsonEventItem)
+    newWb.JsonEventItem = newWb.JsonEventItem.filter(e => e.Name === 'State')
+  let childrenWb = wbase_list.filter(e => e.ParentID === wb.ParentID)
+  if (childrenWb.length > 0) childrenWb.sort((a, b) => b.Sort - a.Sort)
+  newWb.Sort = childrenWb.length == 0 ? 1 : childrenWb[0].Sort + 1
   // tạo GuiID mới cho AttributesItem nếu khác null
-  if (new_wbase_item.AttributesItem) {
+  if (newWb.AttributesItem) {
     let newAttributeId = uuidv4()
-    new_wbase_item.AttributeID = newAttributeId
-    new_wbase_item.AttributesItem.GID = newAttributeId
-    if (new_wbase_item.JsonEventItem)
-      new_wbase_item.AttributesItem.JsonEvent = JSON.stringify(
-        new_wbase_item.JsonEventItem
-      )
+    newWb.AttributeID = newAttributeId
+    newWb.AttributesItem.GID = newAttributeId
+    if (newWb.JsonEventItem)
+      newWb.AttributesItem.JsonEvent = JSON.stringify(newWb.JsonEventItem)
   }
-  if (new_wbase_item.ListChildID?.length > 0) {
+  if (newWb.ListChildID?.length > 0) {
     let list_child = []
     list_child = list_contain_child.filter(e =>
       wb.ListChildID.some(id => e.GID == id)
@@ -211,29 +188,26 @@ function createNewWbase ({ wb, relativeWbs = [], listId, sort }) {
       let new_children = createNewWbase({
         wb: child,
         relativeWbs: relativeWbs,
-        listId: new_wbase_item.ListID + `,${new_wbase_item.GID}`,
+        level: newWb.Level + 1,
         sort: list_child.indexOf(child)
       })
       list_new_wbase.push(...new_children)
-      switch (new_wbase_item.CateID) {
+      switch (newWb.CateID) {
         case EnumCate.table:
-          new_wbase_item.AttributesItem.Content =
-            new_wbase_item.AttributesItem.Content.replace(
-              child.GID,
-              new_children.find(e => e.ParentID === new_wbase_item.GID).GID
-            )
+          newWb.AttributesItem.Content = newWb.AttributesItem.Content.replace(
+            child.GID,
+            new_children.find(e => e.ParentID === newWb.GID).GID
+          )
           break
         default:
           break
       }
     }
-    let new_list_child = list_new_wbase.filter(
-      e => e.ParentID == new_wbase_item.GID
-    )
-    new_wbase_item.ListChildID = new_list_child.map(e => e.GID)
+    let new_list_child = list_new_wbase.filter(e => e.ParentID == newWb.GID)
+    newWb.ListChildID = new_list_child.map(e => e.GID)
   }
-  new_wbase_item.PageID = PageDA.obj.ID
-  list_new_wbase.push(new_wbase_item)
+  newWb.PageID = PageDA.obj.ID
+  list_new_wbase.push(newWb)
   list_new_wbase.sort((a, b) => {
     let tmp = b.Level - a.Level
     if (tmp == 0) return a.Sort - b.Sort
@@ -281,15 +255,10 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
       let relativeWbase = base_component_list.filter(baseCom =>
         baseCom.ListID.includes(new_obj.GID)
       )
-      let newListID = wbase_parentID
-      if (parentid != wbase_parentID) {
-        pWbHTML = document.getElementById(parentid)
-        newListID = pWbHTML.getAttribute('listid') + `,${parentid}`
-      }
       let listNewWbase = createNewWbase({
         wb: new_obj,
         relativeWbs: relativeWbase,
-        listId: newListID,
+        level: parseInt(pWbHTML.getAttribute('level') ?? 0) + 1,
         sort: pWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${
             parseInt(pWbHTML.getAttribute('level') ?? '0') + 1
@@ -306,7 +275,10 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
       new_obj = listNewWbase.pop()
       wbase_list.push(...listNewWbase)
     } else {
-      new_obj = createNewWbase({ wb: new_obj }).pop()
+      new_obj = createNewWbase({
+        wb: new_obj,
+        level: parseInt(pWbHTML.getAttribute('level') ?? 0) + 1
+      }).pop()
       initComponents(new_obj, [])
       if (!w && tool_state === ToolState.text) {
         new_obj.Css += `width: max-content;`
@@ -326,14 +298,6 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
       } else {
         new_obj.Css += `left: ${x}px;top: ${y}px;`
       }
-      new_obj.Sort = [
-        ...pWbHTML.querySelectorAll(
-          `.wbaseItem-value[level="${new_obj.Level}"]`
-        )
-      ]
-        .map(e => e.style.zIndex ?? 0)
-        .sort((a, b) => parseFloat(b) - parseFloat(a))[0]
-      new_obj.value.style.zIndex = new_obj.Sort
       new_obj.value.setAttribute('constx', Constraints.left)
       new_obj.value.setAttribute('consty', Constraints.top)
       pWbHTML.appendChild(new_obj.value)
@@ -353,85 +317,106 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
           `.wbaseItem-value[level="${new_obj.Level}"]`
         )
       ]
+      let isGrid = window.getComputedStyle(pWbHTML).flexWrap == 'wrap'
       if (pWbHTML.classList.contains('w-col')) {
-        let zIndex = 0
+        var zIndex = 0
         if (children.length > 0) {
-          children.sort((aHTML, bHTML) => {
-            let aHTMLRect = aHTML.getBoundingClientRect()
-            let bHTMLRect = bHTML.getBoundingClientRect()
-            let a_center_oy = Math.abs(
-              y - offsetScale(0, aHTMLRect.y + aHTMLRect.height / 2).y
-            )
-            let b_center_oy = Math.abs(
-              y - offsetScale(0, bHTMLRect.y + bHTMLRect.height / 2).y
-            )
+          let closestHTML = [...children].sort((aHTML, bHTML) => {
+            let aRect = aHTML.getBoundingClientRect()
+            let bRect = bHTML.getBoundingClientRect()
+            let a_center_oy
+            let b_center_oy
+            if (isGrid) {
+              a_center_oy = Math.sqrt(
+                Math.pow(x - offsetScale(aRect.x + aRect.width / 2, 0).x, 2) +
+                  Math.pow(y - offsetScale(0, aRect.y + aRect.height / 2).y, 2)
+              )
+              b_center_oy = Math.sqrt(
+                Math.pow(x - offsetScale(bRect.x + bRect.width / 2, 0).x, 2) +
+                  Math.pow(y - offsetScale(0, bRect.y + bRect.height / 2).y, 2)
+              )
+            } else {
+              a_center_oy = Math.abs(
+                y - offsetScale(0, aRect.y + aRect.height / 2).y
+              )
+              b_center_oy = Math.abs(
+                y - offsetScale(0, bRect.y + bRect.height / 2).y
+              )
+            }
             return a_center_oy - b_center_oy
-          })
-          let closestHTML = children[0]
-          let closestHTMLRect = closestHTML.getBoundingClientRect()
-          zIndex = parseInt(window.getComputedStyle(closestHTML).order)
-          let distance =
-            y - offsetScale(0, closestHTMLRect.y + closestHTMLRect.height / 2).y
-          if (distance >= 0) {
-            zIndex++
+          })[0]
+          if (isGrid) {
+            closestHTML = children.find(
+              childHTML =>
+                childHTML.getBoundingClientRect().right >=
+                offsetConvertScale(x, 0).x
+            )
           }
-        }
-        new_obj.Sort = zIndex
-        new_obj.value.style.order = zIndex
-        let wbase_children = wbase_list.filter(
-          wb => wb.ParentID === parentid && wb.Sort >= zIndex
-        )
-        for (let cWb of wbase_children) {
-          cWb.Sort++
-          cWb.value.style.order = cWb.Sort
+          if (closestHTML) {
+            let htmlRect = closestHTML.getBoundingClientRect()
+            zIndex = children.indexOf(closestHTML)
+            distance = y - offsetScale(0, htmlRect.y + htmlRect.height / 2).y
+            if (distance < 0) zIndex--
+          } else {
+            zIndex = children.length - 1
+          }
         }
       } else {
-        let zIndex = 0
+        zIndex = 0
         if (children.length > 0) {
-          children.sort((aHTML, bHTML) => {
-            let aHTMLRect = aHTML.getBoundingClientRect()
-            let bHTMLRect = bHTML.getBoundingClientRect()
-            let a_center_ox = Math.abs(
-              x - offsetScale(aHTMLRect.x + aHTMLRect.width / 2, 0).x
-            )
-            let b_center_ox = Math.abs(
-              x - offsetScale(bHTMLRect.x + bHTMLRect.width / 2, 0).x
-            )
+          let closestHTML = [...children].sort((aHTML, bHTML) => {
+            let aRect = aHTML.getBoundingClientRect()
+            let bRect = bHTML.getBoundingClientRect()
+            let a_center_ox
+            let b_center_ox
+            if (isGrid) {
+              a_center_ox = Math.sqrt(
+                Math.pow(x - offsetScale(aRect.x + aRect.width / 2, 0).x, 2) +
+                  Math.pow(y - offsetScale(0, aRect.y + aRect.height / 2).y, 2)
+              )
+              b_center_ox = Math.sqrt(
+                Math.pow(x - offsetScale(bRect.x + bRect.width / 2, 0).x, 2) +
+                  Math.pow(y - offsetScale(0, bRect.y + bRect.height / 2).y, 2)
+              )
+            } else {
+              a_center_ox = Math.abs(
+                x - offsetScale(aRect.x + aRect.width / 2, 0).x
+              )
+              b_center_ox = Math.abs(
+                x - offsetScale(bRect.x + bRect.width / 2, 0).x
+              )
+            }
             return a_center_ox - b_center_ox
-          })
-          let closestHTML = children[0]
-          let closestHTMLRect = closestHTML.getBoundingClientRect()
-          zIndex = parseInt(window.getComputedStyle(closestHTML).order)
-          let distance =
-            x - offsetScale(closestHTMLRect.x + closestHTMLRect.width / 2, 0).x
-          if (distance >= 0) {
-            zIndex++
+          })[0]
+          if (isGrid) {
+            closestHTML = children.find(
+              childHTML =>
+                childHTML.getBoundingClientRect().bottom >=
+                offsetConvertScale(0, y).y
+            )
+          }
+          if (closestHTML) {
+            let htmlRect = closestHTML.getBoundingClientRect()
+            zIndex = children.indexOf(closestHTML)
+            distance = x - offsetScale(htmlRect.x + htmlRect.width / 2, 0)
+            if (distance < 0) zIndex--
+          } else {
+            zIndex = children.length - 1
           }
         }
-        new_obj.Sort = zIndex
-        new_obj.value.style.order = zIndex
-        let wbase_children = wbase_list.filter(
-          wb => wb.ParentID === parentid && wb.Sort >= zIndex
-        )
-        for (let cWb of wbase_children) {
-          cWb.Sort++
-          cWb.value.style.order = cWb.Sort
-        }
       }
-      pWbHTML.appendChild(new_obj.value)
+      pWbHTML.replaceChildren(
+        ...children.slice(0, zIndex + 1),
+        new_obj.value,
+        ...children.slice(zIndex + 1)
+      )
     }
     if (pWb) {
-      let list_childID = [
+      pWb.ListChildID = [
         ...pWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${pWb.Level + 1}"]`
         )
-      ]
-      list_childID.sort(
-        (a, b) =>
-          parseInt(a.style.zIndex ?? a.style.order ?? 0) -
-          parseInt(b.style.zIndex ?? b.style.order ?? 0)
-      )
-      pWb.ListChildID = list_childID.map(eHTML => eHTML.id)
+      ].map(eHTML => eHTML.id)
     }
     new_obj.value.style.cssText = new_obj.Css
     wbase_list.push(new_obj)

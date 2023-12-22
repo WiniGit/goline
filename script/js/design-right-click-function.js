@@ -996,23 +996,23 @@ async function handleImportFile (event) {
         newRect.AttributesItem.Content = fileItem.Url
       } else {
         newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
-        newRect.StyleItem.DecorationItem.ColorValue = fileItem.Url
+        newRect.Css = `background-image: url(${
+          urlImg + fileItem.Url.replaceAll(' ', '%20')
+        })`
       }
       let imgSize = await FileDA.getImageSize(urlImg + fileItem.Url)
-      let newObj = createWbaseHTML(
-        {
-          w: imgSize.w,
-          h: imgSize.h,
-          x: offset.x - imgSize.w / 2,
-          y: offset.y - imgSize.h / 2,
-          parentid: parent.id?.length == 36 ? parent.id : wbase_parentID
-        },
-        newRect
-      )
+      let newObj = createWbaseHTML({
+        w: imgSize.w,
+        h: imgSize.h,
+        x: offset.x - imgSize.w / 2,
+        y: offset.y - imgSize.h / 2,
+        parentid: parent.id?.length == 36 ? parent.id : wbase_parentID,
+        newObj: newRect
+      })
       listAdd.push(newObj)
     }
     handleWbSelectedList(listAdd)
-    WBaseDA.add(listAdd)
+    WBaseDA.add({ listWb: listAdd })
   }
 }
 

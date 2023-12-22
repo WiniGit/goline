@@ -130,12 +130,12 @@
   all: unset !important;
 }
 
-.w-svg {
+.wbaseItem-value.w-svg {
   position: relative;
   display: block !important;
 }
 
-.w-svg > svg {
+.wbaseItem-value.w-svg > svg {
   position: absolute;
   width: 100%;
   height: 100%;

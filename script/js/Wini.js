@@ -2595,22 +2595,20 @@ function upListener (event) {
           newRect.AttributesItem.Content = url.replace(urlImg, '')
         } else {
           newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
-          newRect.Name = 'new rectangle'
+          newRect.Name = 'Rectangle'
           newRect.Css = `background-image: url(${url});`
         }
         FileDA.getImageSize(url).then(imgSize => {
           let offset = offsetScale(event.pageX, event.pageY)
-          let newObj = createWbaseHTML(
-            {
-              w: imgSize.w,
-              h: imgSize.h,
-              x: offset.x,
-              y: offset.y,
-              parentID: parent.id?.length == 36 ? parent.id : wbase_parentID
-            },
-            newRect
-          )
-          WBaseDA.add([newObj])
+          let newObj = createWbaseHTML({
+            w: imgSize.w,
+            h: imgSize.h,
+            x: offset.x,
+            y: offset.y,
+            parentid: parent.id?.length == 36 ? parent.id : wbase_parentID,
+            newObj: newRect
+          })
+          WBaseDA.add({ listWb: [newObj] })
         })
       }
     } else {
@@ -2775,9 +2773,23 @@ function upListener (event) {
         //   isUpdateTable ? EnumEvent.edit : EnumEvent.add,
         //   isUpdateTable ? EnumObj.wBaseAttribute : EnumObj.wBase
         // )
-        WBaseDA.add({
-          listWb: list_add
-        })
+        if (
+          list_add[0].value.closest(`.w-table[level="${list_add[0].Level}"]`)
+        ) {
+        } else if (
+          list_add[0].value.closest(
+            `:is(.w-col, .w-row)[level="${list_add[0].Level}"]`
+          )
+        ) {
+          WBaseDA.parent([
+            wbase_list.find(e => e.GID === list_add[0].ParentID),
+            ...list_add
+          ])
+        } else {
+          WBaseDA.add({
+            listWb: list_add
+          })
+        }
       }
       break
     case EnumEvent.edit:

@@ -459,6 +459,7 @@ class WbClass {
     ParentID: wbase_parentID,
     ListClassName: 'wbaseItem-value w-svg',
     IsWini: false,
+    Css: '',
     BasePropertyItems: [],
     AttributesItem: {
       Name: 'Svg Picture',
@@ -808,6 +809,7 @@ class WBaseDA {
         enumEvent: EnumEvent.delete
       }
       handleWbSelectedList()
+      updateHoverWbase()
       WiniIO.emitMain(data)
     }
   }
