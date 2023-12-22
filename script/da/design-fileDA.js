@@ -32,6 +32,7 @@ class FileDA {
   }
 
   static async add(listFile, collectionId) {
+    debugger
     let result = await WiniIO.emitFile(listFile, collectionId);
     FileDA.list.push(...result);
     if (document.getElementById("popup_img_document")) {

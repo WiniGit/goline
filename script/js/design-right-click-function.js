@@ -477,7 +477,6 @@ function createComponent () {
         )
         .join(';')} }`
     }
-    debugger
     wb.value.style.cssText = wbCssText
       .filter(e =>
         e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
@@ -487,6 +486,8 @@ function createComponent () {
     if (wb.value.style.cssText === '') {
       wb.value.style = null
       wb.Css = null
+    } else {
+      wb.Css = wb.value.style.cssText
     }
     let children = []
     if (wb.value.classList.contains('w-svg')) {
@@ -581,7 +582,12 @@ function createComponent () {
       StyleDA.editStyleSheet(cssItem)
     } else {
       StyleDA.cssStyleSheets.push(cssItem)
-      StyleDA.addStyleSheet(cssItem)
+      StyleDA.addStyleSheet(cssItem).then(_ => {
+        let styleTag = document.createElement('style')
+        styleTag.id = `w-st-comp${cssItem.GID}`
+        styleTag.innerHTML = cssItem.Css
+        document.head.appendChild(styleTag)
+      })
     }
     listUpdate.push(wb, ...children)
   }
