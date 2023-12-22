@@ -774,25 +774,6 @@ class WBaseDA {
     WiniIO.emitMain(data)
   }
 
-  static editListClassName (list_wbase_item) {
-    // if (!WBaseDA.isCtrlZ) {
-    //   addAction()
-    // }
-    let data = {
-      enumObj: EnumObj.css,
-      data: list_wbase_item.map(e => {
-        return {
-          GID: e.GID,
-          ListClassName: e.ListClassName,
-          IsWini: e.IsWini,
-          CopyID: null
-        }
-      }),
-      enumEvent: EnumEvent.edit
-    }
-    WiniIO.emitMain(data)
-  }
-
   static editBaseComponent (list_wbase_item, enumObj) {
     let data = {
       enumObj: enumObj ?? EnumObj.wBase,

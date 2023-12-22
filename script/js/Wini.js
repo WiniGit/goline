@@ -939,11 +939,10 @@ function centerViewInitListener () {
     resizeWbase.observe(page)
   })
   listShowName = [
-    ...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`),
     ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance="true"])`
+      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini="true"]):not(*[isinstance="true"])`
     )
-  ].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex))
+  ]
 }
 
 const childObserver = new MutationObserver(mutationList => {

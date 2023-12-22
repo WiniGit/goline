@@ -477,6 +477,13 @@ function createComponent () {
         )
         .join(';')} }`
     }
+    wb.value.style.cssText = wbCssText.filter(e =>
+      e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
+    ).join(';').trim()
+    if(wb.value.style.cssText === '') {
+      wb.value.style = null
+      wb.Css = null
+    }
     let children = []
     if (wb.value.classList.contains('w-svg')) {
       ;[...wb.value.querySelector('svg').children].forEach(eHTML => {
@@ -558,6 +565,8 @@ function createComponent () {
             cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} ${eHTML.localName} { ${styleCss} }`
           })
         }
+        childWb.value.style = null
+        childWb.Css = null
       }
     }
     newStyle.innerHTML = cssItem.Css
@@ -573,10 +582,10 @@ function createComponent () {
     listUpdate.push(wb, ...children)
   }
   assets_list.push(...listUpdate)
-  WBaseDA.editListClassName(listUpdate, EnumObj.wBase)
+  WBaseDA.edit(listUpdate, EnumObj.wBase)
   listShowName = [
     ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value[iswini="true"], .w-container, .w-variant`
+      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini="true"]):not(*[isinstance="true"])`
     )
   ]
   wdraw()
