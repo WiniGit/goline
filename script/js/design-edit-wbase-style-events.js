@@ -1479,6 +1479,9 @@ function handleEditOffset ({
               })
             } else {
               cWb.value.style.width = cWb.value.offsetWidth + 'px'
+              if (wb.value.classList.contains('w-row')) {
+                cWb.value.style.flex = null
+              }
               cWb.Css = cWb.value.style.cssText
               cWb.value.removeAttribute('width-type')
               listUpdate.push(cWb)
@@ -1547,6 +1550,9 @@ function handleEditOffset ({
               })
             } else {
               cWb.value.style.height = cWb.value.offsetHeight + 'px'
+              if (wb.value.classList.contains('w-col')) {
+                cWb.value.style.flex = null
+              }
               cWb.Css = cWb.value.style.cssText
               cWb.value.removeAttribute('height-type')
               listUpdate.push(cWb)
@@ -1664,6 +1670,9 @@ function handleEditOffset ({
               })
             } else {
               cWb.value.style.width = cWb.value.offsetWidth + 'px'
+              if (wb.value.classList.contains('w-row')) {
+                cWb.value.style.flex = null
+              }
               cWb.Css = cWb.value.style.cssText
               cWb.value.removeAttribute('width-type')
               listUpdate.push(cWb)
@@ -1781,6 +1790,9 @@ function handleEditOffset ({
               })
             } else {
               cWb.value.style.height = cWb.value.offsetHeight + 'px'
+              if (wb.value.classList.contains('w-col')) {
+                cWb.value.style.flex = null
+              }
               cWb.Css = cWb.value.style.cssText
               cWb.value.removeAttribute('height-type')
               listUpdate.push(cWb)
@@ -5212,6 +5224,7 @@ function addAutoLayout () {
       wb.value.style.zIndex = null
       wb.Css = wb.value.style.cssText
     }
+    newWb.value.replaceChildren(...selected_list.map(e => e.value))
     newWb.Css = newWb.value.style.cssText
     wbase_list.push(newWb)
     listUpdate.push(newWb)
@@ -5224,7 +5237,7 @@ function addAutoLayout () {
     })
     replaceAllLyerItemHTML()
     handleWbSelectedList([newWb])
-    WBaseDA.add(listUpdate, null, EnumEvent.parent, EnumObj.wBase)
+    WBaseDA.parent(listUpdate)
   }
 }
 

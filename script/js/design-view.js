@@ -700,7 +700,9 @@ function EditLayoutBlock () {
   let wbList = selected_list.filter(wb =>
     WbClass.parent.some(e => wb.value.classList.contains(e))
   )
-  let isEditTable = wbList.every(wb => wb.value.classList.contains('w-table'))
+  let isEditTable =
+    wbList.length > 0 &&
+    wbList.every(wb => wb.value.classList.contains('w-table'))
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_auto_layout_div'
   editContainer.className = 'edit-container'
@@ -1457,7 +1459,7 @@ function checkActiveFillHug ({ type = 'fill', isW = true }) {
               if (wb.value.classList.contains('w-row')) {
                 return (
                   !wbComputeSt.overflow.includes('scroll') &&
-                  !wbComputeSt.flexWrap === 'wrap'
+                  wbComputeSt.flexWrap !== 'wrap'
                 )
               } else if (
                 !wb.value.querySelector(`.col-[level="${wb.Level + 1}"]`)
@@ -1468,7 +1470,7 @@ function checkActiveFillHug ({ type = 'fill', isW = true }) {
           } else {
             if (wb.value.classList.contains('w-col')) {
               return (
-                !wbComputeSt.flexWrap === 'wrap' &&
+                wbComputeSt.flexWrap !== 'wrap' &&
                 !wbComputeSt.overflow.includes('scroll')
               )
             } else {
