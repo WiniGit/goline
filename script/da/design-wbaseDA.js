@@ -726,11 +726,10 @@ class WBaseDA {
     let cssData = await StyleDA.initStyleSheets()
     StyleDA.cssStyleSheets = cssData.Data
     StyleDA.cssStyleSheets.forEach(cssItem => {
-      StyleDA.deleteStyleSheet(cssItem)
-      // let styleTag = document.createElement('style')
-      // styleTag.id = `w-st-comp${cssItem.GID}`
-      // styleTag.innerHTML = cssItem.Css
-      // document.head.appendChild(styleTag)
+      let styleTag = document.createElement('style')
+      styleTag.id = `w-st-comp${cssItem.GID}`
+      styleTag.innerHTML = cssItem.Css
+      document.head.appendChild(styleTag)
     })
     WbData = WbData.Data
     WbData.forEach(
