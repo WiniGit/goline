@@ -453,9 +453,12 @@ function createComponent () {
         break
       }
     }
+    debugger
     if (wb.ListClassName) {
       wb.ListClassName = [
-        ...wb.ListClassName.split(' ').filter(cls => !cls.startsWith('w-st')),
+        ...wb.ListClassName.split(' ').filter(
+          cls => !cls.startsWith('w-st') || cls === 'w-stack'
+        ),
         wbClassName
       ].join(' ')
     } else {
@@ -505,7 +508,11 @@ function createComponent () {
     ) {
       let existNameList = [
         ...wb.value.querySelectorAll(`.wbaseItem-value[class*="w-st"]`)
-      ].map(e => [...e.classList].find(cls => cls.startsWith('w-st')))
+      ].map(e =>
+        [...e.classList].find(
+          cls => cls.startsWith('w-st') && cls !== 'w-stack'
+        )
+      )
       children = wbase_list.filter(
         e => wb !== e && wb.value.contains(e.value) && e.Css
       )
@@ -542,7 +549,9 @@ function createComponent () {
             }
           }
           childWb.ListClassName = [
-            ...childClsList.filter(cls => !cls.startsWith('w-st')),
+            ...childClsList.filter(
+              cls => !cls.startsWith('w-st') || cls === 'w-stack'
+            ),
             childWbClassName
           ].join(' ')
           existNameList.push(childWbClassName)
@@ -580,18 +589,15 @@ function createComponent () {
     let index = StyleDA.cssStyleSheets.findIndex(e => e.GID === cssItem.GID)
     if (index >= 0) {
       StyleDA.cssStyleSheets[index] = cssItem
-      StyleDA.editStyleSheet(cssItem).then(_ => {
-        document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML =
-          cssItem.Css
-      })
+      StyleDA.editStyleSheet(cssItem)
+      document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
     } else {
       StyleDA.cssStyleSheets.push(cssItem)
-      StyleDA.addStyleSheet(cssItem).then(_ => {
-        let styleTag = document.createElement('style')
-        styleTag.id = `w-st-comp${cssItem.GID}`
-        styleTag.innerHTML = cssItem.Css
-        document.head.appendChild(styleTag)
-      })
+      StyleDA.addStyleSheet(cssItem)
+      let styleTag = document.createElement('style')
+      styleTag.id = `w-st-comp${cssItem.GID}`
+      styleTag.innerHTML = cssItem.Css
+      document.head.appendChild(styleTag)
     }
     listUpdate.push(wb, ...children)
   }

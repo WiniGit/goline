@@ -1709,7 +1709,7 @@ function handleEditOffset ({
     else if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else if (height !== undefined) {
     let resizeFixed = height === 'fixed'
-    if (!selected_list[0].Css && !selected_list[0].IsInstance) {
+    if (!selected_list[0].IsInstance) {
       let pWbComponent = selected_list[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )

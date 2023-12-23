@@ -68,7 +68,7 @@ function updateUIDesignView () {
         e => window.getComputedStyle(e.value).position === 'absolute'
       )
     ) {
-      let editConstraints = EditConstraintsBlock()
+      var editConstraints = EditConstraintsBlock()
       listEditContainer.appendChild(editConstraints)
     }
     if (
@@ -132,15 +132,20 @@ function updateUIDesignView () {
     // listEditContainer.appendChild(editVariants);
   }
   design_view.replaceChildren(listEditContainer)
-  if (selected_list.some(wb => wb.IsInstance && !wb.StyleItem)) {
-    design_view
-      .querySelectorAll(
-        'input, button, i, .btn_resize, img, .constraint-selector-outerVertical, .constraint-selector-outerHorizontal, .btn_dropdown_select'
-      )
-      .forEach(e => {
-        e.style.pointerEvents = 'none'
-        e.disabled = true
-      })
+  if (
+    selected_list.some(
+      wb =>
+        wb.IsInstance &&
+        wb.value.closest(
+          `.wbaseItem-value[isinstance="true"][level="${wb.Level - 1}"]`
+        )
+    )
+  ) {
+    design_view.querySelectorAll('.uneditable-instance').forEach(e => {
+      e.style.pointerEvents = 'none'
+      e.querySelectorAll('input').forEach(eInput => eInput.disabled = true)
+    })
+    if (editConstraints) editConstraints.style.pointerEvents = 'none'
   }
   design_view.scrollTo({
     top: scrollY,
@@ -307,7 +312,7 @@ function EditOffsetBlock () {
 
   //
   let editXYContainer = document.createElement('div')
-  editXYContainer.className = 'row'
+  editXYContainer.className = 'row uneditable-instance'
   // input edit left position
   let list_offsetX = selected_list.filterAndMap(wb =>
     `${getWBaseOffset(wb).x}`.replace('.00', '')
@@ -352,9 +357,8 @@ function EditOffsetBlock () {
     } ${
       selected_list.some(
         wb =>
-          wb.IsInstance ||
-          (!wb.value.classList.contains('w-variant') &&
-            wb.value.closest('.wbaseItem-value[iswini="true"]'))
+          !wb.value.classList.contains('w-variant') &&
+          wb.value.closest('.wbaseItem-value[iswini="true"]')
       )
         ? ' disabled'
         : ''
@@ -380,7 +384,7 @@ function EditOffsetBlock () {
   //
   //
   let editWHContainer = document.createElement('div')
-  editWHContainer.className = 'row'
+  editWHContainer.className = 'row uneditable-instance'
   // input edit width
   let list_width = selected_list.filterAndMap(e => e.value.offsetWidth)
   let edit_width = _textField({
@@ -440,7 +444,7 @@ function EditOffsetBlock () {
     })
   ) {
     let resizeContainer = document.createElement('div')
-    resizeContainer.className = 'row'
+    resizeContainer.className = 'row uneditable-instance'
     resizeContainer.style.height = '32px'
     const initResizeW = function () {
       let vl = selected_list.filterAndMap(
@@ -674,7 +678,7 @@ function EditOffsetBlock () {
   ) {
     // sixth line is btn checkboc clip content (overflow)
     let btn_clip_content = document.createElement('label')
-    btn_clip_content.className = 'row regular1'
+    btn_clip_content.className = 'row regular1 uneditable-instance'
     btn_clip_content.style.margin = '4px 0 0 16px'
     btn_clip_content.innerHTML = `<input type="checkbox"${
       selected_list
@@ -743,7 +747,7 @@ function EditLayoutBlock () {
       ['w-col', 'w-table'].some(e => wb.value.classList.contains(e))
     )
     let selectDirection = document.createElement('div')
-    selectDirection.className = 'group_btn_direction'
+    selectDirection.className = 'group_btn_direction uneditable-instance'
     selectDirection.innerHTML = `<i class="fa-solid fa-arrow-down fa-xs" style="background-color: ${
       isVertical ? '#e5e5e5' : 'transparent'
     }"></i><i class="fa-solid fa-arrow-right fa-xs" style="background-color: ${
@@ -806,40 +810,15 @@ function EditLayoutBlock () {
     btn_extension.className = 'fa-solid fa-ellipsis icon_btn_default_style'
     body.replaceChildren(selectDirection, alignContainer, btn_extension)
 
-    // let layoutItem = {
-    //   Direction: isVertical ? 'Vertical' : 'Horizontal',
-    //   Alignment:
-    //     mainAxisToAlign(cssList[0].getPropertyValue('--main-axis-align')) +
-    //     crossAxisToAlign(cssList[0].getPropertyValue('--cross-axis-align')),
-    //   ChildSpace: ,
-    //   RunSpace: cssList.filterAndMap(st =>
-    //     parseFloat(st.getPropertyValue('--run-space').replace('px', ''))
-    //   ),
-    //   IsWrap: wbList
-    //     .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
-    //     .every(e => e === 'wrap'),
-    //   IsScroll: wbList
-    //     .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
-    //     .every(e => e.includes('scroll'))
-    // }
-    // layoutItem.Alignment =
-    //   layoutItem.Alignment === 'CenterCenter' ? 'Center' : layoutItem.Alignment
-    // group btn edit auto layout direction
-
     // input edit child space
     if (!isEditTable) {
       let childSpaceValues = wbList.filterAndMap(wb =>
         parseFloat(
-          (
-            wb.value.style.getPropertyValue('--child-space') ??
-            StyleDA.docStyleSheets
-              .find(cssRule =>
-                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                  wbList[0].value
-                )
-              )
-              ?.style?.getPropertyValue('--child-space')
-          ).replace('px', '')
+          window
+            .getComputedStyle(wb.value)
+            [
+              wb.value.classList.contains('w-col') ? 'row-gap' : 'column-gap'
+            ].replace('px', '')
         )
       )
       let inputChildSpace = _textField({
@@ -866,7 +845,7 @@ function EditLayoutBlock () {
         isWrapRow.className = 'row'
         isWrapRow.style.width = '100%'
         let btnIsWarp = document.createElement('label')
-        btnIsWarp.className = 'row regular1 check-box-label'
+        btnIsWarp.className = 'row regular1 check-box-label uneditable-instance'
         btnIsWarp.innerHTML = `<input type="checkbox"${
           wbList
             .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
@@ -910,7 +889,7 @@ function EditLayoutBlock () {
         })
         isWrapRow.replaceChildren(btnIsWarp, inputRunSpace)
         let btnIsScroll = document.createElement('label')
-        btnIsScroll.className = 'row regular1 check-box-label'
+        btnIsScroll.className = 'row regular1 check-box-label uneditable-instance'
         btnIsScroll.innerHTML = `<input type="checkbox"${
           wbList
             .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
