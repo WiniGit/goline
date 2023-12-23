@@ -2837,9 +2837,10 @@ function upListener (event) {
                 wb.value
               )
             )
-            cssRule.style.width = wb.value.style.width
-            cssRule.style.height = wb.value.style.height
-            cssRule.style.flex = wb.value.style.flex
+            if (wb.value.style.width) cssRule.style.width = wb.value.style.width
+            if (wb.value.style.height)
+              cssRule.style.height = wb.value.style.height
+            if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
             wb.value.style.width = null
             wb.value.style.height = null
             wb.value.style.flex = null
@@ -2865,18 +2866,23 @@ function upListener (event) {
           let cssRule = StyleDA.docStyleSheets.find(e =>
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
-          cssRule.style.top = wb.value.style.top
-          cssRule.style.right = wb.value.style.right
-          cssRule.style.bottom = wb.value.style.bottom
-          cssRule.style.left = wb.value.style.left
-          cssRule.style.transform = wb.value.style.transform
-          cssRule.style.height = wb.value.style.height
-          cssRule.style.flex = wb.value.style.flex
+          if (wb.value.style.width) cssRule.style.width = wb.value.style.width
+          if (wb.value.style.height)
+            cssRule.style.height = wb.value.style.height
+          if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
+          if (wb.value.style.top) cssRule.style.top = wb.value.style.top
+          if (wb.value.style.right) cssRule.style.right = wb.value.style.right
+          if (wb.value.style.bottom)
+            cssRule.style.bottom = wb.value.style.bottom
+          if (wb.value.style.left) cssRule.style.left = wb.value.style.left
+          if (wb.value.style.transform)
+            cssRule.style.transform = wb.value.style.transform
           wb.value.style = null
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
+          wb.Css = null
         }
         StyleDA.editStyleSheet(cssItem)
       }
