@@ -5460,6 +5460,7 @@ function addAutoLayout () {
     }
     initComponents(newWb, [])
     newWb.value.style.setProperty('--child-space', `8px`)
+    newWb.value.style.setProperty('--child-space', `8px`)
     newWb.value.style.setProperty('--run-space', `0px`)
     newWb.value.style.justifyContent = 'center'
     newWb.value.style.alignItems = 'center'
@@ -5525,7 +5526,6 @@ function addAutoLayout () {
     }
     for (let wb of selected_list) {
       wb.ParentID = newWb.GID
-      wb.Level += 1
       wb.value.setAttribute('parentid', newWb.GID)
       wb.value.removeAttribute('constx')
       wb.value.removeAttribute('consty')
@@ -5544,7 +5544,7 @@ function addAutoLayout () {
     listUpdate.push(newWb)
     arrange()
     wbase_list.forEach(wb => {
-      if (newWb.value.contains(wb.value)) {
+      if (wb !== newWb && newWb.value.contains(wb.value)) {
         wb.Level += 1
         wb.value.setAttribute('level', wb.Level)
       }

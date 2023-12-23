@@ -461,9 +461,7 @@ function createComponent () {
     } else {
       wb.ListClassName = wbClassName
     }
-    let newStyle = document.createElement('style')
-    newStyle.id = `w-st-comp${wb.GID}`
-    let wbCssText = wb.value.style.cssText.split(';')
+    let wbCssText = wb.value.style.cssText.split(';').map(vl => vl.trim())
     let cssItem = {
       GID: wb.GID,
       Name: wbClassName,
@@ -489,6 +487,7 @@ function createComponent () {
     } else {
       wb.Css = wb.value.style.cssText
     }
+    debugger
     let children = []
     if (wb.value.classList.contains('w-svg')) {
       ;[...wb.value.querySelector('svg').children].forEach(eHTML => {
@@ -575,24 +574,24 @@ function createComponent () {
       }
     }
     newStyle.innerHTML = cssItem.Css
-    document.head.appendChild(newStyle)
     let index = StyleDA.cssStyleSheets.findIndex(e => e.GID === cssItem.GID)
     if (index >= 0) {
       StyleDA.cssStyleSheets[index] = cssItem
-      StyleDA.editStyleSheet(cssItem)
+      // StyleDA.editStyleSheet(cssItem)
     } else {
-      StyleDA.cssStyleSheets.push(cssItem)
-      StyleDA.addStyleSheet(cssItem).then(_ => {
+      // StyleDA.cssStyleSheets.push(cssItem)
+      // StyleDA.addStyleSheet(cssItem).then(_ => {
         let styleTag = document.createElement('style')
         styleTag.id = `w-st-comp${cssItem.GID}`
         styleTag.innerHTML = cssItem.Css
         document.head.appendChild(styleTag)
-      })
+      // })
     }
     listUpdate.push(wb, ...children)
   }
+  debugger
   assets_list.push(...listUpdate)
-  WBaseDA.edit(listUpdate, EnumObj.wBase)
+  // WBaseDA.edit(listUpdate, EnumObj.wBase)
   listShowName = [
     ...divSection.querySelectorAll(
       `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini="true"]):not(*[isinstance="true"])`

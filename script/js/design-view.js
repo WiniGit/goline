@@ -347,9 +347,9 @@ function EditOffsetBlock () {
       e.value.classList.contains('fixed-position')
     )
     let iconFixPos = document.createElement('img')
-    iconFixPos.className =
-      'img-button size-28 tlwh-option' +
-      (isFixPos ? ' toggle' : '') +
+    iconFixPos.className = `img-button size-28 tlwh-option ${
+      isFixPos ? ' toggle' : ''
+    } ${
       selected_list.some(
         wb =>
           wb.IsInstance ||
@@ -358,6 +358,7 @@ function EditOffsetBlock () {
       )
         ? ' disabled'
         : ''
+    }`
     iconFixPos.src =
       'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/fix_position.svg'
     edit_top.lastChild.disabled = !isFixPos
