@@ -73,14 +73,29 @@ function initComponents (wb, children) {
   switch (wb.ListClassName.split(' ')[1]) {
     case 'w-container':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0)
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
       createContainerHTML(wb, children)
       break
     case 'w-form':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0)
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
       createContainerHTML(wb, children)
       break
     case 'w-variant':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0)
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
       createVariantHTML(wb, children)
       break
     case 'w-text':
@@ -91,6 +106,11 @@ function initComponents (wb, children) {
       break
     case 'w-textformfield':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0)
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
       createTextFormFieldHTML(wb, children)
       break
     case 'w-switch':
@@ -110,6 +130,11 @@ function initComponents (wb, children) {
     //   break
     case 'w-button':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0)
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
       wbutton(wb, children)
       break
     case 'w-table':
