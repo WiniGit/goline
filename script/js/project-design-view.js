@@ -1022,8 +1022,8 @@ function dragWbaseEnd () {
         if (wb.value.style.left) cssRule.style.left = wb.value.style.left
         if (wb.value.style.transform)
           cssRule.style.transform = wb.value.style.transform
-        wb.value.style = null
         if (eEvent) cssRule.style.order = $(wb.value).index()
+        wb.value.style = null
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText

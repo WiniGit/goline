@@ -72,11 +72,12 @@ function initComponents (wb, children) {
   switch (wb.ListClassName.split(' ')[1]) {
     case 'w-container':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
-      if (children.length > 0)
+      if (children.length > 0) {
         children = children.sort(
           (a, b) =>
             wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
         )
+      }
       createContainerHTML(wb, children)
       break
     case 'w-form':
@@ -179,6 +180,15 @@ function initComponents (wb, children) {
   if (wb.Css?.length > 0) {
     wb.value.style = wb.Css
     setAttributeByStyle(wb.value)
+  }
+  if (wb.IsInstance && children.length > 0) {
+    if (wb.value.classList.contains('w-stack')) {
+      for (let i = 0; i < children.length; i++)
+        children[i].value.style.zIndex = i
+    } else {
+      for (let i = 0; i < children.length; i++)
+        children[i].value.style.order = i
+    }
   }
 }
 
