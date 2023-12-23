@@ -923,6 +923,13 @@ function dragWbaseEnd () {
             return wb.value
           })
         )
+      } else if (new_parentID === wbase_parentID) {
+        selected_list.forEach(wb => {
+          wb.value.setAttribute('constx', Constraints.left)
+          wb.value.setAttribute('consty', Constraints.top)
+        })
+      } else if (newPWbHTML.classList.contains('w-stack')) {
+        selected_list.forEach(wb => updateConstraints(wb.value))
       }
       if (pWb) {
         pWb.ListChildID = [
@@ -951,6 +958,13 @@ function dragWbaseEnd () {
       ].map(e => e.id)
       eEvent = EnumEvent.parent
       WBaseDA.listData.push(oldPWb)
+    } else if (new_parentID === wbase_parentID) {
+      selected_list.forEach(wb => {
+        wb.value.setAttribute('constx', Constraints.left)
+        wb.value.setAttribute('consty', Constraints.top)
+      })
+    } else if (newPWbHTML.classList.contains('w-stack')) {
+      selected_list.forEach(wb => updateConstraints(wb.value))
     }
     WBaseDA.listData.push(
       ...selected_list.map(wb => {
@@ -1018,12 +1032,25 @@ function dragAltUpdate (xp, yp, event) {
       alt_wbase.ChildID = wb.GID
       alt_wbase.IsCopy = true
       let tmp = wb.value.cloneNode(true)
-      if (wb.value.getAttribute('width-type') === 'fill') {
+      if (
+        wb.value.getAttribute('width-type') === 'fill' ||
+        wb.value.getAttribute('constx') ===
+          Constraints.left_right ||
+        wb.value.getAttribute('constx') ===
+          Constraints.scale
+      ) {
         tmp.style.width = wb.value.offsetWidth + 'px'
+        tmp.style.flex = null
       }
-      //
-      if (wb.value.getAttribute('height-type') === 'fill') {
+      if (
+        (wb.value.getAttribute('height-type') === 'fill') |
+          (wb.value.getAttribute('consty') ===
+            Constraints.top_bottom) ||
+        wb.value.getAttribute('consty') ===
+          Constraints.scale
+      ) {
         tmp.style.height = wb.value.offsetHeight + 'px'
+        tmp.style.flex = null
       }
       tmpAltHTML.push(tmp)
       tmp.id = alt_wbase.GID
@@ -1256,6 +1283,13 @@ function dragAltEnd () {
           return wb.value
         })
       )
+    } else if (new_parentID === wbase_parentID) {
+      alt_list.forEach(wb => {
+        wb.value.setAttribute('constx', Constraints.left)
+        wb.value.setAttribute('consty', Constraints.top)
+      })
+    } else if (newPWbHTML.classList.contains('w-stack')) {
+      alt_list.forEach(wb => updateConstraints(wb.value))
     }
     if (pWb) {
       pWb.ListChildID = [

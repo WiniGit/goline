@@ -323,7 +323,7 @@ function getWBaseOffset (wb) {
         scale
     ).toFixed(2)
   }
-  return { x: leftValue, y: topValue }
+  return { x: parseFloat(leftValue), y: parseFloat(topValue) }
 }
 
 async function callAPI (request) {

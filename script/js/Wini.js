@@ -1256,11 +1256,23 @@ function moveListener (event) {
                         wb.tmpX = eHTMLOffset.x - parent_offset1.x
                         wb.tmpY = eHTMLOffset.y - parent_offset1.y
                         if (!event.altKey) {
-                          if (wb.value.getAttribute('width-type') === 'fill') {
+                          if (
+                            wb.value.getAttribute('width-type') === 'fill' ||
+                            wb.value.getAttribute('constx') ===
+                              Constraints.left_right ||
+                            wb.value.getAttribute('constx') ===
+                              Constraints.scale
+                          ) {
                             wb.value.style.width = wb.value.offsetWidth + 'px'
                             wb.value.style.flex = null
                           }
-                          if (wb.value.getAttribute('height-type') === 'fill') {
+                          if (
+                            (wb.value.getAttribute('height-type') === 'fill') |
+                              (wb.value.getAttribute('consty') ===
+                                Constraints.top_bottom) ||
+                            wb.value.getAttribute('consty') ===
+                              Constraints.scale
+                          ) {
                             wb.value.style.height = wb.value.offsetHeight + 'px'
                             wb.value.style.flex = null
                           }
