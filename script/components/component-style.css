@@ -733,3 +733,8 @@ body:has(> .w-date-picker-popup) {
 
 /* component css name rule */
 /*  */
+
+.wbaseItem-value[onsort="true"] {
+  order: unset !important;
+  z-index: unset !important;
+}

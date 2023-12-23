@@ -7630,7 +7630,6 @@ function combineAsVariant () {
   new_wbase_item.StyleItem.FrameItem.Height = select_box.h / scale + 16
   new_wbase_item.ParentID = selected_list[0].ParentID
   new_wbase_item.ListID = selected_list[0].ListID
-  new_wbase_item.Sort = selected_list[0].Sort
   new_wbase_item.Level = selected_list[0].Level
   assets_list.push(new_wbase_item)
   let newPropertyItem = {
@@ -7663,7 +7662,6 @@ function combineAsVariant () {
     }px`
     selected_list[i].ParentID = new_wbase_item.GID
     selected_list[i].ListID += `,${new_wbase_item.GID}`
-    selected_list[i].Sort = i
     selected_list[i].Level++
     let newBaseProperty = {
       GID: uuidv4(),
@@ -7744,7 +7742,6 @@ function changeProperty (variantID) {
         wb: copy,
         relativeWbs: assets_list,
         listId: selectedWbase.ListID,
-        sort: selectedWbase.Sort
       })
       listUpdate.push(...newWbaseList)
       let newWbaseSelect = newWbaseList.pop()
@@ -8190,7 +8187,6 @@ function createForm () {
     new_wbase_item.StyleItem.FrameItem.Height = Math.round(select_box.h / scale)
     new_wbase_item.ParentID = selected_list[0].ParentID
     new_wbase_item.ListID = selected_list[0].ListID
-    new_wbase_item.Sort = selected_list[0].Sort
     new_wbase_item.Level = selected_list[0].Level
     for (let i = 0; i < selected_list.length; i++) {
       let eHTML = document.getElementById(selected_list[i].GID)
@@ -8215,7 +8211,6 @@ function createForm () {
       }px`
       selected_list[i].ParentID = new_wbase_item.GID
       selected_list[i].ListID += `,${new_wbase_item.GID}`
-      selected_list[i].Sort = i
       selected_list[i].Level++
       eHTML.setAttribute('Level', selected_list[i].Level)
       eHTML.setAttribute('listid', selected_list[i].ListID)

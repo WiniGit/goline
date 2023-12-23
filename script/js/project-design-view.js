@@ -150,7 +150,7 @@ function toolStateChange (toolState) {
   }
 }
 
-function createNewWbase ({ wb, relativeWbs = [], level, sort }) {
+function createNewWbase ({ wb, relativeWbs = [], level }) {
   let list_new_wbase = []
   let newWb = JSON.parse(JSON.stringify(wb))
   newWb.GID = uuidv4()
@@ -163,9 +163,6 @@ function createNewWbase ({ wb, relativeWbs = [], level, sort }) {
   newWb.Level = level
   if (newWb.JsonEventItem)
     newWb.JsonEventItem = newWb.JsonEventItem.filter(e => e.Name === 'State')
-  let childrenWb = wbase_list.filter(e => e.ParentID === wb.ParentID)
-  if (childrenWb.length > 0) childrenWb.sort((a, b) => b.Sort - a.Sort)
-  newWb.Sort = childrenWb.length == 0 ? 1 : childrenWb[0].Sort + 1
   // tạo GuiID mới cho AttributesItem nếu khác null
   if (newWb.AttributesItem) {
     let newAttributeId = uuidv4()
@@ -208,11 +205,7 @@ function createNewWbase ({ wb, relativeWbs = [], level, sort }) {
   }
   newWb.PageID = PageDA.obj.ID
   list_new_wbase.push(newWb)
-  list_new_wbase.sort((a, b) => {
-    let tmp = b.Level - a.Level
-    if (tmp == 0) return a.Sort - b.Sort
-    else return tmp
-  })
+  list_new_wbase.sort((a, b) => b.Level - a.Level)
   return list_new_wbase
 }
 
@@ -442,23 +435,9 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
 
 function arrange (list) {
   if (list) {
-    list.sort((a, b) => {
-      value = b.Level - a.Level
-      if (value == 0) {
-        return a.Sort - b.Sort
-      } else {
-        return value
-      }
-    })
+    list.sort((a, b) => b.Level - a.Level)
   } else {
-    wbase_list.sort((a, b) => {
-      value = b.Level - a.Level
-      if (value == 0) {
-        return a.Sort - b.Sort
-      } else {
-        return value
-      }
-    })
+    wbase_list.sort((a, b) => b.Level - a.Level)
   }
 }
 
@@ -489,7 +468,7 @@ function handleWbSelectedList (newlist = []) {
           )
       }
     })
-    selected_list.sort((a, b) => a.Sort - b.Sort)
+    selected_list.sort((a, b) => $(a.value).index() - $(b.value).index())
     select_box_parentID = selected_list[0].ParentID
     let layerSelect = document.getElementById(`wbaseID:${selected_list[0].GID}`)
     let layerParentRect = document
@@ -1044,12 +1023,31 @@ function dragWbaseEnd () {
         if (wb.value.style.transform)
           cssRule.style.transform = wb.value.style.transform
         wb.value.style = null
+        if (eEvent) cssRule.style.order = $(wb.value).index()
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
         )
         wb.Css = null
         WBaseDA.listData = WBaseDA.listData.filter(e => e !== wb)
+      }
+      if (eEvent) {
+        newPWbHTML
+          .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
+          .forEach(cWbHTML => {
+            if (selected_list.every(wb => wb.value !== cWbHTML)) {
+              let cssRule = StyleDA.docStyleSheets.find(e =>
+                [...divSection.querySelectorAll(e.selectorText)].includes(
+                  cWbHTML
+                )
+              )
+              cssRule.style.order = $(cWbHTML).index()
+            }
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              cssRule.cssText
+            )
+          })
       }
       StyleDA.editStyleSheet(cssItem)
     }
@@ -1066,6 +1064,7 @@ function dragWbaseEnd () {
     WBaseDA.listData = []
   }
   select_box_parentID = selected_list[0].ParentID
+  parent.removeAttribute('onsort')
   parent = divSection
   updateHoverWbase()
   handleWbSelectedList([...selected_list])
@@ -1393,6 +1392,7 @@ function dragAltEnd () {
     drag_start_list = []
     alt_list = []
   }
+  parent.removeAttribute('onsort')
 }
 
 //

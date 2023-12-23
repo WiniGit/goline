@@ -14,7 +14,6 @@
       if (parent) {
         sortItems.push(e)
         parent.value.appendChild(e.value)
-        e.Sort = parent.ListChildID.indexOf(e.GID)
       } else {
         if (wbase_list.length > 0) {
           parent = document.getElementById(e.ParentID)
@@ -154,12 +153,6 @@ function initComponents (wb, children) {
       wb.value = document.createElement('div')
       break
   }
-  // if (item.WAutolayoutItem) handleStyleLayout(item)
-  // if (item.StyleItem) {
-  //   initWbaseStyle(item)
-  //   item.value.style.zIndex = item.Sort
-  //   item.value.style.order = item.Sort
-  // }
   // if (
   //   item.AttributesItem.NameField &&
   //   item.AttributesItem.NameField.trim() != ''
@@ -170,7 +163,6 @@ function initComponents (wb, children) {
   wb.value.className = wb.ListClassName
   wb.value.setAttribute('level', wb.Level)
   //
-  // wb.value.setAttribute('listid', wb.ListID)
   wb.value.setAttribute('parentid', wb.ParentID)
   if (wb.IsWini) {
     wb.value.setAttribute('iswini', wb.IsWini)

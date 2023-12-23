@@ -317,7 +317,6 @@ function pasteWbase () {
         list_new_wbase[i].value.style.transform = null
         list_new_wbase[i].value.style.zIndex = zIndex + i
         list_new_wbase[i].value.style.order = zIndex + i
-        list_new_wbase[i].Sort = zIndex + i
         if (
           list_new_wbase[i].StyleItem.FrameItem.Width < 0 &&
           parent_wbase.StyleItem.FrameItem.Width == null
@@ -369,7 +368,6 @@ function pasteWbase () {
         parentRect = offsetScale(parentRect.x, parentRect.y)
       }
       for (let i = 0; i < list_new_wbase.length; i++) {
-        list_new_wbase[i].Sort = zIndex + i
         if (list_new_wbase[i].StyleItem.FrameItem.Width < 0) {
           list_new_wbase[i].StyleItem.FrameItem.Width =
             list_new_wbase[i].value.offsetWidth
@@ -410,11 +408,11 @@ function pasteWbase () {
       children.sort(
         (a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex)
       )
-      for (let i = 0; i < children.length; i++) {
-        wbase_list.find(wbase => wbase.GID == children[i].id).Sort = i
-        children[i].style.zIndex = i
-        children[i].style.order = i
-      }
+      // for (let i = 0; i < children.length; i++) {
+      //   wbase_list.find(wbase => wbase.GID == children[i].id).Sort = i
+      //   children[i].style.zIndex = i
+      //   children[i].style.order = i
+      // }
       parent_wbase.CountChild = children.length
       parent_wbase.ListChildID = children.map(e => e.id)
       listWb.push(parent_wbase)

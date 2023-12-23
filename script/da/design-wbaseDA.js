@@ -842,7 +842,6 @@ class WBaseDA {
       data.data = list_wbase_item.map(e => {
         return {
           GID: e.ChildID,
-          Sort: e.Sort,
           IsCopy: e.IsCopy ?? false,
           Css: e.Css,
           AttributesItem:
@@ -874,7 +873,6 @@ class WBaseDA {
         }
         return {
           GID: e.IsCopy ? e.ChildID : e.GID,
-          Sort: e.Sort,
           IsCopy: e.IsCopy ?? false,
           Css: e.Css,
           AttributesItem: attrItem,
