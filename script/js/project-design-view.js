@@ -1004,6 +1004,13 @@ function dragWbaseEnd () {
           wb.Css = wb.value.style.cssText
         }
       }
+      if (eEvent && pWb?.IsInstance) {
+        newPWbHTML
+          .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
+          .forEach(cWbHTML => {
+            cWbHTML.style.order = $(cWbHTML).index()
+          })
+      }
     } else {
       let pWbComponent = selected_list[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
