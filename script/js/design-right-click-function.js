@@ -453,7 +453,6 @@ function createComponent () {
         break
       }
     }
-    debugger
     if (wb.ListClassName) {
       wb.ListClassName = [
         ...wb.ListClassName.split(' ').filter(

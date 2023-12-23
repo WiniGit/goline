@@ -143,7 +143,7 @@ function updateUIDesignView () {
   ) {
     design_view.querySelectorAll('.uneditable-instance').forEach(e => {
       e.style.pointerEvents = 'none'
-      e.querySelectorAll('input').forEach(eInput => eInput.disabled = true)
+      e.querySelectorAll('input').forEach(eInput => (eInput.disabled = true))
     })
     if (editConstraints) editConstraints.style.pointerEvents = 'none'
   }
@@ -889,7 +889,8 @@ function EditLayoutBlock () {
         })
         isWrapRow.replaceChildren(btnIsWarp, inputRunSpace)
         let btnIsScroll = document.createElement('label')
-        btnIsScroll.className = 'row regular1 check-box-label uneditable-instance'
+        btnIsScroll.className =
+          'row regular1 check-box-label uneditable-instance'
         btnIsScroll.innerHTML = `<input type="checkbox"${
           wbList
             .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
@@ -1270,41 +1271,29 @@ function EditConstraintsBlock () {
     constraintsRect.appendChild(selectBtn)
   }
 
-  let dropdownConstX = _btnDropDownSelect(
-    constraintsX !== 'mixed' ? listContraintsX : ['mixed', ...listContraintsX],
-    function (options) {
-      for (let option of options) {
-        if (option.getAttribute('value') == constraintsX) {
-          option.firstChild.style.opacity = 1
-        } else {
-          option.firstChild.style.opacity = 0
-        }
-      }
-    },
-    function (value) {
+  let dropdownConstX = _btnDropDownSelect({
+    initvalue: constraintsX,
+    listvalue:
+      constraintsX !== 'mixed'
+        ? listContraintsX
+        : ['mixed', ...listContraintsX],
+    onselect: value => {
       handleEditConstraints({ constX: value })
       reloadEditConstraintsBlock()
     }
-  )
-  dropdownConstX.firstChild.innerHTML = constraintsX
+  })
 
-  let dropdownConstY = _btnDropDownSelect(
-    constraintsY !== 'mixed' ? listContraintsY : ['mixed', ...listContraintsY],
-    function (options) {
-      for (let option of options) {
-        if (option.getAttribute('value') == constraintsY) {
-          option.firstChild.style.opacity = 1
-        } else {
-          option.firstChild.style.opacity = 0
-        }
-      }
-    },
-    function (value) {
+  let dropdownConstY = _btnDropDownSelect({
+    initvalue: constraintsY,
+    listvalue:
+      constraintsY !== 'mixed'
+        ? listContraintsY
+        : ['mixed', ...listContraintsY],
+    onselect: value => {
       handleEditConstraints({ constY: value })
       reloadEditConstraintsBlock()
     }
-  )
-  dropdownConstY.firstChild.innerHTML = constraintsY
+  })
 
   selectConstraintsCol.replaceChildren(dropdownConstX, dropdownConstY)
 

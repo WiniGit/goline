@@ -1146,12 +1146,12 @@ class WbaseIO {
       wb.value = null
       initComponents(wb)
     }
-    list = list.filter(
+    let pWbList = list.filter(
       wb =>
         wb.Level === 1 ||
         !wb.value.closest(`.wbaseItem-value[level="${wb.Level - 1}"]`)
     )
-    for (let wb of list) {
+    for (let wb of pWbList) {
       let oldWbHTML = divSection.querySelector(
         `.wbaseItem-value[id="${wb.GID}"]`
       )
@@ -1172,5 +1172,18 @@ class WbaseIO {
           .filter(e => e.ParentID === wbase_parentID)
           .map(e => e.value)
       )
+    StyleDA.docStyleSheets.forEach(cssRuleItem => {
+      if (cssRuleItem.style.length > 0) {
+        divSection
+          .querySelectorAll(cssRuleItem.selectorText)
+          .forEach(wbHTML => {
+            if (list.some(wb => wb.value === wbHTML)) {
+              {
+                setAttributeByStyle(wbHTML, cssRuleItem.style)
+              }
+            }
+          })
+      }
+    })
   }
 }
