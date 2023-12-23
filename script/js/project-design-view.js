@@ -49,6 +49,9 @@ async function initData () {
         .forEach(wbHTML => setAttributeByStyle(wbHTML, cssRuleItem.style))
     }
   })
+  divSection
+    .querySelectorAll('.wbaseItem-value[isinstance="true"][class*="w-st0"]')
+    .forEach(wbHTML => setAttributeByStyle(wbHTML))
   console.log('out handle data: ', Date.now())
   centerViewInitListener()
   if (PageDA.obj.scale !== undefined) {
@@ -906,6 +909,7 @@ function dragWbaseEnd () {
         selected_list.forEach(wb => {
           wb.value.setAttribute('constx', Constraints.left)
           wb.value.setAttribute('consty', Constraints.top)
+          updateConstraints(wb.value)
         })
       } else if (newPWbHTML.classList.contains('w-stack')) {
         selected_list.forEach(wb => updateConstraints(wb.value))
@@ -941,6 +945,7 @@ function dragWbaseEnd () {
       selected_list.forEach(wb => {
         wb.value.setAttribute('constx', Constraints.left)
         wb.value.setAttribute('consty', Constraints.top)
+        updateConstraints(wb.value)
       })
     } else if (newPWbHTML.classList.contains('w-stack')) {
       selected_list.forEach(wb => updateConstraints(wb.value))
@@ -1344,6 +1349,7 @@ function dragAltEnd () {
       alt_list.forEach(wb => {
         wb.value.setAttribute('constx', Constraints.left)
         wb.value.setAttribute('consty', Constraints.top)
+        updateConstraints(wb.value)
       })
     } else if (newPWbHTML.classList.contains('w-stack')) {
       alt_list.forEach(wb => updateConstraints(wb.value))

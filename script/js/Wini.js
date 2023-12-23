@@ -2834,11 +2834,30 @@ function upListener (event) {
             updateConstraints(wb.value)
           if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(
-                wb.value
-              )
-            )
+            let cssRule = StyleDA.docStyleSheets.find(rule => {
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
+              const check = selector.includes(wb.value)
+              if (check)
+                selector.forEach(e => {
+                  if (wb.value.getAttribute('width-type')) {
+                    e.setAttribute(
+                      'width-type',
+                      wb.value.getAttribute('width-type')
+                    )
+                  } else {
+                    e.removeAttribute('width-type')
+                  }
+                  if (wb.value.getAttribute('height-type')) {
+                    e.setAttribute(
+                      'height-type',
+                      wb.value.getAttribute('height-type')
+                    )
+                  } else {
+                    e.removeAttribute('height-type')
+                  }
+                })
+              return check
+            })
             if (wb.value.style.width) cssRule.style.width = wb.value.style.width
             if (wb.value.style.height)
               cssRule.style.height = wb.value.style.height
@@ -2865,9 +2884,30 @@ function upListener (event) {
         for (let wb of selected_list) {
           if (window.getComputedStyle(wb.value).position === 'absolute')
             updateConstraints(wb.value)
-          let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-          )
+          let cssRule = StyleDA.docStyleSheets.find(rule => {
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
+            const check = selector.includes(wb.value)
+            if (check)
+              selector.forEach(e => {
+                if (wb.value.getAttribute('width-type')) {
+                  e.setAttribute(
+                    'width-type',
+                    wb.value.getAttribute('width-type')
+                  )
+                } else {
+                  e.removeAttribute('width-type')
+                }
+                if (wb.value.getAttribute('height-type')) {
+                  e.setAttribute(
+                    'height-type',
+                    wb.value.getAttribute('height-type')
+                  )
+                } else {
+                  e.removeAttribute('height-type')
+                }
+              })
+            return check
+          })
           if (wb.value.style.width) cssRule.style.width = wb.value.style.width
           if (wb.value.style.height)
             cssRule.style.height = wb.value.style.height

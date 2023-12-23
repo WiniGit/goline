@@ -2447,6 +2447,7 @@ function handleResizeXYWH ({ xp, yp }) {
           wb.value.style.left = `${wb.tmpX + xp / scale}px`
         }
         wb.value.style.width = `${wb.tmpW - xp / scale}px`
+        wb.value.removeAttribute('width-type')
         if (scaleWb) {
           wb.value.style.height = `${(wb.tmpW - xp / scale) * scaleWb}px`
         }
@@ -2482,6 +2483,7 @@ function handleResizeXYWH ({ xp, yp }) {
           scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
         }
         wb.value.style.width = `${wb.tmpW + xp / scale}px`
+        wb.value.removeAttribute('width-type')
         if (scaleWb) {
           wb.value.style.height = `${(wb.tmpW + xp / scale) * scaleWb}px`
         }
@@ -2519,6 +2521,7 @@ function handleResizeXYWH ({ xp, yp }) {
           wb.value.style.top = `${wb.tmpY + yp / scale}px`
         }
         wb.value.style.height = `${wb.tmpH - yp / scale}px`
+        wb.value.removeAttribute('height-type')
         if (scaleWb) {
           wb.value.style.width = `${(wb.tmpH - yp / scale) * scaleWb}px`
         }
@@ -2554,6 +2557,7 @@ function handleResizeXYWH ({ xp, yp }) {
           scaleWb = wb.value.offsetWidth / wb.value.offsetHeight
         }
         wb.value.style.height = `${wb.tmpH + yp / scale}px`
+        wb.value.removeAttribute('height-type')
         if (scaleWb) {
           wb.value.style.width = `${(wb.tmpH + yp / scale) * scaleWb}px`
         }
@@ -2598,6 +2602,8 @@ function handleResizeXYWH ({ xp, yp }) {
           wb.value.style.width = `${wb.tmpW - xp / scale}px`
           wb.value.style.height = `${wb.tmpH - yp / scale}px`
         }
+        wb.value.removeAttribute('width-type')
+        wb.value.removeAttribute('height-type')
         checkpad++
       }
       break
@@ -2637,6 +2643,8 @@ function handleResizeXYWH ({ xp, yp }) {
           wb.value.style.width = `${wb.tmpW + xp / scale}px`
           wb.value.style.height = `${wb.tmpH - yp / scale}px`
         }
+        wb.value.removeAttribute('width-type')
+        wb.value.removeAttribute('height-type')
         checkpad++
       }
       break
@@ -2674,6 +2682,8 @@ function handleResizeXYWH ({ xp, yp }) {
           wb.value.style.width = `${wb.tmpW - xp / scale}px`
           wb.value.style.height = `${wb.tmpH + yp / scale}px`
         }
+        wb.value.removeAttribute('width-type')
+        wb.value.removeAttribute('height-type')
         checkpad++
       }
       break
@@ -2713,6 +2723,8 @@ function handleResizeXYWH ({ xp, yp }) {
           wb.value.style.width = `${wb.tmpW + xp / scale}px`
           wb.value.style.height = `${wb.tmpH + yp / scale}px`
         }
+        wb.value.removeAttribute('width-type')
+        wb.value.removeAttribute('height-type')
         checkpad++
       }
       break
