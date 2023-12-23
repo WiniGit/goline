@@ -181,7 +181,7 @@ function initComponents (wb, children) {
     wb.value.style = wb.Css
     setAttributeByStyle(wb.value)
   }
-  if (wb.IsInstance && children.length > 0) {
+  if (wb.IsInstance && children?.length > 0) {
     if (wb.value.classList.contains('w-stack')) {
       for (let i = 0; i < children.length; i++)
         children[i].value.style.zIndex = i
