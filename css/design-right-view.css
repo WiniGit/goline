@@ -131,15 +131,20 @@ input[type="color"]::-webkit-color-swatch {
   background-color: #f1f1f1;
 }
 
-.ds-block-header.disable {
+.ds-block-header.disable > i {
+  color: #c4c4c4;
+  pointer-events: none;
+}
+
+#edit-col-number > .ds-block-header.disable {
   position: relative;
 }
 
-.ds-block-header.disable > * {
+#edit-col-number > .ds-block-header.disable > * {
   color: #c4c4c4;
 }
 
-.ds-block-header.disable:hover:after {
+#edit-col-number > .ds-block-header.disable:hover:after {
   content: "can't use breakpoints in fit-content page";
   position: absolute;
   left: 50%;
@@ -736,6 +741,11 @@ input[type="color"]::-webkit-color-swatch {
   pointer-events: none;
 }
 
+.img-button.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 .page-device-container button {
   height: 32px;
   width: 128px;
@@ -1318,14 +1328,13 @@ input[type="color"]::-webkit-color-swatch {
   margin-left: 8px;
 }
 
-.edit-container .popup_edit_effect_attribute {
+.edit-container .popup-edit-effect {
   display: none;
 }
 
-.popup_edit_effect_attribute {
+.popup-edit-effect {
   width: 240px;
   height: fit-content;
-  align-items: flex-start;
   background-color: #ffffff !important;
   border-radius: 4px;
   top: 0;
@@ -1334,7 +1343,7 @@ input[type="color"]::-webkit-color-swatch {
   border: 1px solid #e5e5e5;
 }
 
-.popup_edit_effect_attribute > span {
+.popup-edit-effect > span {
   width: 100%;
   font-size: 12px;
   line-height: 16px;
@@ -1349,14 +1358,14 @@ input[type="color"]::-webkit-color-swatch {
   justify-content: space-between;
 }
 
-.popup_edit_effect_attribute > div {
+.popup-edit-effect > div {
   width: 100%;
   padding: 8px;
   display: flex;
   flex-wrap: wrap;
 }
 
-.popup_edit_effect_attribute .text_field_right_view {
+.popup-edit-effect .text_field_right_view {
   margin: 4px 8px;
 }
 
@@ -3006,4 +3015,26 @@ div:has(> .edit-color-container) {
   align-items: center;
   padding: 8px 6px;
   border-radius: 2px;
+}
+
+.dropdown-effect-tile {
+  width: 100%;
+}
+
+.dropdown-effect-tile > .action-button {
+  overflow: visible;
+  position: relative;
+}
+
+.dropdown-effect-tile > i {
+  margin-left: 4px;
+  font-size: 14px;
+  padding: 6px;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.dropdown-effect-tile > i:hover {
+  background-color: #f1f1f1;
 }

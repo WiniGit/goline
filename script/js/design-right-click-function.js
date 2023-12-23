@@ -63,7 +63,9 @@ let feature_list = [
     shortKey: 'Ctrl+Alt+K',
     onclick: createComponent,
     isShow: () =>
-      selected_list.some(e => !e.IsWini && e.CateID !== EnumCate.text) &&
+      selected_list.some(
+        e => !e.IsWini && !e.value.classList.contains('w-text')
+      ) &&
       !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)
         .length
   },
@@ -315,7 +317,6 @@ function pasteWbase () {
         list_new_wbase[i].value.style.transform = null
         list_new_wbase[i].value.style.zIndex = zIndex + i
         list_new_wbase[i].value.style.order = zIndex + i
-        list_new_wbase[i].Sort = zIndex + i
         if (
           list_new_wbase[i].StyleItem.FrameItem.Width < 0 &&
           parent_wbase.StyleItem.FrameItem.Width == null
@@ -367,7 +368,6 @@ function pasteWbase () {
         parentRect = offsetScale(parentRect.x, parentRect.y)
       }
       for (let i = 0; i < list_new_wbase.length; i++) {
-        list_new_wbase[i].Sort = zIndex + i
         if (list_new_wbase[i].StyleItem.FrameItem.Width < 0) {
           list_new_wbase[i].StyleItem.FrameItem.Width =
             list_new_wbase[i].value.offsetWidth
@@ -408,11 +408,11 @@ function pasteWbase () {
       children.sort(
         (a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex)
       )
-      for (let i = 0; i < children.length; i++) {
-        wbase_list.find(wbase => wbase.GID == children[i].id).Sort = i
-        children[i].style.zIndex = i
-        children[i].style.order = i
-      }
+      // for (let i = 0; i < children.length; i++) {
+      //   wbase_list.find(wbase => wbase.GID == children[i].id).Sort = i
+      //   children[i].style.zIndex = i
+      //   children[i].style.order = i
+      // }
       parent_wbase.CountChild = children.length
       parent_wbase.ListChildID = children.map(e => e.id)
       listWb.push(parent_wbase)
@@ -430,7 +430,7 @@ function pasteWbase () {
 function createComponent () {
   let listUpdate = []
   let un_component_list = selected_list.filter(
-    e => !e.IsWini && e.CateID !== EnumCate.text
+    e => !e.IsWini && !e.value.classList.contains('w-text')
   )
   for (let wb of un_component_list) {
     wb.IsWini = true
@@ -453,29 +453,42 @@ function createComponent () {
     }
     if (wb.ListClassName) {
       wb.ListClassName = [
-        ...wb.ListClassName.split(' ').filter(cls => !cls.startsWith('w-st')),
+        ...wb.ListClassName.split(' ').filter(
+          cls => !cls.startsWith('w-st') || cls === 'w-stack'
+        ),
         wbClassName
       ].join(' ')
     } else {
       wb.ListClassName = wbClassName
     }
-    let newStyle = document.createElement('style')
-    if (wb.value.getAttribute('wrap') === 'wrap')
-      wb.value.style.flexWrap = 'wrap'
-    newStyle.id = `w-st-comp${wb.GID}`
-    let wbCssText = wb.value.style.cssText.split(';')
+    wb.value.className = wb.ListClassName
+    let wbCssText = wb.value.style.cssText.split(';').map(vl => vl.trim())
     let cssItem = {
       GID: wb.GID,
       Name: wbClassName,
-      ProjectID: ProjectDA.obj.ID, 
+      ProjectID: ProjectDA.obj.ID,
       Css: `.${wbClassName} { ${wbCssText
         .filter(
-          e => !e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
+          e =>
+            !e.match(
+              /(z-index|order|left|top|bottom|right|transform|--gutter)/g
+            )
         )
         .join(';')} }`
     }
+    wb.value.style.cssText = wbCssText
+      .filter(e =>
+        e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
+      )
+      .join(';')
+    if (wb.value.style.cssText === '') {
+      wb.value.style = null
+      wb.Css = null
+    } else {
+      wb.Css = wb.value.style.cssText
+    }
     let children = []
-    if (wb.CateID === EnumCate.svg) {
+    if (wb.value.classList.contains('w-svg')) {
       ;[...wb.value.querySelector('svg').children].forEach(eHTML => {
         let styleCss = ''
         for (let prop of eHTML.attributes) {
@@ -485,12 +498,20 @@ function createComponent () {
         }
         cssItem.Css += `/**/ .${wbClassName} ${eHTML.localName} { ${styleCss} }`
       })
-    } else if (EnumCate.no_child_component.every(ct => wb.CateID !== ct)) {
+    } else if (
+      WbClass.parent.some(
+        e => e !== 'w-variant' && wb.value.classList.contains(e)
+      )
+    ) {
       let existNameList = [
         ...wb.value.querySelectorAll(`.wbaseItem-value[class*="w-st"]`)
-      ].map(e => [...e.classList].find(cls => cls.startsWith('w-st')))
+      ].map(e =>
+        [...e.classList].find(
+          cls => cls.startsWith('w-st') && cls !== 'w-stack'
+        )
+      )
       children = wbase_list.filter(
-        e => e.ListID.includes(wb.GID) && e.StyleItem
+        e => wb !== e && wb.value.contains(e.value) && e.Css
       )
       for (let childWb of children) {
         let childWbClassName =
@@ -498,14 +519,16 @@ function createComponent () {
           Ultis.toSlug(childWb.Name.toLowerCase().trim())
         childWb.ListClassName ??= ''
         let childClsList = childWb.ListClassName.split(' ')
-        if (childWb.value.getAttribute('wrap') === 'wrap')
-          childWb.value.style.flexWrap = 'wrap'
-        let childWbCssText = childWb.value.style.cssText.split(';')
+        let childWbCssText = childWb.value.style.cssText
+          .split(';')
+          .map(vl => vl.trim())
         if (childClsList.some(cCls => cCls.startsWith('w-st0'))) {
           childWbClassName = childClsList.find(cCls => cCls.startsWith('w-st0'))
           cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${childWbCssText
             .filter(e =>
-              e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
+              e.match(
+                /(z-index|order|left|top|bottom|right|transform|--gutter)/g
+              )
             )
             .join(';')} }`
         } else {
@@ -523,7 +546,9 @@ function createComponent () {
             }
           }
           childWb.ListClassName = [
-            ...childClsList.filter(cls => !cls.startsWith('w-st')),
+            ...childClsList.filter(
+              cls => !cls.startsWith('w-st') || cls === 'w-stack'
+            ),
             childWbClassName
           ].join(' ')
           existNameList.push(childWbClassName)
@@ -534,12 +559,15 @@ function createComponent () {
               ? childWbCssText.filter(e => !e.match(/order/g)).join(';')
               : childWbCssText
                   .filter(
-                    e => !e.match(/(z-index|left|top|bottom|right|transform|--gutter)/g)
+                    e =>
+                      !e.match(
+                        /(z-index|left|top|bottom|right|transform|--gutter)/g
+                      )
                   )
                   .join(';')
           } }`
         }
-        if (childWb.CateID === EnumCate.svg) {
+        if (childWb.value.classList.contains('w-svg')) {
           ;[...childWb.value.querySelector('svg').children].forEach(eHTML => {
             let styleCss = ''
             for (let prop of eHTML.attributes) {
@@ -550,48 +578,36 @@ function createComponent () {
             cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} ${eHTML.localName} { ${styleCss} }`
           })
         }
+        childWb.value.style = null
+        childWb.Css = null
+        childWb.value.className = childWb.ListClassName
       }
     }
-    newStyle.innerHTML = cssItem.Css
-    document.head.appendChild(newStyle)
     let index = StyleDA.cssStyleSheets.findIndex(e => e.GID === cssItem.GID)
     if (index >= 0) {
       StyleDA.cssStyleSheets[index] = cssItem
       StyleDA.editStyleSheet(cssItem)
+      document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
     } else {
       StyleDA.cssStyleSheets.push(cssItem)
       StyleDA.addStyleSheet(cssItem)
+      let styleTag = document.createElement('style')
+      styleTag.id = `w-st-comp${cssItem.GID}`
+      styleTag.innerHTML = cssItem.Css
+      document.head.appendChild(styleTag)
     }
     listUpdate.push(wb, ...children)
   }
   assets_list.push(...listUpdate)
-  WBaseDA.editListClassName(listUpdate, EnumObj.wBase)
+  WBaseDA.edit(listUpdate, EnumObj.wBase)
   listShowName = [
-    ...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`),
-    ...EnumCate.show_name
-      .map(ct => [
-        ...divSection.querySelectorAll(
-          `:scope > .wbaseItem-value[cateid="${ct}"]:not(*[isinstance="true"])`
-        )
-      ])
-      .reduce((a, b) => a.concat(b))
-  ].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex))
+    ...divSection.querySelectorAll(
+      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini="true"]):not(*[isinstance="true"])`
+    )
+  ]
   wdraw()
   updateUIDesignView()
 }
-
-// function unComponent() {
-//   let component_list = selected_list.filter((e) => e.IsWini);
-//   for (let i = 0; i < component_list.length; i++) {
-//     component_list[i].IsWini = false;
-//     component_list[i].value.removeAttribute("iswini");
-//     document.getElementById(`wbaseID:${component_list[i].GID}`).removeAttribute("iswini");
-//   }
-//   assets_list = assets_list.filter((e) => component_list.every((wbaseItem) => wbaseItem.GID != e.GID));
-//   WBaseDA.edit(component_list, EnumObj.wBase);
-//   wdraw();
-//   updateUIDesignView();
-// }
 
 function showImgDocument () {
   let imgDocument = createImgDocument()
@@ -987,23 +1003,23 @@ async function handleImportFile (event) {
         newRect.AttributesItem.Content = fileItem.Url
       } else {
         newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
-        newRect.StyleItem.DecorationItem.ColorValue = fileItem.Url
+        newRect.Css = `background-image: url(${
+          urlImg + fileItem.Url.replaceAll(' ', '%20')
+        })`
       }
       let imgSize = await FileDA.getImageSize(urlImg + fileItem.Url)
-      let newObj = createWbaseHTML(
-        {
-          w: imgSize.w,
-          h: imgSize.h,
-          x: offset.x - imgSize.w / 2,
-          y: offset.y - imgSize.h / 2,
-          parentid: parent.id?.length == 36 ? parent.id : wbase_parentID
-        },
-        newRect
-      )
+      let newObj = createWbaseHTML({
+        w: imgSize.w,
+        h: imgSize.h,
+        x: offset.x - imgSize.w / 2,
+        y: offset.y - imgSize.h / 2,
+        parentid: parent.id?.length == 36 ? parent.id : wbase_parentID,
+        newObj: newRect
+      })
       listAdd.push(newObj)
     }
     handleWbSelectedList(listAdd)
-    WBaseDA.add(listAdd)
+    WBaseDA.add({ listWb: listAdd })
   }
 }
 

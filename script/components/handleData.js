@@ -9,53 +9,33 @@
   list.forEach(e => {
     if (e.ParentID === wbase_parentID) {
       e.Level = 1
-      e.ListID = wbase_parentID
     } else {
       let parent = list.find(eP => eP.GID === e.ParentID)
       if (parent) {
         sortItems.push(e)
         parent.value.appendChild(e.value)
-        e.Sort = parent.ListChildID.indexOf(e.GID)
       } else {
         if (wbase_list.length > 0) {
           parent = document.getElementById(e.ParentID)
-          if (parent) {
-            e.ListID = parent.getAttribute('listid') + `,${e.ParentID}`
-            e.Level = e.ListID.split(',').length
-            let m = e.value
-            e.ListID.split(',')
-              .filter(id => id !== wbase_parentID)
-              .reverse()
-              .forEach(id => {
-                let tmp = document.createElement('div')
-                tmp.id = id
-                tmp.appendChild(m)
-                m = tmp
-              })
-          }
+          if (parent) e.Level = parseInt(parent.getAttribute('level')) + 1
         }
         if (!parent) {
           e.ParentID = wbase_parentID
           e.Level = 1
-          e.ListID = wbase_parentID
         }
       }
     }
     newList.push(e)
   })
   sortItems.forEach(e => {
-    e.ListID = [...$(e.value).parents('div')]
-      .map(eP => {
+    e.Level =
+      [...$(e.value).parents('div')].map(eP => {
         if (eP.getAttribute('iswini') && !e.IsWini) {
           delete e.CopyID
           delete e.ChildID
         }
         return eP.id
-      })
-      .reverse()
-    e.ListID.unshift(wbase_parentID)
-    e.Level = e.ListID.length
-    e.ListID = e.ListID.join(',')
+      }).length + 1
   })
   return newList
 }
@@ -92,14 +72,30 @@ function initComponents (wb, children) {
   switch (wb.ListClassName.split(' ')[1]) {
     case 'w-container':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0) {
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
+      }
       createContainerHTML(wb, children)
       break
     case 'w-form':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0)
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
       createContainerHTML(wb, children)
       break
     case 'w-variant':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0)
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
       createVariantHTML(wb, children)
       break
     case 'w-text':
@@ -110,6 +106,11 @@ function initComponents (wb, children) {
       break
     case 'w-textformfield':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0)
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
       createTextFormFieldHTML(wb, children)
       break
     case 'w-switch':
@@ -129,6 +130,11 @@ function initComponents (wb, children) {
     //   break
     case 'w-button':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
+      if (children.length > 0)
+        children = children.sort(
+          (a, b) =>
+            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+        )
       wbutton(wb, children)
       break
     case 'w-table':
@@ -148,12 +154,6 @@ function initComponents (wb, children) {
       wb.value = document.createElement('div')
       break
   }
-  // if (item.WAutolayoutItem) handleStyleLayout(item)
-  // if (item.StyleItem) {
-  //   initWbaseStyle(item)
-  //   item.value.style.zIndex = item.Sort
-  //   item.value.style.order = item.Sort
-  // }
   // if (
   //   item.AttributesItem.NameField &&
   //   item.AttributesItem.NameField.trim() != ''
@@ -164,7 +164,6 @@ function initComponents (wb, children) {
   wb.value.className = wb.ListClassName
   wb.value.setAttribute('level', wb.Level)
   //
-  // wb.value.setAttribute('listid', wb.ListID)
   wb.value.setAttribute('parentid', wb.ParentID)
   if (wb.IsWini) {
     wb.value.setAttribute('iswini', wb.IsWini)
@@ -181,6 +180,15 @@ function initComponents (wb, children) {
   if (wb.Css?.length > 0) {
     wb.value.style = wb.Css
     setAttributeByStyle(wb.value)
+  }
+  if (wb.IsInstance && children?.length > 0) {
+    if (wb.value.classList.contains('w-stack')) {
+      for (let i = 0; i < children.length; i++)
+        children[i].value.style.zIndex = i
+    } else {
+      for (let i = 0; i < children.length; i++)
+        children[i].value.style.order = i
+    }
   }
 }
 
@@ -267,161 +275,6 @@ function setAttributeByStyle (wbHTML, cssRule) {
   if (cssRule.height === '') wbHTML.setAttribute('height-type', 'fit')
 }
 
-const setSizeObserver = new MutationObserver(mutationList => {
-  mutationList.forEach(mutation => {
-    let targetWbase = mutation.target
-    if (mutation.attributeName === 'id') {
-      initElement(targetWbase)
-    } else if (
-      mutation.type === 'childList' &&
-      window.getComputedStyle(targetWbase).display.includes('flex')
-    ) {
-      targetWbase
-        .querySelectorAll(
-          `.col-[level="${parseInt(targetWbase.getAttribute('level')) + 1}"]`
-        )
-        .forEach(childCol => {
-          childCol.style.setProperty(
-            '--gutter',
-            targetWbase.style.getPropertyValue('--child-space')
-          )
-        })
-    }
-    if (mutation.attributeName === 'style') {
-      let changeSelectBox = false
-      let widthValue
-      let heightValue
-      if (mutation.oldValue) {
-        let listOldValue = mutation.oldValue.split(';')
-        widthValue = listOldValue
-          .find(
-            styleCss =>
-              styleCss.includes('width') && !styleCss.includes('-width')
-          )
-          ?.replace('width:', '')
-          ?.trim()
-        heightValue = listOldValue
-          .find(
-            styleCss =>
-              styleCss.includes('height') && !styleCss.includes('-height')
-          )
-          ?.replace('height:', '')
-          ?.trim()
-      }
-      changeSelectBox = widthValue != targetWbase.style.width
-      if (heightValue != targetWbase.style.height) {
-        changeSelectBox = true
-        if (
-          targetWbase.style.height !== '100%' &&
-          targetWbase.getAttribute('cateid') == EnumCate.tree
-        ) {
-          targetWbase.style.setProperty(
-            '--height',
-            `${
-              parseFloat(targetWbase.style.height.replace('px', '')) /
-              ([...targetWbase.querySelectorAll('.w-tree')].filter(
-                wtree => wtree.offsetHeight > 0
-              ).length +
-                1)
-            }px`
-          )
-        }
-      }
-      if (
-        changeSelectBox &&
-        document.getElementById('divSection') &&
-        checkpad < selected_list.length
-      ) {
-        switch (parseInt(targetWbase.getAttribute('cateid'))) {
-          case EnumCate.checkbox:
-            $(targetWbase.querySelector('input')).trigger('change')
-            break
-          case EnumCate.radio_button:
-            $(targetWbase.querySelector('input')).trigger('change')
-            break
-          case EnumCate.w_switch:
-            break
-          case EnumCate.textformfield:
-            if (targetWbase.style.height == 'fit-content') {
-              targetWbase.querySelector(
-                '.textfield'
-              ).parentElement.style.height = 'fit-content'
-            } else {
-              targetWbase.querySelector(
-                '.textfield'
-              ).parentElement.style.height = '100%'
-            }
-            break
-          case EnumCate.table:
-            if (targetWbase.style.width == 'fit-content') {
-              targetWbase.setAttribute('table-width', 'hug')
-            } else {
-              targetWbase.removeAttribute('table-width')
-            }
-            break
-          case EnumCate.tree:
-            if (targetWbase.style.height == 'fit-content') {
-              targetWbase.setAttribute('tree-height', 'hug')
-            } else {
-              targetWbase.removeAttribute('tree-height')
-            }
-            break
-          default:
-            break
-        }
-      }
-      if (
-        targetWbase.getAttribute('level') == 1 &&
-        EnumCate.extend_frame.some(
-          cate => targetWbase.getAttribute('cateid') == cate
-        ) &&
-        targetWbase.style.width != 'fit-content'
-      ) {
-        let localResponsive =
-          ProjectDA.obj.ResponsiveJson ?? ProjectDA.responsiveJson
-        let brpShortName = [
-          'min-brp',
-          ...localResponsive.BreakPoint.map(brp =>
-            brp.Key.match(brpRegex).pop().replace(/[()]/g, '')
-          )
-        ]
-        let isContainBrp = false
-        let targetClassList = [...targetWbase.classList].filter(clName => {
-          let check = brpShortName.every(brpName => brpName != clName)
-          if (!check) isContainBrp = true
-          return check
-        })
-        if (document.getElementById('divSection')) {
-          if (
-            !targetWbase.parentElement ||
-            targetWbase.parentElement != divSection ||
-            targetWbase.style.width == 'fit-content'
-          ) {
-            targetWbase.className = targetClassList.join(' ')
-          } else if (!isContainBrp) {
-            let closestBrp = localResponsive.BreakPoint.filter(
-              brp => targetWbase.offsetWidth >= brp.Width
-            )
-            if (closestBrp.length > 0) {
-              closestBrp = closestBrp
-                .pop()
-                .Key.match(brpRegex)
-                .pop()
-                .replace(/[()]/g, '')
-              targetClassList.push(closestBrp)
-            } else {
-              targetClassList.push('min-brp')
-            }
-            targetWbase.className = targetClassList.join(' ')
-            resizeWbase.observe(targetWbase)
-          }
-          if (changeSelectBox && checkpad == 0) updateUISelectBox()
-        }
-      }
-    }
-  })
-})
-
 const resizeWbase = new ResizeObserver(entries => {
   entries.forEach(entry => {
     let framePage = entry.target
@@ -431,7 +284,7 @@ const resizeWbase = new ResizeObserver(entries => {
       brp.Key.match(brpRegex).pop().replace(/[()]/g, '')
     )
     let listClass = [...framePage.classList].filter(clName =>
-      ['min-brp', ...brpShortName].every(brpKey => clName != brpKey)
+      [...brpShortName, 'min-brp'].every(brpKey => clName != brpKey)
     )
     let closestBrp = localResponsive.BreakPoint.filter(
       brp => framePage.offsetWidth >= brp.Width
@@ -449,14 +302,6 @@ const resizeWbase = new ResizeObserver(entries => {
     framePage.className = listClass.join(' ')
   })
 })
-
-function addListenFromSection (item) {
-  item.value.id = item.GID
-  if (item.ParentID == wbase_parentID) {
-    initPositionStyle(item)
-    divSection.appendChild(item.value)
-  }
-}
 
 function getWBaseOffset (wb) {
   let leftValue
@@ -480,7 +325,7 @@ function getWBaseOffset (wb) {
         scale
     ).toFixed(2)
   }
-  return { x: leftValue, y: topValue }
+  return { x: parseFloat(leftValue), y: parseFloat(topValue) }
 }
 
 async function callAPI (request) {
@@ -617,9 +462,9 @@ function mainAxisToAlign (key, isHorizontal) {
     }
   } else if (isHorizontal) {
     switch (key) {
-      case 'flex-start':
+      case 'start':
         return 'Left'
-      case 'flex-end':
+      case 'end':
         return 'Right'
       case 'space-between':
         return 'SpaceBetween'
@@ -628,9 +473,9 @@ function mainAxisToAlign (key, isHorizontal) {
     }
   } else {
     switch (key) {
-      case 'flex-start':
+      case 'start':
         return 'Top'
-      case 'flex-end':
+      case 'end':
         return 'Bottom'
       case 'space-between':
         return 'SpaceBetween'
@@ -652,18 +497,18 @@ function crossAxisToAlign (key, isHorizontal) {
     }
   } else if (isHorizontal) {
     switch (key) {
-      case 'flex-start':
+      case 'start':
         return 'Top'
-      case 'flex-end':
+      case 'end':
         return 'Bottom'
       default:
         return 'Center'
     }
   } else {
     switch (key) {
-      case 'flex-start':
+      case 'start':
         return 'Left'
-      case 'flex-end':
+      case 'end':
         return 'Right'
       default:
         return 'Center'

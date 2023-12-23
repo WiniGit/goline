@@ -49,6 +49,9 @@ async function initData () {
         .forEach(wbHTML => setAttributeByStyle(wbHTML, cssRuleItem.style))
     }
   })
+  divSection
+    .querySelectorAll('.wbaseItem-value[isinstance="true"][class*="w-st0"]')
+    .forEach(wbHTML => setAttributeByStyle(wbHTML))
   console.log('out handle data: ', Date.now())
   centerViewInitListener()
   if (PageDA.obj.scale !== undefined) {
@@ -150,54 +153,28 @@ function toolStateChange (toolState) {
   }
 }
 
-function createNewWbase ({ wb, relativeWbs = [], listId, sort }) {
+function createNewWbase ({ wb, relativeWbs = [], level }) {
   let list_new_wbase = []
-  let new_wbase_item = JSON.parse(JSON.stringify(wb))
-  new_wbase_item.GID = uuidv4()
-  new_wbase_item.IsWini = false
-  new_wbase_item.BasePropertyItems = null
-  new_wbase_item.PropertyItems = null
-  new_wbase_item.value = null
-  new_wbase_item.ProtoType = null
-  new_wbase_item.PrototypeID = null
-  if (new_wbase_item.JsonEventItem)
-    new_wbase_item.JsonEventItem = new_wbase_item.JsonEventItem.filter(
-      e => e.Name === 'State'
-    )
-  if (!listId) {
-    let parent_wbase = wbase_list.find(e => e.GID == new_wbase_item.ParentID)
-    if (parent_wbase) {
-      let list_child = wbase_list.filter(e => e.ParentID == parent_wbase.GID)
-      list_child.sort((a, b) => b.Sort - a.Sort)
-      new_wbase_item.ListID = parent_wbase.ListID + `,${parent_wbase.GID}`
-      new_wbase_item.Level = new_wbase_item.ListID.split(',').length
-      new_wbase_item.Sort = list_child.length == 0 ? 1 : list_child[0].Sort + 1
-    } else {
-      let list_level1 = wbase_list.filter(e => e.ParentID == wbase_parentID)
-      list_level1.sort((a, b) => b.Sort - a.Sort)
-      new_wbase_item.ListID = wbase_parentID
-      new_wbase_item.Level = 1
-      new_wbase_item.Sort =
-        list_level1.length == 0 ? 1 : list_level1[0].Sort + 1
-    }
-  } else {
-    let new_listID = listId.split(',')
-    new_wbase_item.ParentID = new_listID[new_listID.length - 1]
-    new_wbase_item.ListID = listId
-    new_wbase_item.Sort = sort ?? wb.Sort
-    new_wbase_item.Level = new_listID.length
-  }
+  let newWb = JSON.parse(JSON.stringify(wb))
+  newWb.GID = uuidv4()
+  newWb.IsWini = false
+  newWb.BasePropertyItems = null
+  newWb.PropertyItems = null
+  newWb.value = null
+  newWb.ProtoType = null
+  newWb.PrototypeID = null
+  newWb.Level = level
+  if (newWb.JsonEventItem)
+    newWb.JsonEventItem = newWb.JsonEventItem.filter(e => e.Name === 'State')
   // tạo GuiID mới cho AttributesItem nếu khác null
-  if (new_wbase_item.AttributesItem) {
+  if (newWb.AttributesItem) {
     let newAttributeId = uuidv4()
-    new_wbase_item.AttributeID = newAttributeId
-    new_wbase_item.AttributesItem.GID = newAttributeId
-    if (new_wbase_item.JsonEventItem)
-      new_wbase_item.AttributesItem.JsonEvent = JSON.stringify(
-        new_wbase_item.JsonEventItem
-      )
+    newWb.AttributeID = newAttributeId
+    newWb.AttributesItem.GID = newAttributeId
+    if (newWb.JsonEventItem)
+      newWb.AttributesItem.JsonEvent = JSON.stringify(newWb.JsonEventItem)
   }
-  if (new_wbase_item.ListChildID?.length > 0) {
+  if (newWb.ListChildID?.length > 0) {
     let list_child = []
     list_child = list_contain_child.filter(e =>
       wb.ListChildID.some(id => e.GID == id)
@@ -211,34 +188,27 @@ function createNewWbase ({ wb, relativeWbs = [], listId, sort }) {
       let new_children = createNewWbase({
         wb: child,
         relativeWbs: relativeWbs,
-        listId: new_wbase_item.ListID + `,${new_wbase_item.GID}`,
+        level: newWb.Level + 1,
         sort: list_child.indexOf(child)
       })
       list_new_wbase.push(...new_children)
-      switch (new_wbase_item.CateID) {
+      switch (newWb.CateID) {
         case EnumCate.table:
-          new_wbase_item.AttributesItem.Content =
-            new_wbase_item.AttributesItem.Content.replace(
-              child.GID,
-              new_children.find(e => e.ParentID === new_wbase_item.GID).GID
-            )
+          newWb.AttributesItem.Content = newWb.AttributesItem.Content.replace(
+            child.GID,
+            new_children.find(e => e.ParentID === newWb.GID).GID
+          )
           break
         default:
           break
       }
     }
-    let new_list_child = list_new_wbase.filter(
-      e => e.ParentID == new_wbase_item.GID
-    )
-    new_wbase_item.ListChildID = new_list_child.map(e => e.GID)
+    let new_list_child = list_new_wbase.filter(e => e.ParentID == newWb.GID)
+    newWb.ListChildID = new_list_child.map(e => e.GID)
   }
-  new_wbase_item.PageID = PageDA.obj.ID
-  list_new_wbase.push(new_wbase_item)
-  list_new_wbase.sort((a, b) => {
-    let tmp = b.Level - a.Level
-    if (tmp == 0) return a.Sort - b.Sort
-    else return tmp
-  })
+  newWb.PageID = PageDA.obj.ID
+  list_new_wbase.push(newWb)
+  list_new_wbase.sort((a, b) => b.Level - a.Level)
   return list_new_wbase
 }
 
@@ -281,15 +251,10 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
       let relativeWbase = base_component_list.filter(baseCom =>
         baseCom.ListID.includes(new_obj.GID)
       )
-      let newListID = wbase_parentID
-      if (parentid != wbase_parentID) {
-        pWbHTML = document.getElementById(parentid)
-        newListID = pWbHTML.getAttribute('listid') + `,${parentid}`
-      }
       let listNewWbase = createNewWbase({
         wb: new_obj,
         relativeWbs: relativeWbase,
-        listId: newListID,
+        level: parseInt(pWbHTML.getAttribute('level') ?? 0) + 1,
         sort: pWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${
             parseInt(pWbHTML.getAttribute('level') ?? '0') + 1
@@ -306,7 +271,10 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
       new_obj = listNewWbase.pop()
       wbase_list.push(...listNewWbase)
     } else {
-      new_obj = createNewWbase({ wb: new_obj }).pop()
+      new_obj = createNewWbase({
+        wb: new_obj,
+        level: parseInt(pWbHTML.getAttribute('level') ?? 0) + 1
+      }).pop()
       initComponents(new_obj, [])
       if (!w && tool_state === ToolState.text) {
         new_obj.Css += `width: max-content;`
@@ -326,14 +294,6 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
       } else {
         new_obj.Css += `left: ${x}px;top: ${y}px;`
       }
-      new_obj.Sort = [
-        ...pWbHTML.querySelectorAll(
-          `.wbaseItem-value[level="${new_obj.Level}"]`
-        )
-      ]
-        .map(e => e.style.zIndex ?? 0)
-        .sort((a, b) => parseFloat(b) - parseFloat(a))[0]
-      new_obj.value.style.zIndex = new_obj.Sort
       new_obj.value.setAttribute('constx', Constraints.left)
       new_obj.value.setAttribute('consty', Constraints.top)
       pWbHTML.appendChild(new_obj.value)
@@ -353,85 +313,106 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
           `.wbaseItem-value[level="${new_obj.Level}"]`
         )
       ]
+      let isGrid = window.getComputedStyle(pWbHTML).flexWrap == 'wrap'
       if (pWbHTML.classList.contains('w-col')) {
-        let zIndex = 0
+        var zIndex = 0
         if (children.length > 0) {
-          children.sort((aHTML, bHTML) => {
-            let aHTMLRect = aHTML.getBoundingClientRect()
-            let bHTMLRect = bHTML.getBoundingClientRect()
-            let a_center_oy = Math.abs(
-              y - offsetScale(0, aHTMLRect.y + aHTMLRect.height / 2).y
-            )
-            let b_center_oy = Math.abs(
-              y - offsetScale(0, bHTMLRect.y + bHTMLRect.height / 2).y
-            )
+          let closestHTML = [...children].sort((aHTML, bHTML) => {
+            let aRect = aHTML.getBoundingClientRect()
+            let bRect = bHTML.getBoundingClientRect()
+            let a_center_oy
+            let b_center_oy
+            if (isGrid) {
+              a_center_oy = Math.sqrt(
+                Math.pow(x - offsetScale(aRect.x + aRect.width / 2, 0).x, 2) +
+                  Math.pow(y - offsetScale(0, aRect.y + aRect.height / 2).y, 2)
+              )
+              b_center_oy = Math.sqrt(
+                Math.pow(x - offsetScale(bRect.x + bRect.width / 2, 0).x, 2) +
+                  Math.pow(y - offsetScale(0, bRect.y + bRect.height / 2).y, 2)
+              )
+            } else {
+              a_center_oy = Math.abs(
+                y - offsetScale(0, aRect.y + aRect.height / 2).y
+              )
+              b_center_oy = Math.abs(
+                y - offsetScale(0, bRect.y + bRect.height / 2).y
+              )
+            }
             return a_center_oy - b_center_oy
-          })
-          let closestHTML = children[0]
-          let closestHTMLRect = closestHTML.getBoundingClientRect()
-          zIndex = parseInt(window.getComputedStyle(closestHTML).order)
-          let distance =
-            y - offsetScale(0, closestHTMLRect.y + closestHTMLRect.height / 2).y
-          if (distance >= 0) {
-            zIndex++
+          })[0]
+          if (isGrid) {
+            closestHTML = children.find(
+              childHTML =>
+                childHTML.getBoundingClientRect().right >=
+                offsetConvertScale(x, 0).x
+            )
           }
-        }
-        new_obj.Sort = zIndex
-        new_obj.value.style.order = zIndex
-        let wbase_children = wbase_list.filter(
-          wb => wb.ParentID === parentid && wb.Sort >= zIndex
-        )
-        for (let cWb of wbase_children) {
-          cWb.Sort++
-          cWb.value.style.order = cWb.Sort
+          if (closestHTML) {
+            let htmlRect = closestHTML.getBoundingClientRect()
+            zIndex = children.indexOf(closestHTML)
+            distance = y - offsetScale(0, htmlRect.y + htmlRect.height / 2).y
+            if (distance < 0) zIndex--
+          } else {
+            zIndex = children.length - 1
+          }
         }
       } else {
-        let zIndex = 0
+        zIndex = 0
         if (children.length > 0) {
-          children.sort((aHTML, bHTML) => {
-            let aHTMLRect = aHTML.getBoundingClientRect()
-            let bHTMLRect = bHTML.getBoundingClientRect()
-            let a_center_ox = Math.abs(
-              x - offsetScale(aHTMLRect.x + aHTMLRect.width / 2, 0).x
-            )
-            let b_center_ox = Math.abs(
-              x - offsetScale(bHTMLRect.x + bHTMLRect.width / 2, 0).x
-            )
+          let closestHTML = [...children].sort((aHTML, bHTML) => {
+            let aRect = aHTML.getBoundingClientRect()
+            let bRect = bHTML.getBoundingClientRect()
+            let a_center_ox
+            let b_center_ox
+            if (isGrid) {
+              a_center_ox = Math.sqrt(
+                Math.pow(x - offsetScale(aRect.x + aRect.width / 2, 0).x, 2) +
+                  Math.pow(y - offsetScale(0, aRect.y + aRect.height / 2).y, 2)
+              )
+              b_center_ox = Math.sqrt(
+                Math.pow(x - offsetScale(bRect.x + bRect.width / 2, 0).x, 2) +
+                  Math.pow(y - offsetScale(0, bRect.y + bRect.height / 2).y, 2)
+              )
+            } else {
+              a_center_ox = Math.abs(
+                x - offsetScale(aRect.x + aRect.width / 2, 0).x
+              )
+              b_center_ox = Math.abs(
+                x - offsetScale(bRect.x + bRect.width / 2, 0).x
+              )
+            }
             return a_center_ox - b_center_ox
-          })
-          let closestHTML = children[0]
-          let closestHTMLRect = closestHTML.getBoundingClientRect()
-          zIndex = parseInt(window.getComputedStyle(closestHTML).order)
-          let distance =
-            x - offsetScale(closestHTMLRect.x + closestHTMLRect.width / 2, 0).x
-          if (distance >= 0) {
-            zIndex++
+          })[0]
+          if (isGrid) {
+            closestHTML = children.find(
+              childHTML =>
+                childHTML.getBoundingClientRect().bottom >=
+                offsetConvertScale(0, y).y
+            )
+          }
+          if (closestHTML) {
+            let htmlRect = closestHTML.getBoundingClientRect()
+            zIndex = children.indexOf(closestHTML)
+            distance = x - offsetScale(htmlRect.x + htmlRect.width / 2, 0)
+            if (distance < 0) zIndex--
+          } else {
+            zIndex = children.length - 1
           }
         }
-        new_obj.Sort = zIndex
-        new_obj.value.style.order = zIndex
-        let wbase_children = wbase_list.filter(
-          wb => wb.ParentID === parentid && wb.Sort >= zIndex
-        )
-        for (let cWb of wbase_children) {
-          cWb.Sort++
-          cWb.value.style.order = cWb.Sort
-        }
       }
-      pWbHTML.appendChild(new_obj.value)
+      pWbHTML.replaceChildren(
+        ...children.slice(0, zIndex + 1),
+        new_obj.value,
+        ...children.slice(zIndex + 1)
+      )
     }
     if (pWb) {
-      let list_childID = [
+      pWb.ListChildID = [
         ...pWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${pWb.Level + 1}"]`
         )
-      ]
-      list_childID.sort(
-        (a, b) =>
-          parseInt(a.style.zIndex ?? a.style.order ?? 0) -
-          parseInt(b.style.zIndex ?? b.style.order ?? 0)
-      )
-      pWb.ListChildID = list_childID.map(eHTML => eHTML.id)
+      ].map(eHTML => eHTML.id)
     }
     new_obj.value.style.cssText = new_obj.Css
     wbase_list.push(new_obj)
@@ -457,23 +438,9 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
 
 function arrange (list) {
   if (list) {
-    list.sort((a, b) => {
-      value = b.Level - a.Level
-      if (value == 0) {
-        return a.Sort - b.Sort
-      } else {
-        return value
-      }
-    })
+    list.sort((a, b) => b.Level - a.Level)
   } else {
-    wbase_list.sort((a, b) => {
-      value = b.Level - a.Level
-      if (value == 0) {
-        return a.Sort - b.Sort
-      } else {
-        return value
-      }
-    })
+    wbase_list.sort((a, b) => b.Level - a.Level)
   }
 }
 
@@ -504,7 +471,7 @@ function handleWbSelectedList (newlist = []) {
           )
       }
     })
-    selected_list.sort((a, b) => a.Sort - b.Sort)
+    selected_list.sort((a, b) => $(a.value).index() - $(b.value).index())
     select_box_parentID = selected_list[0].ParentID
     let layerSelect = document.getElementById(`wbaseID:${selected_list[0].GID}`)
     let layerParentRect = document
@@ -821,13 +788,15 @@ function dragWbaseUpdate (xp, yp, event) {
     selected_list.forEach(wb => {
       $(wb.value).removeClass('drag-hide')
       $(wb.value).removeClass('fixed-position')
+
       wb.value.style.left = `${wb.tmpX + xp + parent_offset1.x - offsetp.x}px`
       wb.value.style.top = `${wb.tmpY + yp + parent_offset1.y - offsetp.y}px`
-      wb.value.style.right = null
-      wb.value.style.bottom = null
-      wb.value.style.transform = null
+      wb.value.style.right = 'unset'
+      wb.value.style.bottom = 'unset'
+      wb.value.style.transform = 'none'
       wb.value.setAttribute('parentid', new_parentID)
       wb.Level = parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+      wb.value.setAttribute('level', wb.Level)
       wb.ParentID = new_parentID
       return wb.value
     })
@@ -840,19 +809,17 @@ function dragWbaseUpdate (xp, yp, event) {
         )
       ]
       if (children.length > 0) {
-        let zIndex =
-          Math.max(
-            0,
-            ...children.map(eHTML => {
-              if (selected_list.some(wb => wb.GID === eHTML.id)) return 0
-              else return $(eHTML).index()
-            })
-          ) + 1
+        children = children.filter(e =>
+          selected_list.every(wb => e !== wb.value)
+        )
+        let zIndex = children.length + 1
         newPWbHTML.replaceChildren(
           ...children.slice(0, zIndex + 1),
           ...selected_list.map(wb => wb.value),
           ...children.slice(zIndex + 1)
         )
+      } else {
+        newPWbHTML.replaceChildren(...selected_list.map(wb => wb.value))
       }
     }
   }
@@ -938,6 +905,14 @@ function dragWbaseEnd () {
             return wb.value
           })
         )
+      } else if (new_parentID === wbase_parentID) {
+        selected_list.forEach(wb => {
+          wb.value.setAttribute('constx', Constraints.left)
+          wb.value.setAttribute('consty', Constraints.top)
+          updateConstraints(wb.value)
+        })
+      } else if (newPWbHTML.classList.contains('w-stack')) {
+        selected_list.forEach(wb => updateConstraints(wb.value))
       }
       if (pWb) {
         pWb.ListChildID = [
@@ -966,11 +941,23 @@ function dragWbaseEnd () {
       ].map(e => e.id)
       eEvent = EnumEvent.parent
       WBaseDA.listData.push(oldPWb)
+    } else if (new_parentID === wbase_parentID) {
+      selected_list.forEach(wb => {
+        wb.value.setAttribute('constx', Constraints.left)
+        wb.value.setAttribute('consty', Constraints.top)
+        updateConstraints(wb.value)
+      })
+    } else if (newPWbHTML.classList.contains('w-stack')) {
+      selected_list.forEach(wb => updateConstraints(wb.value))
     }
     WBaseDA.listData.push(
       ...selected_list.map(wb => {
-        if(wb.value.getAttribute('width-type') === 'fill') {
-          if(wb.value.closest(`.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`)) {
+        if (wb.value.getAttribute('width-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`
+            )
+          ) {
             wb.value.style.width = '100%'
             wb.value.style.flex = 1
           } else {
@@ -978,8 +965,12 @@ function dragWbaseEnd () {
             wb.value.removeAttribute('width-type')
           }
         }
-        if(wb.value.getAttribute('height-type') === 'fill') {
-          if(wb.value.closest(`.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`)) {
+        if (wb.value.getAttribute('height-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`
+            )
+          ) {
             wb.value.style.height = '100%'
             wb.value.style.flex = 1
           } else {
@@ -993,10 +984,91 @@ function dragWbaseEnd () {
       })
     )
     arrange()
-    if (eEvent === EnumEvent.parent) {
-      WBaseDA.parent(WBaseDA.listData, EnumObj.wBase)
+    if (
+      !newPWbHTML.getAttribute('iswini') &&
+      !newPWbHTML.closest('.wbaseItem-value[iswini="true"]')
+    ) {
+      for (let wb of selected_list) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          if (wb.value.style.width) cssRule.style.width = wb.value.style.width
+          if (wb.value.style.height)
+            cssRule.style.height = wb.value.style.height
+          if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
+          wb.value.style.width = null
+          wb.value.style.height = null
+          wb.value.style.flex = null
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          wb.Css = wb.value.style.cssText
+        }
+      }
+      if (eEvent && pWb?.IsInstance) {
+        newPWbHTML
+          .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
+          .forEach(cWbHTML => {
+            cWbHTML.style.order = $(cWbHTML).index()
+          })
+      }
     } else {
-      WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        if (wb.value.style.width) cssRule.style.width = wb.value.style.width
+        if (wb.value.style.height) cssRule.style.height = wb.value.style.height
+        if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
+        if (wb.value.style.top) cssRule.style.top = wb.value.style.top
+        if (wb.value.style.right) cssRule.style.right = wb.value.style.right
+        if (wb.value.style.bottom) cssRule.style.bottom = wb.value.style.bottom
+        if (wb.value.style.left) cssRule.style.left = wb.value.style.left
+        if (wb.value.style.transform)
+          cssRule.style.transform = wb.value.style.transform
+        if (eEvent) cssRule.style.order = $(wb.value).index()
+        wb.value.style = null
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        wb.Css = null
+        WBaseDA.listData = WBaseDA.listData.filter(e => e !== wb)
+      }
+      if (eEvent) {
+        newPWbHTML
+          .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
+          .forEach(cWbHTML => {
+            if (selected_list.every(wb => wb.value !== cWbHTML)) {
+              let cssRule = StyleDA.docStyleSheets.find(e =>
+                [...divSection.querySelectorAll(e.selectorText)].includes(
+                  cWbHTML
+                )
+              )
+              cssRule.style.order = $(cWbHTML).index()
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                cssRule.cssText
+              )
+            }
+          })
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+    if (WBaseDA.listData.length) {
+      if (eEvent === EnumEvent.parent) {
+        WBaseDA.parent(WBaseDA.listData, EnumObj.wBase)
+      } else {
+        WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
+      }
     }
     replaceAllLyerItemHTML()
     updateUIDesignView()
@@ -1004,9 +1076,11 @@ function dragWbaseEnd () {
     WBaseDA.listData = []
   }
   select_box_parentID = selected_list[0].ParentID
+  parent.removeAttribute('onsort')
   parent = divSection
   updateHoverWbase()
   handleWbSelectedList([...selected_list])
+  reloadEditOffsetBlock()
 }
 
 // ALT copy
@@ -1024,12 +1098,21 @@ function dragAltUpdate (xp, yp, event) {
       alt_wbase.ChildID = wb.GID
       alt_wbase.IsCopy = true
       let tmp = wb.value.cloneNode(true)
-      if (wb.value.getAttribute('width-type') === 'fill') {
+      if (
+        wb.value.getAttribute('width-type') === 'fill' ||
+        wb.value.getAttribute('constx') === Constraints.left_right ||
+        wb.value.getAttribute('constx') === Constraints.scale
+      ) {
         tmp.style.width = wb.value.offsetWidth + 'px'
+        tmp.style.flex = null
       }
-      //
-      if (wb.value.getAttribute('height-type') === 'fill') {
+      if (
+        (wb.value.getAttribute('height-type') === 'fill') |
+          (wb.value.getAttribute('consty') === Constraints.top_bottom) ||
+        wb.value.getAttribute('consty') === Constraints.scale
+      ) {
         tmp.style.height = wb.value.offsetHeight + 'px'
+        tmp.style.flex = null
       }
       tmpAltHTML.push(tmp)
       tmp.id = alt_wbase.GID
@@ -1201,7 +1284,10 @@ function dragAltUpdate (xp, yp, event) {
       wb.ParentID = new_parentID
       return wb.value
     })
-    if (select_box_parentID !== new_parentID || checkpad === selected_list.length) {
+    if (
+      select_box_parentID !== new_parentID ||
+      checkpad === selected_list.length
+    ) {
       let children = [
         ...newPWbHTML.querySelectorAll(
           `.wbaseItem-value[level="${
@@ -1259,6 +1345,14 @@ function dragAltEnd () {
           return wb.value
         })
       )
+    } else if (new_parentID === wbase_parentID) {
+      alt_list.forEach(wb => {
+        wb.value.setAttribute('constx', Constraints.left)
+        wb.value.setAttribute('consty', Constraints.top)
+        updateConstraints(wb.value)
+      })
+    } else if (newPWbHTML.classList.contains('w-stack')) {
+      alt_list.forEach(wb => updateConstraints(wb.value))
     }
     if (pWb) {
       pWb.ListChildID = [
@@ -1269,9 +1363,13 @@ function dragAltEnd () {
       WBaseDA.listData.push(pWb)
     }
     WBaseDA.listData.push(
-      ...selected_list.map(wb => {
-        if(wb.value.getAttribute('width-type') === 'fill') {
-          if(wb.value.closest(`.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`)) {
+      ...alt_list.map(wb => {
+        if (wb.value.getAttribute('width-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`
+            )
+          ) {
             wb.value.style.width = '100%'
             wb.value.style.flex = 1
           } else {
@@ -1279,8 +1377,12 @@ function dragAltEnd () {
             wb.value.removeAttribute('width-type')
           }
         }
-        if(wb.value.getAttribute('height-type') === 'fill') {
-          if(wb.value.closest(`.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`)) {
+        if (wb.value.getAttribute('height-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`
+            )
+          ) {
             wb.value.style.height = '100%'
             wb.value.style.flex = 1
           } else {
@@ -1293,8 +1395,6 @@ function dragAltEnd () {
         return wb
       })
     )
-    wbase_list.push(...alt_list)
-    arrange()
     WBaseDA.copy(WBaseDA.listData)
     replaceAllLyerItemHTML()
     parent = divSection
@@ -1305,6 +1405,7 @@ function dragAltEnd () {
     drag_start_list = []
     alt_list = []
   }
+  parent.removeAttribute('onsort')
 }
 
 //

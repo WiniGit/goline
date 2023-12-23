@@ -459,6 +459,7 @@ class WbClass {
     ParentID: wbase_parentID,
     ListClassName: 'wbaseItem-value w-svg',
     IsWini: false,
+    Css: '',
     BasePropertyItems: [],
     AttributesItem: {
       Name: 'Svg Picture',
@@ -774,25 +775,6 @@ class WBaseDA {
     WiniIO.emitMain(data)
   }
 
-  static editListClassName (list_wbase_item) {
-    // if (!WBaseDA.isCtrlZ) {
-    //   addAction()
-    // }
-    let data = {
-      enumObj: EnumObj.css,
-      data: list_wbase_item.map(e => {
-        return {
-          GID: e.GID,
-          ListClassName: e.ListClassName,
-          IsWini: e.IsWini,
-          CopyID: null
-        }
-      }),
-      enumEvent: EnumEvent.edit
-    }
-    WiniIO.emitMain(data)
-  }
-
   static editBaseComponent (list_wbase_item, enumObj) {
     let data = {
       enumObj: enumObj ?? EnumObj.wBase,
@@ -827,6 +809,7 @@ class WBaseDA {
         enumEvent: EnumEvent.delete
       }
       handleWbSelectedList()
+      updateHoverWbase()
       WiniIO.emitMain(data)
     }
   }
@@ -846,58 +829,57 @@ class WBaseDA {
 
   static copy (list_wbase_item) {
     let data = {
-      data: list_wbase_item,
       enumObj: EnumObj.wBase,
-      enumEvent: EnumEvent.copy,
-      // index: action_index
+      enumEvent: EnumEvent.copy
     }
-    // let minLevel = Math.min(...list_wbase_item.map(e => e.Level))
-    // let minLevelWbase = list_wbase_item.find(e => e.Level === minLevel)
-    // if (minLevelWbase.IsCopy) {
-    //   data.parentid =
-    //     minLevelWbase.ParentID === wbase_parentID
-    //       ? null
-    //       : minLevelWbase.ParentID
-    //   data.data = list_wbase_item.map(e => {
-    //     return {
-    //       GID: e.ChildID,
-    //       Sort: e.Sort,
-    //       IsCopy: e.IsCopy ?? false,
-    //       positionItem: e.StyleItem.PositionItem,
-    //       frameItem: e.StyleItem.FrameItem,
-    //       AttributesItem:
-    //         e.CateID === EnumCate.table && e.IsCopy ? e.AttributesItem : null,
-    //       ListChildID: e.IsCopy ? null : e.ListChildID
-    //     }
-    //   })
-    // } else {
-    //   data.parentid = minLevelWbase.GID
-    //   data.data = list_wbase_item.map(e => {
-    //     let attrItem
-    //     if (e.CateID === EnumCate.table && (minLevelWbase === e || e.IsCopy)) {
-    //       if (!e.IsCopy) {
-    //         attrItem = JSON.parse(JSON.stringify(e.AttributesItem))
-    //         for (let altWb of list_wbase_item.filter(wb => wb.IsCopy)) {
-    //           attrItem.Content = attrItem.Content.replace(
-    //             altWb.GID,
-    //             `iscopy-${altWb.ChildID}`
-    //           )
-    //         }
-    //       } else {
-    //         attrItem = e.AttributesItem
-    //       }
-    //     }
-    //     return {
-    //       GID: e.IsCopy ? e.ChildID : e.GID,
-    //       Sort: e.Sort,
-    //       IsCopy: e.IsCopy ?? false,
-    //       positionItem: e.StyleItem.PositionItem,
-    //       frameItem: e.StyleItem.FrameItem,
-    //       AttributesItem: attrItem,
-    //       ListChildID: e.IsCopy ? null : e.ListChildID
-    //     }
-    //   })
-    // }
+    let minLevel = Math.min(...list_wbase_item.map(e => e.Level))
+    let minLevelWbase = list_wbase_item.find(e => e.Level === minLevel)
+    if (minLevelWbase.IsCopy) {
+      data.parentid =
+        minLevelWbase.ParentID === wbase_parentID
+          ? null
+          : minLevelWbase.ParentID
+      data.data = list_wbase_item.map(e => {
+        return {
+          GID: e.ChildID,
+          IsCopy: e.IsCopy ?? false,
+          Css: e.Css,
+          AttributesItem:
+            e.value.classList.contains('w-table') && e.IsCopy
+              ? e.AttributesItem
+              : null,
+          ListChildID: e.IsCopy ? null : e.ListChildID
+        }
+      })
+    } else {
+      data.parentid = minLevelWbase.GID
+      data.data = list_wbase_item.map(e => {
+        let attrItem
+        if (
+          e.value.classList.contains('w-table') &&
+          (minLevelWbase === e || e.IsCopy)
+        ) {
+          if (!e.IsCopy) {
+            attrItem = JSON.parse(JSON.stringify(e.AttributesItem))
+            for (let altWb of list_wbase_item.filter(wb => wb.IsCopy)) {
+              attrItem.Content = attrItem.Content.replace(
+                altWb.GID,
+                `iscopy-${altWb.ChildID}`
+              )
+            }
+          } else {
+            attrItem = e.AttributesItem
+          }
+        }
+        return {
+          GID: e.IsCopy ? e.ChildID : e.GID,
+          IsCopy: e.IsCopy ?? false,
+          Css: e.Css,
+          AttributesItem: attrItem,
+          ListChildID: e.IsCopy ? null : e.ListChildID
+        }
+      })
+    }
     WiniIO.emitMain(data)
   }
 

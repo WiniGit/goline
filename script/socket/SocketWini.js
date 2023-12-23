@@ -105,179 +105,6 @@ socket.on('server-log', data => {
 //         }
 //     })
 // });
-socket.on('server-color', data => {
-  console.log('server-color')
-  console.log(data)
-  let obj = data.data
-  if (data.pid == ProjectDA.obj.ID) {
-    switch (data.enumEvent) {
-      case EnumEvent.delete:
-        ColorDA.list = ColorDA.list.filter(e => e.GID != obj.GID)
-        break
-      case EnumEvent.unDelete:
-        ColorDA.list.push(obj)
-        break
-      default:
-        if (ColorDA.list.some(e => e.GID == obj.GID)) {
-          ColorDA.list[ColorDA.list.findIndex(e => e.GID == obj.GID)] = obj
-          CateDA.convertData(CateDA.list)
-          CateDA.updateUISkin(EnumCate.color, obj.GID)
-        } else {
-          ColorDA.list.push(obj)
-          document.documentElement.style.setProperty(
-            `--background-color-${obj.GID}`,
-            `#${obj.Value}`
-          )
-          CateDA.convertData(CateDA.list)
-        }
-        let create_skin_popup = document.getElementById('create_skin_popup')
-        if (window.getComputedStyle(create_skin_popup).display != 'none') {
-          create_skin_popup.style.display = 'none'
-          if (selected_list.length > 0) {
-            handleEditBackground({ colorSkin: obj })
-            document.getElementById('popup_table_skin').remove()
-            reloadEditBackgroundBlock()
-          }
-        }
-        break
-    }
-  }
-})
-socket.on('server-border', data => {
-  console.log('server-border')
-  let obj = data.data
-  if (data.pid == ProjectDA.obj.ID) {
-    switch (data.enumEvent) {
-      case EnumEvent.delete:
-        BorderDA.list = BorderDA.list.filter(e => e.GID != obj.GID)
-        break
-      case EnumEvent.unDelete:
-        BorderDA.list.push(obj)
-        break
-      default:
-        if (BorderDA.list.some(e => e.GID == obj.GID)) {
-          BorderDA.list[BorderDA.list.findIndex(e => e.GID == obj.GID)] = obj
-          CateDA.updateUISkin(EnumCate.border, obj.GID)
-        } else {
-          BorderDA.list.push(obj)
-          document.documentElement.style.setProperty(
-            `--border-width-${obj.GID}`,
-            obj.Width.split(' ')
-              .map(e => `${e}px`)
-              .join(' ')
-          )
-          document.documentElement.style.setProperty(
-            `--border-style-${obj.GID}`,
-            obj.BorderStyle
-          )
-          document.documentElement.style.setProperty(
-            `--border-color-${obj.GID}`,
-            `#${obj.ColorValue}`
-          )
-          CateDA.convertData(CateDA.list)
-        }
-        let create_skin_popup = document.getElementById('create_skin_popup')
-        if (window.getComputedStyle(create_skin_popup).display != 'none') {
-          create_skin_popup.style.display = 'none'
-          if (selected_list.length > 0) {
-            handleEditBorder({ borderSkin: obj })
-            document.getElementById('popup_table_skin').remove()
-            reloadEditBorderBlock()
-          }
-        }
-        break
-    }
-  }
-})
-socket.on('server-effect', data => {
-  console.log('server-effect')
-  let obj = data.data
-  if (data.pid == ProjectDA.obj.ID) {
-    switch (data.enumEvent) {
-      case EnumEvent.delete:
-        EffectDA.list = EffectDA.list.filter(e => e.GID != obj.GID)
-        break
-      case EnumEvent.unDelete:
-        EffectDA.list.push(obj)
-        break
-      default:
-        if (EffectDA.list.some(e => e.GID == obj.GID)) {
-          EffectDA.list[EffectDA.list.findIndex(e => e.GID == obj.GID)] = obj
-          CateDA.updateUISkin(EnumCate.effect, obj.GID)
-        } else {
-          EffectDA.list.push(obj)
-          if (obj.Type === ShadowType.layer_blur) {
-            document.documentElement.style.setProperty(
-              `--effect-blur-${obj.GID}`,
-              `blur(${obj.BlurRadius}px)`
-            )
-          } else {
-            document.documentElement.style.setProperty(
-              `--effect-shadow-${obj.GID}`,
-              `${obj.OffsetX}px ${obj.OffsetY}px ${obj.BlurRadius}px ${
-                obj.SpreadRadius
-              }px #${obj.ColorValue} ${
-                obj.Type == ShadowType.inner ? 'inset' : ''
-              }`
-            )
-          }
-          CateDA.convertData(CateDA.list)
-        }
-        let create_skin_popup = document.getElementById('create_skin_popup')
-        if (window.getComputedStyle(create_skin_popup).display != 'none') {
-          create_skin_popup.style.display = 'none'
-          if (selected_list.length > 0) {
-            handleEditEffect({ effectSkin: obj })
-            document.getElementById('popup_table_skin').remove()
-            reloadEditEffectBlock()
-          }
-        }
-        break
-    }
-  }
-})
-socket.on('server-typo', data => {
-  console.log('server-typo')
-  let obj = data.data
-  if (data.pid == ProjectDA.obj.ID) {
-    switch (data.enumEvent) {
-      case EnumEvent.delete:
-        TypoDA.list = TypoDA.list.filter(e => e.GID != obj.GID)
-        break
-      case EnumEvent.unDelete:
-        TypoDA.list.push(obj)
-        break
-      default:
-        if (TypoDA.list.some(e => e.GID == obj.GID)) {
-          TypoDA.list[TypoDA.list.findIndex(e => e.GID == obj.GID)] = obj
-          CateDA.updateUISkin(EnumCate.typography, obj.GID)
-        } else {
-          TypoDA.list.push(obj)
-          document.documentElement.style.setProperty(
-            `--font-style-${obj.GID}`,
-            `${obj.FontWeight} ${obj.FontSize}px/${
-              obj.Height != undefined ? obj.Height + 'px' : 'normal'
-            } ${obj.FontFamily}`
-          )
-          document.documentElement.style.setProperty(
-            `--font-color-${obj.GID}`,
-            `#${obj.ColorValue}`
-          )
-          CateDA.convertData(CateDA.list)
-        }
-        let create_skin_popup = document.getElementById('create_skin_popup')
-        if (window.getComputedStyle(create_skin_popup).display != 'none') {
-          create_skin_popup.style.display = 'none'
-          if (selected_list.length > 0) {
-            handleEditTypo({ typoSkin: obj })
-            document.getElementById('popup_table_skin').remove()
-            reloadEditTypoBlock()
-          }
-        }
-        break
-    }
-  }
-})
 socket.on('server-property', data => {
   var obj = data['data']
   switch (data['enumEvent']) {
@@ -734,6 +561,7 @@ socket.on('server-post', data => {
             break
           case EnumCate.effect:
             handleEditEffect({ effectSkin: StyleDA.newSkin })
+            reloadEditEffectBlock()
             break
           default:
             break
@@ -787,152 +615,159 @@ socket.on('server-post', data => {
 socket.on('server-main', async data => {
   console.log('server-main')
   console.log(data)
-  // if (
-  //   !document.getElementById('body').querySelector('.loading-view') &&
-  //   data.pageid === PageDA.obj.ID
-  // ) {
-  //   let copyList = []
-  //   let initskin = false
-  //   let thisAction
-  //   if (
-  //     data.token === UserService.getToken() ||
-  //     data.token === UserService.getRefreshToken()
-  //   ) {
-  //     if (data.enumEvent === EnumEvent.edit) return
-  //     thisAction = action_list[data.index]
-  //     if (thisAction?.tmpHTML) {
-  //       wbase_list = wbase_list.filter(e => {
-  //         let check = thisAction.tmpHTML.every(eHTML => eHTML.id !== e.GID)
-  //         if (!check) {
-  //           copyList.push(e)
-  //           if (e.ProjectID !== data.pid) initskin = true
-  //         }
-  //         return check
-  //       })
-  //     }
-  //   }
-  //   let importColor = []
-  //   let importTypo = []
-  //   let importBorder = []
-  //   let importEffect = []
-  //   let listData = initskin
-  //     ? data.data.filter(e => {
-  //         if (e.GID !== wbase_parentID) {
-  //           if (e.StyleItem?.DecorationItem?.ColorID)
-  //             importColor.push(e.StyleItem.DecorationItem.ColorID)
-  //           if (e.StyleItem?.DecorationItem?.BorderID)
-  //             importBorder.push(e.StyleItem.DecorationItem.BorderID)
-  //           if (e.StyleItem?.DecorationItem?.EffectID)
-  //             importEffect.push(e.StyleItem.DecorationItem.EffectID)
-  //           if (e.StyleItem?.TextStyleID)
-  //             importTypo.push(e.StyleItem.TextStyleID)
-  //           return true
-  //         }
-  //         return false
-  //       })
-  //     : data.data.filter(e => e.GID !== wbase_parentID)
-  //   listData = initDOM(listData)
-  //   arrange(listData)
-  //   if (data.enumEvent === EnumEvent.delete) {
-  //     WbaseIO.delete(listData)
-  //   } else {
-  //     if (initskin) {
-  //       ColorDA.list.push(
-  //         ...ColorDA.listAssets.filter(skin =>
-  //           importColor.some(
-  //             id =>
-  //               skin.GID === id &&
-  //               ColorDA.list.every(localSkin => localSkin.GID !== id)
-  //           )
-  //         )
-  //       )
-  //       TypoDA.list.push(
-  //         ...TypoDA.listAssets.filter(skin =>
-  //           importTypo.some(
-  //             id =>
-  //               skin.GID === id &&
-  //               TypoDA.list.every(localSkin => localSkin.GID !== id)
-  //           )
-  //         )
-  //       )
-  //       BorderDA.list.push(
-  //         ...BorderDA.listAssets.filter(skin =>
-  //           importBorder.some(
-  //             id =>
-  //               skin.GID === id &&
-  //               BorderDA.list.every(localSkin => localSkin.GID !== id)
-  //           )
-  //         )
-  //       )
-  //       EffectDA.list.push(
-  //         ...EffectDA.listAssets.filter(skin =>
-  //           importEffect.some(
-  //             id =>
-  //               skin.GID === id &&
-  //               EffectDA.list.every(localSkin => localSkin.GID !== id)
-  //           )
-  //         )
-  //       )
-  //       CateDA.initCate()
-  //     }
-  //     await WbaseIO.addOrUpdate(listData, data.enumEvent)
-  //     if (thisAction?.tmpHTML) {
-  //       thisAction.tmpHTML.forEach(e => e.remove())
-  //       thisAction.tmpHTML = null
-  //     }
-  //     if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
-  //       replaceAllLyerItemHTML()
-  //       if (action_index === data.index) {
-  //         clearActionListFrom(action_index - 1)
-  //         handleWbSelectedList(
-  //           listData.filter(e =>
-  //             copyList.some(copyE => copyE.Level === e.Level)
-  //           )
-  //         )
-  //         action_list[action_index].enumEvent = EnumEvent.add
-  //       } else {
-  //         let oldData = []
-  //         if (!data.parentid) {
-  //           oldData.push({
-  //             GID: wbase_parentID,
-  //             ListChildID: wbase_list
-  //               .filter(e => e.ParentID === wbase_parentID)
-  //               .map(e => e.GID),
-  //             Level: 0
-  //           })
-  //         }
-  //         action_list[data.index] = {
-  //           oldData: oldData,
-  //           selected: listData
-  //             .filter(e => copyList.some(copyE => copyE.Level === e.Level))
-  //             .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem))),
-  //           enumObj: EnumObj.wBase,
-  //           enumEvent: EnumEvent.add
-  //         }
-  //         oldData.push(
-  //           ...wbase_list
-  //             .filter(
-  //               wbaseItem =>
-  //                 wbaseItem.GID === data.parentid ||
-  //                 action_list[data.index].selected.some(selectItem =>
-  //                   wbaseItem.ListID.includes(selectItem.GID)
-  //                 )
-  //             )
-  //             .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem)))
-  //         )
-  //       }
-  //     }
-  //   }
-  //   // else {
-  //   //   if (data.enumEvent === EnumEvent.delete) {
-  //   //     WbaseIO.delete(listData);
-  //   //   } else {
-  //   //     await WbaseIO.addOrUpdate(listData, data.enumEvent);
-  //   //   }
-  //   //   replaceAllLyerItemHTML();
-  //   //   wdraw();
-  //   // }
-  // }
+  if (
+    !document.body.querySelector('.loading-view') &&
+    data.pageid === PageDA.obj.ID
+  ) {
+    // let copyList = []
+    // let initskin = false
+    // let thisAction
+    // if (
+    //   data.token === UserService.getToken() ||
+    //   data.token === UserService.getRefreshToken()
+    // ) {
+    //   if (data.enumEvent === EnumEvent.edit) return
+    //   thisAction = action_list[data.index]
+    //   if (thisAction?.tmpHTML) {
+    //     wbase_list = wbase_list.filter(e => {
+    //       let check = thisAction.tmpHTML.every(eHTML => eHTML.id !== e.GID)
+    //       if (!check) {
+    //         copyList.push(e)
+    //         if (e.ProjectID !== data.pid) initskin = true
+    //       }
+    //       return check
+    //     })
+    //   }
+    // }
+    // let importColor = []
+    // let importTypo = []
+    // let importBorder = []
+    // let importEffect = []
+    // let listData = initskin
+    //   ? data.data.filter(e => {
+    //       if (e.GID !== wbase_parentID) {
+    //         if (e.StyleItem?.DecorationItem?.ColorID)
+    //           importColor.push(e.StyleItem.DecorationItem.ColorID)
+    //         if (e.StyleItem?.DecorationItem?.BorderID)
+    //           importBorder.push(e.StyleItem.DecorationItem.BorderID)
+    //         if (e.StyleItem?.DecorationItem?.EffectID)
+    //           importEffect.push(e.StyleItem.DecorationItem.EffectID)
+    //         if (e.StyleItem?.TextStyleID)
+    //           importTypo.push(e.StyleItem.TextStyleID)
+    //         return true
+    //       }
+    //       return false
+    //     })
+    //   : data.data.filter(e => e.GID !== wbase_parentID)
+    // listData = initDOM(listData)
+    // arrange(listData)
+    // if (data.enumEvent === EnumEvent.delete) {
+    //   WbaseIO.delete(listData)
+    // } else {
+    //   if (initskin) {
+    //     ColorDA.list.push(
+    //       ...ColorDA.listAssets.filter(skin =>
+    //         importColor.some(
+    //           id =>
+    //             skin.GID === id &&
+    //             ColorDA.list.every(localSkin => localSkin.GID !== id)
+    //         )
+    //       )
+    //     )
+    //     TypoDA.list.push(
+    //       ...TypoDA.listAssets.filter(skin =>
+    //         importTypo.some(
+    //           id =>
+    //             skin.GID === id &&
+    //             TypoDA.list.every(localSkin => localSkin.GID !== id)
+    //         )
+    //       )
+    //     )
+    //     BorderDA.list.push(
+    //       ...BorderDA.listAssets.filter(skin =>
+    //         importBorder.some(
+    //           id =>
+    //             skin.GID === id &&
+    //             BorderDA.list.every(localSkin => localSkin.GID !== id)
+    //         )
+    //       )
+    //     )
+    //     EffectDA.list.push(
+    //       ...EffectDA.listAssets.filter(skin =>
+    //         importEffect.some(
+    //           id =>
+    //             skin.GID === id &&
+    //             EffectDA.list.every(localSkin => localSkin.GID !== id)
+    //         )
+    //       )
+    //     )
+    //     CateDA.initCate()
+    //   }
+    //   await WbaseIO.addOrUpdate(listData, data.enumEvent)
+    //   if (thisAction?.tmpHTML) {
+    //     thisAction.tmpHTML.forEach(e => e.remove())
+    //     thisAction.tmpHTML = null
+    //   }
+    //   if (data.enumEvent === EnumEvent.copy && copyList.length > 0) {
+    //     replaceAllLyerItemHTML()
+    //     if (action_index === data.index) {
+    //       clearActionListFrom(action_index - 1)
+    //       handleWbSelectedList(
+    //         listData.filter(e =>
+    //           copyList.some(copyE => copyE.Level === e.Level)
+    //         )
+    //       )
+    //       action_list[action_index].enumEvent = EnumEvent.add
+    //     } else {
+    //       let oldData = []
+    //       if (!data.parentid) {
+    //         oldData.push({
+    //           GID: wbase_parentID,
+    //           ListChildID: wbase_list
+    //             .filter(e => e.ParentID === wbase_parentID)
+    //             .map(e => e.GID),
+    //           Level: 0
+    //         })
+    //       }
+    //       action_list[data.index] = {
+    //         oldData: oldData,
+    //         selected: listData
+    //           .filter(e => copyList.some(copyE => copyE.Level === e.Level))
+    //           .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem))),
+    //         enumObj: EnumObj.wBase,
+    //         enumEvent: EnumEvent.add
+    //       }
+    //       oldData.push(
+    //         ...wbase_list
+    //           .filter(
+    //             wbaseItem =>
+    //               wbaseItem.GID === data.parentid ||
+    //               action_list[data.index].selected.some(selectItem =>
+    //                 wbaseItem.ListID.includes(selectItem.GID)
+    //               )
+    //           )
+    //           .map(wbaseItem => JSON.parse(JSON.stringify(wbaseItem)))
+    //       )
+    //     }
+    //   }
+    // }
+    // else {
+    if (
+      data.enumEvent === EnumEvent.copy ||
+      (data.token !== UserService.getToken() &&
+        data.token !== UserService.getRefreshToken())
+    ) {
+      if (data.enumEvent === EnumEvent.delete) {
+        WbaseIO.delete(data.data)
+      } else {
+        tmpAltHTML.forEach(e => e.remove())
+        WbaseIO.addOrUpdate(data.data)
+      }
+      replaceAllLyerItemHTML()
+      wdraw()
+    }
+    // }
+  }
 })
 socket.on('server-mouse', data => {
   if (data.data.ID !== UserService.getUser().ID) {
@@ -1184,8 +1019,8 @@ class WiniIO {
     })
   }
 
-  static emitFile (listFile, collectionId) {
-    let result = BaseDA.uploadFile(
+  static async emitFile (listFile, collectionId) {
+    let result = await BaseDA.uploadFile(
       listFile,
       // "http://10.15.138.23:4000/uploadfile",
       socketWiniFile + '/uploadfile',
@@ -1299,249 +1134,56 @@ class WbaseIO {
     }
   }
 
-  static async addOrUpdate (list, enumEvent) {
-    let relativeList = []
-    if (enumEvent === EnumEvent.parent) {
-      relativeList = wbase_list.filter(wbaseItem =>
-        list.some(
-          editItem =>
-            wbaseItem.ListID.includes(editItem.GID) ||
-            wbaseItem.ListChildID.includes(editItem.GID)
-        )
-      )
-    }
-    wbase_list = wbase_list.filter(e =>
-      list.every(element => e.GID !== element.GID)
-    )
-    wbase_list.push(...list)
-    if (relativeList.length > 0) {
-      for (let item of relativeList) {
-        if (list.some(editItem => item.ListID.includes(editItem.GID))) {
-          if (item.ParentID === wbase_parentID) {
-            item.ListID = wbase_parentID
-          } else {
-            item.ListID =
-              wbase_list.find(e => e.GID === item.ParentID).ListID +
-              ',' +
-              item.ParentID
-          }
-          item.Level = item.ListID.split(',').length
-        } else {
-          let children = wbase_list.filter(e => e.ParentID === item.GID)
-          children.sort((a, b) => a.Sort - b.Sort)
-          item.ListChildID = children.map(e => e.GID)
-          item.CountChild = children.length
-        }
-      }
-    }
-    arrange()
-    let parentList = []
-    for (let item of list) {
-      item.value = null
-      if (item.BasePropertyItems && item.BasePropertyItems.length > 0) {
-        for (let baseProperty of item.BasePropertyItems) {
-          if (baseProperty.BaseID == undefined) {
-            baseProperty.BaseID = item.GID
-          }
-          let property = PropertyDA.list.find(
-            e => baseProperty.PropertyID == e.GID
-          )
-          if (
-            property &&
-            property.BasePropertyItems.every(e => e.GID != baseProperty.GID)
-          ) {
-            property.listBaseProperty.push(e)
-          } else {
-            if (PropertyDA.list.some(e => e.GID != baseProperty.PropertyID)) {
-              PropertyDA.list.push({
-                GID: baseProperty.PropertyID,
-                Name: `Property ${
-                  PropertyDA.list.filter(
-                    property => property.BaseID == item.ParentID
-                  ).length + 1
-                }`,
-                BaseID: item.ParentID,
-                BasePropertyItems: [baseProperty]
-              })
-            }
-          }
-        }
-      }
-      if (item.ParentID === wbase_parentID) {
-        let currentItemHTML = document.getElementById(item.GID)
-        await initComponents(
-          item,
-          wbase_list.filter(e => e.ParentID === item.GID),
-          false
-        )
-        if (currentItemHTML) currentItemHTML.replaceWith(item.value)
-        item.value.id = item.GID
-        initPositionStyle(item)
-        divSection.appendChild(item.value)
-      } else {
-        document.getElementById(item.GID)?.remove()
-        await initComponents(
-          item,
-          wbase_list.filter(e => e.ParentID === item.GID)
-        )
-        parentList.push(item.ParentID)
-      }
-    }
-    parentList = parentList.filterAndMap()
-    parentList = [
-      ...relativeList,
-      ...wbase_list.filter(e => parentList.some(id => e.GID === id))
+  static addOrUpdate (list) {
+    list = initDOM(list)
+    arrange(list)
+    wbase_list = [
+      ...wbase_list.filter(wb => list.every(e => wb.GID !== e.GID)),
+      ...list
     ]
-    for (let wb of parentList) {
-      initComponents(
-        wb,
-        wbase_list.filter(el => el.ParentID === wb.GID),
-        false
+    arrange()
+    for (let wb of list) {
+      wb.value = null
+      initComponents(wb)
+    }
+    let pWbList = list.filter(
+      wb =>
+        wb.Level === 1 ||
+        !wb.value.closest(`.wbaseItem-value[level="${wb.Level - 1}"]`)
+    )
+    for (let wb of pWbList) {
+      let oldWbHTML = divSection.querySelector(
+        `.wbaseItem-value[id="${wb.GID}"]`
       )
-      if (wb.ParentID === wbase_parentID) {
-        let currentValue = document.getElementById(wb.GID)
-        initPositionStyle(wb)
-        if (
-          currentValue &&
-          $(currentValue).parents('.wbaseItem-value').length === 0
-        ) {
-          currentValue.replaceWith(wb.value)
-        } else {
-          currentValue?.remove()
-          divSection.appendChild(wb.value)
-        }
+      if (oldWbHTML) {
+        oldWbHTML.replaceWith(wb.value)
       } else {
-        let currentE = document.getElementById(wb.GID)
-        if (currentE) {
-          currentE?.replaceWith(wb.value)
-        } else {
-          let parentHTML = document.getElementById(wb.ParentID)
-          if (parentHTML) {
-            switch (parseInt(parentHTML.getAttribute('cateid'))) {
-              case EnumCate.tree:
-                createTree(
-                  wbase_list.find(e => e.GID === wb.ParentID),
-                  wbase_list.filter(e => e.ParentID === wb.ParentID)
-                )
-                break
-              case EnumCate.table:
-                createTable(
-                  wbase_list.find(e => e.GID === wb.ParentID),
-                  wbase_list.filter(e => e.ParentID === wb.ParentID)
-                )
-                break
-              default:
-                if (
-                  !window.getComputedStyle(parentHTML).display.match('flex')
-                ) {
-                  initPositionStyle(wb)
-                }
-                parentHTML.appendChild(wb.value)
-                break
-            }
-          }
+        if (wb.Level > 1) var pWb = wbase_list.find(e => e.GID === wb.ParentID)
+        if (pWb) {
+          pWb.value.replaceChildren(
+            ...wbase_list.filter(e => e.ParentID === pWb.GID).map(e => e.value)
+          )
         }
       }
-      wb.value.id = wb.GID
     }
-    for (let wb of list) {
-      StyleDA.docStyleSheets.forEach(cssRuleItem => {
-        if (
-          cssRuleItem.style.length > 0 &&
-          [...divSection.querySelectorAll(cssRuleItem.selectorText)].includes(
-            wb.value
-          )
-        ) {
-          for (let stProp of cssRuleItem.style) {
-            switch (stProp) {
-              case 'width':
-                switch (cssRuleItem.style[stProp]) {
-                  case '100%':
-                    wb.value.setAttribute('width-type', 'fill')
-                    break
-                  case 'fit-content':
-                    wb.value.setAttribute('width-type', 'fit')
-                    break
-                  case 'max-content':
-                    wb.value.setAttribute('width-type', 'fit')
-                    break
-                  default:
-                    wb.value.removeAttribute('width-type')
-                    break
-                }
-                break
-              case 'height':
-                switch (cssRuleItem.style[stProp]) {
-                  case '100%':
-                    wb.value.setAttribute('height-type', 'fill')
-                    break
-                  case 'fit-content':
-                    wb.value.setAttribute('height-type', 'fit')
-                    break
-                  default:
-                    wb.value.removeAttribute('height-type')
-                    break
-                }
-                break
-              case 'left':
-                if (cssRuleItem.style[stProp].includes('calc')) {
-                  wb.value.setAttribute('constX', Constraints.center)
-                } else if (cssRuleItem.style[stProp].includes('%')) {
-                  wb.value.setAttribute('constX', Constraints.scale)
-                } else if (cssRuleItem.style['right']) {
-                  wb.value.setAttribute('constX', Constraints.left_right)
-                } else {
-                  wb.value.setAttribute('constX', Constraints.left)
-                }
-                break
-              case 'right':
-                if (!cssRuleItem.style['left']) {
-                  wb.value.setAttribute('constX', Constraints.right)
-                }
-                break
-              case 'top':
-                if (cssRuleItem.style[stProp].includes('calc')) {
-                  wb.value.setAttribute('constY', Constraints.center)
-                } else if (cssRuleItem.style[stProp].includes('%')) {
-                  wb.value.setAttribute('constY', Constraints.scale)
-                } else if (cssRuleItem.style['bottom']) {
-                  wb.value.setAttribute('constY', Constraints.top_bottom)
-                } else {
-                  wb.value.setAttribute('constY', Constraints.top)
-                }
-                break
-              case 'bottom':
-                if (!cssRuleItem.style['top']) {
-                  wb.value.setAttribute('constY', Constraints.bottom)
-                }
-                break
-              case 'flex-wrap':
-                if (cssRuleItem.style[stProp] === 'wrap') {
-                  wb.value.setAttribute('wrap', 'wrap')
-                }
-                break
-              case 'overflow':
-                if (cssRuleItem.style[stProp] === 'scroll') {
-                  wb.value.setAttribute('scroll', 'true')
-                }
-                break
-              default:
-                break
+    if (!pWb)
+      divSection.replaceChildren(
+        ...wbase_list
+          .filter(e => e.ParentID === wbase_parentID)
+          .map(e => e.value)
+      )
+    StyleDA.docStyleSheets.forEach(cssRuleItem => {
+      if (cssRuleItem.style.length > 0) {
+        divSection
+          .querySelectorAll(cssRuleItem.selectorText)
+          .forEach(wbHTML => {
+            if (list.some(wb => wb.value === wbHTML)) {
+              {
+                setAttributeByStyle(wbHTML, cssRuleItem.style)
+              }
             }
-          }
-          if (cssRuleItem.style.width === '')
-            wb.value.setAttribute('width-type', 'fit')
-          if (cssRuleItem.style.height === '')
-            wb.value.setAttribute('height-type', 'fit')
-        }
-      })
-    }
-    if (list.some(e => e.GID === hover_wbase?.GID)) {
-      updateHoverWbase()
-    }
-    selected_list = selected_list.filter(e =>
-      list.every(editItem => editItem.GID !== e.GID)
-    )
-    updateUISelectBox()
+          })
+      }
+    })
   }
 }

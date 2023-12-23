@@ -614,9 +614,16 @@ function selectParent (event) {
   parent = divSection
   if (
     selected_list.length > 0 &&
-    $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length
+    ($(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)
+      .length ||
+      document
+        .getElementById(select_box_parentID)
+        ?.getAttribute('isinstance') === 'true')
   ) {
     parent = document.getElementById(select_box_parentID)
+    let elementRect = parent.getBoundingClientRect()
+    element_offset = offsetScale(elementRect.x, elementRect.y)
+    parent.setAttribute('onsort', 'true')
   } else {
     let current_level =
       parseInt(
@@ -625,20 +632,17 @@ function selectParent (event) {
       ) + 1
     if (checkpad === 0) {
       listWbOnScreen = []
-      lstc.forEach(e => {
-        listWbOnScreen.push(
-          e,
-          ...e.querySelectorAll(
-            `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${
-              selected_list.every(
-                wb => wb.IsWini && !wb.value.classList.contains('w-variant')
-              )
-                ? ',.w-variant'
-                : ''
-            }):not(*[isinstance="true"])`
-          )
+      listWbOnScreen.push(
+        ...divSection.querySelectorAll(
+          `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${
+            selected_list.every(
+              wb => wb.IsWini && !wb.value.classList.contains('w-variant')
+            )
+              ? ',.w-variant'
+              : ''
+          }):not(*[isinstance="true"], *[iswini="true"], *[iswini="true"] *)`
         )
-      })
+      )
     }
     let list = listWbOnScreen
     let containVariant = selected_list.some(
@@ -939,11 +943,10 @@ function centerViewInitListener () {
     resizeWbase.observe(page)
   })
   listShowName = [
-    ...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini="true"]`),
     ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance="true"])`
+      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini="true"]):not(*[isinstance="true"])`
     )
-  ].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex))
+  ]
 }
 
 const childObserver = new MutationObserver(mutationList => {
@@ -952,7 +955,7 @@ const childObserver = new MutationObserver(mutationList => {
       let listBrpKey = ProjectDA.obj.ResponsiveJson.BreakPoint.map(brp =>
         brp.Key.match(brpRegex).pop().replace(/[()]/g, '')
       )
-      let listClass = ['min-brp', ...wbaseValue.classList].filter(wbClass =>
+      let listClass = [...wbaseValue.classList, 'min-brp'].filter(wbClass =>
         listBrpKey.every(brpKey => brpKey != wbClass)
       )
       wbaseValue.className = listClass.join(' ')
@@ -963,7 +966,7 @@ const childObserver = new MutationObserver(mutationList => {
         wbaseValue
           .querySelectorAll(':scope > .w-container')
           .forEach(childHTML => {
-            let listClass = ['min-brp', ...childHTML.classList].filter(
+            let listClass = [...childHTML.classList, 'min-brp'].filter(
               wbClass => listBrpKey.every(brpKey => brpKey != wbClass)
             )
             childHTML.className = listClass.join(' ')
@@ -990,7 +993,7 @@ const childObserver = new MutationObserver(mutationList => {
           let listBrpKey = ProjectDA.obj.ResponsiveJson.BreakPoint.map(brp =>
             brp.Key.match(brpRegex).pop().replace(/[()]/g, '')
           )
-          let listClass = ['min-brp', ...wbaseValue.classList].filter(wbClass =>
+          let listClass = [...wbaseValue.classList, 'min-brp'].filter(wbClass =>
             listBrpKey.every(brpKey => brpKey != wbClass)
           )
           wbaseValue.className = listClass.join(' ')
@@ -1219,374 +1222,8 @@ function moveListener (event) {
                 if (WBaseDA.enumEvent == null) {
                   WBaseDA.enumEvent = EnumEvent.edit
                 }
-                let isInFlex = false
-                let parentHTML = document.getElementById(select_box_parentID)
-                if (select_box_parentID != wbase_parentID) {
-                  isInFlex =
-                    window.getComputedStyle(parentHTML).display === 'flex'
-                }
-                switch (tool_state) {
-                  case ToolState.resize_left:
-                    for (let wb of selected_list) {
-                      let scaleWb = WbClass.scale.some(e =>
-                        wb.value.classList.contains(e)
-                      )
-                      if (checkpad < selected_list.length) {
-                        if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(wb)
-                          wb.value.style.left = `${thisOffset.x}px`
-                          wb.tmpX = thisOffset.x
-                          if (
-                            wb.value.getAttribute('consty') ===
-                            Constraints.center
-                          ) {
-                            wb.value.style.transform = 'translateY(-50%)'
-                          } else {
-                            wb.value.style.transform = null
-                          }
-                          if (scaleWb) {
-                            wb.value.style.top = `${thisOffset.y}px`
-                            wb.value.style.bottom = null
-                            wb.value.style.transform = null
-                          }
-                        } else if (parentHTML.classList.contains('w-row')) {
-                          wb.value.style.width = `${wb.value.offsetWidth}px`
-                          wb.value.style.flex = null
-                          wb.value.removeAttribute('width-type')
-                        }
-                        wb.tmpW = wb.value.offsetWidth
-                      }
-                      if (scaleWb) {
-                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
-                      }
-                      if (!isInFlex) {
-                        wb.value.style.left = `${wb.tmpX + xp / scale}px`
-                      }
-                      wb.value.style.width = `${wb.tmpW - xp / scale}px`
-                      if (scaleWb) {
-                        wb.value.style.height = `${
-                          (wb.tmpW - xp / scale) * scaleWb
-                        }px`
-                      }
-                      checkpad++
-                    }
-                    break
-                  case ToolState.resize_right:
-                    for (let wb of selected_list) {
-                      let scaleWb = WbClass.scale.some(e =>
-                        wb.value.classList.contains(e)
-                      )
-                      if (checkpad < selected_list.length) {
-                        wb.tmpW = wb.value.offsetWidth
-                        if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(wb)
-                          wb.value.style.left = `${thisOffset.x}px`
-                          wb.value.style.right = null
-                          if (
-                            wb.value.getAttribute('consty') ===
-                            Constraints.center
-                          ) {
-                            wb.value.style.transform = 'translateY(-50%)'
-                          } else {
-                            wb.value.style.transform = null
-                          }
-                          if (scaleWb) {
-                            wb.value.style.top = `${thisOffset.y}px`
-                            wb.value.style.bottom = null
-                            wb.value.style.transform = null
-                          }
-                        } else if (parentHTML.classList.contains('w-row')) {
-                          wb.value.style.width = `${wb.value.offsetWidth}px`
-                          wb.value.style.flex = null
-                          wb.value.removeAttribute('width-type')
-                        }
-                      }
-                      if (scaleWb) {
-                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
-                      }
-                      wb.value.style.width = `${wb.tmpW + xp / scale}px`
-                      if (scaleWb) {
-                        wb.value.style.height = `${
-                          (wb.tmpW + xp / scale) * scaleWb
-                        }px`
-                      }
-                      checkpad++
-                    }
-                    break
-                  case ToolState.resize_top:
-                    for (let wb of selected_list) {
-                      let scaleWb = WbClass.scale.some(e =>
-                        wb.value.classList.contains(e)
-                      )
-                      if (checkpad < selected_list.length) {
-                        if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(wb)
-                          wb.tmpY = thisOffset.y
-                          if (
-                            wb.value.getAttribute('constx') ===
-                            Constraints.center
-                          ) {
-                            wb.value.style.transform = 'translateX(-50%)'
-                          } else {
-                            wb.value.style.transform = null
-                          }
-                          if (scaleWb) {
-                            wb.value.style.left = `${thisOffset.x}px`
-                            wb.value.style.right = null
-                            wb.value.style.transform = null
-                          }
-                        } else if (parentHTML.classList.contains('w-col')) {
-                          wb.value.style.height = `${wb.value.offsetHeight}px`
-                          wb.value.style.flex = null
-                          wb.value.removeAttribute('height-type')
-                        }
-                        wb.tmpH = wb.value.offsetHeight
-                      }
-                      if (scaleWb) {
-                        scaleWb = wb.value.offsetWidth / wb.value.offsetHeight
-                      }
-                      if (!isInFlex) {
-                        wb.value.style.top = `${wb.tmpY + yp / scale}px`
-                      }
-                      wb.value.style.height = `${wb.tmpH - yp / scale}px`
-                      if (scaleWb) {
-                        wb.value.style.width = `${
-                          (wb.tmpH - yp / scale) * scaleWb
-                        }px`
-                      }
-                      checkpad++
-                    }
-                    break
-                  case ToolState.resize_bot:
-                    for (let wb of selected_list) {
-                      let scaleWb = WbClass.scale.some(e =>
-                        wb.value.classList.contains(e)
-                      )
-                      if (checkpad < selected_list.length) {
-                        wb.tmpH = wb.value.offsetHeight
-                        if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(wb)
-                          wb.value.style.top = thisOffset.y + 'px'
-                          wb.value.style.bottom = null
-                          if (
-                            wb.value.getAttribute('constx') ===
-                            Constraints.center
-                          ) {
-                            wb.value.style.transform = 'translateX(-50%)'
-                          } else {
-                            wb.value.style.transform = null
-                          }
-                          if (scaleWb) {
-                            wb.value.style.left = `${thisOffset.x}px`
-                            wb.value.style.right = null
-                            wb.value.style.transform = null
-                          }
-                        } else if (parentHTML.classList.contains('w-col')) {
-                          wb.value.style.height = `${wb.value.offsetHeight}px`
-                          wb.value.style.flex = null
-                          wb.value.removeAttribute('height-type')
-                        }
-                      }
-                      if (scaleWb) {
-                        scaleWb = wb.value.offsetWidth / wb.value.offsetHeight
-                      }
-                      wb.value.style.height = `${wb.tmpH + yp / scale}px`
-                      if (scaleWb) {
-                        wb.value.style.width = `${
-                          (wb.tmpH + yp / scale) * scaleWb
-                        }px`
-                      }
-                      checkpad++
-                    }
-                    break
-                  case ToolState.resize_top_left:
-                    for (let wb of selected_list) {
-                      let scaleWb = WbClass.scale.some(e =>
-                        wb.value.classList.contains(e)
-                      )
-                      if (checkpad < selected_list.length) {
-                        if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(wb)
-                          wb.tmpX = thisOffset.x
-                          wb.tmpY = thisOffset.y + 'px'
-                          wb.value.style.transform = null
-                        } else {
-                          wb.value.style.width = `${wb.value.offsetWidth}px`
-                          wb.value.style.height = `${wb.value.offsetHeight}px`
-                          wb.value.style.flex = null
-                          wb.value.removeAttribute('width-type')
-                          wb.value.removeAttribute('height-type')
-                        }
-                        wb.tmpH = wb.value.offsetHeight
-                        wb.tmpW = wb.value.offsetWidth
-                      }
-                      if (scaleWb) {
-                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
-                      }
-                      if (!isInFlex) {
-                        wb.value.style.top = `${wb.tmpY + yp / scale}px`
-                        wb.value.style.left = `${wb.tmpX + xp / scale}px`
-                      }
-                      if (scaleWb) {
-                        if (Math.abs(xp) > Math.abs(yp)) {
-                          wb.value.style.width = `${wb.tmpW - xp / scale}px`
-                          wb.value.style.height = `${
-                            (wb.tmpW - xp / scale) * scaleWb
-                          }px`
-                        } else {
-                          wb.value.style.height = `${wb.tmpH - yp / scale}px`
-                          wb.value.style.width = `${
-                            (wb.tmpH - yp / scale) / scaleWb
-                          }px`
-                        }
-                      } else {
-                        wb.value.style.width = `${wb.tmpW - xp / scale}px`
-                        wb.value.style.height = `${wb.tmpH - yp / scale}px`
-                      }
-                      checkpad++
-                    }
-                    break
-                  case ToolState.resize_top_right:
-                    for (let wb of selected_list) {
-                      let scaleWb = WbClass.scale.some(e =>
-                        wb.value.classList.contains(e)
-                      )
-                      if (checkpad < selected_list.length) {
-                        if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(wb)
-                          wb.value.style.left = thisOffset.x + 'px'
-                          wb.value.style.right = null
-                          wb.tmpY = thisOffset.y
-                          wb.value.style.transform = null
-                        } else {
-                          wb.value.style.width = `${wb.value.offsetWidth}px`
-                          wb.value.style.height = `${wb.value.offsetHeight}px`
-                          wb.value.style.flex = null
-                          wb.value.removeAttribute('width-type')
-                          wb.value.removeAttribute('height-type')
-                        }
-                        wb.tmpH = wb.value.offsetHeight
-                        wb.tmpW = wb.value.offsetWidth
-                      }
-                      if (scaleWb) {
-                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
-                      }
-                      if (!isInFlex)
-                        wb.value.style.top = `${wb.tmpY + yp / scale}px`
-                      if (scaleWb) {
-                        if (Math.abs(xp) > Math.abs(yp)) {
-                          wb.value.style.width = `${wb.tmpW + xp / scale}px`
-                          wb.value.style.height = `${
-                            (wb.tmpW + xp / scale) * scaleWb
-                          }px`
-                        } else {
-                          wb.value.style.height = `${wb.tmpH - yp / scale}px`
-                          wb.value.style.width = `${
-                            (wb.tmpH - yp / scale) / scaleWb
-                          }px`
-                        }
-                      } else {
-                        wb.value.style.width = `${wb.tmpW + xp / scale}px`
-                        wb.value.style.height = `${wb.tmpH - yp / scale}px`
-                      }
-                      checkpad++
-                    }
-                    break
-                  case ToolState.resize_bot_left:
-                    for (let wb of selected_list) {
-                      let scaleWb = WbClass.scale.some(e =>
-                        wb.value.classList.contains(e)
-                      )
-                      if (checkpad < selected_list.length) {
-                        if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(wb)
-                          wb.value.style.top = thisOffset.y + 'px'
-                          wb.value.style.bottom = null
-                          wb.tmpX = thisOffset.x
-                          wb.value.style.transform = null
-                        } else {
-                          wb.value.style.width = `${wb.value.offsetWidth}px`
-                          wb.value.style.height = `${wb.value.offsetHeight}px`
-                          wb.value.style.flex = null
-                          wb.value.removeAttribute('width-type')
-                          wb.value.removeAttribute('height-type')
-                        }
-                        wb.tmpH = wb.value.offsetHeight
-                        wb.tmpW = wb.value.offsetWidth
-                      }
-                      if (scaleWb)
-                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
-                      if (!isInFlex)
-                        wb.value.style.left = `${wb.tmpX + xp / scale}px`
-                      if (scaleWb) {
-                        if (Math.abs(xp) > Math.abs(yp)) {
-                          wb.value.style.width = `${wb.tmpW - xp / scale}px`
-                          wb.value.style.height = `${
-                            (wb.tmpW - xp / scale) * scaleWb
-                          }px`
-                        } else {
-                          wb.value.style.height = `${wb.tmpH + yp / scale}px`
-                          wb.value.style.width = `${
-                            (wb.tmpH + yp / scale) / scaleWb
-                          }px`
-                        }
-                      } else {
-                        wb.value.style.width = `${wb.tmpW - xp / scale}px`
-                        wb.value.style.height = `${wb.tmpH + yp / scale}px`
-                      }
-                      checkpad++
-                    }
-                    break
-                  case ToolState.resize_bot_right:
-                    for (let wb of selected_list) {
-                      let scaleWb = WbClass.scale.some(e =>
-                        wb.value.classList.contains(e)
-                      )
-                      if (checkpad < selected_list.length) {
-                        if (!isInFlex) {
-                          let thisOffset = getWBaseOffset(wb)
-                          wb.value.style.left = thisOffset.x + 'px'
-                          wb.value.style.right = null
-                          wb.value.style.top = thisOffset.y + 'px'
-                          wb.value.style.bottom = null
-                          wb.value.style.transform = null
-                        } else {
-                          wb.value.style.width = `${wb.value.offsetWidth}px`
-                          wb.value.style.height = `${wb.value.offsetHeight}px`
-                          wb.value.style.flex = null
-                          wb.value.removeAttribute('width-type')
-                          wb.value.removeAttribute('height-type')
-                        }
-                        wb.tmpH = wb.value.offsetHeight
-                        wb.tmpW = wb.value.offsetWidth
-                      }
-                      if (scaleWb) {
-                        scaleWb = wb.value.offsetHeight / wb.value.offsetWidth
-                      }
-                      if (scaleWb) {
-                        if (Math.abs(xp) > Math.abs(yp)) {
-                          wb.value.style.width = `${wb.tmpW + xp / scale}px`
-                          wb.value.style.height = `${
-                            (wb.tmpW + xp / scale) * scaleWb
-                          }px`
-                        } else {
-                          wb.value.style.height = `${wb.tmpH + yp / scale}px`
-                          wb.value.style.width = `${
-                            (wb.tmpH + yp / scale) / scaleWb
-                          }px`
-                        }
-                      } else {
-                        wb.value.style.width = `${wb.tmpW + xp / scale}px`
-                        wb.value.style.height = `${wb.tmpH + yp / scale}px`
-                      }
-                      checkpad++
-                    }
-                    break
-                  default:
-                    break
-                }
+                handleResizeXYWH({ xp: xp, yp: yp })
                 updateUISelectBox()
-                updateInputTLWH()
               } else {
                 if (!selected_list.length) {
                   handleWbSelectedList([hover_wbase])
@@ -1623,11 +1260,23 @@ function moveListener (event) {
                         wb.tmpX = eHTMLOffset.x - parent_offset1.x
                         wb.tmpY = eHTMLOffset.y - parent_offset1.y
                         if (!event.altKey) {
-                          if (wb.value.getAttribute('width-type') === 'fill') {
+                          if (
+                            wb.value.getAttribute('width-type') === 'fill' ||
+                            wb.value.getAttribute('constx') ===
+                              Constraints.left_right ||
+                            wb.value.getAttribute('constx') ===
+                              Constraints.scale
+                          ) {
                             wb.value.style.width = wb.value.offsetWidth + 'px'
                             wb.value.style.flex = null
                           }
-                          if (wb.value.getAttribute('height-type') === 'fill') {
+                          if (
+                            (wb.value.getAttribute('height-type') === 'fill') |
+                              (wb.value.getAttribute('consty') ===
+                                Constraints.top_bottom) ||
+                            wb.value.getAttribute('consty') ===
+                              Constraints.scale
+                          ) {
                             wb.value.style.height = wb.value.offsetHeight + 'px'
                             wb.value.style.flex = null
                           }
@@ -1644,14 +1293,24 @@ function moveListener (event) {
                       Math.abs(event.pageY - previousY) > 2
                     ) {
                       if (event.altKey) {
-                        dragAltUpdate(xb + xp / scale, yb + yp / scale, event)
+                        const checkAllowCopy = !selected_list.some(
+                          wb =>
+                            (!wb.IsWini &&
+                              wb.value.closest(
+                                '.wbaseItem-value[iswini="true"]'
+                              )) ||
+                            wb.value.closest(
+                              `.wbaseItem-value[isinstance="true"][level="${
+                                wb.Level - 1
+                              }"]`
+                            )
+                        )
+                        if (checkAllowCopy)
+                          dragAltUpdate(xb + xp / scale, yb + yp / scale, event)
                       } else {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event)
                       }
-                      if (checkpad % 2 === 0) {
-                        // updateInputTLWH()
-                        wdraw()
-                      }
+                      if (checkpad % 2 === 0) wdraw()
                     }
                   } else {
                     handleWbSelectedList()
@@ -2965,22 +2624,20 @@ function upListener (event) {
           newRect.AttributesItem.Content = url.replace(urlImg, '')
         } else {
           newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
-          newRect.Name = 'new rectangle'
+          newRect.Name = 'Rectangle'
           newRect.Css = `background-image: url(${url});`
         }
         FileDA.getImageSize(url).then(imgSize => {
           let offset = offsetScale(event.pageX, event.pageY)
-          let newObj = createWbaseHTML(
-            {
-              w: imgSize.w,
-              h: imgSize.h,
-              x: offset.x,
-              y: offset.y,
-              parentID: parent.id?.length == 36 ? parent.id : wbase_parentID
-            },
-            newRect
-          )
-          WBaseDA.add([newObj])
+          let newObj = createWbaseHTML({
+            w: imgSize.w,
+            h: imgSize.h,
+            x: offset.x,
+            y: offset.y,
+            parentid: parent.id?.length == 36 ? parent.id : wbase_parentID,
+            newObj: newRect
+          })
+          WBaseDA.add({ listWb: [newObj] })
         })
       }
     } else {
@@ -3145,27 +2802,66 @@ function upListener (event) {
         //   isUpdateTable ? EnumEvent.edit : EnumEvent.add,
         //   isUpdateTable ? EnumObj.wBaseAttribute : EnumObj.wBase
         // )
-        WBaseDA.add({
-          listWb: list_add
-        })
+        if (
+          list_add[0].value.closest(`.w-table[level="${list_add[0].Level}"]`)
+        ) {
+        } else if (
+          list_add[0].value.closest(
+            `:is(.w-col, .w-row)[level="${list_add[0].Level}"]`
+          )
+        ) {
+          WBaseDA.parent([
+            wbase_list.find(e => e.GID === list_add[0].ParentID),
+            ...list_add
+          ])
+        } else {
+          WBaseDA.add({
+            listWb: list_add
+          })
+        }
       }
       break
     case EnumEvent.edit:
       let listUpdate = []
-      if (selected_list[0].Css || selected_list[0].IsInstance) {
+      if (
+        !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)
+          ?.length ||
+        selected_list[0].IsInstance ||
+        selected_list[0].IsWini
+      ) {
         for (let wb of selected_list) {
           if (window.getComputedStyle(wb.value).position === 'absolute')
             updateConstraints(wb.value)
           if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
             let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            let cssRule = StyleDA.docStyleSheets.find(e =>
-              [...divSection.querySelectorAll(e.selectorText)].includes(
-                wb.value
-              )
-            )
-            cssRule.style.width = wb.value.style.width
-            cssRule.style.height = wb.value.style.height
-            cssRule.style.flex = wb.value.style.flex
+            let cssRule = StyleDA.docStyleSheets.find(rule => {
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
+              const check = selector.includes(wb.value)
+              if (check)
+                selector.forEach(e => {
+                  if (wb.value.getAttribute('width-type')) {
+                    e.setAttribute(
+                      'width-type',
+                      wb.value.getAttribute('width-type')
+                    )
+                  } else {
+                    e.removeAttribute('width-type')
+                  }
+                  if (wb.value.getAttribute('height-type')) {
+                    e.setAttribute(
+                      'height-type',
+                      wb.value.getAttribute('height-type')
+                    )
+                  } else {
+                    e.removeAttribute('height-type')
+                  }
+                })
+              return check
+            })
+            if (wb.value.style.width) cssRule.style.width = wb.value.style.width
+            if (wb.value.style.height)
+              cssRule.style.height = wb.value.style.height
+            if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
             wb.value.style.width = null
             wb.value.style.height = null
             wb.value.style.flex = null
@@ -3188,25 +2884,52 @@ function upListener (event) {
         for (let wb of selected_list) {
           if (window.getComputedStyle(wb.value).position === 'absolute')
             updateConstraints(wb.value)
-          let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-          )
-          cssRule.style.top = wb.value.style.top
-          cssRule.style.right = wb.value.style.right
-          cssRule.style.bottom = wb.value.style.bottom
-          cssRule.style.left = wb.value.style.left
-          cssRule.style.transform = wb.value.style.transform
-          cssRule.style.height = wb.value.style.height
-          cssRule.style.flex = wb.value.style.flex
+          let cssRule = StyleDA.docStyleSheets.find(rule => {
+            let selector = [...divSection.querySelectorAll(rule.selectorText)]
+            const check = selector.includes(wb.value)
+            if (check)
+              selector.forEach(e => {
+                if (wb.value.getAttribute('width-type')) {
+                  e.setAttribute(
+                    'width-type',
+                    wb.value.getAttribute('width-type')
+                  )
+                } else {
+                  e.removeAttribute('width-type')
+                }
+                if (wb.value.getAttribute('height-type')) {
+                  e.setAttribute(
+                    'height-type',
+                    wb.value.getAttribute('height-type')
+                  )
+                } else {
+                  e.removeAttribute('height-type')
+                }
+              })
+            return check
+          })
+          if (wb.value.style.width) cssRule.style.width = wb.value.style.width
+          if (wb.value.style.height)
+            cssRule.style.height = wb.value.style.height
+          if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
+          if (wb.value.style.top) cssRule.style.top = wb.value.style.top
+          if (wb.value.style.right) cssRule.style.right = wb.value.style.right
+          if (wb.value.style.bottom)
+            cssRule.style.bottom = wb.value.style.bottom
+          if (wb.value.style.left) cssRule.style.left = wb.value.style.left
+          if (wb.value.style.transform)
+            cssRule.style.transform = wb.value.style.transform
           wb.value.style = null
           cssItem.Css = cssItem.Css.replace(
             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
             cssRule.cssText
           )
+          wb.Css = null
         }
         StyleDA.editStyleSheet(cssItem)
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
+      reloadEditOffsetBlock()
       break
     case EnumEvent.parent:
       let list_update = []
