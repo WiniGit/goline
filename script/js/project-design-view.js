@@ -1042,11 +1042,11 @@ function dragWbaseEnd () {
                 )
               )
               cssRule.style.order = $(cWbHTML).index()
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+                cssRule.cssText
+              )
             }
-            cssItem.Css = cssItem.Css.replace(
-              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-              cssRule.cssText
-            )
           })
       }
       StyleDA.editStyleSheet(cssItem)
