@@ -461,6 +461,7 @@ function createComponent () {
     } else {
       wb.ListClassName = wbClassName
     }
+    wb.value.className = wb.ListClassName
     let wbCssText = wb.value.style.cssText.split(';').map(vl => vl.trim())
     let cssItem = {
       GID: wb.GID,
@@ -573,6 +574,7 @@ function createComponent () {
         }
         childWb.value.style = null
         childWb.Css = null
+        childWb.value.className = childWb.ListClassName
       }
     }
     let index = StyleDA.cssStyleSheets.findIndex(e => e.GID === cssItem.GID)
