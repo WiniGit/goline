@@ -809,9 +809,9 @@ function dragWbaseUpdate (xp, yp, event) {
 
       wb.value.style.left = `${wb.tmpX + xp + parent_offset1.x - offsetp.x}px`
       wb.value.style.top = `${wb.tmpY + yp + parent_offset1.y - offsetp.y}px`
-      wb.value.style.right = null
-      wb.value.style.bottom = null
-      wb.value.style.transform = null
+      wb.value.style.right = 'unset'
+      wb.value.style.bottom = 'unset'
+      wb.value.style.transform = 'none'
       wb.value.setAttribute('parentid', new_parentID)
       wb.Level = parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
       wb.value.setAttribute('level', wb.Level)
@@ -1000,10 +1000,59 @@ function dragWbaseEnd () {
       })
     )
     arrange()
-    if (eEvent === EnumEvent.parent) {
-      WBaseDA.parent(WBaseDA.listData, EnumObj.wBase)
+    if (!newPWbHTML.getAttribute('iswini') && !newPWbHTML.closest('.wbaseItem-value[iswini="true"]')) {
+      for (let wb of selected_list) {
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.width = wb.value.style.width
+          cssRule.style.height = wb.value.style.height
+          cssRule.style.flex = wb.value.style.flex
+          wb.value.style.width = null
+          wb.value.style.height = null
+          wb.value.style.flex = null
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          wb.Css = wb.value.style.cssText
+        }
+      }
     } else {
-      WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
+      let pWbComponent = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.top = wb.value.style.top
+        cssRule.style.right = wb.value.style.right
+        cssRule.style.bottom = wb.value.style.bottom
+        cssRule.style.left = wb.value.style.left
+        cssRule.style.transform = wb.value.style.transform
+        cssRule.style.height = wb.value.style.height
+        cssRule.style.flex = wb.value.style.flex
+        wb.value.style = null
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+        wb.Css = null
+        WBaseDA.listData = WBaseDA.listData.filter(e => e !== wb)
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+    if (WBaseDA.listData.length) {
+      if (eEvent === EnumEvent.parent) {
+        WBaseDA.parent(WBaseDA.listData, EnumObj.wBase)
+      } else {
+        WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
+      }
     }
     replaceAllLyerItemHTML()
     updateUIDesignView()
@@ -1034,20 +1083,16 @@ function dragAltUpdate (xp, yp, event) {
       let tmp = wb.value.cloneNode(true)
       if (
         wb.value.getAttribute('width-type') === 'fill' ||
-        wb.value.getAttribute('constx') ===
-          Constraints.left_right ||
-        wb.value.getAttribute('constx') ===
-          Constraints.scale
+        wb.value.getAttribute('constx') === Constraints.left_right ||
+        wb.value.getAttribute('constx') === Constraints.scale
       ) {
         tmp.style.width = wb.value.offsetWidth + 'px'
         tmp.style.flex = null
       }
       if (
         (wb.value.getAttribute('height-type') === 'fill') |
-          (wb.value.getAttribute('consty') ===
-            Constraints.top_bottom) ||
-        wb.value.getAttribute('consty') ===
-          Constraints.scale
+          (wb.value.getAttribute('consty') === Constraints.top_bottom) ||
+        wb.value.getAttribute('consty') === Constraints.scale
       ) {
         tmp.style.height = wb.value.offsetHeight + 'px'
         tmp.style.flex = null

@@ -5648,14 +5648,19 @@ function updateConstraints (wbHTML) {
   switch (wbHTML.getAttribute('constx')) {
     case Constraints.left:
       wbHTML.style.left = wbComputeSt.left
+      wbHTML.style.right = null
+      if (wbHTML.style.transform === 'none') wbHTML.style.transform = null
       break
     case Constraints.right:
       wbHTML.style.right = wbComputeSt.right
+      wbHTML.style.left = null
+      if (wbHTML.style.transform === 'none') wbHTML.style.transform = null
       break
     case Constraints.left_right:
       wbHTML.style.left = wbComputeSt.left
       wbHTML.style.right = wbComputeSt.right
       wbHTML.style.width = 'auto'
+      if (wbHTML.style.transform === 'none') wbHTML.style.transform = null
       break
     case Constraints.center:
       var leftValue = getWBaseOffset({
@@ -5681,6 +5686,7 @@ function updateConstraints (wbHTML) {
       wbHTML.style.left = leftValue
       wbHTML.style.right = rightValue
       wbHTML.style.width = 'auto'
+      if (wbHTML.style.transform === 'none') wbHTML.style.transform = null
       break
     default:
       break
@@ -5688,14 +5694,19 @@ function updateConstraints (wbHTML) {
   switch (wbHTML.getAttribute('consty')) {
     case Constraints.top:
       wbHTML.style.top = wbComputeSt.top
+      wbHTML.style.bottom = null
+      if (wbHTML.style.transform === 'none') wbHTML.style.transform = null
       break
     case Constraints.bottom:
       wbHTML.style.bottom = wbComputeSt.bottom
+      wbHTML.style.top = null
+      if (wbHTML.style.transform === 'none') wbHTML.style.transform = null
       break
     case Constraints.top_bottom:
       wbHTML.style.top = wbComputeSt.top
       wbHTML.style.bottom = wbComputeSt.bottom
       wbHTML.style.height = 'auto'
+      if (wbHTML.style.transform === 'none') wbHTML.style.transform = null
       break
     case Constraints.center:
       var topValue = getWBaseOffset({
@@ -5721,6 +5732,7 @@ function updateConstraints (wbHTML) {
       wbHTML.style.top = topValue
       wbHTML.style.bottom = bottomValue
       wbHTML.style.height = 'auto'
+      if (wbHTML.style.transform === 'none') wbHTML.style.transform = null
       break
     default:
       break

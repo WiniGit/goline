@@ -617,6 +617,8 @@ function selectParent (event) {
     $(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`).length
   ) {
     parent = document.getElementById(select_box_parentID)
+    let elementRect = parent.getBoundingClientRect()
+    element_offset = offsetScale(elementRect.x, elementRect.y)
   } else {
     let current_level =
       parseInt(
@@ -1289,7 +1291,20 @@ function moveListener (event) {
                       Math.abs(event.pageY - previousY) > 2
                     ) {
                       if (event.altKey) {
-                        dragAltUpdate(xb + xp / scale, yb + yp / scale, event)
+                        const checkAllowCopy = !selected_list.some(
+                          wb =>
+                            (!wb.IsWini &&
+                              wb.value.closest(
+                                '.wbaseItem-value[iswini="true"]'
+                              )) ||
+                            wb.value.closest(
+                              `.wbaseItem-value[isinstance="true"][level="${
+                                wb.Level - 1
+                              }"]`
+                            )
+                        )
+                        if (checkAllowCopy)
+                          dragAltUpdate(xb + xp / scale, yb + yp / scale, event)
                       } else {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event)
                       }
@@ -2806,7 +2821,12 @@ function upListener (event) {
       break
     case EnumEvent.edit:
       let listUpdate = []
-      if (selected_list[0].Css || selected_list[0].IsInstance) {
+      if (
+        !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)
+          ?.length ||
+        selected_list[0].IsInstance ||
+        selected_list[0].IsWini
+      ) {
         for (let wb of selected_list) {
           if (window.getComputedStyle(wb.value).position === 'absolute')
             updateConstraints(wb.value)
