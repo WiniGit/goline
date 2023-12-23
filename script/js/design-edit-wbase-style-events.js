@@ -1488,7 +1488,7 @@ function handleEditOffset ({
             }
           }
         }
-        cssRule.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
+        cssRule.style.width = wb.value.classList.contains('w-text') ? 'max-content' : null
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
@@ -1679,7 +1679,7 @@ function handleEditOffset ({
             }
           }
         }
-        cssRule.style.width = wb.CateID === EnumCate.text ? 'max-content' : null
+        cssRule.style.width = wb.value.classList.contains('w-text') ? 'max-content' : null
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
