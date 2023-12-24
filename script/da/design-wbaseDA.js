@@ -803,6 +803,12 @@ class WBaseDA {
         layerCotainer.remove()
         wb.value.remove()
       }
+      if (select_box_parentID !== wbase_parentID) {
+        let pWb = wbase_list.find(wb => wb.GID === select_box_parentID)
+        pWb.ListChildID = pWb.ListChildID.filter(id =>
+          delete_list.every(wb => wb.GID !== id)
+        )
+      }
       let data = {
         enumObj: EnumObj.wBase,
         data: delete_list,
