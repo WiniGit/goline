@@ -798,7 +798,7 @@ class WBaseDA {
     if (delete_list.length > 0) {
       for (let wb of delete_list) {
         let layerCotainer = left_view.querySelector(
-          `.col > .layer_wbase_tile[id="wbaseID:${wb.GID}"]`
+          `.col:has(> .layer_wbase_tile[id="wbaseID:${wb.GID}"])`
         )
         layerCotainer.remove()
         wb.value.remove()
