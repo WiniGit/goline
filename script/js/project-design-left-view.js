@@ -1246,7 +1246,6 @@ function endDragSortLayer () {
           (wbRect.y - (newPWbRect?.y ?? 0)) /
           scale
         ).toFixed(2)}px`
-
         wb.value.style.flex = null
         wb.value.style.right = 'unset'
         wb.value.style.bottom = 'unset'
@@ -1255,6 +1254,11 @@ function endDragSortLayer () {
         wb.Level = pWb.Level + 1
         wb.value.setAttribute('level', wb.Level)
         wb.ParentID = new_parentID
+        if (!wb.value.getAttribute('constx'))
+          wb.value.setAttribute('constx', Constraints.left)
+        if (!wb.value.getAttribute('consty'))
+          wb.value.setAttribute('consty', Constraints.top)
+        updateConstraints(wb.value)
       }
     }
     let children = [
@@ -1287,6 +1291,7 @@ function endDragSortLayer () {
     wb.Css = wb.value.style.cssText
     listUpdate.push(wb)
     replaceAllLyerItemHTML()
+    handleWbSelectedList([wb])
     sortLayer = null
     WBaseDA.parent(listUpdate)
   }

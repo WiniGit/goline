@@ -456,12 +456,13 @@ function handleWbSelectedList (newlist = []) {
       newlist.every(newE => oldE.GID !== newE.GID)
     )
     selected_list = newlist
+    let layerTile
     for (let wb of selected_list.reverse()) {
-      var layerTile = document.getElementById(`wbaseID:${wb.GID}`)
+      layerTile = document.getElementById(`wbaseID:${wb.GID}`)
       if (layerTile) layerTile.classList.add('selected')
     }
     ;[...$(layerTile).parents(`.col:has(> .layer_wbase_tile)`)].forEach(e => {
-      let layer = e.querySelector(':scope > .layer_wbase_tile')
+      let layer = e.querySelector('.layer_wbase_tile')
       if (layer !== layerTile) {
         let prefixIcon = layer.querySelector('.prefix-btn')
         if (prefixIcon)
