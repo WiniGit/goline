@@ -1258,7 +1258,7 @@ function endDragSortLayer () {
           wb.value.setAttribute('constx', Constraints.left)
         if (!wb.value.getAttribute('consty'))
           wb.value.setAttribute('consty', Constraints.top)
-        updateConstraints(wb.value)
+        var updateConstXY = true
       }
     }
     let children = [
@@ -1273,6 +1273,7 @@ function endDragSortLayer () {
       wb.value,
       ...children.slice(zIndex + 1)
     )
+    if (updateConstXY) updateConstraints(wb.value)
     if (pWb) {
       pWb.ListChildID = [
         ...newPWbHTML.querySelectorAll(
