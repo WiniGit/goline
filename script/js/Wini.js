@@ -471,127 +471,118 @@ function selectBox (list_wbase_item) {
   return undefined
 }
 
-function updateHoverWbase (wbase_item, onAlt) {
-  let isOnchange = hover_wbase?.GID != wbase_item?.GID
-  if (wbase_item) {
-    hover_wbase = wbase_item
-    hover_box = selectBox([wbase_item])
-    if (onAlt && select_box) {
-      var obj1 = select_box
-      var listc = [
-        {
-          o: hover_box.o1,
-          kc: Math.sqrt(
-            (obj1.o5.x - hover_box.o1.x) * (obj1.o5.x - hover_box.o1.x) +
-              (obj1.o5.y - hover_box.o1.y) * (obj1.o5.y - hover_box.o1.y)
-          )
-        },
-        {
-          o: hover_box.o3,
-          kc: Math.sqrt(
-            (obj1.o5.x - hover_box.o3.x) * (obj1.o5.x - hover_box.o3.x) +
-              (obj1.o5.y - hover_box.o3.y) * (obj1.o5.y - hover_box.o3.y)
-          )
-        },
-        {
-          o: hover_box.o7,
-          kc: Math.sqrt(
-            (obj1.o5.x - hover_box.o7.x) * (obj1.o5.x - hover_box.o7.x) +
-              (obj1.o5.y - hover_box.o7.y) * (obj1.o5.y - hover_box.o7.y)
-          )
-        },
-        {
-          o: hover_box.o9,
-          kc: Math.sqrt(
-            (obj1.o5.x - hover_box.o9.x) * (obj1.o5.x - hover_box.o9.x) +
-              (obj1.o5.y - hover_box.o9.y) * (obj1.o5.y - hover_box.o9.y)
-          )
-        }
-      ]
-      listc.sort((a, b) => a.kc - b.kc)
-      var d = obj1.o5.x > listc[0].o.x ? -1 : 1
-      var dh = obj1.o5.y > listc[0].o.y ? -1 : 1
-      var listl = []
-      var listt = []
-      if (Math.abs(obj1.o5.x - listc[0].o.x) > obj1.w / 2) {
-        var o1 = {
-          gid: wbase_item.GID,
-          x: obj1.o5.x + (d * obj1.w) / 2,
-          y: obj1.o5.y,
-          x1: listc[0].o.x,
-          y1: obj1.o5.y,
-          l: true
-        }
-        var o2 = {
-          gid: wbase_item.GID,
-          x: listc[0].o.x,
-          y: obj1.o5.y,
-          x1: listc[0].o.x,
-          y1: listc[0].o.y,
-          l: false
-        }
-        listl.push(o1)
-        listl.push(o2)
-        listt.push({
-          gid: wbase_item.GID,
-          x: (o1.x + o1.x1) / 2,
-          y: (o1.y + o1.y1) / 2,
-          t: Math.round(Math.abs(o1.x - o1.x1) / scale),
-          l: true
-        })
-      }
-      if (Math.abs(obj1.o5.y - listc[0].o.y) > obj1.h / 2) {
-        var o1 = {
-          gid: wbase_item.GID,
-          x: obj1.o5.x,
-          y: listc[0].o.y,
-          x1: obj1.o5.x,
-          y1: obj1.o5.y + (dh * obj1.h) / 2,
-          l: true
-        }
-        var o2 = {
-          gid: wbase_item.GID,
-          x: listc[0].o.x,
-          y: listc[0].o.y,
-          x1: obj1.o5.x,
-          y1: listc[0].o.y,
-          l: false
-        }
-        listl.push(o1)
-        listl.push(o2)
-        listt.push({
-          gid: wbase_item.GID,
-          x: (o1.x + o1.x1) / 2,
-          y: (o1.y + o1.y1) / 2,
-          t: Math.round(Math.abs(o1.y - o1.y1) / scale),
-          l: false
-        })
-      }
-
-      updateLines(listl)
-      updateTexts(listt)
-    }
-  } else {
-    hover_wbase = undefined
-    hover_box = undefined
-  }
+function updateHoverWbase (wb, onAlt) {
+  let isOnchange = hover_wbase !== wb
   if (isOnchange) {
-    ;[...document.getElementsByClassName('layer_wbase_tile')].forEach(
-      layerHTML => {
-        if (layerHTML.id.includes(`${wbase_item?.GID}`)) {
-          layerHTML.style.borderColor =
-            wbase_item.IsWini ||
-            wbase_item.IsInstance ||
-            $(layerHTML).parents(
-              `.col:has(> .layer_wbase_tile[iswini="true"], layer_wbase_tile[isinstance="true"])`
-            ).length
-              ? '#7B61FF'
-              : '#1890FF'
-        } else {
-          layerHTML.style.borderColor = 'transparent'
+    if (wb) {
+      hover_wbase = wb
+      hover_box = selectBox([wb])
+      if (onAlt && select_box) {
+        var obj1 = select_box
+        var listc = [
+          {
+            o: hover_box.o1,
+            kc: Math.sqrt(
+              (obj1.o5.x - hover_box.o1.x) * (obj1.o5.x - hover_box.o1.x) +
+                (obj1.o5.y - hover_box.o1.y) * (obj1.o5.y - hover_box.o1.y)
+            )
+          },
+          {
+            o: hover_box.o3,
+            kc: Math.sqrt(
+              (obj1.o5.x - hover_box.o3.x) * (obj1.o5.x - hover_box.o3.x) +
+                (obj1.o5.y - hover_box.o3.y) * (obj1.o5.y - hover_box.o3.y)
+            )
+          },
+          {
+            o: hover_box.o7,
+            kc: Math.sqrt(
+              (obj1.o5.x - hover_box.o7.x) * (obj1.o5.x - hover_box.o7.x) +
+                (obj1.o5.y - hover_box.o7.y) * (obj1.o5.y - hover_box.o7.y)
+            )
+          },
+          {
+            o: hover_box.o9,
+            kc: Math.sqrt(
+              (obj1.o5.x - hover_box.o9.x) * (obj1.o5.x - hover_box.o9.x) +
+                (obj1.o5.y - hover_box.o9.y) * (obj1.o5.y - hover_box.o9.y)
+            )
+          }
+        ]
+        listc.sort((a, b) => a.kc - b.kc)
+        var d = obj1.o5.x > listc[0].o.x ? -1 : 1
+        var dh = obj1.o5.y > listc[0].o.y ? -1 : 1
+        var listl = []
+        var listt = []
+        if (Math.abs(obj1.o5.x - listc[0].o.x) > obj1.w / 2) {
+          var o1 = {
+            gid: wb.GID,
+            x: obj1.o5.x + (d * obj1.w) / 2,
+            y: obj1.o5.y,
+            x1: listc[0].o.x,
+            y1: obj1.o5.y,
+            l: true
+          }
+          var o2 = {
+            gid: wb.GID,
+            x: listc[0].o.x,
+            y: obj1.o5.y,
+            x1: listc[0].o.x,
+            y1: listc[0].o.y,
+            l: false
+          }
+          listl.push(o1)
+          listl.push(o2)
+          listt.push({
+            gid: wb.GID,
+            x: (o1.x + o1.x1) / 2,
+            y: (o1.y + o1.y1) / 2,
+            t: Math.round(Math.abs(o1.x - o1.x1) / scale),
+            l: true
+          })
         }
+        if (Math.abs(obj1.o5.y - listc[0].o.y) > obj1.h / 2) {
+          var o1 = {
+            gid: wb.GID,
+            x: obj1.o5.x,
+            y: listc[0].o.y,
+            x1: obj1.o5.x,
+            y1: obj1.o5.y + (dh * obj1.h) / 2,
+            l: true
+          }
+          var o2 = {
+            gid: wb.GID,
+            x: listc[0].o.x,
+            y: listc[0].o.y,
+            x1: obj1.o5.x,
+            y1: listc[0].o.y,
+            l: false
+          }
+          listl.push(o1)
+          listl.push(o2)
+          listt.push({
+            gid: wb.GID,
+            x: (o1.x + o1.x1) / 2,
+            y: (o1.y + o1.y1) / 2,
+            t: Math.round(Math.abs(o1.y - o1.y1) / scale),
+            l: false
+          })
+        }
+
+        updateLines(listl)
+        updateTexts(listt)
       }
-    )
+    } else {
+      hover_wbase = undefined
+      hover_box = undefined
+    }
+    left_view.querySelectorAll('.layer_wbase_tile').forEach(layerHTML => {
+      if (layerHTML.id.includes(`${wb?.GID}`)) {
+        layerHTML.classList.add('onhover')
+      } else {
+        layerHTML.classList.remove('onhover')
+      }
+    })
     wdraw()
   }
 }
@@ -1033,7 +1024,10 @@ function moveListener (event) {
   event.preventDefault()
   let target_view
   // check drag resize left view
-  if ((!instance_drag && left_view.offsetWidth > 0) || left_view.resizing) {
+  if (
+    ((!instance_drag && left_view.offsetWidth > 0) || left_view.resizing) &&
+    !sortLayer
+  ) {
     let pageContainerY = document
       .getElementById('div_list_page')
       .getBoundingClientRect()
@@ -1110,44 +1104,7 @@ function moveListener (event) {
       drag_start_list.length === 0
     ) {
       target_view = 'left_view'
-      if (
-        selected_list.length == 1 &&
-        window.getComputedStyle(selected_list[0].value).pointerEvents !==
-          'none' &&
-        !sortLayer
-      ) {
-        let listLayer = [
-          ...left_view.querySelectorAll(
-            '.layer_wbase_tile:is(.w-container, .w-textformfield, .w-button, .w-table, .w-variant):not(*[isinstance="true"])'
-          )
-        ].filter(eLayer => eLayer.offsetHeight > 0)
-        listLayer.forEach(eLayer => {
-          if (eLayer.id.includes(selected_list[0].GID)) {
-            let preAction = eLayer.querySelector(`.prefix-btn`)
-            if (preAction) {
-              preAction.className = preAction.className.replace(
-                'caret-down',
-                'caret-right'
-              )
-            }
-          } else if (eLayer.classList.contains('w-variant')) {
-            if (
-              selected_list[0].value.classList.contains('w-variant') ||
-              !selected_list[0].IsWini
-            ) {
-              let preAction = eLayer.querySelector(`.prefix-btn`)
-              if (preAction) {
-                preAction.className = preAction.className.replace(
-                  'caret-right',
-                  'caret-down'
-                )
-              }
-            }
-          }
-        })
-        sortLayer = document.createElement('div')
-        document.getElementById('Layer').appendChild(sortLayer)
-      }
+      sortLayer = document.createElement('div')
     } else if (sortSkin || event.target.className == 'skin_tile_option') {
       target_view = 'right_view'
     } else {
@@ -1389,20 +1346,8 @@ function moveListener (event) {
           instance_drag.style.transform = null
           instance_drag.style.zIndex = 2
         } else if (sortLayer) {
-          if (sortLayer.getAttribute('parentid')) {
+          if (sortLayer) {
             ondragSortLayer(event)
-          } else {
-            if (sortLayer.offX == null) {
-              sortLayer.offX = event.pageX
-              sortLayer.offY = event.pageY
-            } else {
-              if (
-                Math.abs(event.pageX - sortLayer.offX) > 2 ||
-                Math.abs(event.pageY - sortLayer.offY) > 2
-              ) {
-                ondragSortLayer(event)
-              }
-            }
           }
         }
       }

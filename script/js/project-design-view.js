@@ -460,15 +460,12 @@ function handleWbSelectedList (newlist = []) {
       var layerTile = document.getElementById(`wbaseID:${wb.GID}`)
       if (layerTile) layerTile.classList.add('selected')
     }
-    ;[...$(layerTile).parents(`.col > .layer_wbase_tile`)].forEach(e => {
+    ;[...$(layerTile).parents(`.col:has(> .layer_wbase_tile)`)].forEach(e => {
       let layer = e.querySelector(':scope > .layer_wbase_tile')
       if (layer !== layerTile) {
         let prefixIcon = layer.querySelector('.prefix-btn')
         if (prefixIcon)
-          prefixIcon.className = prefixIcon.className.replace(
-            'caret-right',
-            'caret-down'
-          )
+          prefixIcon.className = prefixIcon.className.replace('right', 'down')
       }
     })
     selected_list.sort((a, b) => $(a.value).index() - $(b.value).index())

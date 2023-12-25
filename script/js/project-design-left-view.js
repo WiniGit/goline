@@ -323,20 +323,20 @@ function showSearchResult () {
 function replaceAllLyerItemHTML () {
   let show_list_tile = document.getElementById(`parentID:${wbase_parentID}`)
   let list_level1 = wbase_list
-    .filter(e => e.ParentID == wbase_parentID)
-    .reverse()
+    .filter(e => e.ParentID === wbase_parentID)
+    .sort((a, b) => $(b.value).index() - $(a.value).index())
   let isReplace = show_list_tile.childElementCount > 0
   let fragment = document.createDocumentFragment()
   fragment.replaceChildren(
-    ...list_level1.map(wbaseItem => {
+    ...list_level1.map(wb => {
       let isShowChildren = false
       if (isReplace) {
-        isShowChildren = document.getElementById(`pefixAction:${wbaseItem.GID}`)
+        isShowChildren = document.getElementById(`pefixAction:${wb.GID}`)
         if (isShowChildren) {
           isShowChildren = isShowChildren.className.includes('fa-caret-down')
         }
       }
-      return createLayerTile(wbaseItem, isShowChildren)
+      return createLayerTile(wb, isShowChildren)
     })
   )
   show_list_tile.replaceChildren(fragment)
@@ -454,39 +454,39 @@ function createPageTile (pageItem) {
 }
 
 // create layer tile depend wbaseItem
-function createLayerTile (wbaseItem, isShowChildren = false) {
+function createLayerTile (wb, isShowChildren = false) {
   let layerContainer = document.createElement('div')
   layerContainer.className = 'col'
   let wbase_tile = document.createElement('div')
-  wbase_tile.id = `wbaseID:${wbaseItem.GID}`
-  wbase_tile.className =
-    'layer_wbase_tile ' + wbaseItem.ListClassName.split(' ')[1]
-  if (wbaseItem.IsWini) {
-    wbase_tile.setAttribute('iswini', wbaseItem.IsWini)
-  } else if (wbaseItem.IsInstance) {
-    wbase_tile.setAttribute('isinstance', wbaseItem.IsInstance)
+  wbase_tile.id = `wbaseID:${wb.GID}`
+  wbase_tile.className = 'layer_wbase_tile ' + wb.ListClassName.split(' ')[1]
+  wbase_tile.style.setProperty('--spacing', `${(wb.Level - 1) * 16}px`)
+  if (wb.IsWini) {
+    wbase_tile.setAttribute('iswini', wb.IsWini)
+  } else if (wb.IsInstance) {
+    wbase_tile.setAttribute('isinstance', wb.IsInstance)
   }
   let isShowListChid = isShowChildren
   wbase_tile.innerHTML = `<i class="fa-solid fa-caret-${
     isShowListChid ? 'down' : 'right'
-  } fa-xs prefix-btn" style="margin-left: ${(wbaseItem.Level - 1) * 16}px"></i>
-  <img/><input id="inputName:${wbaseItem.GID}" readonly value="${
-    wbaseItem.Name
+  } fa-xs prefix-btn" style="margin-left: ${(wb.Level - 1) * 16}px"></i>
+  <img/><input id="inputName:${wb.GID}" readonly value="${
+    wb.Name
   }"/><i class="fa-solid fa-lock fa-xs is-lock"></i>`
   layerContainer.appendChild(wbase_tile)
 
   $(wbase_tile).on('click', '.prefix-btn', function () {
-    isShowListChid = !this.className.includes('caret-down')
+    isShowListChid = !this.className.includes('down')
     if (isShowListChid) {
-      this.className = this.className.replace('caret-right', 'caret-down')
+      this.className = this.className.replace('right', 'down')
     } else {
-      this.className = this.className.replace('caret-down', 'caret-right')
+      this.className = this.className.replace('down', 'right')
     }
   })
 
   $(wbase_tile).on('dblclick', 'img', function (e) {
     e.stopPropagation()
-    let objCenter = document.getElementById(wbaseItem.GID)
+    let objCenter = document.getElementById(wb.GID)
     let centerRect = objCenter.getBoundingClientRect()
     centerRect = offsetScale(
       centerRect.x + centerRect.width / 2,
@@ -503,92 +503,92 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
     updateHoverWbase()
     PageDA.saveSettingsPage()
     if (!wbase_tile.classList.contains('w-textfield'))
-      handleWbSelectedList([wbaseItem])
+      handleWbSelectedList([wb])
   })
   //
-  let wbaseChildren = []
-  
+
   if (WbClass.parent.some(e => wbase_tile.classList.contains(e))) {
-    let childrenLayer = document.createElement('div')
-    layerContainer.appendChild(childrenLayer)
-    childrenLayer.id = `parentID:${wbaseItem.GID}`
-    childrenLayer.className = 'col'
-    wbaseChildren = wbase_list
-      .filter(e => e.ParentID === wbaseItem.GID)
-      .reverse()
-    let fragment = document.createDocumentFragment()
-    fragment.replaceChildren(
-      ...wbaseChildren.map(wbaseChild => createLayerTile(wbaseChild))
-    )
-    childrenLayer.replaceChildren(fragment)
+    let wbChildren = wbase_list.filter(e => e.ParentID === wb.GID)
+    if (wbChildren.length > 0) {
+      let childrenLayer = document.createElement('div')
+      layerContainer.appendChild(childrenLayer)
+      childrenLayer.id = `parentID:${wb.GID}`
+      childrenLayer.className = 'col'
+      wbChildren = wbChildren.sort(
+        (a, b) => wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
+      )
+      if (wb.value.classList.contains('w-stack'))
+        wbChildren = wbChildren.reverse()
+      let fragment = document.createDocumentFragment()
+      fragment.replaceChildren(...wbChildren.map(cWb => createLayerTile(cWb)))
+      childrenLayer.replaceChildren(fragment)
+    }
   }
   wbase_tile.onmouseover = function () {
-    if (!sortLayer && !left_view.resizing) updateHoverWbase(wbaseItem)
+    if (!sortLayer && !left_view.resizing) updateHoverWbase(wb)
   }
   wbase_tile.onmouseout = function () {
     if (!sortLayer && !left_view.resizing) updateHoverWbase()
   }
   if (!wbase_tile.classList.contains('w-textfield')) {
-    if (wbaseItem.IsShow) {
+    if (wb.IsShow) {
       wbase_tile.querySelector('.is-lock').className =
         'fa-solid fa-lock-open fa-xs is-lock'
     } else {
       layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
         if (lockBtn !== wbase_tile.querySelector('.is-lock')) {
           lockBtn.className = 'fa-solid fa-lock fa-xs is-lock'
-          lockBtn.style.pointerEvents = 'none'
         }
       })
     }
     wbase_tile.onclick = function () {
-      if (!sortLayer && !left_view.resizing) handleWbSelectedList([wbaseItem])
+      if (!sortLayer && !left_view.resizing) handleWbSelectedList([wb])
     }
-    $(wbase_tile).on('click', '.is-lock', function () {
-      if (!sortLayer && !left_view.resizing) {
-        let listUpdate = []
-        wbaseItem.IsShow = !wbaseItem.IsShow
-        if (wbaseItem.IsShow) {
-          wbaseItem.value.removeAttribute('lock')
-          this.className = 'fa-solid fa-lock-open fa-xs is-lock'
-          layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
-            if (
-              lockBtn.parentElement.getAttribute('cateid') != EnumCate.textfield
-            ) {
-              lockBtn.className = 'fa-solid fa-lock-open fa-xs is-lock'
-              lockBtn.style.pointerEvents = 'auto'
-              listUpdate.push(lockBtn.parentElement.id.replace('wbaseID:', ''))
-            }
-          })
-          listUpdate = wbase_list.filter(e => {
-            if (listUpdate.some(id => e.GID === id)) {
-              e.value.removeAttribute('lock')
-              e.IsShow = true
-              return true
-            } else {
-              return false
-            }
-          })
-        } else {
-          wbaseItem.value.setAttribute('lock', 'true')
-          this.className = 'fa-solid fa-lock fa-xs is-lock'
-          layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
-            if (lockBtn !== this) {
-              lockBtn.className = 'fa-solid fa-lock fa-xs is-lock'
-              lockBtn.style.pointerEvents = 'none'
-            }
-          })
-        }
-        listUpdate.push(wbaseItem)
-        WBaseDA.edit(listUpdate, EnumObj.wBase)
-      }
-    })
+    // $(wbase_tile).on('click', '.is-lock', function () {
+    //   if (!sortLayer && !left_view.resizing) {
+    //     let listUpdate = []
+    //     wb.IsShow = !wb.IsShow
+    //     if (wb.IsShow) {
+    //       wb.value.removeAttribute('lock')
+    //       this.className = 'fa-solid fa-lock-open fa-xs is-lock'
+    //       layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
+    //         let tile = lockBtn.closest('.layer_wbase_tile:not(.w-textfield)')
+    //         if (tile) {
+    //           lockBtn.className = 'fa-solid fa-lock-open fa-xs is-lock'
+    //           lockBtn.style.pointerEvents = 'auto'
+    //           listUpdate.push(tile.id.replace('wbaseID:', ''))
+    //         }
+    //       })
+    //       listUpdate = wbase_list.filter(e => {
+    //         if (listUpdate.some(id => e.GID === id)) {
+    //           e.value.removeAttribute('lock')
+    //           e.IsShow = true
+    //           return true
+    //         } else {
+    //           return false
+    //         }
+    //       })
+    //     } else {
+    //       wb.value.setAttribute('lock', 'true')
+    //       this.className = 'fa-solid fa-lock fa-xs is-lock'
+    //       layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
+    //         if (lockBtn !== this) {
+    //           lockBtn.className = 'fa-solid fa-lock fa-xs is-lock'
+    //           lockBtn.style.pointerEvents = 'none'
+    //         }
+    //       })
+    //     }
+    //     listUpdate.push(wb)
+    //     WBaseDA.edit(listUpdate, EnumObj.wBase)
+    //   }
+    // })
   }
   $(wbase_tile).on('dblclick', 'input', function () {
     if (PageDA.enableEdit) {
       this.style.cursor = 'text'
       this.style.outline = `1.5px solid ${
-        wbaseItem.IsWini ||
-        wbaseItem.IsInstance ||
+        wb.IsWini ||
+        wb.IsInstance ||
         $(wbase_tile).parents(
           `.col:has(> .layer_wbase_tile[iswini="true"], layer_wbase_tile[isinstance="true"])`
         ).length
@@ -606,9 +606,9 @@ function createLayerTile (wbaseItem, isShowChildren = false) {
       this.style.outline = 'none'
       this.readOnly = true
       window.getSelection().removeAllRanges()
-      if (wbaseItem.Name != this.value) {
-        wbaseItem.Name = this.value
-        WBaseDA.edit([wbaseItem], EnumObj.wBase)
+      if (wb.Name != this.value) {
+        wb.Name = this.value
+        WBaseDA.edit([wb], EnumObj.wBase)
       }
     }
   })
@@ -1050,431 +1050,236 @@ const observer_listPage = new ResizeObserver(entries => {
 
 function ondragSortLayer (event) {
   console.log('drag sort layer update')
-  let fromY = document.getElementById('div_list_page').offsetHeight
-  let listLayer = [
-    ...document.getElementsByClassName('layer_wbase_tile')
-  ].filter(
-    e => e.offsetHeight > 0 && $(e).parents(`#parentID:${select_box_parentID}`)
+  let wb = selected_list[0]
+  let wbLayer = document.getElementById(`wbaseID:${wb.GID}`)
+  const sortComInstance = wb.value.closest(
+    `.wbaseItem-value[iswini="true"][level="${
+      wb.Level - 1
+    }"], .wbaseItem-value[isinstance="true"][level="${wb.Level - 1}"]`
+  )
+  const layerP = sortComInstance
+    ? document.getElementById(`parentID:${select_box_parentID}`)
+    : left_view
+  let listLayer = [...layerP.querySelectorAll('.layer_wbase_tile')].filter(
+    e => {
+      const check =
+        e.offsetHeight > 0 && !wbLayer.nextSibling?.contains(e) && wbLayer !== e
+      e.classList.remove('onsort')
+      e.removeAttribute('sort-position')
+      return check
+    }
   )
   if (listLayer.length > 1) {
-    listLayer.sort((a, b) => {
+    let closestLayer = listLayer.sort((a, b) => {
       let rectA = a.getBoundingClientRect()
-      let distanceA = Math.min(
-        Math.abs(event.pageY - rectA.y),
-        Math.abs(event.pageY - rectA.y - rectA.height)
-      )
+      let distanceA = Math.abs(event.pageY - (rectA.y + rectA.height / 2))
       let rectB = b.getBoundingClientRect()
-      let distanceB = Math.min(
-        Math.abs(event.pageY - rectB.y),
-        Math.abs(event.pageY - rectB.y - rectB.height)
-      )
+      let distanceB = Math.abs(event.pageY - (rectB.y + rectB.height / 2))
       return distanceA - distanceB
-    })
-    let minDistanceRect = listLayer[0].getBoundingClientRect()
-    let rectTopY = minDistanceRect.y
-    let rectCenterY = minDistanceRect.y + minDistanceRect.height / 2
-    let rectBotY = minDistanceRect.y + minDistanceRect.height
-    let wbaseID = listLayer[0]?.id?.replace('wbaseID:', '')
-    let layerViewY =
-      document
-        .getElementById(`parentID:${wbase_parentID}`)
-        .getBoundingClientRect().y - 40 // 40 is height of tab bar
-    let sortWbase = wbase_list.find(wbaseItem => wbaseItem.GID === wbaseID)
-    let parent_cate = [...EnumCate.parent_cate]
+    })[0]
+    let openedLayer = left_view.querySelector('.layer_wbase_tile.opened')
     if (
-      selected_list[0].CateID !== EnumCate.variant &&
-      selected_list[0].IsWini
+      openedLayer &&
+      !openedLayer.nextSibling?.contains(closestLayer) &&
+      openedLayer !== closestLayer
     ) {
-      parent_cate.push(EnumCate.variant)
+      openedLayer.classList.remove('opened')
     }
-    let wbaseHTML = document.getElementById(wbaseID)
-    if (wbaseHTML) {
-      // drag to centerY of layer
-      sortLayer.setAttribute('relativeid', wbaseID)
-      if (
-        !listLayer[0].id.includes(selected_list[0].GID) &&
-        parent_cate.some(cate => cate == listLayer[0].getAttribute('cateid')) &&
-        isInRange(event.pageY, rectCenterY - 5, rectCenterY + 5)
-      ) {
-        let time = parseInt(sortLayer.getAttribute('time') ?? '0')
-        time += 1
-        sortLayer.setAttribute('time', time)
-        sortLayer.style.display = 'none'
-        updateHoverWbase(sortWbase)
-        if (time >= 6) {
-          let preAction = document.getElementById(`pefixAction:${wbaseID}`)
-          if (preAction.className.includes('caret-right')) {
-            preAction.className = preAction.className.replace(
-              'caret-right',
-              'caret-down'
-            )
-          }
+    let layerRect = closestLayer.getBoundingClientRect()
+    if (
+      WbClass.parent.some(cl => closestLayer.classList.contains(cl)) &&
+      closestLayer.nextSibling &&
+      Math.abs(event.pageY - (layerRect.y + layerRect.height / 2)) < 5
+    ) {
+      closestLayer.classList.add('onsort')
+      closestLayer.setAttribute('sort-position', 'inside')
+      setTimeout(function () {
+        let prefixIcon = closestLayer.querySelector('.fa-caret-right')
+        if (
+          sortLayer === closestLayer &&
+          prefixIcon &&
+          sortLayer.getAttribute('sort-position') === 'inside'
+        ) {
+          closestLayer.classList.add('opened')
         }
-        let childHTML = [
-          ...wbaseHTML.querySelectorAll(
-            `.wbaseItem-value[level="${
-              parseInt(wbaseHTML.getAttribute('level') ?? '0') + 1
-            }"]`
-          )
-        ]
-        sortLayer.setAttribute(
-          'sort',
-          Math.max(
-            0,
-            ...childHTML.map(eHTML =>
-              parseInt(window.getComputedStyle(eHTML).zIndex)
-            )
-          )
-        )
-        sortLayer.setAttribute('parentid', wbaseID)
-        console.log('children-----')
-      } else if (
-        Math.abs(event.pageY - rectTopY) <= Math.abs(event.pageY - rectBotY)
-      ) {
-        // drag to abbove of layer
-        sortLayer.removeAttribute('time')
-        sortLayer.style.display = 'block'
-        updateHoverWbase()
-        sortLayer.style.top = fromY + rectTopY - layerViewY + 'px'
-        sortLayer.style.width =
-          minDistanceRect.width - (sortWbase.Level - 1) * 16 + 'px'
-        sortLayer.setAttribute('sort', sortWbase.Sort + 1)
-        sortLayer.setAttribute(
-          'parentid',
-          wbaseHTML.getAttribute('listid').split(',').pop()
-        )
+      }, 800)
+    } else if (
+      Math.abs(event.pageY - layerRect.y) <
+      Math.abs(event.pageY - layerRect.bottom)
+    ) {
+      closestLayer.classList.add('onsort')
+      closestLayer.setAttribute('sort-position', 'top')
+    } else if (event.pageY <= layerRect.bottom || sortComInstance) {
+      if (closestLayer.querySelector('.fa-caret-down')) {
+        closestLayer =
+          closestLayer.nextSibling.querySelector('.layer_wbase_tile')
+        closestLayer.classList.add('onsort')
+        closestLayer.setAttribute('sort-position', 'top')
       } else {
-        // drag to below of layer
-        sortLayer.removeAttribute('time')
-        sortLayer.style.display = 'block'
-        updateHoverWbase()
-        let preAction = document.getElementById(`pefixAction:${wbaseID}`)
-        sortLayer.style.top = fromY + rectBotY - layerViewY + 'px'
-        let spacing = (sortWbase.Level - 1) * 16
-        if (preAction.className.includes('caret-down')) {
-          spacing += 16
-          let childHTML = [
-            ...wbaseHTML.querySelectorAll(
-              `.wbaseItem-value[level="${
-                parseInt(wbaseHTML.getAttribute('level') ?? '0') + 1
-              }"]`
-            )
-          ]
-          sortLayer.setAttribute(
-            'sort',
-            Math.max(
-              0,
-              ...childHTML.map(eHTML =>
-                parseInt(window.getComputedStyle(eHTML).zIndex)
-              )
-            ) + 1
-          )
-          sortLayer.setAttribute('parentid', wbaseID)
-        } else {
-          sortLayer.setAttribute('sort', sortWbase.Sort)
-          sortLayer.setAttribute(
-            'parentid',
-            wbaseHTML.getAttribute('listid').split(',').pop()
-          )
-        }
-        sortLayer.style.width = `${minDistanceRect.width - spacing}px`
+        closestLayer.classList.add('onsort')
+        closestLayer.setAttribute('sort-position', 'bot')
       }
+    } else if (wb.ParentID === closestLayer.id.replace('wbaseID:', '')) {
+      closestLayer = closestLayer.nextSibling.querySelector('.layer_wbase_tile')
+      closestLayer.classList.add('onsort')
+      closestLayer.setAttribute('sort-position', 'top')
+    } else {
+      closestLayer.classList.add('onsort')
+      closestLayer.setAttribute('sort-position', 'outside')
     }
+    sortLayer = closestLayer
   }
 }
 
 function endDragSortLayer () {
-  let listUpdate = []
-  let thisWbaseItem = selected_list[0]
-  let oldParent
-  let thisWbaseHTML = thisWbaseItem?.value
-  if (sortLayer && thisWbaseHTML) {
-    let newParentID = sortLayer.getAttribute('parentid')
-    let zIndex = parseInt(sortLayer.getAttribute('sort'))
-    if (newParentID && zIndex != undefined) {
-      thisWbaseHTML.style.order = zIndex
-      thisWbaseHTML.style.zIndex = zIndex
-      let isChangeParent = thisWbaseItem.ParentID != newParentID
-      if (isChangeParent && thisWbaseItem.ParentID != wbase_parentID) {
-        oldParent = wbase_list.find(e => e.GID === thisWbaseItem.ParentID)
-        oldParent.ListChildID = oldParent.ListChildID.filter(
-          id => id !== thisWbaseItem.GID
-        )
-        oldParent.CountChild = oldParent.ListChildID.length
-        if (oldParent.CountChild == 0 && oldParent.WAutolayoutItem) {
-          let oldParentHTML = oldParent.value
-          oldParentHTML.style.width = oldParentHTML.offsetWidth + 'px'
-          oldParentHTML.style.height = oldParentHTML.offsetHeight + 'px'
-          oldParent.StyleItem.FrameItem.Height = oldParentHTML.offsetHeight
-          oldParent.StyleItem.FrameItem.Width = oldParentHTML.offsetWidth
-          listUpdate.push(oldParent)
+  let wb = selected_list[0]
+  if (sortLayer && sortLayer.id.replace('wbaseID:', '') !== wb.GID) {
+    let listUpdate = []
+    let wbHTML = document.getElementById(sortLayer.id.replace('wbaseID:', ''))
+    let new_parentID = wbHTML.getAttribute('parentid')
+    switch (sortLayer.getAttribute('sort-position')) {
+      case 'top':
+        if (new_parentID !== wbase_parentID) {
+          var pWb = wbase_list.find(e => e.GID === new_parentID)
         }
-        if (oldParent.CateID === EnumCate.variant) {
-          let listProperty = PropertyDA.list.filter(
-            e => e.BaseID === oldParent.GID
-          )
-          for (let property of listProperty) {
-            property.BasePropertyItems = property.BasePropertyItems.filter(
-              e => e.BaseID != thisWbaseItem.GID
-            )
-          }
+        var zIndex = pWb.value.classList.contains('w-stack')
+          ? $(wbHTML).index()
+          : $(wbHTML).index() - 1
+        break
+      case 'bot':
+        if (new_parentID !== wbase_parentID) {
+          pWb = wbase_list.find(e => e.GID === new_parentID)
         }
-      }
-      thisWbaseItem.ParentID = newParentID
-      thisWbaseItem.Sort = zIndex
-      if (newParentID === wbase_parentID) {
-        let newParentHTML = divSection
-        thisWbaseItem.ListID = newParentID
-        thisWbaseHTML.setAttribute('listid', thisWbaseItem.ListID)
-        thisWbaseItem.Level = 1
-        thisWbaseHTML.setAttribute('level', thisWbaseItem.Level)
-        ;[
-          ...newParentHTML.querySelectorAll(
-            `.wbaseItem-value[level="${
-              parseInt(newParentHTML.getAttribute('level') ?? '0') + 1
-            }"]`
-          )
-        ].forEach(eHTML => {
-          if (
-            eHTML.id != thisWbaseItem.GID &&
-            parseInt(window.getComputedStyle(eHTML).order) >= zIndex
-          ) {
-            let thisZIndex =
-              parseInt(window.getComputedStyle(eHTML).order) + zIndex
-            eHTML.style.order = thisZIndex
-            eHTML.style.zIndex = thisZIndex
-          }
-        })
-        if (thisWbaseHTML.parentElement !== newParentHTML) {
-          let thisWbaseRect = thisWbaseHTML.getBoundingClientRect()
-          let offsetLevel1 = offsetScale(thisWbaseRect.x, thisWbaseRect.y)
-          thisWbaseHTML.style.position = 'absolute'
-          thisWbaseHTML.style.left = offsetLevel1.x + 'px'
-          thisWbaseHTML.style.top = offsetLevel1.y + 'px'
-          newParentHTML.appendChild(thisWbaseHTML)
+        zIndex = pWb.value.classList.contains('w-stack')
+          ? $(wbHTML).index() + 1
+          : $(wbHTML).index()
+        break
+      case 'inside':
+        new_parentID = sortLayer.id.replace('wbaseID:', '')
+        zIndex = wbHTML.childElementCount - 1
+        pWb = wbase_list.find(e => e.GID === new_parentID)
+        break
+      case 'outside':
+        if (new_parentID !== wbase_parentID) {
+          pWb = wbase_list.find(e => e.GID === new_parentID)
         }
-        let children = wbase_list.filter(wbase =>
-          wbase.ListID.includes(thisWbaseItem.GID)
-        )
-        for (let j = 0; j < children.length; j++) {
-          let child_listID = children[j].ListID.split(',')
-          let index = child_listID.indexOf(thisWbaseItem.GID)
-          let new_listID = thisWbaseItem.ListID.split(',').concat(
-            child_listID.slice(index)
-          )
-          children[j].ListID = new_listID.join(',')
-          children[j].Level = new_listID.length
-          let childHTML = children[j].value
-          childHTML.setAttribute('level', new_listID.length)
-          childHTML.setAttribute('listid', new_listID.join(','))
-        }
-        let newParentChildren = [
-          ...newParentHTML.querySelectorAll(`.wbaseItem-value[level="1"]`)
-        ]
-        newParentChildren.sort(
-          (a, b) =>
-            parseInt(window.getComputedStyle(a).order) -
-            parseInt(window.getComputedStyle(b).order)
-        )
-        let childrenWbase = wbase_list.filter(
-          wb => wb.ParentID === wbase_parentID
-        )
-        for (let i = 0; i < newParentChildren.length; i++) {
-          let wbaseItemIndex = childrenWbase.find(
-            wb => wb.GID === newParentChildren[i].id
-          )
-          if (wbaseItemIndex) wbaseItemIndex.Sort = i
-          newParentChildren[i].style.order = i
-          newParentChildren[i].style.zIndex = i
-        }
-        listUpdate.push(thisWbaseItem)
-        WBaseDA.parent([
-          {
-            GID: wbase_parentID,
-            ListChildID: newParentChildren.map(wb => wb.id)
-          },
-          ...listUpdate
-        ])
-      } else {
-        let newParent
-        if (newParentID !== wbase_parentID)
-          newParent = wbase_list.find(e => e.GID === newParentID)
-        let newParentHTML = newParent.value
-        thisWbaseItem.ListID = newParent.ListID + `,${newParentID}`
-        thisWbaseItem.Level = thisWbaseItem.ListID.split(',').length
-        thisWbaseHTML.setAttribute('level', thisWbaseItem.Level)
-        thisWbaseHTML.setAttribute('listid', thisWbaseItem.ListID)
-        if (
-          thisWbaseItem.IsWini &&
-          thisWbaseItem.BasePropertyItems?.length > 0
-        ) {
-          thisWbaseItem.BasePropertyItems =
-            thisWbaseItem.BasePropertyItems.filter(
-              e =>
-                PropertyDA.list.find(property => property.GID === e.PropertyID)
-                  ?.BaseID === new_parentID
-            )
-        }
-        if (isChangeParent) {
-          if (newParent.CateID === EnumCate.table) {
-            let listCell = newParent.TableRows.reduce((a, b) => a.concat(b))
-            ;[
-              ...newParentHTML.querySelectorAll(
-                ':scope > .table-row > .table-cell'
-              )
-            ].forEach(cell => {
-              let cellContents = []
-              cell.childNodes.forEach(cellCt => {
-                if (cellCt.id === sortLayer.getAttribute('relativeid')) {
-                  if (zIndex <= parseInt(cellCt.style.zIndex)) {
-                    cellContents.push(thisWbaseHTML, cellCt)
-                  } else {
-                    cellContents.push(cellCt, thisWbaseHTML)
-                  }
-                } else {
-                  cellContents.push(cellCt)
-                }
-              })
-              cell.replaceChildren(...cellContents)
-              listCell.find(e => e.id === cell.id).contentid = cellContents
-                .map(e => e.id)
-                .join(',')
-            })
-            thisWbaseItem.StyleItem.PositionItem.FixPosition = false
-            thisWbaseItem.StyleItem.PositionItem.ConstraintsX = Constraints.left
-            thisWbaseItem.StyleItem.PositionItem.ConstraintsY = Constraints.top
-            thisWbaseHTML.style.left = null
-            thisWbaseHTML.style.top = null
-            thisWbaseHTML.style.right = null
-            thisWbaseHTML.style.bottom = null
-            thisWbaseHTML.style.transform = null
-          } else if (
-            window.getComputedStyle(newParentHTML).display.match('flex') &&
-            !thisWbaseHTML.classList.contains('fixed-position')
-          ) {
-            thisWbaseHTML.style.position = null
-            thisWbaseHTML.style.left = null
-            thisWbaseHTML.style.top = null
-            thisWbaseHTML.style.right = null
-            thisWbaseHTML.style.bottom = null
-            thisWbaseHTML.style.transform = null
-            thisWbaseItem.StyleItem.PositionItem.FixPosition = false
-            thisWbaseItem.StyleItem.PositionItem.ConstraintsX = Constraints.left
-            thisWbaseItem.StyleItem.PositionItem.ConstraintsY = Constraints.top
-            if (
-              thisWbaseItem.StyleItem.FrameItem.Width < 0 &&
-              newParent.StyleItem.FrameItem.Width == null
-            ) {
-              thisWbaseItem.StyleItem.FrameItem.Width =
-                thisWbaseHTML.offsetWidth
-              thisWbaseHTML.style.width = thisWbaseHTML.offsetWidth + 'px'
-            }
-            if (
-              thisWbaseItem.StyleItem.FrameItem.Height < 0 &&
-              newParent.StyleItem.FrameItem.Height == null
-            ) {
-              thisWbaseItem.StyleItem.FrameItem.Height =
-                thisWbaseHTML.offsetHeight
-              thisWbaseHTML.style.height = thisWbaseHTML.offsetHeight + 'px'
-            }
-            switch (newParent.CateID) {
-              case EnumCate.tree:
-                newParentHTML
-                  .querySelector('.children-value')
-                  .appendChild(thisWbaseHTML)
-                break
-              case EnumCate.carousel:
-                newParentHTML
-                  .querySelector('.children-value')
-                  .appendChild(thisWbaseHTML)
-                break
-              default:
-                newParentHTML.appendChild(thisWbaseHTML)
-                break
-            }
-          } else {
-            if (
-              thisWbaseItem.StyleItem.FrameItem.Width != null &&
-              thisWbaseItem.StyleItem.FrameItem.Width < 0
-            )
-              thisWbaseItem.StyleItem.FrameItem.Width =
-                thisWbaseHTML.offsetWidth
-            if (
-              thisWbaseItem.StyleItem.FrameItem.Height != null &&
-              thisWbaseItem.StyleItem.FrameItem.Height < 0
-            )
-              thisWbaseItem.StyleItem.FrameItem.Height =
-                thisWbaseHTML.offsetHeight
-            let thisWbaseRect = thisWbaseHTML.getBoundingClientRect()
-            let offsetLevel1 = offsetScale(thisWbaseRect.x, thisWbaseRect.y)
-            let newParentRect = newParentHTML.getBoundingClientRect()
-            let parentOffLevel1 = offsetScale(newParentRect.x, newParentRect.y)
-            thisWbaseHTML.style.position = 'absolute'
-            updatePosition(
-              {
-                Left: offsetLevel1.x - parentOffLevel1.x,
-                Top: offsetLevel1.y - parentOffLevel1.y
-              },
-              thisWbaseItem
-            )
-            updateConstraints(thisWbaseItem)
-            newParentHTML.appendChild(thisWbaseHTML)
-          }
-        }
-        let children = wbase_list.filter(wbase =>
-          wbase.ListID.includes(thisWbaseItem.GID)
-        )
-        for (let j = 0; j < children.length; j++) {
-          let child_listID = children[j].ListID.split(',')
-          let index = child_listID.indexOf(thisWbaseItem.GID)
-          let new_listID = thisWbaseItem.ListID.split(',').concat(
-            child_listID.slice(index)
-          )
-          children[j].ListID = new_listID.join(',')
-          children[j].Level = new_listID.length
-          let childHTML = children[j].value
-          childHTML.setAttribute('level', new_listID.length)
-          childHTML.setAttribute('listid', new_listID.join(','))
-        }
-        let newParentChildren = [
-          ...newParentHTML.querySelectorAll(
-            `.wbaseItem-value[level="${newParent.Level + 1}"]`
-          )
-        ]
-        newParentChildren
-          .filter(
-            e => e.id != thisWbaseHTML.id && parseInt(e.style.zIndex) >= zIndex
-          )
-          .forEach(e => {
-            e.style.zIndex = parseInt(e.style.zIndex) + 1
-            e.style.order = parseInt(e.style.zIndex) + 1
-          })
-        newParentChildren.sort(
-          (a, b) =>
-            parseInt(window.getComputedStyle(a).zIndex) -
-            parseInt(window.getComputedStyle(b).zIndex)
-        )
-        let childrenWbase = wbase_list.filter(e => e.ParentID === newParentID)
-        for (let i = 0; i < newParentChildren.length; i++) {
-          let wbaseItemIndex = childrenWbase.find(
-            wb => wb.GID === newParentChildren[i].id
-          )
-          if (wbaseItemIndex) wbaseItemIndex.Sort = i
-          newParentChildren[i].style.order = i
-          newParentChildren[i].style.zIndex = i
-        }
-        newParent.ListChildID = newParentChildren.map(wb => wb.id)
-        newParent.CountChild = newParentChildren.length
-        listUpdate.push(newParent, thisWbaseItem)
-        WBaseDA.parent(listUpdate)
-      }
-      arrange()
-      replaceAllLyerItemHTML()
-      handleWbSelectedList([thisWbaseItem])
+        zIndex =
+          !pWb || pWb.value.classList.contains('w-stack')
+            ? $(wbHTML).index() + 1
+            : $(wbHTML).index() - 1
+        break
+      default:
+        break
     }
+    let newPWbHTML = pWb?.value ?? divSection
+    if (wb.ParentID !== new_parentID) {
+      if (wb.ParentID !== wbase_parentID) {
+        let oldPWb = wbase_list.find(e => e.GID === wb.ParentID)
+        oldPWb.ListChildID = oldPWb.ListChildID.filter(id => wb.GID != id)
+        if (oldPWb.value.classList.contains('w-table')) {
+          let listCell = oldPWb.TableRows.reduce((a, b) => a.concat(b))
+          ;[
+            ...oldPWb.value.querySelectorAll(
+              ':scope > .table-row > .table-cell'
+            )
+          ].forEach(cell => {
+            listCell.find(e => e.id === cell.id).contentid = [
+              ...cell.childNodes
+            ]
+              .map(e => e.id)
+              .join(',')
+          })
+          let wbaseChildren = [
+            ...oldPWb.value.querySelectorAll(
+              `.wbaseItem-value[level="${oldPWb.Level + 1}"]`
+            )
+          ]
+          for (let i = 0; i < wbaseChildren.length; i++) {
+            wbaseChildren[i].style.zIndex = i
+          }
+          WBaseDA.listData.push(oldPWb)
+        }
+        if (oldPWb.value.classList.contains('w-variant')) {
+          let listProperty = PropertyDA.list.filter(
+            e => e.BaseID === oldPWb.GID
+          )
+          for (let propertyItem of listProperty) {
+            propertyItem.BasePropertyItems =
+              propertyItem.BasePropertyItems.filter(e => e.BaseID != wb.GID)
+          }
+        }
+        listUpdate.push(oldPWb)
+      }
+      if (newPWbHTML.classList.contains('w-table')) {
+      } else if (
+        window.getComputedStyle(newPWbHTML).display.match('flex') &&
+        !wb.value.classList.contains('fixed-position')
+      ) {
+        wb.value.style.position = null
+        wb.value.style.left = null
+        wb.value.style.top = null
+        wb.value.style.right = null
+        wb.value.style.bottom = null
+        wb.value.style.transform = null
+        wb.value.setAttribute('parentid', new_parentID)
+        wb.Level = pWb.Level + 1
+        wb.value.setAttribute('level', wb.Level)
+        wb.ParentID = new_parentID
+      } else {
+        let wbRect = wb.value.getBoundingClientRect()
+        if (new_parentID !== wbase_parentID) {
+          var newPWbRect = newPWbHTML.getBoundingClientRect()
+        }
+        wb.value.style.left = `${(
+          (wbRect.x - (newPWbRect?.x ?? 0)) /
+          scale
+        ).toFixed(2)}px`
+        wb.value.style.top = `${(
+          (wbRect.y - (newPWbRect?.y ?? 0)) /
+          scale
+        ).toFixed(2)}px`
+        wb.value.style.right = 'unset'
+        wb.value.style.bottom = 'unset'
+        wb.value.style.transform = 'none'
+        wb.value.setAttribute('parentid', new_parentID)
+        wb.Level = pWb.Level + 1
+        wb.value.setAttribute('level', wb.Level)
+        wb.ParentID = new_parentID
+      }
+    }
+    let children = [
+      ...newPWbHTML.querySelectorAll(
+        `.wbaseItem-value[level="${
+          parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+        }"]`
+      )
+    ].filter(e => wb.GID !== e.id)
+    newPWbHTML.replaceChildren(
+      ...children.slice(0, zIndex + 1),
+      wb.value,
+      ...children.slice(zIndex + 1)
+    )
+    if (pWb) {
+      pWb.ListChildID = [
+        ...newPWbHTML.querySelectorAll(
+          `.wbaseItem-value[level="${pWb.Level + 1}"]`
+        )
+      ].map(e => e.id)
+      listUpdate.push(pWb)
+    } else {
+      listUpdate.unshift({
+        GID: wbase_parentID,
+        ListChildID: [
+          ...divSection.querySelectorAll(`.wbaseItem-value[level="1"]`)
+        ].filter(e => wb.GID !== e.id)
+      })
+    }
+    wb.Css = wb.value.style.cssText
+    listUpdate.push(wb)
+    replaceAllLyerItemHTML()
+    sortLayer = null
+    WBaseDA.parent(listUpdate)
   }
-  sortLayer?.remove()
-  sortLayer = undefined
 }
 
 function linkComptAndSkinDialog () {

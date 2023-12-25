@@ -187,6 +187,10 @@
   display: flex !important;
 }
 
+.layer_wbase_tile.opened + .col {
+  display: flex !important;
+}
+
 .col:has(> .col:not(:empty)) > .layer_wbase_tile > .prefix-btn {
   pointer-events: auto !important;
   visibility: visible !important;
@@ -208,6 +212,53 @@
 .layer_wbase_tile.selected[iswini="true"],
 .layer_wbase_tile.selected[isinstance="true"] + .col .layer_wbase_tile {
   background-color: #ebe6ff;
+}
+
+.layer_wbase_tile.onhover {
+  border-color: #1890ff;
+}
+
+.layer_wbase_tile.onhover:is(*[iswini="true"], *[isinstance="true"]) {
+  border-color: #7b61ff;
+}
+
+.col:has(> .onsort) > * {
+  pointer-events: none !important;
+}
+
+.col:has(.onsort) .layer_wbase_tile {
+  pointer-events: none !important;
+}
+
+.onsort {
+  position: relative;
+}
+
+.onsort:not(*[sort-position="inside"]):after {
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  content: "";
+  height: 2px;
+  background-color: #262626;
+  width: calc(100% - var(--spacing));
+}
+
+.onsort[sort-position="top"]::after {
+  top: -1px;
+  bottom: unset;
+}
+
+.onsort[sort-position="outside"]::after {
+  width: calc(100% - var(--spacing) + 16px);
+}
+
+.onsort[sort-position="inside"] {
+  border-color: #1890ff;
+}
+
+.onsort[sort-position="inside"]:is(*[iswini="true"], *[isinstance="true"]) {
+  border-color: #7b61FF;
 }
 
 #Assets > .col > .col {
