@@ -209,7 +209,7 @@
   background-color: #ebe6ff;
 }
 
-.layer_wbase_tile.selected[iswini="true"],
+.layer_wbase_tile.selected[iswini="true"] + .col .layer_wbase_tile,
 .layer_wbase_tile.selected[isinstance="true"] + .col .layer_wbase_tile {
   background-color: #ebe6ff;
 }
@@ -258,7 +258,7 @@
 }
 
 .onsort[sort-position="inside"]:is(*[iswini="true"], *[isinstance="true"]) {
-  border-color: #7b61FF;
+  border-color: #7b61ff;
 }
 
 #Assets > .col > .col {
