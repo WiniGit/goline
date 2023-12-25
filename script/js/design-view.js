@@ -786,24 +786,22 @@ function EditLayoutBlock () {
       isVertical: isVertical,
       value:
         mainAxisToAlign(
-          wbList[0].value.style.getPropertyValue('--main-axis-align') ??
-            StyleDA.docStyleSheets
-              .find(cssRule =>
-                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                  wbList[0].value
-                )
+          wbList[0].value.style.justifyContent ??
+            StyleDA.docStyleSheets.find(cssRule =>
+              [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                wbList[0].value
               )
-              ?.style?.getPropertyValue('--main-axis-align')
+            )?.style?.justifyContent,
+          !isVertical
         ) +
         crossAxisToAlign(
-          wbList[0].value.style.getPropertyValue('--cross-axis-align') ??
-            StyleDA.docStyleSheets
-              .find(cssRule =>
-                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                  wbList[0].value
-                )
+          wbList[0].value.style.alignItems ??
+            StyleDA.docStyleSheets.find(cssRule =>
+              [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                wbList[0].value
               )
-              ?.style?.getPropertyValue('--cross-axis-align')
+            )?.style?.alignItems,
+          !isVertical
         )
     })
     let btn_extension = document.createElement('i')
@@ -1433,6 +1431,18 @@ function checkActiveFillHug ({ type = 'fill', isW = true }) {
           wb.value.classList.contains('w-table')
         )
           return true
+        if (
+          isW &&
+          (wb.value.getAttribute('constx') === Constraints.left_right ||
+            wb.value.getAttribute('constx') === Constraints.scale)
+        )
+          return false
+        if (
+          !isW &&
+          (wb.value.getAttribute('constx') === Constraints.top_bottom ||
+            wb.value.getAttribute('constx') === Constraints.scale)
+        )
+          return false
         let wbComputeSt = window.getComputedStyle(wb.value)
         if (
           wbComputeSt.display === 'flex' &&
@@ -1532,13 +1542,15 @@ function EditBackgroundBlock () {
     if (wbBg[0] === 'none') {
       wbBg = selected_list.filterAndMap(wb => {
         let bgColor =
-          wb.value.style?.backgroundColor ??
-          StyleDA.docStyleSheets.find(cssRule =>
-            [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-              wb.value
-            )
-          )?.style?.backgroundColor
-        return bgColor?.replace(/(var\(--|\))/g, '')
+          wb.value.style?.backgroundColor?.length > 0
+            ? wb.value.style.backgroundColor
+            : StyleDA.docStyleSheets.find(cssRule =>
+                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                  wb.value
+                )
+              )?.style?.backgroundColor
+        if (bgColor?.match(uuid4Regex)) return bgColor?.match(uuid4Regex)[0]
+        else return bgColor?.length === 0 ? null : bgColor
       })
       if (wbBg.length === 1 && wbBg[0]?.length > 0) {
         if (wbBg[0].length === 36) {

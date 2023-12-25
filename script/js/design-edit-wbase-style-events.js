@@ -1488,7 +1488,9 @@ function handleEditOffset ({
             }
           }
         }
-        cssRule.style.width = wb.value.classList.contains('w-text') ? 'max-content' : null
+        cssRule.style.width = wb.value.classList.contains('w-text')
+          ? 'max-content'
+          : null
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
@@ -1679,7 +1681,9 @@ function handleEditOffset ({
             }
           }
         }
-        cssRule.style.width = wb.value.classList.contains('w-text') ? 'max-content' : null
+        cssRule.style.width = wb.value.classList.contains('w-text')
+          ? 'max-content'
+          : null
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
         cssRule.style.width = '100%'
@@ -2381,23 +2385,51 @@ function handleEditOffset ({
     } else {
     }
   } else if (typeof isClip === 'boolean') {
-    if (selected_list[0].StyleItem) {
+    if (selected_list[0].Css || selected_list[0].IsInstance) {
       for (let wb of selected_list) {
-        wb.value.style.overflow = isClip ? 'hidden' : null
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.overflow = isClip
+            ? wbComputeSt.overflow.replace('visible', 'hidden')
+            : wbComputeSt.overflow.replace('hidden', 'visible')
+          if (cssRule.style.overflow === 'visible')
+            cssRule.style.overflow = null
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+        } else {
+          wb.value.style.overflow = isClip
+            ? wbComputeSt.overflow.replace('visible', 'hidden')
+            : wbComputeSt.overflow.replace('hidden', 'visible')
+          if (wb.value.style.overflow === 'visible')
+            wb.value.style.overflow = null
+          wb.Css = wb.value.style.cssText
+          listUpdate.push(wb)
+        }
         wb.Css = wb.value.style.cssText
       }
-      listUpdate.push(...selected_list)
-      WBaseDA.edit(listUpdate, EnumObj.wBase)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = selected_list[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
         let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        cssRule.style.overflow = isClip ? 'hidden' : null
+        cssRule.style.overflow = isClip
+            ? wbComputeSt.overflow.replace('visible', 'hidden')
+            : wbComputeSt.overflow.replace('hidden', 'visible')
+          if (cssRule.style.overflow === 'visible')
+            cssRule.style.overflow = null
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -7753,7 +7785,7 @@ function changeProperty (variantID) {
       let newWbaseList = createNewWbase({
         wb: copy,
         relativeWbs: assets_list,
-        listId: selectedWbase.ListID,
+        listId: selectedWbase.ListID
       })
       listUpdate.push(...newWbaseList)
       let newWbaseSelect = newWbaseList.pop()
