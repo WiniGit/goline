@@ -1215,6 +1215,10 @@ function endDragSortLayer () {
         window.getComputedStyle(newPWbHTML).display.match('flex') &&
         !wb.value.classList.contains('fixed-position')
       ) {
+        if (wb.value.style.width === 'auto')
+          wb.value.style.width = wb.value.offsetWidth + 'px'
+        if (wb.value.style.height === 'auto')
+          wb.value.style.height = wb.value.offsetHeight + 'px'
         wb.value.style.position = null
         wb.value.style.left = null
         wb.value.style.top = null
@@ -1230,6 +1234,10 @@ function endDragSortLayer () {
         if (new_parentID !== wbase_parentID) {
           var newPWbRect = newPWbHTML.getBoundingClientRect()
         }
+        if (wb.value.getAttribute('width-type') === 'fill')
+          wb.value.style.width = wb.value.offsetWidth + 'px'
+        if (wb.value.getAttribute('height-type') === 'fill')
+          wb.value.style.height = wb.value.offsetHeight + 'px'
         wb.value.style.left = `${(
           (wbRect.x - (newPWbRect?.x ?? 0)) /
           scale
@@ -1238,6 +1246,8 @@ function endDragSortLayer () {
           (wbRect.y - (newPWbRect?.y ?? 0)) /
           scale
         ).toFixed(2)}px`
+
+        wb.value.style.flex = null
         wb.value.style.right = 'unset'
         wb.value.style.bottom = 'unset'
         wb.value.style.transform = 'none'
