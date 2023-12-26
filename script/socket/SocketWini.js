@@ -539,17 +539,20 @@ socket.on('server-post', data => {
         CateDA.convertData(CateDA.list)
         switch (StyleDA.newSkin.Type) {
           case EnumCate.color:
-            if (
-              document
-                .getElementById('popup_table_skin')
-                .getAttribute('edit-typo')
-            ) {
-              handleEditTypo({ colorSkin: StyleDA.newSkin })
-              reloadEditTypoBlock()
-            } else {
-              handleEditBackground({ colorSkin: StyleDA.newSkin })
-              reloadEditBackgroundBlock()
+            const editType = document
+              .getElementById('popup_table_skin')
+              .getAttribute('edit-type')
+            switch (editType) {
+              case 'typo':
+                handleEditTypo({ colorSkin: StyleDA.newSkin })
+                reloadEditTypoBlock()
+                break
+              default:
+                handleEditBackground({ colorSkin: StyleDA.newSkin })
+                reloadEditBackgroundBlock()
+                break
             }
+
             break
           case EnumCate.typography:
             handleEditTypo({ typoSkin: StyleDA.newSkin })

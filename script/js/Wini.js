@@ -164,7 +164,7 @@ function keyUpEvent (event) {
         if (isCtrlKey && event.shiftKey) {
           // shiftCtrlZ();
         } else if (isCtrlKey && action_list.length > 0) {
-          ctrlZ()
+          // ctrlZ()
         }
         keyid = 'escape'
         break

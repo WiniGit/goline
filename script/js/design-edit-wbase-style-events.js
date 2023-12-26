@@ -2426,10 +2426,9 @@ function handleEditOffset ({
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.overflow = isClip
-            ? wbComputeSt.overflow.replace('visible', 'hidden')
-            : wbComputeSt.overflow.replace('hidden', 'visible')
-          if (cssRule.style.overflow === 'visible')
-            cssRule.style.overflow = null
+          ? wbComputeSt.overflow.replace('visible', 'hidden')
+          : wbComputeSt.overflow.replace('hidden', 'visible')
+        if (cssRule.style.overflow === 'visible') cssRule.style.overflow = null
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -3956,8 +3955,8 @@ function unlinkColorSkin () {
 }
 
 function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
-  let listUpdate = selected_list.filter(
-    wb => !wb.value.classList.contains('w-text')
+  let listUpdate = selected_list.filter(wb =>
+    ['w-text', 'w-svg'].every(e => !wb.value.classList.contains(e))
   )
   if (colorSkin) {
     if (listUpdate[0].Css || listUpdate[0].IsInstance) {
@@ -3968,9 +3967,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.backgroundImage = null
-          if (wb.value.classList.contains('w-svg')) {
-            // getColorSvg(wb)
-          } else if (
+          if (
             ['w-radio', 'w-switch', 'w-checkbox'].some(e =>
               cssRule.classList.contains(e)
             )
@@ -3990,9 +3987,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
           listUpdate = listUpdate.filter(e => e !== wb)
         } else {
           wb.value.style.backgroundImage = null
-          if (wb.value.classList.contains('w-svg')) {
-            // getColorSvg(wb)
-          } else if (
+          if (
             ['w-radio', 'w-switch', 'w-checkbox'].some(e =>
               wb.value.classList.contains(e)
             )
@@ -4018,9 +4013,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.backgroundImage = null
-        if (wb.value.classList.contains('w-svg')) {
-          // getColorSvg(wb)
-        } else if (
+        if (
           ['w-radio', 'w-switch', 'w-checkbox'].some(e =>
             cssRule.classList.contains(e)
           )
@@ -4048,9 +4041,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
             [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
           )
           cssRule.style.backgroundImage = null
-          if (wb.value.classList.contains('w-svg')) {
-            // getColorSvg(wb)
-          } else if (
+          if (
             ['w-radio', 'w-switch', 'w-checkbox'].some(e =>
               cssRule.classList.contains(e)
             )
@@ -4067,9 +4058,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
           listUpdate = listUpdate.filter(e => e !== wb)
         } else {
           wb.value.style.backgroundImage = null
-          if (wb.value.classList.contains('w-svg')) {
-            // getColorSvg(wb)
-          } else if (
+          if (
             ['w-radio', 'w-switch', 'w-checkbox'].some(e =>
               wb.value.classList.contains(e)
             )
@@ -4092,9 +4081,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
         cssRule.style.backgroundImage = null
-        if (wb.value.classList.contains('w-svg')) {
-          // getColorSvg(wb)
-        } else if (
+        if (
           ['w-radio', 'w-switch', 'w-checkbox'].some(e =>
             cssRule.classList.contains(e)
           )
@@ -4110,18 +4097,9 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
       }
       if (onSubmit) StyleDA.editStyleSheet(cssItem)
     }
-  } else if (image && !image.endsWith('.svg')) {
-    listUpdate = listUpdate.filter(wb =>
-      EnumCate.noImgBg.every(ct => wb.CateID !== ct)
-    )
-    if (listUpdate[0].StyleItem) {
+  } else if (image) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
       for (let wb of [...listUpdate]) {
-        wb.StyleItem.DecorationItem.ColorID = null
-        wb.StyleItem.DecorationItem.ColorValue = image.replaceAll(' ', '%20')
-        wb.value.style.backgroundColor = null
-        wb.value.style.backgroundImage = `url(${
-          urlImg + image.replaceAll(' ', '%20')
-        })`
         if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
           let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4136,9 +4114,16 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
             cssRule.cssText
           )
           StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.backgroundColor = null
+          wb.value.style.backgroundImage = `url(${
+            urlImg + image.replaceAll(' ', '%20')
+          })`
+          wb.Css = wb.value.style.cssText
         }
       }
-      WBaseDA.edit(listUpdate, EnumObj.decoration)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.decoration)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -4158,6 +4143,89 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
         )
       }
       StyleDA.editStyleSheet(cssItem)
+    }
+  }
+}
+
+function handleEditIconColor ({ prop, hexCode, colorSkin, onSubmit = true }) {
+  let listUpdate = selected_list.filter(wb =>
+    wb.value.classList.contains('w-svg')
+  )
+  if (colorSkin) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
+      for (let wb of [...listUpdate]) {
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.setProperty(prop, `var(--${colorSkin.GID})`)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.setProperty(prop, `var(--${colorSkin.GID})`)
+          wb.Css = wb.value.style.cssText
+        }
+      }
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.setProperty(prop, `var(--${colorSkin.GID})`)
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (hexCode !== undefined) {
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
+      for (let wb of [...listUpdate]) {
+        if (wb.IsWini) {
+          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+          let cssRule = StyleDA.docStyleSheets.find(e =>
+            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+          )
+          cssRule.style.setProperty(prop, hexCode)
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          if (onSubmit) StyleDA.editStyleSheet(cssItem)
+          listUpdate = listUpdate.filter(e => e !== wb)
+        } else {
+          wb.value.style.setProperty(prop, hexCode)
+          wb.Css = wb.value.style.cssText
+        }
+      }
+      if (onSubmit && listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.setProperty(prop, hexCode)
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      if (onSubmit) StyleDA.editStyleSheet(cssItem)
     }
   }
 }

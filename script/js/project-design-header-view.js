@@ -21,7 +21,7 @@ function createNewSkin (skinType, skinValue) {
     {
       GID: uuidv4(),
       ProjectID: ProjectDA.obj.ID,
-      Css: skinValue,
+      Css: skinValue.length === 7 ? `${skinValue}ff` : skinValue,
       Type: skinType
     },
     input_value.replace('\\', '/').split('/'),
@@ -31,16 +31,23 @@ function createNewSkin (skinType, skinValue) {
       document.documentElement.style.setProperty(`--${skin.GID}`, skin.Css)
       switch (skinType) {
         case EnumCate.color:
-          if (
-            document
-              .getElementById('popup_table_skin')
-              .getAttribute('edit-typo')
-          ) {
-            handleEditTypo({ colorSkin: skin })
-            reloadEditTypoBlock()
-          } else {
-            handleEditBackground({ colorSkin: skin })
-            reloadEditBackgroundBlock()
+          const editType = document
+            .getElementById('popup_table_skin')
+            .getAttribute('edit-type')
+          switch (editType) {
+            case 'typo':
+              handleEditTypo({ colorSkin: skin })
+              reloadEditTypoBlock()
+              break
+            default:
+              if (editType) {
+                handleEditIconColor({ prop: editType, colorSkin: jsonSkin })
+                reloadEditIconColorBlock()
+              } else {
+                handleEditBackground({ colorSkin: jsonSkin })
+                reloadEditBackgroundBlock()
+              }
+              break
           }
           break
         case EnumCate.typography:

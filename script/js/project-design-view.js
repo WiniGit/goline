@@ -1419,775 +1419,775 @@ function handlePopupDispose (elementHTML, callback) {
   }
 }
 
-function ctrlZ () {
-  if (action_index >= 0) {
-    let action = action_list[action_index]
-    action_index--
-    WBaseDA.isCtrlZ = true
-    console.log('ctrlz action: ', action_list, action_index)
-    let listUpdate = []
-    switch (action.enumEvent) {
-      case EnumEvent.add:
-        if (action.enumObj === EnumObj.wBase) {
-          let preAction = action_list[action_index]
-          let oldSelectList = preAction?.selected ?? []
-          let deletItems = wbase_list.filter(e =>
-            action.selected.some(selectItem => selectItem.GID === e.GID)
-          )
-          if (deletItems.length > 0) WBaseDA.delete(deletItems)
-          handleWbSelectedList(
-            oldSelectList.length
-              ? wbase_list.filter(e =>
-                  oldSelectList.some(selectItem => selectItem.GID === e.GID)
-                )
-              : []
-          )
-        } else {
-          // add style for decoration
-          let preAction = action_list[action_index]
-          let oldSelectList = preAction?.selected ?? []
-          if (preAction) {
-            oldSelectList = oldSelectList.map(e =>
-              JSON.parse(JSON.stringify(e))
-            )
-            listUpdate.push(...oldSelectList)
-            if (
-              [
-                EnumObj.frame,
-                EnumObj.position,
-                EnumObj.framePosition,
-                EnumObj.autoLayoutFrame,
-                EnumObj.padddingWbaseFrame
-              ].some(e => e === action.enumObj)
-            ) {
-              listUpdate.push(
-                ...preAction.oldData
-                  .map(e => JSON.parse(JSON.stringify(e)))
-                  .filter(
-                    e =>
-                      isInRange(e.Level, 0, oldSelectList[0].Level - 1) ||
-                      e.Level > oldSelectList[0].Level + 1
-                  )
-              )
-            }
-            listUpdate = listUpdate.filter(updateItem =>
-              wbase_list.some(e => updateItem.GID === e.GID)
-            )
-            wbase_list = wbase_list.filter(wbaseItem =>
-              listUpdate.every(e => wbaseItem.GID !== e.GID)
-            )
-            wbase_list.push(...listUpdate)
-            arrange()
-            arrange(listUpdate)
-            let parentLevel = Math.min(...listUpdate.map(e => e.Level))
-            for (let wbaseItem of listUpdate) {
-              initComponents(
-                wbaseItem,
-                wbase_list.filter(e => e.ParentID === wbaseItem.GID),
-                wbaseItem.Level > parentLevel
-              )
-              if (wbaseItem.Level === 1 || wbaseItem.Level === parentLevel) {
-                let parentHTML = divSection
-                if (wbaseItem.Level > 1)
-                  parentHTML = document.getElementById(wbaseItem.ParentID)
-                switch (parseInt(parentHTML.getAttribute('cateid'))) {
-                  case EnumCate.tree:
-                    createTree(
-                      wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                      wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                    )
-                    break
-                  case EnumCate.table:
-                    createTable(
-                      wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                      wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                    )
-                    break
-                  default:
-                    let oldValue = document.getElementById(wbaseItem.GID)
-                    if (
-                      !window.getComputedStyle(parentHTML).display.match('flex')
-                    ) {
-                      initPositionStyle(wbaseItem)
-                    }
-                    if (oldValue) {
-                      oldValue.replaceWith(wbaseItem.value)
-                    } else {
-                      parentHTML.appendChild(wbaseItem.value)
-                    }
-                    break
-                }
-                wbaseItem.value.id = wbaseItem.GID
-              }
-            }
-            WBaseDA.edit(listUpdate, action.enumObj)
-          }
-          handleWbSelectedList(
-            listUpdate.filter(e => oldSelectList.some(el => e.GID === el.GID))
-          )
-        }
-        break
-      case EnumEvent.edit:
-        var preAction = action_list[action_index]
-        var oldSelectList = preAction?.selected ?? []
-        if (preAction) {
-          oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
-          let oldWBaseList = [
-            ...oldSelectList,
-            ...preAction.oldData
-              .map(e => JSON.parse(JSON.stringify(e)))
-              .filter(e => e.Level > 0)
-          ]
-          listUpdate = [
-            ...action.selected,
-            ...action.oldData.filter(e => e.Level > 0)
-          ].map(e => JSON.parse(JSON.stringify(e)))
-          let listDelete = listUpdate.filter(e => {
-            let check =
-              e.Level > 0 && oldWBaseList.every(oldE => oldE.GID !== e.GID)
-            if (check) {
-              e.IsDeleted = true
-              document.getElementById(e.GID)?.remove()
-            }
-            return check
-          })
-          oldWBaseList = oldWBaseList.filter(updateItem =>
-            wbase_list.some(e => updateItem.GID === e.GID)
-          )
-          wbase_list = wbase_list.filter(e =>
-            listUpdate.every(el => el.GID !== e.GID)
-          )
-          wbase_list.push(...oldWBaseList)
-          arrange()
-          arrange(oldWBaseList)
-          let parentLevel = Math.min(...oldWBaseList.map(e => e.Level))
-          for (let wbaseItem of oldWBaseList) {
-            initComponents(
-              wbaseItem,
-              wbase_list.filter(e => e.ParentID === wbaseItem.GID),
-              wbaseItem.Level > parentLevel
-            )
-            if (wbaseItem.Level === 1 || wbaseItem.Level === parentLevel) {
-              let parentHTML = divSection
-              if (wbaseItem.Level > 1)
-                parentHTML = document.getElementById(wbaseItem.ParentID)
-              switch (parseInt(parentHTML.getAttribute('cateid'))) {
-                case EnumCate.tree:
-                  createTree(
-                    wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                    wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                  )
-                  break
-                case EnumCate.table:
-                  createTable(
-                    wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                    wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                  )
-                  break
-                default:
-                  let oldValue = document.getElementById(wbaseItem.GID)
-                  if (
-                    !window.getComputedStyle(parentHTML).display.match('flex')
-                  ) {
-                    initPositionStyle(wbaseItem)
-                  }
-                  if (oldValue) {
-                    try {
-                      oldValue?.replaceWith(wbaseItem.value)
-                    } catch (error) {}
-                  } else {
-                    parentHTML.appendChild(wbaseItem.value)
-                  }
-                  break
-              }
-              wbaseItem.value.id = wbaseItem.GID
-            }
-          }
-          replaceAllLyerItemHTML()
-          if (listDelete.length > 0) {
-            WBaseDA.parent([...listDelete, ...oldWBaseList])
-          } else {
-            WBaseDA.edit(oldWBaseList, action.enumObj)
-          }
-          if (
-            oldSelectList.length === 1 &&
-            (oldSelectList[0].isNew || oldSelectList[0].isEditting)
-          ) {
-            oldSelectList[0].value = document.getElementById(
-              oldSelectList[0].GID
-            )
-            if (oldSelectList[0].value) {
-              oldSelectList[0].value.contentEditable = true
-              oldSelectList[0].value.setAttribute('isCtrlZ', 'true')
-              oldSelectList[0].value.focus()
-            }
-          }
-          handleWbSelectedList(
-            oldWBaseList.filter(e => oldSelectList.some(el => e.GID === el.GID))
-          )
-        } else {
-          let deleteItems = wbase_list.filter(e =>
-            action.selected.some(selectItem => selectItem.GID === e.GID)
-          )
-          if (deleteItems.length > 0) WBaseDA.delete(deleteItems)
-          handleWbSelectedList(
-            oldSelectList.length
-              ? wbase_list.filter(e =>
-                  oldSelectList.some(selectItem => selectItem.GID === e.GID)
-                )
-              : []
-          )
-        }
-        break
-      case EnumEvent.parent:
-        var preAction = action_list[action_index]
-        var oldSelectList = preAction?.selected ?? []
-        if (preAction) {
-          oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
-          let oldWBaseList = [
-            ...oldSelectList,
-            ...preAction.oldData
-              .map(e => JSON.parse(JSON.stringify(e)))
-              .filter(e => e.Level > 0)
-          ]
-          let oldParentLevel = Math.min(...preAction.oldData.map(e => e.Level))
-          let newParentLevel = Math.min(...action.oldData.map(e => e.Level))
-          let oldParent = oldWBaseList.find(e => e.Level === oldParentLevel)
-          let newParent = JSON.parse(
-            JSON.stringify(action.oldData.find(e => e.Level === newParentLevel))
-          )
-          listUpdate.push(...oldWBaseList)
-          if (oldWBaseList.every(e => e.GID !== newParent.GID)) {
-            newParent.ListChildID = newParent.ListChildID.filter(id =>
-              action.selected.every(e => e.GID !== id)
-            )
-            newParent.CountChild = newParent.ListChildID.length
-            if (oldParent?.CateID === EnumCate.variant) {
-              PropertyDA.list = PropertyDA.list.filter(
-                e => e.BaseID !== oldParent.GID
-              )
-              PropertyDA.list.push(...oldParent.PropertyItems)
-            }
-            if (newParent.Level > 0) listUpdate.push(newParent)
-          }
-          listUpdate = listUpdate.filter(updateItem =>
-            wbase_list.some(e => updateItem.GID === e.GID)
-          )
-          wbase_list = wbase_list.filter(e =>
-            listUpdate.every(el => el.GID !== e.GID)
-          )
-          wbase_list.push(...listUpdate)
-          arrange()
-          arrange(listUpdate)
-          action.selected.forEach(e => document.getElementById(e.GID)?.remove())
-          for (let wbaseItem of listUpdate) {
-            let children = wbase_list.filter(e => e.ParentID === wbaseItem.GID)
-            initComponents(
-              wbaseItem,
-              children,
-              wbaseItem.GID !== oldParent?.GID &&
-                wbaseItem.GID !== newParent.GID
-            )
-            wbaseItem.value
-              .querySelectorAll(
-                `.wbaseItem-value[level="${wbaseItem.Level + 1}"]`
-              )
-              .forEach(child => {
-                let zIndex = wbaseItem.ListChildID.indexOf(child.id)
-                children.find(e => e.GID === child.id).Sort = zIndex
-                child.style.zIndex = zIndex
-                child.style.order = zIndex
-              })
-            if (
-              wbaseItem.GID === oldParent?.GID ||
-              wbaseItem.GID === newParent.GID
-            ) {
-              let parentHTML = divSection
-              if (wbaseItem.Level > 1)
-                parentHTML = document.getElementById(wbaseItem.ParentID)
-              switch (parseInt(parentHTML?.getAttribute('cateid') ?? '0')) {
-                case EnumCate.tree:
-                  createTree(
-                    wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                    wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                  )
-                  break
-                case EnumCate.table:
-                  createTable(
-                    wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                    wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                  )
-                  break
-                default:
-                  let oldValue = document.getElementById(wbaseItem.GID)
-                  if (
-                    !window.getComputedStyle(parentHTML).display.match('flex')
-                  ) {
-                    initPositionStyle(wbaseItem)
-                  }
-                  if (oldValue) {
-                    oldValue?.replaceWith(wbaseItem.value)
-                  } else {
-                    parentHTML.appendChild(wbaseItem.value)
-                  }
-                  break
-              }
-              wbaseItem.value.id = wbaseItem.GID
-            }
-          }
-          replaceAllLyerItemHTML()
-          WBaseDA.parent(listUpdate)
-        }
-        handleWbSelectedList(
-          listUpdate.filter(e => oldSelectList.some(el => e.GID === el.GID))
-        )
-        break
-      case EnumEvent.unDelete:
-        break
-      case EnumEvent.delete:
-        var preAction = action_list[action_index]
-        var oldSelectList = preAction?.selected ?? []
-        if (preAction) {
-          oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
-          listUpdate.push(
-            ...oldSelectList,
-            ...preAction.oldData
-              .map(e => JSON.parse(JSON.stringify(e)))
-              .filter(e => e.Level > 0)
-          )
-          wbase_list = wbase_list.filter(e =>
-            listUpdate.every(el => el.GID !== e.GID)
-          )
-          wbase_list.push(...listUpdate)
-          arrange()
-          arrange(listUpdate)
-          let parentLevel = Math.min(...listUpdate.map(e => e.Level))
-          for (let wbaseItem of listUpdate) {
-            wbaseItem.IsDeleted = false
-            if (wbaseItem.CateID == EnumCate.variant) {
-              PropertyDA.list = PropertyDA.list.filter(
-                e => e.BaseID !== wbaseItem.GID
-              )
-              PropertyDA.list.push(...wbaseItem.PropertyItems)
-            }
-            if (
-              wbaseItem.BasePropertyItems &&
-              wbaseItem.BasePropertyItems.length > 0
-            ) {
-              for (let baseProperty of wbaseItem.BasePropertyItems) {
-                let propertyItem = PropertyDA.list.find(
-                  e => e.GID === baseProperty.PropertyID
-                )
-                propertyItem.BasePropertyItems =
-                  propertyItem.BasePropertyItems.filter(
-                    e => e.GID != baseProperty.GID
-                  )
-                propertyItem.BasePropertyItems.push(baseProperty)
-              }
-            }
-            let children = wbase_list.filter(e => e.ParentID === wbaseItem.GID)
-            initComponents(wbaseItem, children, wbaseItem.Level > parentLevel)
-            wbaseItem.value
-              .querySelectorAll(
-                `.wbaseItem-value[level="${wbaseItem.Level + 1}"]`
-              )
-              .forEach(child => {
-                let zIndex = wbaseItem.ListChildID.indexOf(child.id)
-                children.find(e => e.GID === child.id).Sort = zIndex
-                child.style.zIndex = zIndex
-                child.style.order = zIndex
-              })
-            if (wbaseItem.Level === 1 || wbaseItem.Level === parentLevel) {
-              let parentHTML = divSection
-              if (wbaseItem.Level > 1)
-                parentHTML = document.getElementById(wbaseItem.ParentID)
-              switch (parseInt(parentHTML.getAttribute('cateid'))) {
-                case EnumCate.tree:
-                  createTree(
-                    wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                    wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                  )
-                  break
-                case EnumCate.table:
-                  createTable(
-                    wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                    wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                  )
-                  break
-                default:
-                  let oldValue = document.getElementById(wbaseItem.GID)
-                  if (
-                    !window.getComputedStyle(parentHTML).display.match('flex')
-                  ) {
-                    initPositionStyle(wbaseItem)
-                  }
-                  if (oldValue) {
-                    oldValue?.replaceWith(wbaseItem.value)
-                  } else {
-                    parentHTML.appendChild(wbaseItem.value)
-                  }
-                  break
-              }
-              wbaseItem.value.id = wbaseItem.GID
-            }
-          }
-          replaceAllLyerItemHTML()
-          if (oldSelectList.length === 1 && oldSelectList[0].isNew) {
-            oldSelectList[0].value.contentEditable = true
-            oldSelectList[0].value.setAttribute('isCtrlZ', 'true')
-            oldSelectList[0].value.focus()
-          } else {
-            WBaseDA.unDelete(listUpdate)
-          }
-        }
-        handleWbSelectedList(oldSelectList)
-        break
-      case EnumEvent.edit_delete:
-        var preAction = action_list[action_index]
-        var oldSelectList = preAction?.selected ?? []
-        if (preAction) {
-          oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
-          let oldWBaseList = [
-            ...oldSelectList,
-            ...preAction.oldData
-              .map(e => JSON.parse(JSON.stringify(e)))
-              .filter(e => e.Level > 0)
-          ]
-          let unDeleteList = []
-          wbase_list = wbase_list.filter(e =>
-            oldWBaseList.every(el => el.GID !== e.GID)
-          )
-          wbase_list.push(...oldWBaseList)
-          arrange()
-          arrange(oldWBaseList)
-          let parentLevel = Math.min(...oldWBaseList.map(e => e.Level))
-          for (let wbaseItem of oldWBaseList) {
-            if (
-              [...action.selected, ...action.oldData].every(
-                el => el.GID !== wbaseItem.GID
-              )
-            ) {
-              wbaseItem.IsDeleted = false
-              unDeleteList.push(wbaseItem)
-            } else {
-              listUpdate.push(wbaseItem)
-            }
-            initComponents(
-              wbaseItem,
-              wbase_list.filter(e => e.ParentID === wbaseItem.GID),
-              wbaseItem.Level > parentLevel
-            )
-            if (wbaseItem.Level === 1 || wbaseItem.Level === parentLevel) {
-              let parentHTML = divSection
-              if (wbaseItem.Level > 1)
-                parentHTML = document.getElementById(wbaseItem.ParentID)
-              switch (parseInt(parentHTML.getAttribute('cateid'))) {
-                case EnumCate.tree:
-                  createTree(
-                    wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                    wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                  )
-                  break
-                case EnumCate.table:
-                  createTable(
-                    wbase_list.find(e => e.GID === wbaseItem.ParentID),
-                    wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
-                  )
-                  break
-                default:
-                  let oldValue = document.getElementById(wbaseItem.GID)
-                  if (
-                    !window.getComputedStyle(parentHTML).display.match('flex')
-                  ) {
-                    initPositionStyle(wbaseItem)
-                  }
-                  if (oldValue) {
-                    try {
-                      oldValue?.replaceWith(wbaseItem.value)
-                    } catch (error) {}
-                  } else {
-                    parentHTML.appendChild(wbaseItem.value)
-                  }
-                  break
-              }
-              wbaseItem.value.id = wbaseItem.GID
-            }
-          }
-          replaceAllLyerItemHTML()
-          WBaseDA.unDelete(unDeleteList)
-          WBaseDA.edit(listUpdate, action.enumObj)
-          if (
-            oldSelectList.length === 1 &&
-            (oldSelectList[0].isNew || oldSelectList[0].isEditting)
-          ) {
-            oldSelectList[0].value.contentEditable = true
-            oldSelectList[0].value.setAttribute('isCtrlZ', 'true')
-            oldSelectList[0].value.focus()
-          }
-        }
-        handleWbSelectedList(oldSelectList)
-        break
-      default: // usually event select
-        var preAction = action_list[action_index]
-        var oldSelectList = preAction?.selected ?? []
-        if (preAction) {
-          oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
-          if (
-            oldSelectList.length === 1 &&
-            (oldSelectList[0].isNew || oldSelectList[0].isEditting)
-          ) {
-            oldSelectList[0].value = document.getElementById(
-              oldSelectList[0].GID
-            )
-            if (oldSelectList[0].value) {
-              oldSelectList[0].value.contentEditable = true
-              oldSelectList[0].value.setAttribute('isCtrlZ', 'true')
-              oldSelectList[0].value.focus()
-            }
-          }
-        }
-        handleWbSelectedList(
-          wbase_list.filter(e =>
-            oldSelectList.some(selectItem => e.GID === selectItem.GID)
-          )
-        )
-        break
-    }
-  } else {
-    handleWbSelectedList()
-  }
-  WBaseDA.isCtrlZ = false
-}
+// function ctrlZ () {
+//   if (action_index >= 0) {
+//     let action = action_list[action_index]
+//     action_index--
+//     WBaseDA.isCtrlZ = true
+//     console.log('ctrlz action: ', action_list, action_index)
+//     let listUpdate = []
+//     switch (action.enumEvent) {
+//       case EnumEvent.add:
+//         if (action.enumObj === EnumObj.wBase) {
+//           let preAction = action_list[action_index]
+//           let oldSelectList = preAction?.selected ?? []
+//           let deletItems = wbase_list.filter(e =>
+//             action.selected.some(selectItem => selectItem.GID === e.GID)
+//           )
+//           if (deletItems.length > 0) WBaseDA.delete(deletItems)
+//           handleWbSelectedList(
+//             oldSelectList.length
+//               ? wbase_list.filter(e =>
+//                   oldSelectList.some(selectItem => selectItem.GID === e.GID)
+//                 )
+//               : []
+//           )
+//         } else {
+//           // add style for decoration
+//           let preAction = action_list[action_index]
+//           let oldSelectList = preAction?.selected ?? []
+//           if (preAction) {
+//             oldSelectList = oldSelectList.map(e =>
+//               JSON.parse(JSON.stringify(e))
+//             )
+//             listUpdate.push(...oldSelectList)
+//             if (
+//               [
+//                 EnumObj.frame,
+//                 EnumObj.position,
+//                 EnumObj.framePosition,
+//                 EnumObj.autoLayoutFrame,
+//                 EnumObj.padddingWbaseFrame
+//               ].some(e => e === action.enumObj)
+//             ) {
+//               listUpdate.push(
+//                 ...preAction.oldData
+//                   .map(e => JSON.parse(JSON.stringify(e)))
+//                   .filter(
+//                     e =>
+//                       isInRange(e.Level, 0, oldSelectList[0].Level - 1) ||
+//                       e.Level > oldSelectList[0].Level + 1
+//                   )
+//               )
+//             }
+//             listUpdate = listUpdate.filter(updateItem =>
+//               wbase_list.some(e => updateItem.GID === e.GID)
+//             )
+//             wbase_list = wbase_list.filter(wbaseItem =>
+//               listUpdate.every(e => wbaseItem.GID !== e.GID)
+//             )
+//             wbase_list.push(...listUpdate)
+//             arrange()
+//             arrange(listUpdate)
+//             let parentLevel = Math.min(...listUpdate.map(e => e.Level))
+//             for (let wbaseItem of listUpdate) {
+//               initComponents(
+//                 wbaseItem,
+//                 wbase_list.filter(e => e.ParentID === wbaseItem.GID),
+//                 wbaseItem.Level > parentLevel
+//               )
+//               if (wbaseItem.Level === 1 || wbaseItem.Level === parentLevel) {
+//                 let parentHTML = divSection
+//                 if (wbaseItem.Level > 1)
+//                   parentHTML = document.getElementById(wbaseItem.ParentID)
+//                 switch (parseInt(parentHTML.getAttribute('cateid'))) {
+//                   case EnumCate.tree:
+//                     createTree(
+//                       wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                       wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                     )
+//                     break
+//                   case EnumCate.table:
+//                     createTable(
+//                       wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                       wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                     )
+//                     break
+//                   default:
+//                     let oldValue = document.getElementById(wbaseItem.GID)
+//                     if (
+//                       !window.getComputedStyle(parentHTML).display.match('flex')
+//                     ) {
+//                       initPositionStyle(wbaseItem)
+//                     }
+//                     if (oldValue) {
+//                       oldValue.replaceWith(wbaseItem.value)
+//                     } else {
+//                       parentHTML.appendChild(wbaseItem.value)
+//                     }
+//                     break
+//                 }
+//                 wbaseItem.value.id = wbaseItem.GID
+//               }
+//             }
+//             WBaseDA.edit(listUpdate, action.enumObj)
+//           }
+//           handleWbSelectedList(
+//             listUpdate.filter(e => oldSelectList.some(el => e.GID === el.GID))
+//           )
+//         }
+//         break
+//       case EnumEvent.edit:
+//         var preAction = action_list[action_index]
+//         var oldSelectList = preAction?.selected ?? []
+//         if (preAction) {
+//           oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
+//           let oldWBaseList = [
+//             ...oldSelectList,
+//             ...preAction.oldData
+//               .map(e => JSON.parse(JSON.stringify(e)))
+//               .filter(e => e.Level > 0)
+//           ]
+//           listUpdate = [
+//             ...action.selected,
+//             ...action.oldData.filter(e => e.Level > 0)
+//           ].map(e => JSON.parse(JSON.stringify(e)))
+//           let listDelete = listUpdate.filter(e => {
+//             let check =
+//               e.Level > 0 && oldWBaseList.every(oldE => oldE.GID !== e.GID)
+//             if (check) {
+//               e.IsDeleted = true
+//               document.getElementById(e.GID)?.remove()
+//             }
+//             return check
+//           })
+//           oldWBaseList = oldWBaseList.filter(updateItem =>
+//             wbase_list.some(e => updateItem.GID === e.GID)
+//           )
+//           wbase_list = wbase_list.filter(e =>
+//             listUpdate.every(el => el.GID !== e.GID)
+//           )
+//           wbase_list.push(...oldWBaseList)
+//           arrange()
+//           arrange(oldWBaseList)
+//           let parentLevel = Math.min(...oldWBaseList.map(e => e.Level))
+//           for (let wbaseItem of oldWBaseList) {
+//             initComponents(
+//               wbaseItem,
+//               wbase_list.filter(e => e.ParentID === wbaseItem.GID),
+//               wbaseItem.Level > parentLevel
+//             )
+//             if (wbaseItem.Level === 1 || wbaseItem.Level === parentLevel) {
+//               let parentHTML = divSection
+//               if (wbaseItem.Level > 1)
+//                 parentHTML = document.getElementById(wbaseItem.ParentID)
+//               switch (parseInt(parentHTML.getAttribute('cateid'))) {
+//                 case EnumCate.tree:
+//                   createTree(
+//                     wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                     wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                   )
+//                   break
+//                 case EnumCate.table:
+//                   createTable(
+//                     wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                     wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                   )
+//                   break
+//                 default:
+//                   let oldValue = document.getElementById(wbaseItem.GID)
+//                   if (
+//                     !window.getComputedStyle(parentHTML).display.match('flex')
+//                   ) {
+//                     initPositionStyle(wbaseItem)
+//                   }
+//                   if (oldValue) {
+//                     try {
+//                       oldValue?.replaceWith(wbaseItem.value)
+//                     } catch (error) {}
+//                   } else {
+//                     parentHTML.appendChild(wbaseItem.value)
+//                   }
+//                   break
+//               }
+//               wbaseItem.value.id = wbaseItem.GID
+//             }
+//           }
+//           replaceAllLyerItemHTML()
+//           if (listDelete.length > 0) {
+//             WBaseDA.parent([...listDelete, ...oldWBaseList])
+//           } else {
+//             WBaseDA.edit(oldWBaseList, action.enumObj)
+//           }
+//           if (
+//             oldSelectList.length === 1 &&
+//             (oldSelectList[0].isNew || oldSelectList[0].isEditting)
+//           ) {
+//             oldSelectList[0].value = document.getElementById(
+//               oldSelectList[0].GID
+//             )
+//             if (oldSelectList[0].value) {
+//               oldSelectList[0].value.contentEditable = true
+//               oldSelectList[0].value.setAttribute('isCtrlZ', 'true')
+//               oldSelectList[0].value.focus()
+//             }
+//           }
+//           handleWbSelectedList(
+//             oldWBaseList.filter(e => oldSelectList.some(el => e.GID === el.GID))
+//           )
+//         } else {
+//           let deleteItems = wbase_list.filter(e =>
+//             action.selected.some(selectItem => selectItem.GID === e.GID)
+//           )
+//           if (deleteItems.length > 0) WBaseDA.delete(deleteItems)
+//           handleWbSelectedList(
+//             oldSelectList.length
+//               ? wbase_list.filter(e =>
+//                   oldSelectList.some(selectItem => selectItem.GID === e.GID)
+//                 )
+//               : []
+//           )
+//         }
+//         break
+//       case EnumEvent.parent:
+//         var preAction = action_list[action_index]
+//         var oldSelectList = preAction?.selected ?? []
+//         if (preAction) {
+//           oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
+//           let oldWBaseList = [
+//             ...oldSelectList,
+//             ...preAction.oldData
+//               .map(e => JSON.parse(JSON.stringify(e)))
+//               .filter(e => e.Level > 0)
+//           ]
+//           let oldParentLevel = Math.min(...preAction.oldData.map(e => e.Level))
+//           let newParentLevel = Math.min(...action.oldData.map(e => e.Level))
+//           let oldParent = oldWBaseList.find(e => e.Level === oldParentLevel)
+//           let newParent = JSON.parse(
+//             JSON.stringify(action.oldData.find(e => e.Level === newParentLevel))
+//           )
+//           listUpdate.push(...oldWBaseList)
+//           if (oldWBaseList.every(e => e.GID !== newParent.GID)) {
+//             newParent.ListChildID = newParent.ListChildID.filter(id =>
+//               action.selected.every(e => e.GID !== id)
+//             )
+//             newParent.CountChild = newParent.ListChildID.length
+//             if (oldParent?.CateID === EnumCate.variant) {
+//               PropertyDA.list = PropertyDA.list.filter(
+//                 e => e.BaseID !== oldParent.GID
+//               )
+//               PropertyDA.list.push(...oldParent.PropertyItems)
+//             }
+//             if (newParent.Level > 0) listUpdate.push(newParent)
+//           }
+//           listUpdate = listUpdate.filter(updateItem =>
+//             wbase_list.some(e => updateItem.GID === e.GID)
+//           )
+//           wbase_list = wbase_list.filter(e =>
+//             listUpdate.every(el => el.GID !== e.GID)
+//           )
+//           wbase_list.push(...listUpdate)
+//           arrange()
+//           arrange(listUpdate)
+//           action.selected.forEach(e => document.getElementById(e.GID)?.remove())
+//           for (let wbaseItem of listUpdate) {
+//             let children = wbase_list.filter(e => e.ParentID === wbaseItem.GID)
+//             initComponents(
+//               wbaseItem,
+//               children,
+//               wbaseItem.GID !== oldParent?.GID &&
+//                 wbaseItem.GID !== newParent.GID
+//             )
+//             wbaseItem.value
+//               .querySelectorAll(
+//                 `.wbaseItem-value[level="${wbaseItem.Level + 1}"]`
+//               )
+//               .forEach(child => {
+//                 let zIndex = wbaseItem.ListChildID.indexOf(child.id)
+//                 children.find(e => e.GID === child.id).Sort = zIndex
+//                 child.style.zIndex = zIndex
+//                 child.style.order = zIndex
+//               })
+//             if (
+//               wbaseItem.GID === oldParent?.GID ||
+//               wbaseItem.GID === newParent.GID
+//             ) {
+//               let parentHTML = divSection
+//               if (wbaseItem.Level > 1)
+//                 parentHTML = document.getElementById(wbaseItem.ParentID)
+//               switch (parseInt(parentHTML?.getAttribute('cateid') ?? '0')) {
+//                 case EnumCate.tree:
+//                   createTree(
+//                     wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                     wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                   )
+//                   break
+//                 case EnumCate.table:
+//                   createTable(
+//                     wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                     wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                   )
+//                   break
+//                 default:
+//                   let oldValue = document.getElementById(wbaseItem.GID)
+//                   if (
+//                     !window.getComputedStyle(parentHTML).display.match('flex')
+//                   ) {
+//                     initPositionStyle(wbaseItem)
+//                   }
+//                   if (oldValue) {
+//                     oldValue?.replaceWith(wbaseItem.value)
+//                   } else {
+//                     parentHTML.appendChild(wbaseItem.value)
+//                   }
+//                   break
+//               }
+//               wbaseItem.value.id = wbaseItem.GID
+//             }
+//           }
+//           replaceAllLyerItemHTML()
+//           WBaseDA.parent(listUpdate)
+//         }
+//         handleWbSelectedList(
+//           listUpdate.filter(e => oldSelectList.some(el => e.GID === el.GID))
+//         )
+//         break
+//       case EnumEvent.unDelete:
+//         break
+//       case EnumEvent.delete:
+//         var preAction = action_list[action_index]
+//         var oldSelectList = preAction?.selected ?? []
+//         if (preAction) {
+//           oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
+//           listUpdate.push(
+//             ...oldSelectList,
+//             ...preAction.oldData
+//               .map(e => JSON.parse(JSON.stringify(e)))
+//               .filter(e => e.Level > 0)
+//           )
+//           wbase_list = wbase_list.filter(e =>
+//             listUpdate.every(el => el.GID !== e.GID)
+//           )
+//           wbase_list.push(...listUpdate)
+//           arrange()
+//           arrange(listUpdate)
+//           let parentLevel = Math.min(...listUpdate.map(e => e.Level))
+//           for (let wbaseItem of listUpdate) {
+//             wbaseItem.IsDeleted = false
+//             if (wbaseItem.CateID == EnumCate.variant) {
+//               PropertyDA.list = PropertyDA.list.filter(
+//                 e => e.BaseID !== wbaseItem.GID
+//               )
+//               PropertyDA.list.push(...wbaseItem.PropertyItems)
+//             }
+//             if (
+//               wbaseItem.BasePropertyItems &&
+//               wbaseItem.BasePropertyItems.length > 0
+//             ) {
+//               for (let baseProperty of wbaseItem.BasePropertyItems) {
+//                 let propertyItem = PropertyDA.list.find(
+//                   e => e.GID === baseProperty.PropertyID
+//                 )
+//                 propertyItem.BasePropertyItems =
+//                   propertyItem.BasePropertyItems.filter(
+//                     e => e.GID != baseProperty.GID
+//                   )
+//                 propertyItem.BasePropertyItems.push(baseProperty)
+//               }
+//             }
+//             let children = wbase_list.filter(e => e.ParentID === wbaseItem.GID)
+//             initComponents(wbaseItem, children, wbaseItem.Level > parentLevel)
+//             wbaseItem.value
+//               .querySelectorAll(
+//                 `.wbaseItem-value[level="${wbaseItem.Level + 1}"]`
+//               )
+//               .forEach(child => {
+//                 let zIndex = wbaseItem.ListChildID.indexOf(child.id)
+//                 children.find(e => e.GID === child.id).Sort = zIndex
+//                 child.style.zIndex = zIndex
+//                 child.style.order = zIndex
+//               })
+//             if (wbaseItem.Level === 1 || wbaseItem.Level === parentLevel) {
+//               let parentHTML = divSection
+//               if (wbaseItem.Level > 1)
+//                 parentHTML = document.getElementById(wbaseItem.ParentID)
+//               switch (parseInt(parentHTML.getAttribute('cateid'))) {
+//                 case EnumCate.tree:
+//                   createTree(
+//                     wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                     wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                   )
+//                   break
+//                 case EnumCate.table:
+//                   createTable(
+//                     wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                     wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                   )
+//                   break
+//                 default:
+//                   let oldValue = document.getElementById(wbaseItem.GID)
+//                   if (
+//                     !window.getComputedStyle(parentHTML).display.match('flex')
+//                   ) {
+//                     initPositionStyle(wbaseItem)
+//                   }
+//                   if (oldValue) {
+//                     oldValue?.replaceWith(wbaseItem.value)
+//                   } else {
+//                     parentHTML.appendChild(wbaseItem.value)
+//                   }
+//                   break
+//               }
+//               wbaseItem.value.id = wbaseItem.GID
+//             }
+//           }
+//           replaceAllLyerItemHTML()
+//           if (oldSelectList.length === 1 && oldSelectList[0].isNew) {
+//             oldSelectList[0].value.contentEditable = true
+//             oldSelectList[0].value.setAttribute('isCtrlZ', 'true')
+//             oldSelectList[0].value.focus()
+//           } else {
+//             WBaseDA.unDelete(listUpdate)
+//           }
+//         }
+//         handleWbSelectedList(oldSelectList)
+//         break
+//       case EnumEvent.edit_delete:
+//         var preAction = action_list[action_index]
+//         var oldSelectList = preAction?.selected ?? []
+//         if (preAction) {
+//           oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
+//           let oldWBaseList = [
+//             ...oldSelectList,
+//             ...preAction.oldData
+//               .map(e => JSON.parse(JSON.stringify(e)))
+//               .filter(e => e.Level > 0)
+//           ]
+//           let unDeleteList = []
+//           wbase_list = wbase_list.filter(e =>
+//             oldWBaseList.every(el => el.GID !== e.GID)
+//           )
+//           wbase_list.push(...oldWBaseList)
+//           arrange()
+//           arrange(oldWBaseList)
+//           let parentLevel = Math.min(...oldWBaseList.map(e => e.Level))
+//           for (let wbaseItem of oldWBaseList) {
+//             if (
+//               [...action.selected, ...action.oldData].every(
+//                 el => el.GID !== wbaseItem.GID
+//               )
+//             ) {
+//               wbaseItem.IsDeleted = false
+//               unDeleteList.push(wbaseItem)
+//             } else {
+//               listUpdate.push(wbaseItem)
+//             }
+//             initComponents(
+//               wbaseItem,
+//               wbase_list.filter(e => e.ParentID === wbaseItem.GID),
+//               wbaseItem.Level > parentLevel
+//             )
+//             if (wbaseItem.Level === 1 || wbaseItem.Level === parentLevel) {
+//               let parentHTML = divSection
+//               if (wbaseItem.Level > 1)
+//                 parentHTML = document.getElementById(wbaseItem.ParentID)
+//               switch (parseInt(parentHTML.getAttribute('cateid'))) {
+//                 case EnumCate.tree:
+//                   createTree(
+//                     wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                     wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                   )
+//                   break
+//                 case EnumCate.table:
+//                   createTable(
+//                     wbase_list.find(e => e.GID === wbaseItem.ParentID),
+//                     wbase_list.filter(e => e.ParentID === wbaseItem.ParentID)
+//                   )
+//                   break
+//                 default:
+//                   let oldValue = document.getElementById(wbaseItem.GID)
+//                   if (
+//                     !window.getComputedStyle(parentHTML).display.match('flex')
+//                   ) {
+//                     initPositionStyle(wbaseItem)
+//                   }
+//                   if (oldValue) {
+//                     try {
+//                       oldValue?.replaceWith(wbaseItem.value)
+//                     } catch (error) {}
+//                   } else {
+//                     parentHTML.appendChild(wbaseItem.value)
+//                   }
+//                   break
+//               }
+//               wbaseItem.value.id = wbaseItem.GID
+//             }
+//           }
+//           replaceAllLyerItemHTML()
+//           WBaseDA.unDelete(unDeleteList)
+//           WBaseDA.edit(listUpdate, action.enumObj)
+//           if (
+//             oldSelectList.length === 1 &&
+//             (oldSelectList[0].isNew || oldSelectList[0].isEditting)
+//           ) {
+//             oldSelectList[0].value.contentEditable = true
+//             oldSelectList[0].value.setAttribute('isCtrlZ', 'true')
+//             oldSelectList[0].value.focus()
+//           }
+//         }
+//         handleWbSelectedList(oldSelectList)
+//         break
+//       default: // usually event select
+//         var preAction = action_list[action_index]
+//         var oldSelectList = preAction?.selected ?? []
+//         if (preAction) {
+//           oldSelectList = oldSelectList.map(e => JSON.parse(JSON.stringify(e)))
+//           if (
+//             oldSelectList.length === 1 &&
+//             (oldSelectList[0].isNew || oldSelectList[0].isEditting)
+//           ) {
+//             oldSelectList[0].value = document.getElementById(
+//               oldSelectList[0].GID
+//             )
+//             if (oldSelectList[0].value) {
+//               oldSelectList[0].value.contentEditable = true
+//               oldSelectList[0].value.setAttribute('isCtrlZ', 'true')
+//               oldSelectList[0].value.focus()
+//             }
+//           }
+//         }
+//         handleWbSelectedList(
+//           wbase_list.filter(e =>
+//             oldSelectList.some(selectItem => e.GID === selectItem.GID)
+//           )
+//         )
+//         break
+//     }
+//   } else {
+//     handleWbSelectedList()
+//   }
+//   WBaseDA.isCtrlZ = false
+// }
 
-function shiftCtrlZ () {
-  if (action_index < action_list.length - 1) {
-    action_index++
-    let action = action_list[action_index]
-    WBaseDA.isCtrlZ = true
-    console.log('hehehehehe', action, action_index)
-    let listUpdate = []
-    switch (action.enumEvent) {
-      case EnumEvent.add:
-        switch (action.enumObj) {
-          default:
-            listUpdate.push(
-              ...action.oldData.filter(e => e.GID != wbase_parentID),
-              ...action.selected
-            )
-            listUpdate.sort((a, b) => {
-              value = b.Level - a.Level
-              if (value == 0) {
-                return a.Sort - b.Sort
-              } else {
-                return value
-              }
-            })
-            wbase_list = wbase_list.filter(e =>
-              listUpdate.every(wbaseItem => wbaseItem.GID != e.GID)
-            )
-            wbase_list.push(...listUpdate)
-            arrange()
-            listUpdate.forEach(wbaseItem => {
-              let oldHTML = document.getElementById(wbaseItem.GID)
-              initComponents(
-                wbaseItem,
-                wbase_list.filter(e => e.ParentID == wbaseItem.GID),
-                !oldHTML
-              )
-              if (oldHTML) {
-                if (
-                  window
-                    .getComputedStyle(oldHTML.parentElement)
-                    .display.match('flex')
-                ) {
-                  wbaseItem.value.style.left = null
-                  wbaseItem.value.style.top = null
-                } else {
-                  initPositionStyle(wbaseItem)
-                }
-                oldHTML.replaceWith(wbaseItem.value)
-              }
-              wbaseItem.value.id = wbaseItem.GID
-            })
-            replaceAllLyerItemHTML()
-            handleWbSelectedList(action.selected, false)
-            if (action.enumObj == EnumObj.wBase) WBaseDA.add(listUpdate)
-            else WBaseDA.addStyle(listUpdate, action.enumObj)
-            break
-        }
-        break
-      case EnumEvent.edit:
-        listUpdate.push(
-          ...action.oldData.filter(e => e.GID != wbase_parentID),
-          ...action.selected
-        )
-        listUpdate.sort((a, b) => {
-          value = b.Level - a.Level
-          if (value == 0) {
-            return a.Sort - b.Sort
-          } else {
-            return value
-          }
-        })
-        wbase_list = wbase_list.filter(e =>
-          listUpdate.every(wbaseItem => wbaseItem.GID != e.GID)
-        )
-        wbase_list.push(...listUpdate)
-        arrange()
-        listUpdate.forEach(wbaseItem => {
-          let oldHTML = document.getElementById(wbaseItem.GID)
-          initComponents(
-            wbaseItem,
-            wbase_list.filter(e => e.ParentID == wbaseItem.GID),
-            !oldHTML
-          )
-          if (oldHTML) {
-            if (
-              window
-                .getComputedStyle(oldHTML.parentElement)
-                .display.match('flex')
-            ) {
-              wbaseItem.value.style.left = null
-              wbaseItem.value.style.top = null
-            } else {
-              initPositionStyle(wbaseItem)
-            }
-            oldHTML.replaceWith(wbaseItem.value)
-          }
-          wbaseItem.value.id = wbaseItem.GID
-        })
-        replaceAllLyerItemHTML()
-        handleWbSelectedList(action.selected, false)
-        WBaseDA.edit(listUpdate, action.enumObj)
-        break
-      case EnumEvent.parent:
-        let oldParentWBase = action.oldData.find(
-          e => e.GID == action.selected[0].ParentID
-        )
-        if (select_box_parentID != oldParentWBase.GID) {
-          if (oldParentWBase.GID != wbase_parentID) {
-            listUpdate.push(oldParentWBase)
-          }
-          listUpdate.push(...action.selected)
-          wbase_list = wbase_list.filter(e =>
-            listUpdate.every(updateItem => e.GID != updateItem.GID)
-          )
-          wbase_list.push(...listUpdate)
-          if (select_box_parentID != wbase_parentID) {
-            let currentParent = wbase_list.find(
-              e => e.GID == select_box_parentID
-            )
-            currentParent.ListChildID = currentParent.ListChildID.filter(id =>
-              action.selected.every(selectItem => selectItem.GID != id)
-            )
-            currentParent.CountChild = currentParent.ListChildID.length
-            let oldHTML = document.getElementById(currentParent.GID)
-            initComponents(
-              currentParent,
-              wbase_list.filter(e => e.ParentID == currentParent.GID),
-              !oldHTML
-            )
-            currentParent.value.id = currentParent.GID
-            if (oldHTML) {
-              if (
-                window
-                  .getComputedStyle(oldHTML.parentElement)
-                  .display.match('flex')
-              ) {
-                currentParent.value.style.left = null
-                currentParent.value.style.top = null
-              } else {
-                initPositionStyle(currentParent)
-              }
-              oldHTML.replaceWith(currentParent.value)
-            }
-          }
-          wbase_list
-            .filter(wbaseItem =>
-              action.selected.some(selectItem =>
-                wbaseItem.ListID.includes(selectItem.GID)
-              )
-            )
-            .forEach(wbaseItem => {
-              wbaseItem.ListID = action.oldData.find(
-                oldWbase => oldWbase.GID == wbaseItem.GID
-              ).ListID
-              wbaseItem.value.setAttribute('listid', wbaseItem.ListID)
-              wbaseItem.value.setAttribute('Level', wbaseItem.Level)
-            })
-          arrange()
-          action.selected.forEach(wbaseItem => {
-            document.getElementById(wbaseItem.GID)?.remove()
-            initComponents(
-              wbaseItem,
-              wbase_list.filter(e => e.ParentID == wbaseItem.GID)
-            )
-          })
-          if (oldParentWBase.GID != wbase_parentID) {
-            let oldHTML = document.getElementById(oldParentWBase.GID)
-            initComponents(
-              oldParentWBase,
-              wbase_list.filter(e => e.ParentID == oldParentWBase.GID),
-              !oldHTML
-            )
-            oldParentWBase.value.id = oldParentWBase.GID
-            if (oldHTML) {
-              if (
-                window
-                  .getComputedStyle(oldHTML.parentElement)
-                  .display.match('flex')
-              ) {
-                oldParentWBase.value.style.left = null
-                oldParentWBase.value.style.top = null
-              } else {
-                initPositionStyle(oldParentWBase)
-              }
-              oldHTML.replaceWith(oldParentWBase.value)
-            }
-          }
-          replaceAllLyerItemHTML()
-          selected_list = []
-          handleWbSelectedList(action.selected, false)
-        } else {
-          listUpdate.push(oldParentWBase)
-          if (select_box_parentID != wbase_parentID) {
-            let currentParent = wbase_list.find(
-              e => e.GID == select_box_parentID
-            )
-            currentParent.ListChildID = oldParentWBase.ListChildID
-          }
-          listUpdate.push(
-            ...wbase_list.filter(wbaseItem => {
-              let zIndex = oldParentWBase.ListChildID.indexOf(wbaseItem.GID)
-              if (zIndex < 0) return false
-              else {
-                wbaseItem.Sort = zIndex
-                wbaseItem.value.style.order = zIndex
-                wbaseItem.value.style.zIndex = zIndex
-                return true
-              }
-            })
-          )
-          arrange()
-          replaceAllLyerItemHTML()
-          handleWbSelectedList(selected_list, false)
-        }
-        WBaseDA.parent(listUpdate)
-        break
-      case EnumEvent.delete:
-        WBaseDA.delete(selected_list)
-        break
-      case EnumEvent.select:
-        handleWbSelectedList(
-          wbase_list.filter(e =>
-            action.selected.some(selectItem => selectItem.GID == e.GID)
-          ),
-          false
-        )
-        break
-      default:
-        break
-    }
-  }
-  WBaseDA.isCtrlZ = false
-}
+// function shiftCtrlZ () {
+//   if (action_index < action_list.length - 1) {
+//     action_index++
+//     let action = action_list[action_index]
+//     WBaseDA.isCtrlZ = true
+//     console.log('hehehehehe', action, action_index)
+//     let listUpdate = []
+//     switch (action.enumEvent) {
+//       case EnumEvent.add:
+//         switch (action.enumObj) {
+//           default:
+//             listUpdate.push(
+//               ...action.oldData.filter(e => e.GID != wbase_parentID),
+//               ...action.selected
+//             )
+//             listUpdate.sort((a, b) => {
+//               value = b.Level - a.Level
+//               if (value == 0) {
+//                 return a.Sort - b.Sort
+//               } else {
+//                 return value
+//               }
+//             })
+//             wbase_list = wbase_list.filter(e =>
+//               listUpdate.every(wbaseItem => wbaseItem.GID != e.GID)
+//             )
+//             wbase_list.push(...listUpdate)
+//             arrange()
+//             listUpdate.forEach(wbaseItem => {
+//               let oldHTML = document.getElementById(wbaseItem.GID)
+//               initComponents(
+//                 wbaseItem,
+//                 wbase_list.filter(e => e.ParentID == wbaseItem.GID),
+//                 !oldHTML
+//               )
+//               if (oldHTML) {
+//                 if (
+//                   window
+//                     .getComputedStyle(oldHTML.parentElement)
+//                     .display.match('flex')
+//                 ) {
+//                   wbaseItem.value.style.left = null
+//                   wbaseItem.value.style.top = null
+//                 } else {
+//                   initPositionStyle(wbaseItem)
+//                 }
+//                 oldHTML.replaceWith(wbaseItem.value)
+//               }
+//               wbaseItem.value.id = wbaseItem.GID
+//             })
+//             replaceAllLyerItemHTML()
+//             handleWbSelectedList(action.selected, false)
+//             if (action.enumObj == EnumObj.wBase) WBaseDA.add(listUpdate)
+//             else WBaseDA.addStyle(listUpdate, action.enumObj)
+//             break
+//         }
+//         break
+//       case EnumEvent.edit:
+//         listUpdate.push(
+//           ...action.oldData.filter(e => e.GID != wbase_parentID),
+//           ...action.selected
+//         )
+//         listUpdate.sort((a, b) => {
+//           value = b.Level - a.Level
+//           if (value == 0) {
+//             return a.Sort - b.Sort
+//           } else {
+//             return value
+//           }
+//         })
+//         wbase_list = wbase_list.filter(e =>
+//           listUpdate.every(wbaseItem => wbaseItem.GID != e.GID)
+//         )
+//         wbase_list.push(...listUpdate)
+//         arrange()
+//         listUpdate.forEach(wbaseItem => {
+//           let oldHTML = document.getElementById(wbaseItem.GID)
+//           initComponents(
+//             wbaseItem,
+//             wbase_list.filter(e => e.ParentID == wbaseItem.GID),
+//             !oldHTML
+//           )
+//           if (oldHTML) {
+//             if (
+//               window
+//                 .getComputedStyle(oldHTML.parentElement)
+//                 .display.match('flex')
+//             ) {
+//               wbaseItem.value.style.left = null
+//               wbaseItem.value.style.top = null
+//             } else {
+//               initPositionStyle(wbaseItem)
+//             }
+//             oldHTML.replaceWith(wbaseItem.value)
+//           }
+//           wbaseItem.value.id = wbaseItem.GID
+//         })
+//         replaceAllLyerItemHTML()
+//         handleWbSelectedList(action.selected, false)
+//         WBaseDA.edit(listUpdate, action.enumObj)
+//         break
+//       case EnumEvent.parent:
+//         let oldParentWBase = action.oldData.find(
+//           e => e.GID == action.selected[0].ParentID
+//         )
+//         if (select_box_parentID != oldParentWBase.GID) {
+//           if (oldParentWBase.GID != wbase_parentID) {
+//             listUpdate.push(oldParentWBase)
+//           }
+//           listUpdate.push(...action.selected)
+//           wbase_list = wbase_list.filter(e =>
+//             listUpdate.every(updateItem => e.GID != updateItem.GID)
+//           )
+//           wbase_list.push(...listUpdate)
+//           if (select_box_parentID != wbase_parentID) {
+//             let currentParent = wbase_list.find(
+//               e => e.GID == select_box_parentID
+//             )
+//             currentParent.ListChildID = currentParent.ListChildID.filter(id =>
+//               action.selected.every(selectItem => selectItem.GID != id)
+//             )
+//             currentParent.CountChild = currentParent.ListChildID.length
+//             let oldHTML = document.getElementById(currentParent.GID)
+//             initComponents(
+//               currentParent,
+//               wbase_list.filter(e => e.ParentID == currentParent.GID),
+//               !oldHTML
+//             )
+//             currentParent.value.id = currentParent.GID
+//             if (oldHTML) {
+//               if (
+//                 window
+//                   .getComputedStyle(oldHTML.parentElement)
+//                   .display.match('flex')
+//               ) {
+//                 currentParent.value.style.left = null
+//                 currentParent.value.style.top = null
+//               } else {
+//                 initPositionStyle(currentParent)
+//               }
+//               oldHTML.replaceWith(currentParent.value)
+//             }
+//           }
+//           wbase_list
+//             .filter(wbaseItem =>
+//               action.selected.some(selectItem =>
+//                 wbaseItem.ListID.includes(selectItem.GID)
+//               )
+//             )
+//             .forEach(wbaseItem => {
+//               wbaseItem.ListID = action.oldData.find(
+//                 oldWbase => oldWbase.GID == wbaseItem.GID
+//               ).ListID
+//               wbaseItem.value.setAttribute('listid', wbaseItem.ListID)
+//               wbaseItem.value.setAttribute('Level', wbaseItem.Level)
+//             })
+//           arrange()
+//           action.selected.forEach(wbaseItem => {
+//             document.getElementById(wbaseItem.GID)?.remove()
+//             initComponents(
+//               wbaseItem,
+//               wbase_list.filter(e => e.ParentID == wbaseItem.GID)
+//             )
+//           })
+//           if (oldParentWBase.GID != wbase_parentID) {
+//             let oldHTML = document.getElementById(oldParentWBase.GID)
+//             initComponents(
+//               oldParentWBase,
+//               wbase_list.filter(e => e.ParentID == oldParentWBase.GID),
+//               !oldHTML
+//             )
+//             oldParentWBase.value.id = oldParentWBase.GID
+//             if (oldHTML) {
+//               if (
+//                 window
+//                   .getComputedStyle(oldHTML.parentElement)
+//                   .display.match('flex')
+//               ) {
+//                 oldParentWBase.value.style.left = null
+//                 oldParentWBase.value.style.top = null
+//               } else {
+//                 initPositionStyle(oldParentWBase)
+//               }
+//               oldHTML.replaceWith(oldParentWBase.value)
+//             }
+//           }
+//           replaceAllLyerItemHTML()
+//           selected_list = []
+//           handleWbSelectedList(action.selected, false)
+//         } else {
+//           listUpdate.push(oldParentWBase)
+//           if (select_box_parentID != wbase_parentID) {
+//             let currentParent = wbase_list.find(
+//               e => e.GID == select_box_parentID
+//             )
+//             currentParent.ListChildID = oldParentWBase.ListChildID
+//           }
+//           listUpdate.push(
+//             ...wbase_list.filter(wbaseItem => {
+//               let zIndex = oldParentWBase.ListChildID.indexOf(wbaseItem.GID)
+//               if (zIndex < 0) return false
+//               else {
+//                 wbaseItem.Sort = zIndex
+//                 wbaseItem.value.style.order = zIndex
+//                 wbaseItem.value.style.zIndex = zIndex
+//                 return true
+//               }
+//             })
+//           )
+//           arrange()
+//           replaceAllLyerItemHTML()
+//           handleWbSelectedList(selected_list, false)
+//         }
+//         WBaseDA.parent(listUpdate)
+//         break
+//       case EnumEvent.delete:
+//         WBaseDA.delete(selected_list)
+//         break
+//       case EnumEvent.select:
+//         handleWbSelectedList(
+//           wbase_list.filter(e =>
+//             action.selected.some(selectItem => selectItem.GID == e.GID)
+//           ),
+//           false
+//         )
+//         break
+//       default:
+//         break
+//     }
+//   }
+//   WBaseDA.isCtrlZ = false
+// }

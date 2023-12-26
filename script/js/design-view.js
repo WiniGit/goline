@@ -98,9 +98,20 @@ function updateUIDesignView () {
       listEditContainer.appendChild(editAutoLayout)
     }
     //
-    if (selected_list.some(wb => !wb.value.classList.contains('w-text'))) {
+    if (
+      selected_list.some(wb =>
+        ['w-text', 'w-svg'].every(e => !wb.value.classList.contains(e))
+      )
+    ) {
       let editBackground = EditBackgroundBlock()
       listEditContainer.appendChild(editBackground)
+    }
+    if (
+      selected_list.filter(wb => wb.value.classList.contains('w-svg'))
+        .length === 1
+    ) {
+      let editIconColor = EditIconColorBlock()
+      listEditContainer.appendChild(editIconColor)
     }
     if (
       selected_list.some(wb =>
@@ -1672,6 +1683,109 @@ function reloadEditBackgroundBlock () {
   document.getElementById('edit-background').replaceWith(newEditBackground)
 }
 
+function EditIconColorBlock () {
+  let wbIcon = selected_list.find(wb => wb.value.classList.contains('w-svg'))
+  let editContainer = document.createElement('div')
+  editContainer.id = 'edit-icon-color'
+  editContainer.className = 'edit-container'
+  let header = document.createElement('div')
+  header.className = 'ds-block-header'
+  editContainer.appendChild(header)
+  let title = document.createElement('p')
+  title.innerHTML = 'Icon color'
+  header.appendChild(title)
+
+  if (wbIcon.value.style.length) renderIconColorForm(wbIcon.value.style)
+  //
+  const cssRule = StyleDA.docStyleSheets.find(cssRule =>
+    [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+      wbIcon.value
+    )
+  )
+  if (cssRule) renderIconColorForm(cssRule.style)
+  //
+  function renderIconColorForm (wbStyle) {
+    for (let i = 0; i < wbStyle.length; i++)
+      if (Ultis.isColor(wbStyle[i].replace('--', ''))) {
+        let colorValue = wbStyle.getPropertyValue(wbStyle[i])
+        if (colorValue.match(uuid4Regex)) {
+          let colorSkin = StyleDA.listSkin.find(skin => colorValue.match(uuid4Regex)[0] === skin.GID)
+          if (colorSkin) {
+            if (colorSkin.CateID !== EnumCate.color) {
+              var cateItem = CateDA.list_color_cate.find(
+                e => e.ID == colorSkin.CateID
+              )
+            }
+            editContainer.appendChild(
+              wbaseSkinTile({
+                cate: EnumCate.color,
+                prefixValue: colorSkin.Css,
+                title: (cateItem ? `${cateItem.Name}/` : '') + colorSkin.Name,
+                onClick: function () {
+                  let offset = header.getBoundingClientRect()
+                  createDropdownTableSkin({
+                    cate: EnumCate.color,
+                    offset: offset,
+                    currentSkinID: colorSkin.GID,
+                    cssText: colorSkin.Css
+                  })
+                  document
+                    .getElementById('popup_table_skin')
+                    .setAttribute('edit-type', wbStyle[i])
+                },
+                handleUnlinkSkin: function () {
+                  handleEditIconColor({
+                    prop: wbStyle[i],
+                    hexCode: colorSkin.Css
+                  })
+                  reloadEditIconColorBlock()
+                }
+              })
+            )
+          }
+        } else {
+          editContainer.appendChild(
+            createEditColorForm({
+              value: colorValue.match(hexRegex)
+                ? `#${colorValue.replace('#', '')}`
+                : `#${Ultis.colorNameToHex(colorValue)}`,
+              onchange: params => {
+                handleEditIconColor({
+                  prop: wbStyle[i],
+                  hexCode: params,
+                  onSubmit: false
+                })
+              },
+              onsubmit: params => {
+                handleEditIconColor({ prop: wbStyle[i], hexCode: params })
+                reloadEditIconColorBlock()
+              },
+              suffixAction: function () {
+                let offset = header.getBoundingClientRect()
+                createDropdownTableSkin({
+                  cate: EnumCate.color,
+                  offset: offset,
+                  cssText: colorValue.match(hexRegex)
+                    ? `#${colorValue.replace('#', '')}`
+                    : `#${Ultis.colorNameToHex(colorValue)}`
+                })
+                document
+                  .getElementById('popup_table_skin')
+                  .setAttribute('edit-type', wbStyle[i])
+              }
+            })
+          )
+        }
+      }
+  }
+  return editContainer
+}
+
+function reloadEditIconColorBlock () {
+  let newEditIconColor = EditIconColorBlock()
+  document.getElementById('edit-icon-color').replaceWith(newEditIconColor)
+}
+
 let list_font_family = [
   'Arial',
   'Algerian',
@@ -1731,23 +1845,26 @@ function EditTypoBlock () {
   })
 
   let wbColor = selected_list.filterAndMap(wb => {
-    let bgColor =
-      wb.value.style?.color ??
-      StyleDA.docStyleSheets.find(cssRule =>
-        [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-          wb.value
-        )
-      )?.style?.color
-    return bgColor?.replace(/(var\(--|\))/g, '')
+    let txtColor =
+      wb.value.style?.color?.length > 0
+        ? wb.value.style.color
+        : StyleDA.docStyleSheets.find(cssRule =>
+            [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+              wb.value
+            )
+          )?.style?.color
+    if (txtColor?.match(uuid4Regex)) return txtColor?.match(uuid4Regex)[0]
+    else return txtColor?.length === 0 ? null : txtColor
   })
 
   if (wbColor.length === 1) {
     if (wbColor[0].length === 36) {
       let colorSkin = StyleDA.listSkin.find(skin => wbColor[0] === skin.GID)
-      let cateItem
       if (colorSkin) {
         if (colorSkin.CateID !== EnumCate.color) {
-          cateItem = CateDA.list_color_cate.find(e => e.ID == colorSkin.CateID)
+          var cateItem = CateDA.list_color_cate.find(
+            e => e.ID == colorSkin.CateID
+          )
         }
         var editColor = wbaseSkinTile({
           cate: EnumCate.color,
@@ -1763,7 +1880,7 @@ function EditTypoBlock () {
             })
             document
               .getElementById('popup_table_skin')
-              .setAttribute('edit-typo', 'true')
+              .setAttribute('edit-type', 'typo')
           },
           handleUnlinkSkin: function () {
             handleEditTypo({
@@ -1798,7 +1915,7 @@ function EditTypoBlock () {
           })
           document
             .getElementById('popup_table_skin')
-            .setAttribute('edit-typo', 'true')
+            .setAttribute('edit-type', 'typo')
         }
       })
     }
@@ -2792,6 +2909,7 @@ function createEditColorForm ({
   ondelete,
   suffixAction
 }) {
+  if (value.length === 7) value += 'ff'
   let editColorTile = document.createElement('div')
   if (id) editColorTile.id = id
   editColorTile.className = 'edit-color-tile'
@@ -3257,16 +3375,23 @@ function createSkinTileHTML (enumCate, jsonSkin) {
       skin_tile.onclick = function (e) {
         e.stopPropagation()
         if (selected_list.length > 0) {
-          if (
-            document
-              .getElementById('popup_table_skin')
-              .getAttribute('edit-typo')
-          ) {
-            handleEditTypo({ colorSkin: jsonSkin })
-            reloadEditTypoBlock()
-          } else {
-            handleEditBackground({ colorSkin: jsonSkin })
-            reloadEditBackgroundBlock()
+          const editType = document
+            .getElementById('popup_table_skin')
+            .getAttribute('edit-type')
+          switch (editType) {
+            case 'typo':
+              handleEditTypo({ colorSkin: jsonSkin })
+              reloadEditTypoBlock()
+              break
+            default:
+              if (editType) {
+                handleEditIconColor({ prop: editType, colorSkin: jsonSkin })
+                reloadEditIconColorBlock()
+              } else {
+                handleEditBackground({ colorSkin: jsonSkin })
+                reloadEditBackgroundBlock()
+              }
+              break
           }
           document
             .querySelectorAll('.popup_remove')
