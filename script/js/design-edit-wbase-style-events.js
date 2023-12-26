@@ -4147,7 +4147,13 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
   }
 }
 
-function handleEditIconColor ({ prop, hexCode, colorSkin, onSubmit = true }) {
+function handleEditIconColor ({
+  prop,
+  hexCode,
+  colorSkin,
+  onSubmit = true,
+  iconValue
+}) {
   let listUpdate = selected_list.filter(wb =>
     wb.value.classList.contains('w-svg')
   )
@@ -4226,6 +4232,45 @@ function handleEditIconColor ({ prop, hexCode, colorSkin, onSubmit = true }) {
         )
       }
       if (onSubmit) StyleDA.editStyleSheet(cssItem)
+    }
+  } else if (iconValue) {
+    let listSvg = []
+    for (let wb of listUpdate) {
+      let demoWb = {
+        GID: wb.GID,
+        AttributesItem: { Content: iconValue.replaceAll(' ', '%20') }
+      }
+      wb.AttributesItem.Content = iconValue.replaceAll(' ', '%20')
+      createSvgImgHTML(demoWb).then(_ => {
+        wb.value.innerHTML = demoWb.value.innerHTML
+        let colorProps = []
+        for (let i = 0; i < demoWb.value.style.length; i++) {
+          if (Ultis.isColor(demoWb.value.style[i].replace('--', '')))
+            colorProps.push({
+              name: demoWb.value.style[i],
+              value: demoWb.value.style.getPropertyValue(demoWb.value.style[i])
+            })
+        }
+        const cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        for (let i = 0; i < wb.value.style.length; i++) {
+          if (Ultis.isColor(wb.value.style[i].replace('--', '')))
+            wb.value.style.removeProperty(wb.value.style[i])
+        }
+        for (let cPorp of colorProps) {
+          if (cssRule && cssRule.style.getPropertyValue(cPorp)?.length > 0) {
+            colorProps = colorProps.filter(e => e !== cPorp)
+          } else {
+            wb.value.style.setProperty(cPorp.name, cPorp.value)
+          }
+        }
+        wb.Css = wb.value.style.cssText
+        listSvg.push(wb)
+        if (listSvg.length === listUpdate)
+          WBaseDA.edit(listSvg, EnumObj.wBaseAttribute)
+      })
+      demoWb.value.style = wb.value.style
     }
   }
 }

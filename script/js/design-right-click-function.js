@@ -944,23 +944,24 @@ function selectFolder (collectionItem, search = '') {
       })`
       _img.ondblclick = function (e) {
         e.stopPropagation()
-        if (stringInputFiled) {
-          stringInputFiled.value =
-            urlImg + fileList[i].Url?.replaceAll(' ', '%20')
-        } else if (
-          selected_list.length > 0 &&
-          selected_list.every(wbaseItem =>
-            EnumCate.noImgBg.every(cate => wbaseItem.CateID !== cate)
-          )
-        ) {
-          let thisUrl = FileDA.list
-            .find(e => e.ID == this.getAttribute('fileID'))
-            ?.Url?.replaceAll(' ', '%20')
-          if (thisUrl) {
-            handleEditBackground({ image: thisUrl })
-            reloadEditBackgroundBlock()
-          }
-        }
+        // if (stringInputFiled) {
+        //   stringInputFiled.value =
+        //     urlImg + fileList[i].Url?.replaceAll(' ', '%20')
+        // } else if (
+        //   selected_list.length > 0 &&
+        //   selected_list.every(wbaseItem =>
+        //     EnumCate.noImgBg.every(cate => wbaseItem.CateID !== cate)
+        //   )
+        // ) {
+        //   let thisUrl = FileDA.list
+        //     .find(e => e.ID == this.getAttribute('fileID'))
+        //     ?.Url?.replaceAll(' ', '%20')
+        //   if (thisUrl) {
+        //     handleEditBackground({ image: thisUrl })
+        //     reloadEditBackgroundBlock()
+        //   }
+        // }
+        handleEditIconColor({iconValue: fileList[i].Url})
       }
       children.push(_img)
     }
