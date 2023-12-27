@@ -795,6 +795,15 @@ class WBaseDA {
   }
 
   static delete (delete_list) {
+    delete_list = delete_list.filter(
+      e =>
+        e.value.IsWini ||
+        !e.value.closest(
+          `.wbaseItem-value[iswini="true"], .wbaseItem-value[isinstance="true"][level="${
+            e.Level - 1
+          }"]`
+        )
+    )
     if (delete_list.length > 0) {
       for (let wb of delete_list) {
         let layerCotainer = left_view.querySelector(

@@ -488,28 +488,20 @@ function createComponent () {
       wb.Css = wb.value.style.cssText
     }
     let children = []
-    if (wb.value.classList.contains('w-svg')) {
-      ;[...wb.value.querySelector('svg').children].forEach(eHTML => {
-        let styleCss = ''
-        for (let prop of eHTML.attributes) {
-          if (prop.localName === 'fill' || prop.localName === 'stroke') {
-            styleCss += `${prop.localName}: ${prop.nodeValue};`
-          }
-        }
-        cssItem.Css += `/**/ .${wbClassName} ${eHTML.localName} { ${styleCss} }`
-      })
-    } else if (
+    if (
       WbClass.parent.some(
         e => e !== 'w-variant' && wb.value.classList.contains(e)
       )
     ) {
       let existNameList = [
         ...wb.value.querySelectorAll(`.wbaseItem-value[class*="w-st"]`)
-      ].map(e =>
-        [...e.classList].find(
-          cls => cls.startsWith('w-st') && cls !== 'w-stack'
+      ]
+        .map(e =>
+          [...e.classList].find(
+            cls => cls.startsWith('w-st') && cls !== 'w-stack'
+          )
         )
-      )
+        .filter(e => e != null)
       children = wbase_list.filter(
         e => wb !== e && wb.value.contains(e.value) && e.Css
       )
@@ -566,17 +558,6 @@ function createComponent () {
                   )
                   .join(';')
           } }`
-        }
-        if (childWb.value.classList.contains('w-svg')) {
-          ;[...childWb.value.querySelector('svg').children].forEach(eHTML => {
-            let styleCss = ''
-            for (let prop of eHTML.attributes) {
-              if (prop.localName === 'fill' || prop.localName === 'stroke') {
-                styleCss += `${prop.localName}: ${prop.nodeValue};`
-              }
-            }
-            cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} ${eHTML.localName} { ${styleCss} }`
-          })
         }
         childWb.value.style = null
         childWb.Css = null
@@ -944,7 +925,7 @@ function selectFolder (collectionItem, search = '') {
         ) {
           handleEditIconColor({ iconValue: file.Url })
         } else {
-          handleEditBackground({image: file.Url})
+          handleEditBackground({ image: file.Url })
         }
       }
       children.push(_img)
