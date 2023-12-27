@@ -704,9 +704,8 @@ function createImgDocument () {
       Name: 'Recycle bin'
     })
   }
-  for (let i = 0; i < CollectionDA.documentList.length; i++) {
-    let folderTile = createFolderTile(CollectionDA.documentList[i])
-    folder.appendChild(folderTile)
+  for (let i of CollectionDA.documentList) {
+    folder.appendChild(createFolderTile(i))
   }
   let divImgs = document.createElement('div')
   divImgs.id = 'list_img_container'
@@ -835,20 +834,14 @@ function createFolderTile (collectionItem) {
   let folderTile = document.createElement('div')
   folderTile.id = `folder:${collectionItem.ID}`
   folderTile.className = 'folder_tile'
+  folderTile.innerHTML = `<i class="fa-regular fa-folder" style="margin: 2px 6px"></i><input disabled value="${collectionItem.Name}"/>`
   folderTile.onclick = function (e) {
     e.stopPropagation()
     selectFolder(collectionItem)
   }
-  let prefixIcon = document.createElement('i')
-  prefixIcon.className = 'fa-regular fa-folder'
-  prefixIcon.style.margin = '2px 6px'
-  folderTile.appendChild(prefixIcon)
-  let folderName = document.createElement('input')
-  folderName.disabled = true
-  folderName.value = collectionItem.Name
-  folderName.onfocus = function () {
+  $(folderTile).on('focus', 'input', function () {
     this.select()
-  }
+  })
   if (collectionItem.ID != -1) {
     folderTile.onauxclick = function (e) {
       e.stopPropagation()
@@ -867,8 +860,8 @@ function createFolderTile (collectionItem) {
       optionEdit.onclick = function (e) {
         e.stopPropagation()
         editDeletePopup.remove()
-        folderName.disabled = false
-        folderName.focus()
+        folderTile.querySelector('input').disabled = false
+        folderTile.querySelector('input').focus()
       }
       let optionDelete = document.createElement('div')
       optionDelete.className = 'row regular1'
@@ -891,17 +884,16 @@ function createFolderTile (collectionItem) {
     }
     folderTile.ondblclick = function (e) {
       e.stopPropagation()
-      folderName.disabled = false
-      folderName.focus()
+      folderTile.querySelector('input').disabled = false
+      folderTile.querySelector('input').focus()
     }
-    folderName.onblur = function () {
+    $(folderTile).on('blur', 'input', function () {
       this.disabled = true
       collectionItem.Name = this.value
       window.getSelection().removeAllRanges()
       CollectionDA.editDocument(collectionItem)
-    }
+    })
   }
-  folderTile.appendChild(folderName)
   return folderTile
 }
 
@@ -935,33 +927,25 @@ function selectFolder (collectionItem, search = '') {
     }
   })
   if (fileList.length > 0) {
-    for (let i = 0; i < fileList.length; i++) {
+    for (let file of fileList) {
       let _img = document.createElement('div')
-      _img.setAttribute('fileID', fileList[i].ID)
+      _img.setAttribute('fileID', file.ID)
       _img.className = 'img_folder_demo'
       _img.style.backgroundImage = `url(${
-        urlImg + fileList[i].Url?.replaceAll(' ', '%20')
+        urlImg + file.Url?.replaceAll(' ', '%20')
       })`
       _img.ondblclick = function (e) {
         e.stopPropagation()
-        // if (stringInputFiled) {
-        //   stringInputFiled.value =
-        //     urlImg + fileList[i].Url?.replaceAll(' ', '%20')
-        // } else if (
-        //   selected_list.length > 0 &&
-        //   selected_list.every(wbaseItem =>
-        //     EnumCate.noImgBg.every(cate => wbaseItem.CateID !== cate)
-        //   )
-        // ) {
-        //   let thisUrl = FileDA.list
-        //     .find(e => e.ID == this.getAttribute('fileID'))
-        //     ?.Url?.replaceAll(' ', '%20')
-        //   if (thisUrl) {
-        //     handleEditBackground({ image: thisUrl })
-        //     reloadEditBackgroundBlock()
-        //   }
-        // }
-        handleEditIconColor({iconValue: fileList[i].Url})
+        if (
+          selected_list.length === 1 &&
+          selected_list[0].value.classList.contains('w-svg') &&
+          file.Url.endsWith('.svg') &&
+          file.Size <= 2200
+        ) {
+          handleEditIconColor({ iconValue: file.Url })
+        } else {
+          handleEditBackground({image: file.Url})
+        }
       }
       children.push(_img)
     }

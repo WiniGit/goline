@@ -4123,7 +4123,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
           wb.Css = wb.value.style.cssText
         }
       }
-      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.decoration)
+      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
       let pWbComponent = listUpdate[0].value.closest(
         `.wbaseItem-value[iswini="true"]`
@@ -4235,42 +4235,125 @@ function handleEditIconColor ({
     }
   } else if (iconValue) {
     let listSvg = []
-    for (let wb of listUpdate) {
-      let demoWb = {
-        GID: wb.GID,
-        AttributesItem: { Content: iconValue.replaceAll(' ', '%20') }
+    if (listUpdate[0].Css || listUpdate[0].IsInstance) {
+      for (let wb of listUpdate) {
+        createIcon({
+          url: urlImg + iconValue.replaceAll(' ', '%20'),
+          GID: wb.GID
+        }).then(icon => {
+          let usingSkin = []
+          wb.value.innerHTML = icon.innerHTML
+          if (wb.IsWini) {
+            let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+            let cssRule = StyleDA.docStyleSheets.find(e =>
+              [...divSection.querySelectorAll(e.selectorText)].includes(
+                wb.value
+              )
+            )
+            for (let i = 0; i < cssRule.style.length; i++) {
+              if (cssRule.style[i].startsWith('--svg-color')) {
+                if (
+                  cssRule.style
+                    .getPropertyValue(cssRule.style[i])
+                    .match(uuid4Regex)
+                ) {
+                  usingSkin.push({
+                    name: cssRule.style[i],
+                    value: cssRule.style.getPropertyValue(cssRule.style[i])
+                  })
+                }
+                cssRule.style.removeProperty(cssRule.style[i])
+              }
+            }
+            cssRule.style.cssText += icon.style.cssText
+            for (let prop of usingSkin) {
+              if (cssRule.style.getPropertyValue(prop.name)?.length > 0)
+                cssRule.style.setProperty(prop.name, prop.value)
+            }
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              cssRule.cssText
+            )
+            StyleDA.editStyleSheet(cssItem)
+          } else {
+            for (let i = 0; i < wb.value.style.length; i++) {
+              if (wb.value.style[i].startsWith('--svg-color')) {
+                if (
+                  wb.value.style
+                    .getPropertyValue(wb.value.style[i])
+                    .match(uuid4Regex)
+                ) {
+                  usingSkin.push({
+                    name: wb.value.style[i],
+                    value: wb.value.style.getPropertyValue(wb.value.style[i])
+                  })
+                }
+                wb.value.style.removeProperty(wb.value.style[i])
+              }
+            }
+            wb.value.style.cssText += icon.style.cssText
+            for (let prop of usingSkin) {
+              if (wb.value.style.getPropertyValue(prop.name)?.length > 0)
+                wb.value.style.setProperty(prop.name, prop.value)
+            }
+            wb.Css = wb.value.style.cssText
+          }
+          wb.AttributesItem.Content = iconValue.replaceAll(' ', '%20')
+          listSvg.push(wb)
+          if (listSvg.length === listUpdate.length) {
+            WBaseDA.edit(listSvg, EnumObj.wBaseAttribute)
+            reloadEditIconColorBlock()
+          }
+        })
       }
-      wb.AttributesItem.Content = iconValue.replaceAll(' ', '%20')
-      createSvgImgHTML(demoWb).then(_ => {
-        wb.value.innerHTML = demoWb.value.innerHTML
-        let colorProps = []
-        for (let i = 0; i < demoWb.value.style.length; i++) {
-          if (Ultis.isColor(demoWb.value.style[i].replace('--', '')))
-            colorProps.push({
-              name: demoWb.value.style[i],
-              value: demoWb.value.style.getPropertyValue(demoWb.value.style[i])
-            })
-        }
-        const cssRule = StyleDA.docStyleSheets.find(e =>
+    } else {
+      let pWbComponent = listUpdate[0].value.closest(
+        `.wbaseItem-value[iswini="true"]`
+      )
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of listUpdate) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
           [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
         )
-        for (let i = 0; i < wb.value.style.length; i++) {
-          if (Ultis.isColor(wb.value.style[i].replace('--', '')))
-            wb.value.style.removeProperty(wb.value.style[i])
-        }
-        for (let cPorp of colorProps) {
-          if (cssRule && cssRule.style.getPropertyValue(cPorp)?.length > 0) {
-            colorProps = colorProps.filter(e => e !== cPorp)
-          } else {
-            wb.value.style.setProperty(cPorp.name, cPorp.value)
+        createIcon({
+          url: urlImg + iconValue.replaceAll(' ', '%20'),
+          GID: wb.GID
+        }).then(icon => {
+          let usingSkin = []
+          wb.value.innerHTML = icon.innerHTML
+          for (let i = 0; i < cssRule.style.length; i++) {
+            if (cssRule.style[i].startsWith('--svg-color')) {
+              if (
+                cssRule.style
+                  .getPropertyValue(cssRule.style[i])
+                  .match(uuid4Regex)
+              ) {
+                usingSkin.push({
+                  name: cssRule.style[i],
+                  value: cssRule.style.getPropertyValue(cssRule.style[i])
+                })
+              }
+              cssRule.style.removeProperty(cssRule.style[i])
+            }
           }
-        }
-        wb.Css = wb.value.style.cssText
-        listSvg.push(wb)
-        if (listSvg.length === listUpdate)
-          WBaseDA.edit(listSvg, EnumObj.wBaseAttribute)
-      })
-      demoWb.value.style = wb.value.style
+          cssRule.style.cssText += icon.style.cssText
+          for (let prop of usingSkin) {
+            if (cssRule.style.getPropertyValue(prop.name)?.length > 0)
+              cssRule.style.setProperty(prop.name, prop.value)
+          }
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+            cssRule.cssText
+          )
+          wb.AttributesItem.Content = iconValue.replaceAll(' ', '%20')
+          listSvg.push(wb)
+          if (listSvg.length === listUpdate.length) {
+            StyleDA.editStyleSheet(cssItem)
+            WBaseDA.edit(listSvg, EnumObj.wBaseAttribute)
+            reloadEditIconColorBlock()
+          }
+        })
+      }
     }
   }
 }

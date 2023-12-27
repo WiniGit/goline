@@ -117,7 +117,7 @@ function initComponents (wb, children) {
       createSwitchHTML(wb)
       break
     case 'w-svg':
-      createSvgImgHTML(wb)
+      createIconHTML(wb)
       break
     case 'w-checkbox':
       createCheckBoxHTML(wb)

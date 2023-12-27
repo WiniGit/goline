@@ -1706,7 +1706,7 @@ function EditIconColorBlock () {
   //
   function renderIconColorForm (wbStyle) {
     for (let i = 0; i < wbStyle.length; i++)
-      if (Ultis.isColor(wbStyle[i].replace('--', ''))) {
+      if (wbStyle[i].startsWith('--svg-color')) {
         let colorValue = wbStyle.getPropertyValue(wbStyle[i])
         if (colorValue.match(uuid4Regex)) {
           let colorSkin = StyleDA.listSkin.find(skin => colorValue.match(uuid4Regex)[0] === skin.GID)
@@ -1746,9 +1746,7 @@ function EditIconColorBlock () {
         } else {
           editContainer.appendChild(
             createEditColorForm({
-              value: colorValue.match(hexRegex)
-                ? `#${colorValue.replace('#', '')}`
-                : `#${Ultis.colorNameToHex(colorValue)}`,
+              value: colorValue,
               onchange: params => {
                 handleEditIconColor({
                   prop: wbStyle[i],
@@ -2909,7 +2907,6 @@ function createEditColorForm ({
   ondelete,
   suffixAction
 }) {
-  if (value.length === 7) value += 'ff'
   let editColorTile = document.createElement('div')
   if (id) editColorTile.id = id
   editColorTile.className = 'edit-color-tile'

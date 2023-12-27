@@ -1372,6 +1372,7 @@ function moveListener (event) {
         instance_drag.style.top = target_rect.y + 'px'
         instance_drag.style.transform = null
         instance_drag.style.zIndex = 2
+        instance_drag.fileid = parseInt(event.target.getAttribute('fileid'))
       }
       break
     default:
@@ -2558,22 +2559,24 @@ function upListener (event) {
       if (instance_drag.getAttribute('componentid')) {
         dragInstanceEnd(event)
       } else {
-        let url = window
-          .getComputedStyle(instance_drag)
-          .backgroundImage.split(/"/)[1]
-        let isSvgImg = url.endsWith('.svg')
-        let newRect
-        if (isSvgImg) {
-          newRect = JSON.parse(JSON.stringify(WbClass.imgSvg))
+        let fileItem = FileDA.list.find(e => e.ID === instance_drag.fileid)
+        const url = fileItem.Url.replaceAll(' ', '%20')
+        if (url.endsWith('.svg') && fileItem.Size <= 2200) {
+          var newRect = JSON.parse(JSON.stringify(WbClass.imgSvg))
           newRect.Name = url.split('/').pop().replace('.svg', '')
-          newRect.AttributesItem.Content = url.replace(urlImg, '')
+          newRect.AttributesItem.Content = url
         } else {
           newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
           newRect.Name = 'Rectangle'
-          newRect.Css = `background-image: url(${url});`
+          newRect.Css = `background-image: url(${urlImg + url});`
         }
-        FileDA.getImageSize(url).then(imgSize => {
+        FileDA.getImageSize(urlImg + url).then(async imgSize => {
           let offset = offsetScale(event.pageX, event.pageY)
+          if (url.endsWith('.svg') && fileItem.Size <= 2200) {
+            newRect.Css = (
+              await createIcon({ url: urlImg + url })
+            ).style.cssText
+          }
           let newObj = createWbaseHTML({
             w: imgSize.w,
             h: imgSize.h,
