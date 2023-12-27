@@ -1105,7 +1105,10 @@ function moveListener (event) {
     ) {
       target_view = 'left_view'
       sortLayer = document.createElement('div')
-    } else if (sortSkin || event.target.className == 'skin_tile_option') {
+    } else if (
+      sortSkin ||
+      event.target.classList.contains('skin_tile_option')
+    ) {
       target_view = 'right_view'
     } else {
       target_view = event.target.closest(
@@ -1329,27 +1332,19 @@ function moveListener (event) {
     case 'left_view':
       if (instance_drag) {
         dragInstanceUpdate(event)
-      } else {
-        if (
-          typeof event.target.className == 'string' &&
-          event.target.className?.includes('instance_demo')
-        ) {
-          previousX = event.pageX
-          previousY = event.pageY
-          instance_drag = event.target.firstChild
-          let target_rect = instance_drag.getBoundingClientRect()
-          document.body.appendChild(instance_drag)
-          instance_drag.style.position = 'absolute'
-          instance_drag.style.pointerEvents = 'none'
-          instance_drag.style.left = target_rect.x + 'px'
-          instance_drag.style.top = target_rect.y + 'px'
-          instance_drag.style.transform = null
-          instance_drag.style.zIndex = 2
-        } else if (sortLayer) {
-          if (sortLayer) {
-            ondragSortLayer(event)
-          }
-        }
+      } else if (event.target.classList?.contains('instance_demo')) {
+        previousX = event.pageX
+        previousY = event.pageY
+        const instDemo = event.target.querySelector('.wbaseItem-value')
+        instance_drag = instDemo.cloneNode(true)
+        let target_rect = instDemo.getBoundingClientRect()
+        document.body.appendChild(instance_drag)
+        instance_drag.style.pointerEvents = 'none'
+        instance_drag.style.left = target_rect.x + target_rect.width / 2 + 'px'
+        instance_drag.style.top = target_rect.y + target_rect.height / 2 + 'px'
+        instance_drag.style.zIndex = 2
+      } else if (sortLayer) {
+        ondragSortLayer(event)
       }
       break
     case 'right_view':
