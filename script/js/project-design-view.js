@@ -504,10 +504,14 @@ function handleWbSelectedList (newlist = []) {
       // if (!WBaseDA.isCtrlZ) {
       //   addAction()
       // }
-      // if (assets_view.offsetWidth > 0 && tool_state === ToolState.move) {
-      //   if (!(select_component?.ProjectID === 0)) select_component = null
-      //   updateListComponentByProject({ ID: 0 })
-      // }
+      if (assets_view.offsetWidth > 0 && tool_state === ToolState.move) {
+        const selectedComp = assets_view.querySelector(
+          'div[id*="projectID:0"] .list_tile.comp-selected'
+        )
+        if (selectedComp)
+          assets_view.querySelector('.instance-container').replaceChildren()
+        updateListComponentByProject({ ID: 0 })
+      }
       f12_update_selectWbase()
       $('.wbaseItem-value').removeClass('selected')
     }

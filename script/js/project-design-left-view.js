@@ -366,7 +366,6 @@ function leftTabChange (tabName) {
     )
     document.getElementById('div_list_page').style.display = 'none'
     select_component = null
-    // initUIAssetView(true)
     initUIAssetView()
   }
 }
@@ -617,184 +616,113 @@ function createLayerTile (wb, isShowChildren = false) {
 }
 
 var select_component
-async function initUIAssetView (loading = false) {
-  let children = []
+async function initUIAssetView () {
   let scrollView = assets_view.querySelector(':scope > .col > .col')
   let scrollY = scrollView?.scrollTop ?? 0
-  if (loading) {
-    assets_view.replaceChildren(...children)
-    let loader = document.createElement('div')
-    loader.style.setProperty('--border-width', '3px')
-    loader.style.height = '20px'
-    loader.style.width = '20px'
-    loader.style.margin = '12px'
-    loader.className = 'data-loader'
-    assets_view.replaceChildren(loader)
-    if (!ProjectDA.obj.ListID || ProjectDA.obj.ListID.split(',').length == 0) {
-      initUIAssetView()
-    } else {
-      StyleDA.getSkinsByListId(ProjectDA.obj.ListID)
-    }
-  } else {
-    // WBaseDA.reloadAssetsList()
-    let component_div = document.createElement('div')
-    component_div.className = 'col'
-    let scroll_div = document.createElement('div')
-    scroll_div.className = 'col'
-    let instance_div = document.createElement('div')
-    // create list component tile assets view
-    let search_container = document.createElement('div')
-    search_container.className = 'row'
-    search_container.style.width = '100%'
-    let search_input = document.createElement('input')
-    search_input.id = 'search_input_assets'
-    search_input.placeholder = 'Search assets...'
-    let onSearch = 0
-    search_input.oninput = function (ev) {
-      ev.stopPropagation()
-      onSearch = 0
-      setTimeout(function () {
-        if (onSearch === 1) {
-          onSearch++
-          let content = search_input.value
-            .split(' ')
-            .filter(text => text != '')
-            .join(' ')
-          content = Ultis.toSlug(content)
-          let isContainLocal = false
-          updateListComponentByProject(ProjectDA.obj)
-          ;[
-            ...document
-              .getElementById(`component projectID:${ProjectDA.obj.ID}`)
-              .querySelectorAll('.assets-component-tile')
-          ]
-            .reverse()
-            .forEach(componentTile => {
-              let thisComponent = assets_list.find(
-                com => com.GID == componentTile.id.replace('Component:', '')
-              )
-              if (
-                content
-                  .split('-')
-                  .some(key => thisComponent.Name.toLowerCase().includes(key))
-              ) {
-                ;[...$(componentTile).parents('.list_tile')].forEach(
-                  parentTile => {
-                    let pre = parentTile.querySelector(
-                      ':scope > .fa-caret-right'
-                    )
-                    if (pre) pre.className = 'fa-solid fa-caret-down fa-xs'
-                  }
-                )
-                isContainLocal = true
-                componentTile
-                  .querySelectorAll('.assets-component-tile')
-                  .forEach(childComponentTile => {
-                    ;[...$(childComponentTile).parents('.list_tile')].forEach(
-                      parentTile => {
-                        let pre = parentTile.querySelector(
-                          ':scope > .fa-caret-right'
-                        )
-                        if (pre) pre.className = 'fa-solid fa-caret-down fa-xs'
-                      }
-                    )
-                  })
-              }
-            })
-          if (!isContainLocal)
-            updateListComponentByProject(ProjectDA.obj, false)
-          if (content.length > 3) {
-            if (ProjectDA.obj.ListID && ProjectDA.obj.ListID.trim() != '') {
-              let _listID = ProjectDA.obj.ListID
-              if (PageDA.list.length > 1) _listID += `,${ProjectDA.obj.ID}`
-              WBaseDA.getAssetsList(_listID, content)
-            }
-          } else if (content.length == 0) {
-            assets_view
-              .querySelectorAll('.list_tile > i')
-              .forEach(
-                prefixIcon =>
-                  (prefixIcon.className = prefixIcon.className.replace(
-                    'fa-caret-down',
-                    'fa-caret-right'
-                  ))
-              )
-            initUIAssetView()
-            document.getElementById('search_input_assets').focus()
-          }
-        }
-      }, 200)
-      onSearch++
-    }
-    search_container.appendChild(search_input)
-    let btn_display_type = document.createElement('i')
-    btn_display_type.className = 'fa-solid fa-list-ul fa-sm'
-    btn_display_type.style.margin = '0 8px 0 4px'
-    btn_display_type.style.color = '#262626'
-    search_container.appendChild(btn_display_type)
-    let btn_book = document.createElement('i')
-    btn_book.className = 'fa-brands fa-readme fa-sm'
-    btn_book.style.margin = '2px 4px 0 0'
-    btn_book.style.color = '#262626'
-    btn_book.onclick = function () {
-      if (WBaseDA.assetsLoading) {
-        WBaseDA.getAssetsList()
-      } else {
-        linkComptAndSkinDialog()
-      }
-    }
-    search_container.appendChild(btn_book)
-    let list_component_div = document.createElement('div')
-    component_div.appendChild(list_component_div)
-    list_component_div.className = 'col'
-    list_component_div.style.overflowY = 'scroll'
-    list_component_div.style.flex = 1
-    let assetsProjects = ProjectDA.assetsList
-    let fragment = document.createDocumentFragment()
-    fragment.replaceChildren(
-      ...[{ ID: 0 }, ProjectDA.obj, ...assetsProjects].map(projectItem =>
-        createListComponent(projectItem)
-      )
-    )
-    scroll_div.replaceChildren(fragment)
-    component_div.replaceChildren(search_container, scroll_div)
-    children.push(component_div)
-    if (select_component) {
-      children.push(instance_div)
-      if (left_view.offsetWidth < 320) {
-        left_view.style.width = '380px'
-      }
-      let instance_demo = document.createElement('div')
-      instance_demo.className = 'instance_demo'
-      if (!select_component.value) {
-        for (let wb of [...select_component.children, select_component]) {
-          await initComponents(
-            wb,
-            select_component.children.filter(e => e.ParentID === wb.GID),
-            false
+  let comContainer = document.createElement('div')
+  comContainer.className = 'col'
+  comContainer.innerHTML = `<div class="row" style="width: 100%">
+      <input class="search-assets" placeholder="Search assets..."/>
+      <i class="fa-solid fa-list-ul fa-sm" style="margin: 0 8px 0 4px; color: #262626"></i>
+      <i class="fa-brands fa-readme fa-sm" style="margin: 2px 4px 0 0; color: #262626"></i>
+    </div><div class="col" style="flex: 1; overflowY: scroll"></div>`
+  let instContainer = document.createElement('div')
+  instContainer.className = 'instance-container'
+
+  // create list component tile assets view
+  let onSearch = 0
+  $(comContainer).on('input', '.search-assets', function (ev) {
+    ev.stopPropagation()
+    onSearch = 0
+    setTimeout(function () {
+      if (onSearch === 1) {
+        onSearch++
+        let content = search_input.value
+          .split(' ')
+          .filter(text => text != '')
+          .join(' ')
+        content = Ultis.toSlug(content)
+        let isContainLocal = false
+        updateListComponentByProject(ProjectDA.obj)
+        let componentTileList = [
+          ...document
+            .getElementById(`component projectID:${ProjectDA.obj.ID}`)
+            .querySelectorAll('.assets-component-tile')
+        ].reverse()
+        componentTileList.forEach(comTile => {
+          let thisComponent = assets_list.find(
+            com => com.GID === comTile.id.replace('Component:', '')
           )
+          if (
+            content
+              .split('-')
+              .some(key => thisComponent.Name.toLowerCase().includes(key))
+          ) {
+            let listTiles = [...$(comTile).parents('.list_tile')]
+            listTiles.forEach(parentTile => {
+              let pre = parentTile.querySelector(':scope > .fa-caret-right')
+              if (pre) pre.className = 'fa-solid fa-caret-down fa-xs'
+            })
+            isContainLocal = true
+            comTile
+              .querySelectorAll('.assets-component-tile')
+              .forEach(childComTile => {
+                let parentTiles = [...$(childComTile).parents('.list_tile')]
+                parentTiles.forEach(pTile => {
+                  let pre = pTile.querySelector(':scope > .fa-caret-right')
+                  if (pre) pre.className = 'fa-solid fa-caret-down fa-xs'
+                })
+              })
+          }
+        })
+        if (!isContainLocal) updateListComponentByProject(ProjectDA.obj, false)
+        if (content.length > 3) {
+          if (ProjectDA.obj.ListID && ProjectDA.obj.ListID.trim() != '') {
+            let _listID = ProjectDA.obj.ListID
+            if (PageDA.list.length > 1) _listID += `,${ProjectDA.obj.ID}`
+            WBaseDA.getAssetsList(_listID, content)
+          }
+        } else if (content.length == 0) {
+          assets_view
+            .querySelectorAll('.list_tile > i')
+            .forEach(
+              prefixIcon =>
+                (prefixIcon.className = prefixIcon.className.replace(
+                  'fa-caret-down',
+                  'fa-caret-right'
+                ))
+            )
+          initUIAssetView()
+          document.getElementById('search_input_assets').focus()
         }
       }
-      if (select_component.IsWini) {
-        select_component.value.style = null
-      } else {
-        select_component.value.style.left = null
-        select_component.value.style.top = null
-        select_component.value.style.right = null
-        select_component.value.style.bottom = null
-        select_component.value.style.transform = null
-      }
-      select_component.value.setAttribute('componentid', select_component.GID)
-      instance_demo.appendChild(select_component.value)
-      instance_div.replaceChildren(instance_demo)
-      observer_instance.observe(instance_demo)
+    }, 200)
+    onSearch++
+  })
+  $(comContainer).on('click', '.fa-readme', function () {
+    if (WBaseDA.assetsLoading) {
+      WBaseDA.getAssetsList()
+    } else {
+      linkComptAndSkinDialog()
     }
-    assets_view.replaceChildren(...children)
-    scroll_div.scrollTo({
-      top: scrollY,
-      behavior: 'smooth'
-    })
-  }
+  })
+  let fragment = document.createDocumentFragment()
+  fragment.replaceChildren(
+    ...[
+      { ID: 0 },
+      ...ProjectDA.list.filter(
+        e =>
+          e.ID === ProjectDA.obj.ID ||
+          ProjectDA.obj.ListID?.split(',')?.includes(`${e.ID}`)
+      )
+    ].map(projectItem => createListComponent(projectItem))
+  )
+  comContainer.querySelector(':scope > .col').replaceChildren(fragment)
+  assets_view.replaceChildren(comContainer, instContainer)
+  comContainer.querySelector(':scope > .col').scrollTo({
+    top: scrollY,
+    behavior: 'smooth'
+  })
 }
 
 // create list component depend on projectId
@@ -827,94 +755,107 @@ function createListComponent (projectItem, isShowContent) {
   let container_child = document.createElement('div')
   container_child.className = 'col'
   container.replaceChildren(list_tile, container_child)
+  let listParentComp = []
   if (projectItem.ID === 0 || isShow) {
-    let list_component_parent = []
     if (projectItem.ID === 0) {
-      list_component_parent = selected_list.map(e => {
-        let jsonE = JSON.parse(JSON.stringify(e))
-        jsonE.ProjectID = 0
-        jsonE.value = e.value.cloneNode(true)
-        return jsonE
-      })
-      container_child.replaceChildren(
-        ...list_component_parent.map(comItem => createComponentTile(comItem))
-      )
-    } else if (projectItem.ID === ProjectDA.obj.ID) {
-      container_child.replaceChildren(
-        ...PageDA.list.map(page => {
-          let listPageComp = assets_list.filter(e => e.PageID === page.ID)
-          let showPageCom =
-            isShowContent ||
-            listPageComp.some(e => e.GID === select_component?.GID)
-          let pageTileContainer = document.createElement('div')
-          pageTileContainer.className = 'col page-comp-container'
-          let pageTile = document.createElement('div')
-          pageTile.className = 'row list_tile'
-          pageTile.innerHTML = `<i class="fa-solid fa-caret-${
-            showPageCom ? 'down' : 'right'
-          } fa-xs"></i><p class="semibold1 title">${page.Name}</p>`
-          let listComp = document.createElement('div')
-          listComp.className = 'col'
-          if (showPageCom) {
-            listComp.replaceChildren(
-              ...listPageComp.map(comItem => createComponentTile(comItem))
+      listParentComp = selected_list
+        .filter(
+          e =>
+            e.IsWini ||
+            !e.value.closest(
+              `.wbaseItem-value[iswini], .wbaseItem-value[isinstance][level="${
+                e.Level - 1
+              }"]`
             )
-          }
-          pageTileContainer.replaceChildren(pageTile, listComp)
-          pageTile.onclick = function () {
-            showPageCom = !showPageCom
-            if (showPageCom) {
-              pageTile.querySelector('i').className =
-                'fa-solid fa-caret-down fa-xs'
-              listComp.replaceChildren(
-                ...listPageComp.map(comItem => createComponentTile(comItem))
-              )
-            } else {
-              pageTile.querySelector('i').className =
-                'fa-solid fa-caret-right fa-xs'
-            }
-          }
-          return pageTileContainer
+        )
+        .map(e => {
+          let jsonE = JSON.parse(JSON.stringify(e))
+          jsonE.ProjectID = 0
+          jsonE.value = e.value.cloneNode(true)
+          return jsonE
         })
-      )
-    } else {
-      list_component_parent = assets_list.filter(
-        e =>
-          e.ProjectID === projectItem.ID &&
-          assets_list.every(el => !e.ListID.includes(el.GID))
-      )
       container_child.replaceChildren(
-        ...list_component_parent.map(comItem => createComponentTile(comItem))
+        ...listParentComp.map(comItem => createComponentTile(comItem))
       )
     }
   }
   list_tile.onclick = function () {
-    if (!WBaseDA.assetsLoading) {
-      isShow = !isShow
-      if (isShow) {
-        if (projectItem.ID === 0) {
-          prefix_action.className = 'fa-solid fa-caret-down fa-xs'
-        } else {
-          WBaseDA.assetsLoading = true
-          let loader = document.createElement('div')
-          loader.style.setProperty('--border-width', '3px')
-          loader.style.width = '10px'
-          loader.style.margin = '0 4px'
-          loader.className = 'data-loader'
-          prefix_action.replaceWith(loader)
-          WBaseDA.getAssetsList(projectItem.ID)
-        }
+    if (prefix_action.classList.contains('fa-caret-down')) {
+      prefix_action.className = 'fa-solid fa-caret-right fa-xs'
+    } else if (projectItem.ID === 0) {
+      prefix_action.className = 'fa-solid fa-caret-down fa-xs'
+    } else if (list_tile.querySelector(':scope > .data-loader')) {
+      prefix_action.className = 'fa-solid fa-caret-down fa-xs'
+      list_tile
+        .querySelector(':scope > .data-loader')
+        .replaceWith(prefix_action)
+      if (projectItem.ID === ProjectDA.obj.ID) {
+        container_child.replaceChildren(
+          ...PageDA.list.map(page => {
+            let listPageComp = assets_list.filter(e => e.PageID === page.ID)
+            let showPageCom =
+              isShowContent ||
+              listPageComp.some(e => e.GID === select_component?.GID)
+            let pageTileContainer = document.createElement('div')
+            pageTileContainer.className = 'col page-comp-container'
+            let pageTile = document.createElement('div')
+            pageTile.className = 'row list_tile'
+            pageTile.innerHTML = `<i class="fa-solid fa-caret-${
+              showPageCom ? 'down' : 'right'
+            } fa-xs"></i><p class="semibold1 title">${page.Name}</p>`
+            let listComp = document.createElement('div')
+            listComp.className = 'col'
+            if (showPageCom) {
+              listComp.replaceChildren(
+                ...listPageComp.map(comItem => createComponentTile(comItem))
+              )
+            }
+            pageTileContainer.replaceChildren(pageTile, listComp)
+            pageTile.onclick = function () {
+              showPageCom = !showPageCom
+              if (showPageCom) {
+                pageTile.querySelector('i').className =
+                  'fa-solid fa-caret-down fa-xs'
+                listComp.replaceChildren(
+                  ...listPageComp.map(comItem => createComponentTile(comItem))
+                )
+              } else {
+                pageTile.querySelector('i').className =
+                  'fa-solid fa-caret-right fa-xs'
+              }
+            }
+            return pageTileContainer
+          })
+        )
       } else {
-        if (list_tile.querySelector(':scope > .data-loader')) {
-          list_tile
-            .querySelector(':scope > .data-loader')
-            .replaceWith(prefix_action)
-          isShow = true
-          prefix_action.className = 'fa-solid fa-caret-down fa-xs'
-        } else {
-          prefix_action.className = 'fa-solid fa-caret-right fa-xs'
-        }
+        listParentComp = assets_list.filter(
+          e => e.ProjectID === projectItem.ID && e.IsWini
+        )
+        listParentComp = listParentComp.filter(
+          e =>
+            e.ListClassName.includes('w-variant') ||
+            listParentComp.every(i => i.GID !== e.ParentID)
+        )
+        container_child.replaceChildren(
+          ...listParentComp.map(comItem => createComponentTile(comItem))
+        )
       }
+    } else {
+      WBaseDA.assetsLoading = true
+      let loader = document.createElement('div')
+      loader.style.setProperty('--border-width', '3px')
+      loader.style.width = '10px'
+      loader.style.margin = '0 4px'
+      loader.className = 'data-loader'
+      prefix_action.replaceWith(loader)
+      StyleDA.initSkin(projectItem.ID).then(skinRes => {
+        let instContainer = assets_view.querySelector('.instance-container')
+        instContainer.style = null
+        skinRes.forEach(e =>
+          instContainer.style.setProperty(`--${e.GID}`, e.Css)
+        )
+      })
+      WBaseDA.getAssetsList(projectItem.ID)
     }
   }
   return container
@@ -933,9 +874,9 @@ function createComponentTile (item, space = 0) {
   let container = document.createElement('div')
   container.id = `Component:${item.GID}`
   container.className = 'col assets-component-tile'
-  container.style.marginLeft = `${16 + space}px`
   let select_tile = document.createElement('div')
   select_tile.className = 'row list_tile'
+  select_tile.style.paddingLeft = `${16 + (space ? space : 24)}px`
   container.appendChild(select_tile)
   let prefix_action = document.createElement('i')
   prefix_action.className = 'fa-solid fa-caret-right fa-xs'
@@ -944,13 +885,13 @@ function createComponentTile (item, space = 0) {
   title.innerHTML = `${item.Name}`
   title.className = 'title'
   select_tile.appendChild(title)
-  if (item.CateID === EnumCate.variant) {
+  if (item.ListClassName.includes('w-variant')) {
     let currentTile = document.getElementById(`Component:${item.GID}`)
     let isShow = false
     if (currentTile) {
       isShow =
-        currentTile.querySelector(':scope > .list_tile > .fa-caret-down') !=
-        undefined
+        currentTile.querySelector(':scope > .list_tile > .fa-caret-right') !=
+        null
     }
     if (isShow) {
       prefix_action.className = 'fa-solid fa-caret-down fa-xs'
@@ -978,31 +919,40 @@ function createComponentTile (item, space = 0) {
     }
   } else {
     select_tile.onclick = function () {
-      if (item.ProjectID === 0) {
-        select_component = JSON.parse(JSON.stringify(item))
-        if (item.ProjectID === 0) {
-          select_component = item
+      assets_view.querySelectorAll('.list_tile').forEach(e => {
+        if (e === select_tile) {
+          e.classList.add('comp-selected')
         } else {
-          select_component.children = assets_list
-            .filter(e => e.ListID.includes(item.GID))
-            .map(e => JSON.parse(JSON.stringify(e)))
+          e.classList.remove('comp-selected')
         }
-        initUIAssetView()
+      })
+
+      if (item.ProjectID === 0) {
+        showInstanceDemo({ wb: item })
       } else {
-        let loader = document.createElement('div')
-        loader.style.setProperty('--border-width', '3px')
-        loader.style.width = '10px'
-        loader.style.margin = '0 4px'
-        loader.className = 'data-loader'
-        prefix_action.replaceWith(loader)
         if (item.PageID === PageDA.obj.ID) {
-          select_component = item
-          initUIAssetView()
+          showInstanceDemo({
+            wb: {
+              ...item,
+              value: divSection
+                .querySelector(`.wbaseItem-value[id="${item.GID}"]`)
+                .cloneNode(true)
+            }
+          })
         } else {
+          let loader = document.createElement('div')
+          loader.style.setProperty('--border-width', '3px')
+          loader.style.width = '10px'
+          loader.style.margin = '0 4px'
+          loader.className = 'data-loader'
+          prefix_action.replaceWith(loader)
           WBaseDA.getAssetChildren(item.GID).then(async result => {
             if (item.ProjectID !== ProjectDA.obj.ID) {
               let cssRule = await StyleDA.getById(item.GID)
-              let styleTag = document.createElement('style')
+              let styleTag =
+                document.head.querySelector(
+                  `style[id="w-st-comp${cssRule.GID}"][export]`
+                ) ?? document.createElement('style')
               styleTag.id = `w-st-comp${cssRule.GID}`
               styleTag.innerHTML = cssRule.Css
               styleTag.setAttribute('export', true)
@@ -1013,15 +963,40 @@ function createComponentTile (item, space = 0) {
               return e
             })
             arrange(relativeList)
-            select_component = relativeList.pop()
-            select_component.children = relativeList
-            initUIAssetView()
+            showInstanceDemo({ wb: item, children: relativeList })
+            loader.replaceWith(prefix_action)
           })
         }
       }
     }
   }
   return container
+}
+
+function showInstanceDemo ({ wb, children }) {
+  let instContainer = assets_view.querySelector('.instance-container')
+  let instance_demo = document.createElement('div')
+  instance_demo.className = 'instance_demo'
+  if (children) {
+    for (let wbItem of [...children, wb]) {
+      initComponents(
+        wbItem,
+        children.filter(e => e.ParentID === wbItem.GID)
+      )
+    }
+    var demoValue = wb.value
+  } else {
+    demoValue = wb.value
+  }
+  demoValue.style.left = null
+  demoValue.style.top = null
+  demoValue.style.right = null
+  demoValue.style.bottom = null
+  demoValue.style.transform = null
+  demoValue.setAttribute('componentid', wb.GID)
+  instance_demo.appendChild(demoValue)
+  instContainer.replaceChildren(instance_demo)
+  observer_instance.observe(instance_demo)
 }
 
 const observer_instance = new ResizeObserver(entries => {

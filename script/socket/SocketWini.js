@@ -263,16 +263,11 @@ socket.on('server-get', data => {
               })
             }
             assets_list.push(...listAssets)
-            let listProjectID = listAssets.filterAndMap(e => e.ProjectID)
-            ;[...ProjectDA.assetsList, ProjectDA.obj]
-              .filter(pro => listProjectID.some(id => pro.ID == id))
-              .forEach(projectItem => updateListComponentByProject(projectItem))
-          } else {
-            WBaseDA.assetsLoading = false
-            $(
-              assets_view.querySelector('.list_tile:has(> .data-loader)')
-            ).trigger('click')
           }
+          let listTileLoader = assets_view.querySelector(
+            '.list_tile:has(> .data-loader)'
+          )
+          $(listTileLoader).trigger('click')
           break
         default:
           break
@@ -285,28 +280,6 @@ socket.on('server-get', data => {
           StyleDA.convertInitData(data.data)
           linkSkinView(ProjectDA.list.find(e => e.ID == data.headers.pid))
           StyleDA.skinProjectID = null
-          break
-        case EnumEvent.get:
-          let listSkinProject = data.data
-          ProjectDA.assetsList = listSkinProject.map(skinProject => {
-            return {
-              ID: skinProject.ID,
-              Name: skinProject.Name
-            }
-          })
-          ColorDA.listAssets = listSkinProject
-            .map(skinProject => skinProject.ColorItems)
-            .reduce((a, b) => a.concat(b))
-          TypoDA.listAssets = listSkinProject
-            .map(skinProject => skinProject.TextStyleItems)
-            .reduce((a, b) => a.concat(b))
-          BorderDA.listAssets = listSkinProject
-            .map(skinProject => skinProject.BorderItems)
-            .reduce((a, b) => a.concat(b))
-          EffectDA.listAssets = listSkinProject
-            .map(skinProject => skinProject.EffectItems)
-            .reduce((a, b) => a.concat(b))
-          initUIAssetView()
           break
         case EnumEvent.merge:
           StyleDA.mergeSkins = data.data
@@ -512,7 +485,7 @@ socket.on('server-post', data => {
             //   PropertyDA.list = res.Data.WPropertyItems
             //   CateDA.initCate()
             // })
-            initUIAssetView(true)
+            initUIAssetView()
           }
           break
       }

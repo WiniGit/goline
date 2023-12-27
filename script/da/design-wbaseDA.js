@@ -799,12 +799,11 @@ class WBaseDA {
       e =>
         e.IsWini ||
         !e.value.closest(
-          `.wbaseItem-value[iswini="true"], .wbaseItem-value[isinstance="true"][level="${
+          `.wbaseItem-value[iswini], .wbaseItem-value[isinstance][level="${
             e.Level - 1
           }"]`
         )
     )
-    debugger
     if (delete_list.length > 0) {
       for (let wb of delete_list) {
         let layerCotainer = left_view.querySelector(
