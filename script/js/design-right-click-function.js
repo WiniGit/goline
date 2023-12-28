@@ -66,7 +66,7 @@ let feature_list = [
       selected_list.some(
         e => !e.IsWini && !e.value.classList.contains('w-text')
       ) &&
-      !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)
+      !$(selected_list[0].value).parents(`.wbaseItem-value[iswini]`)
         .length
   },
   // {
@@ -462,6 +462,14 @@ function createComponent () {
       wb.ListClassName = wbClassName
     }
     wb.value.className = wb.ListClassName
+    if (wb.value.getAttribute('width-type') === 'fill') {
+      wb.value.style.width = wb.value.offsetWidth + 'px'
+      wb.value.style.flex = null
+    }
+    if (wb.value.getAttribute('height-type') === 'fill') {
+      wb.value.style.height = wb.value.offsetHeight + 'px'
+      wb.value.style.flex = null
+    }
     let wbCssText = wb.value.style.cssText.split(';').map(vl => vl.trim())
     let cssItem = {
       GID: wb.GID,
@@ -481,6 +489,16 @@ function createComponent () {
         e.match(/(z-index|order|left|top|bottom|right|transform|--gutter)/g)
       )
       .join(';')
+    if (wb.value.getAttribute('width-type') === 'fill') {
+      wb.value.style.width = '100%'
+      if (wb.value.closest(`.w-row[level="${wb.Level - 1}"]`))
+        wb.value.style.flex = 1
+    }
+    if (wb.value.getAttribute('height-type') === 'fill') {
+      wb.value.style.height = wb.value.offsetHeight + 'px'
+      if (wb.value.closest(`.w-col[level="${wb.Level - 1}"]`))
+        wb.value.style.flex = 1
+    }
     if (wb.value.style.cssText === '') {
       wb.value.style = null
       wb.Css = null
@@ -583,7 +601,7 @@ function createComponent () {
   WBaseDA.edit(listUpdate, EnumObj.wBase)
   listShowName = [
     ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini="true"]):not(*[isinstance="true"])`
+      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini]):not(*[isinstance="true"])`
     )
   ]
   wdraw()

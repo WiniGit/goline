@@ -179,7 +179,7 @@
 .layer_wbase_tile.w-variant > img {
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/multiple_component.svg) !important;
 }
-.layer_wbase_tile[iswini="true"]:not(.w-variant) > img {
+.layer_wbase_tile[iswini]:not(.w-variant) > img {
   content: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/component.svg) !important;
 }
 
@@ -204,12 +204,12 @@
   background-color: #e6f7ff;
 }
 
-.layer_wbase_tile.selected[iswini="true"],
+.layer_wbase_tile.selected[iswini],
 .layer_wbase_tile.selected[isinstance="true"] {
   background-color: #ebe6ff;
 }
 
-.layer_wbase_tile.selected[iswini="true"] + .col .layer_wbase_tile,
+.layer_wbase_tile.selected[iswini] + .col .layer_wbase_tile,
 .layer_wbase_tile.selected[isinstance="true"] + .col .layer_wbase_tile {
   background-color: #ebe6ff;
 }
@@ -218,7 +218,7 @@
   border-color: #1890ff;
 }
 
-.layer_wbase_tile.onhover:is(*[iswini="true"], *[isinstance="true"]) {
+.layer_wbase_tile.onhover:is(*[iswini], *[isinstance="true"]) {
   border-color: #7b61ff;
 }
 
@@ -257,7 +257,7 @@
   border-color: #1890ff;
 }
 
-.onsort[sort-position="inside"]:is(*[iswini="true"], *[isinstance="true"]) {
+.onsort[sort-position="inside"]:is(*[iswini], *[isinstance="true"]) {
   border-color: #7b61ff;
 }
 

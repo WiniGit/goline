@@ -605,8 +605,7 @@ function selectParent (event) {
   parent = divSection
   if (
     selected_list.length > 0 &&
-    ($(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)
-      .length ||
+    ($(selected_list[0].value).parents(`.wbaseItem-value[iswini]`).length ||
       document
         .getElementById(select_box_parentID)
         ?.getAttribute('isinstance') === 'true')
@@ -631,7 +630,7 @@ function selectParent (event) {
             )
               ? ',.w-variant'
               : ''
-          }):not(*[isinstance="true"], *[iswini="true"], *[iswini="true"] *)`
+          }):not(*[isinstance="true"], *[iswini], *[iswini] *)`
         )
       )
     }
@@ -642,7 +641,7 @@ function selectParent (event) {
         wb.value.querySelector('.w-variant')
     )
     let objp = list.filter(eHTML => {
-      let isComponent = eHTML.closest(`.wbaseItem-value[iswini="true"]`)
+      let isComponent = eHTML.closest(`.wbaseItem-value[iswini]`)
       if (isComponent) isComponent = !eHTML.classList.contains('w-variant')
       if (
         isComponent ||
@@ -935,7 +934,7 @@ function centerViewInitListener () {
   })
   listShowName = [
     ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini="true"]):not(*[isinstance="true"])`
+      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini]):not(*[isinstance="true"])`
     )
   ]
 }
@@ -1002,9 +1001,7 @@ const childObserver = new MutationObserver(mutationList => {
     })
     if (mutation.target === divSection) {
       listShowName = [
-        ...divSection.querySelectorAll(
-          `:scope > .wbaseItem-value[iswini="true"]`
-        ),
+        ...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini]`),
         ...divSection.querySelectorAll(
           `:scope > .wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance="true"])`
         )
@@ -1256,9 +1253,7 @@ function moveListener (event) {
                         const checkAllowCopy = !selected_list.some(
                           wb =>
                             (!wb.IsWini &&
-                              wb.value.closest(
-                                '.wbaseItem-value[iswini="true"]'
-                              )) ||
+                              wb.value.closest('.wbaseItem-value[iswini]')) ||
                             wb.value.closest(
                               `.wbaseItem-value[isinstance="true"][level="${
                                 wb.Level - 1
@@ -1802,7 +1797,7 @@ function wdraw () {
       hover_wbase.IsWini ||
       hover_wbase.IsInstance ||
       $(hover_wbase.value).parents(
-        `.wbaseItem-value[iswini="true"],.wbaseItem-value[isinstance="true"]`
+        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance="true"]`
       ).length
         ? '#7B61FF'
         : '#1890FF'
@@ -1813,7 +1808,7 @@ function wdraw () {
       parent.getAttribute('iswini') === 'true' ||
       parent.getAttribute('isinstance') === 'true' ||
       $(parent).parents(
-        `.wbaseItem-value[iswini="true"],.wbaseItem-value[isinstance="true"]`
+        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance="true"]`
       ).length
         ? '#7B61FF'
         : '#1890FF'
@@ -1837,7 +1832,7 @@ function wdraw () {
     ctxr.strokeStyle =
       selected_list.every(e => e.IsWini || e.IsInstance) ||
       $(selected_list[0].value).parents(
-        `.wbaseItem-value[iswini="true"],.wbaseItem-value[isinstance="true"]`
+        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance="true"]`
       ).length
         ? '#7B61FF'
         : '#1890FF'
@@ -2551,7 +2546,7 @@ function upListener (event) {
   let target_view = event.target.closest('div[id="canvas_view"]')
   if (instance_drag) {
     if (target_view) {
-      if (instance_drag.getAttribute('componentid')) {
+      if (instance_drag.getAttribute('projectid')) {
         dragInstanceEnd(event)
       } else {
         let fileItem = FileDA.list.find(e => e.ID === instance_drag.fileid)
@@ -2583,23 +2578,17 @@ function upListener (event) {
           WBaseDA.add({ listWb: [newObj] })
         })
       }
-    } else {
-      if (instance_drag.getAttribute('componentid')) {
-        initUIAssetView()
-      }
     }
-    instance_drag.remove()
-    instance_drag = undefined
   } else if (sortLayer) {
     endDragSortLayer()
   } else if (drag_prototype_endppoint) {
     if (
       event.target.id != 'canvas_view' &&
-      !selected_list[0].ListID.includes(event.target.id)
+      !event.target.contains(selected_list[0].value)
     ) {
-      let listID = event.target.getAttribute('listid').toLowerCase().split(',')
-      selected_list[0].PrototypeID =
-        listID?.length == 1 ? event.target.id : listID[1]
+      selected_list[0].PrototypeID = event.target.closest(
+        '.wbaseItem-value[level="1"]'
+      )?.id
       selected_list[0].ProtoType = 1 //On tap
       if (selected_list[0].JsonEventItem) {
         selected_list[0].JsonEventItem.push(
@@ -2767,7 +2756,7 @@ function upListener (event) {
     case EnumEvent.edit:
       let listUpdate = []
       if (
-        !$(selected_list[0].value).parents(`.wbaseItem-value[iswini="true"]`)
+        !$(selected_list[0].value).parents(`.wbaseItem-value[iswini]`)
           ?.length ||
         selected_list[0].IsInstance ||
         selected_list[0].IsWini
@@ -2819,7 +2808,7 @@ function upListener (event) {
         }
       } else {
         let pWbComponent = selected_list[0].value.closest(
-          `.wbaseItem-value[iswini="true"]`
+          `.wbaseItem-value[iswini]`
         )
         let cssItem = StyleDA.cssStyleSheets.find(
           e => e.GID === pWbComponent.id
@@ -2915,6 +2904,10 @@ function upListener (event) {
     })
   }
   document.getElementById('popup_img_document')?.removeAttribute('offset')
+  if (instance_drag && target_view !== 'canvas_view') {
+    instance_drag?.remove()
+    instance_drag = null
+  }
   PageDA.saveSettingsPage()
 }
 

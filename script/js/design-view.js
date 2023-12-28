@@ -369,7 +369,7 @@ function EditOffsetBlock () {
       selected_list.some(
         wb =>
           !wb.value.classList.contains('w-variant') &&
-          wb.value.closest('.wbaseItem-value[iswini="true"]')
+          wb.value.closest('.wbaseItem-value[iswini]')
       )
         ? ' disabled'
         : ''
@@ -737,7 +737,7 @@ function EditLayoutBlock () {
       wb =>
         wb.IsInstance ||
         (!wb.value.classList.contains('w-variant') &&
-          wb.value.closest('.wbaseItem-value[iswini="true"]'))
+          wb.value.closest('.wbaseItem-value[iswini]'))
     )
       ? 'disable'
       : ''
@@ -771,7 +771,7 @@ function EditLayoutBlock () {
             e => !wb.value.classList.contains(e)
           ) &&
           !wb.IsInstance &&
-          !wb.value.closest('.wbaseItem-value[iswini="true"]')
+          !wb.value.closest('.wbaseItem-value[iswini]')
       )
     ) {
       $(header).on('click', '.fa-minus', function () {

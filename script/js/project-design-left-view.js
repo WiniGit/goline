@@ -589,7 +589,7 @@ function createLayerTile (wb, isShowChildren = false) {
         wb.IsWini ||
         wb.IsInstance ||
         $(wbase_tile).parents(
-          `.col:has(> .layer_wbase_tile[iswini="true"], layer_wbase_tile[isinstance="true"])`
+          `.col:has(> .layer_wbase_tile[iswini], layer_wbase_tile[isinstance="true"])`
         ).length
           ? '#7B61FF'
           : '#1890FF'
@@ -926,9 +926,9 @@ function createComponentTile (item, space = 0) {
           e.classList.remove('comp-selected')
         }
       })
-
       if (item.ProjectID === 0) {
         showInstanceDemo({ wb: item })
+        select_component = item
       } else {
         if (item.PageID === PageDA.obj.ID) {
           showInstanceDemo({
@@ -939,6 +939,7 @@ function createComponentTile (item, space = 0) {
                 .cloneNode(true)
             }
           })
+          select_component = item
         } else {
           let loader = document.createElement('div')
           loader.style.setProperty('--border-width', '3px')
@@ -949,21 +950,43 @@ function createComponentTile (item, space = 0) {
           WBaseDA.getAssetChildren(item.GID).then(async result => {
             if (item.ProjectID !== ProjectDA.obj.ID) {
               let cssRule = await StyleDA.getById(item.GID)
-              let styleTag =
-                document.head.querySelector(
-                  `style[id="w-st-comp${cssRule.GID}"][export]`
-                ) ?? document.createElement('style')
-              styleTag.id = `w-st-comp${cssRule.GID}`
-              styleTag.innerHTML = cssRule.Css
-              styleTag.setAttribute('export', true)
-              document.head.appendChild(styleTag)
+              var relativeList = initDOM([...result, item]).map(e => {
+                let eClassList = e.ListClassName.split(' ')
+                const clsName = eClassList.find(
+                  vl => vl !== 'w-stack' && vl.startsWith('w-st')
+                )
+                if (clsName) {
+                  const ruleRegex = new RegExp(`.${clsName}[^}]+`, 'g')
+                  if (e.Css) {
+                    e.Css = e.Css.split(';')
+                      .filter(vl => !vl.match(/(width:|height:|flex:)/g))
+                      .join(';')
+                    e.Css += cssRule.Css.match(ruleRegex)[0]
+                      .replace(`.${clsName} {`, '')
+                      .trim()
+                  } else {
+                    e.Css = cssRule.Css.match(ruleRegex)[0]
+                      .replace(`.${clsName} {`, '')
+                      .trim()
+                  }
+                  e.ListClassName = eClassList
+                    .filter(vl => vl !== clsName)
+                    .join(' ')
+                }
+                delete e.value
+                return e
+              })
+            } else {
+              relativeList = initDOM([...result, item]).map(e => {
+                delete e.value
+                return e
+              })
             }
-            let relativeList = initDOM([...result, item]).map(e => {
-              delete e.value
-              return e
-            })
             arrange(relativeList)
             showInstanceDemo({ wb: item, children: relativeList })
+            select_component = item
+            relativeList.pop()
+            select_component.children = relativeList
             loader.replaceWith(prefix_action)
           })
         }
@@ -988,12 +1011,18 @@ function showInstanceDemo ({ wb, children }) {
   } else {
     demoValue = wb.value
   }
+  demoValue.id = uuidv4()
+  demoValue.removeAttribute('parentid')
+  demoValue.querySelectorAll('.wbaseItem-value').forEach(e => {
+    e.id = uuidv4()
+    e.removeAttribute('parentid')
+  })
   demoValue.style.left = null
   demoValue.style.top = null
   demoValue.style.right = null
   demoValue.style.bottom = null
   demoValue.style.transform = null
-  demoValue.setAttribute('componentid', wb.GID)
+  demoValue.setAttribute('projectid', wb.ProjectID)
   instance_demo.appendChild(demoValue)
   instContainer.replaceChildren(instance_demo)
   observer_instance.observe(instance_demo)
@@ -1028,7 +1057,7 @@ function ondragSortLayer (event) {
   let wb = selected_list[0]
   let wbLayer = document.getElementById(`wbaseID:${wb.GID}`)
   const sortComInstance = wb.value.closest(
-    `.wbaseItem-value[iswini="true"][level="${
+    `.wbaseItem-value[iswini][level="${
       wb.Level - 1
     }"], .wbaseItem-value[isinstance="true"][level="${wb.Level - 1}"]`
   )
@@ -1804,12 +1833,10 @@ function dragInstanceUpdate (event) {
     instance_drag.offsetTop + event.pageY - previousY + 'px'
   previousX = event.pageX
   previousY = event.pageY
-  let parentHTML = parent
-  let isTableParent = parentHTML.localName === 'table'
-  document.getElementById(`demo_auto_layout`)?.remove()
-  if (isTableParent) {
+  let newPWbHTML = parent
+  if (newPWbHTML.classList.contains('w-table')) {
     console.log('table')
-    let availableCell = findCell(parentHTML, event)
+    let availableCell = findCell(newPWbHTML, event)
     if (availableCell) {
       let distance = 0
       let cellChildren = [...availableCell.childNodes]
@@ -1843,23 +1870,23 @@ function dragInstanceUpdate (event) {
       }
     }
   } else if (
-    window.getComputedStyle(parentHTML).display?.match('flex') &&
-    !select_component.StyleItem.PositionItem.FixPosition
+    window.getComputedStyle(newPWbHTML).display.match('flex') &&
+    !instance_drag.classList.contains('fixed-position')
   ) {
     console.log('flex')
     let children = [
-      ...parentHTML.querySelectorAll(
+      ...newPWbHTML.querySelectorAll(
         `.wbaseItem-value[level="${
-          parseInt(parentHTML.getAttribute('level') ?? '0') + 1
+          parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
         }"]`
       )
     ]
-    let isGrid = window.getComputedStyle(parentHTML).flexWrap == 'wrap'
-    if (parentHTML.style.flexDirection == 'column') {
+    let isGrid = window.getComputedStyle(newPWbHTML).flexWrap == 'wrap'
+    if (newPWbHTML.style.flexDirection == 'column') {
       let zIndex = 0
       let distance = 0
       if (children.length > 0) {
-        children.sort((aHTML, bHTML) => {
+        let closestHTML = [...children].sort((aHTML, bHTML) => {
           let aRect = aHTML.getBoundingClientRect()
           let bRect = bHTML.getBoundingClientRect()
           let a_center_oy
@@ -1878,49 +1905,40 @@ function dragInstanceUpdate (event) {
             b_center_oy = Math.abs(event.pageY - (bRect.y + bRect.height / 2))
           }
           return a_center_oy - b_center_oy
-        })
-        let closestHTML = children[0]
+        })[0]
         if (isGrid) {
           closestHTML = children.find(
-            childHTML => childHTML.getBoundingClientRect().bottom >= event.pageX
+            childHTML => childHTML.getBoundingClientRect().right >= event.pageX
           )
         }
         if (closestHTML) {
           let closestRect = closestHTML.getBoundingClientRect()
-          zIndex = parseInt(window.getComputedStyle(closestHTML).order)
+          zIndex = children.indexOf(closestHTML)
           distance = event.pageY - (closestRect.y + closestRect.height / 2)
-          if (distance < 0) {
-            zIndex--
-          }
+          if (distance < 0) zIndex--
         } else {
-          zIndex = Math.max(
-            ...children.map(childHTML => parseInt(childHTML.style.zIndex))
-          )
+          zIndex = children.length - 1
         }
       }
       $(instance_drag).addClass('drag-hide')
-      let demo = document.createElement('div')
-      demo.id = 'demo_auto_layout'
-      demo.style.backgroundColor = '#1890FF'
-      demo.style.height = `${2.4 / scale}px`
-      demo.style.width = `${instance_drag.firstChild.offsetWidth * 0.8}px`
-      demo.style.order = zIndex
-      switch (parseInt(parentHTML.getAttribute('cateid'))) {
-        case EnumCate.tree:
-          parentHTML.querySelector('.children-value').appendChild(demo)
-          break
-        case EnumCate.carousel:
-          parentHTML.querySelector('.children-value').appendChild(demo)
-          break
-        default:
-          parentHTML.appendChild(demo)
-          break
+      var demo = document.getElementById('demo_auto_layout')
+      if (!demo) {
+        demo = document.createElement('div')
+        demo.id = 'demo_auto_layout'
+        demo.style.backgroundColor = '#1890FF'
+        demo.style.height = `${2.4 / scale}px`
+        demo.style.width = `${32 * 0.8}px`
       }
+      newPWbHTML.replaceChildren(
+        ...children.slice(0, zIndex + 1),
+        demo,
+        ...children.slice(zIndex + 1)
+      )
     } else {
       let zIndex = 0
       let distance = 0
       if (children.length > 0) {
-        children.sort((aHTML, bHTML) => {
+        let closestHTML = [...children].sort((aHTML, bHTML) => {
           let aRect = aHTML.getBoundingClientRect()
           let bRect = bHTML.getBoundingClientRect()
           let a_center_ox
@@ -1939,8 +1957,7 @@ function dragInstanceUpdate (event) {
             b_center_ox = Math.abs(event.pageX - (bRect.x + bRect.width / 2))
           }
           return a_center_ox - b_center_ox
-        })
-        let closestHTML = children[0]
+        })[0]
         if (isGrid) {
           closestHTML = children.find(
             childHTML => childHTML.getBoundingClientRect().bottom >= event.pageY
@@ -1950,200 +1967,110 @@ function dragInstanceUpdate (event) {
           let closestRect = closestHTML.getBoundingClientRect()
           zIndex = parseInt(window.getComputedStyle(closestHTML).zIndex)
           distance = event.pageX - (closestRect.x + closestRect.width / 2)
-          if (distance < 0) {
-            zIndex--
-          }
+          if (distance < 0) zIndex--
         } else {
-          zIndex = Math.max(
-            ...children.map(childHTML => parseInt(childHTML.style.zIndex))
-          )
+          zIndex = children.length - 1
         }
       }
       $(instance_drag).addClass('drag-hide')
-      let demo = document.createElement('div')
-      demo.id = 'demo_auto_layout'
-      demo.style.backgroundColor = '#1890FF'
-      demo.style.width = `${2.4 / scale}px`
-      demo.style.height = `${instance_drag.firstChild.offsetHeight * 0.8}px`
-      demo.style.order = zIndex
-      switch (parseInt(parentHTML.getAttribute('cateid'))) {
-        case EnumCate.tree:
-          parentHTML.querySelector('.children-value').appendChild(demo)
-          break
-        case EnumCate.carousel:
-          parentHTML.querySelector('.children-value').appendChild(demo)
-          break
-        default:
-          parentHTML.appendChild(demo)
-          break
+      var demo = document.getElementById('demo_auto_layout')
+      if (!demo) {
+        demo = document.createElement('div')
+        demo.id = 'demo_auto_layout'
+        demo.style.backgroundColor = '#1890FF'
+        demo.style.width = `${2.4 / scale}px`
+        demo.style.height = `${32 * 0.8}px`
       }
+      newPWbHTML.replaceChildren(
+        ...children.slice(0, zIndex + 1),
+        demo,
+        ...children.slice(zIndex + 1)
+      )
     }
   } else {
     $(instance_drag).removeClass('drag-hide')
   }
+  if (!demo) document.getElementById('demo_auto_layout')?.remove()
 }
 
 function dragInstanceEnd (event) {
-  WBaseDA.enumEvent = EnumEvent.copy
-  let newParent = parent
-  let parent_wbase
-  let isTableParent = newParent.localName === 'table'
-  if (newParent.id?.length === 36)
-    parent_wbase = wbase_list.find(e => e.GID === newParent.id)
-  let drag_to_layout = window.getComputedStyle(newParent).display.match('flex')
-  let newWb = JSON.parse(JSON.stringify(select_component))
-  newWb.children = null
-  newWb.GID = uuidv4()
-  newWb.value = instance_drag.firstChild
-  newWb.value.id = newWb.GID
-  newWb.ChildID = select_component.GID
-  newWb.IsCopy = true
-  newWb.IsWini = false
-  newWb.value.style.width = newWb.value.offsetWidth + 'px'
-  newWb.value.style.height = newWb.value.offsetHeight + 'px'
-  newWb.value.style.transform = null
-  newWb.value.removeAttribute('iswini')
-  let zIndex = 0
-  if (isTableParent) {
-    let demo = document.getElementById('demo_auto_layout')
-    if (demo) {
-      zIndex = parseInt(demo.style.order) + 1
-      demo.replaceWith(newWb.value)
-    }
-    let listCell = parent_wbase.TableRows.reduce((a, b) => a.concat(b))
-    ;[
-      ...newParent.querySelectorAll(':scope > .table-row > .table-cell')
-    ].forEach(cell => {
-      listCell.find(e => e.id === cell.id).contentid = [...cell.childNodes]
-        .map(e => e.id)
-        .join(',')
+  let newPWbHTML = parent
+  let new_parentID = newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
+  let pWb =
+    new_parentID !== wbase_parentID
+      ? wbase_list.find(e => e.GID === new_parentID)
+      : null
+  let wb = select_component
+  WBaseDA.listData = [wb]
+  wb.ParentID = new_parentID
+  wb.ChildID = wb.GID
+  wb.IsCopy = true
+  wb.GID = wb.value.id
+  if (wb.ProjectID > 0 && wb.ProjectID !== ProjectDA.obj.ID) {
+    wb.children.forEach(e => {
+      e.Level = e.Level - wb.Level + (pWb?.Level ?? 0) + 1
+      e.value.setAttribute('level', e.Level)
     })
-    parent_wbase.AttributesItem.Content = JSON.stringify(parent_wbase.TableRows)
-    WBaseDA.listData.push(parent_wbase)
-  } else if (drag_to_layout) {
-    let demo = document.getElementById('demo_auto_layout')
-    if (demo) {
-      zIndex = parseInt(demo.style.order)
-      demo.remove()
-    }
+    WBaseDA.listData.push(...wb.children)
   }
-  $(newWb.value).removeClass('drag-hide')
-  if (parent_wbase) {
-    newWb.ParentID = newParent.id
-    newWb.ListID = parent_wbase.ListID + `,${newParent.id}`
-    newWb.Level = newWb.ListID.split(',').length
-    newWb.value.setAttribute('level', newWb.Level)
-    newWb.value.setAttribute('listid', newWb.ListID)
-  } else {
-    newWb.ParentID = wbase_parentID
-    newWb.ListID = wbase_parentID
-    newWb.Level = 1
-    newWb.value.setAttribute('level', 1)
-    newWb.value.setAttribute('listid', wbase_parentID)
-  }
-  if (isTableParent) {
-    let wbaseChildren = [
-      ...newParent.querySelectorAll(
-        `.wbaseItem-value[level="${
-          parseInt(newParent.getAttribute('level') ?? '0') + 1
-        }"]`
-      )
-    ]
-    for (let i = 0; i < wbaseChildren.length; i++) {
-      wbaseChildren[i].style.zIndex = i
-    }
-    newWb.Sort = zIndex
-    newWb.value.style.left = null
-    newWb.value.style.top = null
-    newWb.value.style.right = null
-    newWb.value.style.bottom = null
-    newWb.value.style.transform = null
-    newWb.StyleItem.PositionItem.FixPosition = false
-    newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left
-    newWb.StyleItem.PositionItem.ConstraintsY = Constraints.top
-  } else if (drag_to_layout) {
-    if (
-      select_component.StyleItem.FrameItem.Width < 0 &&
-      parent_wbase.StyleItem.FrameItem.Width != undefined
-    ) {
-      newWb.StyleItem.FrameItem.Width =
-        select_component.StyleItem.FrameItem.Width
-      newWb.value.style.width = '100%'
-    }
-    if (
-      select_component.StyleItem.FrameItem.Height < 0 &&
-      parent_wbase.StyleItem.FrameItem.Height != undefined
-    ) {
-      newWb.StyleItem.FrameItem.Height =
-        select_component.StyleItem.FrameItem.Height
-      newWb.value.style.height = '100%'
-    }
-    switch (parseInt(newParent.getAttribute('cateid'))) {
-      case EnumCate.tree:
-        newParent.querySelector('.children-value').appendChild(newWb.value)
-        break
-      case EnumCate.carousel:
-        newParent.querySelector('.children-value').appendChild(newWb.value)
-        break
-      default:
-        newParent.appendChild(newWb.value)
-        break
-    }
-    newWb.StyleItem.PositionItem.FixPosition = false
-    newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left
-    newWb.StyleItem.PositionItem.ConstraintsY = Constraints.top
-    $(newWb.value).removeClass('fixed-position')
-    newWb.value.style.position = null
-    newWb.value.style.left = null
-    newWb.value.style.right = null
-    newWb.value.style.top = null
-    newWb.value.style.bottom = null
-    newWb.value.style.transform = null
-    newWb.value.style.zIndex = zIndex
-    newWb.value.style.order = zIndex
-  } else {
-    let parentRect = { x: 0, y: 0 }
-    if (parent_wbase) {
-      parentRect = newParent.getBoundingClientRect()
-      parentRect = offsetScale(parentRect.x, parentRect.y)
-    }
+  wb.Level = (pWb?.Level ?? 0) + 1
+  wb.value.setAttribute('level', wb.Level)
+  let demo = document.getElementById('demo_auto_layout')
+  if (demo) {
+    wb.value.style.position = null
+    wb.value.style.left = null
+    wb.value.style.top = null
+    wb.value.style.right = null
+    wb.value.style.bottom = null
+    wb.value.style.transform = null
+    demo.replaceWith(wb.value)
+  } else if (new_parentID === wbase_parentID) {
     let offset = offsetScale(event.pageX, event.pageY)
-    newWb.StyleItem.PositionItem.Top = `${
-      offset.y - newWb.value.offsetHeight - parentRect.y
-    }px`
-    newWb.StyleItem.PositionItem.Left = `${
-      offset.x - newWb.value.offsetWidth - parentRect.x
-    }px`
-    newWb.value.style.left = newWb.StyleItem.PositionItem.Left
-    newWb.value.style.top = newWb.StyleItem.PositionItem.Top
-    newWb.StyleItem.PositionItem.ConstraintsX = Constraints.left
-    newWb.StyleItem.PositionItem.ConstraintsY = Constraints.top
-    newParent.appendChild(newWb.value)
+    wb.value.style.left = offset.x + 'px'
+    wb.value.style.top = offset.y + 'px'
+    wb.value.style.right = null
+    wb.value.style.bottom = null
+    wb.value.style.transform = null
+    wb.value.setAttribute('constx', Constraints.left)
+    wb.value.setAttribute('consty', Constraints.top)
+    divSection.appendChild(wb.value)
+  } else if (newPWbHTML.classList.contains('w-stack')) {
+    wb.value.style.transform = null
+    let pWbRect = newPWbHTML.getBoundingClientRect()
+    pWbRect = offsetScale(pWbRect.x, pWbRect.y)
+    let offset = offsetScale(event.pageX, event.pageY)
+    wb.value.style.top = `${offset.y - wb.value.offsetHeight - parentRect.y}px`
+    wb.value.style.left = `${offset.x - wb.value.offsetWidth - parentRect.x}px`
+    wb.value.style.right = null
+    wb.value.style.bottom = null
+    wb.value.setAttribute('constx', Constraints.left)
+    wb.value.setAttribute('consty', Constraints.top)
+    newPWbHTML.appendChild(wb.value)
   }
-  WBaseDA.listData.push(newWb)
-  wbase_list.push(newWb)
-  if (parent_wbase) {
-    let children = [
-      ...newParent.querySelectorAll(
-        `.wbaseItem-value[level="${
-          parseInt(newParent.getAttribute('level') ?? '0') + 1
-        }"]`
+  wb.Css = wb.value.style.cssText
+  if (pWb) {
+    pWb.ListChildID = [
+      ...pWb.value.querySelectorAll(
+        `.wbaseItem-value[level="${pWb.Level + 1}"]`
       )
-    ]
-    children.sort((a, b) => parseInt(a.style.zIndex) - parseInt(b.style.zIndex))
-    for (let i = 0; i < children.length; i++) {
-      let wbChild = wbase_list.find(wbase => wbase.GID == children[i].id)
-      if (wbChild) wbChild.Sort = i
-      children[i].style.zIndex = i
-      children[i].style.order = i
-    }
-    parent_wbase.CountChild = children.length
-    parent_wbase.ListChildID = children.map(e => e.id)
-    WBaseDA.listData.push(parent_wbase)
+    ].map(e => e.id)
+    wbase_list.forEach(e => {
+      if (e.ParentID === pWb.GID) {
+        e.Sort = pWb.ListChildID.indexOf(e.GID)
+        WBaseDA.listData.push(e)
+      }
+    })
+    wb.Sort = pWb.ListChildID.indexOf(wb.GID)
+    WBaseDA.listData.push(pWb)
   }
+  WBaseDA.copy(WBaseDA.listData)
+  const selectedTile = assets_view.querySelector('.list_tile.comp-selected')
+  if (selectedTile) $(selectedTile).trigger('click')
   replaceAllLyerItemHTML()
   parent = divSection
-  handleWbSelectedList([newWb])
-  newWb.value.setAttribute('loading', 'true')
-  action_list[action_index].tmpHTML = [newWb.value]
+  handleWbSelectedList([wb])
+  wb.value.setAttribute('loading', 'true')
+  instance_drag?.remove()
+  instance_drag = null
+  // action_list[action_index].tmpHTML = [newWb.value]
 }

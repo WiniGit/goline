@@ -858,6 +858,8 @@ class WBaseDA {
         return {
           GID: e.ChildID,
           IsCopy: e.IsCopy ?? false,
+          ListClassName: e.ListClassName,
+          Sort: e.Sort,
           Css: e.Css,
           AttributesItem:
             e.value.classList.contains('w-table') && e.IsCopy
@@ -889,6 +891,8 @@ class WBaseDA {
         return {
           GID: e.IsCopy ? e.ChildID : e.GID,
           IsCopy: e.IsCopy ?? false,
+          ListClassName: e.ListClassName,
+          Sort: e.Sort,
           Css: e.Css,
           AttributesItem: attrItem,
           ListChildID: e.IsCopy ? null : e.ListChildID

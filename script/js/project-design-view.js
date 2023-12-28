@@ -157,6 +157,7 @@ function createNewWbase ({ wb, relativeWbs = [], level }) {
   let list_new_wbase = []
   let newWb = JSON.parse(JSON.stringify(wb))
   newWb.GID = uuidv4()
+  // newWb.ChildID = wb.GID
   newWb.IsWini = false
   newWb.BasePropertyItems = null
   newWb.PropertyItems = null
@@ -192,7 +193,7 @@ function createNewWbase ({ wb, relativeWbs = [], level }) {
         sort: list_child.indexOf(child)
       })
       list_new_wbase.push(...new_children)
-      switch (newWb.CateID) {
+      switch (newWb.ListClassName.includes('w-table')) {
         case EnumCate.table:
           newWb.AttributesItem.Content = newWb.AttributesItem.Content.replace(
             child.GID,
@@ -797,6 +798,15 @@ function dragWbaseUpdate (xp, yp, event) {
       wb.value.style.bottom = 'unset'
       wb.value.style.transform = 'none'
       wb.value.setAttribute('parentid', new_parentID)
+      wb.value.querySelectorAll('.wbaseItem-value').forEach(e => {
+        e.setAttribute(
+          'level',
+          parseInt(e.getAttribute('level')) -
+            wb.Level +
+            parseInt(newPWbHTML.getAttribute('level') ?? '0') +
+            1
+        )
+      })
       wb.Level = parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
       wb.value.setAttribute('level', wb.Level)
       wb.ParentID = new_parentID
@@ -988,7 +998,7 @@ function dragWbaseEnd () {
     arrange()
     if (
       !newPWbHTML.getAttribute('iswini') &&
-      !newPWbHTML.closest('.wbaseItem-value[iswini="true"]')
+      !newPWbHTML.closest('.wbaseItem-value[iswini]')
     ) {
       for (let wb of selected_list) {
         if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
@@ -1020,7 +1030,7 @@ function dragWbaseEnd () {
       }
     } else {
       let pWbComponent = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini="true"]`
+        `.wbaseItem-value[iswini]`
       )
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
@@ -1282,6 +1292,15 @@ function dragAltUpdate (xp, yp, event) {
       wb.value.style.bottom = null
       wb.value.style.transform = null
       wb.value.setAttribute('parentid', new_parentID)
+      wb.value.querySelectorAll('.wbaseItem-value').forEach(e => {
+        e.setAttribute(
+          'level',
+          parseInt(e.getAttribute('level')) -
+            wb.Level +
+            parseInt(newPWbHTML.getAttribute('level') ?? '0') +
+            1
+        )
+      })
       wb.Level = parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
       wb.ParentID = new_parentID
       return wb.value
@@ -1362,6 +1381,12 @@ function dragAltEnd () {
           `.wbaseItem-value[level="${pWb.Level + 1}"]`
         )
       ].map(e => e.id)
+      wbase_list.forEach(e => {
+        if (e.ParentID === pWb.GID) {
+          e.Sort = pWb.ListChildID.indexOf(e.GID)
+          WBaseDA.listData.push(e)
+        }
+      })
       WBaseDA.listData.push(pWb)
     }
     WBaseDA.listData.push(
@@ -1394,6 +1419,7 @@ function dragAltEnd () {
         }
         wb.Css = wb.value.style.cssText
         wb.ListClassName = wb.value.className
+        if (pWb) wb.Sort = pWb.ListChildID.indexOf(wb.GID)
         return wb
       })
     )
@@ -1407,7 +1433,6 @@ function dragAltEnd () {
     drag_start_list = []
     alt_list = []
   }
-  parent.removeAttribute('onsort')
 }
 
 //
