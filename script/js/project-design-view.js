@@ -1381,14 +1381,9 @@ function dragAltEnd () {
           `.wbaseItem-value[level="${pWb.Level + 1}"]`
         )
       ].map(e => e.id)
-      wbase_list.forEach(e => {
-        if (e.ParentID === pWb.GID) {
-          e.Sort = pWb.ListChildID.indexOf(e.GID)
-          WBaseDA.listData.push(e)
-        }
-      })
       WBaseDA.listData.push(pWb)
     }
+    let sort
     WBaseDA.listData.push(
       ...alt_list.map(wb => {
         if (wb.value.getAttribute('width-type') === 'fill') {
@@ -1419,7 +1414,16 @@ function dragAltEnd () {
         }
         wb.Css = wb.value.style.cssText
         wb.ListClassName = wb.value.className
-        if (pWb) wb.Sort = pWb.ListChildID.indexOf(wb.GID)
+        if (pWb) {
+          wb.Sort =
+            (sort ?? pWb.ListChildID.indexOf(wb.GID)) + alt_list.indexOf(wb)
+          if (wb.Sort !== 0 && alt_list.indexOf(wb) === 0) {
+            wb.Sort = wbase_list.find(
+              e => e.GID === pWb.ListChildID[wb.Sort - 1]
+            ).Sort
+            sort = wb.Sort
+          }
+        }
         return wb
       })
     )

@@ -1335,8 +1335,8 @@ function moveListener (event) {
         let target_rect = instDemo.getBoundingClientRect()
         document.body.appendChild(instance_drag)
         instance_drag.style.pointerEvents = 'none'
-        instance_drag.style.left = target_rect.x + target_rect.width / 2 + 'px'
-        instance_drag.style.top = target_rect.y + target_rect.height / 2 + 'px'
+        instance_drag.style.left = target_rect.x + target_rect.width+ 'px'
+        instance_drag.style.top = target_rect.y + target_rect.height+ 'px'
         instance_drag.style.zIndex = 2
       } else if (sortLayer) {
         ondragSortLayer(event)

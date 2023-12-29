@@ -1828,9 +1828,19 @@ function dragInstanceUpdate (event) {
   console.log('drag instance update')
   selectParent(event)
   instance_drag.style.left =
-    instance_drag.offsetLeft + event.pageX - previousX + 'px'
+    (instance_drag.style.left
+      ? parseFloat(instance_drag.style.left.replace('px', ''))
+      : instance_drag.offsetLeft) +
+    event.pageX -
+    previousX +
+    'px'
   instance_drag.style.top =
-    instance_drag.offsetTop + event.pageY - previousY + 'px'
+    (instance_drag.style.top
+      ? parseFloat(instance_drag.style.top.replace('px', ''))
+      : instance_drag.offsetTop) +
+    event.pageY -
+    previousY +
+    'px'
   previousX = event.pageX
   previousY = event.pageY
   let newPWbHTML = parent
@@ -1870,7 +1880,7 @@ function dragInstanceUpdate (event) {
       }
     }
   } else if (
-    window.getComputedStyle(newPWbHTML).display.match('flex') &&
+    window.getComputedStyle(newPWbHTML).display === 'flex' &&
     !instance_drag.classList.contains('fixed-position')
   ) {
     console.log('flex')
@@ -1882,7 +1892,7 @@ function dragInstanceUpdate (event) {
       )
     ]
     let isGrid = window.getComputedStyle(newPWbHTML).flexWrap == 'wrap'
-    if (newPWbHTML.style.flexDirection == 'column') {
+    if (newPWbHTML.classList.contains('w-col')) {
       let zIndex = 0
       let distance = 0
       if (children.length > 0) {
@@ -1927,7 +1937,7 @@ function dragInstanceUpdate (event) {
         demo.id = 'demo_auto_layout'
         demo.style.backgroundColor = '#1890FF'
         demo.style.height = `${2.4 / scale}px`
-        demo.style.width = `${32 * 0.8}px`
+        demo.style.width = `${(newPWbHTML.offsetWidth / 2) * 0.8}px`
       }
       newPWbHTML.replaceChildren(
         ...children.slice(0, zIndex + 1),
@@ -1979,7 +1989,7 @@ function dragInstanceUpdate (event) {
         demo.id = 'demo_auto_layout'
         demo.style.backgroundColor = '#1890FF'
         demo.style.width = `${2.4 / scale}px`
-        demo.style.height = `${32 * 0.8}px`
+        demo.style.height = `${(newPWbHTML.offsetHeight / 2) * 0.8}px`
       }
       newPWbHTML.replaceChildren(
         ...children.slice(0, zIndex + 1),
@@ -2014,6 +2024,7 @@ function dragInstanceEnd (event) {
     WBaseDA.listData.push(...wb.children)
   }
   wb.Level = (pWb?.Level ?? 0) + 1
+  wb.value.className = wb.ListClassName
   wb.value.setAttribute('level', wb.Level)
   let demo = document.getElementById('demo_auto_layout')
   if (demo) {
@@ -2054,13 +2065,12 @@ function dragInstanceEnd (event) {
         `.wbaseItem-value[level="${pWb.Level + 1}"]`
       )
     ].map(e => e.id)
-    wbase_list.forEach(e => {
-      if (e.ParentID === pWb.GID) {
-        e.Sort = pWb.ListChildID.indexOf(e.GID)
-        WBaseDA.listData.push(e)
-      }
-    })
     wb.Sort = pWb.ListChildID.indexOf(wb.GID)
+    if (wb.Sort !== 0) {
+      wb.Sort = wbase_list.find(
+        e => e.GID === pWb.ListChildID[wb.Sort - 1]
+      ).Sort
+    }
     WBaseDA.listData.push(pWb)
   }
   WBaseDA.copy(WBaseDA.listData)

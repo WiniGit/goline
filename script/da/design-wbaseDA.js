@@ -856,7 +856,7 @@ class WBaseDA {
           : minLevelWbase.ParentID
       data.data = list_wbase_item.map(e => {
         return {
-          GID: e.ChildID,
+          GID: e.IsCopy ? e.ChildID : e.GID,
           IsCopy: e.IsCopy ?? false,
           ListClassName: e.ListClassName,
           Sort: e.Sort,

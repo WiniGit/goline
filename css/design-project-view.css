@@ -279,7 +279,7 @@ body:has(#history-view) :is(.btn-tool-state:nth-child(2), .btn-history) {
   position: absolute !important;
 }
 
-#divSection .drag-hide {
+.drag-hide {
   display: none !important;
 }
 
