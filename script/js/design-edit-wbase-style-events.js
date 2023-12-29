@@ -1602,27 +1602,30 @@ function handleEditOffset ({
       if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
       }
-      let cssRule = cssItem
-        ? StyleDA.docStyleSheets.find(rule => {
-            let selector = [...divSection.querySelectorAll(rule.selectorText)]
-            let check = selector.includes(wb.value)
-            if (check)
-              selector.forEach(e => {
-                if (e !== wb.value) {
-                  if (width === null) e.setAttribute('width-type', 'fit')
-                  else if (width < 0) e.setAttribute('width-type', 'fill')
-                  else e.removeAttribute('width-type')
-                }
-              })
-            return check
-          })
-        : wb.value
+      let cssRule =
+        cssItem && !(wb.IsWini && width < 0)
+          ? StyleDA.docStyleSheets.find(rule => {
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
+              let check = selector.includes(wb.value)
+              if (check)
+                selector.forEach(e => {
+                  if (e !== wb.value) {
+                    if (width === null) e.setAttribute('width-type', 'fit')
+                    else if (width < 0) e.setAttribute('width-type', 'fill')
+                    else e.removeAttribute('width-type')
+                  }
+                })
+              return check
+            })
+          : wb.value
       let children = [
         ...wb.value.querySelectorAll(
           `.wbaseItem-value[level="${wb.Level + 1}"]`
         )
       ]
       if (width === null) {
+        if (cssItem && wb.value.style.width === '100%') var removeFillW = true
+        //
         if (wb.value.classList.contains('w-row')) {
           var fillWChildren = children.filter(
             e => e.getAttribute('width-type') === 'fill'
@@ -1639,10 +1642,7 @@ function handleEditOffset ({
             fillWChildren.some(wbHTML => wb.GID === wbHTML.id)
           )
           for (let cWb of fillWChildren) {
-            if (
-              cssItem ||
-              (cWb.IsWini && !cWb.value.classList.contains('w-variant'))
-            ) {
+            if (cssItem) {
               StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
                 let check = selector.includes(cWb.value)
@@ -1692,10 +1692,18 @@ function handleEditOffset ({
         }
         wb.value.setAttribute('width-type', 'fill')
       } else {
+        if (cssItem && wb.value.style.width === '100%') removeFillW = true
         cssRule.style.width = width + 'px'
         wb.value.removeAttribute('width-type')
       }
-      if (cssItem) {
+      if (removeFillW) {
+        wb.value.style.width = null
+        if (wb.value.closest(`.w-row[level="${wb.Level - 1}"]`))
+          wb.value.style.flex = null
+        wb.Css = wb.value.style.cssText
+        listUpdate.push(wb)
+      }
+      if (cssItem && !(wb.IsWini && width < 0)) {
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -1707,6 +1715,7 @@ function handleEditOffset ({
       } else {
         wb.Css = cssRule.style.cssText
         listUpdate.push(wb)
+        cssItem = null
       }
     }
     if (cssItem) StyleDA.editStyleSheet(cssItem)
@@ -1724,27 +1733,30 @@ function handleEditOffset ({
       if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
       }
-      let cssRule = cssItem
-        ? StyleDA.docStyleSheets.find(rule => {
-            let selector = [...divSection.querySelectorAll(rule.selectorText)]
-            let check = selector.includes(wb.value)
-            if (check)
-              selector.forEach(e => {
-                if (e !== wb.value) {
-                  if (height === null) e.setAttribute('height-type', 'fit')
-                  else if (height < 0) e.setAttribute('height-type', 'fill')
-                  else e.removeAttribute('height-type')
-                }
-              })
-            return check
-          })
-        : wb.value
+      let cssRule =
+        cssItem && !(wb.IsWini && height < 0)
+          ? StyleDA.docStyleSheets.find(rule => {
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
+              let check = selector.includes(wb.value)
+              if (check)
+                selector.forEach(e => {
+                  if (e !== wb.value) {
+                    if (height === null) e.setAttribute('height-type', 'fit')
+                    else if (height < 0) e.setAttribute('height-type', 'fill')
+                    else e.removeAttribute('height-type')
+                  }
+                })
+              return check
+            })
+          : wb.value
       let children = [
         ...wb.value.querySelectorAll(
           `.wbaseItem-value[level="${wb.Level + 1}"]`
         )
       ]
       if (height === null) {
+        if (cssItem && wb.value.style.height === '100%') var removeFillH = true
+        //
         if (wb.value.classList.contains('w-col')) {
           var fillHChildren = children.filter(
             e => e.getAttribute('height-type') === 'fill'
@@ -1761,10 +1773,7 @@ function handleEditOffset ({
             fillHChildren.some(wbHTML => wb.GID === wbHTML.id)
           )
           for (let cWb of fillHChildren) {
-            if (
-              cssItem ||
-              (cWb.IsWini && !cWb.value.classList.contains('w-variant'))
-            ) {
+            if (cssItem) {
               StyleDA.docStyleSheets.find(rule => {
                 let selector = [...wb.value.querySelectorAll(rule.selectorText)]
                 let check = selector.includes(cWb.value)
@@ -1812,10 +1821,19 @@ function handleEditOffset ({
         }
         wb.value.setAttribute('height-type', 'fill')
       } else {
+        if (cssItem && wb.value.style.height === '100%') removeFillH = true
         cssRule.style.height = height + 'px'
         wb.value.removeAttribute('height-type')
       }
-      if (cssItem) {
+      if (removeFillH) {
+        wb.value.style.height = null
+        if (wb.value.closest(`.w-col[level="${wb.Level - 1}"]`))
+          wb.value.style.flex = null
+        wb.Css = wb.value.style.cssText
+        listUpdate.push(wb)
+      }
+
+      if (cssItem && !(wb.IsWini && height < 0)) {
         cssItem.Css = cssItem.Css.replace(
           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
           cssRule.cssText
@@ -1827,6 +1845,7 @@ function handleEditOffset ({
       } else {
         wb.Css = cssRule.style.cssText
         listUpdate.push(wb)
+        cssItem = null
       }
     }
     if (cssItem) StyleDA.editStyleSheet(cssItem)
@@ -3863,9 +3882,7 @@ function addBackgroundColor () {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of [...listUpdate]) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -3928,9 +3945,7 @@ function unlinkColorSkin () {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of [...listUpdate]) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4004,9 +4019,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4072,9 +4085,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
       }
       if (onSubmit && listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4125,9 +4136,7 @@ function handleEditBackground ({ hexCode, image, colorSkin, onSubmit = true }) {
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4179,9 +4188,7 @@ function handleEditIconColor ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4217,9 +4224,7 @@ function handleEditIconColor ({
       }
       if (onSubmit && listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4307,9 +4312,7 @@ function handleEditIconColor ({
         })
       }
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4386,9 +4389,7 @@ function unlinkTypoSkin () {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of [...listUpdate]) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4443,9 +4444,7 @@ function handleEditTypo ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4481,9 +4480,7 @@ function handleEditTypo ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4519,9 +4516,7 @@ function handleEditTypo ({
       }
       if (onSubmit && listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4558,9 +4553,7 @@ function handleEditTypo ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbComputeSt = window.getComputedStyle(wb.value)
@@ -4598,9 +4591,7 @@ function handleEditTypo ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbComputeSt = window.getComputedStyle(wb.value)
@@ -4638,9 +4629,7 @@ function handleEditTypo ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbComputeSt = window.getComputedStyle(wb.value)
@@ -4686,9 +4675,7 @@ function handleEditTypo ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbComputeSt = window.getComputedStyle(wb.value)
@@ -4729,9 +4716,7 @@ function handleEditTypo ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4767,9 +4752,7 @@ function handleEditTypo ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4805,9 +4788,7 @@ function handleEditTypo ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -4877,9 +4858,7 @@ function unlinkBorderSkin () {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of [...listUpdate]) {
       let wbComputeSt = window.getComputedStyle(wb.value)
@@ -4934,9 +4913,7 @@ function addBorder () {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -5040,9 +5017,7 @@ function handleEditBorder ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let wbBorderW = window
@@ -5158,9 +5133,7 @@ function handleEditBorder ({
       }
       if (onSubmit && listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbComputeSt = window.getComputedStyle(wb.value)
@@ -5312,9 +5285,7 @@ function handleEditBorder ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbComputeSt = window.getComputedStyle(wb.value)
@@ -5485,9 +5456,7 @@ function handleEditBorder ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbComputeSt = window.getComputedStyle(wb.value)
@@ -5658,9 +5627,7 @@ function handleEditBorder ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbComputeSt = window.getComputedStyle(wb.value)
@@ -5756,9 +5723,7 @@ function deleteBorder () {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of [...listUpdate]) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -6459,9 +6424,7 @@ function handleEditLayout ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -6528,9 +6491,7 @@ function handleEditLayout ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(rule => {
@@ -6580,9 +6541,7 @@ function handleEditLayout ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         wb.WAutolayoutItem.RunSpace = runSpace
@@ -6717,9 +6676,7 @@ function handleEditLayout ({
         }
       }
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         wb.WAutolayoutItem.IsScroll = isScroll
@@ -6858,9 +6815,7 @@ function handleEditPadding ({ top, right, bottom, left }) {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -7185,9 +7140,7 @@ function unlinkEffectSkin () {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let wbComputeSt = window.getComputedStyle(wb.value)
@@ -7236,9 +7189,7 @@ function addEffect () {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -7284,9 +7235,7 @@ function deleteEffect () {
     }
     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else {
-    let pWbComponent = listUpdate[0].value.closest(
-      `.wbaseItem-value[iswini]`
-    )
+    let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -7350,9 +7299,7 @@ function handleEditEffect ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -7398,9 +7345,7 @@ function handleEditEffect ({
       }
       if (onSubmit && listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -7443,9 +7388,7 @@ function handleEditEffect ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbShadow = window.getComputedStyle(wb.value).boxShadow
@@ -7489,9 +7432,7 @@ function handleEditEffect ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbShadow = window.getComputedStyle(wb.value).boxShadow
@@ -7535,9 +7476,7 @@ function handleEditEffect ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         let wbShadow = window.getComputedStyle(wb.value).boxShadow
@@ -7591,9 +7530,7 @@ function handleEditEffect ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         if (window.getComputedStyle(wb.value).boxShadow !== 'none') {
@@ -7666,9 +7603,7 @@ function handleEditEffect ({
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
     } else {
-      let pWbComponent = listUpdate[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+      let pWbComponent = listUpdate[0].value.closest(`.wbaseItem-value[iswini]`)
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of [...listUpdate]) {
         if (window.getComputedStyle(wb.value).boxShadow !== 'none') {

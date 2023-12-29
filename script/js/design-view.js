@@ -148,7 +148,7 @@ function updateUIDesignView () {
       wb =>
         wb.IsInstance &&
         wb.value.closest(
-          `.wbaseItem-value[isinstance="true"][level="${wb.Level - 1}"]`
+          `.wbaseItem-value[isinstance][level="${wb.Level - 1}"]`
         )
     )
   ) {
@@ -323,7 +323,7 @@ function EditOffsetBlock () {
 
   //
   let editXYContainer = document.createElement('div')
-  editXYContainer.className = 'row uneditable-instance'
+  editXYContainer.className = 'row'
   // input edit left position
   let list_offsetX = selected_list.filterAndMap(wb =>
     `${getWBaseOffset(wb).x}`.replace('.00', '')
@@ -1709,7 +1709,9 @@ function EditIconColorBlock () {
       if (wbStyle[i].startsWith('--svg-color')) {
         let colorValue = wbStyle.getPropertyValue(wbStyle[i])
         if (colorValue.match(uuid4Regex)) {
-          let colorSkin = StyleDA.listSkin.find(skin => colorValue.match(uuid4Regex)[0] === skin.GID)
+          let colorSkin = StyleDA.listSkin.find(
+            skin => colorValue.match(uuid4Regex)[0] === skin.GID
+          )
           if (colorSkin) {
             if (colorSkin.CateID !== EnumCate.color) {
               var cateItem = CateDA.list_color_cate.find(

@@ -601,7 +601,7 @@ function createComponent () {
   WBaseDA.edit(listUpdate, EnumObj.wBase)
   listShowName = [
     ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini]):not(*[isinstance="true"])`
+      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini]):not(*[isinstance])`
     )
   ]
   wdraw()

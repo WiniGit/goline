@@ -50,7 +50,7 @@ async function initData () {
     }
   })
   divSection
-    .querySelectorAll('.wbaseItem-value[isinstance="true"][class*="w-st0"]')
+    .querySelectorAll('.wbaseItem-value[isinstance][class*="w-st0"]')
     .forEach(wbHTML => setAttributeByStyle(wbHTML))
   console.log('out handle data: ', Date.now())
   centerViewInitListener()

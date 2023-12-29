@@ -589,7 +589,7 @@ function createLayerTile (wb, isShowChildren = false) {
         wb.IsWini ||
         wb.IsInstance ||
         $(wbase_tile).parents(
-          `.col:has(> .layer_wbase_tile[iswini], layer_wbase_tile[isinstance="true"])`
+          `.col:has(> .layer_wbase_tile[iswini], layer_wbase_tile[isinstance])`
         ).length
           ? '#7B61FF'
           : '#1890FF'
@@ -1059,7 +1059,7 @@ function ondragSortLayer (event) {
   const sortComInstance = wb.value.closest(
     `.wbaseItem-value[iswini][level="${
       wb.Level - 1
-    }"], .wbaseItem-value[isinstance="true"][level="${wb.Level - 1}"]`
+    }"], .wbaseItem-value[isinstance][level="${wb.Level - 1}"]`
   )
   const layerP = sortComInstance
     ? document.getElementById(`parentID:${select_box_parentID}`)

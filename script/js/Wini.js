@@ -630,7 +630,7 @@ function selectParent (event) {
             )
               ? ',.w-variant'
               : ''
-          }):not(*[isinstance="true"], *[iswini], *[iswini] *)`
+          }):not(*[isinstance], *[iswini], *[iswini] *)`
         )
       )
     }
@@ -934,7 +934,7 @@ function centerViewInitListener () {
   })
   listShowName = [
     ...divSection.querySelectorAll(
-      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini]):not(*[isinstance="true"])`
+      `:scope > .wbaseItem-value:is(.w-container, .w-variant, *[iswini]):not(*[isinstance])`
     )
   ]
 }
@@ -1003,7 +1003,7 @@ const childObserver = new MutationObserver(mutationList => {
       listShowName = [
         ...divSection.querySelectorAll(`:scope > .wbaseItem-value[iswini]`),
         ...divSection.querySelectorAll(
-          `:scope > .wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance="true"])`
+          `:scope > .wbaseItem-value:is(.w-container, .w-variant):not(*[isinstance])`
         )
       ].sort((a, b) => parseInt(b.style.zIndex) - parseInt(a.style.zIndex))
     }
@@ -1160,7 +1160,7 @@ function moveListener (event) {
                 Math.min(miny, event.pageY)
               )
               let parentHTML = event.target.closest(
-                `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table):not(*[isinstance="true"])`
+                `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table):not(*[isinstance])`
               )
               createWbaseHTML({
                 parentid: parentHTML?.id ?? wbase_parentID,
@@ -1176,9 +1176,7 @@ function moveListener (event) {
             }
             if (!isCreate) {
               if (ToolState.resize_type.some(tool => tool_state == tool)) {
-                if (WBaseDA.enumEvent == null) {
-                  WBaseDA.enumEvent = EnumEvent.edit
-                }
+                WBaseDA.enumEvent ??= EnumEvent.edit
                 handleResizeXYWH({ xp: xp, yp: yp })
                 updateUISelectBox()
               } else {
@@ -1255,7 +1253,7 @@ function moveListener (event) {
                             (!wb.IsWini &&
                               wb.value.closest('.wbaseItem-value[iswini]')) ||
                             wb.value.closest(
-                              `.wbaseItem-value[isinstance="true"][level="${
+                              `.wbaseItem-value[isinstance][level="${
                                 wb.Level - 1
                               }"]`
                             )
@@ -1335,8 +1333,8 @@ function moveListener (event) {
         let target_rect = instDemo.getBoundingClientRect()
         document.body.appendChild(instance_drag)
         instance_drag.style.pointerEvents = 'none'
-        instance_drag.style.left = target_rect.x + target_rect.width+ 'px'
-        instance_drag.style.top = target_rect.y + target_rect.height+ 'px'
+        instance_drag.style.left = target_rect.x + target_rect.width + 'px'
+        instance_drag.style.top = target_rect.y + target_rect.height + 'px'
         instance_drag.style.zIndex = 2
       } else if (sortLayer) {
         ondragSortLayer(event)
@@ -1571,7 +1569,7 @@ function checkHoverElement (event) {
           break
         default:
           let parentPage = $(wbHTML).parents(
-            `.w-container:not(*[isinstance="true"]), .w-variant:not(*[isinstance="true"])`
+            `.w-container:not(*[isinstance]), .w-variant:not(*[isinstance])`
           )[0]
           if (target_level === 2 && parentPage) {
             is_enable = true
@@ -1623,6 +1621,9 @@ function checkResize (event) {
   if (
     selected_list.every(
       e => window.getComputedStyle(e.value).pointerEvents !== 'none'
+    ) &&
+    !selected_list[0].value.closest(
+      `.wbaseItem-value[isinstance][level="${selected_list[0].Level - 1}"]`
     )
   ) {
     // top_left
@@ -1797,7 +1798,7 @@ function wdraw () {
       hover_wbase.IsWini ||
       hover_wbase.IsInstance ||
       $(hover_wbase.value).parents(
-        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance="true"]`
+        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`
       ).length
         ? '#7B61FF'
         : '#1890FF'
@@ -1807,9 +1808,8 @@ function wdraw () {
     ctxr.strokeStyle =
       parent.getAttribute('iswini') === 'true' ||
       parent.getAttribute('isinstance') === 'true' ||
-      $(parent).parents(
-        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance="true"]`
-      ).length
+      $(parent).parents(`.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`)
+        .length
         ? '#7B61FF'
         : '#1890FF'
     ctxr.strokeRect(
@@ -1832,7 +1832,7 @@ function wdraw () {
     ctxr.strokeStyle =
       selected_list.every(e => e.IsWini || e.IsInstance) ||
       $(selected_list[0].value).parents(
-        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance="true"]`
+        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`
       ).length
         ? '#7B61FF'
         : '#1890FF'
@@ -2790,12 +2790,15 @@ function upListener (event) {
                 })
               return check
             })
-            if (wb.value.style.width) cssRule.style.width = wb.value.style.width
-            if (wb.value.style.height)
+            if (wb.value.style.width && wb.value.style.width !== 'auto') {
+              cssRule.style.width = wb.value.style.width
+              wb.value.style.width = null
+            }
+            if (wb.value.style.height && wb.value.style.height !== 'auto') {
               cssRule.style.height = wb.value.style.height
+              wb.value.style.height = null
+            }
             if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
-            wb.value.style.width = null
-            wb.value.style.height = null
             wb.value.style.flex = null
             cssItem.Css = cssItem.Css.replace(
               new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
