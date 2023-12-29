@@ -844,6 +844,7 @@ function dragWbaseEnd () {
     alt_list.forEach(altItem => altItem.value?.remove())
     alt_list = []
   }
+  WBaseDA.listData = []
   if (drag_start_list.length > 0) {
     let newPWbHTML = parent
     let new_parentID =
@@ -1338,6 +1339,7 @@ function dragAltUpdate (xp, yp, event) {
 }
 
 function dragAltEnd () {
+  WBaseDA.listData = []
   console.log('dragend alt')
   if (drag_start_list.length > 0 && alt_list.length > 0) {
     let newPWbHTML = parent
@@ -1430,7 +1432,7 @@ function dragAltEnd () {
     WBaseDA.copy(WBaseDA.listData)
     replaceAllLyerItemHTML()
     parent = divSection
-    handleWbSelectedList(alt_list)
+    // handleWbSelectedList(alt_list)
     tmpAltHTML.forEach(tmp => tmp.setAttribute('loading', 'true'))
     // action_list[action_index].tmpHTML = [...tmpAltHTML]
     // tmpAltHTML = []

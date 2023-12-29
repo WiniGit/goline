@@ -597,15 +597,28 @@ socket.on('server-main', async data => {
   ) {
     if (
       data.enumEvent === EnumEvent.copy ||
-      (data.token !== UserService.getToken() &&
-        data.token !== UserService.getRefreshToken())
+      data.userItem.ID !== JSON.parse(localStorage.getItem('customer')).ID
     ) {
       if (data.enumEvent === EnumEvent.delete) {
         WbaseIO.delete(data.data)
       } else {
-        divSection.querySelectorAll('.wbaseItem-value[loading="true"]').forEach(e => e.remove())
-        tmpAltHTML = []
         WbaseIO.addOrUpdate(data.data)
+        if (
+          data.enumEvent === EnumEvent.copy &&
+          data.userItem.ID === JSON.parse(localStorage.getItem('customer')).ID
+        ) {
+          divSection
+            .querySelectorAll('.wbaseItem-value[loading="true"]')
+            .forEach(e => e.remove())
+          tmpAltHTML = []
+          alt_list = []
+          let selectedId = data.data
+            .filter(e => e.ParentID === data.parentid)
+            .map(e => e.GID)
+          handleWbSelectedList(
+            wbase_list.filter(e => selectedId.some(id => e.GID === id))
+          )
+        }
       }
       replaceAllLyerItemHTML()
       wdraw()

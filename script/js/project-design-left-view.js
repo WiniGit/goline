@@ -919,13 +919,14 @@ function createComponentTile (item, space = 0) {
     }
   } else {
     select_tile.onclick = function () {
-      assets_view.querySelectorAll('.list_tile').forEach(e => {
-        if (e === select_tile) {
-          e.classList.add('comp-selected')
-        } else {
-          e.classList.remove('comp-selected')
-        }
-      })
+      if (!select_tile.classList.contains('comp-selected'))
+        assets_view.querySelectorAll('.list_tile').forEach(e => {
+          if (e === select_tile) {
+            e.classList.add('comp-selected')
+          } else {
+            e.classList.remove('comp-selected')
+          }
+        })
       if (item.ProjectID === 0) {
         showInstanceDemo({ wb: item })
         select_component = item
@@ -948,9 +949,10 @@ function createComponentTile (item, space = 0) {
           loader.className = 'data-loader'
           prefix_action.replaceWith(loader)
           WBaseDA.getAssetChildren(item.GID).then(async result => {
-            if (item.ProjectID !== ProjectDA.obj.ID) {
-              let cssRule = await StyleDA.getById(item.GID)
-              var relativeList = initDOM([...result, item]).map(e => {
+            let cloneItem = JSON.parse(JSON.stringify(item))
+            if (cloneItem.ProjectID !== ProjectDA.obj.ID) {
+              let cssRule = await StyleDA.getById(cloneItem.GID)
+              var relativeList = initDOM([...result, cloneItem]).map(e => {
                 let eClassList = e.ListClassName.split(' ')
                 const clsName = eClassList.find(
                   vl => vl !== 'w-stack' && vl.startsWith('w-st')
@@ -977,14 +979,14 @@ function createComponentTile (item, space = 0) {
                 return e
               })
             } else {
-              relativeList = initDOM([...result, item]).map(e => {
+              relativeList = initDOM([...result, cloneItem]).map(e => {
                 delete e.value
                 return e
               })
             }
             arrange(relativeList)
-            showInstanceDemo({ wb: item, children: relativeList })
-            select_component = item
+            showInstanceDemo({ wb: cloneItem, children: relativeList })
+            select_component = cloneItem
             relativeList.pop()
             select_component.children = relativeList
             loader.replaceWith(prefix_action)
@@ -2078,7 +2080,7 @@ function dragInstanceEnd (event) {
   if (selectedTile) $(selectedTile).trigger('click')
   replaceAllLyerItemHTML()
   parent = divSection
-  handleWbSelectedList([wb])
+  // handleWbSelectedList([wb])
   wb.value.setAttribute('loading', 'true')
   instance_drag?.remove()
   instance_drag = null

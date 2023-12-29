@@ -818,6 +818,9 @@ class WBaseDA {
           delete_list.every(wb => wb.GID !== id)
         )
       }
+      wbase_list = wbase_list.filter(wb =>
+        delete_list.every(e => e.GID !== wb.GID)
+      )
       let data = {
         enumObj: EnumObj.wBase,
         data: delete_list,
