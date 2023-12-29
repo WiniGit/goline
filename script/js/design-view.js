@@ -5981,7 +5981,7 @@ function colNumberByBrp (enable = true) {
                 'edit_size_position_div'
               )
               editSizeContainer
-                .querySelectorAll('.uneditable-instance')
+                .querySelectorAll('.uneditable-instance:not(*:has(input[type="checkbox"]))')
                 .forEach(e => {
                   e.style.pointerEvents = 'none'
                   e.querySelectorAll('input').forEach(
