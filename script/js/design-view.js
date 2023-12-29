@@ -2485,39 +2485,8 @@ function EditBorderBlock () {
         iconSize: '28px',
         onBlur: function (ev) {
           let newValue = parseFloat(ev.target.value)
-          let thisWidthValues = [
-            input_border_left,
-            input_border_top,
-            input_border_right,
-            input_border_bottom
-          ]
           if (!isNaN(newValue)) {
-            switch (firstSideValue) {
-              case BorderSide.top:
-                handleEditBorder({ tWidth: ev.target.value })
-                input_border_top.value = ev.target.value
-                break
-              case BorderSide.right:
-                handleEditBorder({ rWidth: ev.target.value })
-                input_border_right.value = ev.target.value
-                break
-              case BorderSide.bottom:
-                handleEditBorder({ bWidth: ev.target.value })
-                input_border_bottom.value = ev.target.value
-                break
-              case BorderSide.left:
-                handleEditBorder({ lWidth: ev.target.value })
-                input_border_left.value = ev.target.value
-                break
-              default:
-                handleEditBorder({ width: ev.target.value })
-                thisWidthValues.forEach(i => (i.value = ev.target.value))
-                break
-            }
-          } else {
-            thisWidthValues = thisWidthValues.filterAndMap(i => i.value)
-            ev.target.value =
-              thisWidthValues.length > 1 ? 'mixed' : thisWidthValues[0]
+            handleEditBorder({ width: ev.target.value })
           }
         }
       })
@@ -5981,7 +5950,9 @@ function colNumberByBrp (enable = true) {
                 'edit_size_position_div'
               )
               editSizeContainer
-                .querySelectorAll('.uneditable-instance:not(*:has(input[type="checkbox"]))')
+                .querySelectorAll(
+                  '.uneditable-instance:not(*:has(input[type="checkbox"]))'
+                )
                 .forEach(e => {
                   e.style.pointerEvents = 'none'
                   e.querySelectorAll('input').forEach(

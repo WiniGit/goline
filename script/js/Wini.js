@@ -914,14 +914,20 @@ function centerViewInitListener () {
     } else return
   })
   window.addEventListener('keyup', keyUpEvent, false)
-  ;[divSection, ...divSection.querySelectorAll(':scope > .w-variant')].forEach(
-    parentPage => {
-      childObserver.observe(parentPage, {
-        childList: true
-      })
-    }
-  )
-  ;[
+  initObserver()
+}
+
+function initObserver () {
+  const childrenObserve = [
+    divSection,
+    ...divSection.querySelectorAll(':scope > .w-variant')
+  ]
+  childrenObserve.forEach(parentPage => {
+    childObserver.observe(parentPage, {
+      childList: true
+    })
+  })
+  const wbResize = [
     ...divSection.querySelectorAll(`:scope > .wbaseItem-value.w-container`),
     ...divSection.querySelectorAll(
       `:scope > .wbaseItem-value.w-variant > .wbaseItem-value.w-container`
@@ -929,7 +935,8 @@ function centerViewInitListener () {
     ...divSection.querySelectorAll(
       `:scope > .wbaseItem-value.w-variant > .wbaseItem-value.w-container`
     )
-  ].forEach(page => {
+  ]
+  wbResize.forEach(page => {
     resizeWbase.observe(page)
   })
   listShowName = [

@@ -1185,14 +1185,12 @@ function dragAltUpdate (xp, yp, event) {
         let closestHTML = [...children].sort((aHTML, bHTML) => {
           let aRect = aHTML.getBoundingClientRect()
           let bRect = bHTML.getBoundingClientRect()
-          let a_center_oy
-          let b_center_oy
           if (isGrid) {
-            a_center_oy = Math.sqrt(
+            var a_center_oy = Math.sqrt(
               Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) +
                 Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
             )
-            b_center_oy = Math.sqrt(
+            var b_center_oy = Math.sqrt(
               Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) +
                 Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
             )
@@ -1237,14 +1235,12 @@ function dragAltUpdate (xp, yp, event) {
         let closestHTML = [...children].sort((aHTML, bHTML) => {
           let aRect = aHTML.getBoundingClientRect()
           let bRect = bHTML.getBoundingClientRect()
-          let a_center_ox
-          let b_center_ox
           if (isGrid) {
-            a_center_ox = Math.sqrt(
+            var a_center_ox = Math.sqrt(
               Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) +
                 Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
             )
-            b_center_ox = Math.sqrt(
+            var b_center_ox = Math.sqrt(
               Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) +
                 Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
             )
@@ -1261,7 +1257,7 @@ function dragAltUpdate (xp, yp, event) {
         }
         if (closestHTML) {
           let closestRect = closestHTML.getBoundingClientRect()
-          zIndex = parseInt(window.getComputedStyle(closestHTML).zIndex)
+          zIndex = children.indexOf(closestHTML)
           distance = event.pageX - (closestRect.x + closestRect.width / 2)
           if (distance < 0) zIndex--
         } else {

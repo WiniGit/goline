@@ -620,6 +620,7 @@ socket.on('server-main', async data => {
           )
         }
       }
+      if (data.enumEvent !== EnumEvent.edit) initObserver()
       replaceAllLyerItemHTML()
       wdraw()
     }

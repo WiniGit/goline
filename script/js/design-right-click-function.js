@@ -69,14 +69,14 @@ let feature_list = [
       !$(selected_list[0].value).parents(`.wbaseItem-value[iswini]`)
         .length
   },
-  // {
-  //   title: "Uncomponent",
-  //   shortKey: "Alt+K",
-  //   onclick: unComponent,
-  //   isShow: function () {
-  //     return selected_list.some((e) => e.IsWini) && document.getElementById(select_box_parentID)?.getAttribute("cateid") != EnumCate.variant;
-  //   },
-  // },
+  {
+    title: "Detach component",
+    shortKey: "Alt+K",
+    onclick: detachComponent,
+    isShow: function () {
+      return selected_list.some(e => !e.value.closest(`.wbaseItem-value[isinstance][level="${e.Level - 1}"]`));
+    },
+  },
   {
     title: 'Show/Hide UI',
     shortKey: 'Ctrl+\\',
@@ -1221,4 +1221,11 @@ function sendBackward () {
   WBaseDA.parent([parentWbase, ...selected_list])
   updateHoverWbase()
   handleWbSelectedList(selected_list)
+}
+
+function detachComponent() {
+  let detachList = selected_list.filter(e => !e.value.closest(`.wbaseItem-value[isinstance][level="${e.Level - 1}"]`))
+  for(let wb of detachList) {
+    
+  }
 }

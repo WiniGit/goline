@@ -6140,7 +6140,7 @@ function handleEditLayout ({
           // TH height của wbase item này dạng fixed thì phải chuyển width của wbase item này về dạng fixed
           else if (!wb.value.getAttribute('height-type')) {
             wb.value.style.width = `${wb.value.offsetWidth}px`
-            cWb.value.removeAttribute('width-type')
+            wb.value.removeAttribute('width-type')
           }
           // gán height của wbase item này null để hug contents
           //TH đang có bất kì wbase item con của item này đang fill container height thì phải chuyển height của nó về fixed
