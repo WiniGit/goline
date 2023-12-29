@@ -5938,17 +5938,10 @@ function colNumberByBrp (enable = true) {
     icon_remove.className = 'fa-solid fa-minus fa-sm'
     icon_remove.onclick = function () {
       for (let wb of selected_list) {
-        wb.ListClassName = wb.ListClassName.split(' ')
-          .filter(cls => !cls.includes('col-') && !cls.match(/col[0-9]{1,2}/g))
-          .join(' ')
-          .trim()
-        if (wb.ListClassName === '') wb.ListClassName = null
-        let oldClassList = [...wb.value.classList]
-        oldClassList.forEach(cls => {
-          if (cls.includes('col-') || cls.match(/col[0-9]{1,2}/g)) {
-            $(wb.value).removeClass(cls)
-          }
-        })
+        let newClassList = [...wb.value.classList].filter(
+          cls => !cls.includes('col-') && !cls.match(/col[0-9]{1,2}/g)
+        )
+        wb.ListClassName = newClassList.join(' ')
       }
       WBaseDA.edit(selected_list)
       reloadEditOffsetBlock()
@@ -5961,7 +5954,7 @@ function colNumberByBrp (enable = true) {
     editContainer.appendChild(body)
 
     let localBrpoint = ProjectDA.obj.ResponsiveJson
-    let totalCol = ['none']
+    let totalCol = ['none', 1, 2, 3, 4, 6, 8, 12, 24]
     let pageParent = $(selected_list[0].value).parents('.wbaseItem-value')
     let framePage = pageParent[pageParent.length - 1]
     if (framePage?.classList?.contains('w-variant'))
@@ -5970,9 +5963,6 @@ function colNumberByBrp (enable = true) {
       brp => framePage.offsetWidth >= brp.Width
     )
     let currentBrpKey = currentBrp.length > 0 ? currentBrp.pop().Key : 'Auto'
-    for (let i = 0; i <= localBrpoint.Column; i++) {
-      totalCol.push(`${i}`)
-    }
     body.replaceChildren(
       ...[
         {
@@ -5987,16 +5977,17 @@ function colNumberByBrp (enable = true) {
           brpTile.style.backgroundColor = 'rgba(0, 53, 128, 0.08)'
           setTimeout(function () {
             if (!isNaN(parseInt(selectNumberInput.firstChild.value))) {
-              let editW = document.getElementById('edit_frame_item_w')
               let editSizeContainer = document.getElementById(
                 'edit_size_position_div'
               )
-              editSizeContainer =
-                editSizeContainer?.querySelectorAll('.btn_resize.width') ?? []
-              ;[editW, ...editSizeContainer].forEach(editWH => {
-                editWH.style.pointerEvents = 'none'
-                editWH.style.backgroundColor = '#f1f1f1'
-              })
+              editSizeContainer
+                .querySelectorAll('.uneditable-instance')
+                .forEach(e => {
+                  e.style.pointerEvents = 'none'
+                  e.querySelectorAll('input').forEach(
+                    eInput => (eInput.disabled = true)
+                  )
+                })
             }
           }, 100)
         }
@@ -6034,23 +6025,11 @@ function colNumberByBrp (enable = true) {
             } else return 'none'
           })
         }
-        let selectNumberInput = _btnInputSelect(
-          brpColValues.length == 1 ? totalCol : ['mixed', ...totalCol],
-          function (options) {
-            let firstValue = brpColValues[0]
-            if (brpColValues.length > 1) {
-              firstValue = 'mixed'
-            }
-            let normalCol = [0, 1, 2, 3, 4, 6, 8, 12, 24]
-            for (let option of options) {
-              if (normalCol.every(num => num != option.getAttribute('value')))
-                option.style.display = 'none'
-              if (firstValue == option.getAttribute('value'))
-                option.firstChild.style.opacity = 1
-              else option.firstChild.style.opacity = 0
-            }
-          },
-          function (option) {
+        let selectNumberInput = _btnInputSelect({
+          initvalue: brpColValues.length == 1 ? brpColValues[0] : 'mixed',
+          listvalue:
+            brpColValues.length == 1 ? totalCol : ['mixed', ...totalCol],
+          onselect: function (option) {
             let shortName = ''
             if (brp.Key != 'Auto') {
               shortName = `-${brp.Key.match(brpRegex)
@@ -6107,9 +6086,7 @@ function colNumberByBrp (enable = true) {
             updateUIColNumber()
             updateUISelectBox()
           }
-        )
-        selectNumberInput.firstChild.value =
-          brpColValues.length == 1 ? brpColValues[0] : 'mixed'
+        })
         brpTile.replaceChildren(brpTitle, selectNumberInput)
         return brpTile
       })
@@ -6120,31 +6097,28 @@ function colNumberByBrp (enable = true) {
     icon_add.className = 'fa-solid fa-plus fa-sm'
     if (enable) {
       icon_add.onclick = function () {
-        let parentHTML = document.getElementById(select_box_parentID)
-        let eObj
+        let pWbHTML = document.getElementById(select_box_parentID)
         let listUpdate = []
-        for (let wbaseItem of selected_list) {
-          wbaseItem.ListClassName = 'col-'
-          wbaseItem.ListClassName.split(' ').forEach(clName =>
-            $(wbaseItem.value).addClass(clName)
-          )
-          wbaseItem.value.style.setProperty(
+        for (let wb of selected_list) {
+          wb.value.classList.add('col-')
+          wb.value.classList.remove('xxl', 'xl', 'lg', 'md', 'sm', 'min-brp')
+          wb.ListClassName = wb.value.className
+          wb.value.style.setProperty(
             '--gutter',
-            parentHTML.style.getPropertyValue('--child-space')
+            pWbHTML.style.getPropertyValue('--child-space')
           )
         }
         if (
-          parentHTML.classList.contains('w-row') &&
-          (!parentHTML.style.width || parentHTML.style.width == 'fit-content')
+          pWbHTML.classList.contains('w-row') &&
+          pWbHTML.getAttribute('width-type') === 'fit'
         ) {
-          let wbParent = wbase_list.find(e => e.GID === select_box_parentID)
-          parentHTML.style.width = parentHTML.offsetWidth + 'px'
-          wbParent.StyleItem.FrameItem.Width = parentHTML.offsetWidth
-          eObj = EnumObj.baseFrame
-          listUpdate.push(wbParent)
+          let pWb = wbase_list.find(e => e.GID === select_box_parentID)
+          pWbHTML.style.width = pWbHTML.offsetWidth + 'px'
+          pWb.Css = pWb.value.style.cssText
+          listUpdate.push(pWb)
         }
         listUpdate.push(...selected_list)
-        WBaseDA.edit(listUpdate, eObj)
+        WBaseDA.edit(listUpdate, EnumObj.wBase)
         reloadEditOffsetBlock()
         updateUIColNumber()
         updateUISelectBox()
