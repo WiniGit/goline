@@ -420,12 +420,10 @@ function positionScrollTop () {
 
 function selectBox (list_wbase_item) {
   if (list_wbase_item.length > 0) {
-    var selectHTML = list_wbase_item.map(e =>
-      (document.getElementById(e.GID) ?? e.value).getBoundingClientRect()
-    )
-    var maxX = Math.max(...selectHTML.map(m => m.right))
-    var maxY = Math.max(...selectHTML.map(m => m.bottom))
-    var box_select = {
+    let selectHTML = list_wbase_item.map(e => e.getBoundingClientRect())
+    let maxX = Math.max(...selectHTML.map(m => m.right))
+    let maxY = Math.max(...selectHTML.map(m => m.bottom))
+    let box_select = {
       gid: uuidv4(),
       x: 0,
       y: 0,
@@ -471,12 +469,12 @@ function selectBox (list_wbase_item) {
   return undefined
 }
 
-function updateHoverWbase (wb, onAlt) {
-  let isOnchange = hover_wbase !== wb
+function updateHoverWbase (wbHTML, onAlt) {
+  let isOnchange = hover_wbase !== wbHTML
   if (isOnchange) {
-    if (wb) {
-      hover_wbase = wb
-      hover_box = selectBox([wb])
+    if (wbHTML) {
+      hover_wbase = wbHTML
+      hover_box = selectBox([wbHTML])
       if (onAlt && select_box) {
         var obj1 = select_box
         var listc = [
@@ -572,12 +570,22 @@ function updateHoverWbase (wb, onAlt) {
         updateLines(listl)
         updateTexts(listt)
       }
+      var layerTile = document.getElementById(`wbaseID:${wbHTML.id}`)
+      if (!layerTile) {
+        let inst = wbHTML.closest('.wbaseItem-value[isinstance]')
+        const stCls = [...wbHTML.classList].find(
+          e => e !== 'w-stack' && e.startsWith('w-st')
+        )
+        layerTile = document
+          .getElementById(`parentID:${inst.id}`)
+          .querySelector(`.${stCls}`)
+      }
     } else {
       hover_wbase = undefined
       hover_box = undefined
     }
     left_view.querySelectorAll('.layer_wbase_tile').forEach(layerHTML => {
-      if (layerHTML.id.includes(`${wb?.GID}`)) {
+      if (layerHTML === layerTile) {
         layerHTML.classList.add('onhover')
       } else {
         layerHTML.classList.remove('onhover')
@@ -1535,20 +1543,21 @@ function checkHoverElement (event) {
         isInRange(event.pageY, title.value.y, title.value.yMax)
     )
   if (titleHover) {
-    let wbase_item = wbase_list.find(e => e.GID == titleHover.id)
-    updateHoverWbase(wbase_item, event.altKey)
+    updateHoverWbase(
+      divSection.querySelector(`.wbaseItem-value[id="${titleHover.id}"]`),
+      event.altKey
+    )
   } else if (event.target !== divSection) {
     listRectHover = []
     listLine = []
     listText = []
     let currentLevel = 1
-    let currentListPPage = []
     if (selected_list.length > 0) {
-      currentLevel = selected_list[0].Level
+      currentLevel = parseInt(selected_list[0].getAttribute('level'))
       if (currentLevel > 1)
-        currentListPPage = [
-          ...$(selected_list[0].value).parents(`.wbaseItem-value`)
-        ]
+        var currentPage = selected_list[0].closest(
+          `.wbaseItem-value[level="1"]`
+        )
     }
     let _target = [
       event.target,
@@ -1575,18 +1584,16 @@ function checkHoverElement (event) {
           }
           break
         default:
-          let parentPage = $(wbHTML).parents(
-            `.w-container:not(*[isinstance]), .w-variant:not(*[isinstance])`
-          )[0]
-          if (target_level === 2 && parentPage) {
+          let pWbPage = wbHTML.closest(
+            `.w-container[level="1"]:not(*[isinstance]), .w-variant:not(*[isinstance])`
+          )
+          if (target_level === 2 && pWbPage) {
             is_enable = true
           } else if (event.metaKey || (!isMac && event.ctrlKey)) {
             is_enable = true
           } else if (
             target_level <= currentLevel &&
-            currentListPPage.some(
-              pPage => pPage.id === wbHTML.getAttribute('parentid')
-            )
+            currentPage.contains(wbHTML)
           ) {
             is_enable = true
           }
@@ -1594,14 +1601,7 @@ function checkHoverElement (event) {
       }
       return is_enable
     })
-    if (_target) {
-      updateHoverWbase(
-        wbase_list.find(m => m.GID === _target.id),
-        event.altKey
-      )
-    } else {
-      updateHoverWbase()
-    }
+    updateHoverWbase(_target, event.altKey)
   } else {
     updateHoverWbase()
   }
@@ -1627,10 +1627,12 @@ function isAroundPoint (off, event) {
 function checkResize (event) {
   if (
     selected_list.every(
-      e => window.getComputedStyle(e.value).pointerEvents !== 'none'
+      e => window.getComputedStyle(e).pointerEvents !== 'none'
     ) &&
-    !selected_list[0].value.closest(
-      `.wbaseItem-value[isinstance][level="${selected_list[0].Level - 1}"]`
+    !selected_list[0].closest(
+      `.wbaseItem-value[isinstance][level="${
+        parseInt(selected_list[0].getAttribute('level')) - 1
+      }"]`
     )
   ) {
     // top_left
@@ -1703,7 +1705,7 @@ function checkResize (event) {
       toolStateChange(ToolState.resize_bot)
     } else {
       if (selected_list.length == 1 && design_view_index == 1) {
-        let selectedPage = document.getElementById(selected_list[0].GID)
+        let selectedPage = selected_list[0]
         if (
           selectedPage.id == event.target.id ||
           selectedPage.contains(event.target)
@@ -1796,14 +1798,14 @@ function wdraw () {
 
   if (
     hover_wbase &&
-    selected_list.every(e => e.GID !== hover_wbase.GID) &&
+    selected_list.every(e => e !== hover_wbase) &&
     checkpad == 0
   ) {
     var objset = offsetScale(hover_box.x, hover_box.y)
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y))
     ctxr.strokeStyle =
-      hover_wbase.IsWini ||
-      hover_wbase.IsInstance ||
+      hover_wbase.getAttribute('iswini') ||
+      hover_wbase.getAttribute('isinstance') ||
       $(hover_wbase.value).parents(
         `.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`
       ).length
@@ -1813,8 +1815,8 @@ function wdraw () {
   } else if (parent?.id?.length == 36 && checkpad > 0) {
     let parentRect = parent.getBoundingClientRect()
     ctxr.strokeStyle =
-      parent.getAttribute('iswini') === 'true' ||
-      parent.getAttribute('isinstance') === 'true' ||
+      parent.getAttribute('iswini') ||
+      parent.getAttribute('isinstance') ||
       $(parent).parents(`.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`)
         .length
         ? '#7B61FF'
@@ -1881,15 +1883,13 @@ function wdraw () {
         )
         txtoffX = 16
       }
-      let txt =
-        document.getElementById('inputName:' + wbaseHTML.id)?.value ??
-        wbase_list.find(e => e.GID == wbaseHTML.id)?.name
+      let txt = wbaseHTML.getAttribute('wb-name')
       ctxr.fillText(
         txt,
         canvasOff.x + txtoffX,
         canvasOff.y - Math.min(8 * scale, 12)
       )
-      if (wbaseHTML.getAttribute('lock') !== 'true') {
+      if (!wbaseHTML.getAttribute('lock')) {
         if (t) {
           t.value = {
             x: canvasOff.x,

@@ -163,33 +163,33 @@ function initComponents (wb, children) {
   wb.value.id = wb.GID
   wb.value.className = wb.ListClassName
   wb.value.setAttribute('level', wb.Level)
+  wb.value.setAttribute('wb-name', wb.Name)
   //
   wb.value.setAttribute('parentid', wb.ParentID)
   if (wb.IsWini) {
     wb.value.setAttribute('iswini', wb.IsWini)
   } else if (
+    wb.CopyID &&
     [...wb.value.classList].some(
-      cls => cls.startsWith('w-st') && cls !== 'w-stack'
+      cls => cls !== 'w-stack' && cls.startsWith('w-st')
     )
   ) {
-    if (wb.CopyID) {
-      wb.value.setAttribute('isinstance', true)
-      wb.IsInstance = true
-    }
+    wb.value.setAttribute('isinstance', true)
+    wb.IsInstance = true
   }
-  if (wb.Css?.length > 0) {
+  if (wb.Css?.length > 0 && !wb.IsInstance) {
     wb.value.style = wb.Css
     setAttributeByStyle(wb.value)
   }
-  if (wb.IsInstance && children?.length > 0) {
-    if (wb.value.classList.contains('w-stack')) {
-      for (let i = 0; i < children.length; i++)
-        children[i].value.style.zIndex = i
-    } else {
-      for (let i = 0; i < children.length; i++)
-        children[i].value.style.order = i
-    }
-  }
+  // if (wb.IsInstance && children?.length > 0) {
+  //   if (wb.value.classList.contains('w-stack')) {
+  //     for (let i = 0; i < children.length; i++)
+  //       children[i].value.style.zIndex = i
+  //   } else {
+  //     for (let i = 0; i < children.length; i++)
+  //       children[i].value.style.order = i
+  //   }
+  // }
 }
 
 function setAttributeByStyle (wbHTML, cssRule) {
@@ -303,26 +303,25 @@ const resizeWbase = new ResizeObserver(entries => {
   })
 })
 
-function getWBaseOffset (wb) {
-  let leftValue
-  let topValue
-  if (wb.ParentID === wbase_parentID) {
-    leftValue = Math.round(
-      parseFloat(`${wb.value.style.left}`.replace('px', '')).toFixed(2)
+function getWBaseOffset (wbHTML) {
+  const wbLevel = parseInt(wbHTML.getAttribute('level'))
+  if (wbLevel === 1) {
+    let wbComputeSt = window.getComputedStyle(wbHTML)
+    var leftValue = Math.round(
+      parseFloat(`${wbComputeSt.left}`.replace('px', '')).toFixed(2)
     )
-    topValue = Math.round(
-      parseFloat(`${wb.value.style.top}`.replace('px', '')).toFixed(2)
+    var topValue = Math.round(
+      parseFloat(`${wbComputeSt.top}`.replace('px', '')).toFixed(2)
     )
   } else {
+    const pWbRect = wbHTML
+      .closest(`.wbaseItem-value[level="${wbLevel - 1}"]`)
+      .getBoundingClientRect()
     leftValue = Math.round(
-      (wb.value.getBoundingClientRect().x -
-        document.getElementById(wb.ParentID).getBoundingClientRect().x) /
-        scale
+      (wbHTML.getBoundingClientRect().x - pWbRect.x) / scale
     ).toFixed(2)
     topValue = Math.round(
-      (wb.value.getBoundingClientRect().y -
-        document.getElementById(wb.ParentID).getBoundingClientRect().y) /
-        scale
+      (wbHTML.getBoundingClientRect().y - pWbRect.y) / scale
     ).toFixed(2)
   }
   return { x: parseFloat(leftValue), y: parseFloat(topValue) }

@@ -222,6 +222,14 @@
   border-color: #7b61ff;
 }
 
+.layer_wbase_tile[iswini] + .col .layer_wbase_tile:hover {
+  border-color: #7b61ff;
+}
+
+.layer_wbase_tile[isinstance] + .col .layer_wbase_tile:hover {
+  border-color: #7b61ff;
+}
+
 .col:has(> .onsort) > * {
   pointer-events: none !important;
 }

@@ -65,7 +65,7 @@ function updateUIDesignView () {
     if (
       select_box_parentID != wbase_parentID &&
       selected_list.some(
-        e => window.getComputedStyle(e.value).position === 'absolute'
+        e => window.getComputedStyle(e).position === 'absolute'
       )
     ) {
       var editConstraints = EditConstraintsBlock()
@@ -74,11 +74,11 @@ function updateUIDesignView () {
     if (
       selected_list.every(
         wb =>
-          wb.Level > 1 &&
-          window.getComputedStyle(wb.value).position !== 'absolute'
+          select_box_parentID !== wbase_parentID &&
+          window.getComputedStyle(wb).position !== 'absolute'
       )
     ) {
-      let framePage = selected_list[0].value.closest(
+      let framePage = selected_list[0].closest(
         `.w-form[level="1"], .w-container[level="1"], w-variant > .w-form[level="2"], w-variant > .w-container[level="2"]`
       )
       if (framePage) {
@@ -90,7 +90,7 @@ function updateUIDesignView () {
     }
     if (
       selected_list.some(wb =>
-        WbClass.parent.some(e => wb.value.classList.contains(e))
+        WbClass.parent.some(e => wb.classList.contains(e))
       ) ||
       selected_list.length > 1
     ) {
@@ -100,22 +100,21 @@ function updateUIDesignView () {
     //
     if (
       selected_list.some(wb =>
-        ['w-text', 'w-svg'].every(e => !wb.value.classList.contains(e))
+        ['w-text', 'w-svg'].every(e => !wb.classList.contains(e))
       )
     ) {
       let editBackground = EditBackgroundBlock()
       listEditContainer.appendChild(editBackground)
     }
     if (
-      selected_list.filter(wb => wb.value.classList.contains('w-svg'))
-        .length === 1
+      selected_list.filter(wb => wb.classList.contains('w-svg')).length === 1
     ) {
       let editIconColor = EditIconColorBlock()
       listEditContainer.appendChild(editIconColor)
     }
     if (
       selected_list.some(wb =>
-        ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
+        ['w-text', 'w-textformfield'].some(e => wb.classList.contains(e))
       )
     ) {
       let editTextStyle = EditTypoBlock()
@@ -124,7 +123,7 @@ function updateUIDesignView () {
     if (
       selected_list.some(wb =>
         ['w-checkbox', ...WbClass.borderEffect].some(e =>
-          wb.value.classList.contains(e)
+          wb.classList.contains(e)
         )
       )
     ) {
@@ -133,7 +132,7 @@ function updateUIDesignView () {
     }
     if (
       selected_list.some(wb =>
-        WbClass.borderEffect.some(e => wb.value.classList.contains(e))
+        WbClass.borderEffect.some(e => wb.classList.contains(e))
       )
     ) {
       let editEffect = EditEffectBlock()
@@ -146,9 +145,11 @@ function updateUIDesignView () {
   if (
     selected_list.some(
       wb =>
-        wb.IsInstance &&
-        wb.value.closest(
-          `.wbaseItem-value[isinstance][level="${wb.Level - 1}"]`
+        wb.getAttribute('isinstance') &&
+        wb.closest(
+          `.wbaseItem-value[isinstance][level="${
+            parseInt(wb.getAttribute('level')) - 1
+          }"]`
         )
     )
   ) {
@@ -216,11 +217,12 @@ function EditAlignBlock () {
   let editAlignContainer = document.createElement('div')
   editAlignContainer.id = 'edit_align_div'
   let isEnable = selected_list.every(
-    wb =>
-      ((selected_list.length > 1 || wb.Level > 1) &&
-        window.getComputedStyle(wb.value).position === 'absolute') ||
-      wb.value.classList.contains('w-stack') ||
-      wb.value.querySelector(':scope > .fixed-position')
+    wbHTML =>
+      ((selected_list.length > 1 ||
+        parseInt(wbHTML.getAttribute('level')) > 1) &&
+        window.getComputedStyle(wbHTML).position === 'absolute') ||
+      wbHTML.classList.contains('w-stack') ||
+      wbHTML.querySelector(':scope > .fixed-position')
   )
   editAlignContainer.setAttribute('enable', isEnable)
   editAlignContainer.replaceChildren(
@@ -259,7 +261,7 @@ function EditOffsetBlock () {
   if (
     select_box_parentID === wbase_parentID &&
     selected_list.every(
-      e => !e.IsInstance && e.value.classList.contains('w-container')
+      e => !e.getAttribute('isinstance') && e.classList.contains('w-container')
     )
   ) {
     let pageDeviceContainer = document.createElement('div')
@@ -305,10 +307,10 @@ function EditOffsetBlock () {
       }
     }
     let listSize = selected_list
-      .filter(wb => wb.value.classList.contains('w-container'))
+      .filter(wb => wb.classList.contains('w-container'))
       .filterAndMap(
         wb =>
-          `${parseInt(wb.value.offsetWidth)}x${parseInt(wb.value.offsetHeight)}`
+          `${parseInt(wb.offsetWidth)}x${parseInt(wb.offsetHeight)}`
       )
     btn_select_frame_size.innerHTML = `<p class="semibold1">${
       listSize.length === 1
@@ -325,8 +327,8 @@ function EditOffsetBlock () {
   let editXYContainer = document.createElement('div')
   editXYContainer.className = 'row'
   // input edit left position
-  let list_offsetX = selected_list.filterAndMap(wb =>
-    `${getWBaseOffset(wb).x}`.replace('.00', '')
+  let list_offsetX = selected_list.filterAndMap(wbHTML =>
+    `${getWBaseOffset(wbHTML).x}`.replace('.00', '')
   )
   let edit_left = _textField({
     id: 'edit_position_item_left',
@@ -340,8 +342,8 @@ function EditOffsetBlock () {
     }
   })
   // input edit right position
-  let list_offsetY = selected_list.filterAndMap(wb =>
-    `${getWBaseOffset(wb).y}`.replace('.00', '')
+  let list_offsetY = selected_list.filterAndMap(wbHTML =>
+    `${getWBaseOffset(wbHTML).y}`.replace('.00', '')
   )
   let edit_top = _textField({
     id: 'edit_position_item_top',
@@ -355,21 +357,21 @@ function EditOffsetBlock () {
     }
   })
   editXYContainer.replaceChildren(edit_left, edit_top)
-  let parentHTML = divSection.querySelector(
-    `.wbaseItem-value.w-container[id="${select_box_parentID}"]`
+  let pWbHTML = divSection.querySelector(
+    `.w-container[id="${select_box_parentID}"]`
   )
-  if (parentHTML && window.getComputedStyle(parentHTML).display.match('flex')) {
+  if (pWbHTML && window.getComputedStyle(pWbHTML).display === 'flex') {
     let isFixPos = selected_list.every(e =>
-      e.value.classList.contains('fixed-position')
+      e.classList.contains('fixed-position')
     )
     let iconFixPos = document.createElement('img')
     iconFixPos.className = `img-button size-28 tlwh-option ${
       isFixPos ? ' toggle' : ''
     } ${
       selected_list.some(
-        wb =>
-          !wb.value.classList.contains('w-variant') &&
-          wb.value.closest('.wbaseItem-value[iswini]')
+        wbHTML =>
+          !wbHTML.classList.contains('w-variant') &&
+          wbHTML.closest('.wbaseItem-value[iswini]')
       )
         ? ' disabled'
         : ''
@@ -397,7 +399,7 @@ function EditOffsetBlock () {
   let editWHContainer = document.createElement('div')
   editWHContainer.className = 'row uneditable-instance'
   // input edit width
-  let list_width = selected_list.filterAndMap(e => e.value.offsetWidth)
+  let list_width = selected_list.filterAndMap(e => e.offsetWidth)
   let edit_width = _textField({
     id: 'edit_frame_item_w',
     label: 'W',
@@ -410,7 +412,7 @@ function EditOffsetBlock () {
     }
   })
   // input edit height
-  let list_height = selected_list.filterAndMap(e => e.value.offsetHeight)
+  let list_height = selected_list.filterAndMap(e => e.offsetHeight)
   let edit_height = _textField({
     id: 'edit_frame_item_h',
     label: 'H',
@@ -422,8 +424,8 @@ function EditOffsetBlock () {
       }
     }
   })
-  let isRatio = selected_list.some(wb =>
-    WbClass.scale.some(e => wb.value.classList.contains(e))
+  let isRatio = selected_list.some(wbHTML =>
+    WbClass.scale.some(e => wbHTML.classList.contains(e))
   )
   let icon_ratioWH = document.createElement('img')
   icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
@@ -445,10 +447,10 @@ function EditOffsetBlock () {
   edit_size_position_div.appendChild(editWHContainer)
 
   if (
-    selected_list.every(wb => {
-      let computeSt = window.getComputedStyle(wb.value)
+    selected_list.every(wbHTML => {
+      const computeSt = window.getComputedStyle(wbHTML)
       return (
-        WbClass.scale.every(e => !wb.value.classList.contains(e)) &&
+        WbClass.scale.every(e => !wbHTML.classList.contains(e)) &&
         (computeSt.display.match(/(flex|table)/g) ||
           computeSt.position !== 'absolute')
       )
@@ -459,7 +461,7 @@ function EditOffsetBlock () {
     resizeContainer.style.height = '32px'
     const initResizeW = function () {
       let vl = selected_list.filterAndMap(
-        wb => wb.value.getAttribute('width-type') ?? 'fixed'
+        wbHTML => wbHTML.getAttribute('width-type') ?? 'fixed'
       )
       vl = vl.length > 1 ? 'mixed' : vl[0] === 'fit' ? 'hug' : vl[0]
       edit_width.lastChild.disabled = vl !== 'fixed'
@@ -469,7 +471,7 @@ function EditOffsetBlock () {
     let resizeWBtn = _btnSelectResizeType(true, initResizeW())
     const initResizeH = function () {
       let vl = selected_list.filterAndMap(
-        wb => wb.value.getAttribute('height-type') ?? 'fixed'
+        wbHTML => wbHTML.getAttribute('height-type') ?? 'fixed'
       )
       vl = vl.length > 1 ? 'mixed' : vl[0] === 'fit' ? 'hug' : vl[0]
       edit_height.lastChild.disabled = vl !== 'fixed'
@@ -481,15 +483,9 @@ function EditOffsetBlock () {
     edit_size_position_div.appendChild(resizeContainer)
   }
   // input edit radius
-  const allowRadius = [
-    EnumCate.rectangle,
-    EnumCate.frame,
-    EnumCate.form,
-    EnumCate.textformfield,
-    EnumCate.button
-  ]
-  let showInputRadius = selected_list.filter(wb =>
-    allowRadius.some(ct => wb.CateID === ct)
+  const allowRadius = ['w-rect', 'w-container', 'w-textformfield', 'w-button']
+  let showInputRadius = selected_list.filter(wbHTML =>
+    allowRadius.some(e => wbHTML.classList.contains(e))
   )
   let radiusContainer = document.createElement('div')
   radiusContainer.className = 'row'
@@ -501,7 +497,7 @@ function EditOffsetBlock () {
   if (showInputRadius.length > 0) {
     let list_radius_value = showInputRadius.map(e =>
       window
-        .getComputedStyle(e.value)
+        .getComputedStyle(e)
         .borderRadius.split(' ')
         .map(brvl => parseFloat(brvl.replace('px')))
     )
@@ -512,13 +508,6 @@ function EditOffsetBlock () {
       onBlur: function (ev) {
         let newValue = parseFloat(ev.target.value)
         if (isNaN(newValue)) {
-          let list_radius_value = list_seleted_radius.map(e => [
-            e.StyleItem.FrameItem.TopLeft,
-            e.StyleItem.FrameItem.TopRight,
-            e.StyleItem.FrameItem.BottomLeft,
-            e.StyleItem.FrameItem.BottomRight
-          ])
-          list_radius_value = [].concat(...list_radius_value).filterAndMap()
           ev.target.value =
             list_radius_value.length == 1 ? list_radius_value[0] : 'mixed'
         } else {
@@ -565,125 +554,50 @@ function EditOffsetBlock () {
       ].map(radiusProp => {
         let radiusInputDetail = document.createElement('input')
         let rvalue = showInputRadius.filterAndMap(e =>
-          window.getComputedStyle(e.value)[radiusProp].replace('px', '')
+          window.getComputedStyle(e)[radiusProp].replace('px', '')
         )
         radiusInputDetail.value = rvalue.length === 1 ? rvalue[0] : 'mixed'
         radiusInputDetail.onfocus = function () {
           this.setSelectionRange(0, this.value.length)
         }
+        radiusInputDetail.onblur = function () {
+          let newValue = parseFloat(this.value)
+          if (isNaN(newValue)) {
+            this.value = rvalue.length === 1 ? rvalue[0] : 'mixed'
+          } else {
+            switch (radiusProp) {
+              case 'borderTopLeftRadius':
+                handleEditOffset({ radiusTL: newValue })
+                break
+              case 'borderTopRightRadius':
+                handleEditOffset({ radiusTR: newValue })
+                break
+              case 'borderBottomLeftRadius':
+                handleEditOffset({ radiusBL: newValue })
+                break
+              case 'borderBottomRightRadius':
+                handleEditOffset({ radiusBR: newValue })
+                break
+              default:
+                break
+            }
+            edit_radius.lastChild.value =
+              [
+                ..._row_radius_detail.querySelectorAll(':scope > input')
+              ].filterAndMap(i => i.value).length > 1
+                ? 'mixed'
+                : this.value
+          }
+        }
         return radiusInputDetail
       })
-    )
-    $('body').on(
-      'blur',
-      '#row_radius_detail > input:nth-child(2)',
-      function () {
-        let newValue = parseFloat(this.value)
-        if (isNaN(newValue)) {
-          let list_top_left_value = selected_list
-            .filter(e => e.StyleItem.FrameItem?.TopLeft != undefined)
-            .map(e => e.StyleItem.FrameItem.TopLeft)
-          let top_left_value = list_top_left_value[0]
-          list_top_left_value = list_top_left_value.filter(
-            e => e != top_left_value
-          )
-          this.value =
-            list_top_left_value.length == 0 ? top_left_value : 'mixed'
-        } else {
-          handleEditOffset({ radiusTL: newValue })
-          edit_radius.lastChild.value =
-            [
-              ..._row_radius_detail.querySelectorAll(':scope > input')
-            ].filterAndMap(i => i.value).length > 1
-              ? 'mixed'
-              : this.value
-        }
-      }
-    )
-    $('body').on(
-      'blur',
-      '#row_radius_detail > input:nth-child(3)',
-      function () {
-        let newValue = parseFloat(this.value)
-        if (isNaN(newValue)) {
-          let list_top_right_value = selected_list
-            .filter(e => e.StyleItem.FrameItem?.Topright != undefined)
-            .map(e => e.StyleItem.FrameItem.TopRight)
-          let top_right_value = list_top_right_value[0]
-          list_top_right_value = list_top_right_value.filter(
-            e => e != top_right_value
-          )
-          this.value =
-            list_top_right_value.length == 0 ? top_right_value : 'mixed'
-        } else {
-          handleEditOffset({ radiusTR: newValue })
-          edit_radius.lastChild.value =
-            [
-              ..._row_radius_detail.querySelectorAll(':scope > input')
-            ].filterAndMap(i => i.value).length > 1
-              ? 'mixed'
-              : this.value
-        }
-      }
-    )
-    $('body').on(
-      'blur',
-      '#row_radius_detail > input:nth-child(4)',
-      function () {
-        let newValue = parseFloat(this.value)
-        if (isNaN(newValue)) {
-          let list_bot_left_value = selected_list
-            .filter(e => e.StyleItem.FrameItem?.BottomLeft != undefined)
-            .map(e => e.StyleItem.FrameItem.BottomLeft)
-          let bot_left_value = list_bot_left_value[0]
-          list_bot_left_value = list_bot_left_value.filter(
-            e => e != bot_left_value
-          )
-          this.value =
-            list_bot_left_value.length == 0 ? bot_left_value : 'mixed'
-        } else {
-          handleEditOffset({ radiusBL: newValue })
-          edit_radius.lastChild.value =
-            [
-              ..._row_radius_detail.querySelectorAll(':scope > input')
-            ].filterAndMap(i => i.value).length > 1
-              ? 'mixed'
-              : this.value
-        }
-      }
-    )
-    $('body').on(
-      'blur',
-      '#row_radius_detail > input:nth-child(5)',
-      function () {
-        let newValue = parseFloat(this.value)
-        if (isNaN(newValue)) {
-          let list_bot_right_value = selected_list
-            .filter(e => e.StyleItem.FrameItem?.BottomRight != undefined)
-            .map(e => e.StyleItem.FrameItem.BottomRight)
-          let bot_right_value = list_bot_right_value[0]
-          list_bot_right_value = list_bot_right_value.filter(
-            e => e != bot_right_value
-          )
-          this.value =
-            list_bot_right_value.length == 0 ? bot_right_value : 'mixed'
-        } else {
-          handleEditOffset({ radiusBR: newValue })
-          edit_radius.lastChild.value =
-            [
-              ..._row_radius_detail.querySelectorAll(':scope > input')
-            ].filterAndMap(i => i.value).length > 1
-              ? 'mixed'
-              : this.value
-        }
-      }
     )
     edit_size_position_div.appendChild(_row_radius_detail)
   }
   if (
-    selected_list.filter(wb =>
+    selected_list.filter(wbHTML =>
       ['w-container', 'w-button', 'w-textformfield', 'w-variant'].some(e =>
-        wb.value.classList.contains(e)
+        wbHTML.classList.contains(e)
       )
     ).length > 0
   ) {
@@ -693,13 +607,13 @@ function EditOffsetBlock () {
     btn_clip_content.style.margin = '4px 0 0 16px'
     btn_clip_content.innerHTML = `<input type="checkbox"${
       selected_list
-        .filter(wb =>
+        .filter(wbHTML =>
           ['w-container', 'w-button', 'w-textformfield', 'w-variant'].some(e =>
-            wb.value.classList.contains(e)
+            wbHTML.classList.contains(e)
           )
         )
-        .every(wb =>
-          window.getComputedStyle(wb.value).overflow.includes('hidden')
+        .every(wbHTML =>
+          window.getComputedStyle(wbHTML).overflow.includes('hidden')
         )
         ? ' checked'
         : ''
@@ -723,11 +637,10 @@ function reloadEditOffsetBlock () {
 // edit auto layout
 function EditLayoutBlock () {
   let wbList = selected_list.filter(wb =>
-    WbClass.parent.some(e => wb.value.classList.contains(e))
+    WbClass.parent.some(e => wb.classList.contains(e))
   )
   let isEditTable =
-    wbList.length > 0 &&
-    wbList.every(wb => wb.value.classList.contains('w-table'))
+    wbList.length > 0 && wbList.every(wb => wb.classList.contains('w-table'))
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_auto_layout_div'
   editContainer.className = 'edit-container'
@@ -735,9 +648,9 @@ function EditLayoutBlock () {
   header.className = `ds-block-header ${
     wbList.some(
       wb =>
-        wb.IsInstance ||
-        (!wb.value.classList.contains('w-variant') &&
-          wb.value.closest('.wbaseItem-value[iswini]'))
+        wb.getAttribute('isinstance') ||
+        (!wb.classList.contains('w-variant') &&
+          wb.closest('.wbaseItem-value[iswini]'))
     )
       ? 'disable'
       : ''
@@ -747,7 +660,7 @@ function EditLayoutBlock () {
   }</p><i class="fa-solid fa-minus fa-sm"></i><i class="fa-solid fa-plus fa-sm"></i>`
   editContainer.appendChild(header)
   let showDetails = selected_list.every(wb =>
-    window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
+    window.getComputedStyle(wb).display.match(/(flex|table)/g)
   )
   if (showDetails) {
     header.querySelector('.fa-plus').remove()
@@ -755,7 +668,7 @@ function EditLayoutBlock () {
     editContainer.appendChild(body)
     body.className = 'row'
     let isVertical = wbList.every(wb =>
-      ['w-col', 'w-table'].some(e => wb.value.classList.contains(e))
+      ['w-col', 'w-table'].some(e => wb.classList.contains(e))
     )
     let selectDirection = document.createElement('div')
     selectDirection.className = 'group_btn_direction uneditable-instance'
@@ -768,10 +681,10 @@ function EditLayoutBlock () {
       wbList.every(
         wb =>
           ['w-textformfield', 'w-table'].every(
-            e => !wb.value.classList.contains(e)
+            e => !wb.classList.contains(e)
           ) &&
-          !wb.IsInstance &&
-          !wb.value.closest('.wbaseItem-value[iswini]')
+          !wb.getAttribute('isinstance') &&
+          !wb.closest('.wbaseItem-value[iswini]')
       )
     ) {
       $(header).on('click', '.fa-minus', function () {
@@ -797,19 +710,19 @@ function EditLayoutBlock () {
       isVertical: isVertical,
       value:
         mainAxisToAlign(
-          wbList[0].value.style.justifyContent ??
+          wbList[0].style.justifyContent ??
             StyleDA.docStyleSheets.find(cssRule =>
               [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                wbList[0].value
+                wbList[0]
               )
             )?.style?.justifyContent,
           !isVertical
         ) +
         crossAxisToAlign(
-          wbList[0].value.style.alignItems ??
+          wbList[0].style.alignItems ??
             StyleDA.docStyleSheets.find(cssRule =>
               [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                wbList[0].value
+                wbList[0]
               )
             )?.style?.alignItems,
           !isVertical
@@ -824,10 +737,11 @@ function EditLayoutBlock () {
       let childSpaceValues = wbList.filterAndMap(wb =>
         parseFloat(
           window
-            .getComputedStyle(wb.value)
-            [
-              wb.value.classList.contains('w-col') ? 'row-gap' : 'column-gap'
-            ].replace('px', '')
+            .getComputedStyle(wb)
+            [wb.classList.contains('w-col') ? 'row-gap' : 'column-gap'].replace(
+              'px',
+              ''
+            )
         )
       )
       let inputChildSpace = _textField({
@@ -849,7 +763,7 @@ function EditLayoutBlock () {
       })
       $(inputChildSpace).css({ position: 'absolute', left: '0', bottom: '0' })
       body.appendChild(inputChildSpace)
-      if (wbList.every(wb => !wb.value.classList.contains('w-textformfield'))) {
+      if (wbList.every(wb => !wb.classList.contains('w-textformfield'))) {
         let isWrapRow = document.createElement('div')
         isWrapRow.className = 'row'
         isWrapRow.style.width = '100%'
@@ -857,7 +771,7 @@ function EditLayoutBlock () {
         btnIsWarp.className = 'row regular1 check-box-label uneditable-instance'
         btnIsWarp.innerHTML = `<input type="checkbox"${
           wbList
-            .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
+            .filterAndMap(wb => window.getComputedStyle(wb).flexWrap)
             .every(e => e === 'wrap')
             ? ' checked'
             : ''
@@ -868,12 +782,12 @@ function EditLayoutBlock () {
         let runSpaceValues = wbList.filterAndMap(wb =>
           parseFloat(
             (
-              wb.value.style.getPropertyValue('--run-space') ??
+              wb.style.getPropertyValue('--run-space') ??
               StyleDA.docStyleSheets
                 .find(cssRule =>
                   [
                     ...divSection.querySelectorAll(cssRule.selectorText)
-                  ].includes(wbList[0].value)
+                  ].includes(wbList[0])
                 )
                 ?.style?.getPropertyValue('--run-space')
             ).replace('px', '')
@@ -902,7 +816,7 @@ function EditLayoutBlock () {
           'row regular1 check-box-label uneditable-instance'
         btnIsScroll.innerHTML = `<input type="checkbox"${
           wbList
-            .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
+            .filterAndMap(wb => window.getComputedStyle(wb).overflow)
             .every(e => e.includes('scroll'))
             ? ' checked'
             : ''
@@ -910,10 +824,10 @@ function EditLayoutBlock () {
         if (
           wbList.some(
             wb =>
-              (wb.value.classList.contains('w-col') &&
-                wb.value.getAttribute('height-type') === 'fit') ||
-              (wb.value.classList.contains('w-row') &&
-                wb.value.getAttribute('width-type') === 'fit')
+              (wb.classList.contains('w-col') &&
+                wb.getAttribute('height-type') === 'fit') ||
+              (wb.classList.contains('w-row') &&
+                wb.getAttribute('width-type') === 'fit')
           )
         ) {
           btnIsScroll.setAttribute('disabled', 'true')
@@ -933,19 +847,19 @@ function EditLayoutBlock () {
     // input padding
     let isShowPadDetails = false
     let paddingLefts = wbList.filterAndMap(e =>
-      window.getComputedStyle(e.value).paddingLeft.replace('px', '')
+      window.getComputedStyle(e).paddingLeft.replace('px', '')
     )
     let padLeftValue = paddingLefts.length == 1 ? paddingLefts[0] : 'mixed'
     let paddingTops = wbList.filterAndMap(e =>
-      window.getComputedStyle(e.value).paddingTop.replace('px', '')
+      window.getComputedStyle(e).paddingTop.replace('px', '')
     )
     let padTopValue = paddingTops.length == 1 ? paddingTops[0] : 'mixed'
     let paddingRights = wbList.filterAndMap(e =>
-      window.getComputedStyle(e.value).paddingRight.replace('px', '')
+      window.getComputedStyle(e).paddingRight.replace('px', '')
     )
     let padRightValue = paddingRights.length == 1 ? paddingRights[0] : 'mixed'
     let paddingBots = wbList.filterAndMap(e =>
-      window.getComputedStyle(e.value).paddingBottom.replace('px', '')
+      window.getComputedStyle(e).paddingBottom.replace('px', '')
     )
     let padBotValue = paddingBots.length == 1 ? paddingBots[0] : 'mixed'
     let paddingContainer = document.createElement('div')
@@ -1166,12 +1080,12 @@ function EditConstraintsBlock () {
   editConstContainer.className = 'row'
   bodyContainer.appendChild(editConstContainer)
   let constraintsXValues = selected_list.filterAndMap(e =>
-    e.value.getAttribute('constx')
+    e.getAttribute('constx')
   )
   let constraintsX =
     constraintsXValues.length === 1 ? constraintsXValues[0] : 'mixed'
   let constraintsYValues = selected_list.filterAndMap(e =>
-    e.value.getAttribute('consty')
+    e.getAttribute('consty')
   )
   let constraintsY =
     constraintsYValues.length === 1 ? constraintsYValues[0] : 'mixed'
@@ -1194,17 +1108,13 @@ function EditConstraintsBlock () {
   ]
   if (
     selected_list.every(wb =>
-      WbClass.scale.every(e => !wb.value.classList.contains(e))
+      WbClass.scale.every(e => !wb.classList.contains(e))
     )
   ) {
-    if (
-      selected_list.every(wb => wb.value.getAttribute('width-type') !== 'fit')
-    ) {
+    if (selected_list.every(wb => wb.getAttribute('width-type') !== 'fit')) {
       listContraintsX.push(Constraints.left_right, Constraints.scale)
     }
-    if (
-      selected_list.every(wb => wb.value.getAttribute('height-type') !== 'fit')
-    ) {
+    if (selected_list.every(wb => wb.getAttribute('height-type') !== 'fit')) {
       listContraintsY.push(Constraints.top_bottom, Constraints.scale)
     }
   }
@@ -1436,25 +1346,25 @@ function checkActiveFillHug ({ type = 'fill', isW = true }) {
       }
       return activeFill
     case 'hug':
-      return selected_list.every(wb => {
+      return selected_list.every(wbHTML => {
         if (
-          wb.value.classList.contains('w-text') ||
-          wb.value.classList.contains('w-table')
+          wbHTML.classList.contains('w-text') ||
+          wbHTML.classList.contains('w-table')
         )
           return true
         if (
           isW &&
-          (wb.value.getAttribute('constx') === Constraints.left_right ||
-            wb.value.getAttribute('constx') === Constraints.scale)
+          (wbHTML.getAttribute('constx') === Constraints.left_right ||
+            wbHTML.getAttribute('constx') === Constraints.scale)
         )
           return false
         if (
           !isW &&
-          (wb.value.getAttribute('constx') === Constraints.top_bottom ||
-            wb.value.getAttribute('constx') === Constraints.scale)
+          (wbHTML.getAttribute('constx') === Constraints.top_bottom ||
+            wbHTML.getAttribute('constx') === Constraints.scale)
         )
           return false
-        let wbComputeSt = window.getComputedStyle(wb.value)
+        let wbComputeSt = window.getComputedStyle(wbHTML)
         if (
           wbComputeSt.display === 'flex' &&
           !(
@@ -1463,20 +1373,22 @@ function checkActiveFillHug ({ type = 'fill', isW = true }) {
           )
         ) {
           if (isW) {
-            if (!wb.value.classList.contains('w-textformfield')) {
-              if (wb.value.classList.contains('w-row')) {
+            if (!wbHTML.classList.contains('w-textformfield')) {
+              if (wbHTML.classList.contains('w-row')) {
                 return (
                   !wbComputeSt.overflow.includes('scroll') &&
                   wbComputeSt.flexWrap !== 'wrap'
                 )
               } else if (
-                !wb.value.querySelector(`.col-[level="${wb.Level + 1}"]`)
+                !wbHTML.querySelector(
+                  `.col-[level="${parseInt(wbHTML.getAttribute('level')) + 1}"]`
+                )
               ) {
                 return !wbComputeSt.overflow.includes('scroll')
               }
             }
           } else {
-            if (wb.value.classList.contains('w-col')) {
+            if (wbHTML.classList.contains('w-col')) {
               return (
                 wbComputeSt.flexWrap !== 'wrap' &&
                 !wbComputeSt.overflow.includes('scroll')
@@ -1538,7 +1450,7 @@ function EditBackgroundBlock () {
   let header = document.createElement('div')
   header.className = 'ds-block-header'
   let scaleWb = selected_list.every(wb =>
-    WbClass.scale.some(e => wb.value.classList.contains(e))
+    WbClass.scale.some(e => wb.classList.contains(e))
   )
   header.innerHTML = `<p>${scaleWb ? 'Checked primary color' : 'Background'}</p>
   <button class="action-button skin-btn bg-header-action"></button>
@@ -1547,17 +1459,17 @@ function EditBackgroundBlock () {
   editContainer.appendChild(header)
 
   let wbBg = selected_list.filterAndMap(
-    wb => window.getComputedStyle(wb.value).backgroundImage
+    wb => window.getComputedStyle(wb).backgroundImage
   )
   if (wbBg.length === 1) {
     if (wbBg[0] === 'none') {
       wbBg = selected_list.filterAndMap(wb => {
         let bgColor =
-          wb.value.style?.backgroundColor?.length > 0
-            ? wb.value.style.backgroundColor
+          wb.style?.backgroundColor?.length > 0
+            ? wb.style.backgroundColor
             : StyleDA.docStyleSheets.find(cssRule =>
                 [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                  wb.value
+                  wb
                 )
               )?.style?.backgroundColor
         if (bgColor?.match(uuid4Regex)) return bgColor?.match(uuid4Regex)[0]
@@ -1625,7 +1537,7 @@ function EditBackgroundBlock () {
 
       let divSelectImg = document.createElement('div')
       divSelectImg.innerHTML = `<div style="background: url(${window
-        .getComputedStyle(selected_list[0].value)
+        .getComputedStyle(selected_list[0])
         .backgroundImage.replace(
           /(url\("|"\))/g,
           ''
@@ -1684,7 +1596,7 @@ function reloadEditBackgroundBlock () {
 }
 
 function EditIconColorBlock () {
-  let wbIcon = selected_list.find(wb => wb.value.classList.contains('w-svg'))
+  let wbIcon = selected_list.find(wb => wb.classList.contains('w-svg'))
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-icon-color'
   editContainer.className = 'edit-container'
@@ -1695,12 +1607,10 @@ function EditIconColorBlock () {
   title.innerHTML = 'Icon color'
   header.appendChild(title)
 
-  if (wbIcon.value.style.length) renderIconColorForm(wbIcon.value.style)
+  if (wbIcon.style.length) renderIconColorForm(wbIcon.style)
   //
   const cssRule = StyleDA.docStyleSheets.find(cssRule =>
-    [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-      wbIcon.value
-    )
+    [...divSection.querySelectorAll(cssRule.selectorText)].includes(wbIcon)
   )
   if (cssRule) renderIconColorForm(cssRule.style)
   //
@@ -1811,7 +1721,7 @@ let list_font_weight = ['200', '300', '400', '500', '600', '700', '800', '900']
 // ! textStyle
 function EditTypoBlock () {
   let listTextStyle = selected_list.filter(wb =>
-    ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
+    ['w-text', 'w-textformfield'].some(e => wb.classList.contains(e))
   )
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_text_style'
@@ -1835,23 +1745,19 @@ function EditTypoBlock () {
 
   let listTypoSkin = listTextStyle.filterAndMap(wb => {
     let fontSt =
-      wb.value.style.font ??
+      wb.style.font ??
       StyleDA.docStyleSheets.find(cssRule =>
-        [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-          wb.value
-        )
+        [...divSection.querySelectorAll(cssRule.selectorText)].includes(wb)
       )?.style?.font
     return fontSt?.replace(/(var\(--|\))/g, '')
   })
 
   let wbColor = selected_list.filterAndMap(wb => {
     let txtColor =
-      wb.value.style?.color?.length > 0
-        ? wb.value.style.color
+      wb.style?.color?.length > 0
+        ? wb.style.color
         : StyleDA.docStyleSheets.find(cssRule =>
-            [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-              wb.value
-            )
+            [...divSection.querySelectorAll(cssRule.selectorText)].includes(wb)
           )?.style?.color
     if (txtColor?.match(uuid4Regex)) return txtColor?.match(uuid4Regex)[0]
     else return txtColor?.length === 0 ? null : txtColor
@@ -1885,7 +1791,7 @@ function EditTypoBlock () {
           handleUnlinkSkin: function () {
             handleEditTypo({
               hexCode: Ultis.rgbToHex(
-                window.getComputedStyle(listTextStyle[0].value).color
+                window.getComputedStyle(listTextStyle[0]).color
               )
             })
             reloadEditTypoBlock()
@@ -1894,9 +1800,7 @@ function EditTypoBlock () {
       }
     } else {
       editColor = createEditColorForm({
-        value: Ultis.rgbToHex(
-          window.getComputedStyle(listTextStyle[0].value).color
-        ),
+        value: Ultis.rgbToHex(window.getComputedStyle(listTextStyle[0]).color),
         onchange: params => {
           handleEditTypo({ color: params, onSubmit: false })
         },
@@ -1910,7 +1814,7 @@ function EditTypoBlock () {
             cate: EnumCate.color,
             offset: offset,
             cssText: Ultis.rgbToHex(
-              window.getComputedStyle(listTextStyle[0].value).color
+              window.getComputedStyle(listTextStyle[0]).color
             )
           })
           document
@@ -1924,7 +1828,7 @@ function EditTypoBlock () {
   if (listTypoSkin.length === 1 && listTypoSkin[0]?.length === 36) {
     let typoSkin = StyleDA.listSkin.find(skin => listTypoSkin[0] == skin.GID)
     let cateItem = CateDA.list_typo_cate.find(e => e.ID == typoSkin.CateID)
-    let wbComputeSt = window.getComputedStyle(listTextStyle[0].value)
+    let wbComputeSt = window.getComputedStyle(listTextStyle[0])
     let skin_tile = wbaseSkinTile({
       cate: EnumCate.typography,
       prefixValue: `${wbComputeSt.fontSize}/${wbComputeSt.lineHeight}`,
@@ -1961,7 +1865,7 @@ function EditTypoBlock () {
     if (editColor) text_style_attribute.appendChild(editColor)
     // select font-family
     let fontFamilyValues = listTextStyle.filterAndMap(
-      wb => window.getComputedStyle(wb.value).fontFamily
+      wb => window.getComputedStyle(wb).fontFamily
     )
     let btn_select_font_family = _btnInputSelect({
       initvalue: fontFamilyValues.length === 1 ? fontFamilyValues[0] : 'mixed',
@@ -1985,7 +1889,7 @@ function EditTypoBlock () {
     text_style_attribute.appendChild(div_font_size_weight)
     // select font-weight
     let fWeightValues = listTextStyle.filterAndMap(
-      wb => window.getComputedStyle(wb.value).fontWeight
+      wb => window.getComputedStyle(wb).fontWeight
     )
     let btn_select_font_weight = _btnDropDownSelect({
       initvalue: fWeightValues.length === 1 ? fWeightValues[0] : 'mixed',
@@ -2000,7 +1904,7 @@ function EditTypoBlock () {
     div_font_size_weight.appendChild(btn_select_font_weight)
     // select font-size
     let fSizeValues = listTextStyle.filterAndMap(wb =>
-      parseFloat(window.getComputedStyle(wb.value).fontSize.replace('px', ''))
+      parseFloat(window.getComputedStyle(wb).fontSize.replace('px', ''))
     )
     let btn_select_font_size = _btnInputSelect({
       initvalue: fSizeValues.length === 1 ? fSizeValues[0] : 'mixed',
@@ -2029,7 +1933,7 @@ function EditTypoBlock () {
     text_style_attribute.appendChild(div_height_spacing)
     // input line-height
     let lineHeightValues = listTextStyle.filterAndMap(wb =>
-      window.getComputedStyle(wb.value).lineHeight.replace('px', '')
+      window.getComputedStyle(wb).lineHeight.replace('px', '')
     )
     let input_line_height = _textField({
       width: '100%',
@@ -2050,7 +1954,7 @@ function EditTypoBlock () {
     div_height_spacing.appendChild(input_line_height)
     // input letter spacing
     let lSpacingValues = listTextStyle.filterAndMap(wb =>
-      window.getComputedStyle(wb.value).letterSpacing.replace('px', '')
+      window.getComputedStyle(wb).letterSpacing.replace('px', '')
     )
     let input_letter_spacing = _textField({
       width: '100%',
@@ -2075,11 +1979,11 @@ function EditTypoBlock () {
   // if (listTextStyle.some(e => e.CateID !== EnumCate.chart)) {
   // group btn select text auto size
   let autoSizeValues = listTextStyle.filterAndMap(wb => {
-    switch (wb.value.getAttribute('width-type')) {
+    switch (wb.getAttribute('width-type')) {
       case 'fit':
         return TextAutoSize.autoWidth
       default:
-        if (wb.value.getAttribute('height-type') === 'fit') {
+        if (wb.getAttribute('height-type') === 'fit') {
           return TextAutoSize.autoHeight
         } else {
           return TextAutoSize.fixedSize
@@ -2129,7 +2033,7 @@ function EditTypoBlock () {
   editContainer.appendChild(_row)
   // group btn select text align
   let textAlignValues = listTextStyle.filterAndMap(
-    wb => window.getComputedStyle(wb.value).textAlign
+    wb => window.getComputedStyle(wb).textAlign
   )
   let group_btn_text_align = _groupBtnSelect({
     initvalue: textAlignValues.length > 1 ? 'mixed' : textAlignValues[0],
@@ -2155,7 +2059,7 @@ function EditTypoBlock () {
   _row.appendChild(group_btn_text_align)
   // group btn select text align vertical
   let alignVerticalValues = listTextStyle.filterAndMap(
-    wb => window.getComputedStyle(wb.value).alignItems
+    wb => window.getComputedStyle(wb).alignItems
   )
   let group_btn_text_align_vertical = _groupBtnSelect({
     initvalue:
@@ -2340,7 +2244,7 @@ let list_border_style = [
 function EditBorderBlock () {
   let listBorder = selected_list.filter(wb =>
     ['w-checkbox', ...WbClass.borderEffect].some(e =>
-      wb.value.classList.contains(e)
+      wb.classList.contains(e)
     )
   )
   let editContainer = document.createElement('div')
@@ -2364,14 +2268,14 @@ function EditBorderBlock () {
   ]
   let listBorderSkin = listBorder.filterAndMap(wb => {
     for (let side of borderSide) {
-      if (wb.value.style[side]) {
-        return wb.value.style[side].match(uuid4Regex)
-          ? wb.value.style[side].replace(/(var\(--|\))/g, '')
-          : wb.value.style[side]
+      if (wb.style[side]) {
+        return wb.style[side].match(uuid4Regex)
+          ? wb.style[side].replace(/(var\(--|\))/g, '')
+          : wb.style[side]
       }
     }
     let rule = StyleDA.docStyleSheets.find(cssRule =>
-      [...divSection.querySelectorAll(cssRule.selectorText)].includes(wb.value)
+      [...divSection.querySelectorAll(cssRule.selectorText)].includes(wb)
     )
     if (rule)
       for (let side of borderSide) {
@@ -2393,7 +2297,7 @@ function EditBorderBlock () {
     let skin_tile = wbaseSkinTile({
       cate: EnumCate.border,
       prefixValue: Ultis.rgbToHex(
-        window.getComputedStyle(listBorder[0].value).borderColor
+        window.getComputedStyle(listBorder[0]).borderColor
       ),
       title: (cateItem ? `${cateItem.Name}/` : '') + borderItem.Name,
       onClick: function () {
@@ -2423,7 +2327,7 @@ function EditBorderBlock () {
     if (listBorderSkin.length > 0) {
       header.querySelector('.fa-plus').remove()
       let borderColorValues = listBorder.filterAndMap(wb =>
-        Ultis.rgbToHex(window.getComputedStyle(wb.value).borderColor)
+        Ultis.rgbToHex(window.getComputedStyle(wb).borderColor)
       )
       if (borderColorValues.length == 1) {
         let formEditColor = createEditColorForm({
@@ -2452,7 +2356,7 @@ function EditBorderBlock () {
       let borderStyles = listBorder.filterAndMap(
         wb =>
           window
-            .getComputedStyle(wb.value)
+            .getComputedStyle(wb)
             .borderStyle.split(' ')
             .filter(e => e !== 'none')[0]
       )
@@ -2473,7 +2377,7 @@ function EditBorderBlock () {
       let widthValues = listBorder.filterAndMap(
         wb =>
           window
-            .getComputedStyle(wb.value)
+            .getComputedStyle(wb)
             .borderWidth.split(' ')
             .map(e => parseFloat(e.replace('px', '')))
             .sort((a, b) => b - a)[0]
@@ -2497,7 +2401,7 @@ function EditBorderBlock () {
       formEditLine.appendChild(action_edit_line_container)
 
       let sideValues = listBorder.filterAndMap(wb => {
-        let borderW = window.getComputedStyle(wb.value).borderWidth.split(' ')
+        let borderW = window.getComputedStyle(wb).borderWidth.split(' ')
         switch (borderW.length) {
           case 1:
             return BorderSide.all
@@ -2613,7 +2517,7 @@ function reloadEditBorderBlock () {
 // ! effect
 function EditEffectBlock () {
   let listEffect = selected_list.filter(wb =>
-    WbClass.borderEffect.some(e => wb.value.classList.contains(e))
+    WbClass.borderEffect.some(e => wb.classList.contains(e))
   )
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-effect'
@@ -2630,14 +2534,14 @@ function EditEffectBlock () {
   const effectType = ['filter', 'box-shadow']
   let listEffectSkin = listEffect.filterAndMap(wb => {
     for (let side of effectType) {
-      if (wb.value.style[side]) {
-        return wb.value.style[side].match(uuid4Regex)
-          ? wb.value.style[side].replace(/(var\(--|\))/g, '')
-          : wb.value.style[side]
+      if (wb.style[side]) {
+        return wb.style[side].match(uuid4Regex)
+          ? wb.style[side].replace(/(var\(--|\))/g, '')
+          : wb.style[side]
       }
     }
     let rule = StyleDA.docStyleSheets.find(cssRule =>
-      [...divSection.querySelectorAll(cssRule.selectorText)].includes(wb.value)
+      [...divSection.querySelectorAll(cssRule.selectorText)].includes(wb)
     )
     if (rule)
       for (let side of effectType) {
@@ -2762,10 +2666,10 @@ function EditEffectBlock () {
           input_color.style.display = 'none'
           input_color.replaceChildren()
           let blurValues = listEffect
-            .filter(wb => window.getComputedStyle(wb.value).filter !== 'none')
+            .filter(wb => window.getComputedStyle(wb).filter !== 'none')
             .filterAndMap(wb =>
               window
-                .getComputedStyle(wb.value)
+                .getComputedStyle(wb)
                 .filter.replace(/(blur\(|px\))/g, '')
             )
           input_blur.querySelector('input').value =
@@ -2773,10 +2677,10 @@ function EditEffectBlock () {
         } else {
           let boxShadowList = listEffect
             .filter(
-              wb => window.getComputedStyle(wb.value).boxShadow !== 'none'
+              wb => window.getComputedStyle(wb).boxShadow !== 'none'
             )
             .map(wb => {
-              let wbShadow = window.getComputedStyle(wb.value).boxShadow
+              let wbShadow = window.getComputedStyle(wb).boxShadow
               let color = wbShadow.match(/(rgba|rgb)\(.*\)/g)[0]
               wbShadow = wbShadow.replace(color, '').trim().split(' ')
               return {
@@ -2822,7 +2726,7 @@ function EditEffectBlock () {
       //
 
       let eTypeValues = listEffect.filterAndMap(wb =>
-        window.getComputedStyle(wb.value).filter === 'none'
+        window.getComputedStyle(wb).filter === 'none'
           ? 'box-shadow'
           : 'filter'
       )

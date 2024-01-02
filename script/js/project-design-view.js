@@ -49,9 +49,40 @@ async function initData () {
         .forEach(wbHTML => setAttributeByStyle(wbHTML, cssRuleItem.style))
     }
   })
-  divSection
-    .querySelectorAll('.wbaseItem-value[isinstance][class*="w-st0"]')
-    .forEach(wbHTML => setAttributeByStyle(wbHTML))
+  let instance_list = wbase_list.filter(e => e.IsInstance)
+  for (let wb of instance_list) {
+    if ([...wb.value.classList].every(cls => !cls.startsWith('w-st0'))) {
+      wbase_list = wbase_list.filter(e => e !== wb)
+    } else {
+      let cloneInst = document.getElementById(wb.CopyID).cloneNode(true)
+      cloneInst.id = wb.GID
+      cloneInst.removeAttribute('style')
+      cloneInst.removeAttribute('iswini')
+      cloneInst.setAttribute('isinstance', 'true')
+      cloneInst
+        .querySelectorAll(`.wbaseItem-value`)
+        .forEach(e => {
+          e.removeAttribute('id')
+          e.removeAttribute('parentid')
+        })
+      let styleEl = document.createElement('style')
+      styleEl.id = `w-st-inst${wb.GID}`
+      document.head.appendChild(styleEl)
+      const classComponent = [...wb.value.classList].find(e =>
+        e.startsWith('w-st0')
+      )
+      styleEl.innerHTML = wb.Css.replaceAll(
+        classComponent,
+        `wbaseItem-value[id="${wb.GID}"]`
+      )
+      wb.value.replaceWith(cloneInst)
+      wb.value = cloneInst
+      setAttributeByStyle(wb.value, styleEl.sheet.cssRules[0].style)
+    }
+  }
+  // divSection
+  //   .querySelectorAll('.wbaseItem-value[isinstance][class*="w-st0"]')
+  //   .forEach(wbHTML => setAttributeByStyle(wbHTML))
   console.log('out handle data: ', Date.now())
   centerViewInitListener()
   if (PageDA.obj.scale !== undefined) {
@@ -453,16 +484,24 @@ function handleWbSelectedList (newlist = []) {
     .forEach(layerTile => layerTile.classList.remove('selected'))
   selectPath?.remove()
   if (newlist.length > 0) {
-    isChange = selected_list.some(oldE =>
-      newlist.every(newE => oldE.GID !== newE.GID)
-    )
+    var inst
+    isChange = selected_list.some(oldE => newlist.every(newE => oldE !== newE))
     selected_list = newlist
-    let layerTile
-    for (let wb of selected_list.reverse()) {
-      layerTile = document.getElementById(`wbaseID:${wb.GID}`)
-      if (layerTile) layerTile.classList.add('selected')
+    for (let wbHTML of selected_list.reverse()) {
+      var layerTile = document.getElementById(`wbaseID:${wbHTML.id}`)
+      if (!layerTile) {
+        inst ??= wbHTML.closest('.wbaseItem-value[isinstance]')
+        const stCls = [...wbHTML.classList].find(
+          e => e !== 'w-stack' && e.startsWith('w-st')
+        )
+        layerTile = document
+          .getElementById(`parentID:${inst.id}`)
+          .querySelector(`.${stCls}`)
+      }
+      layerTile.classList.add('selected')
     }
-    ;[...$(layerTile).parents(`.col:has(> .layer_wbase_tile)`)].forEach(e => {
+    let layerParent = [...$(layerTile).parents(`.col:has(> .layer_wbase_tile)`)]
+    layerParent.forEach(e => {
       let layer = e.querySelector('.layer_wbase_tile')
       if (layer !== layerTile) {
         let prefixIcon = layer.querySelector('.prefix-btn')
@@ -470,24 +509,27 @@ function handleWbSelectedList (newlist = []) {
           prefixIcon.className = prefixIcon.className.replace('right', 'down')
       }
     })
-    selected_list.sort((a, b) => $(a.value).index() - $(b.value).index())
-    select_box_parentID = selected_list[0].ParentID
-    let layerSelect = document.getElementById(`wbaseID:${selected_list[0].GID}`)
+    selected_list.sort((a, b) => $(a).index() - $(b).index())
+    select_box_parentID =
+      selected_list[0].closest(
+        `.wbaseItem-value[level="${parseInt(
+          selected_list[0].getAttribute('level') - 1
+        )}"]`
+      )?.id ?? wbase_parentID
     let layerParentRect = document
       .getElementById(`parentID:${wbase_parentID}`)
       .getBoundingClientRect()
     if (
-      layerSelect &&
-      !isInRange(
-        layerSelect.getBoundingClientRect().y,
+      isInRange(
+        layerTile.getBoundingClientRect().y,
         layerParentRect.y,
         layerParentRect.y + layerParentRect.height,
         true
       )
     ) {
       let scrollToY =
-        layerSelect.offsetTop -
-        layerSelect.offsetHeight -
+        layerTile.offsetTop -
+        layerTile.offsetHeight -
         document.getElementById('div_list_page').offsetHeight -
         8
       document.getElementById(`parentID:${wbase_parentID}`).scrollTo({
@@ -1410,7 +1452,9 @@ function dragAltEnd () {
             wb.value.removeAttribute('height-type')
           }
         }
-        wb.Css = wb.value.style.cssText
+        wb.Css = `.${[...wb.value.classList].find(
+          cls => cls !== 'w-stack' && cls.startsWith('w-st')
+        )} { ${wb.value.style.cssText} }`
         wb.ListClassName = wb.value.className
         if (pWb) {
           wb.Sort =
@@ -1425,6 +1469,7 @@ function dragAltEnd () {
         return wb
       })
     )
+    debugger
     WBaseDA.copy(WBaseDA.listData)
     replaceAllLyerItemHTML()
     parent = divSection

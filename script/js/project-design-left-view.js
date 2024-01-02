@@ -322,21 +322,21 @@ function showSearchResult () {
 
 function replaceAllLyerItemHTML () {
   let show_list_tile = document.getElementById(`parentID:${wbase_parentID}`)
-  let list_level1 = wbase_list
-    .filter(e => e.ParentID === wbase_parentID)
-    .sort((a, b) => $(b.value).index() - $(a.value).index())
+  let list_level1 = [
+    ...divSection.querySelectorAll('.wbaseItem-value[level="1"]')
+  ]
   let isReplace = show_list_tile.childElementCount > 0
   let fragment = document.createDocumentFragment()
   fragment.replaceChildren(
-    ...list_level1.map(wb => {
+    ...list_level1.map(wbHTML => {
       let isShowChildren = false
       if (isReplace) {
-        isShowChildren = document.getElementById(`pefixAction:${wb.GID}`)
-        if (isShowChildren) {
-          isShowChildren = isShowChildren.className.includes('fa-caret-down')
-        }
+        isShowChildren =
+          layer_view.querySelector(
+            `.layer_wbase_tile[id="${wbHTML.id}"] > .prefix-btn.fa-caret-down`
+          ) != null
       }
-      return createLayerTile(wb, isShowChildren)
+      return createLayerTile(wbHTML, isShowChildren)
     })
   )
   show_list_tile.replaceChildren(fragment)
@@ -452,26 +452,43 @@ function createPageTile (pageItem) {
   return pageTile
 }
 
+const removeCls = [
+  'wbaseItem-value',
+  'w-row',
+  'w-col',
+  'xxl',
+  'xl',
+  'lg',
+  'md',
+  'sm',
+  'min-brp'
+]
 // create layer tile depend wbaseItem
-function createLayerTile (wb, isShowChildren = false) {
+function createLayerTile (wbHTML, isShowChildren = false) {
   let layerContainer = document.createElement('div')
   layerContainer.className = 'col'
   let wbase_tile = document.createElement('div')
-  wbase_tile.id = `wbaseID:${wb.GID}`
-  wbase_tile.className = 'layer_wbase_tile ' + wb.ListClassName.split(' ')[1]
-  wbase_tile.style.setProperty('--spacing', `${(wb.Level - 1) * 16}px`)
-  if (wb.IsWini) {
-    wbase_tile.setAttribute('iswini', wb.IsWini)
-  } else if (wb.IsInstance) {
-    wbase_tile.setAttribute('isinstance', wb.IsInstance)
+  if (wbHTML.id) wbase_tile.id = `wbaseID:${wbHTML.id}`
+  wbase_tile.className = [
+    'layer_wbase_tile',
+    ...[...wbHTML.classList].filter(
+      e => removeCls.every(cls => e !== cls) && !e.startsWith('w-st0')
+    )
+  ].join(' ')
+  const wbLevel = parseInt(wbHTML.getAttribute('level'))
+  wbase_tile.style.setProperty('--spacing', `${(wbLevel - 1) * 16}px`)
+  if (wbHTML.getAttribute('iswini')) {
+    wbase_tile.setAttribute('iswini', true)
+  } else if (wbHTML.getAttribute('isinstance')) {
+    wbase_tile.setAttribute('isinstance', true)
   }
   let isShowListChid = isShowChildren
   wbase_tile.innerHTML = `<i class="fa-solid fa-caret-${
     isShowListChid ? 'down' : 'right'
-  } fa-xs prefix-btn" style="margin-left: ${(wb.Level - 1) * 16}px"></i>
-  <img/><input id="inputName:${wb.GID}" readonly value="${
-    wb.Name
-  }"/><i class="fa-solid fa-lock fa-xs is-lock"></i>`
+  } fa-xs prefix-btn" style="margin-left: ${(wbLevel - 1) * 16}px"></i>
+  <img/><input readonly value="${wbHTML.getAttribute(
+    'wb-name'
+  )}"/><i class="fa-solid fa-lock fa-xs is-lock"></i>`
   layerContainer.appendChild(wbase_tile)
 
   $(wbase_tile).on('click', '.prefix-btn', function () {
@@ -485,8 +502,7 @@ function createLayerTile (wb, isShowChildren = false) {
 
   $(wbase_tile).on('dblclick', 'img', function (e) {
     e.stopPropagation()
-    let objCenter = document.getElementById(wb.GID)
-    let centerRect = objCenter.getBoundingClientRect()
+    let centerRect = wbHTML.getBoundingClientRect()
     centerRect = offsetScale(
       centerRect.x + centerRect.width / 2,
       centerRect.y + centerRect.height / 2
@@ -495,53 +511,47 @@ function createLayerTile (wb, isShowChildren = false) {
     scrollbdClick(
       centerRect.x,
       centerRect.y,
-      objCenter.offsetWidth,
-      objCenter.offsetHeight
+      wbHTML.offsetWidth,
+      wbHTML.offsetHeight
     )
     divSection.style.transition = null
     updateHoverWbase()
     PageDA.saveSettingsPage()
     if (!wbase_tile.classList.contains('w-textfield'))
-      handleWbSelectedList([wb])
+      handleWbSelectedList([wbHTML])
   })
   //
 
-  if (WbClass.parent.some(e => wbase_tile.classList.contains(e))) {
-    let wbChildren = wbase_list.filter(e => e.ParentID === wb.GID)
-    if (wbChildren.length > 0) {
-      let childrenLayer = document.createElement('div')
-      layerContainer.appendChild(childrenLayer)
-      childrenLayer.id = `parentID:${wb.GID}`
-      childrenLayer.className = 'col'
-      wbChildren = wbChildren.sort(
-        (a, b) => wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
-      )
-      if (wb.value.classList.contains('w-stack'))
-        wbChildren = wbChildren.reverse()
-      let fragment = document.createDocumentFragment()
-      fragment.replaceChildren(...wbChildren.map(cWb => createLayerTile(cWb)))
-      childrenLayer.replaceChildren(fragment)
-    }
+  let wbChildren = [...wbHTML.querySelectorAll('.wbaseItem-value')]
+  if (wbChildren.length) {
+    let childrenLayer = document.createElement('div')
+    layerContainer.appendChild(childrenLayer)
+    childrenLayer.id = `parentID:${wbHTML.id}`
+    childrenLayer.className = 'col'
+    if (wbHTML.classList.contains('w-stack')) wbChildren = wbChildren.reverse()
+    let fragment = document.createDocumentFragment()
+    fragment.replaceChildren(...wbChildren.map(cWb => createLayerTile(cWb)))
+    childrenLayer.replaceChildren(fragment)
   }
   wbase_tile.onmouseover = function () {
-    if (!sortLayer && !left_view.resizing) updateHoverWbase(wb)
+    if (!sortLayer && !left_view.resizing) updateHoverWbase(wbHTML)
   }
   wbase_tile.onmouseout = function () {
     if (!sortLayer && !left_view.resizing) updateHoverWbase()
   }
   if (!wbase_tile.classList.contains('w-textfield')) {
-    if (wb.IsShow) {
-      wbase_tile.querySelector('.is-lock').className =
-        'fa-solid fa-lock-open fa-xs is-lock'
-    } else {
-      layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
-        if (lockBtn !== wbase_tile.querySelector('.is-lock')) {
-          lockBtn.className = 'fa-solid fa-lock fa-xs is-lock'
-        }
-      })
-    }
+    // if (wb.IsShow) {
+    //   wbase_tile.querySelector('.is-lock').className =
+    //     'fa-solid fa-lock-open fa-xs is-lock'
+    // } else {
+    //   layerContainer.querySelectorAll('.is-lock').forEach(lockBtn => {
+    //     if (lockBtn !== wbase_tile.querySelector('.is-lock')) {
+    //       lockBtn.className = 'fa-solid fa-lock fa-xs is-lock'
+    //     }
+    //   })
+    // }
     wbase_tile.onclick = function () {
-      if (!sortLayer && !left_view.resizing) handleWbSelectedList([wb])
+      if (!sortLayer && !left_view.resizing) handleWbSelectedList([wbHTML])
     }
     // $(wbase_tile).on('click', '.is-lock', function () {
     //   if (!sortLayer && !left_view.resizing) {
@@ -586,8 +596,8 @@ function createLayerTile (wb, isShowChildren = false) {
     if (PageDA.enableEdit) {
       this.style.cursor = 'text'
       this.style.outline = `1.5px solid ${
-        wb.IsWini ||
-        wb.IsInstance ||
+        wbHTML.getAttribute('iswini') ||
+        wbHTML.getAttribute('isinstance') ||
         $(wbase_tile).parents(
           `.col:has(> .layer_wbase_tile[iswini], layer_wbase_tile[isinstance])`
         ).length
@@ -605,7 +615,9 @@ function createLayerTile (wb, isShowChildren = false) {
       this.style.outline = 'none'
       this.readOnly = true
       window.getSelection().removeAllRanges()
-      if (wb.Name != this.value) {
+      if (wbHTML.setAttribute('wb-name') !== this.value) {
+        wbHTML.setAttribute('wb-name', this.value)
+        let wb = wbase_tile.find(e => e.GID === wbHTML.id)
         wb.Name = this.value
         WBaseDA.edit([wb], EnumObj.wBase)
       }

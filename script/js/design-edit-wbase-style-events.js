@@ -1,43 +1,41 @@
 function handleEditAlign (newValue) {
   let is_edit_children = selected_list.every(
-    wb =>
-      (wb.value.classList.contains('w-stack') ||
-        wb.value.querySelector(':scope > .fixed-position')) &&
+    wbHTMl =>
+      (wbHTMl.classList.contains('w-stack') ||
+        wbHTMl.querySelector(':scope > .fixed-position')) &&
       (selected_list.length === 1 ||
-        window.getComputedStyle(wb.value).position !== 'absolute')
+        window.getComputedStyle(wbHTMl).position !== 'absolute')
   )
   let listUpdate = []
   switch (newValue) {
     case 'align left':
       if (is_edit_children) {
-        for (let wb of selected_list) {
-          let children = [
-            ...wb.value.querySelectorAll(`:scope > .wbaseItem-value`)
-          ].filter(
-            cWbHTML => window.getComputedStyle(cWbHTML).position === 'absolute'
+        if (selected_list[0].id) {
+          const wbSelectedList = wbase_list.filter(e =>
+            selected_list.some(wbHTML => wbHTML.id === e.GID)
           )
-          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
-            var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-          }
-          if (children.length > 0) {
-            children = wbase_list.filter(e =>
-              children.some(cWbHTML => e.GID === cWbHTML.id)
+          for (let wb of wbSelectedList) {
+            let children = [
+              ...wb.value.querySelectorAll(`:scope > .wbaseItem-value`)
+            ].filter(
+              cWbHTML =>
+                window.getComputedStyle(cWbHTML).position === 'absolute'
             )
-            for (let cWb of children) {
-              let cssRule = cWb.value
-              if (cssItem) {
-                cssRule = StyleDA.docStyleSheets.find(rule => {
+            if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+              let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+              for (let cWbHTML of children) {
+                StyleDA.docStyleSheets.find(rule => {
                   let selector = [
                     ...divSection.querySelectorAll(rule.selectorText)
                   ]
-                  let check = selector.includes(cWb.value)
+                  let check = selector.includes(cWbHTML)
                   if (check) {
-                    switch (cWb.value.getAttribute('constx')) {
+                    switch (cWbHTML.getAttribute('constx')) {
                       case Constraints.left_right:
-                        rule.style.width = cWb.value.offsetWidth + 'px'
+                        rule.style.width = cWbHTML.offsetWidth + 'px'
                         break
                       case Constraints.scale:
-                        rule.style.width = cWb.value.offsetWidth + 'px'
+                        rule.style.width = cWbHTML.offsetWidth + 'px'
                         break
                       default:
                         break
@@ -45,10 +43,73 @@ function handleEditAlign (newValue) {
                     selector.forEach(e =>
                       e.setAttribute('constx', Constraints.left)
                     )
+                    if (cWbHTML.getAttribute('consty') === Constraints.center) {
+                      rule.style.transform = 'translateY(-50%)'
+                    } else rule.style.transform = null
+                    rule.style.left = '0px'
+                    rule.style.right = null
+                    cssItem.Css = cssItem.Css.replace(
+                      new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                      rule.cssText
+                    )
                   }
                   return check
                 })
-              } else {
+              }
+              StyleDA.editStyleSheet(cssItem)
+            } else if (wb.IsInstance) {
+              const styleEl = document.getElementById(`w-st-inst${wb.GID}`)
+              const clsSt0 = [...wb.value.classList].find(e =>
+                e.startsWith('w-st0')
+              )
+              for (let cWbHTML of children) {
+                let cssRule = [...styleEl.sheet.cssRules].find(
+                  e => divSection.querySelector(e.selectorText) === cWbHTML
+                )
+                switch (cWbHTML.getAttribute('constx')) {
+                  case Constraints.left_right:
+                    cWbHTML.style.width = cWbHTML.offsetWidth + 'px'
+                    break
+                  case Constraints.scale:
+                    cWbHTML.style.width = cWbHTML.offsetWidth + 'px'
+                    break
+                  default:
+                    break
+                }
+                cWbHTML.setAttribute('constx', Constraints.left)
+                if (cWbHTML.getAttribute('consty') === Constraints.center) {
+                  cWbHTML.style.transform = 'translateY(-50%)'
+                } else cWbHTML.style.transform = null
+                cWbHTML.style.left = '0px'
+                cWbHTML.style.right = null
+                if (cssRule) {
+                  cssRule.style.cssText += cWbHTML.style.cssText
+                  const selectorText = cssRule.selectorText.replace(
+                    `wbaseItem-value[id="${wb.GID}"]`,
+                    clsSt0
+                  )
+                  wb.Css = wb.Css.replace(
+                    new RegExp(`${selectorText} {[^}]*}`, 'g'),
+                    cssRule.cssText
+                  )
+                } else {
+                  const childCls = [...cWbHTML.classList].find(
+                    e => e !== 'w-stack' && e.startsWith('w-st')
+                  )
+                  wb.Css += `/**/ .${clsSt0} .${childCls} { ${cWbHTML.style.cssText} }`
+                }
+                styleEl.innerHTML = wb.Css.replaceAll(
+                  clsSt0,
+                  `wbaseItem-value[id="${wb.GID}"]`
+                )
+                cWbHTML.removeAttribute('style')
+              }
+              listUpdate.push(wb)
+            } else {
+              children = wbase_list.filter(e =>
+                children.some(cWbHTML => e.GID === cWbHTML.id)
+              )
+              for (let cWb of children) {
                 switch (cWb.value.getAttribute('constx')) {
                   case Constraints.left_right:
                     cWb.value.style.width = cWb.value.offsetWidth + 'px'
@@ -60,24 +121,76 @@ function handleEditAlign (newValue) {
                     break
                 }
                 cWb.value.setAttribute('constx', Constraints.left)
+                if (cWb.value.getAttribute('consty') === Constraints.center) {
+                  cWb.value.style.transform = 'translateY(-50%)'
+                } else cWb.value.style.transform = null
+                cWb.value.style.left = '0px'
+                cWb.value.style.right = null
+                cWb.Css = cssRule.style.cssText
               }
-              if (cWb.value.getAttribute('consty') === Constraints.center) {
-                cssRule.style.transform = 'translateY(-50%)'
-              } else cssRule.style.transform = null
-              cssRule.style.left = '0px'
-              cssRule.style.right = null
-              if (cssItem) {
-                cssItem.Css = cssItem.Css.replace(
-                  new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+              listUpdate.push(...children)
+            }
+          }
+        } else {
+          let instanceHTML = selected_list[0].closest(
+            `.wbaseItem-value[isinstance]`
+          )
+          const styleEl = document.getElementById(`w-st-inst${instanceHTML.id}`)
+          const clsSt0 = [...instanceHTML.classList].find(e =>
+            e.startsWith('w-st0')
+          )
+          let instWb = wbase_list.find(e => e.GID === instanceHTML.id)
+          for (let wbHTML of selected_list) {
+            let children = [
+              ...wbHTML.querySelectorAll(`:scope > .wbaseItem-value`)
+            ].filter(
+              cWbHTML =>
+                window.getComputedStyle(cWbHTML).position === 'absolute'
+            )
+            for (let cWbHTML of children) {
+              let cssRule = [...styleEl.sheet.cssRules].find(
+                e => divSection.querySelector(e.selectorText) === cWbHTML
+              )
+              switch (cWbHTML.getAttribute('constx')) {
+                case Constraints.left_right:
+                  cWbHTML.style.width = cWbHTML.offsetWidth + 'px'
+                  break
+                case Constraints.scale:
+                  cWbHTML.style.width = cWbHTML.offsetWidth + 'px'
+                  break
+                default:
+                  break
+              }
+              cWbHTML.setAttribute('constx', Constraints.left)
+              if (cWbHTML.getAttribute('consty') === Constraints.center) {
+                cWbHTML.style.transform = 'translateY(-50%)'
+              } else cWbHTML.style.transform = null
+              cWbHTML.style.left = '0px'
+              cWbHTML.style.right = null
+              if (cssRule) {
+                cssRule.style.cssText += cWbHTML.style.cssText
+                const selectorText = cssRule.selectorText.replace(
+                  `wbaseItem-value[id="${instanceHTML.id}"]`,
+                  clsSt0
+                )
+                instWb.Css = instWb.Css.replace(
+                  new RegExp(`${selectorText} {[^}]*}`, 'g'),
                   cssRule.cssText
                 )
               } else {
-                cWb.Css = cssRule.style.cssText
+                const childCls = [...cWbHTML.classList].find(
+                  e => e !== 'w-stack' && e.startsWith('w-st')
+                )
+                instWb.Css += `/**/ .${clsSt0} .${childCls} { ${cWbHTML.style.cssText} }`
               }
+              cWbHTML.removeAttribute('style')
             }
-            if (cssItem) StyleDA.editStyleSheet(cssItem)
-            else listUpdate.push(...children)
           }
+          styleEl.innerHTML = instWb.Css.replaceAll(
+            clsSt0,
+            `wbaseItem-value[id="${instWb.GID}"]`
+          )
+          listUpdate.push(instWb)
         }
       } else if (selected_list.length === 1) {
         if (selected_list[0].Css || selected_list[0].IsInstance) {
