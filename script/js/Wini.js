@@ -603,100 +603,84 @@ var parent = divSection,
 let listWbOnScreen = []
 function selectParent (event) {
   parent = divSection
-  if (
-    selected_list.length > 0 &&
-    ($(selected_list[0].value).parents(`.wbaseItem-value[iswini]`).length ||
-      document
-        .getElementById(select_box_parentID)
-        ?.getAttribute('isinstance') === 'true')
-  ) {
-    parent = document.getElementById(select_box_parentID)
-    let elementRect = parent.getBoundingClientRect()
-    element_offset = offsetScale(elementRect.x, elementRect.y)
-    parent.setAttribute('onsort', 'true')
-  } else {
-    let current_level =
-      parseInt(
-        document.getElementById(select_box_parentID)?.getAttribute('level') ??
-          '0'
-      ) + 1
-    if (checkpad === 0) {
-      listWbOnScreen = []
-      listWbOnScreen.push(
-        ...divSection.querySelectorAll(
-          `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${
-            selected_list.every(
-              wb => wb.IsWini && !wb.value.classList.contains('w-variant')
-            )
-              ? ',.w-variant'
-              : ''
-          }):not(*[isinstance], *[iswini], *[iswini] *)`
-        )
+  // if (
+  //   selected_list.length > 0 &&
+  //   ($(selected_list[0].value).parents(`.wbaseItem-value[iswini]`).length ||
+  //     document
+  //       .getElementById(select_box_parentID)
+  //       ?.getAttribute('isinstance') === 'true')
+  // ) {
+  //   parent = document.getElementById(select_box_parentID)
+  //   let elementRect = parent.getBoundingClientRect()
+  //   element_offset = offsetScale(elementRect.x, elementRect.y)
+  //   parent.setAttribute('onsort', 'true')
+  // } else {
+  let current_level =
+    parseInt(
+      document.getElementById(select_box_parentID)?.getAttribute('level') ?? '0'
+    ) + 1
+  if (checkpad === 0) {
+    listWbOnScreen = []
+    listWbOnScreen.push(
+      ...divSection.querySelectorAll(
+        `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${
+          selected_list.every(
+            wb => wb.IsWini && !wb.value.classList.contains('w-variant')
+          )
+            ? ',.w-variant'
+            : ''
+        })`
       )
-    }
-    let list = listWbOnScreen
-    let containVariant = selected_list.some(
-      wb =>
-        wb.value.classList.contains('w-variant') ||
-        wb.value.querySelector('.w-variant')
     )
-    let objp = list.filter(eHTML => {
-      let isComponent = eHTML.closest(`.wbaseItem-value[iswini]`)
-      if (isComponent) isComponent = !eHTML.classList.contains('w-variant')
-      if (
-        isComponent ||
-        selected_list.some(
-          wb => wb.GID === eHTML.id || wb.value.contains(eHTML)
-        ) || // eHTML ko thể là chính nó hoặc element con của nó
-        alt_list.some(wb => wb.GID === eHTML.id || wb.value?.contains(eHTML)) // eHTML ko thể là chính nó hoặc element con của nó
-      ) {
-        return false
-      }
-      //
-      if (containVariant && eHTML.closest('.wbaseItem-value.w-variant')) {
-        return false
-      }
-      if (event.metaKey || (!isMac && event.ctrlKey)) return true
-      //
-      let is_enable = false
-      let target_level = parseInt(eHTML.getAttribute('level'))
-      if (
-        target_level <= current_level
-        // ||
-        // (target_level == 2 &&
-        //   parent_cate.some(
-        //     cate =>
-        //       cate != EnumCate.textformfield &&
-        //       eHTML.parentElement.getAttribute('cateid') == cate
-        //   ))
-      ) {
-        is_enable = true
-      }
-      return is_enable
-    })
-    objp = objp.sort((a, b) => {
-      value =
-        parseInt(b.getAttribute('level')) - parseInt(a.getAttribute('level'))
-      if (value == 0) {
-        return $(b).index() - $(a).index()
-      } else {
-        return value
-      }
-    })
-    var element_offset
-    parent = objp.find(eHTML => {
-      let elementRect = eHTML.getBoundingClientRect()
-      element_offset = offsetScale(elementRect.x, elementRect.y)
-      return (
-        element_offset.x <= event.pageX / scale - leftx / scale &&
-        element_offset.x + eHTML.offsetWidth >=
-          event.pageX / scale - leftx / scale &&
-        element_offset.y <= event.pageY / scale - topx / scale &&
-        element_offset.y + eHTML.offsetHeight >=
-          event.pageY / scale - topx / scale
-      )
-    })
   }
+  let list = listWbOnScreen
+  let containVariant = selected_list.some(
+    wb =>
+      wb.value.classList.contains('w-variant') ||
+      wb.value.querySelector('.w-variant')
+  )
+  let objp = list.filter(eHTML => {
+    const eLevel = parseInt(eHTML.getAttribute('level'))
+    if (
+      [...alt_list, ...selected_list].some(
+        wb => wb.GID === eHTML.id || wb.value.contains(eHTML)
+      )
+    ) {
+      return false
+    }
+    //
+    if (containVariant && eHTML.closest('.wbaseItem-value.w-variant')) {
+      return false
+    }
+    if (event.metaKey || (!isMac && event.ctrlKey)) return true
+    //
+    let is_enable = false
+    if (eLevel <= current_level) is_enable = true
+    return is_enable
+  })
+  objp = objp.sort((a, b) => {
+    let value =
+      parseInt(b.getAttribute('level')) - parseInt(a.getAttribute('level'))
+    if (value) {
+      return value
+    } else {
+      return $(b).index() - $(a).index()
+    }
+  })
+  let element_offset
+  parent = objp.find(eHTML => {
+    let elementRect = eHTML.getBoundingClientRect()
+    element_offset = offsetScale(elementRect.x, elementRect.y)
+    return (
+      element_offset.x <= event.pageX / scale - leftx / scale &&
+      element_offset.x + eHTML.offsetWidth >=
+        event.pageX / scale - leftx / scale &&
+      element_offset.y <= event.pageY / scale - topx / scale &&
+      element_offset.y + eHTML.offsetHeight >=
+        event.pageY / scale - topx / scale
+    )
+  })
+  // }
   if (parent) {
     if (
       drag_start_list.length > 0 &&
@@ -726,12 +710,11 @@ function selectParent (event) {
         element_offset = offsetScale(grdPRect.x, grdPRect.y)
       }
     }
-    let icon_show_children = document.getElementById(`pefixAction:${parent.id}`)
-    if (icon_show_children) {
-      icon_show_children.className = icon_show_children.className.replace(
-        'caret-right',
-        'caret-down'
-      )
+    let layerPrefix = layer_view.querySelector(
+      `.layer_wbase_tile[id="${parent.id}"] > .prefix-btn`
+    )
+    if (layerPrefix) {
+      layerPrefix.className = layerPrefix.className.replace('right', 'down')
     }
   } else {
     element_offset = null

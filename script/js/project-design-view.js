@@ -453,9 +453,7 @@ function handleWbSelectedList (newlist = []) {
     .forEach(layerTile => layerTile.classList.remove('selected'))
   selectPath?.remove()
   if (newlist.length > 0) {
-    isChange = selected_list.some(oldE =>
-      newlist.every(newE => oldE.GID !== newE.GID)
-    )
+    isChange = selected_list.some(oldE => newlist.every(newE => oldE !== newE))
     selected_list = newlist
     let layerTile
     for (let wb of selected_list.reverse()) {

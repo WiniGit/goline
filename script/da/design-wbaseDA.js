@@ -751,6 +751,7 @@ class WBaseDA {
   static add ({
     listWb,
     pageid,
+    parentid,
     enumEvent = EnumEvent.add,
     enumObj = EnumObj.wBase
   }) {
@@ -758,7 +759,8 @@ class WBaseDA {
       enumObj: enumObj,
       data: listWb,
       enumEvent: enumEvent,
-      pageid: pageid
+      pageid: pageid,
+      parentid: parentid ?? select_box_parentID
     }
     WiniIO.emitMain(data)
   }
