@@ -611,100 +611,92 @@ var parent = divSection,
 let listWbOnScreen = []
 function selectParent (event) {
   parent = divSection
-  if (
-    selected_list.length > 0 &&
-    ($(selected_list[0].value).parents(`.wbaseItem-value[iswini]`).length ||
-      document
-        .getElementById(select_box_parentID)
-        ?.getAttribute('isinstance') === 'true')
-  ) {
-    parent = document.getElementById(select_box_parentID)
-    let elementRect = parent.getBoundingClientRect()
-    element_offset = offsetScale(elementRect.x, elementRect.y)
-    parent.setAttribute('onsort', 'true')
-  } else {
-    let current_level =
-      parseInt(
-        document.getElementById(select_box_parentID)?.getAttribute('level') ??
-          '0'
-      ) + 1
-    if (checkpad === 0) {
-      listWbOnScreen = []
-      listWbOnScreen.push(
-        ...divSection.querySelectorAll(
-          `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${
-            selected_list.every(
-              wb => wb.IsWini && !wb.value.classList.contains('w-variant')
-            )
-              ? ',.w-variant'
-              : ''
-          }):not(*[isinstance], *[iswini], *[iswini] *)`
-        )
-      )
-    }
-    let list = listWbOnScreen
-    let containVariant = selected_list.some(
-      wb =>
-        wb.value.classList.contains('w-variant') ||
-        wb.value.querySelector('.w-variant')
+  // if (
+  //   selected_list.length > 0 &&
+  //   (selected_list[0].closest(`.wbaseItem-value[iswini]`).length ||
+  //     divSection.querySelector(
+  //       `.wbaseItem-value[id="${select_box_parentID}"][isinstance]`
+  //     ))
+  // ) {
+  //   parent = document.getElementById(select_box_parentID)
+  //   let elementRect = parent.getBoundingClientRect()
+  //   element_offset = offsetScale(elementRect.x, elementRect.y)
+  //   parent.setAttribute('onsort', 'true')
+  // } else {
+  let current_level =
+    parseInt(
+      document.getElementById(select_box_parentID)?.getAttribute('level') ?? '0'
+    ) + 1
+  if (checkpad === 0) {
+    listWbOnScreen = []
+    const dragComponent = selected_list.every(
+      wbHTML =>
+        !wbHTML.getAttribute('iswini') &&
+        !wbHTML.classList.contains('w-variant')
     )
-    let objp = list.filter(eHTML => {
-      let isComponent = eHTML.closest(`.wbaseItem-value[iswini]`)
-      if (isComponent) isComponent = !eHTML.classList.contains('w-variant')
-      if (
-        isComponent ||
-        selected_list.some(
-          wb => wb.GID === eHTML.id || wb.value.contains(eHTML)
-        ) || // eHTML ko thể là chính nó hoặc element con của nó
-        alt_list.some(wb => wb.GID === eHTML.id || wb.value?.contains(eHTML)) // eHTML ko thể là chính nó hoặc element con của nó
-      ) {
-        return false
-      }
-      //
-      if (containVariant && eHTML.closest('.wbaseItem-value.w-variant')) {
-        return false
-      }
-      if (event.metaKey || (!isMac && event.ctrlKey)) return true
-      //
-      let is_enable = false
-      let target_level = parseInt(eHTML.getAttribute('level'))
-      if (
-        target_level <= current_level
-        // ||
-        // (target_level == 2 &&
-        //   parent_cate.some(
-        //     cate =>
-        //       cate != EnumCate.textformfield &&
-        //       eHTML.parentElement.getAttribute('cateid') == cate
-        //   ))
-      ) {
-        is_enable = true
-      }
-      return is_enable
-    })
-    objp = objp.sort((a, b) => {
-      value =
-        parseInt(b.getAttribute('level')) - parseInt(a.getAttribute('level'))
-      if (value == 0) {
-        return $(b).index() - $(a).index()
-      } else {
-        return value
-      }
-    })
-    var element_offset
-    parent = objp.find(eHTML => {
-      let elementRect = eHTML.getBoundingClientRect()
-      element_offset = offsetScale(elementRect.x, elementRect.y)
-      return (
-        element_offset.x <= event.pageX / scale - leftx / scale &&
-        element_offset.x + eHTML.offsetWidth >=
-          event.pageX / scale - leftx / scale &&
-        element_offset.y <= event.pageY / scale - topx / scale &&
-        element_offset.y + eHTML.offsetHeight >=
-          event.pageY / scale - topx / scale
+    listWbOnScreen.push(
+      ...divSection.querySelectorAll(
+        `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table${
+          dragComponent ? ', .w-variant' : ''
+        }):not(*[isinstance])`
       )
-    })
+    )
   }
+  let list = listWbOnScreen
+  let containVariant = selected_list.some(
+    wbHTML =>
+      wbHTML.classList.contains('w-variant') ||
+      wbHTML.querySelector('.w-variant')
+  )
+  let objp = list.filter(eHTML => {
+    const eLevel = parseInt(eHTML.getAttribute('level'))
+    // let isComponent =
+    //   eHTML.closest(`.wbaseItem-value[iswini]:not(*[level="${eLevel}"])`) !=
+    //   null
+    if (
+      selected_list.some(
+        wbHTML => wbHTML === eHTML || wbHTML.contains(eHTML)
+      ) || // eHTML ko thể là chính nó hoặc element con của nó
+      alt_list.some(wbHTML => wbHTML === eHTML || wbHTML.contains(eHTML)) // eHTML ko thể là chính nó hoặc element con của nó
+    ) {
+      return false
+    }
+    //
+    if (containVariant && eHTML.closest('.wbaseItem-value.w-variant')) {
+      return false
+    }
+    
+    if (event.metaKey || (!isMac && event.ctrlKey)) return true
+    //
+    let is_enable = false
+    if (eLevel <= current_level) {
+      is_enable = true
+    }
+    return is_enable
+  })
+  objp = objp.sort((a, b) => {
+    const value =
+      parseInt(b.getAttribute('level')) - parseInt(a.getAttribute('level'))
+    if (value) {
+      return value
+    } else {
+      return $(b).index() - $(a).index()
+    }
+  })
+  var element_offset
+  parent = objp.find(eHTML => {
+    let elementRect = eHTML.getBoundingClientRect()
+    element_offset = offsetScale(elementRect.x, elementRect.y)
+    return (
+      element_offset.x <= event.pageX / scale - leftx / scale &&
+      element_offset.x + eHTML.offsetWidth >=
+        event.pageX / scale - leftx / scale &&
+      element_offset.y <= event.pageY / scale - topx / scale &&
+      element_offset.y + eHTML.offsetHeight >=
+        event.pageY / scale - topx / scale
+    )
+  })
+  // }
   if (parent) {
     if (
       drag_start_list.length > 0 &&
@@ -734,12 +726,11 @@ function selectParent (event) {
         element_offset = offsetScale(grdPRect.x, grdPRect.y)
       }
     }
-    let icon_show_children = document.getElementById(`pefixAction:${parent.id}`)
-    if (icon_show_children) {
-      icon_show_children.className = icon_show_children.className.replace(
-        'caret-right',
-        'caret-down'
-      )
+    let layerPrefix = layer_view.querySelector(
+      `.layer_wbase_tile[id="wbaseID:${parent.id}"] > .prefix-btn`
+    )
+    if (layerPrefix) {
+      layerPrefix.className = layerPrefix.className.replace('right', 'down')
     }
   } else {
     element_offset = null
@@ -1224,36 +1215,38 @@ function moveListener (event) {
                       yb = 0
                     if (checkpad === 0) {
                       drag_start_list = []
-                      selected_list.forEach(wb => {
-                        let eHTMLRect = wb.value.getBoundingClientRect()
+                      selected_list.forEach(wbHTML => {
+                        let eHTMLRect = wbHTML.getBoundingClientRect()
                         let eHTMLOffset = offsetScale(eHTMLRect.x, eHTMLRect.y)
-                        wb.tmpX = eHTMLOffset.x - parent_offset1.x
-                        wb.tmpY = eHTMLOffset.y - parent_offset1.y
+                        wbHTML.tmpX = eHTMLOffset.x - parent_offset1.x
+                        wbHTML.tmpY = eHTMLOffset.y - parent_offset1.y
                         if (!event.altKey) {
                           if (
-                            wb.value.getAttribute('width-type') === 'fill' ||
-                            wb.value.getAttribute('constx') ===
+                            wbHTML.getAttribute('width-type') === 'fill' ||
+                            wbHTML.getAttribute('constx') ===
                               Constraints.left_right ||
-                            wb.value.getAttribute('constx') ===
-                              Constraints.scale
+                            wbHTML.getAttribute('constx') === Constraints.scale
                           ) {
-                            wb.value.style.width = wb.value.offsetWidth + 'px'
-                            wb.value.style.flex = null
+                            wbHTML.style.width = wbHTML.offsetWidth + 'px'
+                            wbHTML.style.flex = null
                           }
                           if (
-                            (wb.value.getAttribute('height-type') === 'fill') |
-                              (wb.value.getAttribute('consty') ===
+                            (wbHTML.getAttribute('height-type') === 'fill') |
+                              (wbHTML.getAttribute('consty') ===
                                 Constraints.top_bottom) ||
-                            wb.value.getAttribute('consty') ===
-                              Constraints.scale
+                            wbHTML.getAttribute('consty') === Constraints.scale
                           ) {
-                            wb.value.style.height = wb.value.offsetHeight + 'px'
-                            wb.value.style.flex = null
+                            wbHTML.style.height = wbHTML.offsetHeight + 'px'
+                            wbHTML.style.flex = null
                           }
                         }
                       })
                       drag_start_list = JSON.parse(
-                        JSON.stringify(selected_list)
+                        JSON.stringify(
+                          wbase_list.filter(wb =>
+                            selected_list.some(e => e.id === wb.GID)
+                          )
+                        )
                       )
                     }
                     checkpad++
@@ -1264,12 +1257,15 @@ function moveListener (event) {
                     ) {
                       if (event.altKey) {
                         const checkAllowCopy = !selected_list.some(
-                          wb =>
-                            (!wb.IsWini &&
-                              wb.value.closest('.wbaseItem-value[iswini]')) ||
-                            wb.value.closest(
+                          wbHTML =>
+                            wbHTML.closest(
+                              `.wbaseItem-value[iswini]:not(*[level="${wbHTML.getAttribute(
+                                'level'
+                              )}"])`
+                            ) ||
+                            wbHTML.closest(
                               `.wbaseItem-value[isinstance][level="${
-                                wb.Level - 1
+                                parseInt(wbHTML.getAttribute('level')) - 1
                               }"]`
                             )
                         )
@@ -2349,8 +2345,8 @@ function doubleClickEvent (event) {
   if (tool_state === ToolState.move) {
     let element_path = [...event.path]
     if (PageDA.enableEdit) {
-      let parent_index = element_path.findIndex(e => e.id === hover_wbase?.GID)
-      let currentLevel = selected_list.length > 0 ? selected_list[0].Level : 1
+      let parent_index = element_path.findIndex(e => e === hover_wbase)
+      let currentLevel = selected_list.length > 0 ? parseInt(selected_list[0].getAttribute('level')) : 1
       let target_element =
         element_path
           .slice(0, parent_index)
@@ -2722,10 +2718,12 @@ function upListener (event) {
       if (WBaseDA.listData.length > 0) {
         list_add = WBaseDA.listData
       } else {
-        list_add = selected_list.filter(wb => {
-          wb.Css = wb.value.style.cssText
-          return !wb.value.classList.contains('w-text')
-        })
+        list_add = wbase_list
+          .filter(wb => selected_list.some(e => e.id === wb.GID))
+          .filter(wb => {
+            wb.Css = wb.value.style.cssText
+            return !wb.value.classList.contains('w-text')
+          })
       }
       // ! add wbase thường
       // action_list[action_index].selected = [
