@@ -103,7 +103,7 @@ let feature_list = [
     title: 'Delete',
     shortKey: 'Delete',
     onclick: function () {
-      WBaseDA.deleteWb(selected_list)
+      WBaseDA.delete(selected_list)
     },
     isShow: () => selected_list.length > 0
   }

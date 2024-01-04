@@ -1466,18 +1466,19 @@ function handleCompleteAddWbase () {
       )
       .filter(e => e != null && e.startsWith(newClassName))
     for (let i = 1; i < 100; i++) {
-      if (existNameList.every(num => i !== num)) {
+      if (existNameList.every(vl => vl !== `${newClassName}${i}`)) {
         newClassName = newClassName + `${i}`
         break
       }
     }
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === component.id)
+    let cssText = wb.value.style.cssText.split(';').map(vl => vl.trim())
     cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${
       wb.value
         .closest(`.wbaseItem-value[level="${wb.Level - 1}"]`)
         .classList.contains('w-stack')
-        ? wb.value.style.cssText.filter(e => !e.match(/order/g)).join(';')
-        : wb.value.style.cssText
+        ? cssText.filter(e => !e.match(/order/g)).join(';')
+        : cssText
             .filter(
               e =>
                 !e.match(/(z-index|left|top|bottom|right|transform|--gutter)/g)
@@ -1511,7 +1512,7 @@ function handleCompleteAddWbase () {
 //           let deletItems = wbase_list.filter(e =>
 //             action.selected.some(selectItem => selectItem.GID === e.GID)
 //           )
-//           if (deletItems.length > 0) WBaseDA.deleteWb(deletItems)
+//           if (deletItems.length > 0) WBaseDA.delete(deletItems)
 //           handleWbSelectedList(
 //             oldSelectList.length
 //               ? wbase_list.filter(e =>
@@ -1706,7 +1707,7 @@ function handleCompleteAddWbase () {
 //           let deleteItems = wbase_list.filter(e =>
 //             action.selected.some(selectItem => selectItem.GID === e.GID)
 //           )
-//           if (deleteItems.length > 0) WBaseDA.deleteWb(deleteItems)
+//           if (deleteItems.length > 0) WBaseDA.delete(deleteItems)
 //           handleWbSelectedList(
 //             oldSelectList.length
 //               ? wbase_list.filter(e =>
@@ -2252,7 +2253,7 @@ function handleCompleteAddWbase () {
 //         WBaseDA.parent(listUpdate)
 //         break
 //       case EnumEvent.delete:
-//         WBaseDA.deleteWb(selected_list)
+//         WBaseDA.delete(selected_list)
 //         break
 //       case EnumEvent.select:
 //         handleWbSelectedList(

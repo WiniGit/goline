@@ -772,7 +772,8 @@ class WBaseDA {
     let data = {
       enumObj: enumObj ?? EnumObj.wBase,
       data: list_wbase_item,
-      enumEvent: EnumEvent.edit
+      enumEvent: EnumEvent.edit,
+      parentid: select_box_parentID
     }
     WiniIO.emitMain(data)
   }
@@ -826,7 +827,8 @@ class WBaseDA {
       let data = {
         enumObj: EnumObj.wBase,
         data: delete_list,
-        enumEvent: EnumEvent.delete
+        enumEvent: EnumEvent.delete,
+        parentid: select_box_parentID
       }
       handleWbSelectedList()
       updateHoverWbase()
@@ -888,6 +890,7 @@ class WBaseDA {
         return {
           GID: e.IsCopy ? e.ChildID : e.GID,
           IsCopy: e.IsCopy ?? false,
+          IsWini: e.IsWini,
           ListClassName: e.ListClassName,
           Sort: e.Sort,
           Css: e.Css,
@@ -921,6 +924,7 @@ class WBaseDA {
         return {
           GID: e.IsCopy ? e.ChildID : e.GID,
           IsCopy: e.IsCopy ?? false,
+          IsWini: e.IsWini,
           ListClassName: e.ListClassName,
           Sort: e.Sort,
           Css: e.Css,

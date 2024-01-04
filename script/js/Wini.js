@@ -191,12 +191,12 @@ function keyUpEvent (event) {
         break
       case 'delete': // delete
         if (selected_list.length > 0) {
-          WBaseDA.deleteWb(selected_list)
+          WBaseDA.delete(selected_list)
         }
         break
       case 'backspace': // delete
         if (selected_list.length > 0) {
-          WBaseDA.deleteWb(selected_list)
+          WBaseDA.delete(selected_list)
         }
         break
       default:

@@ -201,7 +201,7 @@
 //       }
 //       if (this.innerHTML == '') {
 //         console.log('delete text')
-//         WBaseDA.deleteWb([this_text])
+//         WBaseDA.delete([this_text])
 //       } else {
 //         if (item.isNew && item.value.getAttribute('width-type') !== 'fit') {
 //           this_text.StyleItem.FrameItem.Width = item.value.offsetWidth
@@ -371,7 +371,7 @@ function createTextHTML (wb) {
       wb.value.remove()
       handleWbSelectedList()
     } else {
-      WBaseDA.deleteWb([wb])
+      WBaseDA.delete([wb])
     }
   })
 }
