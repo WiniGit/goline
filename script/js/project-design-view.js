@@ -1473,18 +1473,24 @@ function handleCompleteAddWbase () {
     }
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === component.id)
     let cssText = wb.value.style.cssText.split(';').map(vl => vl.trim())
-    cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${
-      wb.value
-        .closest(`.wbaseItem-value[level="${wb.Level - 1}"]`)
-        .classList.contains('w-stack')
-        ? cssText.filter(e => !e.match(/order/g)).join(';')
-        : cssText
-            .filter(
-              e =>
-                !e.match(/(z-index|left|top|bottom|right|transform|--gutter)/g)
-            )
-            .join(';')
-    } }`
+    let cssTextValue = wb.value
+      .closest(`.wbaseItem-value[level="${wb.Level - 1}"]`)
+      .classList.contains('w-stack')
+      ? cssText.filter(e => !e.match(/order/g)).join(';')
+      : cssText
+          .filter(
+            e => !e.match(/(z-index|left|top|bottom|right|transform|--gutter)/g)
+          )
+          .join(';')
+    const clsRegex = new RegExp(
+      `.${componentClsName} .${newClassName} {[^}]*}`,
+      'g'
+    )
+    if (cssItem.Css.match(clsRegex)) {
+      cssItem.Css = cssItem.Css.replace(clsRegex, cssTextValue)
+    } else {
+      cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${cssTextValue} }`
+    }
     wb.Css = null
     wb.value.removeAttribute('style')
     wb.value.classList.add(newClassName)
