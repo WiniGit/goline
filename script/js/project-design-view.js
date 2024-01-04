@@ -1487,6 +1487,8 @@ function handleCompleteAddWbase () {
     } }`
     wb.Css = null
     wb.value.removeAttribute('style')
+    wb.value.classList.add(newClassName)
+    wb.ListClassName = wb.value.className
     wb.IsCopy = true
     WBaseDA.add({ listWb: [wb] })
     StyleDA.editStyleSheet(cssItem)
