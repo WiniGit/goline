@@ -797,15 +797,15 @@ class WBaseDA {
   }
 
   static delete (delete_list) {
-    delete_list = delete_list.filter(
-      e =>
-        e.IsWini ||
-        !e.value.closest(
-          `.wbaseItem-value[iswini], .wbaseItem-value[isinstance][level="${
-            e.Level - 1
-          }"]`
-        )
-    )
+    // delete_list = delete_list.filter(
+    //   e =>
+    //     e.IsWini ||
+    //     !e.value.closest(
+    //       `.wbaseItem-value[iswini], .wbaseItem-value[isinstance][level="${
+    //         e.Level - 1
+    //       }"]`
+    //     )
+    // )
     if (delete_list.length > 0) {
       for (let wb of delete_list) {
         let layerCotainer = left_view.querySelector(
@@ -831,6 +831,31 @@ class WBaseDA {
       handleWbSelectedList()
       updateHoverWbase()
       WiniIO.emitMain(data)
+    }
+  }
+
+  static async deleteWb ({ listWb }) {
+    if (listWb.length > 0) {
+      $.post('/view/delete-wbase', {
+        headers: await UserService.headerProject(),
+        body: { data: listWb.map(e => e.GID) }
+      })
+      for (let wb of listWb) {
+        let layerCotainer = left_view.querySelector(
+          `.col:has(> .layer_wbase_tile[id="wbaseID:${wb.GID}"])`
+        )
+        layerCotainer.remove()
+        wb.value.remove()
+      }
+      if (select_box_parentID !== wbase_parentID) {
+        let pWb = wbase_list.find(wb => wb.GID === select_box_parentID)
+        pWb.ListChildID = pWb.ListChildID.filter(id =>
+          listWb.every(wb => wb.GID !== id)
+        )
+      }
+      wbase_list = wbase_list.filter(wb => listWb.every(e => e.GID !== wb.GID))
+      handleWbSelectedList()
+      updateHoverWbase()
     }
   }
 

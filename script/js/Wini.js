@@ -191,12 +191,12 @@ function keyUpEvent (event) {
         break
       case 'delete': // delete
         if (selected_list.length > 0) {
-          WBaseDA.delete(selected_list)
+          WBaseDA.deleteWb(selected_list)
         }
         break
       case 'backspace': // delete
         if (selected_list.length > 0) {
-          WBaseDA.delete(selected_list)
+          WBaseDA.deleteWb(selected_list)
         }
         break
       default:
@@ -2529,45 +2529,41 @@ function upListener (event) {
   left_view.resizing = false
   console.log('up ', checkpad, action_list)
   event.preventDefault()
-  if (event.target?.className == 'header_popup_skin') {
+  if (event.target?.classList?.contains('header_popup_skin')) {
     event.target.parentElement.removeAttribute('startOffset')
     return
   }
   let target_view = event.target.closest('div[id="canvas_view"]')
-  if (instance_drag) {
-    if (target_view) {
-      if (instance_drag.getAttribute('projectid')) {
-        dragInstanceEnd(event)
+  if (instance_drag && target_view) {
+    if (instance_drag.getAttribute('projectid')) {
+      dragInstanceEnd(event)
+    } else {
+      let fileItem = FileDA.list.find(e => e.ID === instance_drag.fileid)
+      const url = fileItem.Url.replaceAll(' ', '%20')
+      if (url.endsWith('.svg') && fileItem.Size <= 2200) {
+        var newRect = JSON.parse(JSON.stringify(WbClass.imgSvg))
+        newRect.Name = url.split('/').pop().replace('.svg', '')
+        newRect.AttributesItem.Content = url
       } else {
-        let fileItem = FileDA.list.find(e => e.ID === instance_drag.fileid)
-        const url = fileItem.Url.replaceAll(' ', '%20')
-        if (url.endsWith('.svg') && fileItem.Size <= 2200) {
-          var newRect = JSON.parse(JSON.stringify(WbClass.imgSvg))
-          newRect.Name = url.split('/').pop().replace('.svg', '')
-          newRect.AttributesItem.Content = url
-        } else {
-          newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
-          newRect.Name = 'Rectangle'
-          newRect.Css = `background-image: url(${urlImg + url});`
-        }
-        FileDA.getImageSize(urlImg + url).then(async imgSize => {
-          let offset = offsetScale(event.pageX, event.pageY)
-          if (url.endsWith('.svg') && fileItem.Size <= 2200) {
-            newRect.Css = (
-              await createIcon({ url: urlImg + url })
-            ).style.cssText
-          }
-          let newObj = createWbaseHTML({
-            w: imgSize.w,
-            h: imgSize.h,
-            x: offset.x,
-            y: offset.y,
-            parentid: parent.id?.length == 36 ? parent.id : wbase_parentID,
-            newObj: newRect
-          })
-          WBaseDA.add({ listWb: [newObj] })
-        })
+        newRect = JSON.parse(JSON.stringify(WbClass.rectangle))
+        newRect.Name = 'Rectangle'
+        newRect.Css = `background-image: url(${urlImg + url});`
       }
+      FileDA.getImageSize(urlImg + url).then(async imgSize => {
+        let offset = offsetScale(event.pageX, event.pageY)
+        if (url.endsWith('.svg') && fileItem.Size <= 2200) {
+          newRect.Css = (await createIcon({ url: urlImg + url })).style.cssText
+        }
+        let newObj = createWbaseHTML({
+          w: imgSize.w,
+          h: imgSize.h,
+          x: offset.x,
+          y: offset.y,
+          parentid: parent.id?.length == 36 ? parent.id : wbase_parentID,
+          newObj: newRect
+        })
+        WBaseDA.add({ listWb: [newObj] })
+      })
     }
   } else if (sortLayer) {
     endDragSortLayer()
@@ -2643,236 +2639,214 @@ function upListener (event) {
         paintCanvas(true)
       }
       //keyid = "escape";
-    }
-    if (tool_state !== ToolState.hand_tool && objr) {
-      lists = []
-      if (selected_list.length === 1 && selected_list[0].isNew) {
-        selected_list[0].StyleItem.FrameItem.Width = Math.round(objr.w / scale)
-        selected_list[0].StyleItem.FrameItem.Height = Math.round(objr.h / scale)
-        selected_list[0].value.style.width =
-          selected_list[0].StyleItem.FrameItem.Width + 'px'
-        selected_list[0].value.style.height =
-          selected_list[0].StyleItem.FrameItem.Height + 'px'
-      }
-      objr = null
-      listRect = []
-      let selectItems = [...selected_list]
-      selected_list = []
-      handleWbSelectedList(selectItems)
+    } else if (
+      ToolState.create_new_type.some(e => e === tool_state) &&
+      checkpad == 0
+    ) {
+      let offset_convert = offsetScale(
+        Math.min(minx, event.pageX),
+        Math.min(miny, event.pageY)
+      )
+      let parentHTML = event.target.closest(
+        '.w-container,.w-textformfield,.w-button,.w-table'
+      )
+      createWbaseHTML({
+        parentid: parentHTML?.id ?? wbase_parentID,
+        x: offset_convert.x,
+        y: offset_convert.y
+      })
+    } else if (WBaseDA.enumEvent === EnumEvent.add) {
+      handleCompleteAddWbase()
+    } else if (!checkpad) {
+      downListener(event)
+    } else if (event.altKey) {
+      dragAltEnd()
     } else {
-      if (
-        ToolState.create_new_type.some(e => e === tool_state) &&
-        checkpad == 0
-      ) {
-        let offset_convert = offsetScale(
-          Math.min(minx, event.pageX),
-          Math.min(miny, event.pageY)
-        )
-        let parentHTML = event.target.closest(
-          '.wbaseItem-value:is(.w-container,.w-textformfield,.w-button,.w-table)'
-        )
-        createWbaseHTML({
-          parentid: parentHTML?.id ?? wbase_parentID,
-          x: offset_convert.x,
-          y: offset_convert.y
-        })
-      } else {
-        if (checkpad === 0) {
-          downListener(event)
-        } else {
-          if (event.altKey) {
-            dragAltEnd()
-          } else {
-            dragWbaseEnd()
-            handleWbSelectedList(selected_list)
-          }
-          checkpad = 0
-        }
-      }
+      dragWbaseEnd()
     }
   }
   hidePopup(event)
   //
-  switch (WBaseDA.enumEvent) {
-    case EnumEvent.copy:
-      WBaseDA.copy(WBaseDA.listData)
-      if (window.getComputedStyle(assets_view).display != 'none') {
-        initUIAssetView()
-      }
-      break
-    case EnumEvent.add:
-      let list_add = []
-      if (WBaseDA.listData.length > 0) {
-        list_add = WBaseDA.listData
-      } else {
-        list_add = selected_list.filter(wb => {
-          wb.Css = wb.value.style.cssText
-          return !wb.value.classList.contains('w-text')
-        })
-      }
-      // ! add wbase thường
-      // action_list[action_index].selected = [
-      //   ...list_add
-      //     .filter(e => e.ParentID === selected_list[0].ParentID)
-      //     .map(wbasItem => JSON.parse(JSON.stringify(wbasItem)))
-      // ]
-      if (list_add.length > 0) {
-        // let isUpdateTable = list_add.some(e => e.CateID === EnumCate.table)
-        // WBaseDA.add(
-        //   list_add,
-        //   undefined,
-        //   isUpdateTable ? EnumEvent.edit : EnumEvent.add,
-        //   isUpdateTable ? EnumObj.wBaseAttribute : EnumObj.wBase
-        // )
-        if (
-          list_add[0].value.closest(`.w-table[level="${list_add[0].Level}"]`)
-        ) {
-        } else if (
-          list_add[0].value.closest(
-            `:is(.w-col, .w-row)[level="${list_add[0].Level}"]`
-          )
-        ) {
-          WBaseDA.parent([
-            wbase_list.find(e => e.GID === list_add[0].ParentID),
-            ...list_add
-          ])
-        } else {
-          WBaseDA.add({
-            listWb: list_add
-          })
-        }
-      }
-      break
-    case EnumEvent.edit:
-      let listUpdate = []
-      if (
-        !$(selected_list[0].value).parents(`.wbaseItem-value[iswini]`)
-          ?.length ||
-        selected_list[0].IsInstance ||
-        selected_list[0].IsWini
-      ) {
-        for (let wb of selected_list) {
-          if (window.getComputedStyle(wb.value).position === 'absolute')
-            updateConstraints(wb.value)
-          if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
-            let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-            let cssRule = StyleDA.docStyleSheets.find(rule => {
-              let selector = [...divSection.querySelectorAll(rule.selectorText)]
-              const check = selector.includes(wb.value)
-              if (check)
-                selector.forEach(e => {
-                  if (wb.value.getAttribute('width-type')) {
-                    e.setAttribute(
-                      'width-type',
-                      wb.value.getAttribute('width-type')
-                    )
-                  } else {
-                    e.removeAttribute('width-type')
-                  }
-                  if (wb.value.getAttribute('height-type')) {
-                    e.setAttribute(
-                      'height-type',
-                      wb.value.getAttribute('height-type')
-                    )
-                  } else {
-                    e.removeAttribute('height-type')
-                  }
-                })
-              return check
-            })
-            if (wb.value.style.width && wb.value.style.width !== 'auto') {
-              cssRule.style.width = wb.value.style.width
-              wb.value.style.width = null
-            }
-            if (wb.value.style.height && wb.value.style.height !== 'auto') {
-              cssRule.style.height = wb.value.style.height
-              wb.value.style.height = null
-            }
-            if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
-            wb.value.style.flex = null
-            cssItem.Css = cssItem.Css.replace(
-              new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-              cssRule.cssText
-            )
-            StyleDA.editStyleSheet(cssItem)
-          }
-          wb.Css = wb.value.style.cssText
-          listUpdate.push(wb)
-        }
-      } else {
-        let pWbComponent = selected_list[0].value.closest(
-          `.wbaseItem-value[iswini]`
-        )
-        let cssItem = StyleDA.cssStyleSheets.find(
-          e => e.GID === pWbComponent.id
-        )
-        for (let wb of selected_list) {
-          if (window.getComputedStyle(wb.value).position === 'absolute')
-            updateConstraints(wb.value)
-          let cssRule = StyleDA.docStyleSheets.find(rule => {
-            let selector = [...divSection.querySelectorAll(rule.selectorText)]
-            const check = selector.includes(wb.value)
-            if (check)
-              selector.forEach(e => {
-                if (wb.value.getAttribute('width-type')) {
-                  e.setAttribute(
-                    'width-type',
-                    wb.value.getAttribute('width-type')
-                  )
-                } else {
-                  e.removeAttribute('width-type')
-                }
-                if (wb.value.getAttribute('height-type')) {
-                  e.setAttribute(
-                    'height-type',
-                    wb.value.getAttribute('height-type')
-                  )
-                } else {
-                  e.removeAttribute('height-type')
-                }
-              })
-            return check
-          })
-          if (wb.value.style.width) cssRule.style.width = wb.value.style.width
-          if (wb.value.style.height)
-            cssRule.style.height = wb.value.style.height
-          if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
-          if (wb.value.style.top) cssRule.style.top = wb.value.style.top
-          if (wb.value.style.right) cssRule.style.right = wb.value.style.right
-          if (wb.value.style.bottom)
-            cssRule.style.bottom = wb.value.style.bottom
-          if (wb.value.style.left) cssRule.style.left = wb.value.style.left
-          if (wb.value.style.transform)
-            cssRule.style.transform = wb.value.style.transform
-          wb.value.style = null
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-            cssRule.cssText
-          )
-          wb.Css = null
-        }
-        StyleDA.editStyleSheet(cssItem)
-      }
-      if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
-      reloadEditOffsetBlock()
-      break
-    case EnumEvent.parent:
-      let list_update = []
-      if (WBaseDA.listData.length == 0) {
-        if (selected_list[0].ParentID != wbase_parentID) {
-          list_update.push(
-            wbase_list.find(e => e.GID == selected_list[0].ParentID)
-          )
-        }
-        list_update.push(...selected_list)
-      } else {
-        list_update = WBaseDA.listData
-      }
-      WBaseDA.parent(list_update)
-      break
-    default:
-      break
-  }
+  // switch (WBaseDA.enumEvent) {
+  //   case EnumEvent.copy:
+  //     WBaseDA.copy(WBaseDA.listData)
+  //     if (window.getComputedStyle(assets_view).display != 'none') {
+  //       initUIAssetView()
+  //     }
+  //     break
+  //   case EnumEvent.add:
+  //     let list_add = []
+  //     if (WBaseDA.listData.length > 0) {
+  //       list_add = WBaseDA.listData
+  //     } else {
+  //       list_add = selected_list.filter(wb => {
+  //         wb.Css = wb.value.style.cssText
+  //         return !wb.value.classList.contains('w-text')
+  //       })
+  //     }
+  //     // ! add wbase thường
+  //     // action_list[action_index].selected = [
+  //     //   ...list_add
+  //     //     .filter(e => e.ParentID === selected_list[0].ParentID)
+  //     //     .map(wbasItem => JSON.parse(JSON.stringify(wbasItem)))
+  //     // ]
+  //     if (list_add.length > 0) {
+  //       // let isUpdateTable = list_add.some(e => e.CateID === EnumCate.table)
+  //       // WBaseDA.add(
+  //       //   list_add,
+  //       //   undefined,
+  //       //   isUpdateTable ? EnumEvent.edit : EnumEvent.add,
+  //       //   isUpdateTable ? EnumObj.wBaseAttribute : EnumObj.wBase
+  //       // )
+  //       if (
+  //         list_add[0].value.closest(`.w-table[level="${list_add[0].Level}"]`)
+  //       ) {
+  //       } else if (
+  //         list_add[0].value.closest(
+  //           `:is(.w-col, .w-row)[level="${list_add[0].Level}"]`
+  //         )
+  //       ) {
+  //         WBaseDA.parent([
+  //           wbase_list.find(e => e.GID === list_add[0].ParentID),
+  //           ...list_add
+  //         ])
+  //       } else {
+  //         WBaseDA.add({
+  //           listWb: list_add
+  //         })
+  //       }
+  //     }
+  //     break
+  //   case EnumEvent.edit:
+  //     let listUpdate = []
+  //     if (
+  //       !$(selected_list[0].value).parents(`.wbaseItem-value[iswini]`)
+  //         ?.length ||
+  //       selected_list[0].IsInstance ||
+  //       selected_list[0].IsWini
+  //     ) {
+  //       for (let wb of selected_list) {
+  //         if (window.getComputedStyle(wb.value).position === 'absolute')
+  //           updateConstraints(wb.value)
+  //         if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+  //           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
+  //           let cssRule = StyleDA.docStyleSheets.find(rule => {
+  //             let selector = [...divSection.querySelectorAll(rule.selectorText)]
+  //             const check = selector.includes(wb.value)
+  //             if (check)
+  //               selector.forEach(e => {
+  //                 if (wb.value.getAttribute('width-type')) {
+  //                   e.setAttribute(
+  //                     'width-type',
+  //                     wb.value.getAttribute('width-type')
+  //                   )
+  //                 } else {
+  //                   e.removeAttribute('width-type')
+  //                 }
+  //                 if (wb.value.getAttribute('height-type')) {
+  //                   e.setAttribute(
+  //                     'height-type',
+  //                     wb.value.getAttribute('height-type')
+  //                   )
+  //                 } else {
+  //                   e.removeAttribute('height-type')
+  //                 }
+  //               })
+  //             return check
+  //           })
+  //           if (wb.value.style.width && wb.value.style.width !== 'auto') {
+  //             cssRule.style.width = wb.value.style.width
+  //             wb.value.style.width = null
+  //           }
+  //           if (wb.value.style.height && wb.value.style.height !== 'auto') {
+  //             cssRule.style.height = wb.value.style.height
+  //             wb.value.style.height = null
+  //           }
+  //           if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
+  //           wb.value.style.flex = null
+  //           cssItem.Css = cssItem.Css.replace(
+  //             new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+  //             cssRule.cssText
+  //           )
+  //           StyleDA.editStyleSheet(cssItem)
+  //         }
+  //         wb.Css = wb.value.style.cssText
+  //         listUpdate.push(wb)
+  //       }
+  //     } else {
+  //       let pWbComponent = selected_list[0].value.closest(
+  //         `.wbaseItem-value[iswini]`
+  //       )
+  //       let cssItem = StyleDA.cssStyleSheets.find(
+  //         e => e.GID === pWbComponent.id
+  //       )
+  //       for (let wb of selected_list) {
+  //         if (window.getComputedStyle(wb.value).position === 'absolute')
+  //           updateConstraints(wb.value)
+  //         let cssRule = StyleDA.docStyleSheets.find(rule => {
+  //           let selector = [...divSection.querySelectorAll(rule.selectorText)]
+  //           const check = selector.includes(wb.value)
+  //           if (check)
+  //             selector.forEach(e => {
+  //               if (wb.value.getAttribute('width-type')) {
+  //                 e.setAttribute(
+  //                   'width-type',
+  //                   wb.value.getAttribute('width-type')
+  //                 )
+  //               } else {
+  //                 e.removeAttribute('width-type')
+  //               }
+  //               if (wb.value.getAttribute('height-type')) {
+  //                 e.setAttribute(
+  //                   'height-type',
+  //                   wb.value.getAttribute('height-type')
+  //                 )
+  //               } else {
+  //                 e.removeAttribute('height-type')
+  //               }
+  //             })
+  //           return check
+  //         })
+  //         if (wb.value.style.width) cssRule.style.width = wb.value.style.width
+  //         if (wb.value.style.height)
+  //           cssRule.style.height = wb.value.style.height
+  //         if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
+  //         if (wb.value.style.top) cssRule.style.top = wb.value.style.top
+  //         if (wb.value.style.right) cssRule.style.right = wb.value.style.right
+  //         if (wb.value.style.bottom)
+  //           cssRule.style.bottom = wb.value.style.bottom
+  //         if (wb.value.style.left) cssRule.style.left = wb.value.style.left
+  //         if (wb.value.style.transform)
+  //           cssRule.style.transform = wb.value.style.transform
+  //         wb.value.style = null
+  //         cssItem.Css = cssItem.Css.replace(
+  //           new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+  //           cssRule.cssText
+  //         )
+  //         wb.Css = null
+  //       }
+  //       StyleDA.editStyleSheet(cssItem)
+  //     }
+  //     if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
+  //     reloadEditOffsetBlock()
+  //     break
+  //   case EnumEvent.parent:
+  //     let list_update = []
+  //     if (WBaseDA.listData.length == 0) {
+  //       if (selected_list[0].ParentID != wbase_parentID) {
+  //         list_update.push(
+  //           wbase_list.find(e => e.GID == selected_list[0].ParentID)
+  //         )
+  //       }
+  //       list_update.push(...selected_list)
+  //     } else {
+  //       list_update = WBaseDA.listData
+  //     }
+  //     WBaseDA.parent(list_update)
+  //     break
+  //   default:
+  //     break
+  // }
   WBaseDA.enumEvent = null
   // WBaseDA.listData = []
   // drag_start_list = []

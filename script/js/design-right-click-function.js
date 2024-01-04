@@ -65,17 +65,20 @@ let feature_list = [
     isShow: () =>
       selected_list.some(
         e => !e.IsWini && !e.value.classList.contains('w-text')
-      ) &&
-      !$(selected_list[0].value).parents(`.wbaseItem-value[iswini]`)
-        .length
+      ) && !$(selected_list[0].value).parents(`.wbaseItem-value[iswini]`).length
   },
   {
-    title: "Detach component",
-    shortKey: "Alt+K",
+    title: 'Detach component',
+    shortKey: 'Alt+K',
     onclick: detachComponent,
     isShow: function () {
-      return selected_list.some(e => !e.value.closest(`.wbaseItem-value[isinstance][level="${e.Level - 1}"]`));
-    },
+      return selected_list.some(
+        e =>
+          !e.value.closest(
+            `.wbaseItem-value[isinstance][level="${e.Level - 1}"]`
+          )
+      )
+    }
   },
   {
     title: 'Show/Hide UI',
@@ -100,7 +103,7 @@ let feature_list = [
     title: 'Delete',
     shortKey: 'Delete',
     onclick: function () {
-      WBaseDA.delete(selected_list)
+      WBaseDA.deleteWb(selected_list)
     },
     isShow: () => selected_list.length > 0
   }
@@ -108,23 +111,22 @@ let feature_list = [
 
 function popupRightClick (event) {
   document.getElementById('wini_features')?.remove()
-  let popup = document.createElement('wini_features')
+  let popup = document.createElement('div')
   popup.id = 'wini_features'
   popup.className = 'wini_popup col popup_remove'
   popup.style.top = `${event.pageY}px`
   popup.style.left = `${event.pageX}px`
   document.getElementById('body').appendChild(popup)
-  for (let i = 0; i < feature_list.length; i++) {
-    if (feature_list[i].isShow()) {
+  for (let element of feature_list) {
+    if (element.isShow()) {
       let option = document.createElement('div')
       option.className = 'popup_function_option'
-      option.style.order = i
       popup.appendChild(option)
       let title = document.createElement('p')
       title.style.padding = '0'
-      title.innerHTML = feature_list[i].title
+      title.innerHTML = element.title
       option.appendChild(title)
-      if (feature_list[i].more) {
+      if (element.more) {
         let btn_more_option = document.createElement('i')
         btn_more_option.className = 'fa-solid fa-caret-right'
         option.appendChild(btn_more_option)
@@ -133,13 +135,13 @@ function popupRightClick (event) {
         let shortKey = document.createElement('p')
         option.appendChild(shortKey)
         shortKey.style.padding = '0'
-        shortKey.innerHTML = feature_list[i].shortKey ?? ''
+        shortKey.innerHTML = element.shortKey ?? ''
         option.onclick = function () {
-          feature_list[parseInt(this.style.order)].onclick()
+          element.onclick()
           popup.remove()
         }
       }
-      if (feature_list[i].spaceLine) {
+      if (element.spaceLine) {
         option.style.borderBottom = '1px solid #e5e5e5'
       }
     }
@@ -1223,9 +1225,11 @@ function sendBackward () {
   handleWbSelectedList(selected_list)
 }
 
-function detachComponent() {
-  let detachList = selected_list.filter(e => !e.value.closest(`.wbaseItem-value[isinstance][level="${e.Level - 1}"]`))
-  for(let wb of detachList) {
-    
+function detachComponent () {
+  let detachList = selected_list.filter(
+    e =>
+      !e.value.closest(`.wbaseItem-value[isinstance][level="${e.Level - 1}"]`)
+  )
+  for (let wb of detachList) {
   }
 }

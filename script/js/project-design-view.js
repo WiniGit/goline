@@ -1448,6 +1448,54 @@ function handlePopupDispose (elementHTML, callback) {
   }
 }
 
+function handleCompleteAddWbase () {
+  let wb = selected_list[0]
+  const component = wb.value.closest(`.wbaseItem-value[iswini]`)
+  if (component) {
+    const componentClsName = [...component.classList].find(cls =>
+      cls.startsWith('w-st0')
+    )
+    let newClassName =
+      `w-st${wb.Level - parseInt(component.getAttribute('level'))}-` +
+      Ultis.toSlug(wb.Name.toLowerCase().trim())
+    let existNameList = [...component.querySelectorAll(`.wbaseItem-value`)]
+      .map(e =>
+        [...e.classList].find(
+          cls => cls.startsWith('w-st') && cls !== 'w-stack'
+        )
+      )
+      .filter(e => e != null && e.startsWith(newClassName))
+    for (let i = 1; i < 100; i++) {
+      if (existNameList.every(num => i !== num)) {
+        newClassName = newClassName + `${i}`
+        break
+      }
+    }
+    let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === component.id)
+    cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${
+      wb.value
+        .closest(`.wbaseItem-value[level="${wb.Level - 1}"]`)
+        .classList.contains('w-stack')
+        ? wb.value.style.cssText.filter(e => !e.match(/order/g)).join(';')
+        : wb.value.style.cssText
+            .filter(
+              e =>
+                !e.match(/(z-index|left|top|bottom|right|transform|--gutter)/g)
+            )
+            .join(';')
+    } }`
+    wb.Css = null
+    wb.value.removeAttribute('style')
+    wb.IsCopy = true
+    WBaseDA.add({ listWb: [wb] })
+    StyleDA.editStyleSheet(cssItem)
+    document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
+    delete wb.IsCopy
+  } else {
+    WBaseDA.add({ listWb: [wb] })
+  }
+}
+
 // function ctrlZ () {
 //   if (action_index >= 0) {
 //     let action = action_list[action_index]
@@ -1463,7 +1511,7 @@ function handlePopupDispose (elementHTML, callback) {
 //           let deletItems = wbase_list.filter(e =>
 //             action.selected.some(selectItem => selectItem.GID === e.GID)
 //           )
-//           if (deletItems.length > 0) WBaseDA.delete(deletItems)
+//           if (deletItems.length > 0) WBaseDA.deleteWb(deletItems)
 //           handleWbSelectedList(
 //             oldSelectList.length
 //               ? wbase_list.filter(e =>
@@ -1658,7 +1706,7 @@ function handlePopupDispose (elementHTML, callback) {
 //           let deleteItems = wbase_list.filter(e =>
 //             action.selected.some(selectItem => selectItem.GID === e.GID)
 //           )
-//           if (deleteItems.length > 0) WBaseDA.delete(deleteItems)
+//           if (deleteItems.length > 0) WBaseDA.deleteWb(deleteItems)
 //           handleWbSelectedList(
 //             oldSelectList.length
 //               ? wbase_list.filter(e =>
@@ -2204,7 +2252,7 @@ function handlePopupDispose (elementHTML, callback) {
 //         WBaseDA.parent(listUpdate)
 //         break
 //       case EnumEvent.delete:
-//         WBaseDA.delete(selected_list)
+//         WBaseDA.deleteWb(selected_list)
 //         break
 //       case EnumEvent.select:
 //         handleWbSelectedList(
