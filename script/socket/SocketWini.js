@@ -595,32 +595,32 @@ socket.on('server-main', async data => {
     !document.body.querySelector('.loading-view') &&
     data.pageid === PageDA.obj.ID
   ) {
-    if (data.userItem.ID !== JSON.parse(localStorage.getItem('customer')).ID) {
-      if (data.enumEvent === EnumEvent.delete) {
-        WbaseIO.delete(data.data)
-      } else {
-        WbaseIO.addOrUpdate(data.data)
-        if (
-          data.enumEvent === EnumEvent.copy &&
-          data.userItem.ID === JSON.parse(localStorage.getItem('customer')).ID
-        ) {
-          divSection
-            .querySelectorAll('.wbaseItem-value[loading="true"]')
-            .forEach(e => e.remove())
-          tmpAltHTML = []
-          alt_list = []
-          let selectedId = data.data
-            .filter(e => e.ParentID === data.parentid)
-            .map(e => e.GID)
-          handleWbSelectedList(
-            wbase_list.filter(e => selectedId.some(id => e.GID === id))
-          )
-        }
+    // if (data.userItem.ID !== JSON.parse(localStorage.getItem('customer')).ID) {
+    if (data.enumEvent === EnumEvent.delete) {
+      WbaseIO.delete(data.data)
+    } else {
+      WbaseIO.addOrUpdate(data.data)
+      if (
+        data.enumEvent === EnumEvent.copy &&
+        data.userItem.ID === JSON.parse(localStorage.getItem('customer')).ID
+      ) {
+        divSection
+          .querySelectorAll('.wbaseItem-value[loading="true"]')
+          .forEach(e => e.remove())
+        tmpAltHTML = []
+        alt_list = []
+        let selectedId = data.data
+          .filter(e => e.ParentID === data.parentid)
+          .map(e => e.GID)
+        handleWbSelectedList(
+          wbase_list.filter(e => selectedId.some(id => e.GID === id))
+        )
       }
-      if (data.enumEvent !== EnumEvent.edit) initObserver()
-      replaceAllLyerItemHTML()
-      wdraw()
     }
+    if (data.enumEvent !== EnumEvent.edit) initObserver()
+    replaceAllLyerItemHTML()
+    wdraw()
+    // }
     // }
   }
 })
