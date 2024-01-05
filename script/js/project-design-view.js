@@ -215,6 +215,7 @@ function createNewWbase ({ wb, relativeWbs = [], level }) {
 
 //! .................................................................................................
 function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
+  WBaseDA.listData = []
   if (newObj) {
     var new_obj = newObj
   } else {
@@ -407,13 +408,19 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
         new_obj.value,
         ...children.slice(zIndex + 1)
       )
-    }
-    if (pWb) {
-      pWb.ListChildID = [
-        ...pWbHTML.querySelectorAll(
-          `.wbaseItem-value[level="${pWb.Level + 1}"]`
-        )
-      ].map(eHTML => eHTML.id)
+      new_obj.value.style.order = $(new_obj.value).index()
+      wbase_list
+        .filter(e => e.ParentID === pWbHTML.id)
+        .forEach(e => {
+          const newZindex = $(e.value).index()
+          if (newZindex != window.getComputedStyle(e.value).order) {
+            e.value.style.order = newZindex
+            WBaseDA.listData.push(e)
+          }
+        })
+      pWbHTML
+        .querySelectorAll(`.wbaseItem-value[level="${new_obj.Level}"]`)
+        .forEach()
     }
     new_obj.value.style.cssText = new_obj.Css
     wbase_list.push(new_obj)
@@ -856,7 +863,6 @@ function dragWbaseEnd () {
     alt_list = []
   }
   WBaseDA.listData = []
-
   if (drag_start_list.length > 0) {
     let newPWbHTML = parent
     let new_parentID =
@@ -869,11 +875,8 @@ function dragWbaseEnd () {
     if (drag_start_list[0].ParentID !== new_parentID) {
       var eEvent = EnumEvent.parent
       if (drag_start_list[0].ParentID !== wbase_parentID) {
-        let oldPWb = wbase_list.find(
+        var oldPWb = wbase_list.find(
           wb => wb.GID === drag_start_list[0].ParentID
-        )
-        oldPWb.ListChildID = oldPWb.ListChildID.filter(id =>
-          selected_list.every(e => e.GID != id)
         )
         if (oldPWb.value.classList.contains('w-table')) {
           let listCell = oldPWb.TableRows.reduce((a, b) => a.concat(b))
@@ -912,6 +915,9 @@ function dragWbaseEnd () {
         WBaseDA.listData.push(oldPWb)
       }
       let demo = document.getElementById('demo_auto_layout')
+      var component = newPWbHTML.closest(
+        `.wbaseItem-value[iswini]:not(.w-variant)`
+      )
       if (demo) {
         demo.replaceWith(
           ...selected_list.map(wb => {
@@ -927,6 +933,24 @@ function dragWbaseEnd () {
             wb.Level = pWb.Level + 1
             wb.value.setAttribute('level', wb.Level)
             wb.ParentID = new_parentID
+            if (wb.value.getAttribute('width-type') === 'fill') {
+              if (newPWbHTML.getAttribute('width-type') !== 'fit') {
+                wb.value.style.width = '100%'
+                if (newPWbHTML.classList.contains('w-row'))
+                  wb.value.style.flex = 1
+              } else {
+                wb.value.removeAttribute('width-type')
+              }
+            }
+            if (wb.value.getAttribute('height-type') === 'fill') {
+              if (newPWbHTML.getAttribute('height-type') !== 'fit') {
+                wb.value.style.height = '100%'
+                if (newPWbHTML.classList.contains('w-col'))
+                  wb.value.style.flex = 1
+              } else {
+                wb.value.removeAttribute('height-type')
+              }
+            }
             return wb.value
           })
         )
@@ -934,24 +958,119 @@ function dragWbaseEnd () {
         selected_list.forEach(wb => {
           wb.value.setAttribute('constx', Constraints.left)
           wb.value.setAttribute('consty', Constraints.top)
+          if (wb.value.getAttribute('width-type') === 'fill')
+            wb.value.removeAttribute('width-type')
+          if (wb.value.getAttribute('height-type') === 'fill')
+            wb.value.removeAttribute('height-type')
           updateConstraints(wb.value)
         })
       } else if (newPWbHTML.classList.contains('w-stack')) {
-        selected_list.forEach(wb => updateConstraints(wb.value))
+        selected_list.forEach(wb => {
+          if (wb.value.getAttribute('width-type') === 'fill')
+            wb.value.removeAttribute('width-type')
+          if (wb.value.getAttribute('height-type') === 'fill')
+            wb.value.removeAttribute('height-type')
+          updateConstraints(wb.value)
+        })
       }
-      if (pWb) {
-        pWb.ListChildID = [
-          ...pWb.value.querySelectorAll(
-            `.wbaseItem-value[level="${pWb.Level + 1}"]`
+      if (component) {
+        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === component.id)
+        for (let wb of selected_list) {
+          const stClassName = [...wb.value.classList].find(
+            cls => cls.startsWith('w-st') && cls !== 'w-stack'
           )
-        ].map(e => e.id)
-        WBaseDA.listData.push(pWb)
+          if (stClassName) {
+            StyleDA.docStyleSheets.find(rule => {
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
+              const check = selector.includes(wb.value)
+              if (check) {
+                rule.style.cssText += wb.value.style.cssText
+                wb.value.removeAttribute('style')
+                selector.forEach(e => {
+                  if (wb.value.getAttribute('constx')) {
+                    e.setAttribute('constx', wb.value.getAttribute('constx'))
+                  } else {
+                    e.removeAttribute('constx')
+                  }
+                  if (wb.value.getAttribute('consty')) {
+                    e.setAttribute('consty', wb.value.getAttribute('consty'))
+                  } else {
+                    e.removeAttribute('consty')
+                  }
+                  if (wb.value.getAttribute('width-type')) {
+                    e.setAttribute(
+                      'width-type',
+                      wb.value.getAttribute('width-type')
+                    )
+                  } else {
+                    e.removeAttribute('width-type')
+                  }
+                  if (wb.value.getAttribute('height-type')) {
+                    e.setAttribute(
+                      'height-type',
+                      wb.value.getAttribute('height-type')
+                    )
+                  } else {
+                    e.removeAttribute('height-type')
+                  }
+                })
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                  rule.cssText
+                )
+              }
+              return check
+            })
+          } else {
+            const componentClsName = [...component.classList].find(cls =>
+              cls.startsWith('w-st0')
+            )
+            let newClassName =
+              `w-st${wb.Level - pWb.Level}-` +
+              Ultis.toSlug(wb.Name.toLowerCase().trim())
+            let existNameList = [
+              ...component.querySelectorAll(`.wbaseItem-value`)
+            ]
+              .map(e =>
+                [...e.classList].find(
+                  cls => cls.startsWith('w-st') && cls !== 'w-stack'
+                )
+              )
+              .filter(e => e != null && e.startsWith(newClassName))
+            for (let i = 1; i < 100; i++) {
+              if (existNameList.every(vl => vl !== `${newClassName}${i}`)) {
+                newClassName = newClassName + `${i}`
+                break
+              }
+            }
+            let cssText = wb.value.style.cssText.split(';').map(vl => vl.trim())
+            let cssTextValue = newPWbHTML.classList.contains('w-stack')
+              ? cssText.filter(e => !e.match(/order/g)).join(';')
+              : cssText
+                  .filter(
+                    e =>
+                      !e.match(
+                        /(z-index|left|top|bottom|right|transform|--gutter)/g
+                      )
+                  )
+                  .join(';')
+            const clsRegex = new RegExp(
+              `.${componentClsName} .${newClassName} {[^}]*}`,
+              'g'
+            )
+            if (cssItem.Css.match(clsRegex)) {
+              cssItem.Css = cssItem.Css.replace(
+                clsRegex,
+                `.${componentClsName} .${newClassName} { ${cssTextValue} }`
+              )
+            } else {
+              cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${cssTextValue} }`
+            }
+          }
+        }
       }
-    } else if (
-      window.getComputedStyle(
-        document.getElementById(drag_start_list[0].ParentID) ?? divSection
-      ).display === 'flex'
-    ) {
+      if (pWb) WBaseDA.listData.push(pWb)
+    } else if (window.getComputedStyle(newPWbHTML).display === 'flex') {
       let oldPWb = wbase_list.find(e => e.GID === drag_start_list[0].ParentID)
       if (oldPWb.value.getAttribute('width-type') === 'fit') {
         oldPWb.value.style.width = null
@@ -959,11 +1078,6 @@ function dragWbaseEnd () {
       if (oldPWb.value.getAttribute('height-type') === 'fit') {
         oldPWb.value.style.height = null
       }
-      oldPWb.ListChildID = [
-        ...oldPWb.value.querySelectorAll(
-          `.wbaseItem-value[level="${pWb.Level + 1}"]`
-        )
-      ].map(e => e.id)
       eEvent = EnumEvent.parent
       WBaseDA.listData.push(oldPWb)
     } else if (new_parentID === wbase_parentID) {
@@ -1004,6 +1118,15 @@ function dragWbaseEnd () {
           }
         }
         wb.Css = wb.value.style.cssText
+        if (wb.Css.length === 0) wb.Css = null
+        if (
+          !component &&
+          oldPWb?.value?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)
+        ) {
+          wb.value.className = [...wb.value.classList]
+            .filter(cls => cls !== 'w-stack' && cls.startsWith('w-st'))
+            .join(' ')
+        }
         wb.ListClassName = wb.value.className
         return wb
       })
@@ -1385,15 +1508,7 @@ function dragAltEnd () {
     } else if (newPWbHTML.classList.contains('w-stack')) {
       alt_list.forEach(wb => updateConstraints(wb.value))
     }
-    if (pWb) {
-      pWb.ListChildID = [
-        ...pWb.value.querySelectorAll(
-          `.wbaseItem-value[level="${pWb.Level + 1}"]`
-        )
-      ].map(e => e.id)
-      WBaseDA.listData.push(pWb)
-    }
-    let sort
+    if (pWb) WBaseDA.listData.push(pWb)
     WBaseDA.listData.push(
       ...alt_list.map(wb => {
         if (wb.value.getAttribute('width-type') === 'fill') {
@@ -1424,16 +1539,6 @@ function dragAltEnd () {
         }
         wb.Css = wb.value.style.cssText
         wb.ListClassName = wb.value.className
-        if (pWb) {
-          wb.Sort =
-            (sort ?? pWb.ListChildID.indexOf(wb.GID)) + alt_list.indexOf(wb)
-          if (wb.Sort !== 0 && alt_list.indexOf(wb) === 0) {
-            wb.Sort = wbase_list.find(
-              e => e.GID === pWb.ListChildID[wb.Sort - 1]
-            ).Sort
-            sort = wb.Sort
-          }
-        }
         return wb
       })
     )
@@ -1501,7 +1606,10 @@ function handleCompleteAddWbase () {
       'g'
     )
     if (cssItem.Css.match(clsRegex)) {
-      cssItem.Css = cssItem.Css.replace(clsRegex, `.${componentClsName} .${newClassName} { ${cssTextValue} }`)
+      cssItem.Css = cssItem.Css.replace(
+        clsRegex,
+        `.${componentClsName} .${newClassName} { ${cssTextValue} }`
+      )
     } else {
       cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${cssTextValue} }`
     }
@@ -1510,13 +1618,28 @@ function handleCompleteAddWbase () {
     wb.value.classList.add(newClassName)
     wb.ListClassName = wb.value.className
     wb.IsCopy = true
+    WBaseDA.listData.forEach(e => {
+      let cssRule = StyleDA.docStyleSheets.find(
+        rule =>
+          component.querySelector(
+            rule.selectorText.replace(componentClsName, '')
+          ) === e.value
+      )
+      cssRule.style.cssText += e.value.style.cssText
+      cssItem.Css = cssItem.Css.replace(
+        new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+        cssRule.cssText
+      )
+    })
     WBaseDA.add({ listWb: [wb] })
     StyleDA.editStyleSheet(cssItem)
     document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
     delete wb.IsCopy
   } else {
-    WBaseDA.add({ listWb: [wb] })
+    WBaseDA.listData.push(wb)
+    WBaseDA.add({ listWb: WBaseDA.listData })
   }
+  WBaseDA.listData = []
 }
 
 // function ctrlZ () {

@@ -352,20 +352,14 @@ function createTextHTML (wb) {
       wb.AttributesItem.Content = this.innerText
       wb.Css = wb.value.style.cssText
       if (wb.isNew) {
-        WBaseDA.add({
-          listWb: [wb]
-        })
+        handleCompleteAddWbase()
       } else {
         WBaseDA.edit([wb], EnumObj.attribute)
       }
     } else if (wb.isNew) {
       wbase_list = wbase_list.filter(e => e.GID !== wb.GID)
-      if (wb.ParentID !== wbase_parentID) {
-        let pWb = wbase_list.find(e => e.GID === wb.ParentID)
-        pWb.ListChildID = pWb.ListChildID.filter(id => id !== wb.GID)
-      }
       let layerCotainer = left_view.querySelector(
-        `.col > .layer_wbase_tile[id="wbaseID:${wb.GID}"]`
+        `.col:has(.layer_wbase_tile[id="wbaseID:${wb.GID}"])`
       )
       layerCotainer.remove()
       wb.value.remove()

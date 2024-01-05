@@ -487,7 +487,6 @@ class WbClass {
     ParentID: wbase_parentID,
     ListClassName: 'wbaseItem-value w-container w-stack',
     IsWini: false,
-    ListChildID: [],
     Css: 'background-color: #FFFFFFFF;',
     BasePropertyItems: [],
     AttributesItem: {
@@ -500,7 +499,6 @@ class WbClass {
     ListID: wbase_parentID,
     ParentID: wbase_parentID,
     IsWini: true,
-    ListChildID: [],
     ListClassName: 'wbaseItem-value w-variant w-stack',
     Css: 'border-width: 2px;border-color: #7b61ffff;border-style: dotted;overflow: hidden;',
     StyleItem: {
@@ -527,7 +525,6 @@ class WbClass {
     ListID: wbase_parentID,
     ParentID: wbase_parentID,
     IsWini: false,
-    ListChildID: [],
     ListClassName: 'wbaseItem-value w-button w-row',
     Css: 'background-color: #366AE2FF;border-radius: 8px;--padding: 12px 20px;justify-content: center;align-items: center;--child-space: 4px;--run-space: 0px;',
     BasePropertyItems: [],
@@ -586,7 +583,6 @@ class WbClass {
     ParentID: wbase_parentID,
     ListID: wbase_parentID,
     ListClassName: 'wbaseItem-value w-textformfield w-row',
-    ListChildID: [],
     IsWini: false,
     Css: 'width: 382px;background-color: #ffffffff;border-radius: 8px;--padding: 10px 16px;justify-content: flex-start;align-items: center;--child-space: 4px;--run-space: 0px;border-width: 1px;border-color: #e5eaf0ff;border-style: solid;font-size: 16px;line-height: 24px;font-weight: 400;color: #394960ff;font-family: Roboto;',
     AttributesItem: {
@@ -623,7 +619,6 @@ class WbClass {
     ParentID: wbase_parentID,
     Level: 1,
     ListID: wbase_parentID,
-    ListChildID: [],
     IsWini: false,
     CountChild: 0,
     StyleItem: {
@@ -807,12 +802,6 @@ class WBaseDA {
         layerCotainer.remove()
         wb.value.remove()
       }
-      if (select_box_parentID !== wbase_parentID) {
-        let pWb = wbase_list.find(wb => wb.GID === select_box_parentID)
-        pWb.ListChildID = pWb.ListChildID.filter(id =>
-          delete_list.every(wb => wb.GID !== id)
-        )
-      }
       wbase_list = wbase_list.filter(wb =>
         delete_list.every(e => e.GID !== wb.GID)
       )
@@ -840,12 +829,6 @@ class WBaseDA {
         )
         layerCotainer.remove()
         wb.value.remove()
-      }
-      if (select_box_parentID !== wbase_parentID) {
-        let pWb = wbase_list.find(wb => wb.GID === select_box_parentID)
-        pWb.ListChildID = pWb.ListChildID.filter(id =>
-          listWb.every(wb => wb.GID !== id)
-        )
       }
       wbase_list = wbase_list.filter(wb => listWb.every(e => e.GID !== wb.GID))
       handleWbSelectedList()
@@ -891,7 +874,6 @@ class WBaseDA {
             e.value.classList.contains('w-table') && e.IsCopy
               ? e.AttributesItem
               : null,
-          ListChildID: e.IsCopy ? null : e.ListChildID
         }
       })
     } else {
@@ -922,7 +904,6 @@ class WBaseDA {
           Sort: e.Sort,
           Css: e.Css,
           AttributesItem: attrItem,
-          ListChildID: e.IsCopy ? null : e.ListChildID
         }
       })
     }

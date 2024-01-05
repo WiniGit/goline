@@ -612,12 +612,15 @@ function selectParent (event) {
     element_offset = offsetScale(elementRect.x, elementRect.y)
     parent.setAttribute('onsort', 'true')
   } else {
-    let current_level =
+    let =
       parseInt(
         document.getElementById(select_box_parentID)?.getAttribute('level') ??
           '0'
       ) + 1
     if (checkpad === 0) {
+      const component = selected_list.some(wb =>
+        wb.value.closest(`.wbaseItem-value[iswini]:not(*[level="${wb.Level}"])`)
+      )
       listWbOnScreen = []
       listWbOnScreen.push(
         ...divSection.querySelectorAll(
@@ -630,6 +633,11 @@ function selectParent (event) {
           })`
         )
       )
+      if (component) {
+        listWbOnScreen = listWbOnScreen.filter(
+          e => !e.closest(`.wbaseItem-value[iswini]`) || component.contains(e)
+        )
+      }
     }
     let list = listWbOnScreen
     let containVariant = selected_list.some(

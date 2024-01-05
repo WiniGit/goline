@@ -513,11 +513,24 @@ function createLayerTile (wb, isShowChildren = false) {
       layerContainer.appendChild(childrenLayer)
       childrenLayer.id = `parentID:${wb.GID}`
       childrenLayer.className = 'col'
-      wbChildren = wbChildren.sort(
-        (a, b) => wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
-      )
-      if (wb.value.classList.contains('w-stack'))
+      if (wb.value.classList.contains('w-stack')) {
+        wbChildren = wbChildren.sort(
+          (a, b) =>
+            window.getComputedStyle(a.value).zIndex -
+            window.getComputedStyle(b.value).zIndex
+        )
+        wb.value.replaceChildren(...wbChildren.map(e => e.value))
         wbChildren = wbChildren.reverse()
+      } else {
+        wbChildren = wbChildren.sort(
+          (a, b) =>
+            window.getComputedStyle(a.value).order -
+            window.getComputedStyle(b.value).order
+        )
+        wbChildren[0].value.parentElement.replaceChildren(
+          ...wbChildren.map(e => e.value)
+        )
+      }
       let fragment = document.createDocumentFragment()
       fragment.replaceChildren(...wbChildren.map(cWb => createLayerTile(cWb)))
       childrenLayer.replaceChildren(fragment)
@@ -1181,7 +1194,6 @@ function endDragSortLayer () {
     if (wb.ParentID !== new_parentID) {
       if (wb.ParentID !== wbase_parentID) {
         let oldPWb = wbase_list.find(e => e.GID === wb.ParentID)
-        oldPWb.ListChildID = oldPWb.ListChildID.filter(id => wb.GID != id)
         if (oldPWb.value.classList.contains('w-table')) {
           let listCell = oldPWb.TableRows.reduce((a, b) => a.concat(b))
           ;[
@@ -1280,21 +1292,7 @@ function endDragSortLayer () {
       ...children.slice(zIndex + 1)
     )
     if (updateConstXY) updateConstraints(wb.value)
-    if (pWb) {
-      pWb.ListChildID = [
-        ...newPWbHTML.querySelectorAll(
-          `.wbaseItem-value[level="${pWb.Level + 1}"]`
-        )
-      ].map(e => e.id)
-      listUpdate.push(pWb)
-    } else {
-      listUpdate.unshift({
-        GID: wbase_parentID,
-        ListChildID: [
-          ...divSection.querySelectorAll(`.wbaseItem-value[level="1"]`)
-        ].filter(e => wb.GID !== e.id)
-      })
-    }
+    if (pWb) listUpdate.push(pWb)
     wb.Css = wb.value.style.cssText
     listUpdate.push(wb)
     replaceAllLyerItemHTML()
@@ -2061,20 +2059,7 @@ function dragInstanceEnd (event) {
     newPWbHTML.appendChild(wb.value)
   }
   wb.Css = wb.value.style.cssText
-  if (pWb) {
-    pWb.ListChildID = [
-      ...pWb.value.querySelectorAll(
-        `.wbaseItem-value[level="${pWb.Level + 1}"]`
-      )
-    ].map(e => e.id)
-    wb.Sort = pWb.ListChildID.indexOf(wb.GID)
-    if (wb.Sort !== 0) {
-      wb.Sort = wbase_list.find(
-        e => e.GID === pWb.ListChildID[wb.Sort - 1]
-      ).Sort
-    }
-    WBaseDA.listData.push(pWb)
-  }
+  if (pWb) WBaseDA.listData.push(pWb)
   WBaseDA.copy(WBaseDA.listData)
   const selectedTile = assets_view.querySelector('.list_tile.comp-selected')
   if (selectedTile) $(selectedTile).trigger('click')

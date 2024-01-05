@@ -50,52 +50,36 @@ function initComponents (wb, children) {
   if (wb.AttributesItem.Variables) {
     wb.VariablesData = JSON.parse(wb.AttributesItem.Variables)
   }
-  if (wb.IsWini) {
-    if (wb.ListClassName.includes('w-variant')) {
-      wb.PropertyItems = PropertyDA.list.filter(e => e.BaseID == wb.GID)
-      for (let property of wb.PropertyItems) {
-        property.BasePropertyItems = property.BasePropertyItems.filter(e =>
-          wb.ListChildID.some(id => id === e.BaseID)
-        )
-      }
-    } else {
-      let listBaseProperty = PropertyDA.list.map(e => e.BasePropertyItems)
-      if (listBaseProperty.length > 0) {
-        wb.BasePropertyItems = listBaseProperty
-          .reduce((a, b) => a.concat(b))
-          .filter(e => e.BaseID === wb.GID)
-      } else {
-        wb.BasePropertyItems = []
-      }
-    }
-  }
+  // if (wb.IsWini) {
+  //   if (wb.ListClassName.includes('w-variant')) {
+  //     wb.PropertyItems = PropertyDA.list.filter(e => e.BaseID == wb.GID)
+  //     for (let property of wb.PropertyItems) {
+  //       property.BasePropertyItems = property.BasePropertyItems.filter(e =>
+  //         wb.ListChildID.some(id => id === e.BaseID)
+  //       )
+  //     }
+  //   } else {
+  //     let listBaseProperty = PropertyDA.list.map(e => e.BasePropertyItems)
+  //     if (listBaseProperty.length > 0) {
+  //       wb.BasePropertyItems = listBaseProperty
+  //         .reduce((a, b) => a.concat(b))
+  //         .filter(e => e.BaseID === wb.GID)
+  //     } else {
+  //       wb.BasePropertyItems = []
+  //     }
+  //   }
+  // }
   switch (wb.ListClassName.split(' ')[1]) {
     case 'w-container':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
-      if (children.length > 0) {
-        children = children.sort(
-          (a, b) =>
-            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
-        )
-      }
       createContainerHTML(wb, children)
       break
     case 'w-form':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
-      if (children.length > 0)
-        children = children.sort(
-          (a, b) =>
-            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
-        )
       createContainerHTML(wb, children)
       break
     case 'w-variant':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
-      if (children.length > 0)
-        children = children.sort(
-          (a, b) =>
-            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
-        )
       createVariantHTML(wb, children)
       break
     case 'w-text':
@@ -106,11 +90,6 @@ function initComponents (wb, children) {
       break
     case 'w-textformfield':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
-      if (children.length > 0)
-        children = children.sort(
-          (a, b) =>
-            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
-        )
       createTextFormFieldHTML(wb, children)
       break
     case 'w-switch':
@@ -130,11 +109,6 @@ function initComponents (wb, children) {
     //   break
     case 'w-button':
       children ??= wbase_list.filter(e => e.ParentID === wb.GID)
-      if (children.length > 0)
-        children = children.sort(
-          (a, b) =>
-            wb.ListChildID.indexOf(a.GID) - wb.ListChildID.indexOf(b.GID)
-        )
       wbutton(wb, children)
       break
     case 'w-table':

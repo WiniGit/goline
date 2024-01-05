@@ -907,10 +907,6 @@ class WbaseIO {
         wbaseItem => wbaseItem.GID === list[0].ParentID
       )
       if (parentWbase) {
-        parentWbase.ListChildID = parentWbase.ListChildID.filter(id =>
-          list.every(deleteItem => deleteItem.GID != id)
-        )
-        parentWbase.CountChild = parentWbase.ListChildID.length
         let oldParentHTML = parentWbase.value
         if (
           parentWbase.CountChild === 0 &&

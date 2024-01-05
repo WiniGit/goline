@@ -5954,7 +5954,7 @@ function addAutoLayout () {
     let wb = selected_list[0]
     if (
       wb.Level === 1 &&
-      wb.ListChildID.length > 0 &&
+      wb.value.childElementCount &&
       wb.value.querySelectorAll('.col-').length === 0
     ) {
       wb.value.style.width = null
@@ -5991,7 +5991,6 @@ function addAutoLayout () {
       select_box.w > select_box.h ? 'w-row' : 'w-col'
     }`
     newWb.ParentID = selected_list[0].ParentID
-    newWb.ListChildID = selected_list.map(e => e.GID)
     let newX = `${Math.min(
       ...selected_list.map(e => getWBaseOffset(e).x)
     ).toFixed(2)}px`
@@ -6057,7 +6056,6 @@ function addAutoLayout () {
         )
         pWb.value.replaceChildren(...childrenHTML)
       }
-      pWb.ListChildID = childrenHTML.map(e => e.id)
     } else {
       childrenHTML = [
         ...divSection.querySelectorAll(`.wbaseItem-value[level="1"]`)
@@ -7800,7 +7798,6 @@ function combineAsVariant () {
     ).toFixed(2) - 8
   }px`
   new_wbase_item.CountChild = selected_list.length
-  new_wbase_item.ListChildID = selected_list.map(e => e.GID)
   new_wbase_item.StyleItem.FrameItem.Width = select_box.w / scale + 16
   new_wbase_item.StyleItem.FrameItem.Height = select_box.h / scale + 16
   new_wbase_item.ParentID = selected_list[0].ParentID
