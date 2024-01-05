@@ -856,7 +856,7 @@ function dragWbaseEnd () {
     alt_list = []
   }
   WBaseDA.listData = []
-  
+
   if (drag_start_list.length > 0) {
     let newPWbHTML = parent
     let new_parentID =
@@ -1501,7 +1501,7 @@ function handleCompleteAddWbase () {
       'g'
     )
     if (cssItem.Css.match(clsRegex)) {
-      cssItem.Css = cssItem.Css.replace(clsRegex, cssTextValue)
+      cssItem.Css = cssItem.Css.replace(clsRegex, `.${componentClsName} .${newClassName} { ${cssTextValue} }`)
     } else {
       cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${cssTextValue} }`
     }
