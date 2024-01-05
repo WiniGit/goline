@@ -595,10 +595,7 @@ socket.on('server-main', async data => {
     !document.body.querySelector('.loading-view') &&
     data.pageid === PageDA.obj.ID
   ) {
-    if (
-      data.enumEvent === EnumEvent.copy ||
-      data.userItem.ID !== JSON.parse(localStorage.getItem('customer')).ID
-    ) {
+    if (data.userItem.ID !== JSON.parse(localStorage.getItem('customer')).ID) {
       if (data.enumEvent === EnumEvent.delete) {
         WbaseIO.delete(data.data)
       } else {
