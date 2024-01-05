@@ -603,84 +603,82 @@ var parent = divSection,
 let listWbOnScreen = []
 function selectParent (event) {
   parent = divSection
-  // if (
-  //   selected_list.length > 0 &&
-  //   ($(selected_list[0].value).parents(`.wbaseItem-value[iswini]`).length ||
-  //     document
-  //       .getElementById(select_box_parentID)
-  //       ?.getAttribute('isinstance') === 'true')
-  // ) {
-  //   parent = document.getElementById(select_box_parentID)
-  //   let elementRect = parent.getBoundingClientRect()
-  //   element_offset = offsetScale(elementRect.x, elementRect.y)
-  //   parent.setAttribute('onsort', 'true')
-  // } else {
-  let current_level =
-    parseInt(
-      document.getElementById(select_box_parentID)?.getAttribute('level') ?? '0'
-    ) + 1
-  if (checkpad === 0) {
-    listWbOnScreen = []
-    listWbOnScreen.push(
-      ...divSection.querySelectorAll(
-        `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${
-          selected_list.every(
-            wb => wb.IsWini && !wb.value.classList.contains('w-variant')
-          )
-            ? ',.w-variant'
-            : ''
-        })`
-      )
-    )
-  }
-  let list = listWbOnScreen
-  let containVariant = selected_list.some(
-    wb =>
-      wb.value.classList.contains('w-variant') ||
-      wb.value.querySelector('.w-variant')
-  )
-  let objp = list.filter(eHTML => {
-    const eLevel = parseInt(eHTML.getAttribute('level'))
-    if (
-      [...alt_list, ...selected_list].some(
-        wb => wb.GID === eHTML.id || wb.value.contains(eHTML)
-      )
-    ) {
-      return false
-    }
-    //
-    if (containVariant && eHTML.closest('.wbaseItem-value.w-variant')) {
-      return false
-    }
-    if (event.metaKey || (!isMac && event.ctrlKey)) return true
-    //
-    let is_enable = false
-    if (eLevel <= current_level) is_enable = true
-    return is_enable
-  })
-  objp = objp.sort((a, b) => {
-    let value =
-      parseInt(b.getAttribute('level')) - parseInt(a.getAttribute('level'))
-    if (value) {
-      return value
-    } else {
-      return $(b).index() - $(a).index()
-    }
-  })
-  let element_offset
-  parent = objp.find(eHTML => {
-    let elementRect = eHTML.getBoundingClientRect()
+  if (
+    selected_list.length > 0 &&
+    selected_list[0].value.closest(`.wbaseItem-value[isinstance]`)
+  ) {
+    parent = document.getElementById(select_box_parentID)
+    let elementRect = parent.getBoundingClientRect()
     element_offset = offsetScale(elementRect.x, elementRect.y)
-    return (
-      element_offset.x <= event.pageX / scale - leftx / scale &&
-      element_offset.x + eHTML.offsetWidth >=
-        event.pageX / scale - leftx / scale &&
-      element_offset.y <= event.pageY / scale - topx / scale &&
-      element_offset.y + eHTML.offsetHeight >=
-        event.pageY / scale - topx / scale
+    parent.setAttribute('onsort', 'true')
+  } else {
+    let current_level =
+      parseInt(
+        document.getElementById(select_box_parentID)?.getAttribute('level') ??
+          '0'
+      ) + 1
+    if (checkpad === 0) {
+      listWbOnScreen = []
+      listWbOnScreen.push(
+        ...divSection.querySelectorAll(
+          `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${
+            selected_list.every(
+              wb => wb.IsWini && !wb.value.classList.contains('w-variant')
+            )
+              ? ',.w-variant'
+              : ''
+          })`
+        )
+      )
+    }
+    let list = listWbOnScreen
+    let containVariant = selected_list.some(
+      wb =>
+        wb.value.classList.contains('w-variant') ||
+        wb.value.querySelector('.w-variant')
     )
-  })
-  // }
+    let objp = list.filter(eHTML => {
+      const eLevel = parseInt(eHTML.getAttribute('level'))
+      if (
+        [...alt_list, ...selected_list].some(
+          wb => wb.GID === eHTML.id || wb.value.contains(eHTML)
+        )
+      ) {
+        return false
+      }
+      //
+      if (containVariant && eHTML.closest('.wbaseItem-value.w-variant')) {
+        return false
+      }
+      if (event.metaKey || (!isMac && event.ctrlKey)) return true
+      //
+      let is_enable = false
+      if (eLevel <= current_level) is_enable = true
+      return is_enable
+    })
+    objp = objp.sort((a, b) => {
+      let value =
+        parseInt(b.getAttribute('level')) - parseInt(a.getAttribute('level'))
+      if (value) {
+        return value
+      } else {
+        return $(b).index() - $(a).index()
+      }
+    })
+    var element_offset
+    parent = objp.find(eHTML => {
+      let elementRect = eHTML.getBoundingClientRect()
+      element_offset = offsetScale(elementRect.x, elementRect.y)
+      return (
+        element_offset.x <= event.pageX / scale - leftx / scale &&
+        element_offset.x + eHTML.offsetWidth >=
+          event.pageX / scale - leftx / scale &&
+        element_offset.y <= event.pageY / scale - topx / scale &&
+        element_offset.y + eHTML.offsetHeight >=
+          event.pageY / scale - topx / scale
+      )
+    })
+  }
   if (parent) {
     if (
       drag_start_list.length > 0 &&
@@ -1184,16 +1182,9 @@ function moveListener (event) {
                   // bottom right
                   let select_box_o9 = select_box.o9
                   if (
+                    checkpad > 0 ||
                     (isInRange(event.pageX, select_box_o1.x, select_box_o9.x) &&
-                      isInRange(
-                        event.pageY,
-                        select_box_o1.y,
-                        select_box_o9.y
-                      ) &&
-                      checkpad == 0) ||
-                    checkpad != 0 ||
-                    (selected_list.length === 1 &&
-                      hover_wbase === selected_list[0])
+                      isInRange(event.pageY, select_box_o1.y, select_box_o9.y))
                   ) {
                     var xb = 0,
                       yb = 0
@@ -1207,20 +1198,18 @@ function moveListener (event) {
                         if (!event.altKey) {
                           if (
                             wb.value.getAttribute('width-type') === 'fill' ||
-                            wb.value.getAttribute('constx') ===
-                              Constraints.left_right ||
-                            wb.value.getAttribute('constx') ===
-                              Constraints.scale
+                            [Constraints.left_right, Constraints.scale].some(
+                              e => wb.value.getAttribute('constx') === e
+                            )
                           ) {
                             wb.value.style.width = wb.value.offsetWidth + 'px'
                             wb.value.style.flex = null
                           }
                           if (
-                            (wb.value.getAttribute('height-type') === 'fill') |
-                              (wb.value.getAttribute('consty') ===
-                                Constraints.top_bottom) ||
-                            wb.value.getAttribute('consty') ===
-                              Constraints.scale
+                            wb.value.getAttribute('height-type') === 'fill' ||
+                            [Constraints.top_bottom, Constraints.scale].some(
+                              e => wb.value.getAttribute('consty') === e
+                            )
                           ) {
                             wb.value.style.height = wb.value.offsetHeight + 'px'
                             wb.value.style.flex = null
@@ -1231,28 +1220,28 @@ function moveListener (event) {
                         JSON.stringify(selected_list)
                       )
                     }
-                    checkpad++
 
                     if (
                       Math.abs(event.pageX - previousX) > 2 ||
                       Math.abs(event.pageY - previousY) > 2
                     ) {
                       if (event.altKey) {
-                        const checkAllowCopy = !selected_list.some(
-                          wb =>
-                            (!wb.IsWini &&
-                              wb.value.closest('.wbaseItem-value[iswini]')) ||
-                            wb.value.closest(
-                              `.wbaseItem-value[isinstance][level="${
-                                wb.Level - 1
-                              }"]`
-                            )
-                        )
-                        if (checkAllowCopy)
-                          dragAltUpdate(xb + xp / scale, yb + yp / scale, event)
+                        // const checkAllowCopy = !selected_list.some(
+                        //   wb =>
+                        //     (!wb.IsWini &&
+                        //       wb.value.closest('.wbaseItem-value[iswini]')) ||
+                        //     wb.value.closest(
+                        //       `.wbaseItem-value[isinstance][level="${
+                        //         wb.Level - 1
+                        //       }"]`
+                        //     )
+                        // )
+                        // if (checkAllowCopy)
+                        dragAltUpdate(xb + xp / scale, yb + yp / scale, event)
                       } else {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event)
                       }
+                      checkpad++
                       if (checkpad % 2 === 0) wdraw()
                     }
                   } else {
@@ -2659,6 +2648,8 @@ function upListener (event) {
       handleCompleteAddWbase()
     } else if (!checkpad) {
       downListener(event)
+    } else if (ToolState.resize_type.some(e => tool_state === e)) {
+      debugger
     } else if (event.altKey) {
       dragAltEnd()
     } else {

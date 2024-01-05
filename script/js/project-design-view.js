@@ -561,6 +561,19 @@ function dragWbaseUpdate (xp, yp, event) {
   }
   let newPWbHTML = parent
   let new_parentID = newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
+  if (checkpad === 0) {
+    const wbSt0 = selected_list[0].value.closest(
+      `.wbaseItem-value[iswini], .wbaseItem-value[isinstance]`
+    )
+    if (wbSt0) {
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        wb.value.style.cssText = cssRule.style.cssText + wb.value.style.cssText
+      }
+    }
+  }
   if (
     drag_start_list[0].ParentID !== new_parentID &&
     drag_start_list[0].Level > 1 &&
@@ -843,6 +856,7 @@ function dragWbaseEnd () {
     alt_list = []
   }
   WBaseDA.listData = []
+  
   if (drag_start_list.length > 0) {
     let newPWbHTML = parent
     let new_parentID =

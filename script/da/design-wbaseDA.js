@@ -730,21 +730,13 @@ class WBaseDA {
       styleTag.id = `w-st-comp${cssItem.GID}`
       styleTag.innerHTML = cssItem.Css
       document.head.appendChild(styleTag)
+      StyleDA.docStyleSheets.push(...styleTag.sheet.cssRules)
     })
     WbData = WbData.Data
     WbData.forEach(
       wb =>
         (wb.AttributesItem = attributeData.find(e => e.GID === wb.AttributeID))
     )
-    StyleDA.docStyleSheets = [...document.styleSheets]
-      .map(e => (e.href ? [] : [...e.cssRules]))
-      .filter(
-        e => e[0]?.selectorText && e[0].selectorText.startsWith('.w-st0-')
-      )
-    if (StyleDA.docStyleSheets.length > 0)
-      StyleDA.docStyleSheets = StyleDA.docStyleSheets.reduce((a, b) =>
-        a.concat(b)
-      )
     return WbData
   }
 
@@ -869,7 +861,8 @@ class WBaseDA {
     let data = {
       enumObj: EnumObj.wBase,
       data: list_wbase_item,
-      enumEvent: EnumEvent.parent
+      enumEvent: EnumEvent.parent,
+      parentid: select_box_parentID
     }
     WiniIO.emitMain(data)
   }
