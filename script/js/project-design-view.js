@@ -867,10 +867,13 @@ function dragWbaseEnd () {
     let newPWbHTML = parent
     let new_parentID =
       newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
-    let pWb =
-      new_parentID !== wbase_parentID
-        ? wbase_list.find(e => e.GID === new_parentID)
-        : null
+    if (new_parentID !== wbase_parentID) {
+      var pWb = wbase_list.find(e => e.GID === new_parentID)
+      var component = newPWbHTML.closest(
+        `.wbaseItem-value[iswini]:not(.w-variant)`
+      )
+      var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === component.id)
+    }
     //
     if (drag_start_list[0].ParentID !== new_parentID) {
       var eEvent = EnumEvent.parent
@@ -915,9 +918,6 @@ function dragWbaseEnd () {
         WBaseDA.listData.push(oldPWb)
       }
       let demo = document.getElementById('demo_auto_layout')
-      var component = newPWbHTML.closest(
-        `.wbaseItem-value[iswini]:not(.w-variant)`
-      )
       if (demo) {
         demo.replaceWith(
           ...selected_list.map(wb => {
@@ -973,9 +973,54 @@ function dragWbaseEnd () {
           updateConstraints(wb.value)
         })
       }
-      if (component) {
-        let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === component.id)
-        for (let wb of selected_list) {
+      if (pWb) WBaseDA.listData.push(pWb)
+    } else if (window.getComputedStyle(newPWbHTML).display === 'flex') {
+      if (pWb.value.getAttribute('width-type') === 'fit') {
+        pWb.value.style.width = null
+      }
+      if (pWb.value.getAttribute('height-type') === 'fit') {
+        pWb.value.style.height = null
+      }
+      eEvent = EnumEvent.parent
+      WBaseDA.listData.push(pWb)
+    } else if (new_parentID === wbase_parentID) {
+      selected_list.forEach(wb => {
+        wb.value.setAttribute('constx', Constraints.left)
+        wb.value.setAttribute('consty', Constraints.top)
+        updateConstraints(wb.value)
+      })
+    } else if (newPWbHTML.classList.contains('w-stack')) {
+      selected_list.forEach(wb => updateConstraints(wb.value))
+    }
+    WBaseDA.listData.push(
+      ...selected_list.map(wb => {
+        if (wb.value.getAttribute('width-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`
+            )
+          ) {
+            wb.value.style.width = '100%'
+            wb.value.style.flex = 1
+          } else {
+            wb.value.style.width = wb.value.offsetWidth + 'px'
+            wb.value.removeAttribute('width-type')
+          }
+        }
+        if (wb.value.getAttribute('height-type') === 'fill') {
+          if (
+            wb.value.closest(
+              `.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`
+            )
+          ) {
+            wb.value.style.height = '100%'
+            wb.value.style.flex = 1
+          } else {
+            wb.value.style.height = wb.value.offsetHeight + 'px'
+            wb.value.removeAttribute('height-type')
+          }
+        }
+        if (component) {
           const stClassName = [...wb.value.classList].find(
             cls => cls.startsWith('w-st') && cls !== 'w-stack'
           )
@@ -1067,150 +1112,19 @@ function dragWbaseEnd () {
               cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${cssTextValue} }`
             }
           }
-        }
-      }
-      if (pWb) WBaseDA.listData.push(pWb)
-    } else if (window.getComputedStyle(newPWbHTML).display === 'flex') {
-      let oldPWb = wbase_list.find(e => e.GID === drag_start_list[0].ParentID)
-      if (oldPWb.value.getAttribute('width-type') === 'fit') {
-        oldPWb.value.style.width = null
-      }
-      if (oldPWb.value.getAttribute('height-type') === 'fit') {
-        oldPWb.value.style.height = null
-      }
-      eEvent = EnumEvent.parent
-      WBaseDA.listData.push(oldPWb)
-    } else if (new_parentID === wbase_parentID) {
-      selected_list.forEach(wb => {
-        wb.value.setAttribute('constx', Constraints.left)
-        wb.value.setAttribute('consty', Constraints.top)
-        updateConstraints(wb.value)
-      })
-    } else if (newPWbHTML.classList.contains('w-stack')) {
-      selected_list.forEach(wb => updateConstraints(wb.value))
-    }
-    WBaseDA.listData.push(
-      ...selected_list.map(wb => {
-        if (wb.value.getAttribute('width-type') === 'fill') {
-          if (
-            wb.value.closest(
-              `.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`
-            )
-          ) {
-            wb.value.style.width = '100%'
-            wb.value.style.flex = 1
-          } else {
-            wb.value.style.width = wb.value.offsetWidth + 'px'
-            wb.value.removeAttribute('width-type')
-          }
-        }
-        if (wb.value.getAttribute('height-type') === 'fill') {
-          if (
-            wb.value.closest(
-              `.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`
-            )
-          ) {
-            wb.value.style.height = '100%'
-            wb.value.style.flex = 1
-          } else {
-            wb.value.style.height = wb.value.offsetHeight + 'px'
-            wb.value.removeAttribute('height-type')
-          }
-        }
-        wb.Css = wb.value.style.cssText
-        if (wb.Css.length === 0) wb.Css = null
-        if (
-          !component &&
+        } else if (
           oldPWb?.value?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)
         ) {
           wb.value.className = [...wb.value.classList]
             .filter(cls => cls !== 'w-stack' && cls.startsWith('w-st'))
             .join(' ')
         }
+        wb.Css = wb.value.style.cssText
+        if (wb.Css.length === 0) wb.Css = null
         wb.ListClassName = wb.value.className
         return wb
       })
     )
-    arrange()
-    if (
-      !newPWbHTML.getAttribute('iswini') &&
-      !newPWbHTML.closest('.wbaseItem-value[iswini]')
-    ) {
-      for (let wb of selected_list) {
-        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
-          let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
-          let cssRule = StyleDA.docStyleSheets.find(e =>
-            [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-          )
-          if (wb.value.style.width) cssRule.style.width = wb.value.style.width
-          if (wb.value.style.height)
-            cssRule.style.height = wb.value.style.height
-          if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
-          wb.value.style.width = null
-          wb.value.style.height = null
-          wb.value.style.flex = null
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-            cssRule.cssText
-          )
-          StyleDA.editStyleSheet(cssItem)
-          wb.Css = wb.value.style.cssText
-        }
-      }
-      if (eEvent && pWb?.IsInstance) {
-        newPWbHTML
-          .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
-          .forEach(cWbHTML => {
-            cWbHTML.style.order = $(cWbHTML).index()
-          })
-      }
-    } else {
-      let pWbComponent = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of selected_list) {
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        if (wb.value.style.width) cssRule.style.width = wb.value.style.width
-        if (wb.value.style.height) cssRule.style.height = wb.value.style.height
-        if (wb.value.style.flex) cssRule.style.flex = wb.value.style.flex
-        if (wb.value.style.top) cssRule.style.top = wb.value.style.top
-        if (wb.value.style.right) cssRule.style.right = wb.value.style.right
-        if (wb.value.style.bottom) cssRule.style.bottom = wb.value.style.bottom
-        if (wb.value.style.left) cssRule.style.left = wb.value.style.left
-        if (wb.value.style.transform)
-          cssRule.style.transform = wb.value.style.transform
-        if (eEvent) cssRule.style.order = $(wb.value).index()
-        wb.value.style = null
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-        wb.Css = null
-        WBaseDA.listData = WBaseDA.listData.filter(e => e !== wb)
-      }
-      if (eEvent) {
-        newPWbHTML
-          .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
-          .forEach(cWbHTML => {
-            if (selected_list.every(wb => wb.value !== cWbHTML)) {
-              let cssRule = StyleDA.docStyleSheets.find(e =>
-                [...divSection.querySelectorAll(e.selectorText)].includes(
-                  cWbHTML
-                )
-              )
-              cssRule.style.order = $(cWbHTML).index()
-              cssItem.Css = cssItem.Css.replace(
-                new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-                cssRule.cssText
-              )
-            }
-          })
-      }
-      StyleDA.editStyleSheet(cssItem)
-    }
     if (WBaseDA.listData.length) {
       if (eEvent === EnumEvent.parent) {
         WBaseDA.parent(WBaseDA.listData, EnumObj.wBase)
@@ -1218,6 +1132,7 @@ function dragWbaseEnd () {
         WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
       }
     }
+    if (component) StyleDA.editStyleSheet(cssItem)
     replaceAllLyerItemHTML()
     updateUIDesignView()
     drag_start_list = []
