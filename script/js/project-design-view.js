@@ -1088,10 +1088,14 @@ function dragWbaseEnd () {
             wb.value.removeAttribute('height-type')
           }
         }
-        if (window.getComputedStyle(newPWbHTML).display === 'flex') wb.value.style.order = $(wb.value).index()
+        if (window.getComputedStyle(newPWbHTML).display === 'flex') {
+          wb.value.style.order = $(wb.value).index()
+        } else {
+          wb.value.style.order = null
+        }
         if (component) {
           const stClassName = [...wb.value.classList].find(
-            cls => cls.startsWith('w-st') && cls !== 'w-stack'
+            cls => !cls.startsWith('w-st') || cls === 'w-stack'
           )
           if (stClassName) {
             StyleDA.docStyleSheets.find(rule => {
