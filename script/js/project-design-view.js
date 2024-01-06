@@ -1552,6 +1552,7 @@ function handleCompleteAddWbase () {
     delete wb.IsCopy
   } else {
     WBaseDA.listData.push(wb)
+    WBaseDA.listData.forEach(e => (e.Css = e.value.style.cssText))
     WBaseDA.add({ listWb: WBaseDA.listData })
   }
   WBaseDA.listData = []
