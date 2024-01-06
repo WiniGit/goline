@@ -962,16 +962,33 @@ function dragWbaseEnd () {
             return wb.value
           })
         )
-        if (!component) {
+        if (component) {
           wbase_list.filter(e => {
             if (
               e.ParentID === new_parentID &&
-              selected_list.every(wb => wb !== e) &&
+              selected_list.every(wb => wb !== e)
+            ) {
+              let eRule = StyleDA.docStyleSheets.find(rule =>
+                [...divSection.querySelectorAll(rule.selectorText)].includes(
+                  e.value
+                )
+              )
+              eRule.style.order = $(e.value).index()
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${eRule.selectorText} {[^}]*}`, 'g'),
+                eRule.cssText
+              )
+            }
+          })
+        } else {
+          wbase_list.filter(e => {
+            if (
+              e.ParentID === new_parentID &&
               e.value.style.order != $(e.value).index()
             ) {
               e.value.style.order = $(e.value).index()
               e.Css = e.value.style.cssText
-              WBaseDA.listData.push(e)
+              if (selected_list.every(wb => wb !== e)) WBaseDA.listData.push(e)
             }
           })
         }
@@ -1003,16 +1020,33 @@ function dragWbaseEnd () {
         pWb.value.style.height = null
       }
       eEvent = EnumEvent.parent
-      if (!component) {
+      if (component) {
         wbase_list.filter(e => {
           if (
             e.ParentID === new_parentID &&
-            selected_list.every(wb => wb !== e) &&
+            selected_list.every(wb => wb !== e)
+          ) {
+            let eRule = StyleDA.docStyleSheets.find(rule =>
+              [...divSection.querySelectorAll(rule.selectorText)].includes(
+                e.value
+              )
+            )
+            eRule.style.order = $(e.value).index()
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${eRule.selectorText} {[^}]*}`, 'g'),
+              eRule.cssText
+            )
+          }
+        })
+      } else {
+        wbase_list.filter(e => {
+          if (
+            e.ParentID === new_parentID &&
             e.value.style.order != $(e.value).index()
           ) {
             e.value.style.order = $(e.value).index()
             e.Css = e.value.style.cssText
-            WBaseDA.listData.push(e)
+            if (selected_list.every(wb => wb !== e)) WBaseDA.listData.push(e)
           }
         })
       }
@@ -1054,6 +1088,7 @@ function dragWbaseEnd () {
             wb.value.removeAttribute('height-type')
           }
         }
+        if (window.getComputedStyle(newPWbHTML).display === 'flex') wb.value.style.order = $(wb.value).index()
         if (component) {
           const stClassName = [...wb.value.classList].find(
             cls => cls.startsWith('w-st') && cls !== 'w-stack'
