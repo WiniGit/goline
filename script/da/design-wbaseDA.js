@@ -819,10 +819,28 @@ class WBaseDA {
 
   static async deleteWb ({ listWb = [] }) {
     if (listWb.length > 0) {
-      $.post('/view/delete-wbase', {
-        headers: await UserService.headerProject(),
-        body: { data: listWb.map(e => e.GID) }
-      })
+      $.post(
+        '/view/delete-wbase',
+        {
+          headers: await UserService.headerProject(),
+          body: { data: listWb.map(e => e.GID) }
+        },
+        function (response) {
+          if (response.Data.length > 0) {
+            for (let id of response.Data) {
+              let layerCotainer = left_view.querySelector(
+                `.col:has(> .layer_wbase_tile[id="wbaseID:${id}"])`
+              )
+              layerCotainer.remove()
+            }
+            wbase_list = wbase_list.filter(wb => {
+              const check = response.Data.every(id => id !== wb.GID)
+              if (!check) wb.value.remove()
+              return check
+            })
+          }
+        }
+      )
     }
   }
 
