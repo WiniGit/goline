@@ -621,8 +621,8 @@ function selectParent (event) {
           '0'
       ) + 1
     if (checkpad === 0) {
-      const component = selected_list.some(wb =>
-        wb.value.closest(`.wbaseItem-value[iswini]:not(*[level="${wb.Level}"])`)
+      const component = selected_list[0].value.closest(
+        `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
       )
       listWbOnScreen = []
       listWbOnScreen.push(
