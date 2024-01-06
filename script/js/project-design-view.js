@@ -1030,7 +1030,6 @@ function dragWbaseEnd () {
               const check = selector.includes(wb.value)
               if (check) {
                 rule.style.cssText += wb.value.style.cssText
-                wb.value.removeAttribute('style')
                 selector.forEach(e => {
                   if (wb.value.getAttribute('constx')) {
                     e.setAttribute('constx', wb.value.getAttribute('constx'))
@@ -1112,6 +1111,7 @@ function dragWbaseEnd () {
               cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${cssTextValue} }`
             }
           }
+          wb.value.removeAttribute('style')
         } else if (
           oldPWb?.value?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)
         ) {
@@ -1125,6 +1125,7 @@ function dragWbaseEnd () {
         return wb
       })
     )
+    select_box_parentID = selected_list[0].ParentID
     if (WBaseDA.listData.length) {
       if (eEvent === EnumEvent.parent) {
         WBaseDA.parent(WBaseDA.listData, EnumObj.wBase)
@@ -1132,13 +1133,15 @@ function dragWbaseEnd () {
         WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
       }
     }
-    if (component) StyleDA.editStyleSheet(cssItem)
+    if (component) {
+      StyleDA.editStyleSheet(cssItem)
+      document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
+    }
     replaceAllLyerItemHTML()
     updateUIDesignView()
     drag_start_list = []
     WBaseDA.listData = []
   }
-  select_box_parentID = selected_list[0].ParentID
   parent.removeAttribute('onsort')
   parent = divSection
   updateHoverWbase()
