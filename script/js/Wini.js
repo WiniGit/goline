@@ -611,7 +611,7 @@ function selectParent (event) {
       )
     )
   ) {
-    parent = document.getElementById(select_box_parentID)
+    parent = document.getElementById(select_box_parentID) ?? divSection
     let elementRect = parent.getBoundingClientRect()
     element_offset = offsetScale(elementRect.x, elementRect.y)
   } else {
