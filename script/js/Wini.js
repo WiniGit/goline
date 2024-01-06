@@ -612,7 +612,7 @@ function selectParent (event) {
     element_offset = offsetScale(elementRect.x, elementRect.y)
     parent.setAttribute('onsort', 'true')
   } else {
-    let =
+    let current_level =
       parseInt(
         document.getElementById(select_box_parentID)?.getAttribute('level') ??
           '0'
