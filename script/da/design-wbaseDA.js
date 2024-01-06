@@ -826,15 +826,16 @@ class WBaseDA {
           body: { data: listWb.map(e => e.GID) }
         },
         function (response) {
-          if (response.Data.length > 0) {
-            for (let id of response.Data) {
+          const listid = response.data.Data
+          if (listid.length > 0) {
+            for (let id of listid) {
               let layerCotainer = left_view.querySelector(
                 `.col:has(> .layer_wbase_tile[id="wbaseID:${id}"])`
               )
               layerCotainer.remove()
             }
             wbase_list = wbase_list.filter(wb => {
-              const check = response.Data.every(id => id !== wb.GID)
+              const check = listid.every(id => id !== wb.GID)
               if (!check) wb.value.remove()
               return check
             })

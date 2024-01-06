@@ -1095,7 +1095,7 @@ function dragWbaseEnd () {
         }
         if (component) {
           const stClassName = [...wb.value.classList].find(
-            cls => !cls.startsWith('w-st') || cls === 'w-stack'
+            cls => cls.startsWith('w-st') && cls !== 'w-stack'
           )
           if (stClassName) {
             StyleDA.docStyleSheets.find(rule => {
@@ -1191,7 +1191,7 @@ function dragWbaseEnd () {
           oldPWb?.value?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)
         ) {
           wb.value.className = [...wb.value.classList]
-            .filter(cls => cls !== 'w-stack' && cls.startsWith('w-st'))
+            .filter(cls => cls === 'w-stack' || !cls.startsWith('w-st'))
             .join(' ')
         }
         wb.Css = wb.value.style.cssText
@@ -1204,10 +1204,10 @@ function dragWbaseEnd () {
     if (component) {
       StyleDA.editStyleSheet(cssItem)
       document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
-    } else {
-      if (oldPWb?.value?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)) {
-        WBaseDA.deleteWb({ listWb: selected_list })
-      }
+    } else if (
+      oldPWb?.value?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)
+    ) {
+      WBaseDA.deleteWb({ listWb: selected_list })
     }
     if (WBaseDA.listData.length) {
       if (eEvent === EnumEvent.parent) {
