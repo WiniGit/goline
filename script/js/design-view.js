@@ -146,9 +146,11 @@ function updateUIDesignView () {
   if (
     selected_list.some(
       wb =>
-        wb.IsInstance &&
+        [...wb.value.classList].some(
+          cls => cls !== 'w-stack' && cls.startsWith('w-st')
+        ) &&
         wb.value.closest(
-          `.wbaseItem-value[isinstance][level="${wb.Level - 1}"]`
+          `.wbaseItem-value[isinstance]:not(*[level="${wb.Level}"])`
         )
     )
   ) {

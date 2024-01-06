@@ -604,8 +604,12 @@ let listWbOnScreen = []
 function selectParent (event) {
   parent = divSection
   if (
-    selected_list.length > 0 &&
-    selected_list[0].value.closest(`.wbaseItem-value[isinstance]`)
+    selected_list[0].value.closest(`.wbaseItem-value[isinstance]`) &&
+    selected_list.some(e =>
+      [...e.value.classList].some(
+        cls => cls !== 'w-stack' && cls.startsWith('w-st')
+      )
+    )
   ) {
     parent = document.getElementById(select_box_parentID)
     let elementRect = parent.getBoundingClientRect()

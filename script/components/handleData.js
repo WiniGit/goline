@@ -142,14 +142,11 @@ function initComponents (wb, children) {
   if (wb.IsWini) {
     wb.value.setAttribute('iswini', wb.IsWini)
   } else if (
-    [...wb.value.classList].some(
-      cls => cls.startsWith('w-st') && cls !== 'w-stack'
-    )
+    [...wb.value.classList].some(cls => cls.startsWith('w-st0')) &&
+    wb.CopyID
   ) {
-    if (wb.CopyID) {
-      wb.value.setAttribute('isinstance', true)
-      wb.IsInstance = true
-    }
+    wb.value.setAttribute('isinstance', true)
+    wb.IsInstance = true
   }
   if (wb.Css?.length > 0) {
     wb.value.style = wb.Css
