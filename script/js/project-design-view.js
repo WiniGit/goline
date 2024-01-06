@@ -923,6 +923,8 @@ function dragWbaseEnd () {
           ...selected_list.map(wb => {
             $(wb.value).removeClass('drag-hide')
             $(wb.value).removeClass('fixed-position')
+            wb.value.removeAttribute('constx')
+            wb.value.removeAttribute('consty')
             wb.value.style.position = null
             wb.value.style.left = null
             wb.value.style.top = null
