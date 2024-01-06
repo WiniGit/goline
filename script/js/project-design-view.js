@@ -909,7 +909,6 @@ function dragWbaseEnd () {
           for (let i = 0; i < wbaseChildren.length; i++) {
             wbaseChildren[i].style.zIndex = i
           }
-          WBaseDA.listData.push(oldPWb)
         }
         if (oldPWb.value.classList.contains('w-variant')) {
           let listProperty = PropertyDA.list.filter(
@@ -967,7 +966,8 @@ function dragWbaseEnd () {
           wbase_list.filter(e => {
             if (
               e.ParentID === new_parentID &&
-              selected_list.every(wb => wb !== e)
+              selected_list.every(wb => wb !== e) &&
+              e.value.style.order != $(e.value).index()
             ) {
               e.value.style.order = $(e.value).index()
               e.Css = e.value.style.cssText
@@ -1007,7 +1007,8 @@ function dragWbaseEnd () {
         wbase_list.filter(e => {
           if (
             e.ParentID === new_parentID &&
-            selected_list.every(wb => wb !== e)
+            selected_list.every(wb => wb !== e) &&
+            e.value.style.order != $(e.value).index()
           ) {
             e.value.style.order = $(e.value).index()
             e.Css = e.value.style.cssText
