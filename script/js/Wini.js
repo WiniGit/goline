@@ -610,7 +610,6 @@ function selectParent (event) {
     parent = document.getElementById(select_box_parentID)
     let elementRect = parent.getBoundingClientRect()
     element_offset = offsetScale(elementRect.x, elementRect.y)
-    parent.setAttribute('onsort', 'true')
   } else {
     let current_level =
       parseInt(

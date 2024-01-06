@@ -582,6 +582,12 @@ function dragWbaseUpdate (xp, yp, event) {
     }
   }
   if (
+    select_box_parentID !== wbase_parentID &&
+    select_box_parentID !== new_parentID
+  ) {
+    document.getElementById(select_box_parentID).removeAttribute('onsort')
+  }
+  if (
     drag_start_list[0].ParentID !== new_parentID &&
     drag_start_list[0].Level > 1 &&
     drag_start_list[0].ParentID === select_box_parentID
@@ -647,6 +653,7 @@ function dragWbaseUpdate (xp, yp, event) {
     window.getComputedStyle(newPWbHTML).display.match('flex') &&
     selected_list.some(e => !e.value.classList.contains('fixed-position'))
   ) {
+    newPWbHTML.setAttribute('onsort', 'true')
     let children = [
       ...newPWbHTML.querySelectorAll(
         `.wbaseItem-value[level="${
@@ -956,6 +963,18 @@ function dragWbaseEnd () {
             return wb.value
           })
         )
+        if (!component) {
+          wbase_list.filter(e => {
+            if (
+              e.ParentID === new_parentID &&
+              selected_list.every(wb => wb !== e)
+            ) {
+              e.value.style.order = $(e.value).index()
+              e.Css = e.value.style.cssText
+              WBaseDA.listData.push(e)
+            }
+          })
+        }
       } else if (new_parentID === wbase_parentID) {
         selected_list.forEach(wb => {
           wb.value.setAttribute('constx', Constraints.left)
@@ -984,6 +1003,18 @@ function dragWbaseEnd () {
         pWb.value.style.height = null
       }
       eEvent = EnumEvent.parent
+      if (!component) {
+        wbase_list.filter(e => {
+          if (
+            e.ParentID === new_parentID &&
+            selected_list.every(wb => wb !== e)
+          ) {
+            e.value.style.order = $(e.value).index()
+            e.Css = e.value.style.cssText
+            WBaseDA.listData.push(e)
+          }
+        })
+      }
       WBaseDA.listData.push(pWb)
     } else if (new_parentID === wbase_parentID) {
       selected_list.forEach(wb => {
@@ -1112,6 +1143,7 @@ function dragWbaseEnd () {
             } else {
               cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${cssTextValue} }`
             }
+            wb.IsCopy = true
           }
           wb.value.removeAttribute('style')
         } else if (
@@ -1128,6 +1160,14 @@ function dragWbaseEnd () {
       })
     )
     select_box_parentID = selected_list[0].ParentID
+    if (component) {
+      StyleDA.editStyleSheet(cssItem)
+      document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
+    } else {
+      if (oldPWb?.value?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)) {
+        WBaseDA.deleteWb({ listWb: selected_list })
+      }
+    }
     if (WBaseDA.listData.length) {
       if (eEvent === EnumEvent.parent) {
         WBaseDA.parent(WBaseDA.listData, EnumObj.wBase)
@@ -1135,16 +1175,12 @@ function dragWbaseEnd () {
         WBaseDA.edit(WBaseDA.listData, EnumObj.wBase)
       }
     }
-    if (component) {
-      StyleDA.editStyleSheet(cssItem)
-      document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
-    }
+    newPWbHTML.removeAttribute('onsort')
     replaceAllLyerItemHTML()
     updateUIDesignView()
     drag_start_list = []
     WBaseDA.listData = []
   }
-  parent.removeAttribute('onsort')
   parent = divSection
   updateHoverWbase()
   handleWbSelectedList([...selected_list])

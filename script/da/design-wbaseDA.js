@@ -817,22 +817,12 @@ class WBaseDA {
     }
   }
 
-  static async deleteWb ({ listWb }) {
+  static async deleteWb ({ listWb = [] }) {
     if (listWb.length > 0) {
       $.post('/view/delete-wbase', {
         headers: await UserService.headerProject(),
         body: { data: listWb.map(e => e.GID) }
       })
-      for (let wb of listWb) {
-        let layerCotainer = left_view.querySelector(
-          `.col:has(> .layer_wbase_tile[id="wbaseID:${wb.GID}"])`
-        )
-        layerCotainer.remove()
-        wb.value.remove()
-      }
-      wbase_list = wbase_list.filter(wb => listWb.every(e => e.GID !== wb.GID))
-      handleWbSelectedList()
-      updateHoverWbase()
     }
   }
 
@@ -873,7 +863,7 @@ class WBaseDA {
           AttributesItem:
             e.value.classList.contains('w-table') && e.IsCopy
               ? e.AttributesItem
-              : null,
+              : null
         }
       })
     } else {
@@ -903,7 +893,7 @@ class WBaseDA {
           ListClassName: e.ListClassName,
           Sort: e.Sort,
           Css: e.Css,
-          AttributesItem: attrItem,
+          AttributesItem: attrItem
         }
       })
     }
