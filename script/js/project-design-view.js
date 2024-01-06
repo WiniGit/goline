@@ -1144,6 +1144,7 @@ function dragWbaseEnd () {
             } else {
               cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${cssTextValue} }`
             }
+            wb.value.classList.add(newClassName)
             wb.IsCopy = true
           }
           wb.value.removeAttribute('style')
