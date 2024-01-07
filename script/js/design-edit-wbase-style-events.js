@@ -1386,13 +1386,24 @@ function handleEditOffset ({
   if ((width !== undefined && height !== undefined) || ratioWH) {
     let resizeFixedW = width === 'fixed'
     let resizeFixedH = height === 'fixed'
-    if (!selected_list[0].Css && !selected_list[0].IsInstance) {
-      let pWbComponent = selected_list[0].value.closest(
+    let listEnableEdit = selected_list.filter(
+      e =>
+        !(
+          [...e.value.classList].some(
+            cls => cls !== 'w-stack' && cls.startsWith('w-st')
+          ) &&
+          e.value.closest(
+            `.wbaseItem-value[isinstance]:not(*[level="${e.Level}"])`
+          )
+        )
+    )
+    if (!listEnableEdit[0].Css?.length) {
+      let pWbComponent = listEnableEdit[0].value.closest(
         `.wbaseItem-value[iswini]`
       )
       var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     }
-    for (let wb of selected_list) {
+    for (let wb of listEnableEdit) {
       if (resizeFixedW) width = wb.value.offsetWidth
       if (resizeFixedH) height = wb.value.offsetHeight
       if (ratioWH) {
