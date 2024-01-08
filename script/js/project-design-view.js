@@ -1593,7 +1593,7 @@ function dragAltEnd () {
               GID: wb.AttributeID
             }
             delete wb.ChildID
-            delete wb.IsCopy
+            if (!cssItem) delete wb.IsCopy
             var check = true
           } else if (
             selected_list.some(eSelect => eSelect.value.contains(e.value))
@@ -1670,7 +1670,6 @@ function dragAltEnd () {
       arrange()
     }
     if (cssItem) {
-      wb.IsCopy = true
       newPWbHTML
         .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
         .forEach(e => {
