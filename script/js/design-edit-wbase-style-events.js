@@ -1602,13 +1602,24 @@ function handleEditOffset ({
     else if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else if (width !== undefined) {
     let resizeFixed = width === 'fixed'
-    if (!selected_list[0].Css && !selected_list[0].IsInstance) {
-      let pWbComponent = selected_list[0].value.closest(
+    let listEnableEdit = selected_list.filter(
+      e =>
+        !(
+          [...e.value.classList].some(
+            cls => cls !== 'w-stack' && cls.startsWith('w-st')
+          ) &&
+          e.value.closest(
+            `.wbaseItem-value[isinstance]:not(*[level="${e.Level}"])`
+          )
+        )
+    )
+    if (!listEnableEdit[0].Css?.length) {
+      var pWbComponent = listEnableEdit[0].value.closest(
         `.wbaseItem-value[iswini]`
       )
       var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     }
-    for (let wb of selected_list) {
+    for (let wb of listEnableEdit) {
       if (resizeFixed) width = wb.value.offsetWidth
       if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
@@ -1697,6 +1708,31 @@ function handleEditOffset ({
           : null
         wb.value.setAttribute('width-type', 'fit')
       } else if (width < 0) {
+        let pWbHugW = wb.value.closest(
+          `.wbaseItem-value[level="${wb.Level - 1}"][width-type="fit"]`
+        )
+        if (pWbHugW) {
+          if (pWbComponent) {
+            StyleDA.docStyleSheets.find(rule => {
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
+              const check = selector.includes(pWbHugW)
+              if (check) {
+                rule.style.width = pWbHugW.offsetWidth + 'px'
+                selector.forEach(e => e.removeAttribute('width-type'))
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                  rule.cssText
+                )
+              }
+              return check
+            })
+          } else {
+            pWbHugW = wbase_list.find(e => e.GID === pWbHugW.id)
+            pWbHugW.value.style.width = pWbHugW.value.offsetWidth + 'px'
+            pWbHugW.value.removeAttribute('width-type')
+            listUpdate.push(pWbHugW)
+          }
+        }
         cssRule.style.width = '100%'
         if (wb.value.closest(`.w-row[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
@@ -1733,13 +1769,24 @@ function handleEditOffset ({
     else if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else if (height !== undefined) {
     let resizeFixed = height === 'fixed'
-    if (!selected_list[0].Css && !selected_list[0].IsInstance) {
-      let pWbComponent = selected_list[0].value.closest(
+    let listEnableEdit = selected_list.filter(
+      e =>
+        !(
+          [...e.value.classList].some(
+            cls => cls !== 'w-stack' && cls.startsWith('w-st')
+          ) &&
+          e.value.closest(
+            `.wbaseItem-value[isinstance]:not(*[level="${e.Level}"])`
+          )
+        )
+    )
+    if (!listEnableEdit[0].Css?.length) {
+      let pWbComponent = listEnableEdit[0].value.closest(
         `.wbaseItem-value[iswini]`
       )
       var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     }
-    for (let wb of selected_list) {
+    for (let wb of listEnableEdit) {
       if (resizeFixed) height = wb.value.offsetHeight
       if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
         cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
@@ -1826,6 +1873,31 @@ function handleEditOffset ({
         cssRule.style.height = null
         wb.value.setAttribute('height-type', 'fit')
       } else if (height < 0) {
+        let pWbHugH = wb.value.closest(
+          `.wbaseItem-value[level="${wb.Level - 1}"][height-type="fit"]`
+        )
+        if (pWbHugH) {
+          if (pWbComponent) {
+            StyleDA.docStyleSheets.find(rule => {
+              let selector = [...divSection.querySelectorAll(rule.selectorText)]
+              const check = selector.includes(pWbHugH)
+              if (check) {
+                rule.style.height = pWbHugH.offsetHeight + 'px'
+                selector.forEach(e => e.removeAttribute('height-type'))
+                cssItem.Css = cssItem.Css.replace(
+                  new RegExp(`${rule.selectorText} {[^}]*}`, 'g'),
+                  rule.cssText
+                )
+              }
+              return check
+            })
+          } else {
+            pWbHugH = wbase_list.find(e => e.GID === pWbHugH.id)
+            pWbHugH.value.style.height = pWbHugH.value.offsetHeight + 'px'
+            pWbHugH.value.removeAttribute('height-type')
+            listUpdate.push(pWbHugH)
+          }
+        }
         cssRule.style.height = '100%'
         if (wb.value.closest(`.w-col[level="${wb.Level - 1}"]`)) {
           cssRule.style.flex = 1
@@ -1862,67 +1934,11 @@ function handleEditOffset ({
     if (cssItem) StyleDA.editStyleSheet(cssItem)
     else if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
   } else if (x !== undefined) {
+    let pWbComponent = selected_list[0].value.closest(
+      `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
+    )
     let pStyle = window.getComputedStyle(selected_list[0].value.parentElement)
-    if (selected_list[0].Css || selected_list[0].IsInstance) {
-      for (let wb of selected_list) {
-        switch (wb.value.getAttribute('constx')) {
-          case Constraints.right:
-            wb.value.style.right = `${Math.round(
-              parseFloat(pStyle.width.replace('px')) -
-                parseFloat(pStyle.borderRightWidth.replace('px')) -
-                parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x -
-                wb.value.offsetWidth
-            )}px`
-            break
-          case Constraints.left_right:
-            wb.value.style.right = `${Math.round(
-              parseFloat(pStyle.width.replace('px')) -
-                parseFloat(pStyle.borderRightWidth.replace('px')) -
-                parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                x -
-                wb.value.offsetWidth
-            )}px`
-            wb.value.style.left = x + 'px'
-            break
-          case Constraints.center:
-            let centerValue = `${
-              x +
-              (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
-            }px`
-            wb.value.style.left = `calc(50% + ${centerValue})`
-            break
-          case Constraints.scale:
-            let leftValue = `${(
-              (x * 100) /
-              wb.value.parentElement.offsetWidth
-            ).toFixed(2)}%`
-            let rightValue = `${(
-              (Math.round(
-                parseFloat(pStyle.width.replace('px')) -
-                  parseFloat(pStyle.borderRightWidth.replace('px')) -
-                  parseFloat(pStyle.borderLeftWidth.replace('px')) -
-                  x -
-                  wb.value.offsetWidth
-              ) *
-                100) /
-              wb.value.parentElement.offsetWidth
-            ).toFixed(2)}%`
-            wb.value.style.left = leftValue
-            wb.value.style.right = rightValue
-            break
-          default:
-            wb.value.style.left = x + 'px'
-            break
-        }
-        wb.Css = wb.value.style.cssText
-      }
-      listUpdate.push(...selected_list)
-      WBaseDA.edit(listUpdate, EnumObj.wBase)
-    } else {
-      let pWbComponent = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+    if (pWbComponent) {
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -1984,69 +2000,69 @@ function handleEditOffset ({
         )
       }
       StyleDA.editStyleSheet(cssItem)
-    }
-  } else if (y !== undefined) {
-    let pStyle = window.getComputedStyle(selected_list[0].value.parentElement)
-    if (selected_list[0].Css || selected_list[0].IsInstance) {
+    } else {
       for (let wb of selected_list) {
-        switch (wb.value.getAttribute('consty')) {
-          case Constraints.bottom:
-            wb.value.style.bottom = `${Math.round(
-              parseFloat(pStyle.height.replace('px')) -
-                parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                parseFloat(pStyle.borderTopWidth.replace('px')) -
-                y -
-                wb.value.offsetHeight
+        switch (wb.value.getAttribute('constx')) {
+          case Constraints.right:
+            wb.value.style.right = `${Math.round(
+              parseFloat(pStyle.width.replace('px')) -
+                parseFloat(pStyle.borderRightWidth.replace('px')) -
+                parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                x -
+                wb.value.offsetWidth
             )}px`
             break
-          case Constraints.top_bottom:
-            wb.value.style.bottom = `${Math.round(
-              parseFloat(pStyle.height.replace('px')) -
-                parseFloat(pStyle.borderBottomWidth.replace('px')) -
-                parseFloat(pStyle.borderTopWidth.replace('px')) -
-                y -
-                wb.value.offsetHeight
+          case Constraints.left_right:
+            wb.value.style.right = `${Math.round(
+              parseFloat(pStyle.width.replace('px')) -
+                parseFloat(pStyle.borderRightWidth.replace('px')) -
+                parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                x -
+                wb.value.offsetWidth
             )}px`
-            wb.value.style.top = y + 'px'
+            wb.value.style.left = x + 'px'
             break
           case Constraints.center:
             let centerValue = `${
-              y +
-              (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) / 2
+              x +
+              (wb.value.offsetWidth - wb.value.parentElement.offsetWidth) / 2
             }px`
-            wb.value.style.top = `calc(50% + ${centerValue})`
+            wb.value.style.left = `calc(50% + ${centerValue})`
             break
           case Constraints.scale:
-            let topValue = `${(
-              (y * 100) /
-              wb.value.parentElement.offsetHeight
+            let leftValue = `${(
+              (x * 100) /
+              wb.value.parentElement.offsetWidth
             ).toFixed(2)}%`
-            let botValue = `${(
+            let rightValue = `${(
               (Math.round(
-                parseFloat(pStyle.height.replace('px')) -
-                  parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                parseFloat(pStyle.width.replace('px')) -
                   parseFloat(pStyle.borderRightWidth.replace('px')) -
-                  y -
-                  wb.value.offsetHeight
+                  parseFloat(pStyle.borderLeftWidth.replace('px')) -
+                  x -
+                  wb.value.offsetWidth
               ) *
                 100) /
-              wb.value.parentElement.offsetHeight
+              wb.value.parentElement.offsetWidth
             ).toFixed(2)}%`
-            wb.value.style.top = topValue
-            wb.value.style.bottom = botValue
+            wb.value.style.left = leftValue
+            wb.value.style.right = rightValue
             break
           default:
-            wb.value.style.top = y + 'px'
+            wb.value.style.left = x + 'px'
             break
         }
         wb.Css = wb.value.style.cssText
       }
       listUpdate.push(...selected_list)
       WBaseDA.edit(listUpdate, EnumObj.wBase)
-    } else {
-      let pWbComponent = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
+    }
+  } else if (y !== undefined) {
+    let pWbComponent = selected_list[0].value.closest(
+      `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
+    )
+    let pStyle = window.getComputedStyle(selected_list[0].value.parentElement)
+    if (pWbComponent) {
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of selected_list) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
@@ -2108,9 +2124,81 @@ function handleEditOffset ({
         )
       }
       StyleDA.editStyleSheet(cssItem)
+    } else {
+      for (let wb of selected_list) {
+        switch (wb.value.getAttribute('consty')) {
+          case Constraints.bottom:
+            wb.value.style.bottom = `${Math.round(
+              parseFloat(pStyle.height.replace('px')) -
+                parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                parseFloat(pStyle.borderTopWidth.replace('px')) -
+                y -
+                wb.value.offsetHeight
+            )}px`
+            break
+          case Constraints.top_bottom:
+            wb.value.style.bottom = `${Math.round(
+              parseFloat(pStyle.height.replace('px')) -
+                parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                parseFloat(pStyle.borderTopWidth.replace('px')) -
+                y -
+                wb.value.offsetHeight
+            )}px`
+            wb.value.style.top = y + 'px'
+            break
+          case Constraints.center:
+            let centerValue = `${
+              y +
+              (wb.value.offsetHeight - wb.value.parentElement.offsetHeight) / 2
+            }px`
+            wb.value.style.top = `calc(50% + ${centerValue})`
+            break
+          case Constraints.scale:
+            let topValue = `${(
+              (y * 100) /
+              wb.value.parentElement.offsetHeight
+            ).toFixed(2)}%`
+            let botValue = `${(
+              (Math.round(
+                parseFloat(pStyle.height.replace('px')) -
+                  parseFloat(pStyle.borderBottomWidth.replace('px')) -
+                  parseFloat(pStyle.borderRightWidth.replace('px')) -
+                  y -
+                  wb.value.offsetHeight
+              ) *
+                100) /
+              wb.value.parentElement.offsetHeight
+            ).toFixed(2)}%`
+            wb.value.style.top = topValue
+            wb.value.style.bottom = botValue
+            break
+          default:
+            wb.value.style.top = y + 'px'
+            break
+        }
+        wb.Css = wb.value.style.cssText
+      }
+      listUpdate.push(...selected_list)
+      WBaseDA.edit(listUpdate, EnumObj.wBase)
     }
   } else if (radius !== undefined) {
-    if (selected_list[0].Css || selected_list[0].IsInstance) {
+    let pWbComponent = selected_list[0].value.closest(
+      `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
+    )
+    if (pWbComponent) {
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderRadius = `${radius}px`
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    } else {
       for (let wb of selected_list) {
         if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
           let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === wb.GID)
@@ -2130,25 +2218,34 @@ function handleEditOffset ({
         }
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
-    } else {
-      let pWbComponent = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of selected_list) {
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        cssRule.style.borderRadius = `${radius}px`
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-      }
-      StyleDA.editStyleSheet(cssItem)
     }
   } else if (radiusTL !== undefined) {
-    if (selected_list[0].Css || selected_list[0].IsInstance) {
+    let pWbComponent = selected_list[0].value.closest(
+      `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
+    )
+    if (pWbComponent) {
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let radiusVl = [
+          `${radiusTL}px`,
+          wbComputeSt.borderTopRightRadius,
+          wbComputeSt.borderBottomRightRadius,
+          wbComputeSt.borderBottomLeftRadius
+        ]
+        let newVl = radiusVl.filterAndMap()
+        newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderRadius = newVl
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    } else {
       for (let wb of selected_list) {
         let wbComputeSt = window.getComputedStyle(wb.value)
         let radiusVl = [
@@ -2177,34 +2274,34 @@ function handleEditOffset ({
         }
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
-    } else {
-      let pWbComponent = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of selected_list) {
-        let wbComputeSt = window.getComputedStyle(wb.value)
-        let radiusVl = [
-          `${radiusTL}px`,
-          wbComputeSt.borderTopRightRadius,
-          wbComputeSt.borderBottomRightRadius,
-          wbComputeSt.borderBottomLeftRadius
-        ]
-        let newVl = radiusVl.filterAndMap()
-        newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        cssRule.style.borderRadius = newVl
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-      }
-      StyleDA.editStyleSheet(cssItem)
     }
   } else if (radiusTR !== undefined) {
-    if (selected_list[0].Css || selected_list[0].IsInstance) {
+    let pWbComponent = selected_list[0].value.closest(
+      `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
+    )
+    if (pWbComponent) {
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let radiusVl = [
+          wbComputeSt.borderTopLeftRadius,
+          `${radiusTR}px`,
+          wbComputeSt.borderBottomRightRadius,
+          wbComputeSt.borderBottomLeftRadius
+        ]
+        let newVl = radiusVl.filterAndMap()
+        newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderRadius = newVl
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    } else {
       for (let wb of selected_list) {
         let wbComputeSt = window.getComputedStyle(wb.value)
         let radiusVl = [
@@ -2233,34 +2330,34 @@ function handleEditOffset ({
         }
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
-    } else {
-      let pWbComponent = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of selected_list) {
-        let wbComputeSt = window.getComputedStyle(wb.value)
-        let radiusVl = [
-          wbComputeSt.borderTopLeftRadius,
-          `${radiusTR}px`,
-          wbComputeSt.borderBottomRightRadius,
-          wbComputeSt.borderBottomLeftRadius
-        ]
-        let newVl = radiusVl.filterAndMap()
-        newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        cssRule.style.borderRadius = newVl
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-      }
-      StyleDA.editStyleSheet(cssItem)
     }
   } else if (radiusBL !== undefined) {
-    if (selected_list[0].Css || selected_list[0].IsInstance) {
+    let pWbComponent = selected_list[0].value.closest(
+      `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
+    )
+    if (pWbComponent) {
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let radiusVl = [
+          wbComputeSt.borderTopLeftRadius,
+          wbComputeSt.borderTopRightRadius,
+          wbComputeSt.borderBottomRightRadius,
+          `${radiusBL}px`
+        ]
+        let newVl = radiusVl.filterAndMap()
+        newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderRadius = newVl
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    } else {
       for (let wb of selected_list) {
         let wbComputeSt = window.getComputedStyle(wb.value)
         let radiusVl = [
@@ -2289,34 +2386,34 @@ function handleEditOffset ({
         }
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
-    } else {
-      let pWbComponent = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of selected_list) {
-        let wbComputeSt = window.getComputedStyle(wb.value)
-        let radiusVl = [
-          wbComputeSt.borderTopLeftRadius,
-          wbComputeSt.borderTopRightRadius,
-          wbComputeSt.borderBottomRightRadius,
-          `${radiusBL}px`
-        ]
-        let newVl = radiusVl.filterAndMap()
-        newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        cssRule.style.borderRadius = newVl
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-      }
-      StyleDA.editStyleSheet(cssItem)
     }
   } else if (radiusBR !== undefined) {
-    if (selected_list[0].Css || selected_list[0].IsInstance) {
+    let pWbComponent = selected_list[0].value.closest(
+      `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
+    )
+    if (pWbComponent) {
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        let wbComputeSt = window.getComputedStyle(wb.value)
+        let radiusVl = [
+          wbComputeSt.borderTopLeftRadius,
+          wbComputeSt.borderTopRightRadius,
+          `${radiusBR}px`,
+          wbComputeSt.borderBottomLeftRadius
+        ]
+        let newVl = radiusVl.filterAndMap()
+        newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
+        let cssRule = StyleDA.docStyleSheets.find(e =>
+          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
+        )
+        cssRule.style.borderRadius = newVl
+        cssItem.Css = cssItem.Css.replace(
+          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
+          cssRule.cssText
+        )
+      }
+      StyleDA.editStyleSheet(cssItem)
+    } else {
       for (let wb of selected_list) {
         let wbComputeSt = window.getComputedStyle(wb.value)
         let radiusVl = [
@@ -2345,34 +2442,51 @@ function handleEditOffset ({
         }
       }
       if (listUpdate.length) WBaseDA.edit(listUpdate, EnumObj.wBase)
-    } else {
-      let pWbComponent = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini]`
-      )
-      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
-      for (let wb of selected_list) {
-        let wbComputeSt = window.getComputedStyle(wb.value)
-        let radiusVl = [
-          wbComputeSt.borderTopLeftRadius,
-          wbComputeSt.borderTopRightRadius,
-          `${radiusBR}px`,
-          wbComputeSt.borderBottomLeftRadius
-        ]
-        let newVl = radiusVl.filterAndMap()
-        newVl = newVl.length === 1 ? newVl[0] : radiusVl.join(' ')
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        cssRule.style.borderRadius = newVl
-        cssItem.Css = cssItem.Css.replace(
-          new RegExp(`${cssRule.selectorText} {[^}]*}`, 'g'),
-          cssRule.cssText
-        )
-      }
-      StyleDA.editStyleSheet(cssItem)
     }
   } else if (fixPosition !== undefined) {
-    if (selected_list[0].Css || selected_list[0].IsInstance) {
+    let pWbComponent = selected_list[0].value.closest(
+      `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
+    )
+    if (pWbComponent) {
+      let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
+      for (let wb of selected_list) {
+        if (fixPosition) {
+          if (pWb.value.getAttribute('width-type') === 'fit') {
+            pWb.value.style.width = pWb.value.offsetWidth + 'px'
+            pWb.value.removeAttribute('width-type')
+            listUpdate.push(pWb)
+          }
+          if (pWb.value.getAttribute('height-type') === 'fit') {
+            pWb.value.style.height = pWb.value.offsetHeight + 'px'
+            pWb.value.removeAttribute('height-type')
+            if (!listUpdate.includes(pWb)) listUpdate.push(pWb)
+          }
+          if (wb.value.getAttribute('width-type') === 'fill') {
+            wb.value.style.width = wb.value.offsetWidth + 'px'
+            wb.value.removeAttribute('width-type')
+          }
+          if (wb.value.getAttribute('height-type') === 'fill') {
+            wb.value.style.height = wb.value.offsetHeight + 'px'
+            wb.value.removeAttribute('height-type')
+          }
+          wb.value.setAttribute('constx', Constraints.left)
+          wb.value.setAttribute('consty', Constraints.top)
+          wb.value.style.left = wb.value.offsetLeft + 'px'
+          wb.value.style.top = wb.value.offsetTop + 'px'
+          wb.value.style.position = 'absolute'
+          $(wb.value).addClass('fixed-position')
+        } else {
+          $(wb.value).removeClass('fixed-position')
+          wb.value.style.position = null
+          wb.value.style.left = null
+          wb.value.style.right = null
+          wb.value.style.top = null
+          wb.value.style.bottom = null
+          wb.value.style.transform = null
+        }
+        wb.Css = wb.value.style.cssText
+      }
+    } else {
       let pWb = wbase_list.find(wb => wb.GID === select_box_parentID)
       for (let wb of selected_list) {
         if (fixPosition) {
@@ -2412,7 +2526,6 @@ function handleEditOffset ({
         wb.Css = wb.value.style.cssText
       }
       WBaseDA.edit(listUpdate, EnumObj.wBase)
-    } else {
     }
   } else if (typeof isClip === 'boolean') {
     if (selected_list[0].Css || selected_list[0].IsInstance) {
