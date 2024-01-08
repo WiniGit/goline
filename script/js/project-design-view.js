@@ -1510,8 +1510,11 @@ function dragAltEnd () {
       newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
     if (new_parentID !== wbase_parentID) {
       var pWb = wbase_list.find(e => e.GID === new_parentID)
-      if (pWb.IsWini)
-        var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWb.GID)
+      const newComponent = pWb.value.closest('.wbaseItem-value[iswini]')
+      if (newComponent)
+        var cssItem = StyleDA.cssStyleSheets.find(
+          e => e.GID === newComponent.id
+        )
     }
     let demo = document.getElementById('demo_auto_layout')
     if (demo) {
