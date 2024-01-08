@@ -605,6 +605,7 @@ function selectParent (event) {
   parent = divSection
   if (
     selected_list[0].value.closest(`.wbaseItem-value[isinstance]`) &&
+    !event.altKey &&
     selected_list.some(e =>
       [...e.value.classList].some(cls => cls.startsWith('w-st'))
     )
