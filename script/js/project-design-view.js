@@ -1505,7 +1505,6 @@ function dragAltUpdate (xp, yp, event) {
 }
 
 function dragAltEnd () {
-  debugger
   WBaseDA.listData = []
   console.log('dragend alt')
   if (drag_start_list.length > 0 && alt_list.length > 0) {
@@ -1676,7 +1675,7 @@ function dragAltEnd () {
     if (component) {
       wbase_list.push(...WBaseDA.listData.filter(e => e !== pWb))
       arrange()
-      WBaseDA.add(WBaseDA.listData)
+      WBaseDA.add({listWb: WBaseDA.listData, parentid: new_parentID})
       replaceAllLyerItemHTML()
     } else {
       WBaseDA.copy(WBaseDA.listData)
