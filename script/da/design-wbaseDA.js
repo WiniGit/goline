@@ -485,7 +485,7 @@ class WbClass {
   static container = {
     ListID: wbase_parentID,
     ParentID: wbase_parentID,
-    ListClassName: 'wbaseItem-value w-container w-stack',
+    ListClassName: 'wbaseItem-value w-container w-block',
     IsWini: false,
     Css: 'background-color: #FFFFFFFF;',
     BasePropertyItems: [],
@@ -499,7 +499,7 @@ class WbClass {
     ListID: wbase_parentID,
     ParentID: wbase_parentID,
     IsWini: true,
-    ListClassName: 'wbaseItem-value w-variant w-stack',
+    ListClassName: 'wbaseItem-value w-variant w-block',
     Css: 'border-width: 2px;border-color: #7b61ffff;border-style: dotted;overflow: hidden;',
     StyleItem: {
       DecorationItem: {

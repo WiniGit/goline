@@ -606,9 +606,7 @@ function selectParent (event) {
   if (
     selected_list[0].value.closest(`.wbaseItem-value[isinstance]`) &&
     selected_list.some(e =>
-      [...e.value.classList].some(
-        cls => cls !== 'w-stack' && cls.startsWith('w-st')
-      )
+      [...e.value.classList].some(cls => cls.startsWith('w-st'))
     )
   ) {
     parent = document.getElementById(select_box_parentID) ?? divSection
@@ -1237,17 +1235,6 @@ function moveListener (event) {
                       Math.abs(event.pageY - previousY) > 2
                     ) {
                       if (event.altKey) {
-                        // const checkAllowCopy = !selected_list.some(
-                        //   wb =>
-                        //     (!wb.IsWini &&
-                        //       wb.value.closest('.wbaseItem-value[iswini]')) ||
-                        //     wb.value.closest(
-                        //       `.wbaseItem-value[isinstance][level="${
-                        //         wb.Level - 1
-                        //       }"]`
-                        //     )
-                        // )
-                        // if (checkAllowCopy)
                         dragAltUpdate(xb + xp / scale, yb + yp / scale, event)
                       } else {
                         dragWbaseUpdate(xb + xp / scale, yb + yp / scale, event)

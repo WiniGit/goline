@@ -513,7 +513,7 @@ function createLayerTile (wb, isShowChildren = false) {
       layerContainer.appendChild(childrenLayer)
       childrenLayer.id = `parentID:${wb.GID}`
       childrenLayer.className = 'col'
-      if (wb.value.classList.contains('w-stack')) {
+      if (wb.value.classList.contains('w-block')) {
         wbChildren = wbChildren.sort(
           (a, b) =>
             window.getComputedStyle(a.value).zIndex -
@@ -968,7 +968,7 @@ function createComponentTile (item, space = 0) {
               var relativeList = initDOM([...result, cloneItem]).map(e => {
                 let eClassList = e.ListClassName.split(' ')
                 const clsName = eClassList.find(
-                  vl => vl !== 'w-stack' && vl.startsWith('w-st')
+                  vl => vl.startsWith('w-st')
                 )
                 if (clsName) {
                   const ruleRegex = new RegExp(`.${clsName}[^}]+`, 'g')
@@ -1161,7 +1161,7 @@ function endDragSortLayer () {
         if (new_parentID !== wbase_parentID) {
           var pWb = wbase_list.find(e => e.GID === new_parentID)
         }
-        var zIndex = pWb.value.classList.contains('w-stack')
+        var zIndex = pWb.value.classList.contains('w-block')
           ? $(wbHTML).index()
           : $(wbHTML).index() - 1
         break
@@ -1169,7 +1169,7 @@ function endDragSortLayer () {
         if (new_parentID !== wbase_parentID) {
           pWb = wbase_list.find(e => e.GID === new_parentID)
         }
-        zIndex = pWb.value.classList.contains('w-stack')
+        zIndex = pWb.value.classList.contains('w-block')
           ? $(wbHTML).index() + 1
           : $(wbHTML).index()
         break
@@ -1183,7 +1183,7 @@ function endDragSortLayer () {
           pWb = wbase_list.find(e => e.GID === new_parentID)
         }
         zIndex =
-          !pWb || pWb.value.classList.contains('w-stack')
+          !pWb || pWb.value.classList.contains('w-block')
             ? $(wbHTML).index() + 1
             : $(wbHTML).index() - 1
         break
@@ -2045,7 +2045,7 @@ function dragInstanceEnd (event) {
     wb.value.setAttribute('constx', Constraints.left)
     wb.value.setAttribute('consty', Constraints.top)
     divSection.appendChild(wb.value)
-  } else if (newPWbHTML.classList.contains('w-stack')) {
+  } else if (newPWbHTML.classList.contains('w-block')) {
     wb.value.style.transform = null
     let pWbRect = newPWbHTML.getBoundingClientRect()
     pWbRect = offsetScale(pWbRect.x, pWbRect.y)

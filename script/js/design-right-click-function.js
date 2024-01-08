@@ -456,7 +456,7 @@ function createComponent () {
     if (wb.ListClassName) {
       wb.ListClassName = [
         ...wb.ListClassName.split(' ').filter(
-          cls => !cls.startsWith('w-st') || cls === 'w-stack'
+          cls => !cls.startsWith('w-st')
         ),
         wbClassName
       ].join(' ')
@@ -518,7 +518,7 @@ function createComponent () {
       ]
         .map(e =>
           [...e.classList].find(
-            cls => cls.startsWith('w-st') && cls !== 'w-stack'
+            cls => cls.startsWith('w-st')
           )
         )
         .filter(e => e != null)
@@ -559,7 +559,7 @@ function createComponent () {
           }
           childWb.ListClassName = [
             ...childClsList.filter(
-              cls => !cls.startsWith('w-st') || cls === 'w-stack'
+              cls => !cls.startsWith('w-st')
             ),
             childWbClassName
           ].join(' ')
@@ -567,7 +567,7 @@ function createComponent () {
           cssItem.Css += `/**/ .${wbClassName} .${childWbClassName} { ${
             childWb.value
               .closest(`.wbaseItem-value[level="${childWb.Level - 1}"]`)
-              .classList.contains('w-stack')
+              .classList.contains('w-block')
               ? childWbCssText.filter(e => !e.match(/order/g)).join(';')
               : childWbCssText
                   .filter(

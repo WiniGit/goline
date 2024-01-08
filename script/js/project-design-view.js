@@ -287,8 +287,8 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
       }
     }
 
-    if (pWbHTML === divSection || pWbHTML.classList.contains('w-stack')) {
-      if (pWbHTML.classList.contains('w-stack')) {
+    if (pWbHTML === divSection || pWbHTML.classList.contains('w-block')) {
+      if (pWbHTML.classList.contains('w-block')) {
         let pRect = pWbHTML.getBoundingClientRect()
         new_obj.Css += `left: ${x - offsetScale(pRect.x, 0).x}px;top: ${
           y - offsetScale(0, pRect.y).y
@@ -879,7 +879,8 @@ function dragWbaseEnd () {
       var component = newPWbHTML.closest(
         `.wbaseItem-value[iswini]:not(.w-variant)`
       )
-      var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === component.id)
+      if (component)
+        var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === component.id)
     }
     //
     if (drag_start_list[0].ParentID !== new_parentID) {
@@ -1002,7 +1003,7 @@ function dragWbaseEnd () {
             wb.value.removeAttribute('height-type')
           updateConstraints(wb.value)
         })
-      } else if (newPWbHTML.classList.contains('w-stack')) {
+      } else if (newPWbHTML.classList.contains('w-block')) {
         selected_list.forEach(wb => {
           if (wb.value.getAttribute('width-type') === 'fill')
             wb.value.removeAttribute('width-type')
@@ -1057,7 +1058,7 @@ function dragWbaseEnd () {
         wb.value.setAttribute('consty', Constraints.top)
         updateConstraints(wb.value)
       })
-    } else if (newPWbHTML.classList.contains('w-stack')) {
+    } else if (newPWbHTML.classList.contains('w-block')) {
       selected_list.forEach(wb => updateConstraints(wb.value))
     }
     WBaseDA.listData.push(
@@ -1094,8 +1095,8 @@ function dragWbaseEnd () {
           wb.value.style.order = null
         }
         if (component) {
-          const stClassName = [...wb.value.classList].find(
-            cls => cls.startsWith('w-st') && cls !== 'w-stack'
+          const stClassName = [...wb.value.classList].find(cls =>
+            cls.startsWith('w-st')
           )
           if (stClassName) {
             StyleDA.docStyleSheets.find(rule => {
@@ -1148,11 +1149,7 @@ function dragWbaseEnd () {
             let existNameList = [
               ...component.querySelectorAll(`.wbaseItem-value`)
             ]
-              .map(e =>
-                [...e.classList].find(
-                  cls => cls.startsWith('w-st') && cls !== 'w-stack'
-                )
-              )
+              .map(e => [...e.classList].find(cls => cls.startsWith('w-st')))
               .filter(e => e != null && e.startsWith(newClassName))
             for (let i = 1; i < 100; i++) {
               if (existNameList.every(vl => vl !== `${newClassName}${i}`)) {
@@ -1161,7 +1158,7 @@ function dragWbaseEnd () {
               }
             }
             let cssText = wb.value.style.cssText.split(';').map(vl => vl.trim())
-            let cssTextValue = newPWbHTML.classList.contains('w-stack')
+            let cssTextValue = newPWbHTML.classList.contains('w-block')
               ? cssText.filter(e => !e.match(/order/g)).join(';')
               : cssText
                   .filter(
@@ -1191,7 +1188,7 @@ function dragWbaseEnd () {
           oldPWb?.value?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)
         ) {
           wb.value.className = [...wb.value.classList]
-            .filter(cls => cls === 'w-stack' || !cls.startsWith('w-st'))
+            .filter(cls => !cls.startsWith('w-st'))
             .join(' ')
         }
         wb.Css = wb.value.style.cssText
@@ -1236,7 +1233,21 @@ function dragAltUpdate (xp, yp, event) {
   console.log('drag alt update')
   let newPWbHTML = parent
   let new_parentID = newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
+  if (
+    select_box_parentID !== wbase_parentID &&
+    select_box_parentID !== new_parentID
+  ) {
+    document.getElementById(select_box_parentID).removeAttribute('onsort')
+  }
   if (alt_list.length == 0) {
+    const component = selected_list[0].value.closest(
+      `.wbaseItem-value:is(*[iswini], *[isinstance]):not(*[level="${selected_list[0].Level}"], .w-variant)`
+    )
+    if (component) {
+      var componentCls = [...component.classList].find(e =>
+        e.startsWith('w-st0')
+      )
+    }
     for (let wb of selected_list) {
       let alt_wbase = JSON.parse(JSON.stringify(wb))
       alt_wbase.GID = uuidv4()
@@ -1259,8 +1270,34 @@ function dragAltUpdate (xp, yp, event) {
         tmp.style.height = wb.value.offsetHeight + 'px'
         tmp.style.flex = null
       }
+      if (componentCls) {
+        const removeClsList = [tmp, ...tmp.querySelectorAll(`.wbaseItem-value`)]
+        removeClsList.forEach(e => {
+          if (e === tmp) {
+            tmp.id = alt_wbase.GID
+          } else {
+            e.setAttribute('copyid', e.id)
+            e.id = uuidv4()
+            e.setAttribute(
+              'parentid',
+              e.closest(
+                `.wbaseItem-value[level="${
+                  parseInt(e.getAttribute('level')) - 1
+                }"]`
+              )
+            )
+          }
+          const eCls = [...e.classList].find(cls => cls.startsWith('w-st'))
+          if (eCls) {
+            const cssRule = StyleDA.docStyleSheets.find(rule =>
+              rule.selectorText.endsWith(eCls)
+            )
+            e.style.cssText = cssRule.style.cssText + e.style.cssText
+            e.classList.remove(eCls)
+          }
+        })
+      }
       tmpAltHTML.push(tmp)
-      tmp.id = alt_wbase.GID
       alt_wbase.value = tmp
       alt_list.push(alt_wbase)
     }
@@ -1301,6 +1338,7 @@ function dragAltUpdate (xp, yp, event) {
     window.getComputedStyle(newPWbHTML).display.match('flex') &&
     alt_list.some(e => !e.value.classList.contains('fixed-position'))
   ) {
+    newPWbHTML.setAttribute('onsort', 'true')
     console.log('flex')
     let children = [
       ...newPWbHTML.querySelectorAll(
@@ -1467,16 +1505,21 @@ function dragAltUpdate (xp, yp, event) {
 }
 
 function dragAltEnd () {
+  debugger
   WBaseDA.listData = []
   console.log('dragend alt')
   if (drag_start_list.length > 0 && alt_list.length > 0) {
+    const component = selected_list[0].value.closest(
+      `.wbaseItem-value:is(*[iswini], *[isinstance]):not(*[level="${selected_list[0].Level}"], .w-variant)`
+    )
     let newPWbHTML = parent
     let new_parentID =
       newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
-    let pWb =
-      new_parentID !== wbase_parentID
-        ? wbase_list.find(e => e.GID === new_parentID)
-        : null
+    if (new_parentID !== wbase_parentID) {
+      var pWb = wbase_list.find(e => e.GID === new_parentID)
+      if (pWb.IsWini)
+        var cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWb.GID)
+    }
     let demo = document.getElementById('demo_auto_layout')
     if (demo) {
       demo.replaceWith(
@@ -1493,6 +1536,15 @@ function dragAltEnd () {
           wb.Level = pWb.Level + 1
           wb.value.setAttribute('level', wb.Level)
           wb.ParentID = new_parentID
+          wb.value.querySelectorAll('.wbaseItem-value').forEach(e => {
+            e.setAttribute(
+              'level',
+              parseInt(e.getAttribute('level')) -
+                wb.Level +
+                parseInt(newPWbHTML.getAttribute('level') ?? '0') +
+                1
+            )
+          })
           return wb.value
         })
       )
@@ -1502,52 +1554,142 @@ function dragAltEnd () {
         wb.value.setAttribute('consty', Constraints.top)
         updateConstraints(wb.value)
       })
-    } else if (newPWbHTML.classList.contains('w-stack')) {
+    } else if (newPWbHTML.classList.contains('w-block')) {
       alt_list.forEach(wb => updateConstraints(wb.value))
     }
     if (pWb) WBaseDA.listData.push(pWb)
-    WBaseDA.listData.push(
-      ...alt_list.map(wb => {
-        if (wb.value.getAttribute('width-type') === 'fill') {
-          if (
-            wb.value.closest(
-              `.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`
-            )
-          ) {
-            wb.value.style.width = '100%'
-            wb.value.style.flex = 1
-          } else {
-            wb.value.style.width = wb.value.offsetWidth + 'px'
-            wb.value.removeAttribute('width-type')
-          }
+    alt_list.forEach(wb => {
+      if (wb.value.getAttribute('width-type') === 'fill') {
+        if (
+          wb.value.closest(
+            `.w-row[level="${wb.Level - 1}"]:not(*[width-type="fit"])`
+          )
+        ) {
+          wb.value.style.width = '100%'
+          wb.value.style.flex = 1
+        } else {
+          wb.value.style.width = wb.value.offsetWidth + 'px'
+          wb.value.removeAttribute('width-type')
         }
-        if (wb.value.getAttribute('height-type') === 'fill') {
-          if (
-            wb.value.closest(
-              `.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`
-            )
-          ) {
-            wb.value.style.height = '100%'
-            wb.value.style.flex = 1
-          } else {
-            wb.value.style.height = wb.value.offsetHeight + 'px'
-            wb.value.removeAttribute('height-type')
-          }
+      }
+      if (wb.value.getAttribute('height-type') === 'fill') {
+        if (
+          wb.value.closest(
+            `.w-col[level="${wb.Level - 1}"]:not(*[height-type="fit"]`
+          )
+        ) {
+          wb.value.style.height = '100%'
+          wb.value.style.flex = 1
+        } else {
+          wb.value.style.height = wb.value.offsetHeight + 'px'
+          wb.value.removeAttribute('height-type')
         }
-        wb.Css = wb.value.style.cssText
-        wb.ListClassName = wb.value.className
-        return wb
-      })
-    )
-    WBaseDA.copy(WBaseDA.listData)
-    replaceAllLyerItemHTML()
+      }
+      wb.Css = wb.value.style.cssText
+      wb.ListClassName = wb.value.className
+      if (component) {
+        wb.AttributeID = uuidv4()
+        wbase_list.forEach(e => {
+          if (e.GID === wb.ChildID) {
+            wb.AttributesItem = {
+              ...e.AttributesItem,
+              GID: wb.AttributeID
+            }
+            delete wb.ChildID
+            delete wb.IsCopy
+            var check = true
+          } else if (
+            selected_list.some(eSelect => eSelect.value.contains(e.value))
+          ) {
+            let cWbHTML = wb.value.querySelector(
+              `.wbaseItem-value[copyid="${e.GID}"]`
+            )
+            var newWb = JSON.parse(JSON.stringify(e))
+            newWb.GID = cWbHTML.id
+            newWb.ParentID = cWbHTML.getAttribute('parentid')
+            newWb.AttributeID = uuidv4()
+            newWb.AttributesItem.GID = newWb.AttributeID
+            newWb.Css = cWbHTML.style.cssText
+            newWb.ListClassName = cWbHTML.className
+            newWb.Level = parseInt(cWbHTML.getAttribute('level'))
+            newWb.value = cWbHTML
+            delete newWb.ChildID
+            WBaseDA.listData.push(newWb)
+            check = true
+          }
+          if (check && cssItem) {
+            newWb ??= wb
+            const componentClsName = [...newPWbHTML.classList].find(cls =>
+              cls.startsWith('w-st0')
+            )
+            let newClassName =
+              `w-st${newWb.Level - pWb.Level}-` +
+              Ultis.toSlug(newWb.Name.toLowerCase().trim())
+            let existNameList = [
+              ...newPWbHTML.querySelectorAll(`.wbaseItem-value`)
+            ]
+              .map(e => [...e.classList].find(cls => cls.startsWith('w-st')))
+              .filter(e => e != null && e.startsWith(newClassName))
+            for (let i = 1; i < 100; i++) {
+              if (existNameList.every(vl => vl !== `${newClassName}${i}`)) {
+                newClassName = newClassName + `${i}`
+                break
+              }
+            }
+            let cssText = newWb.value.style.cssText
+              .split(';')
+              .map(vl => vl.trim())
+            let cssTextValue = newPWbHTML.classList.contains('w-block')
+              ? cssText.filter(e => !e.match(/order/g)).join(';')
+              : cssText
+                  .filter(
+                    e =>
+                      !e.match(
+                        /(z-index|left|top|bottom|right|transform|--gutter)/g
+                      )
+                  )
+                  .join(';')
+            const clsRegex = new RegExp(
+              `.${componentClsName} .${newClassName} {[^}]*}`,
+              'g'
+            )
+            if (cssItem.Css.match(clsRegex)) {
+              cssItem.Css = cssItem.Css.replace(
+                clsRegex,
+                `.${componentClsName} .${newClassName} { ${cssTextValue} }`
+              )
+            } else {
+              cssItem.Css += `/**/ .${componentClsName} .${newClassName} { ${cssTextValue} }`
+            }
+            newWb.value.classList.add(newClassName)
+            newWb.value.removeAttribute('style')
+          }
+        })
+      }
+      if (newPWbHTML.closest(`.wbaseItem-value[iswini]`)) wb.IsCopy = true
+    })
+    WBaseDA.listData.push(...alt_list)
+    if (cssItem) {
+      StyleDA.editStyleSheet(cssItem)
+      document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
+    }
+    if (component) {
+      wbase_list.push(...WBaseDA.listData.filter(e => e !== pWb))
+      arrange()
+      WBaseDA.add(WBaseDA.listData)
+      replaceAllLyerItemHTML()
+    } else {
+      WBaseDA.copy(WBaseDA.listData)
+      tmpAltHTML.forEach(tmp => tmp.setAttribute('loading', 'true'))
+    }
+    newPWbHTML.removeAttribute('onsort')
     parent = divSection
     // handleWbSelectedList(alt_list)
-    tmpAltHTML.forEach(tmp => tmp.setAttribute('loading', 'true'))
     // action_list[action_index].tmpHTML = [...tmpAltHTML]
     // tmpAltHTML = []
     drag_start_list = []
     alt_list = []
+    WBaseDA.listData = []
   }
 }
 
@@ -1575,11 +1717,7 @@ function handleCompleteAddWbase () {
       `w-st${wb.Level - parseInt(component.getAttribute('level'))}-` +
       Ultis.toSlug(wb.Name.toLowerCase().trim())
     let existNameList = [...component.querySelectorAll(`.wbaseItem-value`)]
-      .map(e =>
-        [...e.classList].find(
-          cls => cls.startsWith('w-st') && cls !== 'w-stack'
-        )
-      )
+      .map(e => [...e.classList].find(cls => cls.startsWith('w-st')))
       .filter(e => e != null && e.startsWith(newClassName))
     for (let i = 1; i < 100; i++) {
       if (existNameList.every(vl => vl !== `${newClassName}${i}`)) {
@@ -1591,7 +1729,7 @@ function handleCompleteAddWbase () {
     let cssText = wb.value.style.cssText.split(';').map(vl => vl.trim())
     let cssTextValue = wb.value
       .closest(`.wbaseItem-value[level="${wb.Level - 1}"]`)
-      .classList.contains('w-stack')
+      .classList.contains('w-block')
       ? cssText.filter(e => !e.match(/order/g)).join(';')
       : cssText
           .filter(

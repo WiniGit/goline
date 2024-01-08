@@ -20,15 +20,15 @@
   background-position: center;
 }
 
-.wbaseItem-value.w-stack > * {
+.wbaseItem-value.w-block > * {
   position: absolute !important;
 }
 
-/* .wbaseItem-value.w-stack > .wbaseItem-value:is(*[constx="left_right"], *[constx="scale"]) {
+/* .wbaseItem-value.w-block > .wbaseItem-value:is(*[constx="left_right"], *[constx="scale"]) {
   width: auto !important;
 }
 
-.wbaseItem-value.w-stack > .wbaseItem-value:is(*[consty="top_bottom"], *[consty="scale"]) {
+.wbaseItem-value.w-block > .wbaseItem-value:is(*[consty="top_bottom"], *[consty="scale"]) {
   height: auto !important;
 } */
 

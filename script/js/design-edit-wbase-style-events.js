@@ -1,7 +1,7 @@
 function handleEditAlign (newValue) {
   let is_edit_children = selected_list.every(
     wb =>
-      (wb.value.classList.contains('w-stack') ||
+      (wb.value.classList.contains('w-block') ||
         wb.value.querySelector(':scope > .fixed-position')) &&
       (selected_list.length === 1 ||
         window.getComputedStyle(wb.value).position !== 'absolute')
@@ -1390,7 +1390,7 @@ function handleEditOffset ({
       e =>
         !(
           [...e.value.classList].some(
-            cls => cls !== 'w-stack' && cls.startsWith('w-st')
+            cls => cls.startsWith('w-st')
           ) &&
           e.value.closest(
             `.wbaseItem-value[isinstance]:not(*[level="${e.Level}"])`
@@ -1606,7 +1606,7 @@ function handleEditOffset ({
       e =>
         !(
           [...e.value.classList].some(
-            cls => cls !== 'w-stack' && cls.startsWith('w-st')
+            cls => cls.startsWith('w-st')
           ) &&
           e.value.closest(
             `.wbaseItem-value[isinstance]:not(*[level="${e.Level}"])`
@@ -1773,7 +1773,7 @@ function handleEditOffset ({
       e =>
         !(
           [...e.value.classList].some(
-            cls => cls !== 'w-stack' && cls.startsWith('w-st')
+            cls => cls.startsWith('w-st')
           ) &&
           e.value.closest(
             `.wbaseItem-value[isinstance]:not(*[level="${e.Level}"])`
@@ -6087,7 +6087,7 @@ function addAutoLayout () {
       wb.value.setAttribute('height-type', 'fit')
     }
     $(wb.value).addClass(select_box.w > select_box.h ? 'w-row' : 'w-col')
-    $(wb.value).removeClass('w-stack')
+    $(wb.value).removeClass('w-block')
     wb.value.style.setProperty('--child-space', `8px`)
     wb.value.style.setProperty('--run-space', `0px`)
     wb.value.style.justifyContent = 'center'
@@ -6893,7 +6893,7 @@ function removeLayout () {
     wb.value.style.removeProperty('--padding')
     $(wb.value).removeClass('w-row')
     $(wb.value).removeClass('w-col')
-    $(wb.value).addClass('w-stack')
+    $(wb.value).addClass('w-block')
     wb.ListClassName = wb.value.className
     wb.Css = wb.value.style.cssText
   }

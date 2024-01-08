@@ -146,9 +146,7 @@ function updateUIDesignView () {
   if (
     selected_list.some(
       wb =>
-        [...wb.value.classList].some(
-          cls => cls !== 'w-stack' && cls.startsWith('w-st')
-        ) &&
+        [...wb.value.classList].some(cls => cls.startsWith('w-st')) &&
         wb.value.closest(
           `.wbaseItem-value[isinstance]:not(*[level="${wb.Level}"])`
         )
@@ -221,7 +219,7 @@ function EditAlignBlock () {
     wb =>
       ((selected_list.length > 1 || wb.Level > 1) &&
         window.getComputedStyle(wb.value).position === 'absolute') ||
-      wb.value.classList.contains('w-stack') ||
+      wb.value.classList.contains('w-block') ||
       wb.value.querySelector(':scope > .fixed-position')
   )
   editAlignContainer.setAttribute('enable', isEnable)
@@ -734,16 +732,8 @@ function EditLayoutBlock () {
   editContainer.id = 'edit_auto_layout_div'
   editContainer.className = 'edit-container'
   let header = document.createElement('div')
-  header.className = `ds-block-header ${
-    wbList.some(
-      wb =>
-        wb.IsInstance ||
-        (!wb.value.classList.contains('w-variant') &&
-          wb.value.closest('.wbaseItem-value[iswini]'))
-    )
-      ? 'disable'
-      : ''
-  }`
+  header.id = 'edit-layout-header'
+  header.className = `ds-block-header`
   header.innerHTML = `<p>${
     isEditTable ? 'Table layout' : 'Auto layout'
   }</p><i class="fa-solid fa-minus fa-sm"></i><i class="fa-solid fa-plus fa-sm"></i>`
@@ -752,6 +742,12 @@ function EditLayoutBlock () {
     window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
   )
   if (showDetails) {
+    if (
+      selected_list.some(wb =>
+        wb.value.closest('.wbaseItem-value[iswini]:not(.w-variant)')
+      )
+    )
+      header.classList.add('disable')
     header.querySelector('.fa-plus').remove()
     let body = document.createElement('div')
     editContainer.appendChild(body)
@@ -1100,11 +1096,18 @@ function EditLayoutBlock () {
     }
   } else {
     header.querySelector('.fa-minus').remove()
-    header.id = 'edit-layout-header'
-    $(header).on('click', '.fa-plus', function () {
-      addAutoLayout()
-      reloadEditLayoutBlock()
-    })
+    if (
+      selected_list.every(wb =>
+        wb.value.closest('.wbaseItem-value[iswini]:not(.w-variant)')
+      )
+    ) {
+      header.classList.add('disable')
+    } else {
+      $(header).on('click', '.fa-plus', function () {
+        addAutoLayout()
+        reloadEditLayoutBlock()
+      })
+    }
   }
   return editContainer
 }
