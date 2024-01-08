@@ -1618,8 +1618,9 @@ function dragAltEnd () {
               cls.startsWith('w-st0')
             )
             let newClassName =
-              `w-st${newWb.Level - pWb.Level}-` +
-              Ultis.toSlug(newWb.Name.toLowerCase().trim())
+              `w-st${
+                newWb.Level - parseInt(newComponent.getAttribute('level'))
+              }-` + Ultis.toSlug(newWb.Name.toLowerCase().trim())
             let existNameList = [
               ...newComponent.querySelectorAll(`.wbaseItem-value`)
             ]
