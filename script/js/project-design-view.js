@@ -1022,23 +1022,20 @@ function dragWbaseEnd () {
       }
       eEvent = EnumEvent.parent
       if (component) {
-        wbase_list.filter(e => {
-          if (
-            e.ParentID === new_parentID &&
-            selected_list.every(wb => wb !== e)
-          ) {
-            let eRule = StyleDA.docStyleSheets.find(rule =>
-              [...divSection.querySelectorAll(rule.selectorText)].includes(
-                e.value
+        pWb.value
+          .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
+          .forEach(e => {
+            if (selected_list.every(wb => wb.value !== e)) {
+              let eRule = StyleDA.docStyleSheets.find(rule =>
+                [...divSection.querySelectorAll(rule.selectorText)].includes(e)
               )
-            )
-            eRule.style.order = $(e.value).index()
-            cssItem.Css = cssItem.Css.replace(
-              new RegExp(`${eRule.selectorText} {[^}]*}`, 'g'),
-              eRule.cssText
-            )
-          }
-        })
+              eRule.style.order = $(e).index()
+              cssItem.Css = cssItem.Css.replace(
+                new RegExp(`${eRule.selectorText} {[^}]*}`, 'g'),
+                eRule.cssText
+              )
+            }
+          })
       } else {
         wbase_list.filter(e => {
           if (
@@ -1668,14 +1665,42 @@ function dragAltEnd () {
       if (newPWbHTML.closest(`.wbaseItem-value[iswini]`)) wb.IsCopy = true
     })
     WBaseDA.listData.push(...alt_list)
+    if (component) {
+      wbase_list.push(...WBaseDA.listData.filter(e => e !== pWb))
+      arrange()
+    }
     if (cssItem) {
+      newPWbHTML
+        .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
+        .forEach(e => {
+          if (alt_list.every(wb => wb.value !== e)) {
+            let eRule = StyleDA.docStyleSheets.find(rule =>
+              [...divSection.querySelectorAll(rule.selectorText)].includes(e)
+            )
+            eRule.style.order = $(e).index()
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${eRule.selectorText} {[^}]*}`, 'g'),
+              eRule.cssText
+            )
+          }
+        })
       StyleDA.editStyleSheet(cssItem)
       document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
+    } else {
+      wbase_list.filter(e => {
+        if (
+          e.ParentID === new_parentID &&
+          e.value.style.order != $(e.value).index()
+        ) {
+          e.value.style.order = $(e.value).index()
+          e.Css = e.value.style.cssText
+        }
+      })
     }
     if (component) {
       wbase_list.push(...WBaseDA.listData.filter(e => e !== pWb))
       arrange()
-      WBaseDA.add({listWb: WBaseDA.listData, parentid: new_parentID})
+      WBaseDA.add({ listWb: WBaseDA.listData, parentid: new_parentID })
       replaceAllLyerItemHTML()
     } else {
       WBaseDA.copy(WBaseDA.listData)
