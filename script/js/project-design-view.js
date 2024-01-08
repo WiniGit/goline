@@ -1510,7 +1510,7 @@ function dragAltEnd () {
       newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
     if (new_parentID !== wbase_parentID) {
       var pWb = wbase_list.find(e => e.GID === new_parentID)
-      const newComponent = pWb.value.closest('.wbaseItem-value[iswini]')
+      var newComponent = pWb.value.closest('.wbaseItem-value[iswini]')
       if (newComponent)
         var cssItem = StyleDA.cssStyleSheets.find(
           e => e.GID === newComponent.id
@@ -1555,6 +1555,7 @@ function dragAltEnd () {
     }
     if (pWb) WBaseDA.listData.push(pWb)
     alt_list.forEach(wb => {
+      if (demo) wb.value.style.order = $(wb.value).index()
       if (wb.value.getAttribute('width-type') === 'fill') {
         if (
           wb.value.closest(
@@ -1615,14 +1616,14 @@ function dragAltEnd () {
           }
           if (check && cssItem) {
             newWb ??= wb
-            const componentClsName = [...newPWbHTML.classList].find(cls =>
+            const componentClsName = [...newComponent.classList].find(cls =>
               cls.startsWith('w-st0')
             )
             let newClassName =
               `w-st${newWb.Level - pWb.Level}-` +
               Ultis.toSlug(newWb.Name.toLowerCase().trim())
             let existNameList = [
-              ...newPWbHTML.querySelectorAll(`.wbaseItem-value`)
+              ...newComponent.querySelectorAll(`.wbaseItem-value`)
             ]
               .map(e => [...e.classList].find(cls => cls.startsWith('w-st')))
               .filter(e => e != null && e.startsWith(newClassName))
@@ -1662,7 +1663,6 @@ function dragAltEnd () {
           }
         })
       }
-      if (newPWbHTML.closest(`.wbaseItem-value[iswini]`)) wb.IsCopy = true
     })
     WBaseDA.listData.push(...alt_list)
     if (component) {
@@ -1670,19 +1670,20 @@ function dragAltEnd () {
       arrange()
     }
     if (cssItem) {
+      wb.IsCopy = true
       newPWbHTML
         .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
         .forEach(e => {
-          if (alt_list.every(wb => wb.value !== e)) {
-            let eRule = StyleDA.docStyleSheets.find(rule =>
-              [...divSection.querySelectorAll(rule.selectorText)].includes(e)
+          let eRule = StyleDA.docStyleSheets.find(rule =>
+            rule.selectorText.endsWith(
+              [...e.classList].find(cls => cls.startsWith('w-st'))
             )
-            eRule.style.order = $(e).index()
-            cssItem.Css = cssItem.Css.replace(
-              new RegExp(`${eRule.selectorText} {[^}]*}`, 'g'),
-              eRule.cssText
-            )
-          }
+          )
+          eRule.style.order = $(e).index()
+          cssItem.Css = cssItem.Css.replace(
+            new RegExp(`${eRule.selectorText} {[^}]*}`, 'g'),
+            eRule.cssText
+          )
         })
       StyleDA.editStyleSheet(cssItem)
       document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
