@@ -418,9 +418,6 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
             WBaseDA.listData.push(e)
           }
         })
-      pWbHTML
-        .querySelectorAll(`.wbaseItem-value[level="${new_obj.Level}"]`)
-        .forEach()
     }
     new_obj.value.style.cssText = new_obj.Css
     wbase_list.push(new_obj)
