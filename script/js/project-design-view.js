@@ -1671,33 +1671,36 @@ function dragAltEnd () {
       wbase_list.push(...WBaseDA.listData.filter(e => e !== pWb))
       arrange()
     }
-    if (cssItem) {
-      newPWbHTML
-        .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
-        .forEach(e => {
-          let eRule = StyleDA.docStyleSheets.find(rule =>
-            rule.selectorText.endsWith(
-              [...e.classList].find(cls => cls.startsWith('w-st'))
+    if (demo) {
+      if (cssItem) {
+        newPWbHTML
+          .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
+          .forEach(e => {
+            let eRule = StyleDA.docStyleSheets.find(rule =>
+              rule.selectorText.endsWith(
+                [...e.classList].find(cls => cls.startsWith('w-st'))
+              )
             )
-          )
-          eRule.style.order = $(e).index()
-          cssItem.Css = cssItem.Css.replace(
-            new RegExp(`${eRule.selectorText} {[^}]*}`, 'g'),
-            eRule.cssText
-          )
+            eRule.style.order = $(e).index()
+            cssItem.Css = cssItem.Css.replace(
+              new RegExp(`${eRule.selectorText} {[^}]*}`, 'g'),
+              eRule.cssText
+            )
+          })
+        StyleDA.editStyleSheet(cssItem)
+        document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML =
+          cssItem.Css
+      } else {
+        wbase_list.filter(e => {
+          if (
+            e.ParentID === new_parentID &&
+            e.value.style.order != $(e.value).index()
+          ) {
+            e.value.style.order = $(e.value).index()
+            e.Css = e.value.style.cssText
+          }
         })
-      StyleDA.editStyleSheet(cssItem)
-      document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
-    } else {
-      wbase_list.filter(e => {
-        if (
-          e.ParentID === new_parentID &&
-          e.value.style.order != $(e.value).index()
-        ) {
-          e.value.style.order = $(e.value).index()
-          e.Css = e.value.style.cssText
-        }
-      })
+      }
     }
     if (component) {
       wbase_list.push(...WBaseDA.listData.filter(e => e !== pWb))
