@@ -620,6 +620,7 @@ function selectParent (event) {
           '0'
       ) + 1
     if (checkpad === 0) {
+      const disabledInstance = selected_list.some(e => e.IsWini)
       const component = selected_list[0].value.closest(
         `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
       )
@@ -632,7 +633,7 @@ function selectParent (event) {
             )
               ? ',.w-variant'
               : ''
-          })`
+          })${disabledInstance ? ':not(*[isinstance], *[isinstance] *)' : ''}`
         )
       )
       if (component) {
