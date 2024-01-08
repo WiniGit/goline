@@ -1582,8 +1582,6 @@ function dragAltEnd () {
           wb.value.removeAttribute('height-type')
         }
       }
-      wb.Css = wb.value.style.cssText
-      wb.ListClassName = wb.value.className
       if (component) {
         wb.AttributeID = uuidv4()
         wbase_list.forEach(e => {
@@ -1663,6 +1661,9 @@ function dragAltEnd () {
           }
         })
       }
+      wb.Css = wb.value.style.cssText
+      if (!wb.Css.length) wb.Css = null
+      wb.ListClassName = wb.value.className
     })
     WBaseDA.listData.push(...alt_list)
     if (component) {
