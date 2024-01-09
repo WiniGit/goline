@@ -229,6 +229,16 @@ function setAttributeByStyle (wbHTML, cssRule) {
           wbHTML.setAttribute('scroll', 'true')
         }
         break
+      case 'position':
+        const levelAttr = `[level="${
+          parseInt(wbHTML.getAttribute('level')) - 1
+        }"]`
+        if (
+          cssRule[stProp] === 'absolute' &&
+          wbHTML.closest(`.w-row${levelAttr}, .w-col${levelAttr}`)
+        )
+          wbHTML.classList.add('fixed-position')
+        break
       default:
         break
     }
