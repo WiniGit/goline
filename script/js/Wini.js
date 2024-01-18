@@ -58,7 +58,7 @@ document.onpaste = function (e) {
 
 let keyTimeStamp = 0
 
-function keyUpEvent (event) {
+function keyUpEvent(event) {
   console.log('keyup:', keyid, event.key)
   isKeyUp = true
   if (
@@ -241,7 +241,7 @@ document.ondrop = function (e) {
   dropFile(e)
 }
 
-function dropFile (event) {
+function dropFile(event) {
   let fileList = []
   for (let fileItem of event.dataTransfer.files) {
     if (FileDA.acceptFileTypes.some(type => type == fileItem.type)) {
@@ -339,7 +339,7 @@ scrollLeft.style.backgroundColor = 'red'
 divMain.appendChild(scrollLeft)
 var idscroll = ''
 
-function initScroll (listp) {
+function initScroll(listp) {
   if (listp.length > 0) {
     var psition = listp.map(m => m.PositionItem)
     var psitionw = listp.map(
@@ -384,7 +384,7 @@ function initScroll (listp) {
   }
 }
 
-function positionScrollLeft () {
+function positionScrollLeft() {
   if (-leftx / scale <= objscroll.xo) objscroll.x = -leftx / scale
   else objscroll.x = objscroll.xo
   if (-leftx / scale >= objscroll.xo1) objscroll.x1 = -leftx / scale
@@ -401,7 +401,7 @@ function positionScrollLeft () {
     ) + 'px'
 }
 
-function positionScrollTop () {
+function positionScrollTop() {
   if (-topx / scale <= objscroll.yo) objscroll.y = -topx / scale
   else objscroll.y = objscroll.yo
   if (-topx / scale >= objscroll.yo1) objscroll.y1 = -topx / scale
@@ -418,7 +418,7 @@ function positionScrollTop () {
     ) + 'px'
 }
 
-function selectBox (list_wbase_item) {
+function selectBox(list_wbase_item) {
   if (list_wbase_item.length > 0) {
     var selectHTML = list_wbase_item.map(e =>
       (document.getElementById(e.GID) ?? e.value).getBoundingClientRect()
@@ -471,7 +471,7 @@ function selectBox (list_wbase_item) {
   return undefined
 }
 
-function updateHoverWbase (wb, onAlt) {
+function updateHoverWbase(wb, onAlt) {
   let isOnchange = hover_wbase !== wb
   if (isOnchange) {
     if (wb) {
@@ -484,28 +484,28 @@ function updateHoverWbase (wb, onAlt) {
             o: hover_box.o1,
             kc: Math.sqrt(
               (obj1.o5.x - hover_box.o1.x) * (obj1.o5.x - hover_box.o1.x) +
-                (obj1.o5.y - hover_box.o1.y) * (obj1.o5.y - hover_box.o1.y)
+              (obj1.o5.y - hover_box.o1.y) * (obj1.o5.y - hover_box.o1.y)
             )
           },
           {
             o: hover_box.o3,
             kc: Math.sqrt(
               (obj1.o5.x - hover_box.o3.x) * (obj1.o5.x - hover_box.o3.x) +
-                (obj1.o5.y - hover_box.o3.y) * (obj1.o5.y - hover_box.o3.y)
+              (obj1.o5.y - hover_box.o3.y) * (obj1.o5.y - hover_box.o3.y)
             )
           },
           {
             o: hover_box.o7,
             kc: Math.sqrt(
               (obj1.o5.x - hover_box.o7.x) * (obj1.o5.x - hover_box.o7.x) +
-                (obj1.o5.y - hover_box.o7.y) * (obj1.o5.y - hover_box.o7.y)
+              (obj1.o5.y - hover_box.o7.y) * (obj1.o5.y - hover_box.o7.y)
             )
           },
           {
             o: hover_box.o9,
             kc: Math.sqrt(
               (obj1.o5.x - hover_box.o9.x) * (obj1.o5.x - hover_box.o9.x) +
-                (obj1.o5.y - hover_box.o9.y) * (obj1.o5.y - hover_box.o9.y)
+              (obj1.o5.y - hover_box.o9.y) * (obj1.o5.y - hover_box.o9.y)
             )
           }
         ]
@@ -588,10 +588,10 @@ function updateHoverWbase (wb, onAlt) {
 }
 
 var toph = 0
-function offsetScale (x, y) {
+function offsetScale(x, y) {
   return { x: (x - leftx) / scale, y: (y - topx) / scale - toph }
 }
-function offsetConvertScale (x, y) {
+function offsetConvertScale(x, y) {
   return { x: x * scale + leftx, y: (y + toph) * scale + topx }
 }
 
@@ -601,7 +601,7 @@ var parent = divSection,
   offsetp = { x: 0, y: 0 },
   parent_offset1 = { x: 0, y: 0 }
 let listWbOnScreen = []
-function selectParent (event) {
+function selectParent(event) {
   parent = divSection
   if (
     selected_list[0].value.closest(`.wbaseItem-value[isinstance]`) &&
@@ -617,7 +617,7 @@ function selectParent (event) {
     let current_level =
       parseInt(
         document.getElementById(select_box_parentID)?.getAttribute('level') ??
-          '0'
+        '0'
       ) + 1
     if (checkpad === 0) {
       const disabledInstance = selected_list.some(e => e.IsWini)
@@ -627,12 +627,11 @@ function selectParent (event) {
       listWbOnScreen = []
       listWbOnScreen.push(
         ...divSection.querySelectorAll(
-          `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${
-            selected_list.every(
-              wb => wb.IsWini && !wb.value.classList.contains('w-variant')
-            )
-              ? ',.w-variant'
-              : ''
+          `.wbaseItem-value:is(.w-container, .w-textformfield, .w-button, .w-table ${selected_list.every(
+            wb => wb.IsWini && !wb.value.classList.contains('w-variant')
+          )
+            ? ',.w-variant'
+            : ''
           })${disabledInstance ? ':not(*[isinstance], *[isinstance] *)' : ''}`
         )
       )
@@ -683,10 +682,10 @@ function selectParent (event) {
       return (
         element_offset.x <= event.pageX / scale - leftx / scale &&
         element_offset.x + eHTML.offsetWidth >=
-          event.pageX / scale - leftx / scale &&
+        event.pageX / scale - leftx / scale &&
         element_offset.y <= event.pageY / scale - topx / scale &&
         element_offset.y + eHTML.offsetHeight >=
-          event.pageY / scale - topx / scale
+        event.pageY / scale - topx / scale
       )
     })
   }
@@ -706,9 +705,9 @@ function selectParent (event) {
         Math.abs(event.pageX / scale - leftx / scale - pRect.x) <= 3 ||
         Math.abs(
           element_offset.x +
-            parent.offsetWidth -
-            event.pageX / scale +
-            leftx / scale
+          parent.offsetWidth -
+          event.pageX / scale +
+          leftx / scale
         ) <= 3 ||
         Math.abs(event.pageY / scale - topx / scale - pRect.y) <= 3 ||
         Math.abs(
@@ -738,7 +737,7 @@ function selectParent (event) {
 }
 
 var clearAction = false
-function downListener (event) {
+function downListener(event) {
   if (
     !document.getElementById('wini_features') &&
     event.target.localName != 'input' &&
@@ -779,7 +778,7 @@ function downListener (event) {
   } else return
 }
 
-function scrollbdClick (x, y, w, h) {
+function scrollbdClick(x, y, w, h) {
   scale = Math.min(objscroll.w / w, objscroll.h / h)
   scale = scale * 0.8
   scale = Math.max(min_scale, Math.min(max_scale, scale))
@@ -789,7 +788,7 @@ function scrollbdClick (x, y, w, h) {
   paintCanvas(true)
 }
 
-function scrollScale (x, y) {
+function scrollScale(x, y) {
   if (topx != y) {
     topx = y
     divSection.style.top = topx + 'px'
@@ -810,7 +809,7 @@ var instance_drag
 var sortLayer
 var sortSkin
 var listCurve = []
-function centerViewInitListener () {
+function centerViewInitListener() {
   window.addEventListener('mousemove', moveListener)
   divMain.addEventListener('mousedown', function (event) {
     if (
@@ -909,7 +908,7 @@ function centerViewInitListener () {
   initObserver()
 }
 
-function initObserver () {
+function initObserver() {
   const childrenObserve = [
     divSection,
     ...divSection.querySelectorAll(':scope > .w-variant')
@@ -1011,7 +1010,7 @@ const childObserver = new MutationObserver(mutationList => {
 
 var lstc = []
 var dragTime = 0
-function moveListener (event) {
+function moveListener(event) {
   if (
     document.activeElement.closest('.w-text') ||
     (event.target.localName === 'input' && !event.target.readOnly)
@@ -1413,7 +1412,7 @@ function moveListener (event) {
   }
 }
 
-function handToolDrag (event) {
+function handToolDrag(event) {
   let dragX = 0
   let dragY = 0
   // skip the drag when the x position was not changed
@@ -1436,7 +1435,7 @@ function handToolDrag (event) {
   paintCanvas(false)
 }
 
-function scanSelectList (event) {
+function scanSelectList(event) {
   console.log('scan')
   var xm = Math.min(minx, event.pageX),
     ym = Math.min(miny, event.pageY),
@@ -1498,7 +1497,7 @@ function scanSelectList (event) {
   handleWbSelectedList(newListWBase)
 }
 
-function checkHoverElement (event) {
+function checkHoverElement(event) {
   let titleHover
   if (titleList.length > 0)
     titleHover = titleList.find(
@@ -1581,12 +1580,12 @@ function checkHoverElement (event) {
 
 var drag_prototype_endppoint
 
-function dragPrototypeLine (event) {
+function dragPrototypeLine(event) {
   drag_prototype_endppoint = { x: event.pageX, y: event.pageY }
   wdraw()
 }
 
-function isAroundPoint (off, event) {
+function isAroundPoint(off, event) {
   return (
     off &&
     event.pageX >= off.x - 6 &&
@@ -1596,14 +1595,9 @@ function isAroundPoint (off, event) {
   )
 }
 
-function checkResize (event) {
-  if (
-    selected_list.every(
-      e => window.getComputedStyle(e.value).pointerEvents !== 'none'
-    ) &&
-    !selected_list[0].value.closest(
-      `.wbaseItem-value[isinstance][level="${selected_list[0].Level - 1}"]`
-    )
+function checkResize(event) {
+  if (selected_list.every(e => window.getComputedStyle(e.value).pointerEvents !== 'none') &&
+    !selected_list[0].value.closest(`.wbaseItem-value[isinstance]:not(*[level="${selected_list[0].Level}"])`)
   ) {
     // top_left
     let select_box_o1 = select_box.o1
@@ -1676,19 +1670,16 @@ function checkResize (event) {
     } else {
       if (selected_list.length == 1 && design_view_index == 1) {
         let selectedPage = document.getElementById(selected_list[0].GID)
-        if (
-          selectedPage.id == event.target.id ||
-          selectedPage.contains(event.target)
-        ) {
+        if (selectedPage.id == event.target.id || selectedPage.contains(event.target)) {
           let listPoint = [topPoint, rightPoint, botPoint, leftPoint]
           listPoint.sort((a, b) => {
             let distanceA = Math.sqrt(
               (event.pageX - a.x) * (event.pageX - a.x) +
-                (event.pageY - a.y) * (event.pageY - a.y)
+              (event.pageY - a.y) * (event.pageY - a.y)
             )
             let distanceB = Math.sqrt(
               (event.pageX - b.x) * (event.pageX - b.x) +
-                (event.pageY - b.y) * (event.pageY - b.y)
+              (event.pageY - b.y) * (event.pageY - b.y)
             )
             return distanceA - distanceB
           })
@@ -1711,7 +1702,7 @@ var drawid = uuidv4(),
   wd = 0,
   hd = 0
 
-function uuidv4 () {
+function uuidv4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (
       c ^
@@ -1721,7 +1712,7 @@ function uuidv4 () {
 }
 
 var divtest_rectid = ''
-function eventdiv (event) {
+function eventdiv(event) {
   if (keyid == ' ') {
     var divre = document.getElementById(divtest_rectid)
     if (divre) {
@@ -1750,7 +1741,7 @@ let imgComSrc = `data:image/svg+xml;charset=utf-8,<svg width="12" height="12" vi
 imgCom.src = imgComSrc
 let drawIn = 0
 let listShowName = []
-function wdraw () {
+function wdraw() {
   // drawIn = performance.now();
   ctxr.clearRect(0, 0, width, height)
   // ctxr.lineWidth = 1;
@@ -1775,10 +1766,10 @@ function wdraw () {
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y))
     ctxr.strokeStyle =
       hover_wbase.IsWini ||
-      hover_wbase.IsInstance ||
-      $(hover_wbase.value).parents(
-        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`
-      ).length
+        hover_wbase.IsInstance ||
+        $(hover_wbase.value).parents(
+          `.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`
+        ).length
         ? '#7B61FF'
         : '#1890FF'
     ctxr.strokeRect(objse.x, objse.y, hover_box.w, hover_box.h)
@@ -1786,9 +1777,9 @@ function wdraw () {
     let parentRect = parent.getBoundingClientRect()
     ctxr.strokeStyle =
       parent.getAttribute('iswini') === 'true' ||
-      parent.getAttribute('isinstance') === 'true' ||
-      $(parent).parents(`.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`)
-        .length
+        parent.getAttribute('isinstance') === 'true' ||
+        $(parent).parents(`.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`)
+          .length
         ? '#7B61FF'
         : '#1890FF'
     ctxr.strokeRect(
@@ -1810,9 +1801,9 @@ function wdraw () {
     var objse = offsetConvertScale(Math.round(objset.x), Math.round(objset.y))
     ctxr.strokeStyle =
       selected_list.every(e => e.IsWini || e.IsInstance) ||
-      $(selected_list[0].value).parents(
-        `.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`
-      ).length
+        $(selected_list[0].value).parents(
+          `.wbaseItem-value[iswini],.wbaseItem-value[isinstance]`
+        ).length
         ? '#7B61FF'
         : '#1890FF'
     ctxr.strokeRect(objse.x, objse.y, select_box.w, select_box.h)
@@ -1962,7 +1953,7 @@ function wdraw () {
   listRect = []
 }
 
-function getPagePrototypePoint (page) {
+function getPagePrototypePoint(page) {
   let convert_position = page.getBoundingClientRect()
   return {
     o1: {
@@ -1984,7 +1975,7 @@ function getPagePrototypePoint (page) {
   }
 }
 
-function drawArrow (ctxr, startPoint, endPoint) {
+function drawArrow(ctxr, startPoint, endPoint) {
   var headlen = 10 * scale
   var dx = endPoint.x - (startPoint.x + (endPoint.x - startPoint.x) * 0.8)
   var dy = endPoint.y - startPoint.y
@@ -2027,7 +2018,7 @@ var controlPoint = 2
 var isHorizontal = true
 var direction
 // vẽ đường các đường nối trong màn hình prototype
-function drawCurvePrototype () {
+function drawCurvePrototype() {
   if (design_view_index == 1) {
     if (drag_prototype_endppoint && prototypePoint) {
       ctxr.beginPath()
@@ -2038,10 +2029,10 @@ function drawCurvePrototype () {
       // let controlPoint1 =
       ctxr.bezierCurveTo(
         prototypePoint.x +
-          (drag_prototype_endppoint.x - prototypePoint.x) * 0.5,
+        (drag_prototype_endppoint.x - prototypePoint.x) * 0.5,
         prototypePoint.y,
         prototypePoint.x +
-          (drag_prototype_endppoint.x - prototypePoint.x) * 0.5,
+        (drag_prototype_endppoint.x - prototypePoint.x) * 0.5,
         drag_prototype_endppoint.y,
         drag_prototype_endppoint.x,
         drag_prototype_endppoint.y
@@ -2175,55 +2166,55 @@ function drawCurvePrototype () {
 }
 
 //list = [{ gid: gid, x: x, y: y, x1: x1, y1: y1 }]
-function removeLines (list = []) {
+function removeLines(list = []) {
   if (list.length > 0) {
     listLine = listLine.filter(e => !list.some(m => m.gid == e.gid))
     wdraw()
   }
 }
 //list = [{ gid: gid, t: t, x: x, y: y }]
-function removeTexts (list = []) {
+function removeTexts(list = []) {
   if (list.length > 0) {
     listText = listText.filter(e => !list.some(m => m.gid == e.gid))
     wdraw()
   }
 }
 //list = [{ gid: gid, x: x, y: y, w: w, h: h }]
-function removeRests (list = []) {
+function removeRests(list = []) {
   if (list.length > 0) {
     listRect = listRect.filter(e => !list.some(m => m.gid == e.gid))
     wdraw()
   }
 }
-function removeAllRects () {
+function removeAllRects() {
   listRect = []
   wdraw()
 }
 //list = [{ gid: gid, x: x, y: y, w: w, h: h }]
-function removeRectHovers (list = []) {
+function removeRectHovers(list = []) {
   if (list.length > 0) {
     listRectHover = listRectHover.filter(e => !list.some(m => m.gid == e.gid))
     wdraw()
   }
 }
-function removeAllRectHovers () {
+function removeAllRectHovers() {
   listRectHover = []
   wdraw()
 }
-function removeAllRectselects () {
+function removeAllRectselects() {
   listRectSelect = []
   wdraw()
 }
-function removeAllLine () {
+function removeAllLine() {
   listLine = []
   wdraw()
 }
-function removeAllText () {
+function removeAllText() {
   listText = []
   wdraw()
 }
 
-function updateLines (list = []) {
+function updateLines(list = []) {
   if (list.length > 0) {
     listLine = listLine.filter(e => !list.some(m => m.gid == e.gid))
     listLine.push(...list)
@@ -2231,7 +2222,7 @@ function updateLines (list = []) {
   }
 }
 //list = [{ gid: gid, t: t, x: x, y: y }]
-function updateTexts (list = []) {
+function updateTexts(list = []) {
   if (list.length > 0) {
     listText = listText.filter(e => !list.some(m => m.gid == e.gid))
     listText.push(...list)
@@ -2239,7 +2230,7 @@ function updateTexts (list = []) {
   }
 }
 //list = [{ gid: gid, x: x, y: y, w: w, h: h }]
-function updateRects (list = []) {
+function updateRects(list = []) {
   if (list.length > 0) {
     listRect = listRect.filter(e => !list.some(m => m.gid == e.gid))
     listRect.push(...list)
@@ -2247,7 +2238,7 @@ function updateRects (list = []) {
   }
 }
 
-function updateRectHovers (list = []) {
+function updateRectHovers(list = []) {
   if (list.length > 0) {
     listRectHover = listRectHover.filter(e => !list.some(m => m.gid == e.gid))
     listRectHover.push(...list)
@@ -2255,7 +2246,7 @@ function updateRectHovers (list = []) {
   }
 }
 
-function updateRectSelects (list = []) {
+function updateRectSelects(list = []) {
   if (list.length > 0) {
     listRectSelect = listRectSelect.filter(e => !list.some(m => m.gid == e.gid))
     listRectSelect.push(...list)
@@ -2263,7 +2254,7 @@ function updateRectSelects (list = []) {
   }
 }
 
-function paintCanvas (check) {
+function paintCanvas(check) {
   wdraw()
   l = leftx / scale - Math.floor(leftx / scale)
   t = topx / scale - Math.floor(topx / scale)
@@ -2279,7 +2270,7 @@ function paintCanvas (check) {
   //
 }
 
-function painLine (l, t) {
+function painLine(l, t) {
   ctx.clearRect(0, 0, totalW, totalH)
   ctx.save()
   totalH = height + scale
@@ -2315,7 +2306,7 @@ function painLine (l, t) {
   ctx.restore()
 }
 
-function doubleClickEvent (event) {
+function doubleClickEvent(event) {
   console.log('doubleClickEvent ' + checkpad)
   is_dbclick = true
   if (tool_state === ToolState.move) {
@@ -2413,7 +2404,7 @@ function doubleClickEvent (event) {
   }
 }
 
-function clickEvent (event) {
+function clickEvent(event) {
   console.log('clickEvent ' + checkpad)
   if (tool_state != ToolState.hand_tool) {
     positionScrollLeft()
@@ -2508,7 +2499,7 @@ function clickEvent (event) {
   }
 }
 
-function upListener (event) {
+function upListener(event) {
   // updateUIF12();
   if (
     document.activeElement.closest('.w-text') ||
@@ -2869,7 +2860,7 @@ function upListener (event) {
   PageDA.saveSettingsPage()
 }
 
-function elementIsInRange (element, range, checkAll = false) {
+function elementIsInRange(element, range, checkAll = false) {
   // nếu checkAllObj = true thì phải toàn bộ Obj nằm trong range hàm mới return true
   let parentElemetList = [...$(element).parents('.wbaseItem-value')]
 
@@ -2926,7 +2917,7 @@ function elementIsInRange (element, range, checkAll = false) {
   return false
 }
 
-function isInRange (number, min, max, isEqual = false) {
+function isInRange(number, min, max, isEqual = false) {
   if (isEqual) return number >= min && number <= max
   else return number > min && number < max
 }

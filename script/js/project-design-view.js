@@ -7,7 +7,7 @@ var design_view = document.getElementById('Design')
 var prototype_view = document.getElementById('Prototype')
 var state_view = document.getElementById('State')
 
-async function initData () {
+async function initData() {
   WiniIO.emitInit()
   console.log('init: ', Date.now())
   console.log('get server: ', Date.now())
@@ -83,12 +83,12 @@ async function initData () {
   }, 80)
 }
 
-function input_scale_set (value) {
+function input_scale_set(value) {
   settingsPage = true
   input_scale.innerHTML = `${Math.floor(value)}%`
 }
 
-function toolStateChange (toolState) {
+function toolStateChange(toolState) {
   if (tool_state != toolState) {
     if (
       ToolState.resize_type.every(
@@ -153,7 +153,7 @@ function toolStateChange (toolState) {
   }
 }
 
-function createNewWbase ({ wb, relativeWbs = [], level }) {
+function createNewWbase({ wb, relativeWbs = [], level }) {
   let list_new_wbase = []
   let newWb = JSON.parse(JSON.stringify(wb))
   newWb.GID = uuidv4()
@@ -214,7 +214,7 @@ function createNewWbase ({ wb, relativeWbs = [], level }) {
 }
 
 //! .................................................................................................
-function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
+function createWbaseHTML({ parentid, x, y, w, h, newObj }) {
   WBaseDA.listData = []
   if (newObj) {
     var new_obj = newObj
@@ -258,8 +258,7 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
         relativeWbs: relativeWbase,
         level: parseInt(pWbHTML.getAttribute('level') ?? 0) + 1,
         sort: pWbHTML.querySelectorAll(
-          `.wbaseItem-value[level="${
-            parseInt(pWbHTML.getAttribute('level') ?? '0') + 1
+          `.wbaseItem-value[level="${parseInt(pWbHTML.getAttribute('level') ?? '0') + 1
           }"]`
         ).length
       })
@@ -290,9 +289,8 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
     if (pWbHTML === divSection || pWbHTML.classList.contains('w-block')) {
       if (pWbHTML.classList.contains('w-block')) {
         let pRect = pWbHTML.getBoundingClientRect()
-        new_obj.Css += `left: ${x - offsetScale(pRect.x, 0).x}px;top: ${
-          y - offsetScale(0, pRect.y).y
-        }px;`
+        new_obj.Css += `left: ${x - offsetScale(pRect.x, 0).x}px;top: ${y - offsetScale(0, pRect.y).y
+          }px;`
       } else {
         new_obj.Css += `left: ${x}px;top: ${y}px;`
       }
@@ -327,11 +325,11 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
             if (isGrid) {
               a_center_oy = Math.sqrt(
                 Math.pow(x - offsetScale(aRect.x + aRect.width / 2, 0).x, 2) +
-                  Math.pow(y - offsetScale(0, aRect.y + aRect.height / 2).y, 2)
+                Math.pow(y - offsetScale(0, aRect.y + aRect.height / 2).y, 2)
               )
               b_center_oy = Math.sqrt(
                 Math.pow(x - offsetScale(bRect.x + bRect.width / 2, 0).x, 2) +
-                  Math.pow(y - offsetScale(0, bRect.y + bRect.height / 2).y, 2)
+                Math.pow(y - offsetScale(0, bRect.y + bRect.height / 2).y, 2)
               )
             } else {
               a_center_oy = Math.abs(
@@ -370,11 +368,11 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
             if (isGrid) {
               a_center_ox = Math.sqrt(
                 Math.pow(x - offsetScale(aRect.x + aRect.width / 2, 0).x, 2) +
-                  Math.pow(y - offsetScale(0, aRect.y + aRect.height / 2).y, 2)
+                Math.pow(y - offsetScale(0, aRect.y + aRect.height / 2).y, 2)
               )
               b_center_ox = Math.sqrt(
                 Math.pow(x - offsetScale(bRect.x + bRect.width / 2, 0).x, 2) +
-                  Math.pow(y - offsetScale(0, bRect.y + bRect.height / 2).y, 2)
+                Math.pow(y - offsetScale(0, bRect.y + bRect.height / 2).y, 2)
               )
             } else {
               a_center_ox = Math.abs(
@@ -441,7 +439,7 @@ function createWbaseHTML ({ parentid, x, y, w, h, newObj }) {
   }
 }
 
-function arrange (list) {
+function arrange(list) {
   if (list) {
     list.sort((a, b) => b.Level - a.Level)
   } else {
@@ -449,7 +447,7 @@ function arrange (list) {
   }
 }
 
-function handleWbSelectedList (newlist = []) {
+function handleWbSelectedList(newlist = []) {
   newlist = newlist.filter(e => e).slice(0, 10)
   let isChange = false
   left_view
@@ -535,12 +533,12 @@ function handleWbSelectedList (newlist = []) {
   updateUISelectBox()
 }
 
-function updateUISelectBox () {
+function updateUISelectBox() {
   select_box = selectBox(selected_list)
   wdraw()
 }
 
-function findCell (table, event) {
+function findCell(table, event) {
   let listCellHTML = [
     ...table.querySelectorAll(':scope > .table-row > .table-cell')
   ]
@@ -550,7 +548,7 @@ function findCell (table, event) {
     return (
       cellOffset.x <= event.pageX / scale - leftx / scale &&
       cellOffset.x + cellHTML.offsetWidth >=
-        event.pageX / scale - leftx / scale &&
+      event.pageX / scale - leftx / scale &&
       cellOffset.y <= event.pageY / scale - topx / scale &&
       cellOffset.y + cellHTML.offsetHeight >= event.pageY / scale - topx / scale
     )
@@ -558,7 +556,7 @@ function findCell (table, event) {
   return availableCell
 }
 
-function dragWbaseUpdate (xp, yp, event) {
+function dragWbaseUpdate(xp, yp, event) {
   if (alt_list.length > 0) {
     alt_list.forEach(altItem => altItem.value?.remove())
     alt_list = []
@@ -653,8 +651,7 @@ function dragWbaseUpdate (xp, yp, event) {
     newPWbHTML.setAttribute('onsort', 'true')
     let children = [
       ...newPWbHTML.querySelectorAll(
-        `.wbaseItem-value[level="${
-          parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+        `.wbaseItem-value[level="${parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
         }"]`
       )
     ].filter(e => selected_list.every(wb => wb.GID !== e.id))
@@ -671,11 +668,11 @@ function dragWbaseUpdate (xp, yp, event) {
           if (isGrid) {
             a_center_oy = Math.sqrt(
               Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) +
-                Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
+              Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
             )
             b_center_oy = Math.sqrt(
               Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) +
-                Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
+              Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
             )
           } else {
             a_center_oy = Math.abs(event.pageY - (aRect.y + aRect.height / 2))
@@ -745,11 +742,11 @@ function dragWbaseUpdate (xp, yp, event) {
           if (isGrid) {
             a_center_ox = Math.sqrt(
               Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) +
-                Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
+              Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
             )
             b_center_ox = Math.sqrt(
               Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) +
-                Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
+              Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
             )
           } else {
             a_center_ox = Math.abs(event.pageX - (aRect.x + aRect.width / 2))
@@ -824,9 +821,9 @@ function dragWbaseUpdate (xp, yp, event) {
         e.setAttribute(
           'level',
           parseInt(e.getAttribute('level')) -
-            wb.Level +
-            parseInt(newPWbHTML.getAttribute('level') ?? '0') +
-            1
+          wb.Level +
+          parseInt(newPWbHTML.getAttribute('level') ?? '0') +
+          1
         )
       })
       wb.Level = parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
@@ -837,8 +834,7 @@ function dragWbaseUpdate (xp, yp, event) {
     if (select_box_parentID !== new_parentID) {
       let children = [
         ...newPWbHTML.querySelectorAll(
-          `.wbaseItem-value[level="${
-            parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+          `.wbaseItem-value[level="${parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
           }"]`
         )
       ]
@@ -861,7 +857,7 @@ function dragWbaseUpdate (xp, yp, event) {
   select_box_parentID = selected_list[0].ParentID
 }
 
-function dragWbaseEnd () {
+function dragWbaseEnd() {
   if (alt_list.length > 0) {
     alt_list.forEach(altItem => altItem.value?.remove())
     alt_list = []
@@ -888,17 +884,17 @@ function dragWbaseEnd () {
         )
         if (oldPWb.value.classList.contains('w-table')) {
           let listCell = oldPWb.TableRows.reduce((a, b) => a.concat(b))
-          ;[
-            ...oldPWb.value.querySelectorAll(
-              ':scope > .table-row > .table-cell'
-            )
-          ].forEach(cell => {
-            listCell.find(e => e.id === cell.id).contentid = [
-              ...cell.childNodes
-            ]
-              .map(e => e.id)
-              .join(',')
-          })
+            ;[
+              ...oldPWb.value.querySelectorAll(
+                ':scope > .table-row > .table-cell'
+              )
+            ].forEach(cell => {
+              listCell.find(e => e.id === cell.id).contentid = [
+                ...cell.childNodes
+              ]
+                .map(e => e.id)
+                .join(',')
+            })
           let wbaseChildren = [
             ...oldPWb.value.querySelectorAll(
               `.wbaseItem-value[level="${oldPWb.Level + 1}"]`
@@ -1155,13 +1151,13 @@ function dragWbaseEnd () {
             let cssTextValue = newPWbHTML.classList.contains('w-block')
               ? cssText.filter(e => !e.match(/order/g)).join(';')
               : cssText
-                  .filter(
-                    e =>
-                      !e.match(
-                        /(z-index|left|top|bottom|right|transform|--gutter)/g
-                      )
-                  )
-                  .join(';')
+                .filter(
+                  e =>
+                    !e.match(
+                      /(z-index|left|top|bottom|right|transform|--gutter)/g
+                    )
+                )
+                .join(';')
             const clsRegex = new RegExp(
               `.${componentClsName} .${newClassName} {[^}]*}`,
               'g'
@@ -1223,7 +1219,7 @@ function dragWbaseEnd () {
 let tmpAltHTML = []
 
 // new alt
-function dragAltUpdate (xp, yp, event) {
+function dragAltUpdate(xp, yp, event) {
   console.log('drag alt update')
   let newPWbHTML = parent
   let new_parentID = newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
@@ -1258,7 +1254,7 @@ function dragAltUpdate (xp, yp, event) {
       }
       if (
         (wb.value.getAttribute('height-type') === 'fill') |
-          (wb.value.getAttribute('consty') === Constraints.top_bottom) ||
+        (wb.value.getAttribute('consty') === Constraints.top_bottom) ||
         wb.value.getAttribute('consty') === Constraints.scale
       ) {
         tmp.style.height = wb.value.offsetHeight + 'px'
@@ -1275,8 +1271,7 @@ function dragAltUpdate (xp, yp, event) {
             e.setAttribute(
               'parentid',
               e.closest(
-                `.wbaseItem-value[level="${
-                  parseInt(e.getAttribute('level')) - 1
+                `.wbaseItem-value[level="${parseInt(e.getAttribute('level')) - 1
                 }"]`
               )
             )
@@ -1336,8 +1331,7 @@ function dragAltUpdate (xp, yp, event) {
     console.log('flex')
     let children = [
       ...newPWbHTML.querySelectorAll(
-        `.wbaseItem-value[level="${
-          parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+        `.wbaseItem-value[level="${parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
         }"]`
       )
     ].filter(e => alt_list.every(wb => wb.GID !== e.id))
@@ -1352,11 +1346,11 @@ function dragAltUpdate (xp, yp, event) {
           if (isGrid) {
             var a_center_oy = Math.sqrt(
               Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) +
-                Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
+              Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
             )
             var b_center_oy = Math.sqrt(
               Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) +
-                Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
+              Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
             )
           } else {
             a_center_oy = Math.abs(event.pageY - (aRect.y + aRect.height / 2))
@@ -1402,11 +1396,11 @@ function dragAltUpdate (xp, yp, event) {
           if (isGrid) {
             var a_center_ox = Math.sqrt(
               Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) +
-                Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
+              Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
             )
             var b_center_ox = Math.sqrt(
               Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) +
-                Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
+              Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
             )
           } else {
             a_center_ox = Math.abs(event.pageX - (aRect.x + aRect.width / 2))
@@ -1457,9 +1451,9 @@ function dragAltUpdate (xp, yp, event) {
         e.setAttribute(
           'level',
           parseInt(e.getAttribute('level')) -
-            wb.Level +
-            parseInt(newPWbHTML.getAttribute('level') ?? '0') +
-            1
+          wb.Level +
+          parseInt(newPWbHTML.getAttribute('level') ?? '0') +
+          1
         )
       })
       wb.Level = parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
@@ -1472,8 +1466,7 @@ function dragAltUpdate (xp, yp, event) {
     ) {
       let children = [
         ...newPWbHTML.querySelectorAll(
-          `.wbaseItem-value[level="${
-            parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+          `.wbaseItem-value[level="${parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
           }"]`
         )
       ]
@@ -1498,7 +1491,7 @@ function dragAltUpdate (xp, yp, event) {
   select_box_parentID = alt_list[0].ParentID
 }
 
-function dragAltEnd () {
+function dragAltEnd() {
   WBaseDA.listData = []
   console.log('dragend alt')
   if (drag_start_list.length > 0 && alt_list.length > 0) {
@@ -1536,9 +1529,9 @@ function dragAltEnd () {
             e.setAttribute(
               'level',
               parseInt(e.getAttribute('level')) -
-                wb.Level +
-                parseInt(newPWbHTML.getAttribute('level') ?? '0') +
-                1
+              wb.Level +
+              parseInt(newPWbHTML.getAttribute('level') ?? '0') +
+              1
             )
           })
           return wb.value
@@ -1618,8 +1611,7 @@ function dragAltEnd () {
               cls.startsWith('w-st0')
             )
             let newClassName =
-              `w-st${
-                newWb.Level - parseInt(newComponent.getAttribute('level'))
+              `w-st${newWb.Level - parseInt(newComponent.getAttribute('level'))
               }-` + Ultis.toSlug(newWb.Name.toLowerCase().trim())
             let existNameList = [
               ...newComponent.querySelectorAll(`.wbaseItem-value`)
@@ -1638,13 +1630,13 @@ function dragAltEnd () {
             let cssTextValue = newPWbHTML.classList.contains('w-block')
               ? cssText.filter(e => !e.match(/order/g)).join(';')
               : cssText
-                  .filter(
-                    e =>
-                      !e.match(
-                        /(z-index|left|top|bottom|right|transform|--gutter)/g
-                      )
-                  )
-                  .join(';')
+                .filter(
+                  e =>
+                    !e.match(
+                      /(z-index|left|top|bottom|right|transform|--gutter)/g
+                    )
+                )
+                .join(';')
             const clsRegex = new RegExp(
               `.${componentClsName} .${newClassName} {[^}]*}`,
               'g'
@@ -1677,9 +1669,7 @@ function dragAltEnd () {
           .querySelectorAll(`.wbaseItem-value[level="${pWb.Level + 1}"]`)
           .forEach(e => {
             let eRule = StyleDA.docStyleSheets.find(rule =>
-              rule.selectorText.endsWith(
-                [...e.classList].find(cls => cls.startsWith('w-st'))
-              )
+              rule.selectorText.endsWith([...e.classList].find(cls => cls.startsWith('w-st')))
             )
             eRule.style.order = $(e).index()
             cssItem.Css = cssItem.Css.replace(
@@ -1688,14 +1678,10 @@ function dragAltEnd () {
             )
           })
         StyleDA.editStyleSheet(cssItem)
-        document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML =
-          cssItem.Css
+        document.getElementById(`w-st-comp${cssItem.GID}`).innerHTML = cssItem.Css
       } else {
         wbase_list.filter(e => {
-          if (
-            e.ParentID === new_parentID &&
-            e.value.style.order != $(e.value).index()
-          ) {
+          if (e.ParentID === new_parentID && e.value.style.order != $(e.value).index()) {
             e.value.style.order = $(e.value).index()
             e.Css = e.value.style.cssText
           }
@@ -1723,7 +1709,7 @@ function dragAltEnd () {
 }
 
 //
-function handlePopupDispose (elementHTML, callback) {
+function handlePopupDispose(elementHTML, callback) {
   if (callback) {
     const observer = new IntersectionObserver((entries, observe) => {
       let target = entries[0].target
@@ -1735,7 +1721,7 @@ function handlePopupDispose (elementHTML, callback) {
   }
 }
 
-function handleCompleteAddWbase () {
+function handleCompleteAddWbase() {
   let wb = selected_list[0]
   const component = wb.value.closest(`.wbaseItem-value[iswini]`)
   if (component) {
@@ -1761,10 +1747,10 @@ function handleCompleteAddWbase () {
       .classList.contains('w-block')
       ? cssText.filter(e => !e.match(/order/g)).join(';')
       : cssText
-          .filter(
-            e => !e.match(/(z-index|left|top|bottom|right|transform|--gutter)/g)
-          )
-          .join(';')
+        .filter(
+          e => !e.match(/(z-index|left|top|bottom|right|transform|--gutter)/g)
+        )
+        .join(';')
     const clsRegex = new RegExp(
       `.${componentClsName} .${newClassName} {[^}]*}`,
       'g'

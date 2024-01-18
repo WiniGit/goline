@@ -97,9 +97,7 @@ let list_tool = [
           let rectTile = document.createElement('div')
           rectTile.className = 'row regular1'
           let preIcon = document.createElement('i')
-          preIcon.className = `fa-regular fa-${
-            i === 0 ? 'square' : 'circle'
-          } fa-sm`
+          preIcon.className = `fa-regular fa-${i === 0 ? 'square' : 'circle'} fa-sm`
           let t = document.createElement('p')
           t = i === 0 ? 'Rectangle' : 'Ellipse'
           rectTile.replaceChildren(preIcon, t)
