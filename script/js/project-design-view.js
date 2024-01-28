@@ -156,6 +156,7 @@ function toolStateChange(toolState) {
 function createNewWbase({ wb, relativeWbs = [], level }) {
   let list_new_wbase = []
   let newWb = JSON.parse(JSON.stringify(wb))
+  delete newWb.children
   newWb.GID = uuidv4()
   // newWb.ChildID = wb.GID
   newWb.IsWini = false
@@ -169,28 +170,20 @@ function createNewWbase({ wb, relativeWbs = [], level }) {
     newWb.JsonEventItem = newWb.JsonEventItem.filter(e => e.Name === 'State')
   // tạo GuiID mới cho AttributesItem nếu khác null
   if (newWb.AttributesItem) {
-    let newAttributeId = uuidv4()
-    newWb.AttributeID = newAttributeId
-    newWb.AttributesItem.GID = newAttributeId
+    newWb.AttributeID = uuidv4()
+    newWb.AttributesItem.GID = newWb.AttributeID
     if (newWb.JsonEventItem)
       newWb.AttributesItem.JsonEvent = JSON.stringify(newWb.JsonEventItem)
   }
-  if (newWb.ListChildID?.length > 0) {
-    let list_child = []
-    list_child = list_contain_child.filter(e =>
-      wb.ListChildID.some(id => e.GID == id)
-    )
-    if (list_child.length == 0 && wb.ListChildID.length > 0)
-      list_child = assets_list.filter(e =>
-        wb.ListChildID.some(id => e.GID == id)
-      )
-
+  if (newWb.ListChildID?.length) {
+    let list_child = relativeWbs.filter(e => wb.ListChildID.some(id => e.GID === id))
+    if (!list_child.length && wb.ListChildID.length)
+      list_child = assets_list.filter(e => wb.ListChildID.some(id => e.GID == id))
     for (let child of list_child) {
       let new_children = createNewWbase({
         wb: child,
         relativeWbs: relativeWbs,
-        level: newWb.Level + 1,
-        sort: list_child.indexOf(child)
+        level: newWb.Level + 1
       })
       list_new_wbase.push(...new_children)
       switch (newWb.ListClassName.includes('w-table')) {
@@ -204,7 +197,7 @@ function createNewWbase({ wb, relativeWbs = [], level }) {
           break
       }
     }
-    let new_list_child = list_new_wbase.filter(e => e.ParentID == newWb.GID)
+    let new_list_child = list_new_wbase.filter(e => e.ParentID === newWb.GID)
     newWb.ListChildID = new_list_child.map(e => e.GID)
   }
   newWb.PageID = PageDA.obj.ID
@@ -569,17 +562,15 @@ function dragWbaseUpdate(xp, yp, event) {
     )
     if (wbSt0) {
       for (let wb of selected_list) {
-        let cssRule = StyleDA.docStyleSheets.find(e =>
-          [...divSection.querySelectorAll(e.selectorText)].includes(wb.value)
-        )
-        wb.value.style.cssText = cssRule.style.cssText + wb.value.style.cssText
+        const wstCls = [...wb.value.classList].find(e => e.startsWith('w-st'))
+        if (wstCls) {
+          let cssRule = StyleDA.docStyleSheets.find(e => e.selectorText.endsWith(wstCls))
+          wb.value.style.cssText = cssRule.style.cssText + wb.value.style.cssText
+        }
       }
     }
   }
-  if (
-    select_box_parentID !== wbase_parentID &&
-    select_box_parentID !== new_parentID
-  ) {
+  if (select_box_parentID !== wbase_parentID && select_box_parentID !== new_parentID) {
     document.getElementById(select_box_parentID).removeAttribute('onsort')
   }
   if (
@@ -650,10 +641,7 @@ function dragWbaseUpdate(xp, yp, event) {
   ) {
     newPWbHTML.setAttribute('onsort', 'true')
     let children = [
-      ...newPWbHTML.querySelectorAll(
-        `.wbaseItem-value[level="${parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
-        }"]`
-      )
+      ...newPWbHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1}"]`)
     ].filter(e => selected_list.every(wb => wb.GID !== e.id))
     let isGrid = window.getComputedStyle(newPWbHTML).flexWrap == 'wrap'
     if (newPWbHTML.classList.contains('w-col')) {
@@ -1223,10 +1211,7 @@ function dragAltUpdate(xp, yp, event) {
   console.log('drag alt update')
   let newPWbHTML = parent
   let new_parentID = newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
-  if (
-    select_box_parentID !== wbase_parentID &&
-    select_box_parentID !== new_parentID
-  ) {
+  if (select_box_parentID !== wbase_parentID && select_box_parentID !== new_parentID) {
     document.getElementById(select_box_parentID).removeAttribute('onsort')
   }
   if (alt_list.length == 0) {
@@ -1234,9 +1219,7 @@ function dragAltUpdate(xp, yp, event) {
       `.wbaseItem-value:is(*[iswini], *[isinstance]):not(*[level="${selected_list[0].Level}"], .w-variant)`
     )
     if (component) {
-      var componentCls = [...component.classList].find(e =>
-        e.startsWith('w-st0')
-      )
+      var componentCls = [...component.classList].find(e => e.startsWith('w-st0'))
     }
     for (let wb of selected_list) {
       let alt_wbase = JSON.parse(JSON.stringify(wb))
@@ -1244,17 +1227,15 @@ function dragAltUpdate(xp, yp, event) {
       alt_wbase.ChildID = wb.GID
       alt_wbase.IsCopy = true
       let tmp = wb.value.cloneNode(true)
-      if (
-        wb.value.getAttribute('width-type') === 'fill' ||
+      if (wb.value.getAttribute('width-type') === 'fill' ||
         wb.value.getAttribute('constx') === Constraints.left_right ||
         wb.value.getAttribute('constx') === Constraints.scale
       ) {
         tmp.style.width = wb.value.offsetWidth + 'px'
         tmp.style.flex = null
       }
-      if (
-        (wb.value.getAttribute('height-type') === 'fill') |
-        (wb.value.getAttribute('consty') === Constraints.top_bottom) ||
+      if (wb.value.getAttribute('height-type') === 'fill' ||
+        wb.value.getAttribute('consty') === Constraints.top_bottom ||
         wb.value.getAttribute('consty') === Constraints.scale
       ) {
         tmp.style.height = wb.value.offsetHeight + 'px'

@@ -3557,9 +3557,7 @@ function handleEditConstraints({ constX, constY }) {
 }
 
 function addBackgroundColor() {
-  let listUpdate = selected_list.filter(
-    wb => !wb.value.classList.contains('w-text')
-  )
+  let listUpdate = selected_list.filter(wb => !wb.value.classList.contains('w-text'))
   const pWbComponent = document
     .getElementById(select_box_parentID)
     ?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)
@@ -3567,9 +3565,7 @@ function addBackgroundColor() {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
       let cssRule = StyleDA.docStyleSheets.find(e =>
-        e.selectorText.endsWith(
-          [...wb.value.classList].find(cls => cls.startsWith('w-st'))
-        )
+        e.selectorText.endsWith([...wb.value.classList].find(cls => cls.startsWith('w-st')))
       )
       if (wb.value.classList.contains('w-container')) {
         cssRule.style.backgroundColor = `#ffffffff`
@@ -3622,9 +3618,7 @@ function addBackgroundColor() {
 
 function unlinkColorSkin() {
   let listUpdate = selected_list
-  const pWbComponent = document
-    .getElementById(select_box_parentID)
-    ?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)
+  const pWbComponent = document.getElementById(select_box_parentID)?.closest(`.wbaseItem-value[iswini]:not(.w-variant)`)
   if (pWbComponent) {
     let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
     for (let wb of listUpdate) {
@@ -3690,9 +3684,7 @@ function unlinkColorSkin() {
 }
 
 function handleEditBackground({ hexCode, image, colorSkin, onSubmit = true }) {
-  let listUpdate = selected_list.filter(wb =>
-    ['w-text', 'w-svg'].every(e => !wb.value.classList.contains(e))
-  )
+  let listUpdate = selected_list.filter(wb => ['w-text', 'w-svg'].every(e => !wb.value.classList.contains(e)))
   const checkedColor = ['w-radio', 'w-switch', 'w-checkbox']
   const pWbComponent = document
     .getElementById(select_box_parentID)
@@ -3765,9 +3757,7 @@ function handleEditBackground({ hexCode, image, colorSkin, onSubmit = true }) {
       let cssItem = StyleDA.cssStyleSheets.find(e => e.GID === pWbComponent.id)
       for (let wb of listUpdate) {
         let cssRule = StyleDA.docStyleSheets.find(e =>
-          e.selectorText.endsWith(
-            [...wb.value.classList].find(cls => cls.startsWith('w-st'))
-          )
+          e.selectorText.endsWith([...wb.value.classList].find(cls => cls.startsWith('w-st')))
         )
         cssRule.style.backgroundImage = null
         if (checkedColor.some(e => cssRule.classList.contains(e))) {

@@ -1,4 +1,4 @@
-function setupRightView () {
+function setupRightView() {
   // setup tab change
   // create elements in design view
   right_view.onkeydown = function (e) {
@@ -39,7 +39,7 @@ $('body').on('click', '.tab_right', function () {
 })
 
 // update UI design view when selected change
-function updateUIDesignView () {
+function updateUIDesignView() {
   let scrollY = design_view.scrollTop
   let listEditContainer = document.createDocumentFragment()
   if (selected_list.length === 0) {
@@ -62,80 +62,42 @@ function updateUIDesignView () {
     //   let editVariables = createVariables();
     //   listEditContainer.appendChild(editVariables);
     // }
-    if (
-      select_box_parentID != wbase_parentID &&
-      selected_list.some(
-        e => window.getComputedStyle(e.value).position === 'absolute'
-      )
-    ) {
+    if (select_box_parentID != wbase_parentID &&
+      selected_list.some(e => window.getComputedStyle(e.value).position === 'absolute')) {
       var editConstraints = EditConstraintsBlock()
       listEditContainer.appendChild(editConstraints)
     }
-    if (
-      selected_list.every(
-        wb =>
-          wb.Level > 1 &&
-          window.getComputedStyle(wb.value).position !== 'absolute'
-      )
-    ) {
+    if (selected_list.every(wb => wb.Level > 1 && window.getComputedStyle(wb.value).position !== 'absolute')) {
       let framePage = selected_list[0].value.closest(
         `.w-form[level="1"], .w-container[level="1"], w-variant > .w-form[level="2"], w-variant > .w-container[level="2"]`
       )
       if (framePage) {
-        let selectColByBrp = colNumberByBrp(
-          framePage.getAttribute('width-type') !== 'fit'
-        )
+        let selectColByBrp = colNumberByBrp(framePage.getAttribute('width-type') !== 'fit')
         listEditContainer.appendChild(selectColByBrp)
       }
     }
-    if (
-      selected_list.some(wb =>
-        WbClass.parent.some(e => wb.value.classList.contains(e))
-      ) ||
-      selected_list.length > 1
-    ) {
+    if (selected_list.some(wb => WbClass.parent.some(e => wb.value.classList.contains(e))) || selected_list.length > 1) {
       let editAutoLayout = EditLayoutBlock()
       listEditContainer.appendChild(editAutoLayout)
     }
     //
-    if (
-      selected_list.some(wb =>
-        ['w-text', 'w-svg'].every(e => !wb.value.classList.contains(e))
-      )
-    ) {
+    if (selected_list.some(wb => ['w-text', 'w-svg'].every(e => !wb.value.classList.contains(e)))) {
       let editBackground = EditBackgroundBlock()
       listEditContainer.appendChild(editBackground)
     }
-    if (
-      selected_list.filter(wb => wb.value.classList.contains('w-svg'))
-        .length === 1
-    ) {
+    if (selected_list.filter(wb => wb.value.classList.contains('w-svg')).length === 1) {
       let editIconColor = EditIconColorBlock()
       listEditContainer.appendChild(editIconColor)
     }
-    if (
-      selected_list.some(wb =>
-        ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
-      )
-    ) {
+    if (selected_list.some(wb => ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e)))) {
       let editTextStyle = EditTypoBlock()
       listEditContainer.appendChild(editTextStyle)
     }
-    if (
-      selected_list.some(wb =>
-        ['w-checkbox', ...WbClass.borderEffect].some(e =>
-          wb.value.classList.contains(e)
-        )
-      )
-    ) {
+    if (selected_list.some(wb => ['w-checkbox', ...WbClass.borderEffect].some(e => wb.value.classList.contains(e)))) {
       let editBorder = EditBorderBlock()
       listEditContainer.appendChild(editBorder)
     }
-    if (
-      selected_list.some(wb =>
-        WbClass.borderEffect.some(e => wb.value.classList.contains(e))
-      )
-    ) {
+    if (selected_list.some(wb => WbClass.borderEffect.some(e => wb.value.classList.contains(e)))) {
       let editEffect = EditEffectBlock()
       listEditContainer.appendChild(editEffect)
     }
@@ -143,14 +105,9 @@ function updateUIDesignView () {
     // listEditContainer.appendChild(editVariants);
   }
   design_view.replaceChildren(listEditContainer)
-  if (
-    selected_list.some(
-      wb =>
-        [...wb.value.classList].some(cls => cls.startsWith('w-st')) &&
-        wb.value.closest(
-          `.wbaseItem-value[isinstance]:not(*[level="${wb.Level}"])`
-        )
-    )
+  if (selected_list.some(
+    wb => [...wb.value.classList].some(cls => cls.startsWith('w-st')) &&
+      wb.value.closest(`.wbaseItem-value[isinstance]:not(*[level="${wb.Level}"])`))
   ) {
     design_view.querySelectorAll('.uneditable-instance').forEach(e => {
       e.style.pointerEvents = 'none'
@@ -165,7 +122,7 @@ function updateUIDesignView () {
 }
 
 // edit canvas background color
-function createCanvasBackground () {
+function createCanvasBackground() {
   var canvas_view_background = document.createElement('div')
   canvas_view_background.id = 'canvas_view_background'
   canvas_view_background.className = 'col'
@@ -212,7 +169,7 @@ function createCanvasBackground () {
 }
 
 // edit align UI
-function EditAlignBlock () {
+function EditAlignBlock() {
   let editAlignContainer = document.createElement('div')
   editAlignContainer.id = 'edit_align_div'
   let isEnable = selected_list.every(
@@ -246,13 +203,13 @@ function EditAlignBlock () {
   return editAlignContainer
 }
 
-function reloadEditAlignBlock () {
+function reloadEditAlignBlock() {
   let newEditAlign = EditAlignBlock()
   document.getElementById('edit_align_div').replaceWith(newEditAlign)
 }
 
 // edit position UI
-function EditOffsetBlock () {
+function EditOffsetBlock() {
   let edit_size_position_div = document.createElement('div')
   edit_size_position_div.id = 'edit_size_position_div'
   edit_size_position_div.className = 'edit-container'
@@ -284,11 +241,9 @@ function EditOffsetBlock () {
             popup.remove()
             reloadEditOffsetBlock()
           }
-          option.innerHTML = `<i class="fa-solid fa-check" style="visibility: ${
-            btn_title.innerHTML === device.Name ? 'visible' : 'hidden'
-          }"></i><span>${device.Name}</span><span>${device.Width}x${
-            device.Height
-          }</span>`
+          option.innerHTML = `<i class="fa-solid fa-check" style="visibility: ${btn_title.innerHTML === device.Name ? 'visible' : 'hidden'
+            }"></i><span>${device.Name}</span><span>${device.Width}x${device.Height
+            }</span>`
           col.appendChild(option)
         }
         popup.appendChild(col)
@@ -298,10 +253,9 @@ function EditOffsetBlock () {
         popup.getBoundingClientRect().bottom >
         document.body.getBoundingClientRect().bottom
       ) {
-        popup.style.height = `${
-          document.body.getBoundingClientRect().bottom -
+        popup.style.height = `${document.body.getBoundingClientRect().bottom -
           popup.getBoundingClientRect().y
-        }px`
+          }px`
       }
     }
     let listSize = selected_list
@@ -310,14 +264,13 @@ function EditOffsetBlock () {
         wb =>
           `${parseInt(wb.value.offsetWidth)}x${parseInt(wb.value.offsetHeight)}`
       )
-    btn_select_frame_size.innerHTML = `<p class="semibold1">${
-      listSize.length === 1
-        ? listDevice
-            .reduce((a, b) => a.concat(b))
-            .find(device => `${device.Width}x${device.Height}` === listSize[0])
-            ?.Name ?? 'Device size'
-        : 'Device size'
-    }</p><i class="fa-solid fa-chevron-down fa-2xs"></i>`
+    btn_select_frame_size.innerHTML = `<p class="semibold1">${listSize.length === 1
+      ? listDevice
+        .reduce((a, b) => a.concat(b))
+        .find(device => `${device.Width}x${device.Height}` === listSize[0])
+        ?.Name ?? 'Device size'
+      : 'Device size'
+      }</p><i class="fa-solid fa-chevron-down fa-2xs"></i>`
     edit_size_position_div.appendChild(pageDeviceContainer)
   }
 
@@ -363,17 +316,15 @@ function EditOffsetBlock () {
       e.value.classList.contains('fixed-position')
     )
     let iconFixPos = document.createElement('img')
-    iconFixPos.className = `img-button size-28 tlwh-option ${
-      isFixPos ? ' toggle' : ''
-    } ${
-      selected_list.some(
+    iconFixPos.className = `img-button size-28 tlwh-option ${isFixPos ? ' toggle' : ''
+      } ${selected_list.some(
         wb =>
           !wb.value.classList.contains('w-variant') &&
           wb.value.closest('.wbaseItem-value[iswini]')
       )
         ? ' disabled'
         : ''
-    }`
+      }`
     iconFixPos.src =
       'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/fix_position.svg'
     edit_top.lastChild.disabled = !isFixPos
@@ -426,17 +377,15 @@ function EditOffsetBlock () {
     WbClass.scale.some(e => wb.value.classList.contains(e))
   )
   let icon_ratioWH = document.createElement('img')
-  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
-    isRatio ? 'ratioWH' : 'un_ratioWH'
-  }.svg`
+  icon_ratioWH.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${isRatio ? 'ratioWH' : 'un_ratioWH'
+    }.svg`
   icon_ratioWH.className =
     'img-button size-28 tlwh-option' + (isRatio ? ' toggle' : '')
   if (!isRatio) {
     icon_ratioWH.onclick = function () {
       isRatio = !isRatio
-      this.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
-        isRatio ? 'ratioWH' : 'un_ratioWH'
-      }.svg`
+      this.src = `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${isRatio ? 'ratioWH' : 'un_ratioWH'
+        }.svg`
       if (isRatio) this.classList.add('toggle')
       else this.classList.remove('toggle')
     }
@@ -691,19 +640,18 @@ function EditOffsetBlock () {
     let btn_clip_content = document.createElement('label')
     btn_clip_content.className = 'row regular1 uneditable-instance'
     btn_clip_content.style.margin = '4px 0 0 16px'
-    btn_clip_content.innerHTML = `<input type="checkbox"${
-      selected_list
-        .filter(wb =>
-          ['w-container', 'w-button', 'w-textformfield', 'w-variant'].some(e =>
-            wb.value.classList.contains(e)
-          )
+    btn_clip_content.innerHTML = `<input type="checkbox"${selected_list
+      .filter(wb =>
+        ['w-container', 'w-button', 'w-textformfield', 'w-variant'].some(e =>
+          wb.value.classList.contains(e)
         )
-        .every(wb =>
-          window.getComputedStyle(wb.value).overflow.includes('hidden')
-        )
-        ? ' checked'
-        : ''
-    } style="margin-right: 8px; width: fit-content" />Clip content`
+      )
+      .every(wb =>
+        window.getComputedStyle(wb.value).overflow.includes('hidden')
+      )
+      ? ' checked'
+      : ''
+      } style="margin-right: 8px; width: fit-content" />Clip content`
     $(btn_clip_content).on('change', 'input', function (ev) {
       handleEditOffset({ isClip: ev.target.checked })
     })
@@ -713,7 +661,7 @@ function EditOffsetBlock () {
 }
 
 // update style HTML edit position UI
-function reloadEditOffsetBlock () {
+function reloadEditOffsetBlock() {
   let newEditSizePositionForm = EditOffsetBlock()
   document
     .getElementById('edit_size_position_div')
@@ -721,7 +669,7 @@ function reloadEditOffsetBlock () {
 }
 
 // edit auto layout
-function EditLayoutBlock () {
+function EditLayoutBlock() {
   let wbList = selected_list.filter(wb =>
     WbClass.parent.some(e => wb.value.classList.contains(e))
   )
@@ -734,9 +682,8 @@ function EditLayoutBlock () {
   let header = document.createElement('div')
   header.id = 'edit-layout-header'
   header.className = `ds-block-header`
-  header.innerHTML = `<p>${
-    isEditTable ? 'Table layout' : 'Auto layout'
-  }</p><i class="fa-solid fa-minus fa-sm"></i><i class="fa-solid fa-plus fa-sm"></i>`
+  header.innerHTML = `<p>${isEditTable ? 'Table layout' : 'Auto layout'
+    }</p><i class="fa-solid fa-minus fa-sm"></i><i class="fa-solid fa-plus fa-sm"></i>`
   editContainer.appendChild(header)
   let showDetails = selected_list.every(wb =>
     window.getComputedStyle(wb.value).display.match(/(flex|table)/g)
@@ -757,11 +704,9 @@ function EditLayoutBlock () {
     )
     let selectDirection = document.createElement('div')
     selectDirection.className = 'group_btn_direction uneditable-instance'
-    selectDirection.innerHTML = `<i class="fa-solid fa-arrow-down fa-xs" style="background-color: ${
-      isVertical ? '#e5e5e5' : 'transparent'
-    }"></i><i class="fa-solid fa-arrow-right fa-xs" style="background-color: ${
-      isVertical ? 'transparent' : '#e5e5e5'
-    }"></i>`
+    selectDirection.innerHTML = `<i class="fa-solid fa-arrow-down fa-xs" style="background-color: ${isVertical ? '#e5e5e5' : 'transparent'
+      }"></i><i class="fa-solid fa-arrow-right fa-xs" style="background-color: ${isVertical ? 'transparent' : '#e5e5e5'
+      }"></i>`
     if (
       wbList.every(
         wb =>
@@ -796,20 +741,20 @@ function EditLayoutBlock () {
       value:
         mainAxisToAlign(
           wbList[0].value.style.justifyContent ??
-            StyleDA.docStyleSheets.find(cssRule =>
-              [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                wbList[0].value
-              )
-            )?.style?.justifyContent,
+          StyleDA.docStyleSheets.find(cssRule =>
+            [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+              wbList[0].value
+            )
+          )?.style?.justifyContent,
           !isVertical
         ) +
         crossAxisToAlign(
           wbList[0].value.style.alignItems ??
-            StyleDA.docStyleSheets.find(cssRule =>
-              [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                wbList[0].value
-              )
-            )?.style?.alignItems,
+          StyleDA.docStyleSheets.find(cssRule =>
+            [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+              wbList[0].value
+            )
+          )?.style?.alignItems,
           !isVertical
         )
     })
@@ -823,16 +768,15 @@ function EditLayoutBlock () {
         parseFloat(
           window
             .getComputedStyle(wb.value)
-            [
-              wb.value.classList.contains('w-col') ? 'row-gap' : 'column-gap'
-            ].replace('px', '')
+          [
+            wb.value.classList.contains('w-col') ? 'row-gap' : 'column-gap'
+          ].replace('px', '')
         )
       )
       let inputChildSpace = _textField({
         width: '88px',
-        icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
-          isVertical ? 'vertical' : 'horizontal'
-        } child spacing.svg`,
+        icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${isVertical ? 'vertical' : 'horizontal'
+          } child spacing.svg`,
         value: childSpaceValues.length == 1 ? childSpaceValues[0] : 'mixed',
         onBlur: function (ev) {
           let newValue = parseFloat(ev.target.value)
@@ -853,13 +797,12 @@ function EditLayoutBlock () {
         isWrapRow.style.width = '100%'
         let btnIsWarp = document.createElement('label')
         btnIsWarp.className = 'row regular1 check-box-label uneditable-instance'
-        btnIsWarp.innerHTML = `<input type="checkbox"${
-          wbList
-            .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
-            .every(e => e === 'wrap')
-            ? ' checked'
-            : ''
-        } />Wrap content`
+        btnIsWarp.innerHTML = `<input type="checkbox"${wbList
+          .filterAndMap(wb => window.getComputedStyle(wb.value).flexWrap)
+          .every(e => e === 'wrap')
+          ? ' checked'
+          : ''
+          } />Wrap content`
         btnIsWarp.firstChild.onchange = function (ev) {
           handleEditLayout({ isWrap: ev.target.checked })
         }
@@ -879,9 +822,8 @@ function EditLayoutBlock () {
         )
         let inputRunSpace = _textField({
           width: '88px',
-          icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${
-            isVertical ? 'horizontal' : 'vertical'
-          } child spacing.svg`,
+          icon: `https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/${isVertical ? 'horizontal' : 'vertical'
+            } child spacing.svg`,
           value: runSpaceValues.length == 1 ? runSpaceValues[0] : 'mixed',
           onBlur: function (ev) {
             let newValue = parseFloat(ev.target.value)
@@ -898,13 +840,12 @@ function EditLayoutBlock () {
         let btnIsScroll = document.createElement('label')
         btnIsScroll.className =
           'row regular1 check-box-label uneditable-instance'
-        btnIsScroll.innerHTML = `<input type="checkbox"${
-          wbList
-            .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
-            .every(e => e.includes('scroll'))
-            ? ' checked'
-            : ''
-        }/>Overflow scroll`
+        btnIsScroll.innerHTML = `<input type="checkbox"${wbList
+          .filterAndMap(wb => window.getComputedStyle(wb.value).overflow)
+          .every(e => e.includes('scroll'))
+          ? ' checked'
+          : ''
+          }/>Overflow scroll`
         if (
           wbList.some(
             wb =>
@@ -1075,7 +1016,7 @@ function EditLayoutBlock () {
       toggleShowDetails()
     }
     toggleShowDetails()
-    function toggleShowDetails () {
+    function toggleShowDetails() {
       if (isShowPadDetails) {
         input_padding_horizontal.style.display = 'none'
         input_padding_vertical.style.display = 'none'
@@ -1113,13 +1054,13 @@ function EditLayoutBlock () {
 }
 
 // update style HTML edit auto layout UI
-function reloadEditLayoutBlock () {
+function reloadEditLayoutBlock() {
   let newEditAutoLayout = EditLayoutBlock()
   document.getElementById('edit_auto_layout_div').replaceWith(newEditAutoLayout)
 }
 
 // create text field UI
-function _textField ({
+function _textField({
   id,
   width = '82px',
   icon,
@@ -1132,15 +1073,13 @@ function _textField ({
   inputContainer.id = id
   inputContainer.className = 'text_field_right_view'
   inputContainer.style.width = width
-  inputContainer.innerHTML = `${
-    icon
-      ? `<img src="${icon}" style="box-sizing: border-box; padding: 6px; width: ${iconSize}; width: ${iconSize}"/>`
-      : ''
-  }${
-    label
+  inputContainer.innerHTML = `${icon
+    ? `<img src="${icon}" style="box-sizing: border-box; padding: 6px; width: ${iconSize}; width: ${iconSize}"/>`
+    : ''
+    }${label
       ? `<p class="label-5" style="color: #BFBFBF; margin-left: 4px">${label}</p>`
       : ''
-  }<input class="input_text_field" value=${value} style="background-color: transparent" />`
+    }<input class="input_text_field" value=${value} style="background-color: transparent" />`
   inputContainer.lastChild.onfocus = function () {
     this.select()
   }
@@ -1149,7 +1088,7 @@ function _textField ({
 }
 
 // ! Constraints
-function EditConstraintsBlock () {
+function EditConstraintsBlock() {
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-constraints'
   editContainer.className = 'edit-container'
@@ -1314,7 +1253,7 @@ function EditConstraintsBlock () {
   return editContainer
 }
 
-function reloadEditConstraintsBlock () {
+function reloadEditConstraintsBlock() {
   if (document.getElementById('edit-constraints')) {
     let newEditConst = EditConstraintsBlock()
     document.getElementById('edit-constraints').replaceWith(newEditConst)
@@ -1322,7 +1261,7 @@ function reloadEditConstraintsBlock () {
 }
 
 //create button select resizing type
-function _btnSelectResizeType (isW = true, type) {
+function _btnSelectResizeType(isW = true, type) {
   type = type.toLowerCase()
   let btn_resize = document.createElement('div')
   btn_resize.className = 'btn_resize' + (isW ? ' width' : ' height')
@@ -1361,22 +1300,19 @@ function _btnSelectResizeType (isW = true, type) {
         let option = document.createElement('div')
         option.className = 'resize-option'
         if (vl === 'mixed' || checkActiveFillHug({ type: vl, isW: isW })) {
-          option.innerHTML = `<i class="fa-solid fa-check" style="color: #fff;opacity: ${
-            type === vl ? 1 : 0
-          }"></i><span ${
-            isW ? '' : 'style="transform: rotate(90deg)"'
-          }>${(vl === 'fixed'
-            ? SVGIcon.fixed_size
-            : vl === 'hug'
-            ? SVGIcon.hug_content
-            : SVGIcon.fill_container
-          ).replace('#000', '#fff')}</span>${
-            vl === 'hug'
+          option.innerHTML = `<i class="fa-solid fa-check" style="color: #fff;opacity: ${type === vl ? 1 : 0
+            }"></i><span ${isW ? '' : 'style="transform: rotate(90deg)"'
+            }>${(vl === 'fixed'
+              ? SVGIcon.fixed_size
+              : vl === 'hug'
+                ? SVGIcon.hug_content
+                : SVGIcon.fill_container
+            ).replace('#000', '#fff')}</span>${vl === 'hug'
               ? 'hug contents'
               : vl === 'fill'
-              ? 'fill container'
-              : vl
-          }`
+                ? 'fill container'
+                : vl
+            }`
         }
         if (vl !== 'mixed')
           option.onclick = function (e) {
@@ -1407,7 +1343,7 @@ function _btnSelectResizeType (isW = true, type) {
 }
 
 // fill || hug
-function checkActiveFillHug ({ type = 'fill', isW = true }) {
+function checkActiveFillHug({ type = 'fill', isW = true }) {
   switch (type) {
     case 'fill':
       let activeFill = false
@@ -1499,7 +1435,7 @@ function checkActiveFillHug ({ type = 'fill', isW = true }) {
 }
 
 // create alignment type table UI
-function _alignTable ({ isVertical = true, value }) {
+function _alignTable({ isVertical = true, value }) {
   value = value === 'CenterCenter' ? 'Center' : value
   let alignContainer = document.createElement('div')
   alignContainer.className = 'alignment-container'
@@ -1517,8 +1453,7 @@ function _alignTable ({ isVertical = true, value }) {
   ]
     .map(
       vl =>
-        `<div class='align-option' alignvl="${vl}" style='opacity: ${
-          vl === value ? 1 : 0.05
+        `<div class='align-option' alignvl="${vl}" style='opacity: ${vl === value ? 1 : 0.05
         }'></div>`
     )
     .join('')
@@ -1536,7 +1471,7 @@ function _alignTable ({ isVertical = true, value }) {
 }
 
 //! background-color || img
-function EditBackgroundBlock () {
+function EditBackgroundBlock() {
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-background'
   editContainer.className = 'edit-container'
@@ -1561,10 +1496,10 @@ function EditBackgroundBlock () {
           wb.value.style?.backgroundColor?.length > 0
             ? wb.value.style.backgroundColor
             : StyleDA.docStyleSheets.find(cssRule =>
-                [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-                  wb.value
-                )
-              )?.style?.backgroundColor
+              [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+                wb.value
+              )
+            )?.style?.backgroundColor
         if (bgColor?.match(uuid4Regex)) return bgColor?.match(uuid4Regex)[0]
         else return bgColor?.length === 0 ? null : bgColor
       })
@@ -1683,12 +1618,12 @@ function EditBackgroundBlock () {
   return editContainer
 }
 
-function reloadEditBackgroundBlock () {
+function reloadEditBackgroundBlock() {
   let newEditBackground = EditBackgroundBlock()
   document.getElementById('edit-background').replaceWith(newEditBackground)
 }
 
-function EditIconColorBlock () {
+function EditIconColorBlock() {
   let wbIcon = selected_list.find(wb => wb.value.classList.contains('w-svg'))
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-icon-color'
@@ -1709,7 +1644,7 @@ function EditIconColorBlock () {
   )
   if (cssRule) renderIconColorForm(cssRule.style)
   //
-  function renderIconColorForm (wbStyle) {
+  function renderIconColorForm(wbStyle) {
     for (let i = 0; i < wbStyle.length; i++)
       if (wbStyle[i].startsWith('--svg-color')) {
         let colorValue = wbStyle.getPropertyValue(wbStyle[i])
@@ -1786,7 +1721,7 @@ function EditIconColorBlock () {
   return editContainer
 }
 
-function reloadEditIconColorBlock () {
+function reloadEditIconColorBlock() {
   let newEditIconColor = EditIconColorBlock()
   document.getElementById('edit-icon-color').replaceWith(newEditIconColor)
 }
@@ -1814,7 +1749,7 @@ let list_font_size = [
 let list_font_weight = ['200', '300', '400', '500', '600', '700', '800', '900']
 
 // ! textStyle
-function EditTypoBlock () {
+function EditTypoBlock() {
   let listTextStyle = selected_list.filter(wb =>
     ['w-text', 'w-textformfield'].some(e => wb.value.classList.contains(e))
   )
@@ -1854,10 +1789,10 @@ function EditTypoBlock () {
       wb.value.style?.color?.length > 0
         ? wb.value.style.color
         : StyleDA.docStyleSheets.find(cssRule =>
-            [...divSection.querySelectorAll(cssRule.selectorText)].includes(
-              wb.value
-            )
-          )?.style?.color
+          [...divSection.querySelectorAll(cssRule.selectorText)].includes(
+            wb.value
+          )
+        )?.style?.color
     if (txtColor?.match(uuid4Regex)) return txtColor?.match(uuid4Regex)[0]
     else return txtColor?.length === 0 ? null : txtColor
   })
@@ -2190,7 +2125,7 @@ function EditTypoBlock () {
   return editContainer
 }
 
-function _groupBtnSelect ({ initvalue, listvalue = [], onselect }) {
+function _groupBtnSelect({ initvalue, listvalue = [], onselect }) {
   let group_btn_select = document.createElement('div')
   group_btn_select.className = 'group_btn_select'
   group_btn_select.replaceChildren(
@@ -2213,12 +2148,12 @@ function _groupBtnSelect ({ initvalue, listvalue = [], onselect }) {
   return group_btn_select
 }
 
-function reloadEditTypoBlock () {
+function reloadEditTypoBlock() {
   let newEditTextStyle = EditTypoBlock()
   document.getElementById('edit_text_style').replaceWith(newEditTextStyle)
 }
 
-function _btnInputSelect ({
+function _btnInputSelect({
   initvalue = '',
   listvalue = [],
   onselect,
@@ -2269,9 +2204,8 @@ function _btnInputSelect ({
               onselect(vl)
               popup_select.remove()
             }
-          option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${
-            vl === initvalue ? 1 : 0
-          }"></i><span class="semibold2" style="color: #ffffff">${vl}</span>`
+          option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${vl === initvalue ? 1 : 0
+            }"></i><span class="semibold2" style="color: #ffffff">${vl}</span>`
           return option
         })
       )
@@ -2279,9 +2213,8 @@ function _btnInputSelect ({
       if (
         popup_select.getBoundingClientRect().bottom > document.body.offsetHeight
       ) {
-        popup_select.style.height = `${
-          document.body.offsetHeight - popup_select.getBoundingClientRect().top
-        }px`
+        popup_select.style.height = `${document.body.offsetHeight - popup_select.getBoundingClientRect().top
+          }px`
         popup_select.style.overflowY = 'scroll'
       }
     }, 200)
@@ -2289,7 +2222,7 @@ function _btnInputSelect ({
   return btn_select
 }
 
-function _btnDropDownSelect ({ initvalue = '', listvalue = [], onselect }) {
+function _btnDropDownSelect({ initvalue = '', listvalue = [], onselect }) {
   let isString = typeof listvalue[0] === 'string'
   let btnDropDownSelect = document.createElement('div')
   btnDropDownSelect.className = 'btn_dropdown_select'
@@ -2318,11 +2251,9 @@ function _btnDropDownSelect ({ initvalue = '', listvalue = [], onselect }) {
               onselect(vl)
               popup_select_option.remove()
             }
-          option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${
-            vl === initvalue ? 1 : 0
-          }"></i><span class="semibold2" style="color: #ffffff">${
-            isString ? vl : vl.title
-          }</span>`
+          option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${vl === initvalue ? 1 : 0
+            }"></i><span class="semibold2" style="color: #ffffff">${isString ? vl : vl.title
+            }</span>`
           return option
         })
       )
@@ -2342,7 +2273,7 @@ let list_border_style = [
 ]
 
 //! border
-function EditBorderBlock () {
+function EditBorderBlock() {
   let listBorder = selected_list.filter(wb =>
     ['w-checkbox', ...WbClass.borderEffect].some(e =>
       wb.value.classList.contains(e)
@@ -2566,20 +2497,17 @@ function EditBorderBlock () {
                     handleEditBorder({ side: vl })
                   popup_select_option.remove()
                 }
-              option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${
-                vl === sideValues[0] ? 1 : 0
-              }"></i><div style="height: 16px; margin: 4px; background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-${
-                vl === 'mixed' ? 'all' : vl
-              }.svg)"></div><span class="semibold2" style="color: #ffffff; width: max-content">${vl}</span>`
+              option.innerHTML = `<i class="fa-solid fa-check" style="color: #ffffff;margin-right: 8px;opacity: ${vl === sideValues[0] ? 1 : 0
+                }"></i><div style="height: 16px; margin: 4px; background-image: url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-${vl === 'mixed' ? 'all' : vl
+                }.svg)"></div><span class="semibold2" style="color: #ffffff; width: max-content">${vl}</span>`
               return option
             })
           )
           document.getElementById('body').appendChild(popup_select_option)
         }, 200)
       }
-      btnSelectBorderSide.style.backgroundImage = `url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-${
-        sideValues.length > 1 ? 'all' : sideValues[0]
-      }-black.svg)`
+      btnSelectBorderSide.style.backgroundImage = `url(https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/border-${sideValues.length > 1 ? 'all' : sideValues[0]
+        }-black.svg)`
       action_edit_line_container.appendChild(btnSelectBorderSide)
 
       // let edit_line_action2 = createButtonAction(
@@ -2605,7 +2533,7 @@ function EditBorderBlock () {
   return editContainer
 }
 
-function reloadEditBorderBlock () {
+function reloadEditBorderBlock() {
   let newEditBorder = EditBorderBlock()
   document.getElementById('edit-border').replaceWith(newEditBorder)
 }
@@ -2616,7 +2544,7 @@ function reloadEditBorderBlock () {
 //   ShadowType.layer_blur
 // ]
 // ! effect
-function EditEffectBlock () {
+function EditEffectBlock() {
   let listEffect = selected_list.filter(wb =>
     WbClass.borderEffect.some(e => wb.value.classList.contains(e))
   )
@@ -2758,7 +2686,7 @@ function EditEffectBlock () {
       )
 
       //
-      function setEffectValue () {
+      function setEffectValue() {
         popupEditEffect.style.display = 'flex'
         if (eTypeValues === 'filter') {
           input_offsetX.style.display = 'none'
@@ -2870,12 +2798,12 @@ function EditEffectBlock () {
   return editContainer
 }
 
-function reloadEditEffectBlock () {
+function reloadEditEffectBlock() {
   let newEditEffect = EditEffectBlock()
   document.getElementById('edit-effect').replaceWith(newEditEffect)
 }
 
-function createEditColorForm ({
+function createEditColorForm({
   id,
   value = '#000000ff',
   onchange,
@@ -2891,17 +2819,16 @@ function createEditColorForm ({
   editColorTile.innerHTML = `<div class="parameter-form">
   <input type="color" value=${value.substring(0, 7)} class="color-picker"/>
   <input value="${value
-    .replace('#', '')
-    .substring(0, 6)
-    .toUpperCase()}" class="edit-color-form"/><div class="ver-line"></div><input value="${Ultis.hexToPercent(
-    value.replace('#', '').substring(6)
-  )}%" class="edit-opacity-form"/>
+      .replace('#', '')
+      .substring(0, 6)
+      .toUpperCase()}" class="edit-color-form"/><div class="ver-line"></div><input value="${Ultis.hexToPercent(
+        value.replace('#', '').substring(6)
+      )}%" class="edit-opacity-form"/>
   </div>
-  ${
-    suffixAction
+  ${suffixAction
       ? '<img src="https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/buttonStyle.svg"/>'
       : '<div class="row"><i class="fa-regular fa-eye"></i><i class="fa-solid fa-minus"></i></div>'
-  }`
+    }`
 
   $(editColorTile).on('input', '.color-picker', function () {
     editColorTile.querySelector('.edit-color-form').value = this.value
@@ -2933,7 +2860,7 @@ function createEditColorForm ({
     if (!isNaN(parseInt(this.value.replace('%', '')))) {
       onsubmit(
         value.substring(7) +
-          Ultis.percentToHex(parseInt(this.value.replace('%', '')))
+        Ultis.percentToHex(parseInt(this.value.replace('%', '')))
       )
     } else {
       this.value = Ultis.hexToPercent(value.replace('#', '').substring(6))
@@ -2947,7 +2874,7 @@ function createEditColorForm ({
   return editColorTile
 }
 
-function createButtonAction (src1, src2, action) {
+function createButtonAction(src1, src2, action) {
   let changeIcon = false
   let button = document.createElement('button')
   button.className = 'action-button'
@@ -2969,7 +2896,7 @@ function createButtonAction (src1, src2, action) {
   return button
 }
 
-function createDropdownTableSkin ({ cate, offset, currentSkinID, cssText }) {
+function createDropdownTableSkin({ cate, offset, currentSkinID, cssText }) {
   let dropdown = document.createElement('div')
   dropdown.onclick = function (e) {
     e.stopPropagation()
@@ -3053,7 +2980,7 @@ function createDropdownTableSkin ({ cate, offset, currentSkinID, cssText }) {
     e.stopPropagation()
     searchSkins()
   })
-  function searchSkins () {
+  function searchSkins() {
     let searchContent = inputSearch.value.toLowerCase()
     if (searchContent.trim() == '') {
       let listTile = body.querySelectorAll('.cate-skin-tile, .skin_tile_option')
@@ -3096,7 +3023,7 @@ function createDropdownTableSkin ({ cate, offset, currentSkinID, cssText }) {
   }
 }
 
-function updateTableSkinBody (enumCate, currentSkinID) {
+function updateTableSkinBody(enumCate, currentSkinID) {
   let dropdown = document.getElementById('popup_table_skin')
   if (!dropdown) return
   let body = document.createElement('div')
@@ -3200,7 +3127,7 @@ function updateTableSkinBody (enumCate, currentSkinID) {
   }
 }
 
-function createCateSkinHTML (cateItem, currentSkinID) {
+function createCateSkinHTML(cateItem, currentSkinID) {
   let cateContainer = document.createElement('div')
   cateContainer.className = `CateItemID:${cateItem.ID} col cate-skin-tile`
   cateContainer.style.width = '100%'
@@ -3268,7 +3195,7 @@ function createCateSkinHTML (cateItem, currentSkinID) {
   return cateContainer
 }
 
-function createSkinTileHTML (enumCate, jsonSkin) {
+function createSkinTileHTML(enumCate, jsonSkin) {
   let skin_tile = document.createElement('button')
   skin_tile.id = `skinID:${jsonSkin.GID}`
   skin_tile.className = 'skin_tile_option'
@@ -3285,7 +3212,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
     action_edit.className = 'fa-solid fa-sliders fa-lg'
     action_edit.onclick = showEditSkin
   }
-  function showEditSkin (e) {
+  function showEditSkin(e) {
     e.stopPropagation()
     let popupEdit = popupEditSkin(enumCate, jsonSkin)
     popupEdit.style.top = e.pageY + 'px'
@@ -3294,9 +3221,8 @@ function createSkinTileHTML (enumCate, jsonSkin) {
     if (
       popupEdit.getBoundingClientRect().bottom >= document.body.offsetHeight
     ) {
-      popupEdit.style.top = `${
-        document.body.offsetHeight - popupEdit.offsetHeight
-      }px`
+      popupEdit.style.top = `${document.body.offsetHeight - popupEdit.offsetHeight
+        }px`
     }
   }
   skin_tile.onauxclick = function (e) {
@@ -3427,7 +3353,7 @@ function createSkinTileHTML (enumCate, jsonSkin) {
   return skin_tile
 }
 
-function popupEditSkin (enumCate, jsonSkin) {
+function popupEditSkin(enumCate, jsonSkin) {
   let divEditSkin = document.createElement('div')
   divEditSkin.id = 'popup_edit_skin'
   divEditSkin.className = 'wini_popup col popup_remove'
@@ -3523,7 +3449,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       }
       demoDiv.style.backgroundImage = 'none'
       demoDiv.style.backgroundColor = `#${jsonSkin.Value}`
-      function updateColorSkin (newColor, onSubmit = true) {
+      function updateColorSkin(newColor, onSubmit = true) {
         let thisSkin = ColorDA.list.find(e => e.GID == jsonSkin.GID)
         editColorSkin({ Value: newColor }, thisSkin, onSubmit)
         demoDiv.style.backgroundColor = `#${thisSkin.Value}`
@@ -3982,11 +3908,9 @@ function popupEditSkin (enumCate, jsonSkin) {
       } else {
         let effect_color = jsonSkin.ColorValue
         /* offset-x | offset-y | blur-radius | spread-radius | color */
-        demoShadow.style.boxShadow = `${jsonSkin.OffsetX}px ${
-          jsonSkin.OffsetY
-        }px ${jsonSkin.BlurRadius}px ${
-          jsonSkin.SpreadRadius
-        }px #${effect_color} 
+        demoShadow.style.boxShadow = `${jsonSkin.OffsetX}px ${jsonSkin.OffsetY
+          }px ${jsonSkin.BlurRadius}px ${jsonSkin.SpreadRadius
+          }px #${effect_color} 
           ${jsonSkin.Type == ShadowType.inner ? 'inset' : ''}`
       }
       demoDiv.appendChild(demoShadow)
@@ -4035,11 +3959,9 @@ function popupEditSkin (enumCate, jsonSkin) {
                     { OffsetX: parseFloat(ev.target.value) },
                     thisSkin
                   )
-                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                    thisSkin.OffsetY
-                  }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
-                    thisSkin.ColorValue
-                  } 
+                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY
+                    }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue
+                    } 
                         ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
                 } else {
                   ev.target.value = thisSkin.OffsetX
@@ -4063,11 +3985,9 @@ function popupEditSkin (enumCate, jsonSkin) {
                   demoShadow.style.filter = `blur(${thisSkin.BlurRadius}px)`
                 } else {
                   let effect_color = thisSkin.ColorValue
-                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                    thisSkin.OffsetY
-                  }px ${thisSkin.BlurRadius}px ${
-                    thisSkin.SpreadRadius
-                  }px #${effect_color} 
+                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY
+                    }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius
+                    }px #${effect_color} 
                       ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
                 }
               } else {
@@ -4088,11 +4008,9 @@ function popupEditSkin (enumCate, jsonSkin) {
                     { OffsetY: parseFloat(ev.target.value) },
                     thisSkin
                   )
-                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                    thisSkin.OffsetY
-                  }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
-                    thisSkin.ColorValue
-                  } 
+                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY
+                    }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue
+                    } 
                       ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
                 } else {
                   ev.target.value = thisSkin.OffsetY
@@ -4110,11 +4028,9 @@ function popupEditSkin (enumCate, jsonSkin) {
                     { SpreadRadius: parseFloat(ev.target.value) },
                     thisSkin
                   )
-                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                    thisSkin.OffsetY
-                  }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${
-                    thisSkin.ColorValue
-                  } 
+                  demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY
+                    }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius}px #${thisSkin.ColorValue
+                    } 
                       ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
                 } else {
                   ev.target.value = thisSkin.OffsetY
@@ -4128,21 +4044,17 @@ function popupEditSkin (enumCate, jsonSkin) {
               onchange: newColor => {
                 let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
                 editEffectSkin({ ColorValue: newColor }, thisSkin, false)
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                  thisSkin.OffsetY
-                }px ${thisSkin.BlurRadius}px ${
-                  thisSkin.SpreadRadius
-                }px #${newColor} 
+                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY
+                  }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius
+                  }px #${newColor} 
                     ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
               },
               onsubmit: newColor => {
                 let thisSkin = EffectDA.list.find(e => e.GID == jsonSkin.GID)
                 editEffectSkin({ ColorValue: newColor }, thisSkin)
-                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-                  thisSkin.OffsetY
-                }px ${thisSkin.BlurRadius}px ${
-                  thisSkin.SpreadRadius
-                }px #${newColor} 
+                demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY
+                  }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius
+                  }px #${newColor} 
                     ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
               }
             })
@@ -4154,9 +4066,8 @@ function popupEditSkin (enumCate, jsonSkin) {
             popupEditEffect.getBoundingClientRect().bottom >=
             document.body.offsetHeight
           ) {
-            popupEditEffect.style.top = `${
-              document.body.offsetHeight - popupEditEffect.offsetHeight
-            }px`
+            popupEditEffect.style.top = `${document.body.offsetHeight - popupEditEffect.offsetHeight
+              }px`
           }
         }
       )
@@ -4190,11 +4101,9 @@ function popupEditSkin (enumCate, jsonSkin) {
           } else {
             let effect_color = thisSkin.ColorValue
             /* offset-x | offset-y | blur-radius | spread-radius | color */
-            demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${
-              thisSkin.OffsetY
-            }px ${thisSkin.BlurRadius}px ${
-              thisSkin.SpreadRadius
-            }px #${effect_color} 
+            demoShadow.style.boxShadow = `${thisSkin.OffsetX}px ${thisSkin.OffsetY
+              }px ${thisSkin.BlurRadius}px ${thisSkin.SpreadRadius
+              }px #${effect_color} 
               ${thisSkin.Type == ShadowType.inner ? 'inset' : ''}`
           }
         }
@@ -4205,7 +4114,7 @@ function popupEditSkin (enumCate, jsonSkin) {
       let btn_isShow = createButtonAction(
         'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/eye-outline.svg',
         'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/eye-close.svg',
-        function () {}
+        function () { }
       )
       btn_isShow.className = 'action-button'
       div_select_eType.appendChild(btn_isShow)
@@ -4218,7 +4127,7 @@ function popupEditSkin (enumCate, jsonSkin) {
   return divEditSkin
 }
 
-function wbaseSkinTile ({
+function wbaseSkinTile({
   cate,
   onClick,
   onRemove,
@@ -4280,7 +4189,7 @@ function wbaseSkinTile ({
   return wbase_skin_tile
 }
 
-function hidePopup (event) {
+function hidePopup(event) {
   let list_popup = document.getElementsByClassName('wini_popup')
   let actived_popup = [...list_popup].filter(
     e => window.getComputedStyle(e).display != 'none'
@@ -4307,7 +4216,7 @@ function hidePopup (event) {
   }
 }
 
-function isHidden (elHTML) {
+function isHidden(elHTML) {
   let bouncingClient = elHTML?.getBoundingClientRect()
   if (bouncingClient) {
     let offsetTop = 0
@@ -4351,7 +4260,7 @@ function isHidden (elHTML) {
 }
 
 //! variants
-function createEditVariants () {
+function createEditVariants() {
   let editContainer = document.createElement('div')
   editContainer.id = 'edit_variant'
   editContainer.style.padding = '8px 0'
@@ -4408,7 +4317,7 @@ function createEditVariants () {
   else if (
     select_box_parentID != wbase_parentID &&
     document.getElementById(select_box_parentID).getAttribute('cateid') ==
-      EnumCate.variant
+    EnumCate.variant
   ) {
     btnTitle.style.pointerEvents = 'none'
     action_add.style.display = 'none'
@@ -4579,12 +4488,12 @@ function createEditVariants () {
   return editContainer
 }
 
-function updateUIVariant () {
+function updateUIVariant() {
   let newEditVariants = createEditVariants()
   document.getElementById('edit_variant').replaceWith(newEditVariants)
 }
 
-function _editPropertyTile (property_item) {
+function _editPropertyTile(property_item) {
   let property_tile = document.createElement('div')
   property_tile.id = `propertyID:${property_item.GID}`
   property_tile.className = 'property_tile'
@@ -4655,7 +4564,7 @@ function _editPropertyTile (property_item) {
   return property_tile
 }
 
-function _selectPropertyVariant (
+function _selectPropertyVariant(
   property_item,
   title,
   onSelect,
@@ -4737,7 +4646,7 @@ function _selectPropertyVariant (
   return property_tile
 }
 
-function createSelectionSkins () {
+function createSelectionSkins() {
   let selectionSkins = document.createElement('div')
   selectionSkins.id = 'selection_skins'
   selectionSkins.className = 'edit-container'
@@ -4778,12 +4687,12 @@ function createSelectionSkins () {
   return selectionSkins
 }
 
-function updateUISelectionSkins () {
+function updateUISelectionSkins() {
   let newSelectionSkins = createSelectionSkins()
   document.getElementById('selection_skins')?.replaceWith(newSelectionSkins)
 }
 
-function mergeSkinDialog () {
+function mergeSkinDialog() {
   document.getElementById('dialog_merge_skin')?.parentElement?.remove()
   let dialogBackground = document.createElement('div')
   dialogBackground.className = 'dialog-background'
@@ -4825,7 +4734,7 @@ function mergeSkinDialog () {
   let mergeSkinTitle = document.createElement('p')
   mergeSkinTitle.innerHTML = 'Local skins'
   contentTitle.replaceChildren(conflictSkinTitle, mergeSkinTitle)
-  function getUndefinedSkin (skinList) {
+  function getUndefinedSkin(skinList) {
     return skinList.filter(skinItem => {
       let thisProjectID = skinItem.ProjectID ?? ProjectDA.obj.ID
       if (thisProjectID == ProjectDA.obj.ID) return false
@@ -4907,7 +4816,7 @@ function mergeSkinDialog () {
   dialogBottom.replaceChildren(submitButton)
 }
 
-function conflictSkinInProject (skinProjectItem) {
+function conflictSkinInProject(skinProjectItem) {
   if (
     skinProjectItem.ColorItems.length == 0 &&
     skinProjectItem.TextStyleItems.length == 0 &&
@@ -4980,7 +4889,7 @@ function conflictSkinInProject (skinProjectItem) {
   return container
 }
 
-function mergeSkinByCate (cateItem, listSkin) {
+function mergeSkinByCate(cateItem, listSkin) {
   let enumCate = cateItem.ParentID ?? cateItem.ID
   let isShow = true
   let children = []
@@ -5143,7 +5052,7 @@ function mergeSkinByCate (cateItem, listSkin) {
   }
 }
 
-function mergeSkinTile (enumCate, jsonSkin) {
+function mergeSkinTile(enumCate, jsonSkin) {
   let mergeSkinTile = document.createElement('div')
   mergeSkinTile.className = 'merge-skin-tile'
   let conflictSkin = document.createElement('div')
@@ -5152,7 +5061,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
   }
   let localSkin = document.createElement('div')
   mergeSkinTile.replaceChildren(conflictSkin, localSkin)
-  function onSelectLocalSkin (option) {
+  function onSelectLocalSkin(option) {
     let dialogContent = document.getElementById('merge_skins_dialog_content')
     let listMergeSkin = JSON.parse(dialogContent.getAttribute('listMergeSkin'))
     let localSkinItem = listMergeSkin.find(
@@ -5246,8 +5155,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
       skinTitle.innerHTML =
         jsonSkin.Name +
         ' || ' +
-        `${jsonSkin.FontSize}px/${
-          jsonSkin.Height ? jsonSkin.Height + 'px' : 'Auto'
+        `${jsonSkin.FontSize}px/${jsonSkin.Height ? jsonSkin.Height + 'px' : 'Auto'
         }`
       conflictSkin.replaceChildren(demoDiv1, skinTitle)
       var arrowIcon = document.createElement('i')
@@ -5284,8 +5192,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
             '/' +
             option.Name +
             ' || ' +
-            `${option.FontSize}px/${
-              option.Height ? option.Height + 'px' : 'Auto'
+            `${option.FontSize}px/${option.Height ? option.Height + 'px' : 'Auto'
             }`
           optionTitle.className = 'regular1'
           optionTitle.style.color = '#ffffff'
@@ -5418,7 +5325,7 @@ function mergeSkinTile (enumCate, jsonSkin) {
   return mergeSkinTile
 }
 
-function suggestInput (listValue, placeholder, prefixIcon, builder, onSelect) {
+function suggestInput(listValue, placeholder, prefixIcon, builder, onSelect) {
   let listSearch = []
   let inputContainer = document.createElement('div')
   inputContainer.className = 'suggetion-input'
@@ -5487,7 +5394,7 @@ function suggestInput (listValue, placeholder, prefixIcon, builder, onSelect) {
         ?.remove()
     }
   }
-  function showPopupOptions () {
+  function showPopupOptions() {
     let parentRect = inputContainer.getBoundingClientRect()
     document
       .getElementById('body')
@@ -5501,7 +5408,7 @@ function suggestInput (listValue, placeholder, prefixIcon, builder, onSelect) {
     document.getElementById('body').appendChild(popupOptionValues)
   }
 
-  function search (textValue = '') {
+  function search(textValue = '') {
     let popupOptionValues = document
       .getElementById('body')
       .querySelector(':scope > .popup-options')
@@ -5582,7 +5489,7 @@ function suggestInput (listValue, placeholder, prefixIcon, builder, onSelect) {
 }
 
 // ! Breakpoint
-function createBreakpoint () {
+function createBreakpoint() {
   ProjectDA.obj.ResponsiveJson ??= JSON.parse(
     JSON.stringify(ProjectDA.responsiveJson)
   )
@@ -5634,7 +5541,7 @@ function createBreakpoint () {
       header.replaceChildren(title, historyBtn, closeBtn)
       let body = document.createElement('div')
       body.className = 'popup-body'
-      function listBrpTile () {
+      function listBrpTile() {
         body.replaceChildren(
           ...localBrpoint.BreakPoint.map(brp => {
             let editBrp = document.createElement('div')
@@ -5846,13 +5753,13 @@ function createBreakpoint () {
   return editContainer
 }
 
-function updateUIBreakpoint () {
+function updateUIBreakpoint() {
   let newBreakpoint = createBreakpoint()
   document.getElementById('edit-breakpoint')?.replaceWith(newBreakpoint)
 }
 
 // !Responsive
-function winiResponsive () {
+function winiResponsive() {
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-wini-res'
   editContainer.className = 'edit-container'
@@ -5890,7 +5797,7 @@ function winiResponsive () {
 
 // ! select number col
 let copyBrpColSettings
-function colNumberByBrp (enable = true) {
+function colNumberByBrp(enable = true) {
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-col-number'
   editContainer.className = 'edit-container'
@@ -6160,12 +6067,12 @@ function colNumberByBrp (enable = true) {
   return editContainer
 }
 
-function updateUIColNumber () {
+function updateUIColNumber() {
   let newSelectCol = colNumberByBrp()
   document.getElementById('edit-col-number')?.replaceWith(newSelectCol)
 }
 
-function selectionClass () {
+function selectionClass() {
   let listStyleClass = selected_list
     .map(wb => wb.ListClassName?.split(' ') ?? [])
     .reduce((a, b) => a.concat(b))
@@ -6212,7 +6119,7 @@ function selectionClass () {
   return editContainer
 }
 
-function createVariables () {
+function createVariables() {
   let editContainer = document.createElement('div')
   editContainer.id = 'edit-variables'
   editContainer.className = 'edit-container'
@@ -6230,7 +6137,7 @@ function createVariables () {
       body.appendChild(createVariableTile(prop))
     }
   }
-  function createVariableTile (propN) {
+  function createVariableTile(propN) {
     let tile = document.createElement('div')
     tile.className = 'row'
     let propEditName = document.createElement('input')

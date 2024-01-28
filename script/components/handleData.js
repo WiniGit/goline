@@ -1,4 +1,4 @@
-﻿function initDOM (list) {
+﻿function initDOM(list) {
   list.forEach(e => {
     e.value = document.createElement('div')
     e.value.id = e.GID
@@ -40,7 +40,7 @@
   return newList
 }
 
-function initComponents (wb, children) {
+function initComponents(wb, children) {
   if (wb.AttributesItem.Json) {
     wb.JsonItem = JSON.parse(wb.AttributesItem.Json)
   }
@@ -141,10 +141,7 @@ function initComponents (wb, children) {
   wb.value.setAttribute('parentid', wb.ParentID)
   if (wb.IsWini) {
     wb.value.setAttribute('iswini', wb.IsWini)
-  } else if (
-    [...wb.value.classList].some(cls => cls.startsWith('w-st0')) &&
-    wb.CopyID
-  ) {
+  } else if ([...wb.value.classList].some(cls => cls.startsWith('w-st0')) && wb.CopyID) {
     wb.value.setAttribute('isinstance', true)
     wb.IsInstance = true
   }
@@ -154,7 +151,7 @@ function initComponents (wb, children) {
   }
 }
 
-function setAttributeByStyle (wbHTML, cssRule) {
+function setAttributeByStyle(wbHTML, cssRule) {
   cssRule ??= wbHTML.style
   for (let stProp of cssRule) {
     switch (stProp) {
@@ -230,9 +227,8 @@ function setAttributeByStyle (wbHTML, cssRule) {
         }
         break
       case 'position':
-        const levelAttr = `[level="${
-          parseInt(wbHTML.getAttribute('level')) - 1
-        }"]`
+        const levelAttr = `[level="${parseInt(wbHTML.getAttribute('level')) - 1
+          }"]`
         if (
           cssRule[stProp] === 'absolute' &&
           wbHTML.closest(`.w-row${levelAttr}, .w-col${levelAttr}`)
@@ -275,7 +271,7 @@ const resizeWbase = new ResizeObserver(entries => {
   })
 })
 
-function getWBaseOffset (wb) {
+function getWBaseOffset(wb) {
   let leftValue
   let topValue
   if (wb.ParentID === wbase_parentID) {
@@ -289,18 +285,18 @@ function getWBaseOffset (wb) {
     leftValue = Math.round(
       (wb.value.getBoundingClientRect().x -
         document.getElementById(wb.ParentID).getBoundingClientRect().x) /
-        scale
+      scale
     ).toFixed(2)
     topValue = Math.round(
       (wb.value.getBoundingClientRect().y -
         document.getElementById(wb.ParentID).getBoundingClientRect().y) /
-        scale
+      scale
     ).toFixed(2)
   }
   return { x: parseFloat(leftValue), y: parseFloat(topValue) }
 }
 
-async function callAPI (request) {
+async function callAPI(request) {
   var listParam = InputDA.list.filter(
     e => e.APIID == request.ID && e.Type == enumTypeInput.param
   )
@@ -327,13 +323,13 @@ async function callAPI (request) {
   return response
 }
 
-function addStyleComponents (item, elements) {
+function addStyleComponents(item, elements) {
   if (item.IsWini == true) {
     elements.setAttribute('class', item.StyleItem.Name)
   }
 }
 
-function handleListInput (listInput) {
+function handleListInput(listInput) {
   let _obj = {}
   listInput.forEach(function (item) {
     let name = item.Name
@@ -342,7 +338,7 @@ function handleListInput (listInput) {
   return _obj
 }
 
-function handleRequestUrl (request, listParam) {
+function handleRequestUrl(request, listParam) {
   let param = ''
   listParam.forEach(function (e) {
     if (e.Name != null && e.Name != '') {
@@ -362,7 +358,7 @@ class enumTypeInput {
   static body = 3
 }
 
-function wMainAxis (key, isHorizontal) {
+function wMainAxis(key, isHorizontal) {
   if (isHorizontal == null) {
     if (key.includes('Left')) {
       return '-webkit-left'
@@ -394,7 +390,7 @@ function wMainAxis (key, isHorizontal) {
   }
 }
 
-function wCrossAxis (key, isHorizontal) {
+function wCrossAxis(key, isHorizontal) {
   if (isHorizontal == undefined) {
     if (key.includes('Top')) {
       return 'top'
@@ -422,7 +418,7 @@ function wCrossAxis (key, isHorizontal) {
   }
 }
 
-function mainAxisToAlign (key, isHorizontal) {
+function mainAxisToAlign(key, isHorizontal) {
   if (isHorizontal == null) {
     switch (key) {
       case '-webkit-left':
@@ -457,7 +453,7 @@ function mainAxisToAlign (key, isHorizontal) {
   }
 }
 
-function crossAxisToAlign (key, isHorizontal) {
+function crossAxisToAlign(key, isHorizontal) {
   if (isHorizontal == undefined) {
     switch (key) {
       case 'top':

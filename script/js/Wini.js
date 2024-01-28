@@ -603,27 +603,19 @@ var parent = divSection,
 let listWbOnScreen = []
 function selectParent(event) {
   parent = divSection
-  if (
+  if (selected_list.length && !event.altKey &&
     selected_list[0].value.closest(`.wbaseItem-value[isinstance]`) &&
-    !event.altKey &&
-    selected_list.some(e =>
-      [...e.value.classList].some(cls => cls.startsWith('w-st'))
-    )
+    selected_list.some(e => [...e.value.classList].some(cls => cls.startsWith('w-st')))
   ) {
     parent = document.getElementById(select_box_parentID) ?? divSection
     let elementRect = parent.getBoundingClientRect()
     element_offset = offsetScale(elementRect.x, elementRect.y)
   } else {
     let current_level =
-      parseInt(
-        document.getElementById(select_box_parentID)?.getAttribute('level') ??
-        '0'
-      ) + 1
+      parseInt(document.getElementById(select_box_parentID)?.getAttribute('level') ?? '0') + 1
     if (checkpad === 0) {
       const disabledInstance = selected_list.some(e => e.IsWini)
-      const component = selected_list[0].value.closest(
-        `.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`
-      )
+      const component = selected_list.length && selected_list[0].value.closest(`.wbaseItem-value[iswini]:not(*[level="${selected_list[0].Level}"])`)
       listWbOnScreen = []
       listWbOnScreen.push(
         ...divSection.querySelectorAll(
@@ -636,24 +628,14 @@ function selectParent(event) {
         )
       )
       if (component) {
-        listWbOnScreen = listWbOnScreen.filter(
-          e => !e.closest(`.wbaseItem-value[iswini]`) || component.contains(e)
-        )
+        listWbOnScreen = listWbOnScreen.filter(e => !e.closest(`.wbaseItem-value[iswini]`) || component.contains(e))
       }
     }
     let list = listWbOnScreen
-    let containVariant = selected_list.some(
-      wb =>
-        wb.value.classList.contains('w-variant') ||
-        wb.value.querySelector('.w-variant')
-    )
+    let containVariant = selected_list.some(wb => wb.value.classList.contains('w-variant') || wb.value.querySelector('.w-variant'))
     let objp = list.filter(eHTML => {
       const eLevel = parseInt(eHTML.getAttribute('level'))
-      if (
-        [...alt_list, ...selected_list].some(
-          wb => wb.GID === eHTML.id || wb.value.contains(eHTML)
-        )
-      ) {
+      if ([...alt_list, ...selected_list].some(wb => wb.GID === eHTML.id || wb.value.contains(eHTML))) {
         return false
       }
       //
@@ -1011,21 +993,13 @@ const childObserver = new MutationObserver(mutationList => {
 var lstc = []
 var dragTime = 0
 function moveListener(event) {
-  if (
-    document.activeElement.closest('.w-text') ||
-    (event.target.localName === 'input' && !event.target.readOnly)
-  )
+  if (document.activeElement.closest('.w-text') || (event.target.localName === 'input' && !event.target.readOnly))
     return
   event.preventDefault()
   let target_view
   // check drag resize left view
-  if (
-    ((!instance_drag && left_view.offsetWidth > 0) || left_view.resizing) &&
-    !sortLayer
-  ) {
-    let pageContainerY = document
-      .getElementById('div_list_page')
-      .getBoundingClientRect()
+  if (((!instance_drag && left_view.offsetWidth > 0) || left_view.resizing) && !sortLayer) {
+    let pageContainerY = document.getElementById('div_list_page').getBoundingClientRect()
     if (left_view.resizing) {
       if (document.body.style.cursor === 'e-resize') {
         left_view.style.width = event.pageX + 'px'
@@ -1093,9 +1067,7 @@ function moveListener(event) {
       )
     } else if (
       (sortLayer || event.target.closest('.layer_wbase_tile')) &&
-      [ToolState.hand_tool, ...ToolState.resize_type].every(
-        ts => tool_state != ts
-      ) &&
+      [ToolState.hand_tool, ...ToolState.resize_type].every(ts => tool_state != ts) &&
       drag_start_list.length === 0
     ) {
       target_view = 'left_view'
@@ -1142,17 +1114,11 @@ function moveListener(event) {
             yp = event.pageY - miny
           if (tool_state === ToolState.hand_tool) {
             handToolDrag(event)
-          } else if (
-            isAroundPoint(prototypePoint, event) ||
-            drag_prototype_endppoint
-          ) {
+          } else if (isAroundPoint(prototypePoint, event) || drag_prototype_endppoint) {
             dragPrototypeLine(event)
           } else if (keyid != 'z' && design_view_index !== 1) {
             let isCreate = false
-            if (
-              ToolState.create_new_type.some(tool => tool_state == tool) &&
-              checkpad == 0
-            ) {
+            if (ToolState.create_new_type.some(tool => tool_state == tool) && checkpad == 0) {
               let offset_convert = offsetScale(
                 Math.min(minx, event.pageX),
                 Math.min(miny, event.pageY)
@@ -1183,16 +1149,13 @@ function moveListener(event) {
                 }
                 if (select_box && !objr) {
                   if (checkpad == 0)
-                    lstc = [
-                      ...parent.querySelectorAll(':scope > .wbaseItem-value')
-                    ].filter(eHTML => !isHidden(eHTML))
+                    lstc = [...parent.querySelectorAll(':scope > .wbaseItem-value')].filter(eHTML => !isHidden(eHTML))
                   selectParent(event)
                   // top left
                   let select_box_o1 = select_box.o1
                   // bottom right
                   let select_box_o9 = select_box.o9
-                  if (
-                    checkpad > 0 ||
+                  if (checkpad > 0 ||
                     (isInRange(event.pageX, select_box_o1.x, select_box_o9.x) &&
                       isInRange(event.pageY, select_box_o1.y, select_box_o9.y))
                   ) {
@@ -1208,27 +1171,21 @@ function moveListener(event) {
                         if (!event.altKey) {
                           if (
                             wb.value.getAttribute('width-type') === 'fill' ||
-                            [Constraints.left_right, Constraints.scale].some(
-                              e => wb.value.getAttribute('constx') === e
-                            )
+                            [Constraints.left_right, Constraints.scale].some(e => wb.value.getAttribute('constx') === e)
                           ) {
                             wb.value.style.width = wb.value.offsetWidth + 'px'
                             wb.value.style.flex = null
                           }
                           if (
                             wb.value.getAttribute('height-type') === 'fill' ||
-                            [Constraints.top_bottom, Constraints.scale].some(
-                              e => wb.value.getAttribute('consty') === e
-                            )
+                            [Constraints.top_bottom, Constraints.scale].some(e => wb.value.getAttribute('consty') === e)
                           ) {
                             wb.value.style.height = wb.value.offsetHeight + 'px'
                             wb.value.style.flex = null
                           }
                         }
                       })
-                      drag_start_list = JSON.parse(
-                        JSON.stringify(selected_list)
-                      )
+                      drag_start_list = JSON.parse(JSON.stringify(selected_list))
                     }
 
                     if (
@@ -1309,6 +1266,7 @@ function moveListener(event) {
         const instDemo = event.target.querySelector('.wbaseItem-value')
         instance_drag = instDemo.cloneNode(true)
         let target_rect = instDemo.getBoundingClientRect()
+        document.body.style.cssText = event.target.closest('.instance-container').style.cssText
         document.body.appendChild(instance_drag)
         instance_drag.style.pointerEvents = 'none'
         instance_drag.style.left = target_rect.x + target_rect.width + 'px'
@@ -2853,6 +2811,7 @@ function upListener(event) {
     })
   }
   document.getElementById('popup_img_document')?.removeAttribute('offset')
+  document.body.removeAttribute('style')
   if (instance_drag && target_view !== 'canvas_view') {
     instance_drag?.remove()
     instance_drag = null

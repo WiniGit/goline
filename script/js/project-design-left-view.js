@@ -1,20 +1,14 @@
 //setup left view
-function setupLeftView () {
+function setupLeftView() {
   document.querySelector('#btn_select_page > p').innerHTML = PageDA.obj.Name
   $('body').on('click', '#btn_select_page', function (ev) {
     let suffixIcon = ev.target.querySelector('i')
     if (div_list_page.style.display === 'none') {
-      suffixIcon.className = suffixIcon.className.replace(
-        'fa-chevron-down',
-        'fa-chevron-up'
-      )
+      suffixIcon.className = suffixIcon.className.replace('fa-chevron-down', 'fa-chevron-up')
       div_list_page.style.display = 'flex'
       if (assets_view.offsetWidth > 0) leftTabChange('Layer')
     } else {
-      suffixIcon.className = suffixIcon.className.replace(
-        'fa-chevron-up',
-        'fa-chevron-down'
-      )
+      suffixIcon.className = suffixIcon.className.replace('fa-chevron-up', 'fa-chevron-down')
       div_list_page.style.display = 'none'
     }
   })
@@ -50,7 +44,7 @@ function setupLeftView () {
   })
 }
 
-function showSearchResult () {
+function showSearchResult() {
   leftTabChange('Layer')
   let searchFilter = 0
   let filterBy = [
@@ -58,11 +52,10 @@ function showSearchResult () {
     -1, //base component
     -2, // search by text content
     -3, // local component
-    EnumCate.text,
-    EnumCate.svg,
-    EnumCate.rectangle,
-    EnumCate.frame,
-    EnumCate.variant
+    'w-text',
+    'w-rect',
+    'w-container',
+    'w-variant'
   ]
   let searchContainer = document.createElement('div')
   searchContainer.className = 'col'
@@ -84,72 +77,23 @@ function showSearchResult () {
         )
         break
       case -1:
-        filterList = wbase_list.filter(
-          wb =>
-            EnumCate.baseComponent.some(ct => wb.CateID === ct) &&
-            Ultis.toSlug(wb.Name.toLowerCase()).includes(
-              Ultis.toSlug(this.value.toLowerCase())
-            )
-        )
+        filterList = wbase_list.filter(wb => Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase())))
         break
       case -2:
         filterList = wbase_list.filter(
           wb =>
-            wb.CateID === EnumCate.text &&
-            wb.AttributesItem.Content.toLowerCase().includes(
-              Ultis.toSlug(this.value.toLowerCase())
-            )
+            wb.value.classList.contains('w-text') &&
+            wb.AttributesItem.Content.toLowerCase().includes(Ultis.toSlug(this.value.toLowerCase()))
         )
         break
       case -3:
         filterList = wbase_list.filter(wb => wb.IsWini)
         break
-      case EnumCate.text:
-        filterList = wbase_list.filter(
-          wb =>
-            wb.CateID === EnumCate.text &&
-            Ultis.toSlug(wb.Name.toLowerCase()).includes(
-              Ultis.toSlug(this.value.toLowerCase())
-            )
-        )
-        break
-      case EnumCate.svg:
-        filterList = wbase_list.filter(
-          wb =>
-            wb.CateID === EnumCate.svg &&
-            Ultis.toSlug(wb.Name.toLowerCase()).includes(
-              Ultis.toSlug(this.value.toLowerCase())
-            )
-        )
-        break
-      case EnumCate.rectangle:
-        filterList = wbase_list.filter(
-          wb =>
-            wb.CateID === EnumCate.rectangle &&
-            Ultis.toSlug(wb.Name.toLowerCase()).includes(
-              Ultis.toSlug(this.value.toLowerCase())
-            )
-        )
-        break
-      case EnumCate.frame:
-        filterList = wbase_list.filter(
-          wb =>
-            EnumCate.extend_frame.some(ct => wb.CateID === ct) &&
-            Ultis.toSlug(wb.Name.toLowerCase()).includes(
-              Ultis.toSlug(this.value.toLowerCase())
-            )
-        )
-        break
-      case EnumCate.variant:
-        filterList = wbase_list.filter(
-          wb =>
-            wb.CateID === EnumCate.variant &&
-            Ultis.toSlug(wb.Name.toLowerCase()).includes(
-              Ultis.toSlug(this.value.toLowerCase())
-            )
-        )
-        break
       default:
+        filterList = wbase_list.filter(
+          wb => wb.value.classList.contains(searchFilter) &&
+            Ultis.toSlug(wb.Name.toLowerCase()).includes(Ultis.toSlug(this.value.toLowerCase()))
+        )
         break
     }
     searchBody.replaceChildren(
@@ -157,32 +101,18 @@ function showSearchResult () {
         let result = document.createElement('div')
         result.className = 'layer-search-result row'
         let cateImg = document.createElement('img')
-        if (wb.IsWini && wb.CateID != EnumCate.variant) {
-          cateImg.src =
-            'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/component.svg'
+        if (wb.IsWini && !wb.value.classList.contains('w-variant')) {
+          cateImg.src = 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/component.svg'
+        } else if (wb.value.classList.contains('w-container')) {
+          cateImg.src = 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/frame_black.svg'
+        } else if (wb.value.classList.contains('w-rect')) {
+          cateImg.src = 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/rectangle_black.svg'
+        } else if (wb.value.classList.contains('w-text')) {
+          cateImg.src = 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text_black.svg'
+        } else if (wb.value.classList.contains('w-variant')) {
+          cateImg.src = 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/multiple_component.svg'
         } else {
-          switch (wb.CateID) {
-            case EnumCate.frame:
-              cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/frame_black.svg'
-              break
-            case EnumCate.rectangle:
-              cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/rectangle_black.svg'
-              break
-            case EnumCate.text:
-              cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/text_black.svg'
-              break
-            case EnumCate.variant:
-              cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/multiple_component.svg'
-              break
-            default:
-              cateImg.src =
-                'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/base_component_black.svg'
-              break
-          }
+          cateImg.src = 'https://cdn.jsdelivr.net/gh/WiniGit/goline@c6fbab0/lib/assets/base_component_black.svg'
         }
         cateImg.style.width = '16px'
         cateImg.style.height = '16px'
@@ -204,10 +134,8 @@ function showSearchResult () {
           divSection.style.transition = 'none'
           updateHoverWbase()
           PageDA.saveSettingsPage()
-          if (wb.CateID === EnumCate.textfield) {
-            handleWbSelectedList([
-              wbase_list.find(ele => ele.GID === wb.ParentID)
-            ])
+          if (wb.value.classList.contains('w-textfield')) {
+            handleWbSelectedList([wbase_list.find(ele => ele.GID === wb.ParentID)])
           } else {
             handleWbSelectedList([wb])
           }
@@ -227,9 +155,7 @@ function showSearchResult () {
         if (wb.Level > 1) {
           let wbPName = document.createElement('p')
           wbPName.className = 'regular11'
-          wbPName.innerHTML = document.getElementById(
-            'inputName:' + wb.ListID.split(',')[1]
-          ).value
+          wbPName.innerHTML = document.getElementById('inputName:' + wb.ListID.split(',')[1]).value
           titleCol.appendChild(wbPName)
         }
         result.replaceChildren(cateImg, titleCol)
@@ -275,19 +201,16 @@ function showSearchResult () {
             case -3:
               type.innerHTML = 'Local component'
               break
-            case EnumCate.text:
+            case 'w-text':
               type.innerHTML = 'Text'
               break
-            case EnumCate.svg:
-              type.innerHTML = 'Svg picture'
-              break
-            case EnumCate.rectangle:
+            case 'w-rect':
               type.innerHTML = 'Rectangle'
               break
-            case EnumCate.frame:
+            case 'w-container':
               type.innerHTML = 'Frame'
               break
-            case EnumCate.variant:
+            case 'w-variant':
               type.innerHTML = 'Variant'
               break
             default:
@@ -320,7 +243,7 @@ function showSearchResult () {
   inputBar.focus()
 }
 
-function replaceAllLyerItemHTML () {
+function replaceAllLyerItemHTML() {
   let show_list_tile = document.getElementById(`parentID:${wbase_parentID}`)
   let list_level1 = wbase_list
     .filter(e => e.ParentID === wbase_parentID)
@@ -343,7 +266,7 @@ function replaceAllLyerItemHTML () {
 }
 
 // handle tab change
-function leftTabChange (tabName) {
+function leftTabChange(tabName) {
   tabName = tabName.trim()
   let x = document.getElementsByClassName('left_tab_view')
   for (let i = 0; i < x.length; i++) {
@@ -360,17 +283,14 @@ function leftTabChange (tabName) {
     assets_view.style.display = 'flex'
     let btn_select_page = document.getElementById('btn_select_page')
     let btnIcon = btn_select_page.querySelector(':scope > i')
-    btnIcon.className = btnIcon.className.replace(
-      'fa-chevron-up',
-      'fa-chevron-down'
-    )
+    btnIcon.className = btnIcon.className.replace('fa-chevron-up', 'fa-chevron-down')
     document.getElementById('div_list_page').style.display = 'none'
     select_component = null
     initUIAssetView()
   }
 }
 
-function createPageTile (pageItem) {
+function createPageTile(pageItem) {
   let pageTile = document.createElement('div')
   pageTile.id = `pageID:${pageItem.ID}`
   pageTile.className = 'page_item_tile row'
@@ -453,7 +373,7 @@ function createPageTile (pageItem) {
 }
 
 // create layer tile depend wbaseItem
-function createLayerTile (wb, isShowChildren = false) {
+function createLayerTile(wb, isShowChildren = false) {
   let layerContainer = document.createElement('div')
   layerContainer.className = 'col'
   let wbase_tile = document.createElement('div')
@@ -466,12 +386,10 @@ function createLayerTile (wb, isShowChildren = false) {
     wbase_tile.setAttribute('isinstance', wb.IsInstance)
   }
   let isShowListChid = isShowChildren
-  wbase_tile.innerHTML = `<i class="fa-solid fa-caret-${
-    isShowListChid ? 'down' : 'right'
-  } fa-xs prefix-btn" style="margin-left: ${(wb.Level - 1) * 16}px"></i>
-  <img/><input id="inputName:${wb.GID}" readonly value="${
-    wb.Name
-  }"/><i class="fa-solid fa-lock fa-xs is-lock"></i>`
+  wbase_tile.innerHTML = `<i class="fa-solid fa-caret-${isShowListChid ? 'down' : 'right'
+    } fa-xs prefix-btn" style="margin-left: ${(wb.Level - 1) * 16}px"></i>
+  <img/><input id="inputName:${wb.GID}" readonly value="${wb.Name
+    }"/><i class="fa-solid fa-lock fa-xs is-lock"></i>`
   layerContainer.appendChild(wbase_tile)
 
   $(wbase_tile).on('click', '.prefix-btn', function () {
@@ -598,15 +516,14 @@ function createLayerTile (wb, isShowChildren = false) {
   $(wbase_tile).on('dblclick', 'input', function () {
     if (PageDA.enableEdit) {
       this.style.cursor = 'text'
-      this.style.outline = `1.5px solid ${
-        wb.IsWini ||
+      this.style.outline = `1.5px solid ${wb.IsWini ||
         wb.IsInstance ||
         $(wbase_tile).parents(
           `.col:has(> .layer_wbase_tile[iswini], layer_wbase_tile[isinstance])`
         ).length
-          ? '#7B61FF'
-          : '#1890FF'
-      }`
+        ? '#7B61FF'
+        : '#1890FF'
+        }`
       this.readOnly = false
       this.setSelectionRange(0, this.value.length)
       this.focus()
@@ -629,7 +546,7 @@ function createLayerTile (wb, isShowChildren = false) {
 }
 
 var select_component
-async function initUIAssetView () {
+async function initUIAssetView() {
   let scrollView = assets_view.querySelector(':scope > .col > .col')
   let scrollY = scrollView?.scrollTop ?? 0
   let comContainer = document.createElement('div')
@@ -663,14 +580,8 @@ async function initUIAssetView () {
             .querySelectorAll('.assets-component-tile')
         ].reverse()
         componentTileList.forEach(comTile => {
-          let thisComponent = assets_list.find(
-            com => com.GID === comTile.id.replace('Component:', '')
-          )
-          if (
-            content
-              .split('-')
-              .some(key => thisComponent.Name.toLowerCase().includes(key))
-          ) {
+          let thisComponent = assets_list.find(com => com.GID === comTile.id.replace('Component:', ''))
+          if (content.split('-').some(key => thisComponent.Name.toLowerCase().includes(key))) {
             let listTiles = [...$(comTile).parents('.list_tile')]
             listTiles.forEach(parentTile => {
               let pre = parentTile.querySelector(':scope > .fa-caret-right')
@@ -700,10 +611,10 @@ async function initUIAssetView () {
             .querySelectorAll('.list_tile > i')
             .forEach(
               prefixIcon =>
-                (prefixIcon.className = prefixIcon.className.replace(
-                  'fa-caret-down',
-                  'fa-caret-right'
-                ))
+              (prefixIcon.className = prefixIcon.className.replace(
+                'fa-caret-down',
+                'fa-caret-right'
+              ))
             )
           initUIAssetView()
           document.getElementById('search_input_assets').focus()
@@ -739,7 +650,7 @@ async function initUIAssetView () {
 }
 
 // create list component depend on projectId
-function createListComponent (projectItem, isShowContent) {
+function createListComponent(projectItem, isShowContent) {
   let currentListTile = document.getElementById(
     `component projectID:${projectItem.ID}`
   )
@@ -755,15 +666,13 @@ function createListComponent (projectItem, isShowContent) {
   container.className = 'col'
   let list_tile = document.createElement('div')
   list_tile.className = 'list_tile row'
-  list_tile.innerHTML = `<i class="fa-solid fa-caret-${
-    isShow ? 'down' : 'right'
-  } fa-xs"></i><p class="title">${
-    projectItem.ID === 0
+  list_tile.innerHTML = `<i class="fa-solid fa-caret-${isShow ? 'down' : 'right'
+    } fa-xs"></i><p class="title">${projectItem.ID === 0
       ? 'Selected objects'
       : projectItem.ID === ProjectDA.obj.ID
-      ? 'Local components'
-      : projectItem.Name
-  }</p>`
+        ? 'Local components'
+        : projectItem.Name
+    }</p>`
   let prefix_action = list_tile.querySelector('i')
   let container_child = document.createElement('div')
   container_child.className = 'col'
@@ -773,13 +682,8 @@ function createListComponent (projectItem, isShowContent) {
     if (projectItem.ID === 0) {
       listParentComp = selected_list
         .filter(
-          e =>
-            e.IsWini ||
-            !e.value.closest(
-              `.wbaseItem-value[iswini], .wbaseItem-value[isinstance][level="${
-                e.Level - 1
-              }"]`
-            )
+          e => e.IsWini ||
+            !e.value.closest(`.wbaseItem-value[iswini], .wbaseItem-value[isinstance][level="${e.Level - 1}"]`)
         )
         .map(e => {
           let jsonE = JSON.parse(JSON.stringify(e))
@@ -806,52 +710,36 @@ function createListComponent (projectItem, isShowContent) {
         container_child.replaceChildren(
           ...PageDA.list.map(page => {
             let listPageComp = assets_list.filter(e => e.PageID === page.ID)
-            let showPageCom =
-              isShowContent ||
-              listPageComp.some(e => e.GID === select_component?.GID)
+            let showPageCom = isShowContent || listPageComp.some(e => e.GID === select_component?.GID)
             let pageTileContainer = document.createElement('div')
             pageTileContainer.className = 'col page-comp-container'
             let pageTile = document.createElement('div')
             pageTile.className = 'row list_tile'
-            pageTile.innerHTML = `<i class="fa-solid fa-caret-${
-              showPageCom ? 'down' : 'right'
-            } fa-xs"></i><p class="semibold1 title">${page.Name}</p>`
+            pageTile.innerHTML = `<i class="fa-solid fa-caret-${showPageCom ? 'down' : 'right'} fa-xs"></i><p class="semibold1 title">${page.Name}</p>`
             let listComp = document.createElement('div')
             listComp.className = 'col'
             if (showPageCom) {
-              listComp.replaceChildren(
-                ...listPageComp.map(comItem => createComponentTile(comItem))
-              )
+              listComp.replaceChildren(...listPageComp.map(comItem => createComponentTile(comItem)))
             }
             pageTileContainer.replaceChildren(pageTile, listComp)
             pageTile.onclick = function () {
               showPageCom = !showPageCom
               if (showPageCom) {
-                pageTile.querySelector('i').className =
-                  'fa-solid fa-caret-down fa-xs'
-                listComp.replaceChildren(
-                  ...listPageComp.map(comItem => createComponentTile(comItem))
-                )
+                pageTile.querySelector('i').className = 'fa-solid fa-caret-down fa-xs'
+                listComp.replaceChildren(...listPageComp.map(comItem => createComponentTile(comItem)))
               } else {
-                pageTile.querySelector('i').className =
-                  'fa-solid fa-caret-right fa-xs'
+                pageTile.querySelector('i').className = 'fa-solid fa-caret-right fa-xs'
               }
             }
             return pageTileContainer
           })
         )
       } else {
-        listParentComp = assets_list.filter(
-          e => e.ProjectID === projectItem.ID && e.IsWini
-        )
+        listParentComp = assets_list.filter(e => e.ProjectID === projectItem.ID && e.IsWini)
         listParentComp = listParentComp.filter(
-          e =>
-            e.ListClassName.includes('w-variant') ||
-            listParentComp.every(i => i.GID !== e.ParentID)
+          e => e.ListClassName.includes('w-variant') || listParentComp.every(i => i.GID !== e.ParentID)
         )
-        container_child.replaceChildren(
-          ...listParentComp.map(comItem => createComponentTile(comItem))
-        )
+        container_child.replaceChildren(...listParentComp.map(comItem => createComponentTile(comItem)))
       }
     } else {
       WBaseDA.assetsLoading = true
@@ -864,9 +752,7 @@ function createListComponent (projectItem, isShowContent) {
       StyleDA.initSkin(projectItem.ID).then(skinRes => {
         let instContainer = assets_view.querySelector('.instance-container')
         instContainer.style = null
-        skinRes.forEach(e =>
-          instContainer.style.setProperty(`--${e.GID}`, e.Css)
-        )
+        skinRes.forEach(e => instContainer.style.setProperty(`--${e.GID}`, e.Css))
       })
       WBaseDA.getAssetsList(projectItem.ID)
     }
@@ -874,7 +760,7 @@ function createListComponent (projectItem, isShowContent) {
   return container
 }
 
-function updateListComponentByProject (projectItem, isShow = true) {
+function updateListComponentByProject(projectItem, isShow = true) {
   let newListComponent = createListComponent(projectItem, isShow)
   document
     .getElementById(`component projectID:${projectItem.ID}`)
@@ -883,7 +769,7 @@ function updateListComponentByProject (projectItem, isShow = true) {
 }
 
 // create component tile
-function createComponentTile (item, space = 0) {
+function createComponentTile(item, space = 0) {
   let container = document.createElement('div')
   container.id = `Component:${item.GID}`
   container.className = 'col assets-component-tile'
@@ -902,9 +788,7 @@ function createComponentTile (item, space = 0) {
     let currentTile = document.getElementById(`Component:${item.GID}`)
     let isShow = false
     if (currentTile) {
-      isShow =
-        currentTile.querySelector(':scope > .list_tile > .fa-caret-right') !=
-        null
+      isShow = currentTile.querySelector(':scope > .list_tile > .fa-caret-right') != null
     }
     if (isShow) {
       prefix_action.className = 'fa-solid fa-caret-down fa-xs'
@@ -912,9 +796,8 @@ function createComponentTile (item, space = 0) {
     let container_child = document.createElement('div')
     container_child.className = 'col'
     container.appendChild(container_child)
-    let children = []
     if (item.ProjectID === 0) {
-      children = wbase_list.filter(e => e.ParentID === item.GID)
+      var children = wbase_list.filter(e => e.ParentID === item.GID)
     } else {
       children = assets_list.filter(e => e.ParentID === item.GID)
     }
@@ -946,12 +829,7 @@ function createComponentTile (item, space = 0) {
       } else {
         if (item.PageID === PageDA.obj.ID) {
           showInstanceDemo({
-            wb: {
-              ...item,
-              value: divSection
-                .querySelector(`.wbaseItem-value[id="${item.GID}"]`)
-                .cloneNode(true)
-            }
+            wb: { ...item, value: divSection.querySelector(`.wbaseItem-value[id="${item.GID}"]`).cloneNode(true) }
           })
           select_component = item
         } else {
@@ -967,26 +845,16 @@ function createComponentTile (item, space = 0) {
               let cssRule = await StyleDA.getById(cloneItem.GID)
               var relativeList = initDOM([...result, cloneItem]).map(e => {
                 let eClassList = e.ListClassName.split(' ')
-                const clsName = eClassList.find(
-                  vl => vl.startsWith('w-st')
-                )
+                const clsName = eClassList.find(vl => vl.startsWith('w-st'))
                 if (clsName) {
                   const ruleRegex = new RegExp(`.${clsName}[^}]+`, 'g')
                   if (e.Css) {
-                    e.Css = e.Css.split(';')
-                      .filter(vl => !vl.match(/(width:|height:|flex:)/g))
-                      .join(';')
-                    e.Css += cssRule.Css.match(ruleRegex)[0]
-                      .replace(`.${clsName} {`, '')
-                      .trim()
+                    e.Css = e.Css.split(';').filter(vl => !vl.match(/(width:|height:|flex:)/g)).join(';')
+                    e.Css += cssRule.Css.match(ruleRegex)[0].replace(`.${clsName} {`, '').trim()
                   } else {
-                    e.Css = cssRule.Css.match(ruleRegex)[0]
-                      .replace(`.${clsName} {`, '')
-                      .trim()
+                    e.Css = cssRule.Css.match(ruleRegex)[0].replace(`.${clsName} {`, '').trim()
                   }
-                  e.ListClassName = eClassList
-                    .filter(vl => vl !== clsName)
-                    .join(' ')
+                  e.ListClassName = eClassList.filter(vl => vl !== clsName).join(' ')
                 }
                 delete e.value
                 return e
@@ -1011,16 +879,13 @@ function createComponentTile (item, space = 0) {
   return container
 }
 
-function showInstanceDemo ({ wb, children }) {
+function showInstanceDemo({ wb, children }) {
   let instContainer = assets_view.querySelector('.instance-container')
   let instance_demo = document.createElement('div')
   instance_demo.className = 'instance_demo'
   if (children) {
     for (let wbItem of [...children, wb]) {
-      initComponents(
-        wbItem,
-        children.filter(e => e.ParentID === wbItem.GID)
-      )
+      initComponents(wbItem, children.filter(e => e.ParentID === wbItem.GID))
     }
     var demoValue = wb.value
   } else {
@@ -1067,26 +932,20 @@ const observer_listPage = new ResizeObserver(entries => {
   })
 })
 
-function ondragSortLayer (event) {
+function ondragSortLayer(event) {
   console.log('drag sort layer update')
   let wb = selected_list[0]
   let wbLayer = document.getElementById(`wbaseID:${wb.GID}`)
   const sortComInstance = wb.value.closest(
-    `.wbaseItem-value[iswini][level="${
-      wb.Level - 1
-    }"], .wbaseItem-value[isinstance][level="${wb.Level - 1}"]`
+    `.wbaseItem-value[iswini][level="${wb.Level - 1}"], .wbaseItem-value[isinstance][level="${wb.Level - 1}"]`
   )
-  const layerP = sortComInstance
-    ? document.getElementById(`parentID:${select_box_parentID}`)
-    : left_view
-  let listLayer = [...layerP.querySelectorAll('.layer_wbase_tile')].filter(
-    e => {
-      const check =
-        e.offsetHeight > 0 && !wbLayer.nextSibling?.contains(e) && wbLayer !== e
-      e.classList.remove('onsort')
-      e.removeAttribute('sort-position')
-      return check
-    }
+  const layerP = sortComInstance ? document.getElementById(`parentID:${select_box_parentID}`) : left_view
+  let listLayer = [...layerP.querySelectorAll('.layer_wbase_tile')].filter(e => {
+    const check = e.offsetHeight > 0 && !wbLayer.nextSibling?.contains(e) && wbLayer !== e
+    e.classList.remove('onsort')
+    e.removeAttribute('sort-position')
+    return check
+  }
   )
   if (listLayer.length > 1) {
     let closestLayer = listLayer.sort((a, b) => {
@@ -1097,16 +956,13 @@ function ondragSortLayer (event) {
       return distanceA - distanceB
     })[0]
     let openedLayer = left_view.querySelector('.layer_wbase_tile.opened')
-    if (
-      openedLayer &&
-      !openedLayer.nextSibling?.contains(closestLayer) &&
-      openedLayer !== closestLayer
+    if (openedLayer && openedLayer !== closestLayer &&
+      !openedLayer.nextSibling?.contains(closestLayer)
     ) {
       openedLayer.classList.remove('opened')
     }
     let layerRect = closestLayer.getBoundingClientRect()
-    if (
-      WbClass.parent.some(cl => closestLayer.classList.contains(cl)) &&
+    if (WbClass.parent.some(cl => closestLayer.classList.contains(cl)) &&
       closestLayer.nextSibling &&
       Math.abs(event.pageY - (layerRect.y + layerRect.height / 2)) < 5
     ) {
@@ -1114,18 +970,12 @@ function ondragSortLayer (event) {
       closestLayer.setAttribute('sort-position', 'inside')
       setTimeout(function () {
         let prefixIcon = closestLayer.querySelector('.fa-caret-right')
-        if (
-          sortLayer === closestLayer &&
-          prefixIcon &&
-          sortLayer.getAttribute('sort-position') === 'inside'
-        ) {
+        if (sortLayer === closestLayer && prefixIcon &&
+          sortLayer.getAttribute('sort-position') === 'inside') {
           closestLayer.classList.add('opened')
         }
       }, 800)
-    } else if (
-      Math.abs(event.pageY - layerRect.y) <
-      Math.abs(event.pageY - layerRect.bottom)
-    ) {
+    } else if (Math.abs(event.pageY - layerRect.y) < Math.abs(event.pageY - layerRect.bottom)) {
       closestLayer.classList.add('onsort')
       closestLayer.setAttribute('sort-position', 'top')
     } else if (event.pageY <= layerRect.bottom || sortComInstance) {
@@ -1150,7 +1000,7 @@ function ondragSortLayer (event) {
   }
 }
 
-function endDragSortLayer () {
+function endDragSortLayer() {
   let wb = selected_list[0]
   if (sortLayer && sortLayer.id.replace('wbaseID:', '') !== wb.GID) {
     let listUpdate = []
@@ -1195,12 +1045,8 @@ function endDragSortLayer () {
       if (wb.ParentID !== wbase_parentID) {
         let oldPWb = wbase_list.find(e => e.GID === wb.ParentID)
         if (oldPWb.value.classList.contains('w-table')) {
-          let listCell = oldPWb.TableRows.reduce((a, b) => a.concat(b))
-          ;[
-            ...oldPWb.value.querySelectorAll(
-              ':scope > .table-row > .table-cell'
-            )
-          ].forEach(cell => {
+          let listCell = oldPWb.TableRows.reduce((a, b) => a.concat(b));
+          [...oldPWb.value.querySelectorAll(':scope > .table-row > .table-cell')].forEach(cell => {
             listCell.find(e => e.id === cell.id).contentid = [
               ...cell.childNodes
             ]
@@ -1281,8 +1127,7 @@ function endDragSortLayer () {
     }
     let children = [
       ...newPWbHTML.querySelectorAll(
-        `.wbaseItem-value[level="${
-          parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
+        `.wbaseItem-value[level="${parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
         }"]`
       )
     ].filter(e => wb.GID !== e.id)
@@ -1302,7 +1147,7 @@ function endDragSortLayer () {
   }
 }
 
-function linkComptAndSkinDialog () {
+function linkComptAndSkinDialog() {
   let dialogBackground = document.createElement('div')
   dialogBackground.className = 'dialog-background'
   dialogBackground.style.paddingTop = '46px'
@@ -1409,7 +1254,7 @@ function linkComptAndSkinDialog () {
   linkComponentView()
 }
 
-function linkComponentView () {
+function linkComponentView() {
   let dialog = document.getElementById('dialog_link_component_skin')
   let libContentDetails = dialog.querySelector('.lib_content_details')
   libContentDetails.replaceChildren(
@@ -1441,17 +1286,15 @@ function linkComponentView () {
   dialogBottom.replaceChildren(submitButton)
 }
 
-function createProjectTile (projectItem, suffixOnclick) {
+function createProjectTile(projectItem, suffixOnclick) {
   let projectTile = document.createElement('div')
   projectTile.id = `projectID:${projectItem.ID}`
   projectTile.className = 'project_tile'
-  projectTile.innerHTML = `<label class="w-switch toggle_ptoject_tile" style="--checked-color: #1890ff;--unchecked-bg: #ccc;scale: 0.75;${
-    projectItem.Permission === EnumPermission.view ? 'pointer-events: none' : ''
-  }"><input type="checkbox" ${
-    ProjectDA.obj.ListID?.split(',')?.includes(projectItem.ID.toString())
+  projectTile.innerHTML = `<label class="w-switch toggle_ptoject_tile" style="--checked-color: #1890ff;--unchecked-bg: #ccc;scale: 0.75;${projectItem.Permission === EnumPermission.view ? 'pointer-events: none' : ''
+    }"><input type="checkbox" ${ProjectDA.obj.ListID?.split(',')?.includes(projectItem.ID.toString())
       ? 'checked'
       : ''
-  }/><span class="slider"></span></label>
+    }/><span class="slider"></span></label>
   <p>${projectItem.Name}</p>
   <p>${projectItem.CountComponent} components</p>
   <i class="fa-solid fa-chevron-right fa-sm" style="color: #262626;padding: 10px;"></i>`
@@ -1475,7 +1318,7 @@ function createProjectTile (projectItem, suffixOnclick) {
   return projectTile
 }
 
-function linkSkinView (project) {
+function linkSkinView(project) {
   let dialog = document.getElementById('dialog_link_component_skin')
   let libContentDetails = dialog.querySelector('.lib_content_details')
   let titleBar = document.createElement('div')
@@ -1610,7 +1453,7 @@ function linkSkinView (project) {
   dialogBottom.replaceChildren(insertButton)
 }
 
-function checkboxLinkSkin (cateItem) {
+function checkboxLinkSkin(cateItem) {
   let enumCate = cateItem.ParentID != 1 ? cateItem.ParentID : cateItem.ID
   let cateForm = document.createElement('div')
   cateForm.className = 'link_skin_cate_form'
@@ -1633,7 +1476,7 @@ function checkboxLinkSkin (cateItem) {
     }
   }
   titleBar.replaceChildren(suffixAction, title)
-  function onChangeCheckbox (isSingleCheck = true) {
+  function onChangeCheckbox(isSingleCheck = true) {
     if (isSingleCheck) {
       if (
         [...cateForm.querySelectorAll('input')]
@@ -1824,23 +1667,15 @@ function checkboxLinkSkin (cateItem) {
   return cateForm
 }
 
-function dragInstanceUpdate (event) {
+function dragInstanceUpdate(event) {
   console.log('drag instance update')
   selectParent(event)
-  instance_drag.style.left =
-    (instance_drag.style.left
-      ? parseFloat(instance_drag.style.left.replace('px', ''))
-      : instance_drag.offsetLeft) +
+  instance_drag.style.left = (instance_drag.style.left ? parseFloat(instance_drag.style.left.replace('px', '')) : instance_drag.offsetLeft) +
     event.pageX -
-    previousX +
-    'px'
-  instance_drag.style.top =
-    (instance_drag.style.top
-      ? parseFloat(instance_drag.style.top.replace('px', ''))
-      : instance_drag.offsetTop) +
+    previousX + 'px'
+  instance_drag.style.top = (instance_drag.style.top ? parseFloat(instance_drag.style.top.replace('px', '')) : instance_drag.offsetTop) +
     event.pageY -
-    previousY +
-    'px'
+    previousY + 'px'
   previousX = event.pageX
   previousY = event.pageY
   let newPWbHTML = parent
@@ -1879,18 +1714,9 @@ function dragInstanceUpdate (event) {
         availableCell.replaceChildren(...cellChildren, demo)
       }
     }
-  } else if (
-    window.getComputedStyle(newPWbHTML).display === 'flex' &&
-    !instance_drag.classList.contains('fixed-position')
-  ) {
+  } else if (window.getComputedStyle(newPWbHTML).display === 'flex' && !instance_drag.classList.contains('fixed-position')) {
     console.log('flex')
-    let children = [
-      ...newPWbHTML.querySelectorAll(
-        `.wbaseItem-value[level="${
-          parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1
-        }"]`
-      )
-    ]
+    let children = [...newPWbHTML.querySelectorAll(`.wbaseItem-value[level="${parseInt(newPWbHTML.getAttribute('level') ?? '0') + 1}"]`)]
     let isGrid = window.getComputedStyle(newPWbHTML).flexWrap == 'wrap'
     if (newPWbHTML.classList.contains('w-col')) {
       let zIndex = 0
@@ -1904,11 +1730,11 @@ function dragInstanceUpdate (event) {
           if (isGrid) {
             a_center_oy = Math.sqrt(
               Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) +
-                Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
+              Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
             )
             b_center_oy = Math.sqrt(
               Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) +
-                Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
+              Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
             )
           } else {
             a_center_oy = Math.abs(event.pageY - (aRect.y + aRect.height / 2))
@@ -1956,11 +1782,11 @@ function dragInstanceUpdate (event) {
           if (isGrid) {
             a_center_ox = Math.sqrt(
               Math.pow(event.pageX - (aRect.x + aRect.width / 2), 2) +
-                Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
+              Math.pow(event.pageY - (aRect.y + aRect.height / 2), 2)
             )
             b_center_ox = Math.sqrt(
               Math.pow(event.pageX - (bRect.x + bRect.width / 2), 2) +
-                Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
+              Math.pow(event.pageY - (bRect.y + bRect.height / 2), 2)
             )
           } else {
             a_center_ox = Math.abs(event.pageX - (aRect.x + aRect.width / 2))
@@ -2003,15 +1829,12 @@ function dragInstanceUpdate (event) {
   if (!demo) document.getElementById('demo_auto_layout')?.remove()
 }
 
-function dragInstanceEnd (event) {
+function dragInstanceEnd(event) {
+  WBaseDA.listData = []
   let newPWbHTML = parent
   let new_parentID = newPWbHTML.id.length != 36 ? wbase_parentID : newPWbHTML.id
-  let pWb =
-    new_parentID !== wbase_parentID
-      ? wbase_list.find(e => e.GID === new_parentID)
-      : null
+  let pWb = new_parentID !== wbase_parentID ? wbase_list.find(e => e.GID === new_parentID) : null
   let wb = select_component
-  WBaseDA.listData = [wb]
   wb.ParentID = new_parentID
   wb.ChildID = wb.GID
   wb.IsCopy = true
@@ -2050,8 +1873,8 @@ function dragInstanceEnd (event) {
     let pWbRect = newPWbHTML.getBoundingClientRect()
     pWbRect = offsetScale(pWbRect.x, pWbRect.y)
     let offset = offsetScale(event.pageX, event.pageY)
-    wb.value.style.top = `${offset.y - wb.value.offsetHeight - parentRect.y}px`
-    wb.value.style.left = `${offset.x - wb.value.offsetWidth - parentRect.x}px`
+    wb.value.style.top = `${offset.y - wb.value.offsetHeight - pWbRect.y}px`
+    wb.value.style.left = `${offset.x - wb.value.offsetWidth - pWbRect.x}px`
     wb.value.style.right = null
     wb.value.style.bottom = null
     wb.value.setAttribute('constx', Constraints.left)
@@ -2060,13 +1883,25 @@ function dragInstanceEnd (event) {
   }
   wb.Css = wb.value.style.cssText
   if (pWb) WBaseDA.listData.push(pWb)
-  WBaseDA.copy(WBaseDA.listData)
+  if (wb.ProjectID !== ProjectDA.obj.ID) {
+    let newWbList = createNewWbase({ wb: wb, relativeWbs: wb.children, level: wb.level })
+    WBaseDA.listData.push(...newWbList)
+    newWbList.forEach(e => {
+      initComponents(e, newWbList.filter(el => el.ParentID === e.GID))
+    })
+    // WBaseDA.add({ listWb: WBaseDA.listData })
+    wb.value.replaceWith(newWbList.pop().value)
+  } else {
+    WBaseDA.listData.push(wb)
+    WBaseDA.copy(WBaseDA.listData)
+    wb.value.setAttribute('loading', 'true')
+  }
+  WBaseDA.listData = []
   const selectedTile = assets_view.querySelector('.list_tile.comp-selected')
   if (selectedTile) $(selectedTile).trigger('click')
   replaceAllLyerItemHTML()
   parent = divSection
   // handleWbSelectedList([wb])
-  wb.value.setAttribute('loading', 'true')
   instance_drag?.remove()
   instance_drag = null
   // action_list[action_index].tmpHTML = [newWb.value]
