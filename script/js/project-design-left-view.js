@@ -1884,13 +1884,14 @@ function dragInstanceEnd(event) {
   wb.Css = wb.value.style.cssText
   if (pWb) WBaseDA.listData.push(pWb)
   if (wb.ProjectID !== ProjectDA.obj.ID) {
+    wb.GID = wb.ChildID
     let newWbList = createNewWbase({ wb: wb, relativeWbs: wb.children, level: wb.level })
     WBaseDA.listData.push(...newWbList)
     newWbList.forEach(e => {
       initComponents(e, newWbList.filter(el => el.ParentID === e.GID))
     })
-    // WBaseDA.add({ listWb: WBaseDA.listData })
     wb.value.replaceWith(newWbList.pop().value)
+    WBaseDA.add({ listWb: WBaseDA.listData })
   } else {
     WBaseDA.listData.push(wb)
     WBaseDA.copy(WBaseDA.listData)

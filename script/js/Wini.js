@@ -2459,10 +2459,7 @@ function clickEvent(event) {
 
 function upListener(event) {
   // updateUIF12();
-  if (
-    document.activeElement.closest('.w-text') ||
-    (event.target.localName === 'input' && !event.target.readOnly)
-  )
+  if (document.activeElement.closest('.w-text') || (event.target.localName === 'input' && !event.target.readOnly))
     return
   left_view.resizing = false
   console.log('up ', checkpad, action_list)

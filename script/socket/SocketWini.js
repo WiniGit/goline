@@ -591,37 +591,26 @@ socket.on('server-post', data => {
 socket.on('server-main', async data => {
   console.log('server-main')
   console.log(data)
-  if (
-    !document.body.querySelector('.loading-view') &&
-    data.pageid === PageDA.obj.ID
-  ) {
-    // if (data.userItem.ID !== JSON.parse(localStorage.getItem('customer')).ID) {
+  if (!document.body.querySelector('.loading-view') && data.pageid === PageDA.obj.ID) {
     if (data.enumEvent === EnumEvent.delete) {
       WbaseIO.delete(data.data)
     } else {
       WbaseIO.addOrUpdate(data.data)
-      if (
-        data.enumEvent === EnumEvent.copy &&
-        data.userItem.ID === JSON.parse(localStorage.getItem('customer')).ID
-      ) {
+      if (data.enumEvent !== EnumEvent.edit) initObserver()
+      replaceAllLyerItemHTML()
+      wdraw()
+      if (data.enumEvent === EnumEvent.copy && data.userItem.ID === JSON.parse(localStorage.getItem('customer')).ID) {
         divSection
           .querySelectorAll('.wbaseItem-value[loading="true"]')
           .forEach(e => e.remove())
         tmpAltHTML = []
         alt_list = []
-        let selectedId = data.data
-          .filter(e => e.ParentID === data.parentid)
-          .map(e => e.GID)
-        handleWbSelectedList(
-          wbase_list.filter(e => selectedId.some(id => e.GID === id))
-        )
+        var selectedId = data.data.filter(e => e.ParentID === data.parentid).map(e => e.GID)
+      } else {
+        selectedId = selected_list.map(e => e.GID)
       }
+      handleWbSelectedList(wbase_list.filter(e => selectedId.some(id => e.GID === id)))
     }
-    if (data.enumEvent !== EnumEvent.edit) initObserver()
-    replaceAllLyerItemHTML()
-    wdraw()
-    // }
-    // }
   }
 })
 socket.on('server-mouse', data => {
@@ -632,7 +621,7 @@ socket.on('server-mouse', data => {
   }
 })
 
-socket.on('server-css', data => {})
+socket.on('server-css', data => { })
 
 socket.on('server-refresh', data => {
   const href = window.location.href
@@ -651,7 +640,7 @@ socket.on('server-refresh', data => {
 })
 
 class WiniIO {
-  static emitMain (obj) {
+  static emitMain(obj) {
     obj.userItem = UserService.getUser()
     obj.token = UserService.getToken()
     obj.pid = parseInt(obj.pid ?? ProjectDA.obj.ID)
@@ -735,7 +724,7 @@ class WiniIO {
     socket.emit('client-main', obj)
   }
 
-  static async emitProperty (item, enumEvent) {
+  static async emitProperty(item, enumEvent) {
     var jsonData = item
     socket.emit('client-property', {
       headers: await UserService.headerProject(),
@@ -745,7 +734,7 @@ class WiniIO {
     })
   }
 
-  static async emitColor (color, enumEvent) {
+  static async emitColor(color, enumEvent) {
     console.log('emit-color')
     let jsonData = color
     console.log(jsonData)
@@ -759,7 +748,7 @@ class WiniIO {
     })
   }
 
-  static async emitTypo (typo, enumEvent) {
+  static async emitTypo(typo, enumEvent) {
     var jsonData = typo
     socket.emit('client-typo', {
       headers: await UserService.headerProject(),
@@ -771,7 +760,7 @@ class WiniIO {
     })
   }
 
-  static async emitEffect (effect, enumEvent) {
+  static async emitEffect(effect, enumEvent) {
     var jsonData = effect
     socket.emit('client-effect', {
       headers: await UserService.headerProject(),
@@ -783,7 +772,7 @@ class WiniIO {
     })
   }
 
-  static async emitBorder (borderItem, enumEvent) {
+  static async emitBorder(borderItem, enumEvent) {
     var jsonData = borderItem
     socket.emit('client-border', {
       headers: await UserService.headerProject(),
@@ -795,14 +784,14 @@ class WiniIO {
     })
   }
 
-  static async emitInit () {
+  static async emitInit() {
     socket.emit('client-init', {
       pid: ProjectDA.obj.ID,
       headers: await UserService.headerProject()
     })
   }
 
-  static async emitPage (listPage, enumEvent) {
+  static async emitPage(listPage, enumEvent) {
     console.log('client-page')
     let jsonData
     if (enumEvent != EnumEvent.sort) {
@@ -819,14 +808,14 @@ class WiniIO {
   }
 
   static kc = { xMouse: 0, yMouse: 0 }
-  static async emitMouse (mouseItem) {
+  static async emitMouse(mouseItem) {
     if (
       (!this.kc.w && mouseItem.w !== undefined) ||
       Math.sqrt(
         Math.pow(this.kc.xMouse - mouseItem.xMouse, 2) +
-          Math.pow(this.kc.yMouse - mouseItem.yMouse, 2)
+        Math.pow(this.kc.yMouse - mouseItem.yMouse, 2)
       ) >=
-        20 / scale
+      20 / scale
     ) {
       let mouseData = JSON.parse(JSON.stringify(mouseItem))
       this.kc = mouseData
@@ -841,7 +830,7 @@ class WiniIO {
     }
   }
 
-  static emitCss (cssItem, enumEvent) {
+  static emitCss(cssItem, enumEvent) {
     socket.emit('client-css', {
       pid: PageDA.obj.ProjectID,
       data: cssItem,
@@ -849,7 +838,7 @@ class WiniIO {
     })
   }
 
-  static async emitGet (json, url, enumObj, enumEvent) {
+  static async emitGet(json, url, enumObj, enumEvent) {
     var header = await UserService.headerProject()
     socket.emit('client-get', {
       headers: header,
@@ -862,7 +851,7 @@ class WiniIO {
     })
   }
 
-  static async emitPort (json, url, enumObj, enumEvent) {
+  static async emitPort(json, url, enumObj, enumEvent) {
     socket.emit('client-post', {
       headers: await UserService.headerProject(),
       body: json,
@@ -874,7 +863,7 @@ class WiniIO {
     })
   }
 
-  static async emitFile (listFile, collectionId) {
+  static async emitFile(listFile, collectionId) {
     let result = await BaseDA.uploadFile(
       listFile,
       // "http://10.15.138.23:4000/uploadfile",
@@ -884,7 +873,7 @@ class WiniIO {
     return result
   }
 
-  static emitRefreshToken () {
+  static emitRefreshToken() {
     socket.emit('client-refresh', {
       headers: UserService.headerRefreshSocket(),
       data: []
@@ -892,7 +881,7 @@ class WiniIO {
   }
 }
 class WbaseIO {
-  static delete (list) {
+  static delete(list) {
     if (list.some(e => e.GID == hover_wbase?.GID)) {
       updateHoverWbase()
     }
@@ -985,7 +974,7 @@ class WbaseIO {
     }
   }
 
-  static addOrUpdate (list) {
+  static addOrUpdate(list) {
     list = initDOM(list)
     arrange(list)
     wbase_list = [
@@ -997,15 +986,9 @@ class WbaseIO {
       wb.value = null
       initComponents(wb)
     }
-    let pWbList = list.filter(
-      wb =>
-        wb.Level === 1 ||
-        !wb.value.closest(`.wbaseItem-value[level="${wb.Level - 1}"]`)
-    )
+    let pWbList = list.filter(wb => wb.Level === 1 || !wb.value.closest(`.wbaseItem-value[level="${wb.Level - 1}"]`))
     for (let wb of pWbList) {
-      let oldWbHTML = divSection.querySelector(
-        `.wbaseItem-value[id="${wb.GID}"]`
-      )
+      let oldWbHTML = divSection.querySelector(`.wbaseItem-value[id="${wb.GID}"]`)
       if (oldWbHTML) {
         oldWbHTML.replaceWith(wb.value)
       } else {

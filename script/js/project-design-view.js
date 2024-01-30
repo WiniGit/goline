@@ -158,27 +158,23 @@ function createNewWbase({ wb, relativeWbs = [], level }) {
   let newWb = JSON.parse(JSON.stringify(wb))
   delete newWb.children
   newWb.GID = uuidv4()
-  // newWb.ChildID = wb.GID
   newWb.IsWini = false
-  newWb.BasePropertyItems = null
-  newWb.PropertyItems = null
-  newWb.value = null
-  newWb.ProtoType = null
-  newWb.PrototypeID = null
+  delete newWb.BasePropertyItems
+  delete newWb.PropertyItems
+  delete newWb.value
+  delete newWb.ProtoType
+  delete newWb.PrototypeID
   newWb.Level = level
   if (newWb.JsonEventItem)
     newWb.JsonEventItem = newWb.JsonEventItem.filter(e => e.Name === 'State')
-  // tạo GuiID mới cho AttributesItem nếu khác null
   if (newWb.AttributesItem) {
     newWb.AttributeID = uuidv4()
     newWb.AttributesItem.GID = newWb.AttributeID
     if (newWb.JsonEventItem)
       newWb.AttributesItem.JsonEvent = JSON.stringify(newWb.JsonEventItem)
   }
-  if (newWb.ListChildID?.length) {
-    let list_child = relativeWbs.filter(e => wb.ListChildID.some(id => e.GID === id))
-    if (!list_child.length && wb.ListChildID.length)
-      list_child = assets_list.filter(e => wb.ListChildID.some(id => e.GID == id))
+  let list_child = relativeWbs.filter(e => e.ParentID === wb.GID)
+  if (list_child.length) {
     for (let child of list_child) {
       let new_children = createNewWbase({
         wb: child,
@@ -197,8 +193,6 @@ function createNewWbase({ wb, relativeWbs = [], level }) {
           break
       }
     }
-    let new_list_child = list_new_wbase.filter(e => e.ParentID === newWb.GID)
-    newWb.ListChildID = new_list_child.map(e => e.GID)
   }
   newWb.PageID = PageDA.obj.ID
   list_new_wbase.push(newWb)
