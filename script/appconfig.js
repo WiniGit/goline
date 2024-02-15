@@ -3,7 +3,7 @@ var domainUrl = 'http://localhost:3000/';
 var domainApi = 'https://apip.wini.vn/';
 // 
 var socketHome = "wss://home.wini.vn";
-var socketWini = "wss://server.wini.vn";
+var socketWini = "https://server.wini.vn";
 var socketWiniFile = "https://server.wini.vn";
 
 var urlFile = "https://file.wini.vn/";
