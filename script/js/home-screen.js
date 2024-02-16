@@ -7,12 +7,12 @@ $('.loading-view').load('/View/loading.html', async function () {
     $('.user-container .user-name').text(userItem?.FullName ?? "");
     $('.user-container .user-email').text(userItem?.Email ?? "");
     // ProjectDA.init();
-    await $.get({
+    await $.ajax({
         url: '/view/init-project',
         type: 'GET',
-        contentType: 'application/json',
+        // contentType: 'application/json',
         headers: {
-            token: localStorage.getItem("token"),
+            Token: localStorage.getItem("token"),
         },
         success: async function (data) {
             debugger
