@@ -17,7 +17,7 @@ class BaseDA {
     listFile = [...listFile];
     let _date = new Date();
     let headers = await UserService.headerFile();
-    headers.folder = UserService.getUser().ID;
+    headers.folder = UserService.getUser().id;
     headers.collectionId = collectionId;
     headers.code = ProjectDA.obj.Code;
     headers.datee = `${_date.getFullYear()}${_date.getMonth()}${_date.getDate()}`;

@@ -616,7 +616,7 @@ socket.on('server-main', async data => {
   }
 })
 socket.on('server-mouse', data => {
-  if (data.data.ID !== UserService.getUser().ID) {
+  if (data.data.ID !== UserService.getUser().id) {
     listRect = listRect.filter(e => e.ID !== data.data.ID)
     listRect.push(data.data)
     // wdraw();
@@ -821,7 +821,7 @@ class WiniIO {
     ) {
       let mouseData = JSON.parse(JSON.stringify(mouseItem))
       this.kc = mouseData
-      mouseData.ID = UserService.getUser().ID
+      mouseData.ID = UserService.getUser().id
       if (PageDA.obj?.ProjectID) {
         socket.emit('client-mouse', {
           headers: await UserService.headerProject(),
@@ -849,7 +849,7 @@ class WiniIO {
       data: [],
       enumObj: enumObj,
       enumEvent: enumEvent,
-      userId: UserService.getUser().ID
+      userId: UserService.getUser().id
     })
   }
 
@@ -861,7 +861,7 @@ class WiniIO {
       data: [],
       enumEvent: enumEvent,
       enumObj: enumObj,
-      userId: UserService.getUser().ID
+      userId: UserService.getUser().id
     })
   }
 
