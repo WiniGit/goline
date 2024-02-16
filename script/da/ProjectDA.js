@@ -61,13 +61,13 @@ class ProjectDA {
   }
 
   static init() {
-    if (this.obj.ID != 0) {
+    // if (this.obj.ID != 0) {
       var url = this.urlCtr + "ListAll";
       WiniIO.emitGet(null, url, EnumObj.project, EnumEvent.init);
-    } else {
-      var url = ProjectDA.urlCtr + "ListAll";
-      emitGet(null, url, EnumObj.project, EnumEvent.init);
-    }
+    // } else {
+    //   var url = ProjectDA.urlCtr + "ListAll";
+    //   emitGet(null, url, EnumObj.project, EnumEvent.init);
+    // }
   }
 
   static checkDomain(domain) {

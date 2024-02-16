@@ -17,27 +17,27 @@ socket.on('connect', () => {
   // WIndexedDB.initDB();
   console.log('socketID:' + socket.id) // "G5p5..."
   console.log('socket connect' + socket.connected) // true
-  PageDA.obj = undefined
-  PageDA.list = []
-  if (socket.connected) {
-    PageDA.pageLoadingView(function () {
-      clearActionListFrom()
-      WiniIO.emitRefreshToken()
-      const queryString = window.location.search
-      const urlParams = new URLSearchParams(queryString)
-      const projectID = urlParams.get('id')
-      ProjectDA.openingList =
-        JSON.parse(Ultis.getStorage('list-project-tab')) ?? []
-      ProjectDA.obj = ProjectDA.openingList.find(e => e.ID === projectID)
-      if (!ProjectDA.obj) {
-        ProjectDA.obj = { ID: projectID }
-      }
-      ProjectDA.getProjectInfor()
-      ProjectDA.getByID()
-      ProjectDA.getPermission()
-      ProjectDA.init()
-    })
-  }
+  // PageDA.obj = undefined
+  // PageDA.list = []
+  // if (socket.connected) {
+  //   PageDA.pageLoadingView(function () {
+  //     clearActionListFrom()
+  //     WiniIO.emitRefreshToken()
+  //     const queryString = window.location.search
+  //     const urlParams = new URLSearchParams(queryString)
+  //     const projectID = urlParams.get('id')
+  //     ProjectDA.openingList =
+  //       JSON.parse(Ultis.getStorage('list-project-tab')) ?? []
+  //     ProjectDA.obj = ProjectDA.openingList.find(e => e.ID === projectID)
+  //     if (!ProjectDA.obj) {
+  //       ProjectDA.obj = { ID: projectID }
+  //     }
+  //     ProjectDA.getProjectInfor()
+  //     ProjectDA.getByID()
+  //     ProjectDA.getPermission()
+  //     ProjectDA.init()
+  //   })
+  // }
 })
 //socket.io.on("error", (error) => {
 //	// ...
@@ -321,6 +321,8 @@ socket.on('server-get', data => {
           break
         case EnumEvent.init:
           ProjectDA.list = data.data.sort((a, b) => b.DateUpdate - a.DateUpdate)
+          loadding_P_success = true;
+          check_loadingSuccess();
           TitleBarDA.initDataStorage()
           break
         case EnumEvent.init:
